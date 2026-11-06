@@ -105,7 +105,7 @@
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tiny_url",

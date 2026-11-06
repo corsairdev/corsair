@@ -44,10 +44,8 @@ await corsair.rootly.api.actionItems.delete({});
 {
   id: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -91,10 +89,8 @@ await corsair.rootly.api.actionItems.get({});
 {
   id: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -105,10 +101,8 @@ await corsair.rootly.api.actionItems.get({});
 {
   id: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -146,8 +140,8 @@ await corsair.rootly.api.actionItems.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `links` | `Record<string, string \| null>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `included` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -157,27 +151,9 @@ await corsair.rootly.api.actionItems.list({});
 {
   id: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -187,10 +163,8 @@ await corsair.rootly.api.actionItems.list({});
 {
   id: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -235,10 +209,8 @@ await corsair.rootly.api.incidents.delete({});
 {
   id: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -282,10 +254,8 @@ await corsair.rootly.api.incidents.get({});
 {
   id: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -296,10 +266,8 @@ await corsair.rootly.api.incidents.get({});
 {
   id: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -328,8 +296,8 @@ await corsair.rootly.api.incidents.update({});
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `kind` | `string` | No | — |
-| `parent_incident_id` | `string` | No | — |
-| `duplicate_incident_id` | `string` | No | — |
+| `parent_incident_id` | `string \| null` | No | — |
+| `duplicate_incident_id` | `string \| null` | No | — |
 | `summary` | `string` | No | — |
 | `private` | `boolean` | No | — |
 | `severity_id` | `string` | No | — |
@@ -341,39 +309,29 @@ await corsair.rootly.api.incidents.update({});
 | `functionality_ids` | `string[]` | No | — |
 | `muted_service_ids` | `string[]` | No | — |
 | `cause_ids` | `string[]` | No | — |
-| `labels` | `object` | No | — |
-| `slack_channel_id` | `string` | No | — |
-| `slack_channel_name` | `string` | No | — |
-| `slack_channel_url` | `string` | No | — |
+| `labels` | `Record<string, string>` | No | — |
+| `slack_channel_id` | `string \| null` | No | — |
+| `slack_channel_name` | `string \| null` | No | — |
+| `slack_channel_url` | `string \| null` | No | — |
 | `slack_channel_archived` | `boolean` | No | — |
-| `google_drive_parent_id` | `string` | No | — |
-| `google_drive_url` | `string` | No | — |
-| `jira_issue_key` | `string` | No | — |
-| `jira_issue_id` | `string` | No | — |
-| `jira_issue_url` | `string` | No | — |
-| `scheduled_for` | `string` | No | — |
-| `scheduled_until` | `string` | No | — |
-| `in_triage_at` | `string` | No | — |
-| `started_at` | `string` | No | — |
-| `detected_at` | `string` | No | — |
-| `acknowledged_at` | `string` | No | — |
-| `mitigated_at` | `string` | No | — |
-| `resolved_at` | `string` | No | — |
-| `closed_at` | `string` | No | — |
-| `cancelled_at` | `string` | No | — |
-| `mitigation_message` | `string` | No | — |
-| `resolution_message` | `string` | No | — |
-| `cancellation_message` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="labels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `google_drive_parent_id` | `string \| null` | No | — |
+| `google_drive_url` | `string \| null` | No | — |
+| `jira_issue_key` | `string \| null` | No | — |
+| `jira_issue_id` | `string \| null` | No | — |
+| `jira_issue_url` | `string \| null` | No | — |
+| `scheduled_for` | `string \| null` | No | — |
+| `scheduled_until` | `string \| null` | No | — |
+| `in_triage_at` | `string \| null` | No | — |
+| `started_at` | `string \| null` | No | — |
+| `detected_at` | `string \| null` | No | — |
+| `acknowledged_at` | `string \| null` | No | — |
+| `mitigated_at` | `string \| null` | No | — |
+| `resolved_at` | `string \| null` | No | — |
+| `closed_at` | `string \| null` | No | — |
+| `cancelled_at` | `string \| null` | No | — |
+| `mitigation_message` | `string \| null` | No | — |
+| `resolution_message` | `string \| null` | No | — |
+| `cancellation_message` | `string \| null` | No | — |
 
 
 
@@ -391,10 +349,8 @@ await corsair.rootly.api.incidents.update({});
 {
   id: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }
 ```
 </Accordion>
@@ -405,10 +361,8 @@ await corsair.rootly.api.incidents.update({});
 {
   id: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
 ```
 </Accordion>

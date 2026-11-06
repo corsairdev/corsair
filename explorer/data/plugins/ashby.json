@@ -1,7 +1,7 @@
 {
   "id": "ashby",
   "displayName": "Ashby",
-  "description": "Ashby plugin for Corsair",
+  "description": "Recruiting platform. Manage candidates, applications, interviews, offers, jobs, departments, locations, users, and webhooks.",
   "npmPackageName": "@corsair-dev/ashby",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -878,7 +878,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -2260,7 +2260,7 @@
           {
             "key": "results",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }

@@ -31,19 +31,19 @@ await corsair.alttextai.api.account.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `webhook_url` | `string` | No | — |
-| `notification_email` | `string` | No | — |
+| `webhook_url` | `string \| null` | No | — |
+| `notification_email` | `string \| null` | No | — |
 | `usage` | `number` | No | — |
 | `usage_limit` | `number` | No | — |
 | `whitelabel` | `boolean` | No | — |
 | `default_lang` | `string` | No | — |
 | `ending_period` | `boolean` | No | — |
 | `no_quotes` | `boolean` | No | — |
-| `remove_symbols` | `string[]` | No | — |
-| `gpt_prompt` | `string` | No | — |
-| `max_chars` | `number` | No | — |
-| `subscription` | `object` | No | — |
-| `errors` | `object` | No | — |
+| `remove_symbols` | `string[] \| null` | No | — |
+| `gpt_prompt` | `string \| null` | No | — |
+| `max_chars` | `number \| null` | No | — |
+| `subscription` | `object \| null` | No | — |
+| `errors` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="subscription full type">
@@ -54,15 +54,7 @@ await corsair.alttextai.api.account.get({});
   usage_quota?: number,
   status?: string,
   expires_at?: string
-}
-```
-</Accordion>
-
-<Accordion title="errors full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -112,19 +104,19 @@ await corsair.alttextai.api.account.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `webhook_url` | `string` | No | — |
-| `notification_email` | `string` | No | — |
+| `webhook_url` | `string \| null` | No | — |
+| `notification_email` | `string \| null` | No | — |
 | `usage` | `number` | No | — |
 | `usage_limit` | `number` | No | — |
 | `whitelabel` | `boolean` | No | — |
 | `default_lang` | `string` | No | — |
 | `ending_period` | `boolean` | No | — |
 | `no_quotes` | `boolean` | No | — |
-| `remove_symbols` | `string[]` | No | — |
-| `gpt_prompt` | `string` | No | — |
-| `max_chars` | `number` | No | — |
-| `subscription` | `object` | No | — |
-| `errors` | `object` | No | — |
+| `remove_symbols` | `string[] \| null` | No | — |
+| `gpt_prompt` | `string \| null` | No | — |
+| `max_chars` | `number \| null` | No | — |
+| `subscription` | `object \| null` | No | — |
+| `errors` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="subscription full type">
@@ -135,15 +127,7 @@ await corsair.alttextai.api.account.update({});
   usage_quota?: number,
   status?: string,
   expires_at?: string
-}
-```
-</Accordion>
-
-<Accordion title="errors full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -181,8 +165,8 @@ await corsair.alttextai.api.images.bulkCreate({});
 |------|------|----------|-------------|
 | `success` | `boolean` | No | — |
 | `rows` | `number` | No | — |
-| `row_errors` | `tuple[]` | No | — |
-| `error` | `string` | No | — |
+| `row_errors` | `[number, string][]` | No | — |
+| `error` | `string \| null` | No | — |
 
 
 
@@ -226,8 +210,7 @@ await corsair.alttextai.api.images.create({});
   url?: string,
   raw?: string,
   asset_id?: string,
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }
 ```
 </Accordion>
@@ -252,40 +235,14 @@ await corsair.alttextai.api.images.create({});
 |------|------|----------|-------------|
 | `asset_id` | `string` | No | — |
 | `url` | `string` | No | — |
-| `alt_text` | `string` | No | — |
-| `alt_texts` | `object` | No | — |
+| `alt_text` | `string \| null` | No | — |
+| `alt_texts` | `Record<string, string>` | No | — |
 | `tags` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `created_at` | `number` | No | — |
 | `credits_used` | `number` | No | — |
-| `errors` | `object` | No | — |
-| `error_code` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="alt_texts full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="errors full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `errors` | `Record<string, any>` | No | — |
+| `error_code` | `string \| null` | No | — |
 
 
 
@@ -317,40 +274,14 @@ await corsair.alttextai.api.images.delete({});
 |------|------|----------|-------------|
 | `asset_id` | `string` | No | — |
 | `url` | `string` | No | — |
-| `alt_text` | `string` | No | — |
-| `alt_texts` | `object` | No | — |
+| `alt_text` | `string \| null` | No | — |
+| `alt_texts` | `Record<string, string>` | No | — |
 | `tags` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `created_at` | `number` | No | — |
 | `credits_used` | `number` | No | — |
-| `errors` | `object` | No | — |
-| `error_code` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="alt_texts full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="errors full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `errors` | `Record<string, any>` | No | — |
+| `error_code` | `string \| null` | No | — |
 
 
 
@@ -382,40 +313,14 @@ await corsair.alttextai.api.images.get({});
 |------|------|----------|-------------|
 | `asset_id` | `string` | No | — |
 | `url` | `string` | No | — |
-| `alt_text` | `string` | No | — |
-| `alt_texts` | `object` | No | — |
+| `alt_text` | `string \| null` | No | — |
+| `alt_texts` | `Record<string, string>` | No | — |
 | `tags` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `created_at` | `number` | No | — |
 | `credits_used` | `number` | No | — |
-| `errors` | `object` | No | — |
-| `error_code` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="alt_texts full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="errors full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `errors` | `Record<string, any>` | No | — |
+| `error_code` | `string \| null` | No | — |
 
 
 
@@ -457,15 +362,12 @@ await corsair.alttextai.api.images.list({});
   asset_id?: string,
   url?: string,
   alt_text?: string | null,
-  alt_texts?: {
-  },
+  alt_texts?: Record<string, string>,
   tags?: string[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   created_at?: number,
   credits_used?: number,
-  errors?: {
-  },
+  errors?: Record<string, any>,
   error_code?: string | null
 }[]
 ```
@@ -516,9 +418,9 @@ await corsair.alttextai.api.images.pageScrape({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | — |
+| `url` | `string \| null` | No | — |
 | `total_processed` | `number` | No | — |
-| `errors` | `any` | No | — |
+| `errors` | `any \| null` | No | — |
 | `scraped_images` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -576,15 +478,12 @@ await corsair.alttextai.api.images.search({});
   asset_id?: string,
   url?: string,
   alt_text?: string | null,
-  alt_texts?: {
-  },
+  alt_texts?: Record<string, string>,
   tags?: string[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   created_at?: number,
   credits_used?: number,
-  errors?: {
-  },
+  errors?: Record<string, any>,
   error_code?: string | null
 }[]
 ```
@@ -623,8 +522,7 @@ await corsair.alttextai.api.images.update({});
 {
   alt_text?: string,
   asset_id?: string,
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }
 ```
 </Accordion>
@@ -638,40 +536,14 @@ await corsair.alttextai.api.images.update({});
 |------|------|----------|-------------|
 | `asset_id` | `string` | No | — |
 | `url` | `string` | No | — |
-| `alt_text` | `string` | No | — |
-| `alt_texts` | `object` | No | — |
+| `alt_text` | `string \| null` | No | — |
+| `alt_texts` | `Record<string, string>` | No | — |
 | `tags` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `created_at` | `number` | No | — |
 | `credits_used` | `number` | No | — |
-| `errors` | `object` | No | — |
-| `error_code` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="alt_texts full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="errors full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `errors` | `Record<string, any>` | No | — |
+| `error_code` | `string \| null` | No | — |
 
 
 

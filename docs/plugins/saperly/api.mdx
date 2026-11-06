@@ -80,9 +80,9 @@ await corsair.saperly.api.calls.end({});
 | `to` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `rateCentsPerMin` | `number` | No | — |
-| `durationSec` | `number` | No | — |
-| `costCents` | `number` | No | — |
+| `rateCentsPerMin` | `number \| null` | Yes | — |
+| `durationSec` | `number \| null` | Yes | — |
+| `costCents` | `number \| null` | Yes | — |
 | `hasRecording` | `boolean` | Yes | — |
 | `hasTranscript` | `boolean` | Yes | — |
 | `createdAt` | `string` | Yes | — |
@@ -121,9 +121,9 @@ await corsair.saperly.api.calls.get({});
 | `to` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `rateCentsPerMin` | `number` | No | — |
-| `durationSec` | `number` | No | — |
-| `costCents` | `number` | No | — |
+| `rateCentsPerMin` | `number \| null` | Yes | — |
+| `durationSec` | `number \| null` | Yes | — |
+| `costCents` | `number \| null` | Yes | — |
 | `hasRecording` | `boolean` | Yes | — |
 | `hasTranscript` | `boolean` | Yes | — |
 | `createdAt` | `string` | Yes | — |
@@ -160,9 +160,9 @@ await corsair.saperly.api.calls.list({});
   to: string,
   from: string,
   status: string,
-  rateCentsPerMin?: number | null,
-  durationSec?: number | null,
-  costCents?: number | null,
+  rateCentsPerMin: number | null,
+  durationSec: number | null,
+  costCents: number | null,
   hasRecording: boolean,
   hasTranscript: boolean,
   createdAt: string
@@ -192,8 +192,8 @@ await corsair.saperly.api.calls.place({ fromNumberId: 'num_01H', to: '+155555501
 |------|------|----------|-------------|
 | `fromNumberId` | `string` | Yes | — |
 | `to` | `string` | Yes | — |
-| `connectionId` | `string` | No | — |
-| `instructions` | `string` | No | — |
+| `connectionId` | `string \| null` | No | — |
+| `instructions` | `string \| null` | No | — |
 | `idempotencyKey` | `string` | No | — |
 
 
@@ -208,9 +208,9 @@ await corsair.saperly.api.calls.place({ fromNumberId: 'num_01H', to: '+155555501
 | `to` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `rateCentsPerMin` | `number` | No | — |
-| `durationSec` | `number` | No | — |
-| `costCents` | `number` | No | — |
+| `rateCentsPerMin` | `number \| null` | Yes | — |
+| `durationSec` | `number \| null` | Yes | — |
+| `costCents` | `number \| null` | Yes | — |
 | `hasRecording` | `boolean` | Yes | — |
 | `hasTranscript` | `boolean` | Yes | — |
 | `createdAt` | `string` | Yes | — |
@@ -269,7 +269,7 @@ await corsair.saperly.api.calls.transcript({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -317,9 +317,9 @@ await corsair.saperly.api.calls.transfer({});
 | `to` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `rateCentsPerMin` | `number` | No | — |
-| `durationSec` | `number` | No | — |
-| `costCents` | `number` | No | — |
+| `rateCentsPerMin` | `number \| null` | Yes | — |
+| `durationSec` | `number \| null` | Yes | — |
+| `costCents` | `number \| null` | Yes | — |
 | `hasRecording` | `boolean` | Yes | — |
 | `hasTranscript` | `boolean` | Yes | — |
 | `createdAt` | `string` | Yes | — |
@@ -347,20 +347,20 @@ await corsair.saperly.api.connections.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `mode` | `hosted \| manual` | No | — |
-| `backend` | `network \| openai_realtime` | No | — |
-| `instructions` | `string` | No | — |
-| `llm` | `object` | No | — |
-| `tts` | `object` | No | — |
-| `backgroundAudio` | `object` | No | — |
-| `language` | `string` | No | — |
-| `mcpServers` | `object` | No | — |
-| `callControl` | `object` | No | — |
-| `complianceEnabled` | `boolean` | No | — |
-| `smsAutoReply` | `boolean` | No | — |
-| `disclosure` | `string` | No | — |
-| `openaiRealtime` | `object` | No | — |
-| `manualWebhookUrl` | `string` | No | — |
+| `mode` | `hosted \| manual \| null` | No | — |
+| `backend` | `network \| openai_realtime \| null` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `llm` | `object \| null` | No | — |
+| `tts` | `object \| null` | No | — |
+| `backgroundAudio` | `object \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `mcpServers` | `object[] \| null` | No | — |
+| `callControl` | `object \| null` | No | — |
+| `complianceEnabled` | `boolean \| null` | No | — |
+| `smsAutoReply` | `boolean \| null` | No | — |
+| `disclosure` | `string \| null` | No | — |
+| `openaiRealtime` | `object \| null` | No | — |
+| `manualWebhookUrl` | `string \| null` | No | — |
 | `idempotencyKey` | `string` | No | — |
 
 <AccordionGroup>
@@ -445,21 +445,21 @@ await corsair.saperly.api.connections.create({});
 | `name` | `string` | Yes | — |
 | `mode` | `hosted \| manual` | Yes | — |
 | `instructions` | `string` | Yes | — |
-| `llm` | `object` | No | — |
-| `backgroundAudio` | `object` | No | — |
-| `language` | `string` | No | — |
-| `mcpServers` | `object[]` | No | — |
-| `callControl` | `object` | No | — |
+| `llm` | `object \| null` | Yes | — |
+| `backgroundAudio` | `object \| null` | No | — |
+| `language` | `string \| null` | Yes | — |
+| `mcpServers` | `object[] \| null` | Yes | — |
+| `callControl` | `object \| null` | Yes | — |
 | `complianceEnabled` | `boolean` | Yes | — |
 | `smsAutoReply` | `boolean` | Yes | — |
 | `disclosure` | `string` | Yes | — |
 | `recordingEnabled` | `boolean` | Yes | — |
-| `openaiRealtime` | `object` | No | — |
-| `manualSecret` | `string` | No | — |
-| `manualWebhookUrl` | `string` | No | — |
+| `openaiRealtime` | `object \| null` | Yes | — |
+| `manualSecret` | `string \| null` | Yes | — |
+| `manualWebhookUrl` | `string \| null` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 | `backend` | `network \| openai_realtime` | Yes | — |
-| `tts` | `object` | No | — |
+| `tts` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="llm full type">
@@ -468,7 +468,7 @@ await corsair.saperly.api.connections.create({});
 {
   kind: managed,
   model: string
-}
+} | null
 ```
 </Accordion>
 
@@ -480,7 +480,7 @@ await corsair.saperly.api.connections.create({});
 } | {
   type: office,
   volume: number
-}
+} | null
 ```
 </Accordion>
 
@@ -494,7 +494,7 @@ await corsair.saperly.api.connections.create({});
     token?: string | null
   } | null,
   allowedTools?: string[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -508,7 +508,7 @@ await corsair.saperly.api.connections.create({});
     targets: string[],
     from?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -518,7 +518,7 @@ await corsair.saperly.api.connections.create({});
 {
   model: string,
   voice?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -527,7 +527,7 @@ await corsair.saperly.api.connections.create({});
 ```ts
 {
   voiceId: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -594,21 +594,21 @@ await corsair.saperly.api.connections.get({});
 | `name` | `string` | Yes | — |
 | `mode` | `hosted \| manual` | Yes | — |
 | `instructions` | `string` | Yes | — |
-| `llm` | `object` | No | — |
-| `backgroundAudio` | `object` | No | — |
-| `language` | `string` | No | — |
-| `mcpServers` | `object[]` | No | — |
-| `callControl` | `object` | No | — |
+| `llm` | `object \| null` | Yes | — |
+| `backgroundAudio` | `object \| null` | No | — |
+| `language` | `string \| null` | Yes | — |
+| `mcpServers` | `object[] \| null` | Yes | — |
+| `callControl` | `object \| null` | Yes | — |
 | `complianceEnabled` | `boolean` | Yes | — |
 | `smsAutoReply` | `boolean` | Yes | — |
 | `disclosure` | `string` | Yes | — |
 | `recordingEnabled` | `boolean` | Yes | — |
-| `openaiRealtime` | `object` | No | — |
-| `manualSecret` | `string` | No | — |
-| `manualWebhookUrl` | `string` | No | — |
+| `openaiRealtime` | `object \| null` | Yes | — |
+| `manualSecret` | `string \| null` | Yes | — |
+| `manualWebhookUrl` | `string \| null` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 | `backend` | `network \| openai_realtime` | Yes | — |
-| `tts` | `object` | No | — |
+| `tts` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="llm full type">
@@ -617,7 +617,7 @@ await corsair.saperly.api.connections.get({});
 {
   kind: managed,
   model: string
-}
+} | null
 ```
 </Accordion>
 
@@ -629,7 +629,7 @@ await corsair.saperly.api.connections.get({});
 } | {
   type: office,
   volume: number
-}
+} | null
 ```
 </Accordion>
 
@@ -643,7 +643,7 @@ await corsair.saperly.api.connections.get({});
     token?: string | null
   } | null,
   allowedTools?: string[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -657,7 +657,7 @@ await corsair.saperly.api.connections.get({});
     targets: string[],
     from?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -667,7 +667,7 @@ await corsair.saperly.api.connections.get({});
 {
   model: string,
   voice?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -676,7 +676,7 @@ await corsair.saperly.api.connections.get({});
 ```ts
 {
   voiceId: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -711,7 +711,7 @@ await corsair.saperly.api.connections.list({});
   name: string,
   mode: hosted | manual,
   instructions: string,
-  llm?: {
+  llm: {
     kind: managed,
     model: string
   } | null,
@@ -721,8 +721,8 @@ await corsair.saperly.api.connections.list({});
     type: office,
     volume: number
   } | null,
-  language?: string | null,
-  mcpServers?: {
+  language: string | null,
+  mcpServers: {
     url: string,
     auth?: {
       type: bearer | none,
@@ -730,7 +730,7 @@ await corsair.saperly.api.connections.list({});
     } | null,
     allowedTools?: string[] | null
   }[] | null,
-  callControl?: {
+  callControl: {
     endCall?: boolean | null,
     sendDtmf?: boolean | null,
     transfer?: {
@@ -742,15 +742,15 @@ await corsair.saperly.api.connections.list({});
   smsAutoReply: boolean,
   disclosure: string,
   recordingEnabled: boolean,
-  openaiRealtime?: {
+  openaiRealtime: {
     model: string,
     voice?: string | null
   } | null,
-  manualSecret?: string | null,
-  manualWebhookUrl?: string | null,
+  manualSecret: string | null,
+  manualWebhookUrl: string | null,
   createdAt: string,
   backend: network | openai_realtime,
-  tts?: {
+  tts: {
     voiceId: string
   } | null
 }[]
@@ -778,21 +778,21 @@ await corsair.saperly.api.connections.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `mode` | `hosted \| manual` | No | — |
-| `backend` | `network \| openai_realtime` | No | — |
-| `instructions` | `string` | No | — |
-| `llm` | `object` | No | — |
-| `tts` | `object` | No | — |
-| `backgroundAudio` | `object` | No | — |
-| `language` | `string` | No | — |
-| `mcpServers` | `object` | No | — |
-| `callControl` | `object` | No | — |
-| `complianceEnabled` | `boolean` | No | — |
-| `smsAutoReply` | `boolean` | No | — |
-| `disclosure` | `string` | No | — |
-| `openaiRealtime` | `object` | No | — |
-| `manualWebhookUrl` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `mode` | `hosted \| manual \| null` | No | — |
+| `backend` | `network \| openai_realtime \| null` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `llm` | `object \| null` | No | — |
+| `tts` | `object \| null` | No | — |
+| `backgroundAudio` | `object \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `mcpServers` | `object[] \| null` | No | — |
+| `callControl` | `object \| null` | No | — |
+| `complianceEnabled` | `boolean \| null` | No | — |
+| `smsAutoReply` | `boolean \| null` | No | — |
+| `disclosure` | `string \| null` | No | — |
+| `openaiRealtime` | `object \| null` | No | — |
+| `manualWebhookUrl` | `string \| null` | No | — |
 | `idempotencyKey` | `string` | No | — |
 
 <AccordionGroup>
@@ -877,21 +877,21 @@ await corsair.saperly.api.connections.update({});
 | `name` | `string` | Yes | — |
 | `mode` | `hosted \| manual` | Yes | — |
 | `instructions` | `string` | Yes | — |
-| `llm` | `object` | No | — |
-| `backgroundAudio` | `object` | No | — |
-| `language` | `string` | No | — |
-| `mcpServers` | `object[]` | No | — |
-| `callControl` | `object` | No | — |
+| `llm` | `object \| null` | Yes | — |
+| `backgroundAudio` | `object \| null` | No | — |
+| `language` | `string \| null` | Yes | — |
+| `mcpServers` | `object[] \| null` | Yes | — |
+| `callControl` | `object \| null` | Yes | — |
 | `complianceEnabled` | `boolean` | Yes | — |
 | `smsAutoReply` | `boolean` | Yes | — |
 | `disclosure` | `string` | Yes | — |
 | `recordingEnabled` | `boolean` | Yes | — |
-| `openaiRealtime` | `object` | No | — |
-| `manualSecret` | `string` | No | — |
-| `manualWebhookUrl` | `string` | No | — |
+| `openaiRealtime` | `object \| null` | Yes | — |
+| `manualSecret` | `string \| null` | Yes | — |
+| `manualWebhookUrl` | `string \| null` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 | `backend` | `network \| openai_realtime` | Yes | — |
-| `tts` | `object` | No | — |
+| `tts` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="llm full type">
@@ -900,7 +900,7 @@ await corsair.saperly.api.connections.update({});
 {
   kind: managed,
   model: string
-}
+} | null
 ```
 </Accordion>
 
@@ -912,7 +912,7 @@ await corsair.saperly.api.connections.update({});
 } | {
   type: office,
   volume: number
-}
+} | null
 ```
 </Accordion>
 
@@ -926,7 +926,7 @@ await corsair.saperly.api.connections.update({});
     token?: string | null
   } | null,
   allowedTools?: string[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -940,7 +940,7 @@ await corsair.saperly.api.connections.update({});
     targets: string[],
     from?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -950,7 +950,7 @@ await corsair.saperly.api.connections.update({});
 {
   model: string,
   voice?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -959,7 +959,7 @@ await corsair.saperly.api.connections.update({});
 ```ts
 {
   voiceId: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -996,7 +996,7 @@ await corsair.saperly.api.consent.check({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `hasConsent` | `boolean` | Yes | — |
-| `type` | `implied_inbound \| explicit_outbound` | No | — |
+| `type` | `implied_inbound \| explicit_outbound \| null` | No | — |
 
 
 
@@ -1030,7 +1030,7 @@ await corsair.saperly.api.consent.list({});
   consentType: implied_inbound | explicit_outbound,
   source: string,
   grantedAt: string,
-  revokedAt?: string | null
+  revokedAt: string | null
 }[]
 ```
 </Accordion>
@@ -1073,7 +1073,7 @@ await corsair.saperly.api.consent.record({});
 | `consentType` | `implied_inbound \| explicit_outbound` | Yes | — |
 | `source` | `string` | Yes | — |
 | `grantedAt` | `string` | Yes | — |
-| `revokedAt` | `string` | No | — |
+| `revokedAt` | `string \| null` | Yes | — |
 
 
 
@@ -1146,8 +1146,8 @@ await corsair.saperly.api.customVoices.create({});
 | `language` | `string` | Yes | — |
 | `gender` | `male \| female \| neutral` | Yes | — |
 | `status` | `pending \| active \| failed \| expired` | Yes | — |
-| `failureReason` | `string` | No | — |
-| `deletionPending` | `boolean` | No | — |
+| `failureReason` | `string \| null` | Yes | — |
+| `deletionPending` | `boolean \| null` | No | — |
 | `createdAt` | `string` | Yes | — |
 | `updatedAt` | `string` | Yes | — |
 
@@ -1214,8 +1214,8 @@ await corsair.saperly.api.customVoices.get({});
 | `language` | `string` | Yes | — |
 | `gender` | `male \| female \| neutral` | Yes | — |
 | `status` | `pending \| active \| failed \| expired` | Yes | — |
-| `failureReason` | `string` | No | — |
-| `deletionPending` | `boolean` | No | — |
+| `failureReason` | `string \| null` | Yes | — |
+| `deletionPending` | `boolean \| null` | No | — |
 | `createdAt` | `string` | Yes | — |
 | `updatedAt` | `string` | Yes | — |
 
@@ -1250,7 +1250,7 @@ await corsair.saperly.api.customVoices.list({});
   language: string,
   gender: male | female | neutral,
   status: pending | active | failed | expired,
-  failureReason?: string | null,
+  failureReason: string | null,
   deletionPending?: boolean | null,
   createdAt: string,
   updatedAt: string
@@ -1317,8 +1317,8 @@ await corsair.saperly.api.keys.list({});
   name: string,
   token: string,
   prefix: string,
-  scopes: read | write | admin[],
-  lastUsedAt?: string | null,
+  scopes: (read | write | admin)[],
+  lastUsedAt: string | null,
   createdAt: string,
   numberScope?: string[] | null,
   spendLimitCents?: number | null,
@@ -1352,7 +1352,7 @@ await corsair.saperly.api.keys.mint({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `scopes` | `read \| write \| admin[]` | Yes | — |
+| `scopes` | `(read \| write \| admin)[]` | Yes | — |
 | `numberScope` | `string[] \| null` | No | — |
 | `spendLimitCents` | `number \| null` | No | — |
 | `spendLimitResetPeriod` | `monthly \| null` | No | — |
@@ -1367,8 +1367,8 @@ await corsair.saperly.api.keys.mint({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `prefix` | `string` | Yes | — |
-| `scopes` | `read \| write \| admin[]` | Yes | — |
-| `lastUsedAt` | `string` | No | — |
+| `scopes` | `(read \| write \| admin)[]` | Yes | — |
+| `lastUsedAt` | `string \| null` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 | `token` | `string` | Yes | — |
 
@@ -1558,16 +1558,16 @@ await corsair.saperly.api.numbers.assignConnection({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `phoneNumber` | `string` | Yes | — |
-| `connectionId` | `string` | No | — |
-| `webhookUrl` | `string` | No | — |
-| `smsSenderId` | `string` | No | — |
-| `callerIdName` | `string` | No | — |
-| `country` | `string` | No | — |
-| `numberType` | `string` | No | — |
-| `monthlyPriceCents` | `number` | No | — |
-| `currency` | `string` | No | — |
-| `nextChargeAt` | `string` | No | — |
-| `releasedAt` | `string` | No | — |
+| `connectionId` | `string \| null` | Yes | — |
+| `webhookUrl` | `string \| null` | Yes | — |
+| `smsSenderId` | `string \| null` | No | — |
+| `callerIdName` | `string \| null` | No | — |
+| `country` | `string \| null` | Yes | — |
+| `numberType` | `string \| null` | Yes | — |
+| `monthlyPriceCents` | `number \| null` | Yes | — |
+| `currency` | `string \| null` | Yes | — |
+| `nextChargeAt` | `string \| null` | Yes | — |
+| `releasedAt` | `string \| null` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 
 
@@ -1600,16 +1600,16 @@ await corsair.saperly.api.numbers.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `phoneNumber` | `string` | Yes | — |
-| `connectionId` | `string` | No | — |
-| `webhookUrl` | `string` | No | — |
-| `smsSenderId` | `string` | No | — |
-| `callerIdName` | `string` | No | — |
-| `country` | `string` | No | — |
-| `numberType` | `string` | No | — |
-| `monthlyPriceCents` | `number` | No | — |
-| `currency` | `string` | No | — |
-| `nextChargeAt` | `string` | No | — |
-| `releasedAt` | `string` | No | — |
+| `connectionId` | `string \| null` | Yes | — |
+| `webhookUrl` | `string \| null` | Yes | — |
+| `smsSenderId` | `string \| null` | No | — |
+| `callerIdName` | `string \| null` | No | — |
+| `country` | `string \| null` | Yes | — |
+| `numberType` | `string \| null` | Yes | — |
+| `monthlyPriceCents` | `number \| null` | Yes | — |
+| `currency` | `string \| null` | Yes | — |
+| `nextChargeAt` | `string \| null` | Yes | — |
+| `releasedAt` | `string \| null` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 
 
@@ -1640,16 +1640,16 @@ await corsair.saperly.api.numbers.list({});
 {
   id: string,
   phoneNumber: string,
-  connectionId?: string | null,
-  webhookUrl?: string | null,
+  connectionId: string | null,
+  webhookUrl: string | null,
   smsSenderId?: string | null,
   callerIdName?: string | null,
-  country?: string | null,
-  numberType?: string | null,
-  monthlyPriceCents?: number | null,
-  currency?: string | null,
-  nextChargeAt?: string | null,
-  releasedAt?: string | null,
+  country: string | null,
+  numberType: string | null,
+  monthlyPriceCents: number | null,
+  currency: string | null,
+  nextChargeAt: string | null,
+  releasedAt: string | null,
   createdAt: string
 }[]
 ```
@@ -1675,12 +1675,12 @@ await corsair.saperly.api.numbers.provision({ areaCode: '415', idempotencyKey: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `country` | `string` | No | — |
-| `numberType` | `string` | No | — |
-| `areaCode` | `string` | No | — |
-| `expectedMonthlyPriceCents` | `number` | No | — |
-| `expectedUpfrontPriceCents` | `number` | No | — |
-| `approveHigherPrice` | `boolean` | No | — |
+| `country` | `string \| null` | No | — |
+| `numberType` | `string \| null` | No | — |
+| `areaCode` | `string \| null` | No | — |
+| `expectedMonthlyPriceCents` | `number \| null` | No | — |
+| `expectedUpfrontPriceCents` | `number \| null` | No | — |
+| `approveHigherPrice` | `boolean \| null` | No | — |
 | `idempotencyKey` | `string` | No | — |
 
 
@@ -1691,16 +1691,16 @@ await corsair.saperly.api.numbers.provision({ areaCode: '415', idempotencyKey: '
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `phoneNumber` | `string` | Yes | — |
-| `connectionId` | `string` | No | — |
-| `webhookUrl` | `string` | No | — |
-| `smsSenderId` | `string` | No | — |
-| `callerIdName` | `string` | No | — |
-| `country` | `string` | No | — |
-| `numberType` | `string` | No | — |
-| `monthlyPriceCents` | `number` | No | — |
-| `currency` | `string` | No | — |
-| `nextChargeAt` | `string` | No | — |
-| `releasedAt` | `string` | No | — |
+| `connectionId` | `string \| null` | Yes | — |
+| `webhookUrl` | `string \| null` | Yes | — |
+| `smsSenderId` | `string \| null` | No | — |
+| `callerIdName` | `string \| null` | No | — |
+| `country` | `string \| null` | Yes | — |
+| `numberType` | `string \| null` | Yes | — |
+| `monthlyPriceCents` | `number \| null` | Yes | — |
+| `currency` | `string \| null` | Yes | — |
+| `nextChargeAt` | `string \| null` | Yes | — |
+| `releasedAt` | `string \| null` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 
 
@@ -1766,16 +1766,16 @@ await corsair.saperly.api.numbers.setCallerId({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `phoneNumber` | `string` | Yes | — |
-| `connectionId` | `string` | No | — |
-| `webhookUrl` | `string` | No | — |
-| `smsSenderId` | `string` | No | — |
-| `callerIdName` | `string` | No | — |
-| `country` | `string` | No | — |
-| `numberType` | `string` | No | — |
-| `monthlyPriceCents` | `number` | No | — |
-| `currency` | `string` | No | — |
-| `nextChargeAt` | `string` | No | — |
-| `releasedAt` | `string` | No | — |
+| `connectionId` | `string \| null` | Yes | — |
+| `webhookUrl` | `string \| null` | Yes | — |
+| `smsSenderId` | `string \| null` | No | — |
+| `callerIdName` | `string \| null` | No | — |
+| `country` | `string \| null` | Yes | — |
+| `numberType` | `string \| null` | Yes | — |
+| `monthlyPriceCents` | `number \| null` | Yes | — |
+| `currency` | `string \| null` | Yes | — |
+| `nextChargeAt` | `string \| null` | Yes | — |
+| `releasedAt` | `string \| null` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 
 
@@ -1810,16 +1810,16 @@ await corsair.saperly.api.numbers.setSmsSender({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `phoneNumber` | `string` | Yes | — |
-| `connectionId` | `string` | No | — |
-| `webhookUrl` | `string` | No | — |
-| `smsSenderId` | `string` | No | — |
-| `callerIdName` | `string` | No | — |
-| `country` | `string` | No | — |
-| `numberType` | `string` | No | — |
-| `monthlyPriceCents` | `number` | No | — |
-| `currency` | `string` | No | — |
-| `nextChargeAt` | `string` | No | — |
-| `releasedAt` | `string` | No | — |
+| `connectionId` | `string \| null` | Yes | — |
+| `webhookUrl` | `string \| null` | Yes | — |
+| `smsSenderId` | `string \| null` | No | — |
+| `callerIdName` | `string \| null` | No | — |
+| `country` | `string \| null` | Yes | — |
+| `numberType` | `string \| null` | Yes | — |
+| `monthlyPriceCents` | `number \| null` | Yes | — |
+| `currency` | `string \| null` | Yes | — |
+| `nextChargeAt` | `string \| null` | Yes | — |
+| `releasedAt` | `string \| null` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 
 
@@ -1854,16 +1854,16 @@ await corsair.saperly.api.numbers.setWebhook({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `phoneNumber` | `string` | Yes | — |
-| `connectionId` | `string` | No | — |
-| `webhookUrl` | `string` | No | — |
-| `smsSenderId` | `string` | No | — |
-| `callerIdName` | `string` | No | — |
-| `country` | `string` | No | — |
-| `numberType` | `string` | No | — |
-| `monthlyPriceCents` | `number` | No | — |
-| `currency` | `string` | No | — |
-| `nextChargeAt` | `string` | No | — |
-| `releasedAt` | `string` | No | — |
+| `connectionId` | `string \| null` | Yes | — |
+| `webhookUrl` | `string \| null` | Yes | — |
+| `smsSenderId` | `string \| null` | No | — |
+| `callerIdName` | `string \| null` | No | — |
+| `country` | `string \| null` | Yes | — |
+| `numberType` | `string \| null` | Yes | — |
+| `monthlyPriceCents` | `number \| null` | Yes | — |
+| `currency` | `string \| null` | Yes | — |
+| `nextChargeAt` | `string \| null` | Yes | — |
+| `releasedAt` | `string \| null` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 
 

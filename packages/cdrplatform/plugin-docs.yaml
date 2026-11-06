@@ -1,0 +1,16 @@
+displayName: CDR Platform
+description: Carbon dioxide removal API. Price and purchase CO2 removal portfolios, retrieve removal certificates, and check service health.
+domain: cdrplatform.com
+examples:
+  read:
+    path: certificate.get
+    args:
+      id: abc-def-ghi
+    title: Get a certificate
+  write:
+    path: health.check
+    title: Check service health
+dbExample:
+  entity: certificates
+  note: Search synced certificates without hitting CDR Platform.
+  limit: 50

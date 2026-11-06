@@ -1,0 +1,416 @@
+{
+  "id": "retellai",
+  "displayName": "Retell AI",
+  "description": "Analyze Retell AI calls and chats with transcripts, recordings, and post-call analysis.",
+  "npmPackageName": "@corsair-dev/retellai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "retellai.api.calls.get",
+      "shortPath": "calls.get",
+      "description": "Retrieve a call with its transcript, recording, and post-call analysis.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "call_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "call_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_timestamp",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "disconnection_reason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transcript_object",
+            "optional": true,
+            "type": "{ role?: string, content?: string, start?: number, end?: number }[]"
+          },
+          {
+            "key": "transcript_with_tool_calls",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "scrubbed_transcript_with_tool_calls",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "recording_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "call_analysis",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "retell_llm_dynamic_variables",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retellai.api.calls.list",
+      "shortPath": "calls.list",
+      "description": "List Retell calls with filters and cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filterCriteria",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paginationKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "ascending | descending"
+          },
+          {
+            "key": "includeTotal",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ call_id: string, call_type?: string, agent_id?: string, call_status?: string, start_timestamp?: number, end_timestamp?: number | null, direction?: string, from_number?: string, to_number?: string, disconnection_reason?: string, metadata?: Record<string, any> }[]"
+          },
+          {
+            "key": "pagination_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retellai.api.chats.get",
+      "shortPath": "chats.get",
+      "description": "Retrieve a chat with its transcript and post-chat analysis.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chat_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "chat_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "end_timestamp",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message_with_tool_calls",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "chat_analysis",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retellai.api.chats.list",
+      "shortPath": "chats.list",
+      "description": "List Retell chats with filters and cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filterCriteria",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "paginationKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "ascending | descending"
+          },
+          {
+            "key": "includeTotal",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ chat_id: string, agent_id?: string, chat_status?: string, start_timestamp?: number, end_timestamp?: number | null, metadata?: Record<string, any> }[]"
+          },
+          {
+            "key": "pagination_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "retellai.db.calls.search",
+      "entityName": "calls",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "call_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "call_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "agent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "call_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_timestamp",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "end_timestamp",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "transcript",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recording_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "retellai.db.chats.search",
+      "entityName": "chats",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chat_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "agent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "chat_status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "start_timestamp",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "end_timestamp",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "transcript",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

@@ -60,17 +60,7 @@ await corsair.scaleai.api.batches.createBatch({});
 | `callback` | `string` | No | — |
 | `calibration_batch` | `boolean` | No | — |
 | `self_label_batch` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -84,17 +74,7 @@ await corsair.scaleai.api.batches.createBatch({});
 | `created_at` | `string` | No | — |
 | `completed_at` | `string` | No | — |
 | `callback` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -130,17 +110,7 @@ await corsair.scaleai.api.batches.finalizeBatch({});
 | `created_at` | `string` | No | — |
 | `completed_at` | `string` | No | — |
 | `callback` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -176,17 +146,7 @@ await corsair.scaleai.api.batches.getBatch({});
 | `created_at` | `string` | No | — |
 | `completed_at` | `string` | No | — |
 | `callback` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -274,8 +234,7 @@ await corsair.scaleai.api.batches.listBatches({});
   created_at?: string,
   completed_at?: string,
   callback?: string,
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -304,19 +263,9 @@ await corsair.scaleai.api.files.getAssets({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `project` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `limit` | `number` | No | — |
 | `next_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -326,7 +275,7 @@ await corsair.scaleai.api.files.getAssets({});
 |------|------|----------|-------------|
 | `docs` | `object[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | No | — |
 | `total` | `number` | No | — |
 
 <AccordionGroup>
@@ -366,17 +315,7 @@ await corsair.scaleai.api.files.importFile({});
 | `project_name` | `string` | No | — |
 | `reference_id` | `string` | No | — |
 | `attachment_type` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -413,17 +352,7 @@ await corsair.scaleai.api.files.uploadFile({});
 | `mime_type` | `string` | No | — |
 | `project_name` | `string` | No | — |
 | `reference_id` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -467,19 +396,9 @@ await corsair.scaleai.api.projects.getProject({});
 |------|------|----------|-------------|
 | `type` | `string` | No | — |
 | `name` | `string` | Yes | — |
-| `param_history` | `object[]` | No | — |
+| `param_history` | `Record<string, any>[]` | No | — |
 | `created_at` | `string` | No | — |
 | `archived` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="param_history full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -514,8 +433,7 @@ await corsair.scaleai.api.projects.listProjects({});
 {
   type?: string,
   name: string,
-  param_history?: {
-  }[],
+  param_history?: Record<string, any>[],
   created_at?: string,
   archived?: boolean
 }[]
@@ -543,17 +461,7 @@ await corsair.scaleai.api.projects.setProjectOntology({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `project` | `string` | Yes | — |
-| `ontology` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="ontology full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `ontology` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -563,19 +471,9 @@ any[] | {
 |------|------|----------|-------------|
 | `type` | `string` | No | — |
 | `name` | `string` | Yes | — |
-| `param_history` | `object[]` | No | — |
+| `param_history` | `Record<string, any>[]` | No | — |
 | `created_at` | `string` | No | — |
 | `archived` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="param_history full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -609,19 +507,9 @@ await corsair.scaleai.api.projects.setProjectParams({});
 |------|------|----------|-------------|
 | `type` | `string` | No | — |
 | `name` | `string` | Yes | — |
-| `param_history` | `object[]` | No | — |
+| `param_history` | `Record<string, any>[]` | No | — |
 | `created_at` | `string` | No | — |
 | `archived` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="param_history full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -678,17 +566,7 @@ await corsair.scaleai.api.studio.addStudioAssignments({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -708,17 +586,7 @@ await corsair.scaleai.api.studio.getStudioAssignments({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -738,17 +606,7 @@ await corsair.scaleai.api.studio.getStudioBatches({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[]`
 
 
 ---
@@ -774,17 +632,7 @@ await corsair.scaleai.api.studio.removeStudioAssignments({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -804,17 +652,7 @@ await corsair.scaleai.api.studio.resetBatchPriorities({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[]`
 
 
 ---
@@ -839,17 +677,7 @@ await corsair.scaleai.api.studio.setBatchPriorities({});
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[]`
 
 
 ---
@@ -888,50 +716,16 @@ await corsair.scaleai.api.tasks.addTaskTags({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -959,32 +753,13 @@ await corsair.scaleai.api.tasks.createDocumentTranscriptionTask({});
 | `instruction` | `string` | No | — |
 | `unique_id` | `string` | No | — |
 | `clear_unique_id_on_error` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `priority` | `number` | No | — |
 | `tags` | `string[]` | No | — |
 | `attachment` | `string` | No | — |
 | `attachments` | `string[]` | No | — |
 | `attachment_type` | `string` | No | — |
-| `fields` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="fields full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>[] \| Record<string, any>` | No | — |
 
 
 
@@ -999,50 +774,16 @@ await corsair.scaleai.api.tasks.createDocumentTranscriptionTask({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -1070,39 +811,13 @@ await corsair.scaleai.api.tasks.createImageAnnotationTask({});
 | `instruction` | `string` | No | — |
 | `unique_id` | `string` | No | — |
 | `clear_unique_id_on_error` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `priority` | `number` | No | — |
 | `tags` | `string[]` | No | — |
 | `attachment` | `string` | Yes | — |
 | `attachment_type` | `string` | No | — |
-| `geometries` | `object` | Yes | — |
-| `annotation_attributes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="geometries full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="annotation_attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `geometries` | `Record<string, any>` | Yes | — |
+| `annotation_attributes` | `Record<string, any>` | No | — |
 
 
 
@@ -1117,50 +832,16 @@ await corsair.scaleai.api.tasks.createImageAnnotationTask({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -1188,41 +869,13 @@ await corsair.scaleai.api.tasks.createLidarAnnotationTask({});
 | `instruction` | `string` | No | — |
 | `unique_id` | `string` | No | — |
 | `clear_unique_id_on_error` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `priority` | `number` | No | — |
 | `tags` | `string[]` | No | — |
 | `attachments` | `string[]` | No | — |
 | `attachment` | `string` | No | — |
-| `labels` | `object[]` | No | — |
-| `annotation_attributes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="labels full type">
-
-```ts
-(
-  string | {
-  }
-)[]
-```
-</Accordion>
-
-<Accordion title="annotation_attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `labels` | `(string \| Record<string, any>)[]` | No | — |
+| `annotation_attributes` | `Record<string, any>` | No | — |
 
 
 
@@ -1237,50 +890,16 @@ await corsair.scaleai.api.tasks.createLidarAnnotationTask({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -1308,32 +927,12 @@ await corsair.scaleai.api.tasks.createLidarSegmentationTask({});
 | `instruction` | `string` | No | — |
 | `unique_id` | `string` | No | — |
 | `clear_unique_id_on_error` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `priority` | `number` | No | — |
 | `tags` | `string[]` | No | — |
 | `attachments` | `string[]` | No | — |
 | `attachment` | `string` | No | — |
-| `labels` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="labels full type">
-
-```ts
-(
-  string | {
-  }
-)[]
-```
-</Accordion>
-</AccordionGroup>
+| `labels` | `(string \| Record<string, any>)[]` | No | — |
 
 
 
@@ -1348,50 +947,16 @@ await corsair.scaleai.api.tasks.createLidarSegmentationTask({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -1419,42 +984,12 @@ await corsair.scaleai.api.tasks.createNamedEntityRecognitionTask({});
 | `instruction` | `string` | No | — |
 | `unique_id` | `string` | No | — |
 | `clear_unique_id_on_error` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `priority` | `number` | No | — |
 | `tags` | `string[]` | No | — |
 | `text` | `string` | No | — |
-| `attachments` | `object[]` | No | — |
-| `labels` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="attachments full type">
-
-```ts
-(
-  string | {
-  }
-)[]
-```
-</Accordion>
-
-<Accordion title="labels full type">
-
-```ts
-(
-  string | {
-  }
-)[]
-```
-</Accordion>
-</AccordionGroup>
+| `attachments` | `(string \| Record<string, any>)[]` | No | — |
+| `labels` | `(string \| Record<string, any>)[]` | Yes | — |
 
 
 
@@ -1469,50 +1004,16 @@ await corsair.scaleai.api.tasks.createNamedEntityRecognitionTask({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -1540,32 +1041,12 @@ await corsair.scaleai.api.tasks.createSegmentationAnnotationTask({});
 | `instruction` | `string` | No | — |
 | `unique_id` | `string` | No | — |
 | `clear_unique_id_on_error` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `priority` | `number` | No | — |
 | `tags` | `string[]` | No | — |
 | `attachment` | `string` | Yes | — |
-| `labels` | `object[]` | Yes | — |
+| `labels` | `(string \| Record<string, any>)[]` | Yes | — |
 | `allow_unlabeled` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="labels full type">
-
-```ts
-(
-  string | {
-  }
-)[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1580,50 +1061,16 @@ await corsair.scaleai.api.tasks.createSegmentationAnnotationTask({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -1651,38 +1098,11 @@ await corsair.scaleai.api.tasks.createTextCollectionTask({});
 | `instruction` | `string` | No | — |
 | `unique_id` | `string` | No | — |
 | `clear_unique_id_on_error` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `priority` | `number` | No | — |
 | `tags` | `string[]` | No | — |
-| `attachments` | `object[]` | No | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="attachments full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="fields full type">
-
-```ts
-{
-}[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `attachments` | `Record<string, any>[]` | No | — |
+| `fields` | `Record<string, any>[] \| Record<string, any>` | Yes | — |
 
 
 
@@ -1697,50 +1117,16 @@ await corsair.scaleai.api.tasks.createTextCollectionTask({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -1768,41 +1154,15 @@ await corsair.scaleai.api.tasks.createVideoAnnotationTask({});
 | `instruction` | `string` | No | — |
 | `unique_id` | `string` | No | — |
 | `clear_unique_id_on_error` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `priority` | `number` | No | — |
 | `tags` | `string[]` | No | — |
 | `attachment` | `string` | No | — |
 | `attachments` | `string[]` | No | — |
 | `attachment_type` | `string` | No | — |
-| `geometries` | `object` | Yes | — |
-| `annotation_attributes` | `object` | No | — |
+| `geometries` | `Record<string, any>` | Yes | — |
+| `annotation_attributes` | `Record<string, any>` | No | — |
 | `events_to_annotate` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="geometries full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="annotation_attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1817,50 +1177,16 @@ await corsair.scaleai.api.tasks.createVideoAnnotationTask({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -1888,39 +1214,13 @@ await corsair.scaleai.api.tasks.createVideoPlaybackAnnotationTask({});
 | `instruction` | `string` | No | — |
 | `unique_id` | `string` | No | — |
 | `clear_unique_id_on_error` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `priority` | `number` | No | — |
 | `tags` | `string[]` | No | — |
 | `attachment` | `string` | Yes | — |
 | `attachments` | `string[]` | No | — |
-| `geometries` | `object` | Yes | — |
-| `annotation_attributes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="geometries full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="annotation_attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `geometries` | `Record<string, any>` | Yes | — |
+| `annotation_attributes` | `Record<string, any>` | No | — |
 
 
 
@@ -1935,50 +1235,16 @@ await corsair.scaleai.api.tasks.createVideoPlaybackAnnotationTask({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -2016,50 +1282,16 @@ await corsair.scaleai.api.tasks.deleteTaskTags({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -2096,50 +1328,16 @@ await corsair.scaleai.api.tasks.deleteTaskUniqueId({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -2176,50 +1374,16 @@ await corsair.scaleai.api.tasks.getTask({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -2271,7 +1435,7 @@ await corsair.scaleai.api.tasks.listTasks({});
 | `batch` | `string` | No | — |
 | `type` | `imageannotation \| segmentannotation \| videoannotation \| videoplaybackannotation \| lidarannotation \| lidarsegmentation \| lidartopdown \| namedentityrecognition \| textcollection \| documenttranscription \| categorization \| transcription \| comparison` | No | — |
 | `status` | `pending \| completed \| canceled \| error` | No | — |
-| `customer_review_status` | `accepted \| fixed \| commented \| rejected \| pending \| accepted \| fixed \| commented \| rejected \| pending[]` | No | — |
+| `customer_review_status` | `accepted \| fixed \| commented \| rejected \| pending \| (accepted \| fixed \| commented \| rejected \| pending)[]` | No | — |
 | `unique_id` | `string \| string[]` | No | — |
 | `tags` | `string \| string[]` | No | — |
 | `start_time` | `string` | No | — |
@@ -2297,7 +1461,7 @@ await corsair.scaleai.api.tasks.listTasks({});
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `has_more` | `boolean` | No | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="docs full type">
@@ -2311,18 +1475,14 @@ await corsair.scaleai.api.tasks.listTasks({});
   type?: string,
   status?: string,
   instruction?: string,
-  params?: {
-  },
+  params?: Record<string, any>,
   callback_url?: string,
   callback_completed?: boolean,
   project?: string,
   batch?: string,
-  metadata?: {
-  },
-  response?: {
-  },
-  audits?: {
-  }[],
+  metadata?: Record<string, any>,
+  response?: Record<string, any>,
+  audits?: Record<string, any>[],
   tags?: string[],
   unique_id?: string | null
 }[]
@@ -2381,17 +1541,7 @@ await corsair.scaleai.api.tasks.setTaskMetadata({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `taskId` | `string` | Yes | — |
-| `metadata` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | Yes | — |
 
 
 
@@ -2406,50 +1556,16 @@ await corsair.scaleai.api.tasks.setTaskMetadata({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 
@@ -2487,50 +1603,16 @@ await corsair.scaleai.api.tasks.updateTaskUniqueId({});
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
 | `instruction` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback_completed` | `boolean` | No | — |
 | `project` | `string` | No | — |
 | `batch` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `response` | `object` | No | — |
-| `audits` | `object[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `response` | `Record<string, any>` | No | — |
+| `audits` | `Record<string, any>[]` | No | — |
 | `tags` | `string[]` | No | — |
-| `unique_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audits full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `unique_id` | `string \| null` | No | — |
 
 
 

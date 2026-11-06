@@ -256,9 +256,9 @@ await corsair.clickhouse.api.schema.getTable({});
 | `database` | `string` | Yes | — |
 | `table` | `string` | Yes | — |
 | `engine` | `string` | No | — |
-| `totalRows` | `number \| string` | No | — |
+| `totalRows` | `number \| string \| null` | No | — |
 | `columns` | `object[]` | Yes | — |
-| `sampleRows` | `object[]` | No | Sample rows; only present when includeSample is true |
+| `sampleRows` | `Record<string, any>[]` | No | Sample rows; only present when includeSample is true |
 
 <AccordionGroup>
 <Accordion title="columns full type">
@@ -270,14 +270,6 @@ await corsair.clickhouse.api.schema.getTable({});
   position?: number | string | null,
   comment?: string,
   defaultExpression?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="sampleRows full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>

@@ -29,26 +29,8 @@ await corsair.affinda.api.annotations.batchUpdateAnnotations({});
 |------|------|----------|-------------|
 | `annotations` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -75,26 +57,8 @@ await corsair.affinda.api.annotations.createBatchAnnotations({});
 |------|------|----------|-------------|
 | `annotations` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -121,26 +85,8 @@ await corsair.affinda.api.annotations.deleteAnnotationsBatch({});
 |------|------|----------|-------------|
 | `annotation_ids` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -167,26 +113,8 @@ await corsair.affinda.api.annotations.getAnnotations({});
 |------|------|----------|-------------|
 | `document` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -223,26 +151,8 @@ await corsair.affinda.api.annotations.updateAnnotation({});
 | `isClientVerified` | `boolean` | No | — |
 | `validationResults` | `any[]` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -275,26 +185,8 @@ await corsair.affinda.api.apiUsers.createApiUser({});
 | `username` | `string` | No | — |
 | `organization` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -323,26 +215,8 @@ await corsair.affinda.api.apiUsers.getAllApiUsers({});
 | `offset` | `number` | No | — |
 | `organization` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -373,26 +247,8 @@ await corsair.affinda.api.collections.createCollection({});
 | `extractor` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -417,47 +273,13 @@ await corsair.affinda.api.collections.createDataFieldForCollection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `field` | `object` | Yes | — |
-| `dataPoint` | `object` | Yes | — |
+| `field` | `Record<string, any>` | Yes | — |
+| `dataPoint` | `Record<string, any>` | Yes | — |
 | `identifier` | `string` | Yes | — |
 | `categoryLabel` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="field full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="dataPoint full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -484,26 +306,8 @@ await corsair.affinda.api.collections.deleteCollection({});
 |------|------|----------|-------------|
 | `collection_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -530,26 +334,8 @@ await corsair.affinda.api.collections.getCollection({});
 |------|------|----------|-------------|
 | `collection_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -577,26 +363,8 @@ await corsair.affinda.api.collections.getCollectionFields({});
 | `identifier` | `string` | Yes | — |
 | `datapoint_identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -625,26 +393,8 @@ await corsair.affinda.api.collections.getCollections({});
 | `offset` | `number` | No | — |
 | `workspace` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -673,26 +423,8 @@ await corsair.affinda.api.collections.getCollectionUsage({});
 | `start` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -720,26 +452,8 @@ await corsair.affinda.api.collections.updateCollection({});
 | `name` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -777,26 +491,8 @@ await corsair.affinda.api.collections.updateDataFieldForCollection({});
 | `autoValidationThreshold` | `number` | No | — |
 | `enableAutoValidationThreshold` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -831,26 +527,8 @@ await corsair.affinda.api.dataPointChoices.createDataPointChoice({});
 | `description` | `string` | No | — |
 | `organization` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -877,26 +555,8 @@ await corsair.affinda.api.dataPointChoices.getDataPointChoice({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -927,26 +587,8 @@ await corsair.affinda.api.dataPointChoices.listDataPointChoices({});
 | `collection` | `string` | Yes | — |
 | `data_point` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -976,26 +618,8 @@ await corsair.affinda.api.dataPointChoices.replaceDataPointChoices({});
 | `collection` | `string` | No | — |
 | `organization` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1029,26 +653,8 @@ await corsair.affinda.api.dataPointChoices.updateDataPointChoice({});
 | `description` | `string` | No | — |
 | `organization` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1087,26 +693,8 @@ await corsair.affinda.api.dataPoints.createDataPoint({});
 | `mappingDataSource` | `string` | No | — |
 | `annotationContentType` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1133,26 +721,8 @@ await corsair.affinda.api.dataPoints.deleteDataPoint({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1179,26 +749,8 @@ await corsair.affinda.api.dataPoints.getDataPoint({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1233,26 +785,8 @@ await corsair.affinda.api.dataPoints.listDataPoints({});
 | `include_public` | `boolean` | No | — |
 | `annotation_content_type` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1284,26 +818,8 @@ await corsair.affinda.api.dataPoints.updateDataPoint({});
 | `description` | `string` | No | — |
 | `mappingDataSource` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1331,7 +847,7 @@ await corsair.affinda.api.dataSources.createDataSource({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `schema` | `object` | No | — |
+| `schema` | `Record<string, any>` | No | — |
 | `values` | `any[]` | No | — |
 | `workspace` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
@@ -1339,34 +855,8 @@ await corsair.affinda.api.dataSources.createDataSource({});
 | `organization` | `string` | No | — |
 | `displayProperty` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1396,26 +886,8 @@ await corsair.affinda.api.dataSources.createDataSourceValue({});
 | `identifier` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1442,26 +914,8 @@ await corsair.affinda.api.dataSources.deleteDataSource({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1489,26 +943,8 @@ await corsair.affinda.api.dataSources.deleteDataSourceValue({});
 | `value` | `string` | Yes | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1535,26 +971,8 @@ await corsair.affinda.api.dataSources.getDataSource({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1582,26 +1000,8 @@ await corsair.affinda.api.dataSources.getDataSourceValue({});
 | `value` | `string` | Yes | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1633,26 +1033,8 @@ await corsair.affinda.api.dataSources.getDataSourceValues({});
 | `annotation` | `number` | No | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1684,26 +1066,8 @@ await corsair.affinda.api.dataSources.listDataSources({});
 | `identifier` | `string` | No | — |
 | `organization` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1716,7 +1080,7 @@ await corsair.affinda.api.dataSources.listDataSources({});
 
 `dataSources.replaceDataSourceValues`
 
-Tool to completely replace all values in a mapping data source. Use when you need to bulk update or refresh an entire data source's value list. Note: For large data sources (>1000 values), new values may take a few minutes to become searchable after the operation completes.
+Tool to completely replace all values in a mapping data source. Use when you need to bulk update or refresh an entire data source's value list. Note: For large data sources (&gt;1000 values), new values may take a few minutes to become searchable after the operation completes.
 
 **Risk:** `write`
 
@@ -1731,26 +1095,8 @@ await corsair.affinda.api.dataSources.replaceDataSourceValues({});
 | `values` | `any[]` | Yes | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1780,26 +1126,8 @@ await corsair.affinda.api.dataSources.updateDataSourceValue({});
 | `identifier` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1829,26 +1157,8 @@ await corsair.affinda.api.documents.addTagToDocuments({});
 | `tag` | `number` | Yes | — |
 | `identifiers` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1874,7 +1184,7 @@ await corsair.affinda.api.documents.createDocument({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | No | — |
-| `file` | `object` | No | — |
+| `file` | `Record<string, any>` | No | — |
 | `wait` | `boolean` | No | — |
 | `compact` | `boolean` | No | — |
 | `fileName` | `string` | No | — |
@@ -1885,34 +1195,8 @@ await corsair.affinda.api.documents.createDocument({});
 | `identifier` | `string` | No | — |
 | `rejectDuplicates` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="file full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1925,7 +1209,7 @@ await corsair.affinda.api.documents.createDocument({});
 
 `documents.createFromDataDocuments`
 
-Create a document from structured resume or job description data for Search & Match. Use this when you have structured data to create a document programmatically without file uploads. Returns an identifier for subsequent status checks via /documents/{identifier}.
+Create a document from structured resume or job description data for Search & Match. Use this when you have structured data to create a document programmatically without file uploads. Returns an identifier for subsequent status checks via /documents/&#123;identifier&#125;.
 
 **Risk:** `write`
 
@@ -1948,26 +1232,8 @@ await corsair.affinda.api.documents.createFromDataDocuments({});
 | `expiry_time` | `string` | No | — |
 | `document_type` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1994,26 +1260,8 @@ await corsair.affinda.api.documents.deleteDocument({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2040,26 +1288,8 @@ await corsair.affinda.api.documents.getDocument({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2086,26 +1316,8 @@ await corsair.affinda.api.documents.getDocumentRedacted({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2143,26 +1355,8 @@ await corsair.affinda.api.documents.getDocuments({});
 | `collection` | `string` | No | — |
 | `include_data` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2190,26 +1384,8 @@ await corsair.affinda.api.documents.removeTagFromDocuments({});
 | `tag` | `number` | Yes | — |
 | `identifiers` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2240,39 +1416,13 @@ await corsair.affinda.api.documents.updateDocument({});
 | `collection` | `string` | No | — |
 | `expiryTime` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
-| `regionBias` | `object` | No | — |
+| `regionBias` | `Record<string, any>` | No | — |
 | `customIdentifier` | `string` | No | — |
 | `deleteAfterParse` | `boolean` | No | — |
 | `enableValidationTool` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="regionBias full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2297,37 +1447,11 @@ await corsair.affinda.api.documents.updateDocumentData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2359,26 +1483,8 @@ await corsair.affinda.api.documentSplitters.getAllDocumentSplitters({});
 | `organization` | `string` | No | — |
 | `includePublic` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2405,26 +1511,8 @@ await corsair.affinda.api.documentSplitters.getDocumentSplitter({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2455,26 +1543,8 @@ await corsair.affinda.api.documentTypes.createDocumentType({});
 | `description` | `string` | No | — |
 | `organization` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2501,26 +1571,8 @@ await corsair.affinda.api.documentTypes.deleteDocumentType({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2547,26 +1599,8 @@ await corsair.affinda.api.documentTypes.getDocumentType({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2594,26 +1628,8 @@ await corsair.affinda.api.documentTypes.getDocumentTypeJsonSchema({});
 | `title` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2641,26 +1657,8 @@ await corsair.affinda.api.documentTypes.getDocumentTypePydanticModels({});
 | `identifier` | `string` | Yes | — |
 | `model_name` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2686,26 +1684,8 @@ await corsair.affinda.api.documentTypes.getDocumentTypes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2734,26 +1714,8 @@ await corsair.affinda.api.documentTypes.updateDocumentType({});
 | `identifier` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2788,26 +1750,8 @@ await corsair.affinda.api.extractors.createExtractor({});
 | `organization` | `string` | Yes | — |
 | `baseExtractor` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2834,26 +1778,8 @@ await corsair.affinda.api.extractors.deleteExtractor({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2880,26 +1806,8 @@ await corsair.affinda.api.extractors.getExtractor({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2929,26 +1837,8 @@ await corsair.affinda.api.extractors.getExtractors({});
 | `name` | `string` | No | — |
 | `validatable` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2981,26 +1871,8 @@ await corsair.affinda.api.extractors.updateExtractor({});
 | `validatable` | `boolean` | No | — |
 | `baseExtractor` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3030,26 +1902,8 @@ await corsair.affinda.api.indexes.createIndex({});
 | `name` | `string` | Yes | — |
 | `docType` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3076,26 +1930,8 @@ await corsair.affinda.api.indexes.deleteIndex({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3124,26 +1960,8 @@ await corsair.affinda.api.indexes.getIndexDocuments({});
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3173,26 +1991,8 @@ await corsair.affinda.api.indexes.listIndexes({});
 | `offset` | `number` | No | — |
 | `document_type` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3220,26 +2020,8 @@ await corsair.affinda.api.indexes.updateIndex({});
 | `name` | `string` | Yes | — |
 | `new_name` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3270,26 +2052,8 @@ await corsair.affinda.api.invitations.createInvitation({});
 | `email` | `string` | Yes | — |
 | `organization` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3316,26 +2080,8 @@ await corsair.affinda.api.invitations.deleteInvitation({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3366,26 +2112,8 @@ await corsair.affinda.api.invitations.getAllInvitations({});
 | `status` | `string` | No | — |
 | `organization` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3412,26 +2140,8 @@ await corsair.affinda.api.invitations.getInvitation({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3459,26 +2169,8 @@ await corsair.affinda.api.invitations.updateInvitation({});
 | `role` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3538,26 +2230,8 @@ await corsair.affinda.api.jobDescriptionSearch.createJobDescriptionSearch({});
 | `yearsExperienceRequired` | `boolean` | No | — |
 | `searchExpressionRequired` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3582,36 +2256,10 @@ await corsair.affinda.api.jobDescriptionSearch.createJobDescriptionSearchEmbedUr
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `configOverride` | `object` | No | — |
+| `configOverride` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="configOverride full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3637,26 +2285,8 @@ await corsair.affinda.api.jobDescriptionSearch.getJobDescriptionSearchConfig({})
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3697,7 +2327,7 @@ await corsair.affinda.api.jobDescriptionSearch.updateJobDescriptionSearchConfig(
 | `displayJobTitle` | `boolean` | No | — |
 | `displayKeywords` | `boolean` | No | — |
 | `displayLocation` | `boolean` | No | — |
-| `searchToolTheme` | `object` | No | — |
+| `searchToolTheme` | `Record<string, any>` | No | — |
 | `weightEducation` | `number` | No | — |
 | `weightLanguages` | `number` | No | — |
 | `allowPdfDownload` | `boolean` | No | — |
@@ -3712,34 +2342,8 @@ await corsair.affinda.api.jobDescriptionSearch.updateJobDescriptionSearchConfig(
 | `displayOccupationGroup` | `boolean` | No | — |
 | `displayYearsExperience` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="searchToolTheme full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3771,26 +2375,8 @@ await corsair.affinda.api.mappings.createMapping({});
 | `scoreCutoff` | `number` | No | — |
 | `organization` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3817,26 +2403,8 @@ await corsair.affinda.api.mappings.deleteMapping({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3863,26 +2431,8 @@ await corsair.affinda.api.mappings.getMapping({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3911,26 +2461,8 @@ await corsair.affinda.api.mappings.listMappings({});
 | `offset` | `number` | No | — |
 | `mappingDataSource` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3959,26 +2491,8 @@ await corsair.affinda.api.mappings.updateMapping({});
 | `identifier` | `string` | Yes | — |
 | `scoreCutoff` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4006,26 +2520,8 @@ await corsair.affinda.api.occupationGroups.listOccupationGroups({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4057,26 +2553,8 @@ await corsair.affinda.api.organizationMemberships.getAllOrganizationMemberships(
 | `offset` | `number` | No | — |
 | `organization` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4103,26 +2581,8 @@ await corsair.affinda.api.organizationMemberships.getOrganizationMembership({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4150,26 +2610,8 @@ await corsair.affinda.api.organizationMemberships.updateOrganizationMembership({
 | `role` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4198,26 +2640,8 @@ await corsair.affinda.api.organizations.createOrganization({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4244,26 +2668,8 @@ await corsair.affinda.api.organizations.deleteOrganization({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4290,26 +2696,8 @@ await corsair.affinda.api.organizations.getOrganization({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4335,26 +2723,8 @@ await corsair.affinda.api.organizations.getOrganizations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4383,36 +2753,10 @@ await corsair.affinda.api.organizations.updateOrganization({});
 | `avatar` | `string` | No | — |
 | `identifier` | `string` | Yes | — |
 | `resthook_signature_key` | `string` | No | — |
-| `validation_tool_config` | `object` | No | — |
+| `validation_tool_config` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="validation_tool_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4443,26 +2787,8 @@ await corsair.affinda.api.resthooks.createResthookSubscription({});
 | `targetUrl` | `string` | Yes | — |
 | `organization` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4489,26 +2815,8 @@ await corsair.affinda.api.resthooks.deleteResthookSubscription({});
 |------|------|----------|-------------|
 | `identifier` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4535,26 +2843,8 @@ await corsair.affinda.api.resthooks.getResthookSubscription({});
 |------|------|----------|-------------|
 | `identifier` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4582,26 +2872,8 @@ await corsair.affinda.api.resthooks.getResthookSubscriptions({});
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4631,26 +2903,8 @@ await corsair.affinda.api.resthooks.updateResthookSubscription({});
 | `targetUrl` | `string` | No | — |
 | `identifier` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4719,26 +2973,8 @@ await corsair.affinda.api.resumeSearch.createResumeSearch({});
 | `searchExpressionRequired` | `boolean` | No | — |
 | `highestDegreeTypesRequired` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4763,36 +2999,10 @@ await corsair.affinda.api.resumeSearch.createResumeSearchEmbedUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `configOverride` | `object` | No | — |
+| `configOverride` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="configOverride full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4818,26 +3028,8 @@ await corsair.affinda.api.resumeSearch.listResumeSearchConfig({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4864,26 +3056,8 @@ await corsair.affinda.api.resumeSearch.listResumeSearchJobTitleSuggestions({});
 |------|------|----------|-------------|
 | `job_titles` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4910,26 +3084,8 @@ await corsair.affinda.api.resumeSearch.listResumeSearchSkillSuggestions({});
 |------|------|----------|-------------|
 | `skills` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -4970,7 +3126,7 @@ await corsair.affinda.api.resumeSearch.updateResumeSearchConfig({});
 | `displayJobTitle` | `boolean` | No | — |
 | `displayKeywords` | `boolean` | No | — |
 | `displayLocation` | `boolean` | No | — |
-| `searchToolTheme` | `object` | No | — |
+| `searchToolTheme` | `Record<string, any>` | No | — |
 | `weightEducation` | `number` | No | — |
 | `weightLanguages` | `number` | No | — |
 | `allowPdfDownload` | `boolean` | No | — |
@@ -4985,34 +3141,8 @@ await corsair.affinda.api.resumeSearch.updateResumeSearchConfig({});
 | `displayOccupationGroup` | `boolean` | No | — |
 | `displayYearsExperience` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="searchToolTheme full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5042,26 +3172,8 @@ await corsair.affinda.api.tags.createTag({});
 | `name` | `string` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5088,26 +3200,8 @@ await corsair.affinda.api.tags.deleteTag({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5137,26 +3231,8 @@ await corsair.affinda.api.tags.getAllTags({});
 | `offset` | `number` | No | — |
 | `workspace` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5183,26 +3259,8 @@ await corsair.affinda.api.tags.getTag({});
 |------|------|----------|-------------|
 | `tag_id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5231,26 +3289,8 @@ await corsair.affinda.api.tags.updateTag({});
 | `name` | `string` | No | — |
 | `workspace` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5280,26 +3320,8 @@ await corsair.affinda.api.validation.splitDocumentPages({});
 | `splits` | `any[]` | Yes | — |
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5332,26 +3354,8 @@ await corsair.affinda.api.validationResults.createValidationResult({});
 | `ruleSlug` | `string` | Yes | — |
 | `annotations` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5378,26 +3382,8 @@ await corsair.affinda.api.validationResults.createValidationResultsBatch({});
 |------|------|----------|-------------|
 | `validation_results` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5424,26 +3410,8 @@ await corsair.affinda.api.validationResults.deleteValidationResults({});
 |------|------|----------|-------------|
 | `ids` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5472,26 +3440,8 @@ await corsair.affinda.api.validationResults.getAllValidationResults({});
 | `offset` | `number` | No | — |
 | `document` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5521,26 +3471,8 @@ await corsair.affinda.api.workspaceMemberships.createWorkspaceMembership({});
 | `user` | `number` | Yes | — |
 | `workspace` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5567,26 +3499,8 @@ await corsair.affinda.api.workspaceMemberships.deleteWorkspaceMembership({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5616,26 +3530,8 @@ await corsair.affinda.api.workspaceMemberships.getAllWorkspaceMemberships({});
 | `offset` | `number` | No | — |
 | `workspace` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5662,26 +3558,8 @@ await corsair.affinda.api.workspaceMemberships.getWorkspaceMembership({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5713,26 +3591,8 @@ await corsair.affinda.api.workspaces.createWorkspace({});
 | `organization` | `string` | Yes | — |
 | `rejectInvalidDocuments` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5759,26 +3619,8 @@ await corsair.affinda.api.workspaces.deleteWorkspace({});
 |------|------|----------|-------------|
 | `workspace_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5807,26 +3649,8 @@ await corsair.affinda.api.workspaces.getUsageByWorkspace({});
 | `start` | `string` | No | — |
 | `workspace_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5853,26 +3677,8 @@ await corsair.affinda.api.workspaces.getWorkspace({});
 |------|------|----------|-------------|
 | `identifier` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5900,26 +3706,8 @@ await corsair.affinda.api.workspaces.getWorkspaces({});
 | `name` | `string` | No | — |
 | `organization` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -5953,26 +3741,8 @@ await corsair.affinda.api.workspaces.updateWorkspace({});
 | `rejectInvalidDocuments` | `boolean` | No | — |
 | `whitelistIngestAddresses` | `any[]` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 

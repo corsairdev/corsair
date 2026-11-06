@@ -334,7 +334,7 @@ await corsair.byteforms.api.forms.responses({});
 |------|------|----------|-------------|
 | `count` | `number` | Yes | — |
 | `cursor` | `object` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `object[] \| null` | Yes | — |
 | `status` | `string` | Yes | — |
 
 <AccordionGroup>
@@ -342,8 +342,8 @@ await corsair.byteforms.api.forms.responses({});
 
 ```ts
 {
-  after?: string | null,
-  before?: string | null
+  after: string | null,
+  before: string | null
 }
 ```
 </Accordion>
@@ -354,8 +354,7 @@ await corsair.byteforms.api.forms.responses({});
 {
   id: number,
   form_id: number,
-  response: {
-  },
+  response: Record<string, any>,
   options?: {
     ip?: string
   },

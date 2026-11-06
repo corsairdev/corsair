@@ -145,7 +145,7 @@ await corsair.ploid.api.contacts.enrich({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `identifier` | `object` | Yes | — |
-| `fields` | `work_email \| personal_email \| phone[]` | Yes | — |
+| `fields` | `(work_email \| personal_email \| phone)[]` | Yes | — |
 | `response_format` | `standard` | No | — |
 
 <AccordionGroup>
@@ -181,21 +181,21 @@ await corsair.ploid.api.contacts.enrich({
 ```ts
 {
   work_email?: {
-    value?: string | null,
+    value: string | null,
     status: found | not_found | unavailable,
     confidence?: guess | strong | verified | null,
     source?: contact_network | linked_profile | public_code | public_web | null,
     last_seen?: string | null
   },
   personal_email?: {
-    value?: string | null,
+    value: string | null,
     status: found | not_found | unavailable,
     confidence?: guess | strong | verified | null,
     source?: contact_network | linked_profile | public_code | public_web | null,
     last_seen?: string | null
   },
   phone?: {
-    value?: string | null,
+    value: string | null,
     status: found | not_found | unavailable,
     confidence?: guess | strong | verified | null,
     source?: contact_network | linked_profile | public_code | public_web | null,
@@ -328,7 +328,7 @@ await corsair.ploid.api.person.get({
     request_id: string
   }
 } | {
-  data?: {
+  data: {
     person_id?: string,
     summary?: string | null,
     identity?: {
@@ -387,7 +387,7 @@ await corsair.ploid.api.person.getRun({ id: 'run_abc123' });
     request_id: string
   }
 } | {
-  data?: {
+  data: {
     person_id?: string,
     summary?: string | null,
     identity?: {
@@ -450,7 +450,7 @@ await corsair.ploid.api.person.resolve({ name: 'Jane Doe', company: 'acme.com' }
 ```ts
 {
   found: boolean,
-  person?: {
+  person: {
     person_id: string,
     name: string,
     headline?: string | null,
@@ -598,7 +598,7 @@ await corsair.ploid.api.search.search({ query: 'venture-backed founders in Berli
       lte?: number
     },
     funding_stage?: {
-      in: pre_seed | seed | series_a | series_b | series_c | series_d_plus | public | bootstrapped[]
+      in: (pre_seed | seed | series_a | series_b | series_c | series_d_plus | public | bootstrapped)[]
     }
   },
   industry?: string | {
@@ -642,7 +642,7 @@ await corsair.ploid.api.search.search({ query: 'venture-backed founders in Berli
 
 ```ts
 {
-  fields?: linkedin | title | company | location | name[]
+  fields?: (linkedin | title | company | location | name)[]
 }
 ```
 </Accordion>

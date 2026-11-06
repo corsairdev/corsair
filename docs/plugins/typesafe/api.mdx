@@ -67,34 +67,46 @@ await corsair.typesafe.api.systemOne.ask({ state: { message: 'I was charged twic
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `model` | `string` | Yes | Model name or alias from models.list. jev-latest moves with each release; pin a version such as jev-1.14.0 to keep answers stable. |
-| `state` | `object[]` | Yes | The content every question is about: text, or JSON with descriptive keys. Leave out fields no question needs. |
+| `model` | `string` | No | Model name or alias from models.list. jev-latest moves with each release; pin a version such as jev-1.14.0 to keep answers stable. Defaults to "jev-latest". |
+| `state` | `string \| Record<string, any> \| any[]` | Yes | The content every question is about: text, or JSON with descriptive keys. Leave out fields no question needs. |
 | `questions` | `object` | Yes | Questions keyed by a name you choose; answers come back under the same names. Questions run in parallel and cannot see each other. |
 | `assets` | `object` | No | Images keyed by a placeholder string. Each placeholder in state, instructions or criteria is replaced by its image. Images are experimental at TypeSafe. |
 | `longContext` | `boolean` | No | Raise the context limit from 64k (32k per question) to 262k tokens. Slower and less accurate, same price per token. |
 
 <AccordionGroup>
-<Accordion title="state full type">
-
-```ts
-string | {
-} | any[]
-```
-</Accordion>
-
 <Accordion title="questions full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: noul,
+  instructions?: string | Record<string, any> | any[] | null,
+  criteria?: {
+    true?: string | Record<string, any> | any[] | null,
+    false?: string | Record<string, any> | any[] | null
+  } | null
+} | {
+  type: choice,
+  instructions?: string | Record<string, any> | any[] | null,
+  criteria: Record<string, string | Record<string, any> | any[] | null>
+} | {
+  type: score,
+  instructions?: string | Record<string, any> | any[] | null,
+  criteria: (string | Record<string, any> | any[])[]
+} | {
+  type: box,
+  instructions?: string | Record<string, any> | any[] | null
+}>
 ```
 </Accordion>
 
 <Accordion title="assets full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: image,
+  format: png | jpg | jpeg,
+  data_base64: string
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -113,8 +125,30 @@ string | {
 <Accordion title="answers full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: noul,
+  noul: number
+} | {
+  type: choice,
+  choice: string,
+  confidence: number,
+  probabilities: Record<string, number>
+} | {
+  type: score,
+  score: number,
+  confidence: number,
+  legend?: Record<string, any>,
+  probabilities?: Record<string, number>
+} | {
+  type: box,
+  box: {
+    top: number,
+    bottom: number,
+    left: number,
+    right: number
+  },
+  confidence: number | null
+}>
 ```
 </Accordion>
 

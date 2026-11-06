@@ -41,7 +41,7 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{ inputConfig: { gcsSource?: { uri: string }, content?: string, mimeType: string }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: {}, pages?: number[] }[]"
+            "type": "{ inputConfig: { gcsSource?: { uri: string }, content?: string, mimeType: string }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: Record<string, any>, pages?: number[] }[]"
           }
         ]
       },
@@ -51,7 +51,7 @@
           {
             "key": "responses",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -67,7 +67,7 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{ inputConfig: { gcsSource: { uri: string }, mimeType: string }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: {}, outputConfig: { gcsDestination: { uri: string }, batchSize?: number } }[]"
+            "type": "{ inputConfig: { gcsSource: { uri: string }, mimeType: string }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: Record<string, any>, outputConfig: { gcsDestination: { uri: string }, batchSize?: number } }[]"
           }
         ]
       },
@@ -82,7 +82,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "done",
@@ -97,7 +97,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -113,7 +113,7 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{ image: { content?: string, source?: { gcsImageUri?: string, imageUri?: string } }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: {} }[]"
+            "type": "{ image: { content?: string, source?: { gcsImageUri?: string, imageUri?: string } }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: Record<string, any> }[]"
           }
         ]
       },
@@ -123,7 +123,7 @@
           {
             "key": "responses",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -139,7 +139,7 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{ image: { source: { gcsImageUri: string } }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: {} }[]"
+            "type": "{ image: { source: { gcsImageUri: string } }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: Record<string, any> }[]"
           },
           {
             "key": "outputConfig",
@@ -159,7 +159,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "done",
@@ -174,7 +174,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -195,7 +195,7 @@
           {
             "key": "requests",
             "optional": false,
-            "type": "{ image: { content?: string, source?: { gcsImageUri?: string, imageUri?: string } }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: {} }[]"
+            "type": "{ image: { content?: string, source?: { gcsImageUri?: string, imageUri?: string } }, features: { type: string, maxResults?: number, model?: string }[], imageContext?: Record<string, any> }[]"
           }
         ]
       },
@@ -205,7 +205,7 @@
           {
             "key": "responses",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -246,7 +246,7 @@
           {
             "key": "locations",
             "optional": true,
-            "type": "{ name: string, locationId: string, displayName?: string, labels?: {} }[]"
+            "type": "{ name: string, locationId: string, displayName?: string, labels?: Record<string, string> }[]"
           },
           {
             "key": "nextPageToken",
@@ -322,7 +322,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "done",
@@ -337,7 +337,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -378,7 +378,7 @@
           {
             "key": "operations",
             "optional": true,
-            "type": "{ name: string, metadata?: {}, done?: boolean, error?: { code: number, message: string }, response?: {} }[]"
+            "type": "{ name: string, metadata?: Record<string, any>, done?: boolean, error?: { code: number, message: string }, response?: Record<string, any> }[]"
           },
           {
             "key": "nextPageToken",
@@ -593,7 +593,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "done",
@@ -608,7 +608,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -715,7 +715,7 @@
           {
             "key": "productSet",
             "optional": false,
-            "type": "{ name?: string, displayName: string, indexTime?: string, indexError?: {} }"
+            "type": "{ name?: string, displayName: string, indexTime?: string, indexError?: Record<string, any> }"
           }
         ]
       },
@@ -740,7 +740,7 @@
           {
             "key": "indexError",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -801,7 +801,7 @@
           {
             "key": "indexError",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -837,7 +837,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "done",
@@ -852,7 +852,7 @@
           {
             "key": "response",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -888,7 +888,7 @@
           {
             "key": "productSets",
             "optional": true,
-            "type": "{ name?: string, displayName: string, indexTime?: string, indexError?: {} }[]"
+            "type": "{ name?: string, displayName: string, indexTime?: string, indexError?: Record<string, any> }[]"
           },
           {
             "key": "nextPageToken",
@@ -929,7 +929,7 @@
           {
             "key": "products",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "nextPageToken",
@@ -980,7 +980,7 @@
           {
             "key": "productSet",
             "optional": false,
-            "type": "{ name?: string, displayName: string, indexTime?: string, indexError?: {} }"
+            "type": "{ name?: string, displayName: string, indexTime?: string, indexError?: Record<string, any> }"
           },
           {
             "key": "updateMask",
@@ -1010,7 +1010,7 @@
           {
             "key": "indexError",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1036,7 +1036,7 @@
           {
             "key": "referenceImage",
             "optional": false,
-            "type": "{ name?: string, uri: string, boundingPolys?: {}[] }"
+            "type": "{ name?: string, uri: string, boundingPolys?: Record<string, any>[] }"
           }
         ]
       },
@@ -1056,7 +1056,7 @@
           {
             "key": "boundingPolys",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1112,7 +1112,7 @@
           {
             "key": "boundingPolys",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1148,7 +1148,7 @@
           {
             "key": "referenceImages",
             "optional": true,
-            "type": "{ name?: string, uri: string, boundingPolys?: {}[] }[]"
+            "type": "{ name?: string, uri: string, boundingPolys?: Record<string, any>[] }[]"
           },
           {
             "key": "nextPageToken",

@@ -46,17 +46,17 @@ await corsair.clientary.api.clients.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
+| `number` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `city` | `string` | No | — |
-| `address` | `string` | No | — |
-| `address_2` | `string` | No | — |
-| `zip` | `string` | No | — |
-| `country` | `string` | No | — |
-| `state` | `string` | No | — |
-| `website` | `string` | No | — |
-| `description` | `string` | No | — |
-| `invoice_extra_fields` | `any` | No | — |
+| `city` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `address_2` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `invoice_extra_fields` | `any \| null` | No | — |
 
 
 
@@ -118,17 +118,17 @@ await corsair.clientary.api.clients.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
+| `number` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `city` | `string` | No | — |
-| `address` | `string` | No | — |
-| `address_2` | `string` | No | — |
-| `zip` | `string` | No | — |
-| `country` | `string` | No | — |
-| `state` | `string` | No | — |
-| `website` | `string` | No | — |
-| `description` | `string` | No | — |
-| `invoice_extra_fields` | `any` | No | — |
+| `city` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `address_2` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `invoice_extra_fields` | `any \| null` | No | — |
 
 
 
@@ -228,17 +228,17 @@ await corsair.clientary.api.clients.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
+| `number` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `city` | `string` | No | — |
-| `address` | `string` | No | — |
-| `address_2` | `string` | No | — |
-| `zip` | `string` | No | — |
-| `country` | `string` | No | — |
-| `state` | `string` | No | — |
-| `website` | `string` | No | — |
-| `description` | `string` | No | — |
-| `invoice_extra_fields` | `any` | No | — |
+| `city` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `address_2` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `invoice_extra_fields` | `any \| null` | No | — |
 
 
 
@@ -277,14 +277,14 @@ await corsair.clientary.api.contacts.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client_id` | `number` | No | — |
+| `client_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `email` | `string` | No | — |
-| `title` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `mobile` | `string` | No | — |
-| `ext` | `string` | No | — |
-| `avatar` | `string` | No | — |
+| `email` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `mobile` | `string \| null` | No | — |
+| `ext` | `string \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
 
 
 
@@ -346,14 +346,14 @@ await corsair.clientary.api.contacts.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client_id` | `number` | No | — |
+| `client_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `email` | `string` | No | — |
-| `title` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `mobile` | `string` | No | — |
-| `ext` | `string` | No | — |
-| `avatar` | `string` | No | — |
+| `email` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `mobile` | `string \| null` | No | — |
+| `ext` | `string \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
 
 
 
@@ -497,14 +497,14 @@ await corsair.clientary.api.contacts.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client_id` | `number` | No | — |
+| `client_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `email` | `string` | No | — |
-| `title` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `mobile` | `string` | No | — |
-| `ext` | `string` | No | — |
-| `avatar` | `string` | No | — |
+| `email` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `mobile` | `string \| null` | No | — |
+| `ext` | `string \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
 
 
 
@@ -568,11 +568,11 @@ await corsair.clientary.api.estimates.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
-| `title` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
 | `date` | `string` | Yes | — |
-| `client_id` | `number` | No | — |
-| `note` | `string` | No | — |
+| `client_id` | `number \| null` | No | — |
+| `note` | `string \| null` | No | — |
 | `status` | `number` | Yes | — |
 | `currency_code` | `string` | Yes | — |
 | `subtotal` | `number` | Yes | — |
@@ -580,11 +580,11 @@ await corsair.clientary.api.estimates.create({});
 | `tax` | `number` | Yes | — |
 | `tax2` | `number` | Yes | — |
 | `tax3` | `number` | Yes | — |
-| `tax_label` | `string` | No | — |
-| `tax2_label` | `string` | No | — |
-| `tax3_label` | `string` | No | — |
+| `tax_label` | `string \| null` | No | — |
+| `tax2_label` | `string \| null` | No | — |
+| `tax3_label` | `string \| null` | No | — |
 | `compound_tax` | `boolean` | Yes | — |
-| `summary` | `string` | No | — |
+| `summary` | `string \| null` | No | — |
 | `estimate_items` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -662,11 +662,11 @@ await corsair.clientary.api.estimates.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
-| `title` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
 | `date` | `string` | Yes | — |
-| `client_id` | `number` | No | — |
-| `note` | `string` | No | — |
+| `client_id` | `number \| null` | No | — |
+| `note` | `string \| null` | No | — |
 | `status` | `number` | Yes | — |
 | `currency_code` | `string` | Yes | — |
 | `subtotal` | `number` | Yes | — |
@@ -674,11 +674,11 @@ await corsair.clientary.api.estimates.get({});
 | `tax` | `number` | Yes | — |
 | `tax2` | `number` | Yes | — |
 | `tax3` | `number` | Yes | — |
-| `tax_label` | `string` | No | — |
-| `tax2_label` | `string` | No | — |
-| `tax3_label` | `string` | No | — |
+| `tax_label` | `string \| null` | No | — |
+| `tax2_label` | `string \| null` | No | — |
+| `tax3_label` | `string \| null` | No | — |
 | `compound_tax` | `boolean` | Yes | — |
-| `summary` | `string` | No | — |
+| `summary` | `string \| null` | No | — |
 | `estimate_items` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -1001,11 +1001,11 @@ await corsair.clientary.api.estimates.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
-| `title` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
 | `date` | `string` | Yes | — |
-| `client_id` | `number` | No | — |
-| `note` | `string` | No | — |
+| `client_id` | `number \| null` | No | — |
+| `note` | `string \| null` | No | — |
 | `status` | `number` | Yes | — |
 | `currency_code` | `string` | Yes | — |
 | `subtotal` | `number` | Yes | — |
@@ -1013,11 +1013,11 @@ await corsair.clientary.api.estimates.update({});
 | `tax` | `number` | Yes | — |
 | `tax2` | `number` | Yes | — |
 | `tax3` | `number` | Yes | — |
-| `tax_label` | `string` | No | — |
-| `tax2_label` | `string` | No | — |
-| `tax3_label` | `string` | No | — |
+| `tax_label` | `string \| null` | No | — |
+| `tax2_label` | `string \| null` | No | — |
+| `tax3_label` | `string \| null` | No | — |
 | `compound_tax` | `boolean` | Yes | — |
-| `summary` | `string` | No | — |
+| `summary` | `string \| null` | No | — |
 | `estimate_items` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -1070,13 +1070,13 @@ await corsair.clientary.api.expenses.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `invoice_id` | `number` | No | — |
-| `invoice_item_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
+| `client_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `invoice_id` | `number \| null` | No | — |
+| `invoice_item_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
 | `amount` | `number` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `incurred_on` | `string` | Yes | — |
 
 
@@ -1139,13 +1139,13 @@ await corsair.clientary.api.expenses.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `invoice_id` | `number` | No | — |
-| `invoice_item_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
+| `client_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `invoice_id` | `number \| null` | No | — |
+| `invoice_item_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
 | `amount` | `number` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `incurred_on` | `string` | Yes | — |
 
 
@@ -1343,13 +1343,13 @@ await corsair.clientary.api.expenses.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `invoice_id` | `number` | No | — |
-| `invoice_item_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
+| `client_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `invoice_id` | `number \| null` | No | — |
+| `invoice_item_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
 | `amount` | `number` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `incurred_on` | `string` | Yes | — |
 
 
@@ -1388,13 +1388,13 @@ await corsair.clientary.api.hours.create({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
-| `user_id` | `number` | No | — |
+| `user_id` | `number \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `date` | `string` | Yes | — |
 | `hours` | `number` | Yes | — |
-| `rate` | `number` | No | — |
-| `cost` | `number` | No | — |
+| `rate` | `number \| null` | No | — |
+| `cost` | `number \| null` | No | — |
 | `billed?` | `boolean` | No | — |
 
 
@@ -1458,13 +1458,13 @@ await corsair.clientary.api.hours.get({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
-| `user_id` | `number` | No | — |
+| `user_id` | `number \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `date` | `string` | Yes | — |
 | `hours` | `number` | Yes | — |
-| `rate` | `number` | No | — |
-| `cost` | `number` | No | — |
+| `rate` | `number \| null` | No | — |
+| `cost` | `number \| null` | No | — |
 | `billed?` | `boolean` | No | — |
 
 
@@ -1554,13 +1554,13 @@ await corsair.clientary.api.hours.update({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
-| `user_id` | `number` | No | — |
+| `user_id` | `number \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `date` | `string` | Yes | — |
 | `hours` | `number` | Yes | — |
-| `rate` | `number` | No | — |
-| `cost` | `number` | No | — |
+| `rate` | `number \| null` | No | — |
+| `cost` | `number \| null` | No | — |
 | `billed?` | `boolean` | No | — |
 
 
@@ -1627,13 +1627,13 @@ await corsair.clientary.api.invoices.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
-| `title` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
 | `date` | `string` | Yes | — |
-| `due_date` | `string` | No | — |
-| `client_id` | `number` | No | — |
-| `note` | `string` | No | — |
-| `po` | `string` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `client_id` | `number \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `po` | `string \| null` | No | — |
 | `status` | `number` | Yes | — |
 | `currency_code` | `string` | Yes | — |
 | `subtotal` | `number` | Yes | — |
@@ -1643,11 +1643,11 @@ await corsair.clientary.api.invoices.create({});
 | `tax` | `number` | Yes | — |
 | `tax2` | `number` | Yes | — |
 | `tax3` | `number` | Yes | — |
-| `tax_label` | `string` | No | — |
-| `tax2_label` | `string` | No | — |
-| `tax3_label` | `string` | No | — |
+| `tax_label` | `string \| null` | No | — |
+| `tax2_label` | `string \| null` | No | — |
+| `tax3_label` | `string \| null` | No | — |
 | `compound_tax` | `boolean` | Yes | — |
-| `summary` | `string` | No | — |
+| `summary` | `string \| null` | No | — |
 | `invoice_items` | `object[]` | No | — |
 | `payments` | `object[]` | No | — |
 | `recurring_schedules` | `object[]` | No | — |
@@ -1750,13 +1750,13 @@ await corsair.clientary.api.invoices.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
-| `title` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
 | `date` | `string` | Yes | — |
-| `due_date` | `string` | No | — |
-| `client_id` | `number` | No | — |
-| `note` | `string` | No | — |
-| `po` | `string` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `client_id` | `number \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `po` | `string \| null` | No | — |
 | `status` | `number` | Yes | — |
 | `currency_code` | `string` | Yes | — |
 | `subtotal` | `number` | Yes | — |
@@ -1766,11 +1766,11 @@ await corsair.clientary.api.invoices.get({});
 | `tax` | `number` | Yes | — |
 | `tax2` | `number` | Yes | — |
 | `tax3` | `number` | Yes | — |
-| `tax_label` | `string` | No | — |
-| `tax2_label` | `string` | No | — |
-| `tax3_label` | `string` | No | — |
+| `tax_label` | `string \| null` | No | — |
+| `tax2_label` | `string \| null` | No | — |
+| `tax3_label` | `string \| null` | No | — |
 | `compound_tax` | `boolean` | Yes | — |
-| `summary` | `string` | No | — |
+| `summary` | `string \| null` | No | — |
 | `invoice_items` | `object[]` | No | — |
 | `payments` | `object[]` | No | — |
 | `recurring_schedules` | `object[]` | No | — |
@@ -2252,13 +2252,13 @@ await corsair.clientary.api.invoices.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
-| `title` | `string` | No | — |
+| `number` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
 | `date` | `string` | Yes | — |
-| `due_date` | `string` | No | — |
-| `client_id` | `number` | No | — |
-| `note` | `string` | No | — |
-| `po` | `string` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `client_id` | `number \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `po` | `string \| null` | No | — |
 | `status` | `number` | Yes | — |
 | `currency_code` | `string` | Yes | — |
 | `subtotal` | `number` | Yes | — |
@@ -2268,11 +2268,11 @@ await corsair.clientary.api.invoices.update({});
 | `tax` | `number` | Yes | — |
 | `tax2` | `number` | Yes | — |
 | `tax3` | `number` | Yes | — |
-| `tax_label` | `string` | No | — |
-| `tax2_label` | `string` | No | — |
-| `tax3_label` | `string` | No | — |
+| `tax_label` | `string \| null` | No | — |
+| `tax2_label` | `string \| null` | No | — |
+| `tax3_label` | `string \| null` | No | — |
 | `compound_tax` | `boolean` | Yes | — |
-| `summary` | `string` | No | — |
+| `summary` | `string \| null` | No | — |
 | `invoice_items` | `object[]` | No | — |
 | `payments` | `object[]` | No | — |
 | `recurring_schedules` | `object[]` | No | — |
@@ -2356,17 +2356,17 @@ await corsair.clientary.api.leads.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
+| `number` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `city` | `string` | No | — |
-| `address` | `string` | No | — |
-| `address_2` | `string` | No | — |
-| `zip` | `string` | No | — |
-| `country` | `string` | No | — |
-| `state` | `string` | No | — |
-| `website` | `string` | No | — |
-| `description` | `string` | No | — |
-| `invoice_extra_fields` | `any` | No | — |
+| `city` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `address_2` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `invoice_extra_fields` | `any \| null` | No | — |
 
 
 
@@ -2428,17 +2428,17 @@ await corsair.clientary.api.leads.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
+| `number` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `city` | `string` | No | — |
-| `address` | `string` | No | — |
-| `address_2` | `string` | No | — |
-| `zip` | `string` | No | — |
-| `country` | `string` | No | — |
-| `state` | `string` | No | — |
-| `website` | `string` | No | — |
-| `description` | `string` | No | — |
-| `invoice_extra_fields` | `any` | No | — |
+| `city` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `address_2` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `invoice_extra_fields` | `any \| null` | No | — |
 
 
 
@@ -2537,17 +2537,17 @@ await corsair.clientary.api.leads.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
+| `number` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `city` | `string` | No | — |
-| `address` | `string` | No | — |
-| `address_2` | `string` | No | — |
-| `zip` | `string` | No | — |
-| `country` | `string` | No | — |
-| `state` | `string` | No | — |
-| `website` | `string` | No | — |
-| `description` | `string` | No | — |
-| `invoice_extra_fields` | `any` | No | — |
+| `city` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `address_2` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `invoice_extra_fields` | `any \| null` | No | — |
 
 
 
@@ -2594,15 +2594,15 @@ await corsair.clientary.api.paymentProfiles.create({});
 | `client_id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
 | `gateway` | `string` | Yes | — |
-| `gateway_token` | `string` | No | — |
-| `address` | `string` | No | — |
-| `city` | `string` | No | — |
-| `state` | `string` | No | — |
-| `zip` | `string` | No | — |
-| `country` | `string` | No | — |
-| `expiration_date` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `gateway_token` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `expiration_date` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -2730,10 +2730,10 @@ await corsair.clientary.api.payments.create({});
 | `id` | `number` | Yes | — |
 | `invoice_id` | `number` | Yes | — |
 | `amount` | `number` | Yes | — |
-| `note` | `string` | No | — |
+| `note` | `string \| null` | No | — |
 | `received_on` | `string` | Yes | — |
-| `transaction_id` | `string` | No | — |
-| `transaction_fee_amount` | `number` | No | — |
+| `transaction_id` | `string \| null` | No | — |
+| `transaction_fee_amount` | `number \| null` | No | — |
 
 
 
@@ -2861,21 +2861,21 @@ await corsair.clientary.api.projects.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
+| `number` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `status` | `number` | Yes | — |
 | `budget_type` | `number` | Yes | — |
 | `project_type` | `number` | Yes | — |
-| `budget` | `number` | No | — |
-| `rate` | `number` | No | — |
-| `cost` | `number` | No | — |
-| `worked_hours` | `number` | No | — |
-| `unbilled_hours` | `number` | No | — |
-| `currency_code` | `string` | No | — |
-| `start_date` | `string` | No | — |
-| `end_date` | `string` | No | — |
-| `client` | `object` | No | — |
+| `budget` | `number \| null` | No | — |
+| `rate` | `number \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `worked_hours` | `number \| null` | No | — |
+| `unbilled_hours` | `number \| null` | No | — |
+| `currency_code` | `string \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `client` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -2894,7 +2894,7 @@ await corsair.clientary.api.projects.create({});
   website?: string | null,
   description?: string | null,
   invoice_extra_fields?: any | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2959,21 +2959,21 @@ await corsair.clientary.api.projects.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
+| `number` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `status` | `number` | Yes | — |
 | `budget_type` | `number` | Yes | — |
 | `project_type` | `number` | Yes | — |
-| `budget` | `number` | No | — |
-| `rate` | `number` | No | — |
-| `cost` | `number` | No | — |
-| `worked_hours` | `number` | No | — |
-| `unbilled_hours` | `number` | No | — |
-| `currency_code` | `string` | No | — |
-| `start_date` | `string` | No | — |
-| `end_date` | `string` | No | — |
-| `client` | `object` | No | — |
+| `budget` | `number \| null` | No | — |
+| `rate` | `number \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `worked_hours` | `number \| null` | No | — |
+| `unbilled_hours` | `number \| null` | No | — |
+| `currency_code` | `string \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `client` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -2992,7 +2992,7 @@ await corsair.clientary.api.projects.get({});
   website?: string | null,
   description?: string | null,
   invoice_extra_fields?: any | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3186,21 +3186,21 @@ await corsair.clientary.api.projects.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `number` | `string` | No | — |
+| `number` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `status` | `number` | Yes | — |
 | `budget_type` | `number` | Yes | — |
 | `project_type` | `number` | Yes | — |
-| `budget` | `number` | No | — |
-| `rate` | `number` | No | — |
-| `cost` | `number` | No | — |
-| `worked_hours` | `number` | No | — |
-| `unbilled_hours` | `number` | No | — |
-| `currency_code` | `string` | No | — |
-| `start_date` | `string` | No | — |
-| `end_date` | `string` | No | — |
-| `client` | `object` | No | — |
+| `budget` | `number \| null` | No | — |
+| `rate` | `number \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `worked_hours` | `number \| null` | No | — |
+| `unbilled_hours` | `number \| null` | No | — |
+| `currency_code` | `string \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `client` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -3219,7 +3219,7 @@ await corsair.clientary.api.projects.update({});
   website?: string | null,
   description?: string | null,
   invoice_extra_fields?: any | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3293,9 +3293,9 @@ await corsair.clientary.api.recurring.create({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | Yes | — |
-| `number` | `string` | No | — |
+| `number` | `string \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `note` | `string` | No | — |
+| `note` | `string \| null` | No | — |
 | `status` | `number` | Yes | — |
 | `action` | `number` | Yes | — |
 | `time_interval` | `number` | Yes | — |
@@ -3303,21 +3303,21 @@ await corsair.clientary.api.recurring.create({});
 | `next_date` | `string` | Yes | — |
 | `currency_code` | `string` | Yes | — |
 | `unlimited` | `boolean` | Yes | — |
-| `occurrences_remaining` | `number` | No | — |
-| `payment_profile_id` | `number` | No | — |
-| `po` | `string` | No | — |
-| `summary` | `string` | No | — |
+| `occurrences_remaining` | `number \| null` | No | — |
+| `payment_profile_id` | `number \| null` | No | — |
+| `po` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
 | `subtotal` | `number` | Yes | — |
 | `total_cost` | `number` | Yes | — |
 | `tax` | `number` | Yes | — |
 | `tax2` | `number` | Yes | — |
 | `tax3` | `number` | Yes | — |
-| `tax_label` | `string` | No | — |
-| `tax2_label` | `string` | No | — |
-| `tax3_label` | `string` | No | — |
+| `tax_label` | `string \| null` | No | — |
+| `tax2_label` | `string \| null` | No | — |
+| `tax3_label` | `string \| null` | No | — |
 | `compound_tax` | `boolean` | Yes | — |
-| `updated_at` | `string` | No | — |
-| `client` | `any` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `client` | `any \| null` | No | — |
 | `recurring_schedule_items` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -3401,9 +3401,9 @@ await corsair.clientary.api.recurring.get({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | Yes | — |
-| `number` | `string` | No | — |
+| `number` | `string \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `note` | `string` | No | — |
+| `note` | `string \| null` | No | — |
 | `status` | `number` | Yes | — |
 | `action` | `number` | Yes | — |
 | `time_interval` | `number` | Yes | — |
@@ -3411,21 +3411,21 @@ await corsair.clientary.api.recurring.get({});
 | `next_date` | `string` | Yes | — |
 | `currency_code` | `string` | Yes | — |
 | `unlimited` | `boolean` | Yes | — |
-| `occurrences_remaining` | `number` | No | — |
-| `payment_profile_id` | `number` | No | — |
-| `po` | `string` | No | — |
-| `summary` | `string` | No | — |
+| `occurrences_remaining` | `number \| null` | No | — |
+| `payment_profile_id` | `number \| null` | No | — |
+| `po` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
 | `subtotal` | `number` | Yes | — |
 | `total_cost` | `number` | Yes | — |
 | `tax` | `number` | Yes | — |
 | `tax2` | `number` | Yes | — |
 | `tax3` | `number` | Yes | — |
-| `tax_label` | `string` | No | — |
-| `tax2_label` | `string` | No | — |
-| `tax3_label` | `string` | No | — |
+| `tax_label` | `string \| null` | No | — |
+| `tax2_label` | `string \| null` | No | — |
+| `tax3_label` | `string \| null` | No | — |
 | `compound_tax` | `boolean` | Yes | — |
-| `updated_at` | `string` | No | — |
-| `client` | `any` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `client` | `any \| null` | No | — |
 | `recurring_schedule_items` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -3598,9 +3598,9 @@ await corsair.clientary.api.recurring.update({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `client_id` | `number` | Yes | — |
-| `number` | `string` | No | — |
+| `number` | `string \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `note` | `string` | No | — |
+| `note` | `string \| null` | No | — |
 | `status` | `number` | Yes | — |
 | `action` | `number` | Yes | — |
 | `time_interval` | `number` | Yes | — |
@@ -3608,21 +3608,21 @@ await corsair.clientary.api.recurring.update({});
 | `next_date` | `string` | Yes | — |
 | `currency_code` | `string` | Yes | — |
 | `unlimited` | `boolean` | Yes | — |
-| `occurrences_remaining` | `number` | No | — |
-| `payment_profile_id` | `number` | No | — |
-| `po` | `string` | No | — |
-| `summary` | `string` | No | — |
+| `occurrences_remaining` | `number \| null` | No | — |
+| `payment_profile_id` | `number \| null` | No | — |
+| `po` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
 | `subtotal` | `number` | Yes | — |
 | `total_cost` | `number` | Yes | — |
 | `tax` | `number` | Yes | — |
 | `tax2` | `number` | Yes | — |
 | `tax3` | `number` | Yes | — |
-| `tax_label` | `string` | No | — |
-| `tax2_label` | `string` | No | — |
-| `tax3_label` | `string` | No | — |
+| `tax_label` | `string \| null` | No | — |
+| `tax2_label` | `string \| null` | No | — |
+| `tax3_label` | `string \| null` | No | — |
 | `compound_tax` | `boolean` | Yes | — |
-| `updated_at` | `string` | No | — |
-| `client` | `any` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `client` | `any \| null` | No | — |
 | `recurring_schedule_items` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -3676,14 +3676,14 @@ await corsair.clientary.api.staff.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client_id` | `number` | No | — |
+| `client_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `email` | `string` | No | — |
-| `title` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `mobile` | `string` | No | — |
-| `ext` | `string` | No | — |
-| `avatar` | `string` | No | — |
+| `email` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `mobile` | `string \| null` | No | — |
+| `ext` | `string \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
 
 
 
@@ -3764,15 +3764,15 @@ await corsair.clientary.api.tasks.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
-| `assignee_id` | `number` | No | — |
+| `client_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `assignee_id` | `number \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `complete` | `boolean` | Yes | — |
-| `completed_at` | `string` | No | — |
-| `due_date` | `string` | No | — |
+| `completed_at` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 
@@ -3836,15 +3836,15 @@ await corsair.clientary.api.tasks.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
-| `assignee_id` | `number` | No | — |
+| `client_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `assignee_id` | `number \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `complete` | `boolean` | Yes | — |
-| `completed_at` | `string` | No | — |
-| `due_date` | `string` | No | — |
+| `completed_at` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 
@@ -3996,15 +3996,15 @@ await corsair.clientary.api.tasks.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
-| `assignee_id` | `number` | No | — |
+| `client_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `assignee_id` | `number \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `complete` | `boolean` | Yes | — |
-| `completed_at` | `string` | No | — |
-| `due_date` | `string` | No | — |
+| `completed_at` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 

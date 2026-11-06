@@ -54,7 +54,7 @@
           {
             "key": "apps",
             "optional": true,
-            "type": "{ outputs?: { transcript_id?: string | null, user_id?: string | null, app_id?: string | null, created_at?: number | null, title?: string | null, prompt?: string | null, response?: string | null }[] | null }"
+            "type": "{ outputs?: { transcript_id?: string | null, user_id?: string | null, app_id?: string | null, created_at?: number | null, title?: string | null, prompt?: string | null, response?: string | null }[] | null } | null"
           }
         ]
       }
@@ -168,7 +168,7 @@
           {
             "key": "askfred_thread",
             "optional": true,
-            "type": "{ id: string, title: string, transcript_id?: string | null, user_id: string, created_at: string, messages?: { id: string, thread_id: string, query: string, answer: string, suggested_queries?: string[] | null, status?: string | null, created_at?: string | null, updated_at?: string | null }[] | null }"
+            "type": "{ id: string, title: string, transcript_id?: string | null, user_id: string, created_at: string, messages?: { id: string, thread_id: string, query: string, answer: string, suggested_queries?: string[] | null, status?: string | null, created_at?: string | null, updated_at?: string | null }[] | null } | null"
           }
         ]
       }
@@ -266,7 +266,7 @@
           {
             "key": "transcript",
             "optional": true,
-            "type": "{ id: string, title?: string | null, date?: Date | null, duration?: number | null, host_email?: string | null, organizer_email?: string | null, calendar_id?: string | null, transcript_url?: string | null, meeting_link?: string | null, video_url?: string | null, audio_url?: string | null, privacy?: string | null, sentences?: { index?: number | null, speaker_id?: number | null, speaker_name?: string | null, raw_text?: string | null, text?: string | null, start_time?: number | null, end_time?: number | null, ai_filters?: { task?: string | null, pricing?: string | null, metric?: string | null, question?: string | null, date_and_time?: string | null } | null }[] | null, summary?: { keywords?: string[] | null, action_items?: string | null, outline?: string | null, shorthand_bullet?: string | null, overview?: string | null, bullet_gist?: string | null, gist?: string | null, short_summary?: string | null, notes?: string | null, short_overview?: string | null, meeting_type?: string | null } | null, speakers?: { id?: string | null, name?: string | null }[] | null, meeting_attendees?: { displayName?: string | null, email?: string | null, phoneNumber?: string | null, name?: string | null, location?: string | null }[] | null }"
+            "type": "{ id: string, title?: string | null, date?: Date | null, duration?: number | null, host_email?: string | null, organizer_email?: string | null, calendar_id?: string | null, transcript_url?: string | null, meeting_link?: string | null, video_url?: string | null, audio_url?: string | null, privacy?: string | null, sentences?: { index?: number | null, speaker_id?: number | null, speaker_name?: string | null, raw_text?: string | null, text?: string | null, start_time?: number | null, end_time?: number | null, ai_filters?: { task?: string | null, pricing?: string | null, metric?: string | null, question?: string | null, date_and_time?: string | null } | null }[] | null, summary?: { keywords?: string[] | null, action_items?: string | null, outline?: string | null, shorthand_bullet?: string | null, overview?: string | null, bullet_gist?: string | null, gist?: string | null, short_summary?: string | null, notes?: string | null, short_overview?: string | null, meeting_type?: string | null } | null, speakers?: { id?: string | null, name?: string | null }[] | null, meeting_attendees?: { displayName?: string | null, email?: string | null, phoneNumber?: string | null, name?: string | null, location?: string | null }[] | null } | null"
           }
         ]
       }
@@ -292,7 +292,7 @@
           {
             "key": "transcript",
             "optional": true,
-            "type": "{ id: string, analytics?: { sentiments?: { negative_pct?: number | null, neutral_pct?: number | null, positive_pct?: number | null } | null, categories?: { questions?: number | null, date_times?: number | null, metrics?: number | null, tasks?: number | null } | null, speakers?: {}[] | null } | null }"
+            "type": "{ id: string, analytics?: { sentiments?: { negative_pct?: number | null, neutral_pct?: number | null, positive_pct?: number | null } | null, categories?: { questions?: number | null, date_times?: number | null, metrics?: number | null, tasks?: number | null } | null, speakers?: Record<string, any>[] | null } | null } | null"
           }
         ]
       }
@@ -318,7 +318,7 @@
           {
             "key": "transcript",
             "optional": true,
-            "type": "{ id: string, audio_url?: string | null }"
+            "type": "{ id: string, audio_url?: string | null } | null"
           }
         ]
       }
@@ -344,7 +344,7 @@
           {
             "key": "transcript",
             "optional": true,
-            "type": "{ id: string, summary?: { keywords?: string[] | null, action_items?: string | null, outline?: string | null, shorthand_bullet?: string | null, overview?: string | null, bullet_gist?: string | null, gist?: string | null, short_summary?: string | null, notes?: string | null, short_overview?: string | null, meeting_type?: string | null } | null }"
+            "type": "{ id: string, summary?: { keywords?: string[] | null, action_items?: string | null, outline?: string | null, shorthand_bullet?: string | null, overview?: string | null, bullet_gist?: string | null, gist?: string | null, short_summary?: string | null, notes?: string | null, short_overview?: string | null, meeting_type?: string | null } | null } | null"
           }
         ]
       }
@@ -370,7 +370,7 @@
           {
             "key": "transcript",
             "optional": true,
-            "type": "{ id: string, video_url?: string | null }"
+            "type": "{ id: string, video_url?: string | null } | null"
           }
         ]
       }
@@ -451,7 +451,7 @@
           {
             "key": "user",
             "optional": true,
-            "type": "{ user_id: string, email?: string | null, name?: string | null, num_transcripts?: number | null, minutes_consumed?: number | null, is_admin?: boolean | null, integrations?: string[] | null }"
+            "type": "{ user_id: string, email?: string | null, name?: string | null, num_transcripts?: number | null, minutes_consumed?: number | null, is_admin?: boolean | null, integrations?: string[] | null } | null"
           }
         ]
       }
@@ -493,7 +493,7 @@
           {
             "key": "clientReferenceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "eventType",
@@ -520,7 +520,7 @@
           {
             "key": "clientReferenceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "eventType",
@@ -547,7 +547,7 @@
           {
             "key": "clientReferenceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "eventType",
@@ -574,7 +574,7 @@
           {
             "key": "clientReferenceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "eventType",
@@ -601,7 +601,7 @@
           {
             "key": "clientReferenceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "eventType",

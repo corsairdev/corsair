@@ -1,0 +1,310 @@
+{
+  "id": "snowflake",
+  "displayName": "Snowflake",
+  "description": "Run SQL on a Snowflake account: submit a statement, fetch one result partition, or cancel execution.",
+  "npmPackageName": "@corsair-dev/snowflake",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "account", "tokenType"]
+    }
+  ],
+  "api": [
+    {
+      "path": "snowflake.api.statements.cancel",
+      "shortPath": "statements.cancel",
+      "description": "Cancel a running SQL statement.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statementHandle",
+            "optional": false,
+            "type": "string",
+            "description": "UUID-shaped handle (8-4-4-4-12 hex)."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "UUID-shaped request ID (8-4-4-4-12 hex)."
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Requires `requestId`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sqlState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statementHandle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "statementStatusUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdOn",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "snowflake.api.statements.get",
+      "shortPath": "statements.get",
+      "description": "Fetch the status of a statement and one partition of its result.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statementHandle",
+            "optional": false,
+            "type": "string",
+            "description": "UUID-shaped handle (8-4-4-4-12 hex)."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "UUID-shaped request ID (8-4-4-4-12 hex)."
+          },
+          {
+            "key": "partition",
+            "optional": true,
+            "type": "number",
+            "description": "Partition index, starting at 0."
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Requires `requestId`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sqlState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statementHandle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "statementHandles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "createdOn",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "statementStatusUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resultSetMetaData",
+            "optional": true,
+            "type": "{ format?: string, numRows?: number, rowType?: { name?: string, type?: string, length?: number | null, precision?: number | null, scale?: number | null, nullable?: boolean }[], partitionInfo?: { rowCount?: number, uncompressedSize?: number, compressedSize?: number }[] }"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "(string | null)[][]",
+            "description": "Rows. Each cell is a string or null."
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "{ numRowsInserted?: number, numRowsUpdated?: number, numRowsDeleted?: number, numDuplicateRowsUpdated?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "snowflake.api.statements.submit",
+      "shortPath": "statements.submit",
+      "description": "Submit SQL for execution. Returns rows, a handle while the statement is still running, or DML stats.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "UUID-shaped request ID (8-4-4-4-12 hex)."
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the handle immediately when true."
+          },
+          {
+            "key": "nullable",
+            "optional": true,
+            "type": "boolean",
+            "description": "`false` returns SQL NULL as the string `\"null\"`."
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Requires `requestId`. Set `true` with the `requestId` of the original request to resubmit it; Snowflake does not run it twice. A new `requestId` runs the statement again."
+          },
+          {
+            "key": "statement",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "database",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warehouse",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bindings",
+            "optional": true,
+            "type": "Record<string, { type: FIXED | REAL | DECFLOAT | TEXT | BINARY | BOOLEAN | DATE | TIME | TIMESTAMP_TZ | TIMESTAMP_LTZ | TIMESTAMP_NTZ, value: string }>"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{ timezone?: string, query_tag?: string, binary_output_format?: string, date_output_format?: string, time_output_format?: string, timestamp_output_format?: string, timestamp_ltz_output_format?: string, timestamp_ntz_output_format?: string, timestamp_tz_output_format?: string, multi_statement_count?: number | string, client_result_chunk_size?: number, rows_per_resultset?: number, use_cached_result?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sqlState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statementHandle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "statementHandles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "createdOn",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "statementStatusUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resultSetMetaData",
+            "optional": true,
+            "type": "{ format?: string, numRows?: number, rowType?: { name?: string, type?: string, length?: number | null, precision?: number | null, scale?: number | null, nullable?: boolean }[], partitionInfo?: { rowCount?: number, uncompressedSize?: number, compressedSize?: number }[] }"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "(string | null)[][]",
+            "description": "Rows. Each cell is a string or null."
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "{ numRowsInserted?: number, numRowsUpdated?: number, numRowsDeleted?: number, numDuplicateRowsUpdated?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

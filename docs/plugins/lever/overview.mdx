@@ -1,0 +1,135 @@
+---
+title: Overview
+description: "Applicant tracking system for sourcing, managing, and hiring candidates with postings, interviews, and pipeline management."
+---
+
+Use **Lever** through Corsair: one client, typed API calls.
+
+**What you get:**
+
+- 104 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/lever
+```
+```bash yarn
+yarn add corsair @corsair-dev/lever
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/lever
+```
+```bash bun
+bun add corsair @corsair-dev/lever
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { lever } from '@corsair-dev/lever';
+
+export const corsair = createCorsair({
+	plugins: [
+		lever(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+lever()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Lever OAuth app.
+
+```ts
+lever({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'lever',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`opportunities.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.lever.api.opportunities.list({ limit: 50 });
+```
+
+
+**`opportunities.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.lever.api.opportunities.create({ perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed', name: 'Jane Doe', headline: 'Backend engineer' });
+```
+
+
+See the full list on the [API](/plugins/lever/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/lever/api">
+    Every `lever.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

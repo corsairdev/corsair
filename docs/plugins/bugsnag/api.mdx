@@ -70,33 +70,23 @@ await corsair.bugsnag.api.collaborators.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `two_factor_enabled` | `boolean` | No | — |
-| `two_factor_enabled_on` | `string` | No | — |
-| `password_updated_on` | `string` | No | — |
-| `show_time_in_utc` | `boolean` | No | — |
-| `heroku` | `boolean` | No | — |
-| `recovery_codes_remaining` | `number` | No | — |
-| `is_admin` | `boolean` | No | — |
-| `pending_invitation` | `boolean` | No | — |
-| `last_request_at` | `string` | No | — |
-| `paid_for` | `boolean` | No | — |
-| `project_ids` | `string[]` | No | — |
-| `team_ids` | `string[]` | No | — |
-| `project_roles` | `object` | No | — |
-| `managed_by_smartbear_id` | `boolean` | No | — |
-| `created_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="project_roles full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `two_factor_enabled` | `boolean \| null` | No | — |
+| `two_factor_enabled_on` | `string \| null` | No | — |
+| `password_updated_on` | `string \| null` | No | — |
+| `show_time_in_utc` | `boolean \| null` | No | — |
+| `heroku` | `boolean \| null` | No | — |
+| `recovery_codes_remaining` | `number \| null` | No | — |
+| `is_admin` | `boolean \| null` | No | — |
+| `pending_invitation` | `boolean \| null` | No | — |
+| `last_request_at` | `string \| null` | No | — |
+| `paid_for` | `boolean \| null` | No | — |
+| `project_ids` | `string[] \| null` | No | — |
+| `team_ids` | `string[] \| null` | No | — |
+| `project_roles` | `Record<string, any> \| null` | No | — |
+| `managed_by_smartbear_id` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -128,33 +118,23 @@ await corsair.bugsnag.api.collaborators.getOnProject({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `two_factor_enabled` | `boolean` | No | — |
-| `two_factor_enabled_on` | `string` | No | — |
-| `password_updated_on` | `string` | No | — |
-| `show_time_in_utc` | `boolean` | No | — |
-| `heroku` | `boolean` | No | — |
-| `recovery_codes_remaining` | `number` | No | — |
-| `is_admin` | `boolean` | No | — |
-| `pending_invitation` | `boolean` | No | — |
-| `last_request_at` | `string` | No | — |
-| `paid_for` | `boolean` | No | — |
-| `project_ids` | `string[]` | No | — |
-| `team_ids` | `string[]` | No | — |
-| `project_roles` | `object` | No | — |
-| `managed_by_smartbear_id` | `boolean` | No | — |
-| `created_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="project_roles full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `two_factor_enabled` | `boolean \| null` | No | — |
+| `two_factor_enabled_on` | `string \| null` | No | — |
+| `password_updated_on` | `string \| null` | No | — |
+| `show_time_in_utc` | `boolean \| null` | No | — |
+| `heroku` | `boolean \| null` | No | — |
+| `recovery_codes_remaining` | `number \| null` | No | — |
+| `is_admin` | `boolean \| null` | No | — |
+| `pending_invitation` | `boolean \| null` | No | — |
+| `last_request_at` | `string \| null` | No | — |
+| `paid_for` | `boolean \| null` | No | — |
+| `project_ids` | `string[] \| null` | No | — |
+| `team_ids` | `string[] \| null` | No | — |
+| `project_roles` | `Record<string, any> \| null` | No | — |
+| `managed_by_smartbear_id` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -186,12 +166,12 @@ await corsair.bugsnag.api.collaborators.getProjectAccess({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project_summary` | `object` | No | — |
-| `team_count` | `number` | No | — |
-| `is_admin` | `boolean` | No | — |
-| `project_role` | `string` | No | — |
-| `individual_project_role` | `string` | No | — |
-| `team_project_role` | `string` | No | — |
+| `project_summary` | `object \| null` | No | — |
+| `team_count` | `number \| null` | No | — |
+| `is_admin` | `boolean \| null` | No | — |
+| `project_role` | `string \| null` | No | — |
+| `individual_project_role` | `string \| null` | No | — |
+| `team_project_role` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="project_summary full type">
@@ -202,7 +182,7 @@ await corsair.bugsnag.api.collaborators.getProjectAccess({});
   name?: string | null,
   type?: string | null,
   slug?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -240,33 +220,23 @@ await corsair.bugsnag.api.collaborators.invite({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `two_factor_enabled` | `boolean` | No | — |
-| `two_factor_enabled_on` | `string` | No | — |
-| `password_updated_on` | `string` | No | — |
-| `show_time_in_utc` | `boolean` | No | — |
-| `heroku` | `boolean` | No | — |
-| `recovery_codes_remaining` | `number` | No | — |
-| `is_admin` | `boolean` | No | — |
-| `pending_invitation` | `boolean` | No | — |
-| `last_request_at` | `string` | No | — |
-| `paid_for` | `boolean` | No | — |
-| `project_ids` | `string[]` | No | — |
-| `team_ids` | `string[]` | No | — |
-| `project_roles` | `object` | No | — |
-| `managed_by_smartbear_id` | `boolean` | No | — |
-| `created_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="project_roles full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `two_factor_enabled` | `boolean \| null` | No | — |
+| `two_factor_enabled_on` | `string \| null` | No | — |
+| `password_updated_on` | `string \| null` | No | — |
+| `show_time_in_utc` | `boolean \| null` | No | — |
+| `heroku` | `boolean \| null` | No | — |
+| `recovery_codes_remaining` | `number \| null` | No | — |
+| `is_admin` | `boolean \| null` | No | — |
+| `pending_invitation` | `boolean \| null` | No | — |
+| `last_request_at` | `string \| null` | No | — |
+| `paid_for` | `boolean \| null` | No | — |
+| `project_ids` | `string[] \| null` | No | — |
+| `team_ids` | `string[] \| null` | No | — |
+| `project_roles` | `Record<string, any> \| null` | No | — |
+| `managed_by_smartbear_id` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -316,8 +286,7 @@ await corsair.bugsnag.api.collaborators.list({});
   paid_for?: boolean | null,
   project_ids?: string[] | null,
   team_ids?: string[] | null,
-  project_roles?: {
-  } | null,
+  project_roles?: Record<string, any> | null,
   managed_by_smartbear_id?: boolean | null,
   created_at?: string | null
 }[]
@@ -372,8 +341,7 @@ await corsair.bugsnag.api.collaborators.listOnProject({});
   paid_for?: boolean | null,
   project_ids?: string[] | null,
   team_ids?: string[] | null,
-  project_roles?: {
-  } | null,
+  project_roles?: Record<string, any> | null,
   managed_by_smartbear_id?: boolean | null,
   created_at?: string | null
 }[]
@@ -574,17 +542,7 @@ await corsair.bugsnag.api.collaborators.updatePermissions({});
 | `collaborator_id` | `string` | Yes | — |
 | `admin` | `boolean` | No | — |
 | `project_ids` | `string[]` | No | — |
-| `project_roles` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="project_roles full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `project_roles` | `Record<string, any>` | No | — |
 
 
 
@@ -593,33 +551,23 @@ await corsair.bugsnag.api.collaborators.updatePermissions({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `two_factor_enabled` | `boolean` | No | — |
-| `two_factor_enabled_on` | `string` | No | — |
-| `password_updated_on` | `string` | No | — |
-| `show_time_in_utc` | `boolean` | No | — |
-| `heroku` | `boolean` | No | — |
-| `recovery_codes_remaining` | `number` | No | — |
-| `is_admin` | `boolean` | No | — |
-| `pending_invitation` | `boolean` | No | — |
-| `last_request_at` | `string` | No | — |
-| `paid_for` | `boolean` | No | — |
-| `project_ids` | `string[]` | No | — |
-| `team_ids` | `string[]` | No | — |
-| `project_roles` | `object` | No | — |
-| `managed_by_smartbear_id` | `boolean` | No | — |
-| `created_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="project_roles full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `two_factor_enabled` | `boolean \| null` | No | — |
+| `two_factor_enabled_on` | `string \| null` | No | — |
+| `password_updated_on` | `string \| null` | No | — |
+| `show_time_in_utc` | `boolean \| null` | No | — |
+| `heroku` | `boolean \| null` | No | — |
+| `recovery_codes_remaining` | `number \| null` | No | — |
+| `is_admin` | `boolean \| null` | No | — |
+| `pending_invitation` | `boolean \| null` | No | — |
+| `last_request_at` | `string \| null` | No | — |
+| `paid_for` | `boolean \| null` | No | — |
+| `project_ids` | `string[] \| null` | No | — |
+| `team_ids` | `string[] \| null` | No | — |
+| `project_roles` | `Record<string, any> \| null` | No | — |
+| `managed_by_smartbear_id` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -653,13 +601,13 @@ await corsair.bugsnag.api.dataDeletions.confirmForProject({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 | `filters` | `any` | No | — |
-| `events_count` | `number` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `confirmed_at` | `string` | No | — |
-| `expires_at` | `string` | No | — |
+| `events_count` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `confirmed_at` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
 
 
 
@@ -688,8 +636,13 @@ await corsair.bugsnag.api.dataDeletions.createForOrganization({});
 <Accordion title="filters full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: string,
+  value?: any
+} | {
+  type: string,
+  value?: any
+}[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -701,13 +654,13 @@ await corsair.bugsnag.api.dataDeletions.createForOrganization({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 | `filters` | `any` | No | — |
-| `events_count` | `number` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `confirmed_at` | `string` | No | — |
-| `expires_at` | `string` | No | — |
+| `events_count` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `confirmed_at` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
 
 
 
@@ -736,8 +689,13 @@ await corsair.bugsnag.api.dataDeletions.createForProject({});
 <Accordion title="filters full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: string,
+  value?: any
+} | {
+  type: string,
+  value?: any
+}[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -749,13 +707,13 @@ await corsair.bugsnag.api.dataDeletions.createForProject({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 | `filters` | `any` | No | — |
-| `events_count` | `number` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `confirmed_at` | `string` | No | — |
-| `expires_at` | `string` | No | — |
+| `events_count` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `confirmed_at` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
 
 
 
@@ -787,13 +745,13 @@ await corsair.bugsnag.api.dataDeletions.getForOrganization({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 | `filters` | `any` | No | — |
-| `events_count` | `number` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `confirmed_at` | `string` | No | — |
-| `expires_at` | `string` | No | — |
+| `events_count` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `confirmed_at` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
 
 
 
@@ -825,13 +783,13 @@ await corsair.bugsnag.api.dataDeletions.getForProject({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 | `filters` | `any` | No | — |
-| `events_count` | `number` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `confirmed_at` | `string` | No | — |
-| `expires_at` | `string` | No | — |
+| `events_count` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `confirmed_at` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
 
 
 
@@ -863,8 +821,13 @@ await corsair.bugsnag.api.dataRequests.createForOrganization({});
 <Accordion title="filters full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: string,
+  value?: any
+} | {
+  type: string,
+  value?: any
+}[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -876,13 +839,13 @@ await corsair.bugsnag.api.dataRequests.createForOrganization({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 | `filters` | `any` | No | — |
-| `url` | `string` | No | — |
-| `report_type` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `expires_at` | `string` | No | — |
+| `url` | `string \| null` | No | — |
+| `report_type` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
 
 
 
@@ -912,8 +875,13 @@ await corsair.bugsnag.api.dataRequests.createForProject({});
 <Accordion title="filters full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: string,
+  value?: any
+} | {
+  type: string,
+  value?: any
+}[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -925,13 +893,13 @@ await corsair.bugsnag.api.dataRequests.createForProject({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 | `filters` | `any` | No | — |
-| `url` | `string` | No | — |
-| `report_type` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `expires_at` | `string` | No | — |
+| `url` | `string \| null` | No | — |
+| `report_type` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
 
 
 
@@ -963,13 +931,13 @@ await corsair.bugsnag.api.dataRequests.getForOrganization({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 | `filters` | `any` | No | — |
-| `url` | `string` | No | — |
-| `report_type` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `expires_at` | `string` | No | — |
+| `url` | `string \| null` | No | — |
+| `report_type` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
 
 
 
@@ -1001,13 +969,13 @@ await corsair.bugsnag.api.dataRequests.getForProject({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 | `filters` | `any` | No | — |
-| `url` | `string` | No | — |
-| `report_type` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `expires_at` | `string` | No | — |
+| `url` | `string \| null` | No | — |
+| `report_type` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
 
 
 
@@ -1039,17 +1007,7 @@ await corsair.bugsnag.api.errors.bulkUpdate({});
 | `assigned_team_id` | `string` | No | — |
 | `issue_url` | `string` | No | — |
 | `issue_title` | `string` | No | — |
-| `reopen_rules` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="reopen_rules full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `reopen_rules` | `Record<string, any>` | No | — |
 
 
 
@@ -1057,7 +1015,7 @@ await corsair.bugsnag.api.errors.bulkUpdate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `operation` | `string` | No | — |
+| `operation` | `string \| null` | No | — |
 
 
 
@@ -1123,8 +1081,13 @@ await corsair.bugsnag.api.errors.list({});
 <Accordion title="filters full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: string,
+  value?: any
+} | {
+  type: string,
+  value?: any
+}[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1198,17 +1161,7 @@ await corsair.bugsnag.api.eventFields.create({});
 |------|------|----------|-------------|
 | `project_id` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
-| `filter_options` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="filter_options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `filter_options` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1217,12 +1170,12 @@ await corsair.bugsnag.api.eventFields.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `display_id` | `string` | Yes | — |
-| `custom` | `boolean` | No | — |
+| `custom` | `boolean \| null` | No | — |
 | `pivot_options` | `any` | No | — |
-| `path` | `string` | No | — |
+| `path` | `string \| null` | No | — |
 | `filter_options` | `any` | No | — |
-| `reindex_in_progress` | `boolean` | No | — |
-| `reindex_percentage` | `number` | No | — |
+| `reindex_in_progress` | `boolean \| null` | No | — |
+| `reindex_percentage` | `number \| null` | No | — |
 
 
 
@@ -1336,8 +1289,13 @@ await corsair.bugsnag.api.events.list({});
 <Accordion title="filters full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: string,
+  value?: any
+} | {
+  type: string,
+  value?: any
+}[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1409,8 +1367,13 @@ await corsair.bugsnag.api.events.listForError({});
 <Accordion title="filters full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: string,
+  value?: any
+} | {
+  type: string,
+  value?: any
+}[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1564,17 +1527,7 @@ await corsair.bugsnag.api.integrations.configure({});
 |------|------|----------|-------------|
 | `project_id` | `string` | Yes | — |
 | `integration_key` | `string` | Yes | — |
-| `configuration` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="configuration full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `configuration` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1583,14 +1536,14 @@ await corsair.bugsnag.api.integrations.configure({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `integration_key` | `string` | No | — |
-| `project_id` | `string` | No | — |
-| `name` | `string` | No | — |
-| `type` | `string` | No | — |
+| `integration_key` | `string \| null` | No | — |
+| `project_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
 | `config` | `any` | No | — |
 | `trigger_configs` | `any` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -1653,14 +1606,14 @@ await corsair.bugsnag.api.integrations.getConfigured({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `integration_key` | `string` | No | — |
-| `project_id` | `string` | No | — |
-| `name` | `string` | No | — |
-| `type` | `string` | No | — |
+| `integration_key` | `string \| null` | No | — |
+| `project_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
 | `config` | `any` | No | — |
 | `trigger_configs` | `any` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -1776,17 +1729,7 @@ await corsair.bugsnag.api.integrations.test({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `key` | `string` | Yes | — |
-| `configuration` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="configuration full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `configuration` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1794,9 +1737,9 @@ await corsair.bugsnag.api.integrations.test({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `message` | `string` | No | — |
-| `errors` | `any[]` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `errors` | `any[] \| null` | No | — |
 
 
 
@@ -1861,21 +1804,21 @@ await corsair.bugsnag.api.organizations.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `slug` | `string` | No | — |
-| `api_key` | `string` | No | — |
-| `creator` | `object` | No | — |
-| `collaborators_url` | `string` | No | — |
-| `projects_url` | `string` | No | — |
-| `auto_upgrade` | `boolean` | No | — |
-| `upgrade_url` | `string` | No | — |
-| `can_start_pro_trial` | `boolean` | No | — |
-| `pro_trial_ends_at` | `string` | No | — |
-| `pro_trial_feature` | `boolean` | No | — |
-| `managed_by_platform_services` | `boolean` | No | — |
-| `billing_emails` | `string[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `api_key` | `string \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `collaborators_url` | `string \| null` | No | — |
+| `projects_url` | `string \| null` | No | — |
+| `auto_upgrade` | `boolean \| null` | No | — |
+| `upgrade_url` | `string \| null` | No | — |
+| `can_start_pro_trial` | `boolean \| null` | No | — |
+| `pro_trial_ends_at` | `string \| null` | No | — |
+| `pro_trial_feature` | `boolean \| null` | No | — |
+| `managed_by_platform_services` | `boolean \| null` | No | — |
+| `billing_emails` | `string[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -1885,7 +1828,7 @@ await corsair.bugsnag.api.organizations.get({});
   id?: string | null,
   name?: string | null,
   email?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1979,8 +1922,13 @@ await corsair.bugsnag.api.pivots.list({});
 <Accordion title="filters full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: string,
+  value?: any
+} | {
+  type: string,
+  value?: any
+}[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -2033,8 +1981,13 @@ await corsair.bugsnag.api.pivots.values({});
 <Accordion title="filters full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: string,
+  value?: any
+} | {
+  type: string,
+  value?: any
+}[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -2092,37 +2045,37 @@ await corsair.bugsnag.api.projects.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `organization_id` | `string` | No | — |
-| `slug` | `string` | No | — |
-| `name` | `string` | No | — |
-| `api_key` | `string` | No | — |
-| `upload_api_key` | `string` | No | — |
-| `must_use_upload_api_key` | `boolean` | No | — |
-| `type` | `string` | No | — |
-| `is_full_view` | `boolean` | No | — |
-| `release_stages` | `string[]` | No | — |
-| `language` | `string` | No | — |
-| `errors_url` | `string` | No | — |
-| `events_url` | `string` | No | — |
-| `url` | `string` | No | — |
-| `html_url` | `string` | No | — |
-| `open_error_count` | `number` | No | — |
-| `for_review_error_count` | `number` | No | — |
-| `collaborators_count` | `number` | No | — |
-| `teams_count` | `number` | No | — |
-| `global_grouping` | `string[]` | No | — |
-| `location_grouping` | `string[]` | No | — |
-| `discarded_app_versions` | `string[]` | No | — |
-| `discarded_errors` | `string[]` | No | — |
-| `custom_event_fields_used` | `number` | No | — |
-| `resolve_on_deploy` | `boolean` | No | — |
-| `performance_display_type` | `string` | No | — |
-| `default_performance_percentile` | `string` | No | — |
-| `target_stability` | `object` | No | — |
-| `critical_stability` | `object` | No | — |
-| `stability_target_type` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `organization_id` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `api_key` | `string \| null` | No | — |
+| `upload_api_key` | `string \| null` | No | — |
+| `must_use_upload_api_key` | `boolean \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `is_full_view` | `boolean \| null` | No | — |
+| `release_stages` | `string[] \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `errors_url` | `string \| null` | No | — |
+| `events_url` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `html_url` | `string \| null` | No | — |
+| `open_error_count` | `number \| null` | No | — |
+| `for_review_error_count` | `number \| null` | No | — |
+| `collaborators_count` | `number \| null` | No | — |
+| `teams_count` | `number \| null` | No | — |
+| `global_grouping` | `string[] \| null` | No | — |
+| `location_grouping` | `string[] \| null` | No | — |
+| `discarded_app_versions` | `string[] \| null` | No | — |
+| `discarded_errors` | `string[] \| null` | No | — |
+| `custom_event_fields_used` | `number \| null` | No | — |
+| `resolve_on_deploy` | `boolean \| null` | No | — |
+| `performance_display_type` | `string \| null` | No | — |
+| `default_performance_percentile` | `string \| null` | No | — |
+| `target_stability` | `object \| null` | No | — |
+| `critical_stability` | `object \| null` | No | — |
+| `stability_target_type` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="target_stability full type">
@@ -2132,7 +2085,7 @@ await corsair.bugsnag.api.projects.create({});
   value?: number | null,
   updated_at?: string | null,
   updated_by_id?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2143,7 +2096,7 @@ await corsair.bugsnag.api.projects.create({});
   value?: number | null,
   updated_at?: string | null,
   updated_by_id?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2209,37 +2162,37 @@ await corsair.bugsnag.api.projects.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `organization_id` | `string` | No | — |
-| `slug` | `string` | No | — |
-| `name` | `string` | No | — |
-| `api_key` | `string` | No | — |
-| `upload_api_key` | `string` | No | — |
-| `must_use_upload_api_key` | `boolean` | No | — |
-| `type` | `string` | No | — |
-| `is_full_view` | `boolean` | No | — |
-| `release_stages` | `string[]` | No | — |
-| `language` | `string` | No | — |
-| `errors_url` | `string` | No | — |
-| `events_url` | `string` | No | — |
-| `url` | `string` | No | — |
-| `html_url` | `string` | No | — |
-| `open_error_count` | `number` | No | — |
-| `for_review_error_count` | `number` | No | — |
-| `collaborators_count` | `number` | No | — |
-| `teams_count` | `number` | No | — |
-| `global_grouping` | `string[]` | No | — |
-| `location_grouping` | `string[]` | No | — |
-| `discarded_app_versions` | `string[]` | No | — |
-| `discarded_errors` | `string[]` | No | — |
-| `custom_event_fields_used` | `number` | No | — |
-| `resolve_on_deploy` | `boolean` | No | — |
-| `performance_display_type` | `string` | No | — |
-| `default_performance_percentile` | `string` | No | — |
-| `target_stability` | `object` | No | — |
-| `critical_stability` | `object` | No | — |
-| `stability_target_type` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `organization_id` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `api_key` | `string \| null` | No | — |
+| `upload_api_key` | `string \| null` | No | — |
+| `must_use_upload_api_key` | `boolean \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `is_full_view` | `boolean \| null` | No | — |
+| `release_stages` | `string[] \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `errors_url` | `string \| null` | No | — |
+| `events_url` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `html_url` | `string \| null` | No | — |
+| `open_error_count` | `number \| null` | No | — |
+| `for_review_error_count` | `number \| null` | No | — |
+| `collaborators_count` | `number \| null` | No | — |
+| `teams_count` | `number \| null` | No | — |
+| `global_grouping` | `string[] \| null` | No | — |
+| `location_grouping` | `string[] \| null` | No | — |
+| `discarded_app_versions` | `string[] \| null` | No | — |
+| `discarded_errors` | `string[] \| null` | No | — |
+| `custom_event_fields_used` | `number \| null` | No | — |
+| `resolve_on_deploy` | `boolean \| null` | No | — |
+| `performance_display_type` | `string \| null` | No | — |
+| `default_performance_percentile` | `string \| null` | No | — |
+| `target_stability` | `object \| null` | No | — |
+| `critical_stability` | `object \| null` | No | — |
+| `stability_target_type` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="target_stability full type">
@@ -2249,7 +2202,7 @@ await corsair.bugsnag.api.projects.get({});
   value?: number | null,
   updated_at?: string | null,
   updated_by_id?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2260,7 +2213,7 @@ await corsair.bugsnag.api.projects.get({});
   value?: number | null,
   updated_at?: string | null,
   updated_by_id?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2373,8 +2326,8 @@ await corsair.bugsnag.api.projects.networkGroupingRuleset({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project_id` | `string` | No | — |
-| `endpoints` | `any[]` | No | — |
+| `project_id` | `string \| null` | No | — |
+| `endpoints` | `any[] \| null` | No | — |
 
 
 
@@ -2405,37 +2358,37 @@ await corsair.bugsnag.api.projects.regenerateApiKey({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `organization_id` | `string` | No | — |
-| `slug` | `string` | No | — |
-| `name` | `string` | No | — |
-| `api_key` | `string` | No | — |
-| `upload_api_key` | `string` | No | — |
-| `must_use_upload_api_key` | `boolean` | No | — |
-| `type` | `string` | No | — |
-| `is_full_view` | `boolean` | No | — |
-| `release_stages` | `string[]` | No | — |
-| `language` | `string` | No | — |
-| `errors_url` | `string` | No | — |
-| `events_url` | `string` | No | — |
-| `url` | `string` | No | — |
-| `html_url` | `string` | No | — |
-| `open_error_count` | `number` | No | — |
-| `for_review_error_count` | `number` | No | — |
-| `collaborators_count` | `number` | No | — |
-| `teams_count` | `number` | No | — |
-| `global_grouping` | `string[]` | No | — |
-| `location_grouping` | `string[]` | No | — |
-| `discarded_app_versions` | `string[]` | No | — |
-| `discarded_errors` | `string[]` | No | — |
-| `custom_event_fields_used` | `number` | No | — |
-| `resolve_on_deploy` | `boolean` | No | — |
-| `performance_display_type` | `string` | No | — |
-| `default_performance_percentile` | `string` | No | — |
-| `target_stability` | `object` | No | — |
-| `critical_stability` | `object` | No | — |
-| `stability_target_type` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `organization_id` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `api_key` | `string \| null` | No | — |
+| `upload_api_key` | `string \| null` | No | — |
+| `must_use_upload_api_key` | `boolean \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `is_full_view` | `boolean \| null` | No | — |
+| `release_stages` | `string[] \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `errors_url` | `string \| null` | No | — |
+| `events_url` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `html_url` | `string \| null` | No | — |
+| `open_error_count` | `number \| null` | No | — |
+| `for_review_error_count` | `number \| null` | No | — |
+| `collaborators_count` | `number \| null` | No | — |
+| `teams_count` | `number \| null` | No | — |
+| `global_grouping` | `string[] \| null` | No | — |
+| `location_grouping` | `string[] \| null` | No | — |
+| `discarded_app_versions` | `string[] \| null` | No | — |
+| `discarded_errors` | `string[] \| null` | No | — |
+| `custom_event_fields_used` | `number \| null` | No | — |
+| `resolve_on_deploy` | `boolean \| null` | No | — |
+| `performance_display_type` | `string \| null` | No | — |
+| `default_performance_percentile` | `string \| null` | No | — |
+| `target_stability` | `object \| null` | No | — |
+| `critical_stability` | `object \| null` | No | — |
+| `stability_target_type` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="target_stability full type">
@@ -2445,7 +2398,7 @@ await corsair.bugsnag.api.projects.regenerateApiKey({});
   value?: number | null,
   updated_at?: string | null,
   updated_by_id?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2456,7 +2409,7 @@ await corsair.bugsnag.api.projects.regenerateApiKey({});
   value?: number | null,
   updated_at?: string | null,
   updated_by_id?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2614,8 +2567,13 @@ await corsair.bugsnag.api.savedSearches.create({});
 <Accordion title="filters full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: string,
+  value?: any
+} | {
+  type: string,
+  value?: any
+}[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -2627,29 +2585,29 @@ await corsair.bugsnag.api.savedSearches.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `user_id` | `string` | No | — |
-| `project_id` | `string` | No | — |
-| `name` | `string` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `project_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
 | `filters` | `any` | No | — |
-| `sort` | `string` | No | — |
-| `type` | `string` | No | — |
-| `shared` | `boolean` | No | — |
-| `updated_by_id` | `string` | No | — |
-| `project_default` | `boolean` | No | — |
-| `has_assigned_to_me` | `boolean` | No | — |
-| `has_assigned_to` | `boolean` | No | — |
-| `has_created_issue_filter` | `boolean` | No | — |
-| `has_status_filter` | `boolean` | No | — |
-| `new_error_inclusion` | `boolean` | No | — |
-| `open_error_inclusion` | `boolean` | No | — |
-| `for_review_error_inclusion` | `boolean` | No | — |
-| `snoozed_error_inclusion` | `boolean` | No | — |
-| `fixed_error_inclusion` | `boolean` | No | — |
-| `ignored_error_inclusion` | `boolean` | No | — |
+| `sort` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `shared` | `boolean \| null` | No | — |
+| `updated_by_id` | `string \| null` | No | — |
+| `project_default` | `boolean \| null` | No | — |
+| `has_assigned_to_me` | `boolean \| null` | No | — |
+| `has_assigned_to` | `boolean \| null` | No | — |
+| `has_created_issue_filter` | `boolean \| null` | No | — |
+| `has_status_filter` | `boolean \| null` | No | — |
+| `new_error_inclusion` | `boolean \| null` | No | — |
+| `open_error_inclusion` | `boolean \| null` | No | — |
+| `for_review_error_inclusion` | `boolean \| null` | No | — |
+| `snoozed_error_inclusion` | `boolean \| null` | No | — |
+| `fixed_error_inclusion` | `boolean \| null` | No | — |
+| `ignored_error_inclusion` | `boolean \| null` | No | — |
 | `additional_filtersets` | `any` | No | — |
 | `advanced_filters` | `any` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -2712,29 +2670,29 @@ await corsair.bugsnag.api.savedSearches.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `user_id` | `string` | No | — |
-| `project_id` | `string` | No | — |
-| `name` | `string` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `project_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
 | `filters` | `any` | No | — |
-| `sort` | `string` | No | — |
-| `type` | `string` | No | — |
-| `shared` | `boolean` | No | — |
-| `updated_by_id` | `string` | No | — |
-| `project_default` | `boolean` | No | — |
-| `has_assigned_to_me` | `boolean` | No | — |
-| `has_assigned_to` | `boolean` | No | — |
-| `has_created_issue_filter` | `boolean` | No | — |
-| `has_status_filter` | `boolean` | No | — |
-| `new_error_inclusion` | `boolean` | No | — |
-| `open_error_inclusion` | `boolean` | No | — |
-| `for_review_error_inclusion` | `boolean` | No | — |
-| `snoozed_error_inclusion` | `boolean` | No | — |
-| `fixed_error_inclusion` | `boolean` | No | — |
-| `ignored_error_inclusion` | `boolean` | No | — |
+| `sort` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `shared` | `boolean \| null` | No | — |
+| `updated_by_id` | `string \| null` | No | — |
+| `project_default` | `boolean \| null` | No | — |
+| `has_assigned_to_me` | `boolean \| null` | No | — |
+| `has_assigned_to` | `boolean \| null` | No | — |
+| `has_created_issue_filter` | `boolean \| null` | No | — |
+| `has_status_filter` | `boolean \| null` | No | — |
+| `new_error_inclusion` | `boolean \| null` | No | — |
+| `open_error_inclusion` | `boolean \| null` | No | — |
+| `for_review_error_inclusion` | `boolean \| null` | No | — |
+| `snoozed_error_inclusion` | `boolean \| null` | No | — |
+| `fixed_error_inclusion` | `boolean \| null` | No | — |
+| `ignored_error_inclusion` | `boolean \| null` | No | — |
 | `additional_filtersets` | `any` | No | — |
 | `advanced_filters` | `any` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -2826,10 +2784,10 @@ await corsair.bugsnag.api.savedSearches.usageSummary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project_notifications_count` | `number` | No | — |
-| `current_user_using_for_email_notification` | `boolean` | No | — |
-| `collaborator_email_notifications_count` | `number` | No | — |
-| `performance_monitor_count` | `number` | No | — |
+| `project_notifications_count` | `number \| null` | No | — |
+| `current_user_using_for_email_notification` | `boolean \| null` | No | — |
+| `collaborator_email_notifications_count` | `number \| null` | No | — |
+| `performance_monitor_count` | `number \| null` | No | — |
 
 
 
@@ -2865,33 +2823,23 @@ await corsair.bugsnag.api.teams.addCollaboratorMemberships({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `two_factor_enabled` | `boolean` | No | — |
-| `two_factor_enabled_on` | `string` | No | — |
-| `password_updated_on` | `string` | No | — |
-| `show_time_in_utc` | `boolean` | No | — |
-| `heroku` | `boolean` | No | — |
-| `recovery_codes_remaining` | `number` | No | — |
-| `is_admin` | `boolean` | No | — |
-| `pending_invitation` | `boolean` | No | — |
-| `last_request_at` | `string` | No | — |
-| `paid_for` | `boolean` | No | — |
-| `project_ids` | `string[]` | No | — |
-| `team_ids` | `string[]` | No | — |
-| `project_roles` | `object` | No | — |
-| `managed_by_smartbear_id` | `boolean` | No | — |
-| `created_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="project_roles full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `two_factor_enabled` | `boolean \| null` | No | — |
+| `two_factor_enabled_on` | `string \| null` | No | — |
+| `password_updated_on` | `string \| null` | No | — |
+| `show_time_in_utc` | `boolean \| null` | No | — |
+| `heroku` | `boolean \| null` | No | — |
+| `recovery_codes_remaining` | `number \| null` | No | — |
+| `is_admin` | `boolean \| null` | No | — |
+| `pending_invitation` | `boolean \| null` | No | — |
+| `last_request_at` | `string \| null` | No | — |
+| `paid_for` | `boolean \| null` | No | — |
+| `project_ids` | `string[] \| null` | No | — |
+| `team_ids` | `string[] \| null` | No | — |
+| `project_roles` | `Record<string, any> \| null` | No | — |
+| `managed_by_smartbear_id` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -2925,9 +2873,9 @@ await corsair.bugsnag.api.teams.addMembers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `collaborator_count` | `number` | No | — |
-| `project_count` | `number` | No | — |
+| `name` | `string \| null` | No | — |
+| `collaborator_count` | `number \| null` | No | — |
+| `project_count` | `number \| null` | No | — |
 
 
 
@@ -2959,9 +2907,9 @@ await corsair.bugsnag.api.teams.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `collaborator_count` | `number` | No | — |
-| `project_count` | `number` | No | — |
+| `name` | `string \| null` | No | — |
+| `collaborator_count` | `number \| null` | No | — |
+| `project_count` | `number \| null` | No | — |
 
 
 
@@ -3026,9 +2974,9 @@ await corsair.bugsnag.api.teams.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `collaborator_count` | `number` | No | — |
-| `project_count` | `number` | No | — |
+| `name` | `string \| null` | No | — |
+| `collaborator_count` | `number \| null` | No | — |
+| `project_count` | `number \| null` | No | — |
 
 
 
@@ -3102,8 +3050,13 @@ await corsair.bugsnag.api.trends.projectBuckets({});
 <Accordion title="filters full type">
 
 ```ts
-{
-}
+Record<string, {
+  type: string,
+  value?: any
+} | {
+  type: string,
+  value?: any
+}[]>
 ```
 </Accordion>
 </AccordionGroup>

@@ -282,10 +282,8 @@ await corsair.postman.api.apis.createCollectionFromSchema({});
             src?: string,
             content?: string
           },
-          graphql?: {
-          },
-          options?: {
-          }
+          graphql?: Record<string, any>,
+          options?: Record<string, any>
         }
       },
       response?: {
@@ -355,10 +353,8 @@ await corsair.postman.api.apis.createCollectionFromSchema({});
               src?: string,
               content?: string
             },
-            graphql?: {
-            },
-            options?: {
-            }
+            graphql?: Record<string, any>,
+            options?: Record<string, any>
           }
         }
       }[],
@@ -380,15 +376,179 @@ await corsair.postman.api.apis.createCollectionFromSchema({});
       },
       createdAt?: string,
       updatedAt?: string,
-      item?: lazy[]
+      item?: {
+        id?: string,
+        uid?: string,
+        name?: string,
+        description?: string | null,
+        variable?: {
+          key?: string,
+          value?: string | boolean | number,
+          description?: string,
+          disabled?: boolean,
+          type?: string
+        }[],
+        event?: {
+          id?: string,
+          listen?: test | prerequest,
+          script?: {
+            id?: string,
+            name?: string,
+            type?: string,
+            exec?: string[]
+          }
+        }[],
+        request?: string | {
+          url?: string | {
+            raw?: string,
+            protocol?: string,
+            host?: string[],
+            path?: string[],
+            port?: string,
+            query?: {
+              key?: string,
+              value?: string,
+              description?: string | null,
+              disabled?: boolean
+            }[],
+            variable?: {
+              key?: string,
+              value?: string,
+              description?: string | null,
+              disabled?: boolean
+            }[]
+          },
+          auth?: any,
+          method?: string,
+          description?: string | null,
+          header?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          body?: string | {
+            mode?: string,
+            raw?: string,
+            urlencoded?: {
+              key?: string,
+              value?: string,
+              description?: string | null,
+              disabled?: boolean
+            }[],
+            formdata?: {
+              key?: string,
+              value?: string,
+              description?: string | null,
+              disabled?: boolean
+            }[],
+            file?: {
+              src?: string,
+              content?: string
+            },
+            graphql?: Record<string, any>,
+            options?: Record<string, any>
+          }
+        },
+        response?: {
+          id?: string,
+          name?: string,
+          status?: string,
+          code?: string | number,
+          header?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          cookie?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          body?: string,
+          responseTime?: string | number,
+          originalRequest?: {
+            url?: string | {
+              raw?: string,
+              protocol?: string,
+              host?: string[],
+              path?: string[],
+              port?: string,
+              query?: {
+                key?: string,
+                value?: string,
+                description?: string | null,
+                disabled?: boolean
+              }[],
+              variable?: {
+                key?: string,
+                value?: string,
+                description?: string | null,
+                disabled?: boolean
+              }[]
+            },
+            auth?: any,
+            method?: string,
+            description?: string | null,
+            header?: {
+              key?: string,
+              value?: string,
+              description?: string | null,
+              disabled?: boolean
+            }[],
+            body?: string | {
+              mode?: string,
+              raw?: string,
+              urlencoded?: {
+                key?: string,
+                value?: string,
+                description?: string | null,
+                disabled?: boolean
+              }[],
+              formdata?: {
+                key?: string,
+                value?: string,
+                description?: string | null,
+                disabled?: boolean
+              }[],
+              file?: {
+                src?: string,
+                content?: string
+              },
+              graphql?: Record<string, any>,
+              options?: Record<string, any>
+            }
+          }
+        }[],
+        protocolProfileBehavior?: {
+          strictSSL?: boolean,
+          followRedirects?: boolean,
+          maxRedirects?: number,
+          disableBodyPruning?: boolean,
+          disableUrlEncoding?: boolean,
+          disabledSystemHeaders?: string[],
+          insecureHTTPParser?: boolean,
+          followOriginalHttpMethod?: boolean,
+          followAuthorizationHeader?: boolean,
+          protocolVersion?: http1 | http2 | auto,
+          removeRefererHeaderOnRedirect?: boolean,
+          tlsPreferServerCiphers?: boolean,
+          tlsDisabledProtocols?: string[],
+          tlsCipherSelection?: string[]
+        },
+        createdAt?: string,
+        updatedAt?: string,
+        item?: (recursive)[]
+      }[]
     }[]
   },
   operationType?: CREATE_NEW
 } | {
   name?: string,
   operationType?: GENERATE_FROM_SCHEMA,
-  options?: {
-  }
+  options?: Record<string, any>
 }
 ```
 </Accordion>
@@ -491,17 +651,7 @@ await corsair.postman.api.apis.createRelations({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -649,7 +799,7 @@ await corsair.postman.api.apis.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `apiId` | `string` | Yes | — |
-| `include` | `collections \| versions \| schemas \| gitInfo[]` | No | — |
+| `include` | `(collections \| versions \| schemas \| gitInfo)[]` | No | — |
 
 
 
@@ -770,17 +920,7 @@ await corsair.postman.api.apis.getContractTestRelations({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -806,17 +946,7 @@ await corsair.postman.api.apis.getDocumentationRelations({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -842,17 +972,7 @@ await corsair.postman.api.apis.getEnvironmentRelations({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -878,17 +998,7 @@ await corsair.postman.api.apis.getIntegrationTestRelations({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -914,17 +1024,7 @@ await corsair.postman.api.apis.getLinkedRelations({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1117,17 +1217,7 @@ await corsair.postman.api.apis.getTestRelations({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1153,17 +1243,7 @@ await corsair.postman.api.apis.getTestSuiteRelations({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1189,17 +1269,7 @@ await corsair.postman.api.apis.getUnclassifiedRelations({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1343,17 +1413,7 @@ await corsair.postman.api.apis.listReleases({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1745,10 +1805,8 @@ await corsair.postman.api.collections.create({});
           src?: string,
           content?: string
         },
-        graphql?: {
-        },
-        options?: {
-        }
+        graphql?: Record<string, any>,
+        options?: Record<string, any>
       }
     },
     response?: {
@@ -1818,10 +1876,8 @@ await corsair.postman.api.collections.create({});
             src?: string,
             content?: string
           },
-          graphql?: {
-          },
-          options?: {
-          }
+          graphql?: Record<string, any>,
+          options?: Record<string, any>
         }
       }
     }[],
@@ -2097,7 +2153,7 @@ await corsair.postman.api.collections.createFolder({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `model_id` | `string` | No | — |
 | `revision` | `number` | No | — |
 
@@ -2119,14 +2175,6 @@ await corsair.postman.api.collections.createFolder({});
   description?: string,
   folders_order?: string[],
   lastUpdatedBy?: string
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2265,14 +2313,14 @@ await corsair.postman.api.collections.createRequest({});
 | `collectionId` | `string` | Yes | — |
 | `folder` | `string` | No | — |
 | `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `method` | `GET \| PUT \| POST \| PATCH \| DELETE \| COPY \| HEAD \| OPTIONS \| LINK \| UNLINK \| PURGE \| LOCK \| UNLOCK \| PROPFIND \| VIEW` | No | — |
-| `url` | `object` | No | — |
+| `url` | `string \| object \| null` | No | — |
 | `headerData` | `object[]` | No | — |
 | `queryParams` | `object[]` | No | — |
 | `dataMode` | `raw \| urlencoded \| formdata \| binary \| graphql` | No | — |
 | `data` | `object[]` | No | — |
-| `rawModeData` | `string` | No | — |
+| `rawModeData` | `string \| null` | No | — |
 | `graphqlModeData` | `object` | No | — |
 | `dataOptions` | `object` | No | — |
 | `auth` | `object` | No | — |
@@ -2300,7 +2348,7 @@ string | string | {
     description?: string | null,
     disabled?: boolean
   }[]
-}
+} | null
 ```
 </Accordion>
 
@@ -2358,14 +2406,10 @@ string | string | {
   raw?: {
     language?: string
   },
-  urlencoded?: {
-  },
-  params?: {
-  },
-  binary?: {
-  },
-  graphql?: {
-  }
+  urlencoded?: Record<string, any>,
+  params?: Record<string, any>,
+  binary?: Record<string, any>,
+  graphql?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2509,7 +2553,7 @@ string | string | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `model_id` | `string` | No | — |
 | `revision` | `number` | No | — |
 
@@ -2528,14 +2572,6 @@ string | string | {
   createdAt?: string,
   updatedAt?: string,
   lastUpdatedBy?: string
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2632,21 +2668,21 @@ await corsair.postman.api.collections.createResponse({});
 | `collectionId` | `string` | Yes | — |
 | `request` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `url` | `object` | No | — |
+| `description` | `string \| null` | No | — |
+| `url` | `string \| object \| null` | No | — |
 | `method` | `GET \| PUT \| POST \| PATCH \| DELETE \| COPY \| HEAD \| OPTIONS \| LINK \| UNLINK \| PURGE \| LOCK \| UNLOCK \| PROPFIND \| VIEW` | No | — |
 | `headers` | `object[]` | No | — |
 | `dataMode` | `raw \| urlencoded \| formdata \| binary \| graphql` | No | — |
-| `rawModeData` | `string` | No | — |
+| `rawModeData` | `string \| null` | No | — |
 | `dataOptions` | `object` | No | — |
 | `responseCode` | `object` | No | — |
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 | `time` | `string` | No | — |
-| `cookies` | `string` | No | — |
-| `mime` | `string` | No | — |
+| `cookies` | `string \| null` | No | — |
+| `mime` | `string \| null` | No | — |
 | `text` | `string` | No | — |
 | `language` | `string` | No | — |
-| `rawDataType` | `string` | No | — |
+| `rawDataType` | `string \| null` | No | — |
 | `requestObject` | `string` | No | — |
 
 <AccordionGroup>
@@ -2671,7 +2707,7 @@ string | string | {
     description?: string | null,
     disabled?: boolean
   }[]
-}
+} | null
 ```
 </Accordion>
 
@@ -2693,14 +2729,10 @@ string | string | {
   raw?: {
     language?: string
   },
-  urlencoded?: {
-  },
-  params?: {
-  },
-  binary?: {
-  },
-  graphql?: {
-  }
+  urlencoded?: Record<string, any>,
+  params?: Record<string, any>,
+  binary?: Record<string, any>,
+  graphql?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2723,7 +2755,7 @@ string | string | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `model_id` | `string` | No | — |
 | `revision` | `number` | No | — |
 
@@ -2738,14 +2770,6 @@ string | string | {
   createdAt?: string,
   updatedAt?: string,
   lastUpdatedBy?: string
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2875,7 +2899,7 @@ await corsair.postman.api.collections.deleteFolder({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `model_id` | `string` | No | — |
 | `revision` | `number` | No | — |
 
@@ -2886,14 +2910,6 @@ await corsair.postman.api.collections.deleteFolder({});
 {
   id?: string,
   owner?: string
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2983,19 +2999,11 @@ await corsair.postman.api.collections.deleteResponse({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model_id` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 | `revision` | `number` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3287,18 +3295,10 @@ await corsair.postman.api.collections.getFolder({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model_id` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3566,18 +3566,10 @@ await corsair.postman.api.collections.getRequest({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model_id` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3675,7 +3667,7 @@ await corsair.postman.api.collections.getResponse({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `model_id` | `string` | No | — |
 
 <AccordionGroup>
@@ -3691,14 +3683,6 @@ await corsair.postman.api.collections.getResponse({});
   updatedAt?: string,
   lastRevision?: number,
   lastUpdatedBy?: string
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -4250,10 +4234,8 @@ await corsair.postman.api.collections.replace({});
           src?: string,
           content?: string
         },
-        graphql?: {
-        },
-        options?: {
-        }
+        graphql?: Record<string, any>,
+        options?: Record<string, any>
       }
     },
     response?: {
@@ -4323,10 +4305,8 @@ await corsair.postman.api.collections.replace({});
             src?: string,
             content?: string
           },
-          graphql?: {
-          },
-          options?: {
-          }
+          graphql?: Record<string, any>,
+          options?: Record<string, any>
         }
       }
     }[],
@@ -4369,8 +4349,7 @@ await corsair.postman.api.collections.replace({});
       key?: string,
       secret?: boolean,
       source?: {
-        postman?: {
-        },
+        postman?: Record<string, any>,
         provider?: postman
       },
       description?: string
@@ -4708,7 +4687,7 @@ await corsair.postman.api.collections.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `collectionId` | `string` | Yes | — |
-| `collection` | `object` | No | — |
+| `collection` | `string \| object` | No | — |
 
 <AccordionGroup>
 <Accordion title="collection full type">
@@ -4790,10 +4769,8 @@ string | {
           src?: string,
           content?: string
         },
-        graphql?: {
-        },
-        options?: {
-        }
+        graphql?: Record<string, any>,
+        options?: Record<string, any>
       }
     },
     response?: {
@@ -4863,10 +4840,8 @@ string | {
             src?: string,
             content?: string
           },
-          graphql?: {
-          },
-          options?: {
-          }
+          graphql?: Record<string, any>,
+          options?: Record<string, any>
         }
       }
     }[],
@@ -4888,7 +4863,172 @@ string | {
     },
     createdAt?: string,
     updatedAt?: string,
-    item?: lazy[]
+    item?: {
+      id?: string,
+      uid?: string,
+      name?: string,
+      description?: string | null,
+      variable?: {
+        key?: string,
+        value?: string | boolean | number,
+        description?: string,
+        disabled?: boolean,
+        type?: string
+      }[],
+      event?: {
+        id?: string,
+        listen?: test | prerequest,
+        script?: {
+          id?: string,
+          name?: string,
+          type?: string,
+          exec?: string[]
+        }
+      }[],
+      request?: string | {
+        url?: string | {
+          raw?: string,
+          protocol?: string,
+          host?: string[],
+          path?: string[],
+          port?: string,
+          query?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          variable?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[]
+        },
+        auth?: any,
+        method?: string,
+        description?: string | null,
+        header?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        body?: string | {
+          mode?: string,
+          raw?: string,
+          urlencoded?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          formdata?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          file?: {
+            src?: string,
+            content?: string
+          },
+          graphql?: Record<string, any>,
+          options?: Record<string, any>
+        }
+      },
+      response?: {
+        id?: string,
+        name?: string,
+        status?: string,
+        code?: string | number,
+        header?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        cookie?: {
+          key?: string,
+          value?: string,
+          description?: string | null,
+          disabled?: boolean
+        }[],
+        body?: string,
+        responseTime?: string | number,
+        originalRequest?: {
+          url?: string | {
+            raw?: string,
+            protocol?: string,
+            host?: string[],
+            path?: string[],
+            port?: string,
+            query?: {
+              key?: string,
+              value?: string,
+              description?: string | null,
+              disabled?: boolean
+            }[],
+            variable?: {
+              key?: string,
+              value?: string,
+              description?: string | null,
+              disabled?: boolean
+            }[]
+          },
+          auth?: any,
+          method?: string,
+          description?: string | null,
+          header?: {
+            key?: string,
+            value?: string,
+            description?: string | null,
+            disabled?: boolean
+          }[],
+          body?: string | {
+            mode?: string,
+            raw?: string,
+            urlencoded?: {
+              key?: string,
+              value?: string,
+              description?: string | null,
+              disabled?: boolean
+            }[],
+            formdata?: {
+              key?: string,
+              value?: string,
+              description?: string | null,
+              disabled?: boolean
+            }[],
+            file?: {
+              src?: string,
+              content?: string
+            },
+            graphql?: Record<string, any>,
+            options?: Record<string, any>
+          }
+        }
+      }[],
+      protocolProfileBehavior?: {
+        strictSSL?: boolean,
+        followRedirects?: boolean,
+        maxRedirects?: number,
+        disableBodyPruning?: boolean,
+        disableUrlEncoding?: boolean,
+        disabledSystemHeaders?: string[],
+        insecureHTTPParser?: boolean,
+        followOriginalHttpMethod?: boolean,
+        followAuthorizationHeader?: boolean,
+        protocolVersion?: http1 | http2 | auto,
+        removeRefererHeaderOnRedirect?: boolean,
+        tlsPreferServerCiphers?: boolean,
+        tlsDisabledProtocols?: string[],
+        tlsCipherSelection?: string[]
+      },
+      createdAt?: string,
+      updatedAt?: string,
+      item?: (recursive)[]
+    }[]
   }[],
   event?: {
     id?: string,
@@ -4966,7 +5106,7 @@ await corsair.postman.api.collections.updateFolder({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `model_id` | `string` | No | — |
 | `revision` | `number` | No | — |
 
@@ -4985,14 +5125,6 @@ await corsair.postman.api.collections.updateFolder({});
   lastRevision?: number,
   collection?: string,
   folder?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -5089,14 +5221,14 @@ await corsair.postman.api.collections.updateRequest({});
 | `requestId` | `string` | Yes | — |
 | `collectionId` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `method` | `GET \| PUT \| POST \| PATCH \| DELETE \| COPY \| HEAD \| OPTIONS \| LINK \| UNLINK \| PURGE \| LOCK \| UNLOCK \| PROPFIND \| VIEW` | No | — |
-| `url` | `object` | No | — |
+| `url` | `string \| object \| null` | No | — |
 | `headerData` | `object[]` | No | — |
 | `queryParams` | `object[]` | No | — |
 | `dataMode` | `raw \| urlencoded \| formdata \| binary \| graphql` | No | — |
 | `data` | `object[]` | No | — |
-| `rawModeData` | `string` | No | — |
+| `rawModeData` | `string \| null` | No | — |
 | `graphqlModeData` | `object` | No | — |
 | `dataOptions` | `object` | No | — |
 | `auth` | `object` | No | — |
@@ -5124,7 +5256,7 @@ string | string | {
     description?: string | null,
     disabled?: boolean
   }[]
-}
+} | null
 ```
 </Accordion>
 
@@ -5182,14 +5314,10 @@ string | string | {
   raw?: {
     language?: string
   },
-  urlencoded?: {
-  },
-  params?: {
-  },
-  binary?: {
-  },
-  graphql?: {
-  }
+  urlencoded?: Record<string, any>,
+  params?: Record<string, any>,
+  binary?: Record<string, any>,
+  graphql?: Record<string, any>
 }
 ```
 </Accordion>
@@ -5333,7 +5461,7 @@ string | string | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `model_id` | `string` | No | — |
 | `revision` | `number` | No | — |
 
@@ -5350,14 +5478,6 @@ string | string | {
   owner?: string,
   lastUpdatedBy?: string,
   lastRevision?: number
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -5454,21 +5574,21 @@ await corsair.postman.api.collections.updateResponse({});
 | `responseId` | `string` | Yes | — |
 | `collectionId` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `url` | `object` | No | — |
+| `description` | `string \| null` | No | — |
+| `url` | `string \| object \| null` | No | — |
 | `method` | `GET \| PUT \| POST \| PATCH \| DELETE \| COPY \| HEAD \| OPTIONS \| LINK \| UNLINK \| PURGE \| LOCK \| UNLOCK \| PROPFIND \| VIEW` | No | — |
 | `headers` | `object[]` | No | — |
 | `dataMode` | `raw \| urlencoded \| formdata \| binary \| graphql` | No | — |
-| `rawModeData` | `string` | No | — |
+| `rawModeData` | `string \| null` | No | — |
 | `dataOptions` | `object` | No | — |
 | `responseCode` | `object` | No | — |
-| `status` | `string` | No | — |
+| `status` | `string \| null` | No | — |
 | `time` | `string` | No | — |
-| `cookies` | `string` | No | — |
-| `mime` | `string` | No | — |
+| `cookies` | `string \| null` | No | — |
+| `mime` | `string \| null` | No | — |
 | `text` | `string` | No | — |
 | `language` | `string` | No | — |
-| `rawDataType` | `string` | No | — |
+| `rawDataType` | `string \| null` | No | — |
 | `requestObject` | `string` | No | — |
 
 <AccordionGroup>
@@ -5493,7 +5613,7 @@ string | string | {
     description?: string | null,
     disabled?: boolean
   }[]
-}
+} | null
 ```
 </Accordion>
 
@@ -5515,14 +5635,10 @@ string | string | {
   raw?: {
     language?: string
   },
-  urlencoded?: {
-  },
-  params?: {
-  },
-  binary?: {
-  },
-  graphql?: {
-  }
+  urlencoded?: Record<string, any>,
+  params?: Record<string, any>,
+  binary?: Record<string, any>,
+  graphql?: Record<string, any>
 }
 ```
 </Accordion>
@@ -5545,7 +5661,7 @@ string | string | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `model_id` | `string` | No | — |
 
 <AccordionGroup>
@@ -5560,14 +5676,6 @@ string | string | {
   updatedAt?: string,
   lastRevision?: number,
   lastUpdatedBy?: string
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -5713,8 +5821,7 @@ await corsair.postman.api.environments.create({});
       type?: secret | default,
       secret?: boolean,
       source?: {
-        postman?: {
-        },
+        postman?: Record<string, any>,
         provider?: postman
       },
       description?: string
@@ -5844,8 +5951,7 @@ await corsair.postman.api.environments.get({});
       value?: string,
       type?: secret | default,
       secret?: boolean,
-      source?: {
-      },
+      source?: Record<string, any>,
       description?: string
     }
   )[],
@@ -6090,8 +6196,7 @@ await corsair.postman.api.environments.replace({});
       type?: secret | default,
       secret?: boolean,
       source?: {
-        postman?: {
-        },
+        postman?: Record<string, any>,
         provider?: postman
       },
       description?: string
@@ -6166,8 +6271,7 @@ await corsair.postman.api.environments.update({});
     type?: secret | default,
     secret?: boolean,
     source?: {
-      postman?: {
-      },
+      postman?: Record<string, any>,
       provider?: postman
     },
     description?: string
@@ -6219,8 +6323,7 @@ await corsair.postman.api.environments.update({});
       value?: string,
       type?: secret | default,
       secret?: boolean,
-      source?: {
-      },
+      source?: Record<string, any>,
       description?: string
     }
   )[],
@@ -7077,8 +7180,7 @@ await corsair.postman.api.monitors.run({});
     response?: any,
     errors?: any[]
   }[],
-  failures?: {
-  }[]
+  failures?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -7653,17 +7755,7 @@ await corsair.postman.api.specs.getDefinition({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -8044,8 +8136,7 @@ await corsair.postman.api.tools.importOpenapi({});
 ```ts
 {
   type: json,
-  input: {
-  },
+  input: Record<string, any>,
   options?: {
     requestNameSource?: Fallback | URL,
     indentCharacter?: Tab | Space,

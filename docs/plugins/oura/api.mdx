@@ -31,11 +31,11 @@ await corsair.oura.api.profile.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `age` | `number` | No | — |
-| `weight` | `number` | No | — |
-| `height` | `number` | No | — |
-| `biological_sex` | `string` | No | — |
-| `email` | `string` | No | — |
+| `age` | `number \| null` | No | — |
+| `weight` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `biological_sex` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
 
 
 
@@ -70,7 +70,7 @@ await corsair.oura.api.summary.getActivity({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -145,7 +145,7 @@ await corsair.oura.api.summary.getReadiness({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -204,7 +204,7 @@ await corsair.oura.api.summary.getSleep({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `next_token` | `string` | No | — |
+| `next_token` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">

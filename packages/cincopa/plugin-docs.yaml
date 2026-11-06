@@ -1,0 +1,18 @@
+displayName: Cincopa
+description: Media hosting platform. List galleries, upload assets from a URL and track the upload, and get the upload iframe.
+domain: cincopa.com
+examples:
+  read:
+    path: gallery.list
+    title: List galleries
+  write:
+    path: asset.uploadFromUrl
+    title: Upload an asset from a URL
+    args:
+      input: https://example.com/video.mp4
+dbExample:
+  entity: galleries
+  note: >-
+    This table exists, but Cincopa calls don't fill it yet. This returns only rows
+    you have written yourself.
+  limit: 50

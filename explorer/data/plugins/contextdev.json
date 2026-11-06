@@ -37,18 +37,18 @@
           },
           {
             "key": "period",
-            "optional": true,
-            "type": "{ start: string, credits_used: number }"
+            "optional": false,
+            "type": "{ start: string, credits_used: number } | null"
           },
           {
             "key": "next_refill",
-            "optional": true,
-            "type": "{ at: string, credits: number }"
+            "optional": false,
+            "type": "{ at: string, credits: number } | null"
           },
           {
             "key": "auto_topup",
             "optional": false,
-            "type": "{ enabled: boolean, credits_used_this_period: number, monthly_budget_credits?: number | null }"
+            "type": "{ enabled: boolean, credits_used_this_period: number, monthly_budget_credits: number | null }"
           },
           {
             "key": "key_metadata",
@@ -84,7 +84,7 @@
           {
             "key": "maxAgeMs",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "timeoutOpts",
@@ -124,7 +124,7 @@
           {
             "key": "fontLinks",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { type: google | custom, files: Record<string, string>, category?: string, displayName?: string }>"
           },
           {
             "key": "code",
@@ -368,7 +368,7 @@
           {
             "key": "queryBy",
             "optional": true,
-            "type": "name | domain[]"
+            "type": "(name | domain)[]"
           },
           {
             "key": "typoTolerance",
@@ -516,7 +516,7 @@
           {
             "key": "maxAgeMs",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "timeoutOpts",
@@ -561,7 +561,7 @@
           {
             "key": "styleguide",
             "optional": true,
-            "type": "{ mode: light | dark, colors: { accent: string, background: string, text: string }, typography: { headings: { h1?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string }, h2?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string }, h3?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string }, h4?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string } }, p?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string } }, elementSpacing: { xs: string, sm: string, md: string, lg: string, xl: string }, shadows: { sm: string, md: string, lg: string, xl: string, inner: string }, fontLinks: {}, components: { button: { primary?: { backgroundColor: string, color: string, borderColor: string, borderRadius: string, borderWidth: string, borderStyle: string, padding: string, minWidth: string, minHeight: string, fontSize: string, fontWeight: number, fontFamily?: string, fontFallbacks?: string[], textDecoration: string, textDecorationColor?: string, boxShadow: string, css: string }, secondary?: { backgroundColor: string, color: string, borderColor: string, borderRadius: string, borderWidth: string, borderStyle: string, padding: string, minWidth: string, minHeight: string, fontSize: string, fontWeight: number, fontFamily?: string, fontFallbacks?: string[], textDecoration: string, textDecorationColor?: string, boxShadow: string, css: string }, link?: { backgroundColor: string, color: string, borderColor: string, borderRadius: string, borderWidth: string, borderStyle: string, padding: string, minWidth: string, minHeight: string, fontSize: string, fontWeight: number, fontFamily?: string, fontFallbacks?: string[], textDecoration: string, textDecorationColor?: string, boxShadow: string, css: string } }, card?: { backgroundColor: string, borderColor: string, borderRadius: string, borderWidth: string, borderStyle: string, padding: string, boxShadow: string, textColor: string, css: string } } }"
+            "type": "{ mode: light | dark, colors: { accent: string, background: string, text: string }, typography: { headings: { h1?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string }, h2?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string }, h3?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string }, h4?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string } }, p?: { fontFamily: string, fontFallbacks: string[], fontSize: string, fontWeight: number, lineHeight: string, letterSpacing: string } }, elementSpacing: { xs: string, sm: string, md: string, lg: string, xl: string }, shadows: { sm: string, md: string, lg: string, xl: string, inner: string }, fontLinks: Record<string, { type: google | custom, files: Record<string, string>, category?: string, displayName?: string }>, components: { button: { primary?: { backgroundColor: string, color: string, borderColor: string, borderRadius: string, borderWidth: string, borderStyle: string, padding: string, minWidth: string, minHeight: string, fontSize: string, fontWeight: number, fontFamily?: string, fontFallbacks?: string[], textDecoration: string, textDecorationColor?: string, boxShadow: string, css: string }, secondary?: { backgroundColor: string, color: string, borderColor: string, borderRadius: string, borderWidth: string, borderStyle: string, padding: string, minWidth: string, minHeight: string, fontSize: string, fontWeight: number, fontFamily?: string, fontFallbacks?: string[], textDecoration: string, textDecorationColor?: string, boxShadow: string, css: string }, link?: { backgroundColor: string, color: string, borderColor: string, borderRadius: string, borderWidth: string, borderStyle: string, padding: string, minWidth: string, minHeight: string, fontSize: string, fontWeight: number, fontFamily?: string, fontFallbacks?: string[], textDecoration: string, textDecorationColor?: string, boxShadow: string, css: string } }, card?: { backgroundColor: string, borderColor: string, borderRadius: string, borderWidth: string, borderStyle: string, padding: string, boxShadow: string, textColor: string, css: string } } }"
           },
           {
             "key": "code",
@@ -602,7 +602,7 @@
           {
             "key": "filterBy",
             "optional": true,
-            "type": "{ sourceDomain?: string[], sourceCountry?: string[], articleLanguage?: string[], articleType?: editorial | press_release | regulatory_filing | advisory[], date?: { from?: number, to?: number } }"
+            "type": "{ sourceDomain?: string[], sourceCountry?: string[], articleLanguage?: string[], articleType?: (editorial | press_release | regulatory_filing | advisory)[], date?: { from?: number, to?: number } }"
           },
           {
             "key": "sortBy",
@@ -617,7 +617,7 @@
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tags",
@@ -632,7 +632,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, story_id: string, url: string, title: string, description?: string | null, language?: string | null, authors: string[], image_url?: string | null, published_at?: string | null, type: editorial | press_release | regulatory_filing | advisory, source: { name: string, domain: string, direct: boolean }, match: { level: primary | secondary, confidence?: number | null } }[]"
+            "type": "{ id: string, story_id: string, url: string, title: string, description: string | null, language: string | null, authors: string[], image_url: string | null, published_at: string | null, type: editorial | press_release | regulatory_filing | advisory, source: { name: string, domain: string, direct: boolean }, match: { level: primary | secondary, confidence: number | null } }[]"
           },
           {
             "key": "has_more",
@@ -641,8 +641,8 @@
           },
           {
             "key": "next_cursor",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "meta",
@@ -764,7 +764,7 @@
           {
             "key": "json_format",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "timeoutOpts",
@@ -794,7 +794,7 @@
           {
             "key": "json_content",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "sources",
@@ -865,12 +865,12 @@
           {
             "key": "includeSelectors",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "excludeSelectors",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "country",
@@ -895,12 +895,12 @@
           {
             "key": "maxAgeMs",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "waitForMs",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "settleAnimations",
@@ -940,7 +940,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ markdown: string, metadata: { title: string, description?: string, language?: string, keywords?: string[], canonicalUrl?: string, author?: string, siteName?: string, image?: string, favicon?: string, publishedTime?: string, modifiedTime?: string, robots?: string, openGraph?: {}, twitter?: {}, alternates?: { href: string, hreflang?: string, type?: string, title?: string }[], headings?: { level: number, text: string }[], jsonLd?: {}[], additionalMeta?: {}, sourceUrl: string, finalUrl: string, url: string, crawlDepth: number, statusCode: number, success: boolean } }[]"
+            "type": "{ markdown: string, metadata: { title: string, description?: string, language?: string, keywords?: string[], canonicalUrl?: string, author?: string, siteName?: string, image?: string, favicon?: string, publishedTime?: string, modifiedTime?: string, robots?: string, openGraph?: Record<string, string | string[]>, twitter?: Record<string, string | string[]>, alternates?: { href: string, hreflang?: string, type?: string, title?: string }[], headings?: { level: number, text: string }[], jsonLd?: Record<string, any>[], additionalMeta?: Record<string, string | string[]>, sourceUrl: string, finalUrl: string, url: string, crawlDepth: number, statusCode: number, success: boolean } }[]"
           },
           {
             "key": "metadata",
@@ -981,7 +981,7 @@
           {
             "key": "schema",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "instructions",
@@ -1006,7 +1006,7 @@
           {
             "key": "actions",
             "optional": true,
-            "type": "({ do: wait, timeMs: number } | { do: perform, action: string } | { do: scroll, direction?: up | down | left | right, amount?: number | viewport | max, container?: string, maxScrolls?: number })[]"
+            "type": "({ do: wait, timeMs: number } | { do: perform, action: string } | { do: scroll, direction?: up | down | left | right, amount?: number | viewport | max, container?: string, maxScrolls?: number })[] | null"
           },
           {
             "key": "maxDepth",
@@ -1026,12 +1026,12 @@
           {
             "key": "maxAgeMs",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "waitForMs",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "settleAnimations",
@@ -1086,7 +1086,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
@@ -1142,7 +1142,7 @@
           {
             "key": "imageParams",
             "optional": true,
-            "type": "{ enrich?: dimensions | classification | file[], dedupe?: none | visual }"
+            "type": "{ enrich?: (dimensions | classification | file)[], dedupe?: none | visual }"
           },
           {
             "key": "highlightsParams",
@@ -1152,12 +1152,12 @@
           {
             "key": "jsonParams",
             "optional": true,
-            "type": "{ schema: {}, instructions?: string }"
+            "type": "{ schema: Record<string, any>, instructions?: string }"
           },
           {
             "key": "parseParams",
             "optional": true,
-            "type": "{ type?: custom, rules: lazy } | { type: prebuilt, parser: google-maps | google-play | google-play-reviews | app-store | app-store-reviews | emails | phone-numbers | links }"
+            "type": "{ type?: custom, rules: Record<string, string | { selector: string, type?: item | list, output?: string | (recursive) }> } | { type: prebuilt, parser: google-maps | google-play | google-play-reviews | app-store | app-store-reviews | emails | phone-numbers | links }"
           },
           {
             "key": "productParams",
@@ -1167,7 +1167,7 @@
           {
             "key": "sharedParams",
             "optional": true,
-            "type": "{ country?: string, headers?: {}, viewport?: { width?: number, height?: number }, theme?: light | dark, dismissCookies?: boolean, dismissPopups?: boolean, actions?: ({ type: perform, action: string } | { type: scroll, direction?: down | up | left | right, amount?: number | viewport | max, selector?: string, maxScrolls?: number } | { type: wait, milliseconds: number } | { type: waitFor, selector: string })[], waitFor?: number | string, settleAnimations?: boolean, mainContentOnly?: boolean, includeSelectors?: string[], excludeSelectors?: string[], includeFrames?: boolean, parsers?: { pdf?: { startPage?: number, endPage?: number, ocr?: off | auto } }, profile?: { type: existing, profileId: string } | { type: new, identifier: string, password: string } }"
+            "type": "{ country?: string, headers?: Record<string, string>, viewport?: { width?: number, height?: number }, theme?: light | dark, dismissCookies?: boolean, dismissPopups?: boolean, actions?: ({ type: perform, action: string } | { type: scroll, direction?: down | up | left | right, amount?: number | viewport | max, selector?: string, maxScrolls?: number } | { type: wait, milliseconds: number } | { type: waitFor, selector: string })[], waitFor?: number | string, settleAnimations?: boolean, mainContentOnly?: boolean, includeSelectors?: string[], excludeSelectors?: string[], includeFrames?: boolean, parsers?: { pdf?: { startPage?: number, endPage?: number, ocr?: off | auto } }, profile?: { type: existing, profileId: string } | { type: new, identifier: string, password: string } }"
           },
           {
             "key": "maxAgeMs",
@@ -1202,52 +1202,52 @@
           {
             "key": "html",
             "optional": false,
-            "type": "{ requested: boolean, success?: boolean | null, data?: string | null, error_code?: string, message?: string }"
+            "type": "{ requested: boolean, success: boolean | null, data: string | null, error_code?: string, message?: string }"
           },
           {
             "key": "markdown",
             "optional": false,
-            "type": "{ requested: boolean, success?: boolean | null, data?: string | null, error_code?: string, message?: string }"
+            "type": "{ requested: boolean, success: boolean | null, data: string | null, error_code?: string, message?: string }"
           },
           {
             "key": "screenshot",
             "optional": false,
-            "type": "{ requested: boolean, success?: boolean | null, data?: string | null, error_code?: string, message?: string }"
+            "type": "{ requested: boolean, success: boolean | null, data: string | null, error_code?: string, message?: string }"
           },
           {
             "key": "images",
             "optional": false,
-            "type": "{ requested: boolean, success?: boolean | null, data?: { url: string, alt?: string | null, width?: number, height?: number, classification?: photography | illustration | logo | wordmark | icon | pattern | graphic | other, fileUrl?: string }[] | null, error_code?: string, message?: string }"
+            "type": "{ requested: boolean, success: boolean | null, data: { url: string, alt: string | null, width?: number, height?: number, classification?: photography | illustration | logo | wordmark | icon | pattern | graphic | other, fileUrl?: string }[] | null, error_code?: string, message?: string }"
           },
           {
             "key": "bytes",
             "optional": false,
-            "type": "{ requested: boolean, success?: boolean | null, data?: { contentType: string, base64: string } | null, error_code?: string, message?: string }"
+            "type": "{ requested: boolean, success: boolean | null, data: { contentType: string, base64: string } | null, error_code?: string, message?: string }"
           },
           {
             "key": "parsed",
             "optional": false,
-            "type": "{ requested: boolean, success?: boolean | null, data?: {} | null, error_code?: string, message?: string, type: google-maps | google-play | google-play-reviews | app-store | app-store-reviews | emails | phone-numbers | links | custom }"
+            "type": "{ requested: boolean, success: boolean | null, data: Record<string, any> | null, error_code?: string, message?: string, type: google-maps | google-play | google-play-reviews | app-store | app-store-reviews | emails | phone-numbers | links | custom }"
           },
           {
             "key": "highlights",
             "optional": false,
-            "type": "{ requested: boolean, success?: boolean | null, data?: string[] | null, error_code?: string, message?: string }"
+            "type": "{ requested: boolean, success: boolean | null, data: string[] | null, error_code?: string, message?: string }"
           },
           {
             "key": "json",
             "optional": false,
-            "type": "{ requested: boolean, success?: boolean | null, data?: {} | null, error_code?: string, message?: string, isTruncated?: true }"
+            "type": "{ requested: boolean, success: boolean | null, data: Record<string, any> | null, error_code?: string, message?: string, isTruncated?: true }"
           },
           {
             "key": "product",
             "optional": false,
-            "type": "{ requested: boolean, success?: boolean | null, data?: { isProductPage: boolean, product?: { name: string, description?: string | null, brand?: string | null, sku?: string | null, price?: number | null, regularPrice?: number | null, currency?: string | null, availability?: in_stock | out_of_stock | limited_availability | preorder | backorder | made_to_order | discontinued | null, category?: string | null, imageUrl?: string | null, images: string[], dimensions: string[], features: string[], targetAudience: string[], tags: string[], variants: { sku?: string | null, attributes: {}, url?: string | null, images: string[] }[] } | null } | null, error_code?: string, message?: string }"
+            "type": "{ requested: boolean, success: boolean | null, data: { isProductPage: boolean, product: { name: string, description: string | null, brand: string | null, sku: string | null, price: number | null, regularPrice: number | null, currency: string | null, availability: in_stock | out_of_stock | limited_availability | preorder | backorder | made_to_order | discontinued | null, category: string | null, imageUrl: string | null, images: string[], dimensions: string[], features: string[], targetAudience: string[], tags: string[], variants: { sku: string | null, attributes: Record<string, string>, url: string | null, images: string[] }[] } | null } | null, error_code?: string, message?: string }"
           },
           {
             "key": "profile",
-            "optional": true,
-            "type": "{ id: string }"
+            "optional": false,
+            "type": "{ id: string } | null"
           },
           {
             "key": "isPartial",
@@ -1257,7 +1257,7 @@
           {
             "key": "metadata",
             "optional": false,
-            "type": "{ title?: string, description?: string, language?: string, keywords?: string[], canonicalUrl?: string, author?: string, siteName?: string, image?: string, favicon?: string, publishedTime?: string, modifiedTime?: string, robots?: string, openGraph?: {}, twitter?: {}, alternates?: { href: string, hreflang?: string, type?: string, title?: string }[], headings?: { level: number, text: string }[], jsonLd?: {}[], additionalMeta?: {} }"
+            "type": "{ title?: string, description?: string, language?: string, keywords?: string[], canonicalUrl?: string, author?: string, siteName?: string, image?: string, favicon?: string, publishedTime?: string, modifiedTime?: string, robots?: string, openGraph?: Record<string, string | string[]>, twitter?: Record<string, string | string[]>, alternates?: { href: string, hreflang?: string, type?: string, title?: string }[], headings?: { level: number, text: string }[], jsonLd?: Record<string, any>[], additionalMeta?: Record<string, string | string[]> }"
           },
           {
             "key": "cache_metadata",
@@ -1323,17 +1323,17 @@
           {
             "key": "markdownOptions",
             "optional": true,
-            "type": "{ enabled?: boolean, includeLinks?: boolean, includeImages?: boolean, shortenBase64Images?: boolean, useMainContentOnly?: boolean, pdf?: { shouldParse?: boolean, start?: number, end?: number }, includeFrames?: boolean, maxAgeMs?: number | null, waitForMs?: number | null, timeoutOpts?: { milliseconds: number, behavior?: fail | return-partial } }"
+            "type": "{ enabled?: boolean, includeLinks?: boolean, includeImages?: boolean, shortenBase64Images?: boolean, useMainContentOnly?: boolean, pdf?: { shouldParse?: boolean, start?: number, end?: number }, includeFrames?: boolean, maxAgeMs?: number | null, waitForMs?: number | null, timeoutOpts?: { milliseconds: number, behavior?: fail | return-partial } } | null"
           },
           {
             "key": "highlightsOptions",
             "optional": true,
-            "type": "{ enabled?: boolean, maxCharacters?: number }"
+            "type": "{ enabled?: boolean, maxCharacters?: number } | null"
           },
           {
             "key": "descriptionMaxCharacters",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "timeoutOpts",
@@ -1368,7 +1368,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ url: string, title: string, description: string, relevance: high | medium | low, markdown: { finalDOMState?: loaded | still-loading, markdown?: string | null, code: SUCCESS | NOT_REQUESTED | TIMEOUT | CONTENT_TOO_LARGE | WEBSITE_ACCESS_ERROR | WEBSITE_BLOCKED | ERROR }, highlights: { highlights?: string[] | null, code: SUCCESS | NOT_REQUESTED | TIMEOUT | CONTENT_TOO_LARGE | WEBSITE_ACCESS_ERROR | WEBSITE_BLOCKED | ERROR } }[]"
+            "type": "{ url: string, title: string, description: string, relevance: high | medium | low, markdown: { finalDOMState?: loaded | still-loading, markdown: string | null, code: SUCCESS | NOT_REQUESTED | TIMEOUT | CONTENT_TOO_LARGE | WEBSITE_ACCESS_ERROR | WEBSITE_BLOCKED | ERROR }, highlights: { highlights: string[] | null, code: SUCCESS | NOT_REQUESTED | TIMEOUT | CONTENT_TOO_LARGE | WEBSITE_ACCESS_ERROR | WEBSITE_BLOCKED | ERROR } }[]"
           },
           {
             "key": "cache_metadata",
@@ -1404,7 +1404,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "includeSubdomains",

@@ -291,7 +291,7 @@ await corsair.dropboxsign.api.apiApps.authorize({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `client_id` | `string` | Yes | — |
-| `response_type` | `string` | Yes | — |
+| `response_type` | `string` | No | Defaults to "code". |
 | `state` | `string` | No | — |
 
 
@@ -588,17 +588,7 @@ await corsair.dropboxsign.api.bulkSend.createEmbeddedWithTemplate({});
 | `client_id` | `string` | Yes | — |
 | `template_ids` | `string[]` | Yes | — |
 | `signer_file` | `string` | No | — |
-| `signer_list` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="signer_list full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `signer_list` | `Record<string, any>[]` | No | — |
 
 
 
@@ -767,18 +757,8 @@ await corsair.dropboxsign.api.bulkSend.sendWithTemplate({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `template_ids` | `string[]` | Yes | — |
-| `signer_list` | `object[]` | No | — |
+| `signer_list` | `Record<string, any>[]` | No | — |
 | `title` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="signer_list full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1037,7 +1017,7 @@ await corsair.dropboxsign.api.faxAndReports.createReport({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `report_type` | `user_activity \| document_status \| sms_activity \| fax_usage[]` | Yes | — |
+| `report_type` | `(user_activity \| document_status \| sms_activity \| fax_usage)[]` | Yes | — |
 | `start_date` | `string` | Yes | — |
 | `end_date` | `string` | Yes | — |
 
@@ -1159,8 +1139,7 @@ await corsair.dropboxsign.api.faxAndReports.listFaxes({});
   created_at?: number,
   sender?: string,
   files_url?: string,
-  transmissions?: {
-  }[]
+  transmissions?: Record<string, any>[]
 }[]
 ```
 </Accordion>

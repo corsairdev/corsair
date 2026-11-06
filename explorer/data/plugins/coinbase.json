@@ -1,7 +1,7 @@
 {
   "id": "coinbase",
   "displayName": "Coinbase",
-  "description": "Coinbase plugin for Corsair",
+  "description": "Crypto exchange and wallet platform. Read accounts, transactions, payment methods, prices, exchange rates, and currencies.",
   "npmPackageName": "@corsair-dev/coinbase",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
@@ -81,12 +81,12 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resource",
@@ -178,7 +178,7 @@
           {
             "key": "rates",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -402,7 +402,7 @@
           {
             "key": "trades",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "best_bid",
@@ -474,7 +474,7 @@
           {
             "key": "trades",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "best_bid",
@@ -795,7 +795,7 @@
           {
             "key": "trades",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "best_bid",
@@ -1070,17 +1070,17 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resource",
@@ -1105,17 +1105,17 @@
           {
             "key": "to",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "from",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "details",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1166,7 +1166,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, type?: string, status?: string, amount?: { amount: string, currency: string }, native_amount?: { amount: string, currency: string }, description?: string | null, created_at?: string | null, updated_at?: string | null, resource?: string, resource_path?: string, instant_exchange?: boolean, network?: { status?: string, hash?: string | null, name?: string, transaction_url?: string | null, status_description?: string | null }, to?: {}, from?: {}, details?: {} }[]"
+            "type": "{ id: string, type?: string, status?: string, amount?: { amount: string, currency: string }, native_amount?: { amount: string, currency: string }, description?: string | null, created_at?: string | null, updated_at?: string | null, resource?: string, resource_path?: string, instant_exchange?: boolean, network?: { status?: string, hash?: string | null, name?: string, transaction_url?: string | null, status_description?: string | null }, to?: Record<string, any>, from?: Record<string, any>, details?: Record<string, any> }[]"
           }
         ]
       }
@@ -1191,27 +1191,27 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "profile_location",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "profile_bio",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "profile_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "avatar_url",
@@ -1256,7 +1256,7 @@
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1283,7 +1283,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "user",
@@ -1317,7 +1317,7 @@
           }
         ]
       },
-      "responseType": "{ id?: string, type: wallet:addresses:new-payment, data?: {}, user?: { id?: string, resource?: string, resource_path?: string }, account?: { id?: string, resource?: string, resource_path?: string }, delivery_attempts?: number, created_at?: string, resource?: string, resource_path?: string }",
+      "responseType": "{ id?: string, type: wallet:addresses:new-payment, data?: Record<string, any>, user?: { id?: string, resource?: string, resource_path?: string }, account?: { id?: string, resource?: string, resource_path?: string }, delivery_attempts?: number, created_at?: string, resource?: string, resource_path?: string }",
       "usageExample": "coinbase({\n    webhookHooks: {\n        notifications: {\n            newPayment: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1340,7 +1340,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "user",
@@ -1374,7 +1374,7 @@
           }
         ]
       },
-      "responseType": "{ id?: string, type: ping, data?: {}, user?: { id?: string, resource?: string, resource_path?: string }, account?: { id?: string, resource?: string, resource_path?: string }, delivery_attempts?: number, created_at?: string, resource?: string, resource_path?: string }",
+      "responseType": "{ id?: string, type: ping, data?: Record<string, any>, user?: { id?: string, resource?: string, resource_path?: string }, account?: { id?: string, resource?: string, resource_path?: string }, delivery_attempts?: number, created_at?: string, resource?: string, resource_path?: string }",
       "usageExample": "coinbase({\n    webhookHooks: {\n        notifications: {\n            ping: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

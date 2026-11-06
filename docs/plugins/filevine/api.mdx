@@ -578,7 +578,7 @@ await corsair.filevine.api.notes.create({ projectId: 123, body: 'Hello' });
 |------|------|----------|-------------|
 | `projectId` | `number` | Yes | — |
 | `body` | `string` | Yes | Note body, supports @mentions and markdown |
-| `kind` | `note \| task \| portalMessage \| phoneCall \| text` | Yes | — |
+| `kind` | `note \| task \| portalMessage \| phoneCall \| text` | No | Defaults to "note". |
 | `pinned` | `boolean` | No | — |
 | `attachedDocuments` | `number[]` | No | — |
 | `orgId` | `number` | No | Explicit Filevine org ID — must belong to the authenticated user |

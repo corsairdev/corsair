@@ -620,7 +620,7 @@ await corsair.jigsawstack.api.promptEngine.create({});
 | `inputs` | `object[]` | No | — |
 | `use_internet` | `boolean` | No | — |
 | `optimize_prompt` | `boolean` | No | — |
-| `prompt_guard` | `defamation \| specialized_advice \| privacy \| intellectual_property \| indiscriminate_weapons \| hate \| sexual_content \| elections \| code_interpreter_abuse[]` | No | — |
+| `prompt_guard` | `(defamation \| specialized_advice \| privacy \| intellectual_property \| indiscriminate_weapons \| hate \| sexual_content \| elections \| code_interpreter_abuse)[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="inputs full type">
@@ -732,18 +732,8 @@ await corsair.jigsawstack.api.promptEngine.run({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `input_values` | `object` | No | — |
+| `input_values` | `Record<string, any>` | No | — |
 | `stream` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="input_values full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -919,7 +909,7 @@ await corsair.jigsawstack.api.validate.spamCheck({});
 | `success` | `boolean` | Yes | — |
 | `_usage` | `object` | No | — |
 | `log_id` | `string` | No | — |
-| `check` | `object[]` | No | — |
+| `check` | `object \| object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="_usage full type">
@@ -1037,7 +1027,7 @@ await corsair.jigsawstack.api.vision.detectObjects({});
 | `file_store_key` | `string` | No | — |
 | `prompts` | `string[]` | No | — |
 | `enhance_prompts` | `boolean` | No | — |
-| `features` | `object \| gui[]` | No | — |
+| `features` | `(object \| gui)[]` | No | — |
 | `annotated_image` | `boolean` | No | — |
 | `return_type` | `url \| base64` | No | — |
 | `return_masks` | `boolean` | No | — |
@@ -1093,20 +1083,10 @@ await corsair.jigsawstack.api.vision.vocr({});
 |------|------|----------|-------------|
 | `url` | `string` | No | — |
 | `file_store_key` | `string` | No | — |
-| `prompt` | `object` | No | — |
+| `prompt` | `string \| string[] \| Record<string, string>` | No | — |
 | `page_range` | `number[]` | No | — |
 | `fine_grained` | `boolean` | No | — |
 | `return_bounds` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="prompt full type">
-
-```ts
-string | string[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1222,22 +1202,12 @@ await corsair.jigsawstack.api.web.scrape({});
 |------|------|----------|-------------|
 | `url` | `string` | No | — |
 | `html` | `string` | No | — |
-| `element_prompts` | `object` | No | — |
+| `element_prompts` | `string[] \| Record<string, string>` | No | — |
 | `selectors` | `string[]` | No | — |
 | `root_element_selector` | `string` | No | — |
 | `scroll` | `boolean` | No | — |
 | `page_position` | `number` | No | — |
-| `features` | `meta \| link[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="element_prompts full type">
-
-```ts
-string[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `features` | `(meta \| link)[]` | No | — |
 
 
 
@@ -1253,7 +1223,7 @@ string[] | {
 | `page_position_length` | `number` | No | — |
 | `meta` | `any` | No | — |
 | `link` | `any[]` | No | — |
-| `selectors` | `object` | No | — |
+| `selectors` | `Record<string, any>` | No | — |
 | `context` | `any` | No | — |
 
 <AccordionGroup>
@@ -1265,14 +1235,6 @@ string[] | {
   output_tokens?: number,
   inference_time_tokens?: number,
   total_tokens?: number
-}
-```
-</Accordion>
-
-<Accordion title="selectors full type">
-
-```ts
-{
 }
 ```
 </Accordion>

@@ -54,10 +54,10 @@ await corsair.hookdeck.api.connections.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `team_id` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | Yes | — |
 | `full_name` | `string` | Yes | — |
-| `disabled_at` | `string` | No | — |
-| `paused_at` | `string` | No | — |
+| `disabled_at` | `string \| null` | Yes | — |
+| `paused_at` | `string \| null` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `rules` | `object[]` | No | — |
@@ -136,10 +136,10 @@ await corsair.hookdeck.api.connections.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `team_id` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | Yes | — |
 | `full_name` | `string` | Yes | — |
-| `disabled_at` | `string` | No | — |
-| `paused_at` | `string` | No | — |
+| `disabled_at` | `string \| null` | Yes | — |
+| `paused_at` | `string \| null` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `rules` | `object[]` | No | — |
@@ -201,10 +201,10 @@ await corsair.hookdeck.api.connections.list({});
 {
   id: string,
   team_id: string,
-  name?: string | null,
+  name: string | null,
   full_name: string,
-  disabled_at?: string | null,
-  paused_at?: string | null,
+  disabled_at: string | null,
+  paused_at: string | null,
   created_at: string,
   updated_at: string,
   rules?: {
@@ -277,10 +277,10 @@ await corsair.hookdeck.api.connections.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `team_id` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | Yes | — |
 | `full_name` | `string` | Yes | — |
-| `disabled_at` | `string` | No | — |
-| `paused_at` | `string` | No | — |
+| `disabled_at` | `string \| null` | Yes | — |
+| `paused_at` | `string \| null` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `rules` | `object[]` | No | — |

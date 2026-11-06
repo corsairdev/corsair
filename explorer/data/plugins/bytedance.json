@@ -1,7 +1,7 @@
 {
   "id": "bytedance",
-  "displayName": "Bytedance",
-  "description": "Bytedance plugin for Corsair",
+  "displayName": "ByteDance",
+  "description": "Video generation API for starting Seedance video tasks and listing, reading, and canceling or deleting them.",
   "npmPackageName": "@corsair-dev/bytedance",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -64,7 +64,7 @@
           {
             "key": "model",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -74,97 +74,97 @@
           {
             "key": "content",
             "optional": true,
-            "type": "{ video_url?: string | null, last_frame_url?: string | null }"
+            "type": "{ video_url?: string | null, last_frame_url?: string | null } | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "frames",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "framespersecond",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "generate_audio",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "output_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "priority",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ratio",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resolution",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "seed",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "service_tier",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "execution_expires_after",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "draft",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "draft_task_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "safety_identifier",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "usage",
             "optional": true,
-            "type": "{ completion_tokens?: number | null, total_tokens?: number | null }"
+            "type": "{ completion_tokens?: number | null, total_tokens?: number | null } | null"
           }
         ]
       }

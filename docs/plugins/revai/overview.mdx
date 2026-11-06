@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "RevAI plugin for Corsair"
+description: "Speech-to-text API for submitting transcription jobs and retrieving job status and transcripts."
 ---
 
-Use **RevAI** through Corsair: one client, typed API calls, local DB sync.
+Use **Rev AI** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -44,6 +44,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +52,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -70,7 +71,7 @@ More: [API Key](/concepts/api-key)
 </Tab>
 <Tab title="OAuth 2.0">
 
-Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your RevAI OAuth app.
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Rev AI OAuth app.
 
 ```ts
 revai({
@@ -102,19 +103,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`jobs.getJob`**
+**Get a transcription job**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.revai.api.jobs.getJob({});
+await tenant.revai.api.jobs.getJob({ id: 'Umx5c6F7pH7r' });
 ```
 
 
-**`jobs.submitJob`**
+**Submit a transcription job**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.revai.api.jobs.submitJob({});
+await tenant.revai.api.jobs.submitJob({ media_url: 'https://example.com/interview.mp3' });
 ```
 
 
@@ -122,9 +123,17 @@ See the full list on the [API](/plugins/revai/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.revai.db.<entity>.search()` and `.list()`: `job`.
+Search synced jobs without hitting Rev AI.
 
-See [Database](/plugins/revai/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.revai.db.job.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `job`. See [Database](/plugins/revai/database) for filters and operators.
 
 ## What's next
 

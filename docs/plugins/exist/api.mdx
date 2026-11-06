@@ -177,8 +177,8 @@ await corsair.exist.api.attributes.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | Yes | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -248,8 +248,8 @@ await corsair.exist.api.attributes.listOwned({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | Yes | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -315,8 +315,8 @@ await corsair.exist.api.attributes.listTemplates({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | Yes | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -375,8 +375,8 @@ await corsair.exist.api.attributes.listWithValues({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | Yes | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -407,7 +407,7 @@ await corsair.exist.api.attributes.listWithValues({});
   }[],
   values: {
     date: string,
-    value?: string | number | boolean | null
+    value: string | number | boolean | null
   }[]
 }[]
 ```
@@ -506,7 +506,7 @@ await corsair.exist.api.attributes.update({});
 {
   name: string,
   date: string,
-  value?: string | number | boolean | null
+  value: string | number | boolean | null
 }[]
 ```
 </Accordion>
@@ -528,7 +528,7 @@ await corsair.exist.api.attributes.update({});
 {
   name: string,
   date: string,
-  value?: string | number | boolean | null
+  value: string | number | boolean | null
 }[]
 ```
 </Accordion>
@@ -581,8 +581,8 @@ await corsair.exist.api.averages.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | Yes | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -592,14 +592,14 @@ await corsair.exist.api.averages.list({});
 {
   attribute: string,
   date: string,
-  overall?: number | null,
-  monday?: number | null,
-  tuesday?: number | null,
-  wednesday?: number | null,
-  thursday?: number | null,
-  friday?: number | null,
-  saturday?: number | null,
-  sunday?: number | null
+  overall: number | null,
+  monday: number | null,
+  tuesday: number | null,
+  wednesday: number | null,
+  thursday: number | null,
+  friday: number | null,
+  saturday: number | null,
+  sunday: number | null
 }[]
 ```
 </Accordion>
@@ -640,8 +640,8 @@ await corsair.exist.api.correlations.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | Yes | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -710,8 +710,8 @@ await corsair.exist.api.insights.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | Yes | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -720,7 +720,7 @@ await corsair.exist.api.insights.list({});
 ```ts
 {
   created: string,
-  target_date?: string | null,
+  target_date: string | null,
   type: {
     name: string,
     period: number,
@@ -807,7 +807,7 @@ await corsair.exist.api.users.getProfile({});
 | `username` | `string` | Yes | — |
 | `first_name` | `string` | Yes | — |
 | `last_name` | `string` | Yes | — |
-| `avatar` | `string` | No | — |
+| `avatar` | `string \| null` | No | — |
 | `timezone` | `string` | Yes | — |
 | `local_time` | `string` | Yes | — |
 | `imperial_distance` | `boolean` | Yes | — |

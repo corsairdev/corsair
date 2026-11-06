@@ -56,7 +56,7 @@ await corsair.octen.api.answer.create({});
   time_range?: day | week | month | year | d | w | m | y,
   start_time?: string,
   end_time?: string,
-  language?: ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh[],
+  language?: (ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh)[],
   highlight?: {
     enable?: boolean,
     max_tokens?: number
@@ -87,7 +87,7 @@ await corsair.octen.api.answer.create({});
 | `queries` | `string[]` | No | — |
 | `search_results` | `object[]` | No | — |
 | `meta` | `object` | No | — |
-| `warning` | `string` | No | — |
+| `warning` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="choices full type">
@@ -188,7 +188,7 @@ await corsair.octen.api.broadSearch.post({});
   time_range?: day | week | month | year | d | w | m | y,
   start_time?: string,
   end_time?: string,
-  language?: ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh[],
+  language?: (ar | de | en | es | fr | hi | id | it | ja | ko | nl | pl | pt | ru | th | tr | vi | zh)[],
   highlight?: {
     enable?: boolean,
     max_tokens?: number
@@ -275,7 +275,7 @@ await corsair.octen.api.businessSearch.post({});
 | `time_range` | `day \| week \| month \| year \| d \| w \| m \| y` | No | — |
 | `start_time` | `string` | No | — |
 | `end_time` | `string` | No | — |
-| `language` | `ar \| de \| en \| es \| fr \| hi \| id \| it \| ja \| ko \| nl \| pl \| pt \| ru \| th \| tr \| vi \| zh[]` | No | — |
+| `language` | `(ar \| de \| en \| es \| fr \| hi \| id \| it \| ja \| ko \| nl \| pl \| pt \| ru \| th \| tr \| vi \| zh)[]` | No | — |
 | `highlight` | `object` | No | — |
 | `full_content` | `object` | No | — |
 | `entities` | `object` | No | — |
@@ -385,7 +385,7 @@ await corsair.octen.api.embedding.create({});
 | `input` | `string[]` | Yes | — |
 | `model` | `octen-embedding-0.6b \| octen-embedding-4b \| octen-embedding-8b` | No | — |
 | `dimension` | `number` | No | — |
-| `input_type` | `query \| document` | No | — |
+| `input_type` | `query \| document \| null` | No | — |
 
 
 
@@ -734,7 +734,7 @@ await corsair.octen.api.newsSearch.post({});
 | `time_range` | `day \| week \| month \| year \| d \| w \| m \| y` | No | — |
 | `start_time` | `string` | No | — |
 | `end_time` | `string` | No | — |
-| `language` | `ar \| de \| en \| es \| fr \| hi \| id \| it \| ja \| ko \| nl \| pl \| pt \| ru \| th \| tr \| vi \| zh[]` | No | — |
+| `language` | `(ar \| de \| en \| es \| fr \| hi \| id \| it \| ja \| ko \| nl \| pl \| pt \| ru \| th \| tr \| vi \| zh)[]` | No | — |
 | `highlight` | `object` | No | — |
 | `full_content` | `object` | No | — |
 | `subjects` | `object` | No | — |
@@ -890,7 +890,7 @@ await corsair.octen.api.search.post({});
 | `time_range` | `day \| week \| month \| year \| d \| w \| m \| y` | No | — |
 | `start_time` | `string` | No | — |
 | `end_time` | `string` | No | — |
-| `language` | `ar \| de \| en \| es \| fr \| hi \| id \| it \| ja \| ko \| nl \| pl \| pt \| ru \| th \| tr \| vi \| zh[]` | No | — |
+| `language` | `(ar \| de \| en \| es \| fr \| hi \| id \| it \| ja \| ko \| nl \| pl \| pt \| ru \| th \| tr \| vi \| zh)[]` | No | — |
 | `highlight` | `object` | No | — |
 | `full_content` | `object` | No | — |
 | `format` | `markdown \| text` | No | — |
@@ -986,7 +986,7 @@ await corsair.octen.api.videoGeneration.create({});
 | `input_references` | `object[]` | No | — |
 | `generate_audio` | `boolean` | No | — |
 | `seed` | `number` | No | — |
-| `extra_params` | `object` | No | — |
+| `extra_params` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="frame_images full type">
@@ -1005,14 +1005,6 @@ await corsair.octen.api.videoGeneration.create({});
 {
   image: string
 }[]
-```
-</Accordion>
-
-<Accordion title="extra_params full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>

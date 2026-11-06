@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Docsumo plugin for Corsair"
+description: "Document AI platform for extracting data from uploaded documents, with endpoints for documents, document types, folders, tables, analytics, and agents."
 ---
 
 Use **Docsumo** through Corsair: one client, typed API calls.
@@ -43,6 +43,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -50,7 +51,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -88,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`agents.listCases`**
+**List documents**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.docsumo.api.agents.listCases({});
+await tenant.docsumo.api.documents.listAll({});
 ```
 
 
-**`folders.create`**
+**Create a folder**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.docsumo.api.folders.create({});
+await tenant.docsumo.api.folders.create({ folder_name: 'Invoices', type: 'general' });
 ```
 
 

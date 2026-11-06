@@ -1,7 +1,7 @@
 {
   "id": "reducto",
   "displayName": "Reducto",
-  "description": "Reducto plugin for Corsair",
+  "description": "Document processing API that parses, extracts fields from, classifies, splits, and edits documents, and runs Studio pipelines, with async jobs and file uploads.",
   "npmPackageName": "@corsair-dev/reducto",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -67,17 +67,17 @@
           {
             "key": "category_groups",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "page_range",
             "optional": true,
-            "type": "{ start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[]"
+            "type": "{ start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null"
           },
           {
             "key": "document_metadata",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "model",
@@ -112,12 +112,12 @@
           {
             "key": "duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "usage",
             "optional": true,
-            "type": "{ num_pages: number, credits?: number | null, num_categories: number }"
+            "type": "{ num_pages: number, credits?: number | null, num_categories: number } | null"
           }
         ]
       }
@@ -143,17 +143,17 @@
           {
             "key": "category_groups",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "page_range",
             "optional": true,
-            "type": "{ start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[]"
+            "type": "{ start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null"
           },
           {
             "key": "document_metadata",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "model",
@@ -173,7 +173,7 @@
           {
             "key": "async",
             "optional": true,
-            "type": "{ metadata?: {} | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
+            "type": "{ metadata?: Record<string, any> | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
           }
         ]
       },
@@ -214,7 +214,7 @@
           {
             "key": "form_schema",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "priority",
@@ -234,17 +234,17 @@
           {
             "key": "job_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "form_schema",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "usage",
             "optional": true,
-            "type": "{ num_pages: number, credits?: number | null }"
+            "type": "{ num_pages: number, credits?: number | null } | null"
           }
         ]
       }
@@ -275,7 +275,7 @@
           {
             "key": "form_schema",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "priority",
@@ -316,7 +316,7 @@
           {
             "key": "parsing",
             "optional": true,
-            "type": "{ enhance?: { agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }, retrieval?: { chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[], embedding_optimized?: boolean }, formatting?: { add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[] }, spreadsheet?: { split_large_tables?: { enabled?: boolean, size?: number }, include?: cell_colors | formula | dropdowns[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }, settings?: { ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: figure | table | page[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null } }"
+            "type": "{ enhance?: { agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }, retrieval?: { chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: (Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature)[], embedding_optimized?: boolean }, formatting?: { add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: (change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks)[] }, spreadsheet?: { split_large_tables?: { enabled?: boolean, size?: number }, include?: (cell_colors | formula | dropdowns)[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }, settings?: { ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: (figure | table | page)[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null } }"
           },
           {
             "key": "instructions",
@@ -341,27 +341,27 @@
           {
             "key": "result",
             "optional": false,
-            "type": "any[] | {} | { type: url, url: string, result_id: string }"
+            "type": "any[] | Record<string, any> | { type: url, url: string, result_id: string }"
           },
           {
             "key": "citations",
             "optional": true,
-            "type": "any[] | { type: url, url: string, result_id: string }"
+            "type": "any[] | { type: url, url: string, result_id: string } | null"
           },
           {
             "key": "job_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "studio_link",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -382,7 +382,7 @@
           {
             "key": "parsing",
             "optional": true,
-            "type": "{ enhance?: { agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }, retrieval?: { chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[], embedding_optimized?: boolean }, formatting?: { add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[] }, spreadsheet?: { split_large_tables?: { enabled?: boolean, size?: number }, include?: cell_colors | formula | dropdowns[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }, settings?: { ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: figure | table | page[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null } }"
+            "type": "{ enhance?: { agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }, retrieval?: { chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: (Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature)[], embedding_optimized?: boolean }, formatting?: { add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: (change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks)[] }, spreadsheet?: { split_large_tables?: { enabled?: boolean, size?: number }, include?: (cell_colors | formula | dropdowns)[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }, settings?: { ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: (figure | table | page)[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null } }"
           },
           {
             "key": "instructions",
@@ -397,7 +397,7 @@
           {
             "key": "async",
             "optional": true,
-            "type": "{ metadata?: {} | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
+            "type": "{ metadata?: Record<string, any> | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
           },
           {
             "key": "queue_priority",
@@ -460,7 +460,7 @@
           {
             "key": "extension",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -475,7 +475,7 @@
           {
             "key": "presigned_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -497,7 +497,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{} | null | undefined"
+        "type": "Record<string, any> | null | undefined"
       }
     },
     {
@@ -558,57 +558,57 @@
           {
             "key": "result",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "progress",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           },
           {
             "key": "num_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "total_pages",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bucket",
             "optional": true,
-            "type": "any"
+            "type": "any | null"
           }
         ]
       }
@@ -629,7 +629,7 @@
           {
             "key": "cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "limit",
@@ -649,7 +649,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -675,22 +675,22 @@
           {
             "key": "retrieval",
             "optional": true,
-            "type": "{ chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[], embedding_optimized?: boolean }"
+            "type": "{ chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: (Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature)[], embedding_optimized?: boolean }"
           },
           {
             "key": "formatting",
             "optional": true,
-            "type": "{ add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[] }"
+            "type": "{ add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: (change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks)[] }"
           },
           {
             "key": "spreadsheet",
             "optional": true,
-            "type": "{ split_large_tables?: { enabled?: boolean, size?: number }, include?: cell_colors | formula | dropdowns[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }"
+            "type": "{ split_large_tables?: { enabled?: boolean, size?: number }, include?: (cell_colors | formula | dropdowns)[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }"
           },
           {
             "key": "settings",
             "optional": true,
-            "type": "{ ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: figure | table | page[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null }"
+            "type": "{ ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: (figure | table | page)[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null }"
           }
         ]
       },
@@ -715,27 +715,27 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ type: full, chunks: { content: string, embed?: string, blocks?: { type: string, content?: string, bbox?: { left: number, top: number, width: number, height: number, page: number, original_page?: number }, confidence?: string, granular_confidence?: { parse_confidence?: number | null, extract_confidence?: number | null }, image_url?: string | null, chart_data?: string[] | null, merged_tables?: any[], extra?: {} }[], enriched?: string | null, enrichment_success?: boolean }[], ocr?: { words?: { text: string, bbox: { left: number, top: number, width: number, height: number, page: number, original_page?: number }, confidence?: number, chunk_index?: number, rotation?: number }[], lines?: { text: string, bbox: { left: number, top: number, width: number, height: number, page: number, original_page?: number }, confidence?: number, chunk_index?: number, rotation?: number }[] } | null, custom?: any | null } | { type: url, url: string, result_id: string }"
+            "type": "{ type: full, chunks: { content: string, embed?: string, blocks?: { type: string, content?: string, bbox?: { left: number, top: number, width: number, height: number, page: number, original_page?: number }, confidence?: string, granular_confidence?: { parse_confidence?: number | null, extract_confidence?: number | null }, image_url?: string | null, chart_data?: string[] | null, merged_tables?: any[], extra?: Record<string, any> }[], enriched?: string | null, enrichment_success?: boolean }[], ocr?: { words?: { text: string, bbox: { left: number, top: number, width: number, height: number, page: number, original_page?: number }, confidence?: number, chunk_index?: number, rotation?: number }[], lines?: { text: string, bbox: { left: number, top: number, width: number, height: number, page: number, original_page?: number }, confidence?: number, chunk_index?: number, rotation?: number }[] } | null, custom?: any | null } | { type: url, url: string, result_id: string }"
           },
           {
             "key": "response_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pdf_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "studio_link",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "document_properties",
             "optional": true,
-            "type": "{ title?: string | null, author?: string | null, subject?: string | null, keywords?: string | null, creator?: string | null, producer?: string | null, last_modified_by?: string | null, created_at?: string | null, modified_at?: string | null }"
+            "type": "{ title?: string | null, author?: string | null, subject?: string | null, keywords?: string | null, creator?: string | null, producer?: string | null, last_modified_by?: string | null, created_at?: string | null, modified_at?: string | null } | null"
           }
         ]
       }
@@ -761,27 +761,27 @@
           {
             "key": "retrieval",
             "optional": true,
-            "type": "{ chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[], embedding_optimized?: boolean }"
+            "type": "{ chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: (Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature)[], embedding_optimized?: boolean }"
           },
           {
             "key": "formatting",
             "optional": true,
-            "type": "{ add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[] }"
+            "type": "{ add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: (change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks)[] }"
           },
           {
             "key": "spreadsheet",
             "optional": true,
-            "type": "{ split_large_tables?: { enabled?: boolean, size?: number }, include?: cell_colors | formula | dropdowns[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }"
+            "type": "{ split_large_tables?: { enabled?: boolean, size?: number }, include?: (cell_colors | formula | dropdowns)[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }"
           },
           {
             "key": "settings",
             "optional": true,
-            "type": "{ ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: figure | table | page[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null }"
+            "type": "{ ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: (figure | table | page)[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null }"
           },
           {
             "key": "async",
             "optional": true,
-            "type": "{ metadata?: {} | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
+            "type": "{ metadata?: Record<string, any> | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
           },
           {
             "key": "queue_priority",
@@ -873,7 +873,7 @@
           {
             "key": "async",
             "optional": true,
-            "type": "{ metadata?: {} | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
+            "type": "{ metadata?: Record<string, any> | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
           }
         ]
       },
@@ -904,7 +904,7 @@
           {
             "key": "parsing",
             "optional": true,
-            "type": "{ enhance?: { agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }, retrieval?: { chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[], embedding_optimized?: boolean }, formatting?: { add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[] }, spreadsheet?: { split_large_tables?: { enabled?: boolean, size?: number }, include?: cell_colors | formula | dropdowns[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }, settings?: { ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: figure | table | page[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null } }"
+            "type": "{ enhance?: { agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }, retrieval?: { chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: (Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature)[], embedding_optimized?: boolean }, formatting?: { add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: (change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks)[] }, spreadsheet?: { split_large_tables?: { enabled?: boolean, size?: number }, include?: (cell_colors | formula | dropdowns)[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }, settings?: { ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: (figure | table | page)[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null } }"
           },
           {
             "key": "split_description",
@@ -934,17 +934,17 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ splits: { name: string, pages: number[] }[] } | { type: url, url: string, result_id: string } | {}"
+            "type": "{ splits: { name: string, pages: number[] }[] } | { type: url, url: string, result_id: string } | Record<string, any>"
           },
           {
             "key": "job_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -965,7 +965,7 @@
           {
             "key": "parsing",
             "optional": true,
-            "type": "{ enhance?: { agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }, retrieval?: { chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[], embedding_optimized?: boolean }, formatting?: { add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[] }, spreadsheet?: { split_large_tables?: { enabled?: boolean, size?: number }, include?: cell_colors | formula | dropdowns[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }, settings?: { ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: figure | table | page[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null } }"
+            "type": "{ enhance?: { agentic?: { scope: text | table | figure, prompt?: string | null, mode?: default | auto | max, advanced_chart_agent?: boolean, return_overlays?: boolean }[], advanced_chart_agent?: boolean, summarize_figures?: boolean, intelligent_ordering?: boolean }, retrieval?: { chunking?: { chunk_mode?: variable | section | page | disabled | block | page_sections, chunk_size?: number | null, chunk_overlap?: number }, filter_blocks?: (Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature)[], embedding_optimized?: boolean }, formatting?: { add_page_markers?: boolean, table_output_format?: html | json | md | jsonbbox | dynamic | csv, merge_tables?: boolean, include?: (change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks)[] }, spreadsheet?: { split_large_tables?: { enabled?: boolean, size?: number }, include?: (cell_colors | formula | dropdowns)[], clustering?: accurate | fast | disabled, exclude?: string[], max_cell_count?: number | null }, settings?: { ocr_system?: standard | legacy, extraction_mode?: ocr | hybrid, force_url_result?: boolean, force_file_extension?: string | null, return_ocr_data?: boolean, return_images?: (figure | table | page)[], embed_pdf_metadata?: boolean, extract_document_properties?: boolean, embed_pdf_metadata_dpi?: number, persist_results?: boolean, timeout?: number | null, page_range?: { start?: number | null, end?: number | null } | { start?: number | null, end?: number | null }[] | number[] | null, document_password?: string | null, model?: string | null } }"
           },
           {
             "key": "split_description",
@@ -985,7 +985,7 @@
           {
             "key": "async",
             "optional": true,
-            "type": "{ metadata?: {} | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
+            "type": "{ metadata?: Record<string, any> | null, priority?: boolean, webhook?: { mode: direct, url: string } | { mode: svix, channels?: string[] } | { mode: disabled, channels?: string[] } | null }"
           }
         ]
       },
@@ -1019,6 +1019,11 @@
         },
         {
           "field": "jobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resultKind",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -1157,6 +1162,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "resultKind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "resultUrl",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -1219,6 +1229,16 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "numPages",
           "type": "number",
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
@@ -1254,6 +1274,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "parseResultKind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "parseResultUrl",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -1264,12 +1289,32 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "extractResultKind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "splitResultKind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "splitResultUrl",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
           "field": "splitResultId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "classifyResultKind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "pipelineResultKind",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -1427,6 +1472,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "kind",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "ocrIndex",
           "type": "number",
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
@@ -1474,6 +1524,11 @@
         },
         {
           "field": "jobId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resultKind",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

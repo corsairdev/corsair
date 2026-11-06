@@ -158,6 +158,7 @@ const rows = await corsair.dockerhub.db.orgMembers.search({
 | `gravatar_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `location` | `string` | equals, contains, startsWith, endsWith, in |
 | `profile_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
 | `role` | `string` | equals, contains, startsWith, endsWith, in |
 | `is_guest` | `boolean` | equals |
@@ -274,6 +275,7 @@ const rows = await corsair.dockerhub.db.teamMembers.search({
 | `gravatar_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `location` | `string` | equals, contains, startsWith, endsWith, in |
 | `profile_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
@@ -333,6 +335,7 @@ const rows = await corsair.dockerhub.db.users.search({
 | `gravatar_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `location` | `string` | equals, contains, startsWith, endsWith, in |
 | `profile_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 

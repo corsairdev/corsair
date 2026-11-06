@@ -28,26 +28,8 @@ await corsair.flutterwave.api.banks.getBranches({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -57,18 +39,10 @@ await corsair.flutterwave.api.banks.getBranches({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -103,26 +77,8 @@ await corsair.flutterwave.api.banks.getByCountry({});
 |------|------|----------|-------------|
 | `country` | `string \| number` | Yes | — |
 | `include_provider_type` | `any` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -132,18 +88,10 @@ await corsair.flutterwave.api.banks.getByCountry({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -181,13 +129,10 @@ await corsair.flutterwave.api.banks.resolveAccount({});
 {
   account_number: string,
   account_bank: string,
-  query?: {
-  },
-  body?: {
-  }
+  query?: Record<string, string | number | boolean>,
+  body?: Record<string, any>
 } | {
-  query?: {
-  },
+  query?: Record<string, string | number | boolean>,
   body: {
     account_number: string,
     account_bank: string
@@ -204,18 +149,10 @@ await corsair.flutterwave.api.banks.resolveAccount({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -257,16 +194,13 @@ await corsair.flutterwave.api.beneficiaries.create({});
     account_bank: string,
     beneficiary_name: string
   },
-  query?: {
-  }
+  query?: Record<string, string | number | boolean>
 } | {
   account_number: string,
   account_bank: string,
   beneficiary_name: string,
-  query?: {
-  },
-  body?: {
-  }
+  query?: Record<string, string | number | boolean>,
+  body?: Record<string, any>
 }
 ```
 </Accordion>
@@ -279,18 +213,10 @@ await corsair.flutterwave.api.beneficiaries.create({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -325,26 +251,8 @@ await corsair.flutterwave.api.beneficiaries.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -354,18 +262,10 @@ await corsair.flutterwave.api.beneficiaries.delete({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -397,26 +297,8 @@ await corsair.flutterwave.api.beneficiaries.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -426,18 +308,10 @@ await corsair.flutterwave.api.beneficiaries.get({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -472,26 +346,8 @@ await corsair.flutterwave.api.beneficiaries.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -501,18 +357,10 @@ await corsair.flutterwave.api.beneficiaries.list({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -549,26 +397,8 @@ await corsair.flutterwave.api.bills.getCategories({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `country` | `string` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -578,18 +408,10 @@ await corsair.flutterwave.api.bills.getCategories({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -623,26 +445,8 @@ await corsair.flutterwave.api.bills.listBillers({});
 |------|------|----------|-------------|
 | `category` | `string \| number` | Yes | — |
 | `country` | `string` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -652,18 +456,10 @@ await corsair.flutterwave.api.bills.listBillers({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -696,26 +492,8 @@ await corsair.flutterwave.api.bills.listProducts({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `biller_code` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -725,18 +503,10 @@ await corsair.flutterwave.api.bills.listProducts({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -777,26 +547,8 @@ await corsair.flutterwave.api.bills.listRecurring({});
 | `reference` | `any` | No | — |
 | `category` | `any` | No | — |
 | `country` | `string` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -806,18 +558,10 @@ await corsair.flutterwave.api.bills.listRecurring({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -850,9 +594,9 @@ await corsair.flutterwave.api.bills.validateItem({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `item_code` | `string \| number` | Yes | — |
-| `customer` | `object` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
+| `customer` | `object \| string` | Yes | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="customer full type">
@@ -865,22 +609,6 @@ await corsair.flutterwave.api.bills.validateItem({});
 } | string
 ```
 </Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -891,18 +619,10 @@ await corsair.flutterwave.api.bills.validateItem({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -941,20 +661,15 @@ await corsair.flutterwave.api.bulkTokenizedCharges.create({});
 ```ts
 {
   title: string,
-  bulk_data: {
-  }[],
+  bulk_data: Record<string, any>[],
   retry_strategy?: string,
-  query?: {
-  },
-  body?: {
-  }
+  query?: Record<string, string | number | boolean>,
+  body?: Record<string, any>
 } | {
-  query?: {
-  },
+  query?: Record<string, string | number | boolean>,
   body: {
     title: string,
-    bulk_data: {
-    }[]
+    bulk_data: Record<string, any>[]
   }
 }
 ```
@@ -968,18 +683,10 @@ await corsair.flutterwave.api.bulkTokenizedCharges.create({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1012,17 +719,7 @@ await corsair.flutterwave.api.bulkTokenizedCharges.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `bulk_id` | `number` | Yes | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1032,18 +729,10 @@ await corsair.flutterwave.api.bulkTokenizedCharges.get({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1092,8 +781,7 @@ await corsair.flutterwave.api.bulkVirtualAccounts.create({});
     }[],
     is_permanent?: boolean
   },
-  query?: {
-  }
+  query?: Record<string, string | number | boolean>
 } | {
   batch_ref: string,
   bulk_data: {
@@ -1104,10 +792,8 @@ await corsair.flutterwave.api.bulkVirtualAccounts.create({});
     nin?: string
   }[],
   is_permanent?: boolean,
-  query?: {
-  },
-  body?: {
-  }
+  query?: Record<string, string | number | boolean>,
+  body?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1120,18 +806,10 @@ await corsair.flutterwave.api.bulkVirtualAccounts.create({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1164,26 +842,8 @@ await corsair.flutterwave.api.bulkVirtualAccounts.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `batch_id` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -1193,18 +853,10 @@ await corsair.flutterwave.api.bulkVirtualAccounts.get({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1239,26 +891,8 @@ await corsair.flutterwave.api.cards.resolveBin({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `bin` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -1268,18 +902,10 @@ await corsair.flutterwave.api.cards.resolveBin({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1320,26 +946,8 @@ await corsair.flutterwave.api.chargebacks.list({});
 | `from` | `any` | No | — |
 | `to` | `any` | No | — |
 | `flw_ref` | `any` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -1349,18 +957,10 @@ await corsair.flutterwave.api.chargebacks.list({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1404,14 +1004,11 @@ await corsair.flutterwave.api.charges.initiateMobileMoneyTanzania({});
   currency: string,
   email: string,
   phone_number: string,
-  query?: {
-  },
-  body?: {
-  }
+  query?: Record<string, string | number | boolean>,
+  body?: Record<string, any>
 } | {
   type: string,
-  query?: {
-  },
+  query?: Record<string, string | number | boolean>,
   body: {
     tx_ref: string,
     amount: string | number,
@@ -1431,18 +1028,10 @@ await corsair.flutterwave.api.charges.initiateMobileMoneyTanzania({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1492,13 +1081,10 @@ await corsair.flutterwave.api.paymentLinks.create({});
   } | string,
   currency?: string,
   redirect_url?: string,
-  query?: {
-  },
-  body?: {
-  }
+  query?: Record<string, string | number | boolean>,
+  body?: Record<string, any>
 } | {
-  query?: {
-  },
+  query?: Record<string, string | number | boolean>,
   body: {
     tx_ref: string,
     amount: string | number,
@@ -1520,18 +1106,10 @@ await corsair.flutterwave.api.paymentLinks.create({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1563,26 +1141,8 @@ await corsair.flutterwave.api.paymentLinks.disable({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -1592,18 +1152,10 @@ await corsair.flutterwave.api.paymentLinks.disable({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1638,26 +1190,8 @@ await corsair.flutterwave.api.paymentPlans.cancel({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -1667,18 +1201,10 @@ await corsair.flutterwave.api.paymentPlans.cancel({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1719,13 +1245,10 @@ await corsair.flutterwave.api.paymentPlans.create({});
   amount: string | number,
   name: string,
   interval: string,
-  query?: {
-  },
-  body?: {
-  }
+  query?: Record<string, string | number | boolean>,
+  body?: Record<string, any>
 } | {
-  query?: {
-  },
+  query?: Record<string, string | number | boolean>,
   body: {
     amount: string | number,
     name: string,
@@ -1743,18 +1266,10 @@ await corsair.flutterwave.api.paymentPlans.create({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1790,26 +1305,8 @@ await corsair.flutterwave.api.paymentPlans.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -1819,18 +1316,10 @@ await corsair.flutterwave.api.paymentPlans.get({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1872,26 +1361,8 @@ await corsair.flutterwave.api.paymentPlans.list({});
 | `currency` | `string` | No | — |
 | `interval` | `string` | No | — |
 | `status` | `any` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -1901,18 +1372,10 @@ await corsair.flutterwave.api.paymentPlans.list({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1950,26 +1413,8 @@ await corsair.flutterwave.api.paymentPlans.update({});
 | `id` | `string \| number` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -1979,18 +1424,10 @@ await corsair.flutterwave.api.paymentPlans.update({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2029,26 +1466,8 @@ await corsair.flutterwave.api.payoutSubaccounts.list({});
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
 | `next_cursor` | `any` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -2058,18 +1477,10 @@ await corsair.flutterwave.api.payoutSubaccounts.list({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2105,26 +1516,8 @@ await corsair.flutterwave.api.payoutSubaccounts.listRefunds({});
 | `from` | `any` | No | — |
 | `to` | `any` | No | — |
 | `reference` | `any` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -2134,18 +1527,10 @@ await corsair.flutterwave.api.payoutSubaccounts.listRefunds({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2183,26 +1568,8 @@ await corsair.flutterwave.api.refunds.create({});
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
 | `amount` | `string \| number` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -2212,18 +1579,10 @@ await corsair.flutterwave.api.refunds.create({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2258,26 +1617,8 @@ await corsair.flutterwave.api.refunds.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -2287,18 +1628,10 @@ await corsair.flutterwave.api.refunds.get({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2338,26 +1671,8 @@ await corsair.flutterwave.api.refunds.list({});
 | `currency` | `string` | No | — |
 | `flw_ref` | `any` | No | — |
 | `id` | `any` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -2367,18 +1682,10 @@ await corsair.flutterwave.api.refunds.list({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2419,26 +1726,8 @@ await corsair.flutterwave.api.settlements.list({});
 | `to` | `any` | No | — |
 | `subaccount_id` | `any` | No | — |
 | `disburse_ref` | `any` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -2448,18 +1737,10 @@ await corsair.flutterwave.api.settlements.list({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2503,13 +1784,10 @@ await corsair.flutterwave.api.subaccounts.create({});
   split_value: number,
   country: string,
   business_mobile: string,
-  query?: {
-  },
-  body?: {
-  }
+  query?: Record<string, string | number | boolean>,
+  body?: Record<string, any>
 } | {
-  query?: {
-  },
+  query?: Record<string, string | number | boolean>,
   body: {
     account_bank: string,
     account_number: string,
@@ -2530,18 +1808,10 @@ await corsair.flutterwave.api.subaccounts.create({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2576,26 +1846,8 @@ await corsair.flutterwave.api.subaccounts.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -2605,18 +1857,10 @@ await corsair.flutterwave.api.subaccounts.delete({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2648,26 +1892,8 @@ await corsair.flutterwave.api.subaccounts.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -2677,18 +1903,10 @@ await corsair.flutterwave.api.subaccounts.get({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2726,26 +1944,8 @@ await corsair.flutterwave.api.subaccounts.list({});
 | `account_number` | `string` | No | — |
 | `bank_name` | `any` | No | — |
 | `page` | `number` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -2755,18 +1955,10 @@ await corsair.flutterwave.api.subaccounts.list({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2803,26 +1995,8 @@ await corsair.flutterwave.api.subaccounts.update({});
 | `id` | `string \| number` | Yes | — |
 | `business_name` | `string` | No | — |
 | `split_value` | `number` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -2832,18 +2006,10 @@ await corsair.flutterwave.api.subaccounts.update({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2888,26 +2054,8 @@ await corsair.flutterwave.api.subscriptions.list({});
 | `next_due_to` | `any` | No | — |
 | `page` | `number` | No | — |
 | `status` | `any` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -2917,18 +2065,10 @@ await corsair.flutterwave.api.subscriptions.list({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2966,26 +2106,8 @@ await corsair.flutterwave.api.transactions.generateReference({});
 |------|------|----------|-------------|
 | `prefix` | `string` | No | — |
 | `length` | `number` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -2995,18 +2117,10 @@ await corsair.flutterwave.api.transactions.generateReference({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3039,26 +2153,8 @@ await corsair.flutterwave.api.transactions.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -3068,18 +2164,10 @@ await corsair.flutterwave.api.transactions.get({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3119,26 +2207,8 @@ await corsair.flutterwave.api.transactions.getFee({});
 | `currency` | `string` | Yes | — |
 | `payment_type` | `any` | No | — |
 | `card_first6digits` | `any` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -3148,18 +2218,10 @@ await corsair.flutterwave.api.transactions.getFee({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3199,26 +2261,8 @@ await corsair.flutterwave.api.transactions.list({});
 | `tx_ref` | `string` | No | — |
 | `customer_email` | `any` | No | — |
 | `currency` | `string` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -3228,18 +2272,10 @@ await corsair.flutterwave.api.transactions.list({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3276,26 +2312,8 @@ await corsair.flutterwave.api.transactions.verifyByReference({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `tx_ref` | `string` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -3305,18 +2323,10 @@ await corsair.flutterwave.api.transactions.verifyByReference({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3353,26 +2363,8 @@ await corsair.flutterwave.api.transactions.viewTimeline({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -3382,18 +2374,10 @@ await corsair.flutterwave.api.transactions.viewTimeline({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3430,26 +2414,8 @@ await corsair.flutterwave.api.transfers.getFee({});
 | `amount` | `string \| number` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `type` | `string` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -3459,18 +2425,10 @@ await corsair.flutterwave.api.transfers.getFee({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3505,26 +2463,8 @@ await corsair.flutterwave.api.transfers.getRates({});
 | `amount` | `string \| number` | Yes | — |
 | `destination_currency` | `string` | Yes | — |
 | `source_currency` | `string` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -3534,18 +2474,10 @@ await corsair.flutterwave.api.transfers.getRates({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3583,26 +2515,8 @@ await corsair.flutterwave.api.transfers.list({});
 | `status` | `any` | No | — |
 | `from` | `any` | No | — |
 | `to` | `any` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -3612,18 +2526,10 @@ await corsair.flutterwave.api.transfers.list({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3666,13 +2572,10 @@ await corsair.flutterwave.api.verification.initiateBvn({});
   firstname: string,
   lastname: string,
   redirect_url?: string,
-  query?: {
-  },
-  body?: {
-  }
+  query?: Record<string, string | number | boolean>,
+  body?: Record<string, any>
 } | {
-  query?: {
-  },
+  query?: Record<string, string | number | boolean>,
   body: {
     bvn: string,
     firstname: string,
@@ -3690,18 +2593,10 @@ await corsair.flutterwave.api.verification.initiateBvn({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3744,13 +2639,10 @@ await corsair.flutterwave.api.virtualAccounts.create({});
   tx_ref?: string,
   amount?: string | number,
   narration?: string,
-  query?: {
-  },
-  body?: {
-  }
+  query?: Record<string, string | number | boolean>,
+  body?: Record<string, any>
 } | {
-  query?: {
-  },
+  query?: Record<string, string | number | boolean>,
   body: {
     email: string,
     firstname: string,
@@ -3768,18 +2660,10 @@ await corsair.flutterwave.api.virtualAccounts.create({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3815,26 +2699,8 @@ await corsair.flutterwave.api.virtualAccounts.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `order_ref` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -3844,18 +2710,10 @@ await corsair.flutterwave.api.virtualAccounts.get({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3893,26 +2751,8 @@ await corsair.flutterwave.api.wallets.getBalanceByCurrency({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `currency` | `string \| number` | Yes | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -3922,18 +2762,10 @@ await corsair.flutterwave.api.wallets.getBalanceByCurrency({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -3970,26 +2802,8 @@ await corsair.flutterwave.api.wallets.getStatement({});
 | `currency` | `string` | No | — |
 | `type` | `string` | No | — |
 | `page` | `any` | No | — |
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -3999,18 +2813,10 @@ await corsair.flutterwave.api.wallets.getStatement({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -4044,26 +2850,8 @@ await corsair.flutterwave.api.wallets.listBalances({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 
 
@@ -4073,18 +2861,10 @@ await corsair.flutterwave.api.wallets.listBalances({});
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
 | `message` | `string` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts

@@ -438,7 +438,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "description",
@@ -488,7 +488,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -579,7 +579,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -601,7 +601,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, name: string, description?: string, kind: string, version?: string, last_updated?: string, phase: string, rules?: {}[] }[]"
+        "type": "{ id: string, name: string, description?: string, kind: string, version?: string, last_updated?: string, phase: string, rules?: Record<string, any>[] }[]"
       }
     },
     {
@@ -625,7 +625,7 @@
           {
             "key": "rules",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "description",
@@ -675,7 +675,7 @@
           {
             "key": "rules",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -965,7 +965,7 @@
           {
             "key": "bindings",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "compatibility_date",

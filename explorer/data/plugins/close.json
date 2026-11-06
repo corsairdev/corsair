@@ -1,7 +1,7 @@
 {
   "id": "close",
   "displayName": "Close",
-  "description": "Close plugin for Corsair",
+  "description": "Sales CRM. Manage leads, contacts, opportunities, tasks, and call, note, and SMS activities, and read email activities and custom fields.",
   "npmPackageName": "@corsair-dev/close",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
@@ -116,7 +116,7 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_id",
@@ -172,7 +172,7 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_id",
@@ -273,7 +273,7 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_id",
@@ -498,7 +498,7 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "emails",
@@ -518,7 +518,7 @@
           {
             "key": "created_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_created",
@@ -600,7 +600,7 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "emails",
@@ -620,7 +620,7 @@
           {
             "key": "created_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_created",
@@ -732,7 +732,7 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "emails",
@@ -752,7 +752,7 @@
           {
             "key": "created_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_created",
@@ -838,12 +838,12 @@
           {
             "key": "custom",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "contacts",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -863,22 +863,22 @@
           {
             "key": "status_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_id",
@@ -888,22 +888,22 @@
           {
             "key": "contacts",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "custom",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "created_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_created",
@@ -980,22 +980,22 @@
           {
             "key": "status_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_id",
@@ -1005,22 +1005,22 @@
           {
             "key": "contacts",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "custom",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "created_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_created",
@@ -1071,7 +1071,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: {}[], custom?: {}, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }[]"
+            "type": "{ id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: Record<string, any>[], custom?: Record<string, any>, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }[]"
           },
           {
             "key": "has_more",
@@ -1122,7 +1122,7 @@
           {
             "key": "custom",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1142,22 +1142,22 @@
           {
             "key": "status_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_label",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_id",
@@ -1167,22 +1167,22 @@
           {
             "key": "contacts",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "custom",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "created_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_created",
@@ -1293,7 +1293,7 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_id",
@@ -1303,12 +1303,12 @@
           {
             "key": "date_won",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_lost",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_created",
@@ -1420,7 +1420,7 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_id",
@@ -1430,12 +1430,12 @@
           {
             "key": "date_won",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_lost",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_created",
@@ -1592,7 +1592,7 @@
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_id",
@@ -1602,12 +1602,12 @@
           {
             "key": "date_won",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_lost",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_created",
@@ -1678,7 +1678,7 @@
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_complete",
@@ -1688,7 +1688,7 @@
           {
             "key": "assigned_to",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
@@ -1703,7 +1703,7 @@
           {
             "key": "created_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_created",
@@ -1785,7 +1785,7 @@
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_complete",
@@ -1795,7 +1795,7 @@
           {
             "key": "assigned_to",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
@@ -1810,7 +1810,7 @@
           {
             "key": "created_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_created",
@@ -1932,7 +1932,7 @@
           {
             "key": "due_date",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_complete",
@@ -1942,7 +1942,7 @@
           {
             "key": "assigned_to",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
@@ -1957,7 +1957,7 @@
           {
             "key": "created_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "date_created",
@@ -2007,7 +2007,7 @@
           {
             "key": "image",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "organization_id",
@@ -2104,11 +2104,11 @@
           {
             "key": "event",
             "optional": false,
-            "type": "{ id?: string, object_type: lead, object_id?: string, action: created, organization_id?: string, data: { id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: {}[], custom?: {}, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string }"
+            "type": "{ id?: string, object_type: lead, object_id?: string, action: created, organization_id?: string, data: { id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: Record<string, any>[], custom?: Record<string, any>, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string }"
           }
         ]
       },
-      "responseType": "{ subscription_id?: string, event: { id?: string, object_type: lead, object_id?: string, action: created, organization_id?: string, data: { id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: {}[], custom?: {}, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string } }",
+      "responseType": "{ subscription_id?: string, event: { id?: string, object_type: lead, object_id?: string, action: created, organization_id?: string, data: { id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: Record<string, any>[], custom?: Record<string, any>, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string } }",
       "usageExample": "close({\n    webhookHooks: {\n        lead: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2126,11 +2126,11 @@
           {
             "key": "event",
             "optional": false,
-            "type": "{ id?: string, object_type: lead, object_id?: string, action: updated, organization_id?: string, data: { id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: {}[], custom?: {}, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string }"
+            "type": "{ id?: string, object_type: lead, object_id?: string, action: updated, organization_id?: string, data: { id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: Record<string, any>[], custom?: Record<string, any>, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string }"
           }
         ]
       },
-      "responseType": "{ subscription_id?: string, event: { id?: string, object_type: lead, object_id?: string, action: updated, organization_id?: string, data: { id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: {}[], custom?: {}, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string } }",
+      "responseType": "{ subscription_id?: string, event: { id?: string, object_type: lead, object_id?: string, action: updated, organization_id?: string, data: { id: string, name?: string, status_id?: string | null, status_label?: string | null, description?: string | null, url?: string | null, organization_id?: string, contacts?: Record<string, any>[], custom?: Record<string, any>, created_by?: string | null, updated_by?: string | null, date_created?: string, date_updated?: string }, previous_data?: any, changed_fields?: string[], date_created?: string, date_updated?: string, user_id?: string, lead_id?: string, request_id?: string } }",
       "usageExample": "close({\n    webhookHooks: {\n        lead: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {

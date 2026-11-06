@@ -41,11 +41,11 @@ await corsair.linear.api.comments.create({});
 | `body` | `string` | Yes | — |
 | `issue` | `object` | Yes | — |
 | `user` | `object` | Yes | — |
-| `parent` | `object` | No | — |
-| `editedAt` | `Date` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
-| `archivedAt` | `Date` | No | — |
+| `parent` | `object \| null` | No | — |
+| `editedAt` | `Date \| null` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
+| `archivedAt` | `Date \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="issue full type">
@@ -74,7 +74,7 @@ await corsair.linear.api.comments.create({});
 ```ts
 {
   id: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -293,7 +293,27 @@ await corsair.linear.api.comments.list({});
       } | null,
       createdAt?: Date | null,
       updatedAt?: Date | null,
-      parent: lazy
+      parent: {
+        id: string,
+        name: string,
+        description?: string | null,
+        color: string,
+        team?: {
+          id: string,
+          name: string,
+          key: string,
+          description?: string | null,
+          icon?: string | null,
+          color?: string | null,
+          private: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          archivedAt?: Date | null
+        } | null,
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        parent: (recursive)
+      } | null
     }[],
     subscribers: {
       id: string,
@@ -315,7 +335,199 @@ await corsair.linear.api.comments.list({});
     createdAt?: Date | null,
     updatedAt?: Date | null,
     archivedAt?: Date | null,
-    parent: lazy
+    parent: {
+      id: string,
+      title: string,
+      description?: string | null,
+      priority: 0 | 1 | 2 | 3 | 4,
+      estimate?: number | null,
+      sortOrder: number,
+      number: number,
+      identifier: string,
+      url: string,
+      state: {
+        id: string,
+        name: string,
+        type: backlog | unstarted | started | completed | canceled,
+        color: string,
+        position: number,
+        description?: string | null,
+        team: {
+          id: string,
+          name: string,
+          key: string,
+          description?: string | null,
+          icon?: string | null,
+          color?: string | null,
+          private: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          archivedAt?: Date | null
+        },
+        createdAt?: Date | null,
+        updatedAt?: Date | null
+      },
+      team: {
+        id: string,
+        name: string,
+        key: string,
+        description?: string | null,
+        icon?: string | null,
+        color?: string | null,
+        private: boolean,
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        archivedAt?: Date | null
+      },
+      assignee?: {
+        id: string,
+        name: string,
+        email?: string | null,
+        displayName: string,
+        avatarUrl?: string | null,
+        active: boolean,
+        admin: boolean,
+        createdAt?: Date | null,
+        updatedAt?: Date | null
+      } | null,
+      creator: {
+        id: string,
+        name: string,
+        email?: string | null,
+        displayName: string,
+        avatarUrl?: string | null,
+        active: boolean,
+        admin: boolean,
+        createdAt?: Date | null,
+        updatedAt?: Date | null
+      },
+      project?: {
+        id: string,
+        name: string,
+        description?: string | null,
+        icon?: string | null,
+        color?: string | null,
+        state: backlog | planned | started | paused | completed | canceled,
+        priority: number,
+        sortOrder: number,
+        startDate?: Date | null,
+        targetDate?: Date | null,
+        completedAt?: Date | null,
+        canceledAt?: Date | null,
+        lead?: {
+          id: string,
+          name: string,
+          email?: string | null,
+          displayName: string,
+          avatarUrl?: string | null,
+          active: boolean,
+          admin: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null
+        } | null,
+        teams: {
+          id: string,
+          name: string,
+          key: string,
+          description?: string | null,
+          icon?: string | null,
+          color?: string | null,
+          private: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          archivedAt?: Date | null
+        }[],
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        archivedAt?: Date | null
+      } | null,
+      cycle?: {
+        id: string,
+        number: number,
+        name?: string | null,
+        description?: string | null,
+        startsAt?: Date | null,
+        endsAt?: Date | null,
+        completedAt?: Date | null,
+        team: {
+          id: string,
+          name: string,
+          key: string,
+          description?: string | null,
+          icon?: string | null,
+          color?: string | null,
+          private: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          archivedAt?: Date | null
+        },
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        archivedAt?: Date | null
+      } | null,
+      labels: {
+        id: string,
+        name: string,
+        description?: string | null,
+        color: string,
+        team?: {
+          id: string,
+          name: string,
+          key: string,
+          description?: string | null,
+          icon?: string | null,
+          color?: string | null,
+          private: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          archivedAt?: Date | null
+        } | null,
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        parent: {
+          id: string,
+          name: string,
+          description?: string | null,
+          color: string,
+          team?: {
+            id: string,
+            name: string,
+            key: string,
+            description?: string | null,
+            icon?: string | null,
+            color?: string | null,
+            private: boolean,
+            createdAt?: Date | null,
+            updatedAt?: Date | null,
+            archivedAt?: Date | null
+          } | null,
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          parent: (recursive)
+        } | null
+      }[],
+      subscribers: {
+        id: string,
+        name: string,
+        email?: string | null,
+        displayName: string,
+        avatarUrl?: string | null,
+        active: boolean,
+        admin: boolean,
+        createdAt?: Date | null,
+        updatedAt?: Date | null
+      }[],
+      dueDate?: Date | null,
+      startedAt?: Date | null,
+      completedAt?: Date | null,
+      canceledAt?: Date | null,
+      triagedAt?: Date | null,
+      snoozedUntilAt?: Date | null,
+      createdAt?: Date | null,
+      updatedAt?: Date | null,
+      archivedAt?: Date | null,
+      parent: (recursive)
+    } | null
   },
   user: {
     id: string,
@@ -332,7 +544,411 @@ await corsair.linear.api.comments.list({});
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archivedAt?: Date | null,
-  parent: lazy
+  parent: {
+    id: string,
+    body: string,
+    issue: {
+      id: string,
+      title: string,
+      description?: string | null,
+      priority: 0 | 1 | 2 | 3 | 4,
+      estimate?: number | null,
+      sortOrder: number,
+      number: number,
+      identifier: string,
+      url: string,
+      state: {
+        id: string,
+        name: string,
+        type: backlog | unstarted | started | completed | canceled,
+        color: string,
+        position: number,
+        description?: string | null,
+        team: {
+          id: string,
+          name: string,
+          key: string,
+          description?: string | null,
+          icon?: string | null,
+          color?: string | null,
+          private: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          archivedAt?: Date | null
+        },
+        createdAt?: Date | null,
+        updatedAt?: Date | null
+      },
+      team: {
+        id: string,
+        name: string,
+        key: string,
+        description?: string | null,
+        icon?: string | null,
+        color?: string | null,
+        private: boolean,
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        archivedAt?: Date | null
+      },
+      assignee?: {
+        id: string,
+        name: string,
+        email?: string | null,
+        displayName: string,
+        avatarUrl?: string | null,
+        active: boolean,
+        admin: boolean,
+        createdAt?: Date | null,
+        updatedAt?: Date | null
+      } | null,
+      creator: {
+        id: string,
+        name: string,
+        email?: string | null,
+        displayName: string,
+        avatarUrl?: string | null,
+        active: boolean,
+        admin: boolean,
+        createdAt?: Date | null,
+        updatedAt?: Date | null
+      },
+      project?: {
+        id: string,
+        name: string,
+        description?: string | null,
+        icon?: string | null,
+        color?: string | null,
+        state: backlog | planned | started | paused | completed | canceled,
+        priority: number,
+        sortOrder: number,
+        startDate?: Date | null,
+        targetDate?: Date | null,
+        completedAt?: Date | null,
+        canceledAt?: Date | null,
+        lead?: {
+          id: string,
+          name: string,
+          email?: string | null,
+          displayName: string,
+          avatarUrl?: string | null,
+          active: boolean,
+          admin: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null
+        } | null,
+        teams: {
+          id: string,
+          name: string,
+          key: string,
+          description?: string | null,
+          icon?: string | null,
+          color?: string | null,
+          private: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          archivedAt?: Date | null
+        }[],
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        archivedAt?: Date | null
+      } | null,
+      cycle?: {
+        id: string,
+        number: number,
+        name?: string | null,
+        description?: string | null,
+        startsAt?: Date | null,
+        endsAt?: Date | null,
+        completedAt?: Date | null,
+        team: {
+          id: string,
+          name: string,
+          key: string,
+          description?: string | null,
+          icon?: string | null,
+          color?: string | null,
+          private: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          archivedAt?: Date | null
+        },
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        archivedAt?: Date | null
+      } | null,
+      labels: {
+        id: string,
+        name: string,
+        description?: string | null,
+        color: string,
+        team?: {
+          id: string,
+          name: string,
+          key: string,
+          description?: string | null,
+          icon?: string | null,
+          color?: string | null,
+          private: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          archivedAt?: Date | null
+        } | null,
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        parent: {
+          id: string,
+          name: string,
+          description?: string | null,
+          color: string,
+          team?: {
+            id: string,
+            name: string,
+            key: string,
+            description?: string | null,
+            icon?: string | null,
+            color?: string | null,
+            private: boolean,
+            createdAt?: Date | null,
+            updatedAt?: Date | null,
+            archivedAt?: Date | null
+          } | null,
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          parent: (recursive)
+        } | null
+      }[],
+      subscribers: {
+        id: string,
+        name: string,
+        email?: string | null,
+        displayName: string,
+        avatarUrl?: string | null,
+        active: boolean,
+        admin: boolean,
+        createdAt?: Date | null,
+        updatedAt?: Date | null
+      }[],
+      dueDate?: Date | null,
+      startedAt?: Date | null,
+      completedAt?: Date | null,
+      canceledAt?: Date | null,
+      triagedAt?: Date | null,
+      snoozedUntilAt?: Date | null,
+      createdAt?: Date | null,
+      updatedAt?: Date | null,
+      archivedAt?: Date | null,
+      parent: {
+        id: string,
+        title: string,
+        description?: string | null,
+        priority: 0 | 1 | 2 | 3 | 4,
+        estimate?: number | null,
+        sortOrder: number,
+        number: number,
+        identifier: string,
+        url: string,
+        state: {
+          id: string,
+          name: string,
+          type: backlog | unstarted | started | completed | canceled,
+          color: string,
+          position: number,
+          description?: string | null,
+          team: {
+            id: string,
+            name: string,
+            key: string,
+            description?: string | null,
+            icon?: string | null,
+            color?: string | null,
+            private: boolean,
+            createdAt?: Date | null,
+            updatedAt?: Date | null,
+            archivedAt?: Date | null
+          },
+          createdAt?: Date | null,
+          updatedAt?: Date | null
+        },
+        team: {
+          id: string,
+          name: string,
+          key: string,
+          description?: string | null,
+          icon?: string | null,
+          color?: string | null,
+          private: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          archivedAt?: Date | null
+        },
+        assignee?: {
+          id: string,
+          name: string,
+          email?: string | null,
+          displayName: string,
+          avatarUrl?: string | null,
+          active: boolean,
+          admin: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null
+        } | null,
+        creator: {
+          id: string,
+          name: string,
+          email?: string | null,
+          displayName: string,
+          avatarUrl?: string | null,
+          active: boolean,
+          admin: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null
+        },
+        project?: {
+          id: string,
+          name: string,
+          description?: string | null,
+          icon?: string | null,
+          color?: string | null,
+          state: backlog | planned | started | paused | completed | canceled,
+          priority: number,
+          sortOrder: number,
+          startDate?: Date | null,
+          targetDate?: Date | null,
+          completedAt?: Date | null,
+          canceledAt?: Date | null,
+          lead?: {
+            id: string,
+            name: string,
+            email?: string | null,
+            displayName: string,
+            avatarUrl?: string | null,
+            active: boolean,
+            admin: boolean,
+            createdAt?: Date | null,
+            updatedAt?: Date | null
+          } | null,
+          teams: {
+            id: string,
+            name: string,
+            key: string,
+            description?: string | null,
+            icon?: string | null,
+            color?: string | null,
+            private: boolean,
+            createdAt?: Date | null,
+            updatedAt?: Date | null,
+            archivedAt?: Date | null
+          }[],
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          archivedAt?: Date | null
+        } | null,
+        cycle?: {
+          id: string,
+          number: number,
+          name?: string | null,
+          description?: string | null,
+          startsAt?: Date | null,
+          endsAt?: Date | null,
+          completedAt?: Date | null,
+          team: {
+            id: string,
+            name: string,
+            key: string,
+            description?: string | null,
+            icon?: string | null,
+            color?: string | null,
+            private: boolean,
+            createdAt?: Date | null,
+            updatedAt?: Date | null,
+            archivedAt?: Date | null
+          },
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          archivedAt?: Date | null
+        } | null,
+        labels: {
+          id: string,
+          name: string,
+          description?: string | null,
+          color: string,
+          team?: {
+            id: string,
+            name: string,
+            key: string,
+            description?: string | null,
+            icon?: string | null,
+            color?: string | null,
+            private: boolean,
+            createdAt?: Date | null,
+            updatedAt?: Date | null,
+            archivedAt?: Date | null
+          } | null,
+          createdAt?: Date | null,
+          updatedAt?: Date | null,
+          parent: {
+            id: string,
+            name: string,
+            description?: string | null,
+            color: string,
+            team?: {
+              id: string,
+              name: string,
+              key: string,
+              description?: string | null,
+              icon?: string | null,
+              color?: string | null,
+              private: boolean,
+              createdAt?: Date | null,
+              updatedAt?: Date | null,
+              archivedAt?: Date | null
+            } | null,
+            createdAt?: Date | null,
+            updatedAt?: Date | null,
+            parent: (recursive)
+          } | null
+        }[],
+        subscribers: {
+          id: string,
+          name: string,
+          email?: string | null,
+          displayName: string,
+          avatarUrl?: string | null,
+          active: boolean,
+          admin: boolean,
+          createdAt?: Date | null,
+          updatedAt?: Date | null
+        }[],
+        dueDate?: Date | null,
+        startedAt?: Date | null,
+        completedAt?: Date | null,
+        canceledAt?: Date | null,
+        triagedAt?: Date | null,
+        snoozedUntilAt?: Date | null,
+        createdAt?: Date | null,
+        updatedAt?: Date | null,
+        archivedAt?: Date | null,
+        parent: (recursive)
+      } | null
+    },
+    user: {
+      id: string,
+      name: string,
+      email?: string | null,
+      displayName: string,
+      avatarUrl?: string | null,
+      active: boolean,
+      admin: boolean,
+      createdAt?: Date | null,
+      updatedAt?: Date | null
+    },
+    editedAt?: Date | null,
+    createdAt?: Date | null,
+    updatedAt?: Date | null,
+    archivedAt?: Date | null,
+    parent: (recursive)
+  } | null
 }[]
 ```
 </Accordion>
@@ -394,11 +1010,11 @@ await corsair.linear.api.comments.update({});
 | `body` | `string` | Yes | — |
 | `issue` | `object` | Yes | — |
 | `user` | `object` | Yes | — |
-| `parent` | `object` | No | — |
-| `editedAt` | `Date` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
-| `archivedAt` | `Date` | No | — |
+| `parent` | `object \| null` | No | — |
+| `editedAt` | `Date \| null` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
+| `archivedAt` | `Date \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="issue full type">
@@ -427,7 +1043,7 @@ await corsair.linear.api.comments.update({});
 ```ts
 {
   id: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -476,19 +1092,19 @@ await corsair.linear.api.issues.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `priority` | `0 \| 1 \| 2 \| 3 \| 4` | No | — |
-| `estimate` | `number` | No | — |
+| `estimate` | `number \| null` | No | — |
 | `sortOrder` | `number` | No | — |
 | `number` | `number` | No | — |
 | `identifier` | `string` | No | — |
 | `url` | `string` | No | — |
 | `state` | `object` | No | — |
 | `team` | `object` | No | — |
-| `assignee` | `object` | No | — |
+| `assignee` | `object \| null` | No | — |
 | `creator` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="state full type">
@@ -523,7 +1139,7 @@ await corsair.linear.api.issues.create({});
   name: string,
   displayName: string,
   email?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -595,31 +1211,31 @@ await corsair.linear.api.issues.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `title` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `priority` | `0 \| 1 \| 2 \| 3 \| 4` | Yes | — |
-| `estimate` | `number` | No | — |
+| `estimate` | `number \| null` | No | — |
 | `sortOrder` | `number` | Yes | — |
 | `number` | `number` | Yes | — |
 | `identifier` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `state` | `object` | Yes | — |
 | `team` | `object` | Yes | — |
-| `assignee` | `object` | No | — |
+| `assignee` | `object \| null` | No | — |
 | `creator` | `object` | Yes | — |
-| `project` | `object` | No | — |
-| `cycle` | `object` | No | — |
-| `labels` | `object` | No | — |
-| `subscribers` | `object` | No | — |
-| `dueDate` | `Date` | No | — |
-| `startedAt` | `Date` | No | — |
-| `completedAt` | `Date` | No | — |
-| `canceledAt` | `Date` | No | — |
-| `triagedAt` | `Date` | No | — |
-| `snoozedUntilAt` | `Date` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
-| `archivedAt` | `Date` | No | — |
-| `parent` | `lazy` | Yes | — |
+| `project` | `object \| null` | No | — |
+| `cycle` | `object \| null` | No | — |
+| `labels` | `object \| null` | No | — |
+| `subscribers` | `object \| null` | No | — |
+| `dueDate` | `Date \| null` | No | — |
+| `startedAt` | `Date \| null` | No | — |
+| `completedAt` | `Date \| null` | No | — |
+| `canceledAt` | `Date \| null` | No | — |
+| `triagedAt` | `Date \| null` | No | — |
+| `snoozedUntilAt` | `Date \| null` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
+| `archivedAt` | `Date \| null` | No | — |
+| `parent` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="state full type">
@@ -654,7 +1270,7 @@ await corsair.linear.api.issues.get({});
   name: string,
   displayName: string,
   email?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -677,7 +1293,7 @@ await corsair.linear.api.issues.get({});
   id: string,
   name: string,
   state: backlog | planned | started | paused | completed | canceled
-}
+} | null
 ```
 </Accordion>
 
@@ -688,7 +1304,7 @@ await corsair.linear.api.issues.get({});
   id: string,
   number: number,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -701,7 +1317,7 @@ await corsair.linear.api.issues.get({});
     name: string,
     color: string
   }[]
-}
+} | null
 ```
 </Accordion>
 
@@ -715,7 +1331,83 @@ await corsair.linear.api.issues.get({});
     displayName: string,
     email?: string | null
   }[]
-}
+} | null
+```
+</Accordion>
+
+<Accordion title="parent full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description?: string | null,
+  priority: 0 | 1 | 2 | 3 | 4,
+  estimate?: number | null,
+  sortOrder: number,
+  number: number,
+  identifier: string,
+  url: string,
+  state: {
+    id: string,
+    name: string,
+    type: backlog | unstarted | started | completed | canceled,
+    color?: string,
+    position?: number
+  },
+  team: {
+    id: string,
+    name: string,
+    key: string
+  },
+  assignee?: {
+    id: string,
+    name: string,
+    displayName: string,
+    email?: string | null
+  } | null,
+  creator: {
+    id: string,
+    name: string,
+    displayName: string,
+    email?: string | null
+  },
+  project?: {
+    id: string,
+    name: string,
+    state: backlog | planned | started | paused | completed | canceled
+  } | null,
+  cycle?: {
+    id: string,
+    number: number,
+    name?: string | null
+  } | null,
+  labels?: {
+    nodes: {
+      id: string,
+      name: string,
+      color: string
+    }[]
+  } | null,
+  subscribers?: {
+    nodes: {
+      id: string,
+      name: string,
+      displayName: string,
+      email?: string | null
+    }[]
+  } | null,
+  dueDate?: Date | null,
+  startedAt?: Date | null,
+  completedAt?: Date | null,
+  canceledAt?: Date | null,
+  triagedAt?: Date | null,
+  snoozedUntilAt?: Date | null,
+  createdAt?: Date | null,
+  updatedAt?: Date | null,
+  archivedAt?: Date | null,
+  parent: (recursive)
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -825,7 +1517,76 @@ await corsair.linear.api.issues.list({});
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archivedAt?: Date | null,
-  parent: lazy
+  parent: {
+    id: string,
+    title: string,
+    description?: string | null,
+    priority: 0 | 1 | 2 | 3 | 4,
+    estimate?: number | null,
+    sortOrder: number,
+    number: number,
+    identifier: string,
+    url: string,
+    state: {
+      id: string,
+      name: string,
+      type: backlog | unstarted | started | completed | canceled,
+      color?: string,
+      position?: number
+    },
+    team: {
+      id: string,
+      name: string,
+      key: string
+    },
+    assignee?: {
+      id: string,
+      name: string,
+      displayName: string,
+      email?: string | null
+    } | null,
+    creator: {
+      id: string,
+      name: string,
+      displayName: string,
+      email?: string | null
+    },
+    project?: {
+      id: string,
+      name: string,
+      state: backlog | planned | started | paused | completed | canceled
+    } | null,
+    cycle?: {
+      id: string,
+      number: number,
+      name?: string | null
+    } | null,
+    labels?: {
+      nodes: {
+        id: string,
+        name: string,
+        color: string
+      }[]
+    } | null,
+    subscribers?: {
+      nodes: {
+        id: string,
+        name: string,
+        displayName: string,
+        email?: string | null
+      }[]
+    } | null,
+    dueDate?: Date | null,
+    startedAt?: Date | null,
+    completedAt?: Date | null,
+    canceledAt?: Date | null,
+    triagedAt?: Date | null,
+    snoozedUntilAt?: Date | null,
+    createdAt?: Date | null,
+    updatedAt?: Date | null,
+    archivedAt?: Date | null,
+    parent: (recursive)
+  } | null
 }[]
 ```
 </Accordion>
@@ -896,19 +1657,19 @@ await corsair.linear.api.issues.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `title` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `priority` | `0 \| 1 \| 2 \| 3 \| 4` | No | — |
-| `estimate` | `number` | No | — |
+| `estimate` | `number \| null` | No | — |
 | `sortOrder` | `number` | No | — |
 | `number` | `number` | No | — |
 | `identifier` | `string` | No | — |
 | `url` | `string` | No | — |
 | `state` | `object` | No | — |
 | `team` | `object` | No | — |
-| `assignee` | `object` | No | — |
+| `assignee` | `object \| null` | No | — |
 | `creator` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="state full type">
@@ -943,7 +1704,7 @@ await corsair.linear.api.issues.update({});
   name: string,
   displayName: string,
   email?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1001,21 +1762,21 @@ await corsair.linear.api.projects.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `icon` | `string` | No | — |
-| `color` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
 | `state` | `backlog \| planned \| started \| paused \| completed \| canceled` | Yes | — |
 | `priority` | `number` | Yes | — |
 | `sortOrder` | `number` | No | — |
-| `startDate` | `Date` | No | — |
-| `targetDate` | `Date` | No | — |
-| `completedAt` | `Date` | No | — |
-| `canceledAt` | `Date` | No | — |
-| `lead` | `object` | No | — |
+| `startDate` | `Date \| null` | No | — |
+| `targetDate` | `Date \| null` | No | — |
+| `completedAt` | `Date \| null` | No | — |
+| `canceledAt` | `Date \| null` | No | — |
+| `lead` | `object \| null` | No | — |
 | `teams` | `object` | Yes | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
-| `archivedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
+| `archivedAt` | `Date \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="lead full type">
@@ -1026,7 +1787,7 @@ await corsair.linear.api.projects.create({});
   name: string,
   displayName: string,
   email?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1099,20 +1860,20 @@ await corsair.linear.api.projects.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `icon` | `string` | No | — |
-| `color` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
 | `state` | `backlog \| planned \| started \| paused \| completed \| canceled` | Yes | — |
 | `priority` | `number` | Yes | — |
 | `sortOrder` | `number` | Yes | — |
-| `startDate` | `Date` | No | — |
-| `targetDate` | `Date` | No | — |
-| `completedAt` | `Date` | No | — |
-| `canceledAt` | `Date` | No | — |
-| `lead` | `object` | No | — |
+| `startDate` | `Date \| null` | No | — |
+| `targetDate` | `Date \| null` | No | — |
+| `completedAt` | `Date \| null` | No | — |
+| `canceledAt` | `Date \| null` | No | — |
+| `lead` | `object \| null` | No | — |
 | `teams` | `object` | Yes | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="lead full type">
@@ -1123,7 +1884,7 @@ await corsair.linear.api.projects.get({});
   name: string,
   displayName: string,
   email?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1273,21 +2034,21 @@ await corsair.linear.api.projects.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `icon` | `string` | No | — |
-| `color` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
 | `state` | `backlog \| planned \| started \| paused \| completed \| canceled` | Yes | — |
 | `priority` | `number` | Yes | — |
 | `sortOrder` | `number` | No | — |
-| `startDate` | `Date` | No | — |
-| `targetDate` | `Date` | No | — |
-| `completedAt` | `Date` | No | — |
-| `canceledAt` | `Date` | No | — |
-| `lead` | `object` | No | — |
+| `startDate` | `Date \| null` | No | — |
+| `targetDate` | `Date \| null` | No | — |
+| `completedAt` | `Date \| null` | No | — |
+| `canceledAt` | `Date \| null` | No | — |
+| `lead` | `object \| null` | No | — |
 | `teams` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
-| `archivedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
+| `archivedAt` | `Date \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="lead full type">
@@ -1298,7 +2059,7 @@ await corsair.linear.api.projects.update({});
   name: string,
   displayName: string,
   email?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1349,13 +2110,13 @@ await corsair.linear.api.teams.get({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `icon` | `string` | No | — |
-| `color` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `icon` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
 | `private` | `boolean` | Yes | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
-| `archivedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
+| `archivedAt` | `Date \| null` | No | — |
 
 
 
@@ -1453,13 +2214,13 @@ await corsair.linear.api.users.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `email` | `string` | No | — |
+| `email` | `string \| null` | No | — |
 | `displayName` | `string` | Yes | — |
-| `avatarUrl` | `string` | No | — |
+| `avatarUrl` | `string \| null` | No | — |
 | `active` | `boolean` | Yes | — |
 | `admin` | `boolean` | Yes | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 
 
 

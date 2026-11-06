@@ -1,0 +1,157 @@
+---
+title: Overview
+description: "Recruiting and HR in Workable - jobs, candidates, hiring team members, departments, employees, time off and webhook subscriptions, plus the public job board of any Workable careers page."
+---
+
+Use **Workable** through Corsair: one client, typed API calls, local DB sync.
+
+Workable needs two things from each tenant: an API access token and the account subdomain (the `acme` in `https://acme.workable.com`). Generate the token in Workable under Settings, Integrations, "Generate new token", and pick the scopes you need. The token is shown once. Corsair asks for both on the first call that needs them. Self-hosted setups can pass them to the factory instead:
+
+```ts
+workable({ key: process.env.WORKABLE_TOKEN, account: 'acme' })
+```
+
+Things to know:
+
+- **Scopes.** Each endpoint needs its own scope (`r_jobs`, `r_candidates`, `r_account`, `w_departments`, `w_members`, `r_employees`, `w_employees`, `r_timeoff` and so on). A token without it gets a 403. `r_employees` grants access to confidential employee data.
+- **Public job board.** `publicJobs.list` and `publicLocations.list` call Workable's public careers API and need no token. Pass any `subdomain` to read another company's open roles; without one they use the connected account's.
+- **Subdomain.** Only letters, digits and hyphens are accepted, so requests always go to `<subdomain>.workable.com`.
+- **Paging.** `jobs.list`, `candidates.list`, `members.list`, `requisitions.list` and `events.list` take `limit` (up to 100) with `since_id` / `max_id`. `paging.next` in a response is the next page's URL; pass its `since_id` back to fetch it. `employees.list` pages with `limit` (10, 20, 50 or 100 only) and `offset` instead.
+- **Rate limit.** Workable allows 10 requests per token in a rolling 10 seconds. A read that gets a 429 waits until the reset time Workable sends, then retries.
+- **Writes are not retried.** Workable has no idempotency keys, so creates, updates, invites and deletes fail fast on a 429 or a network error rather than risk running twice.
+- **Department deletes and merges.** Workable answers 409 unless you pass `force: true`, sometimes even when nothing else uses the department.
+- **Time-off balances.** `timeoffBalances.list` needs `employee_id` when the token is an account token.
+
+**What you get:**
+
+- 35 typed API operations
+- 5 synced entities (`candidates`, `departments`, `employees`, `jobs`, `members`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/workable
+```
+```bash yarn
+yarn add corsair @corsair-dev/workable
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/workable
+```
+```bash bun
+bun add corsair @corsair-dev/workable
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { workable } from '@corsair-dev/workable';
+
+export const corsair = createCorsair({
+	plugins: [
+		workable(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+workable()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'workable',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List jobs**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.workable.api.jobs.list({ limit: 50 });
+```
+
+
+**Create a department**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.workable.api.departments.create({ name: 'Engineering' });
+```
+
+
+See the full list on the [API](/plugins/workable/api) page.
+
+## Query synced data
+
+Candidates fetched by `candidates.list` are kept locally.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.workable.db.candidates.search({
+	data: { stage: 'Interview' },
+	limit: 20,
+});
+```
+
+Synced entities: `candidates`, `departments`, `employees`, `jobs`, `members`. See [Database](/plugins/workable/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/workable/api">
+    Every `workable.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/workable/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

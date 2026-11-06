@@ -41,7 +41,7 @@
           {
             "key": "include",
             "optional": true,
-            "type": "profile | role | associatedDepartments | associatedChatDepartments | verifiedEmails[]"
+            "type": "(profile | role | associatedDepartments | associatedChatDepartments | verifiedEmails)[]"
           }
         ]
       },
@@ -51,142 +51,142 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "zuid",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "emailId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isConfirmed",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "roleId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "profileId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "rolePermissionType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "langCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "countryCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timeZone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "aboutInfo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mobile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "extn",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "photoURL",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "channelExpert",
             "optional": true,
-            "type": "string | null[]"
+            "type": "(string | null)[] | null"
           },
           {
             "key": "associatedDepartmentIds",
             "optional": true,
-            "type": "string | number | null[]"
+            "type": "(string | number | null)[] | null"
           },
           {
             "key": "associatedChatDepartmentIds",
             "optional": true,
-            "type": "string | number | null[]"
+            "type": "(string | number | null)[] | null"
           },
           {
             "key": "cf",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "role",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null }"
+            "type": "{ id?: string | number | null, name?: string | null } | null"
           },
           {
             "key": "profile",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null }"
+            "type": "{ id?: string | number | null, name?: string | null } | null"
           },
           {
             "key": "associatedDepartments",
             "optional": true,
-            "type": "{}[]"
+            "type": "{}[] | null"
           },
           {
             "key": "associatedChatDepartments",
             "optional": true,
-            "type": "{}[]"
+            "type": "{}[] | null"
           },
           {
             "key": "verifiedEmails",
             "optional": true,
-            "type": "string | null[]"
+            "type": "(string | null)[] | null"
           }
         ]
       }
@@ -222,7 +222,7 @@
           {
             "key": "count",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       }
@@ -243,7 +243,7 @@
           {
             "key": "include",
             "optional": true,
-            "type": "accounts | owner[]"
+            "type": "(accounts | owner)[]"
           }
         ]
       },
@@ -253,187 +253,187 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "secondaryEmail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "mobile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "street",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "zip",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "facebook",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "twitter",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "photoURL",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "accountId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "ownerId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "layoutId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "accountCount",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "createdTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "modifiedTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isSpam",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isAnonymous",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isEndUser",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isFollowing",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isDeleted",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isTrashed",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "cf",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "customFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "customerHappiness",
             "optional": true,
-            "type": "{ badPercentage?: number | string | null, okPercentage?: number | string | null, goodPercentage?: number | string | null }"
+            "type": "{ badPercentage?: number | string | null, okPercentage?: number | string | null, goodPercentage?: number | string | null } | null"
           },
           {
             "key": "zohoCRMContact",
             "optional": true,
-            "type": "{ id?: string | number | null, type?: string | null }"
+            "type": "{ id?: string | number | null, type?: string | null } | null"
           },
           {
             "key": "owner",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null }"
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
           },
           {
             "key": "account",
             "optional": true,
-            "type": "{ id?: string | number | null, accountName?: string | null, website?: string | null }"
+            "type": "{ id?: string | number | null, accountName?: string | null, website?: string | null } | null"
           }
         ]
       }
@@ -460,7 +460,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: string | number | null, firstName?: string | null, lastName?: string | null, email?: string | null, secondaryEmail?: string | null, phone?: string | null, mobile?: string | null, type?: string | null, title?: string | null, description?: string | null, street?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: number | string | null, facebook?: string | null, twitter?: string | null, photoURL?: string | null, webUrl?: string | null, accountId?: string | number | null, ownerId?: string | number | null, layoutId?: string | number | null, accountCount?: number | string | null, createdTime?: string | null, modifiedTime?: string | null, isSpam?: boolean | string | null, isAnonymous?: boolean | string | null, isEndUser?: boolean | string | null, isFollowing?: boolean | string | null, isDeleted?: boolean | string | null, isTrashed?: boolean | string | null, cf?: {} | null, customFields?: {} | null, customerHappiness?: { badPercentage?: number | string | null, okPercentage?: number | string | null, goodPercentage?: number | string | null } | null, zohoCRMContact?: { id?: string | number | null, type?: string | null } | null, owner?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, account?: { id?: string | number | null, accountName?: string | null, website?: string | null } | null }[]"
+            "type": "{ id?: string | number | null, firstName?: string | null, lastName?: string | null, email?: string | null, secondaryEmail?: string | null, phone?: string | null, mobile?: string | null, type?: string | null, title?: string | null, description?: string | null, street?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: number | string | null, facebook?: string | null, twitter?: string | null, photoURL?: string | null, webUrl?: string | null, accountId?: string | number | null, ownerId?: string | number | null, layoutId?: string | number | null, accountCount?: number | string | null, createdTime?: string | null, modifiedTime?: string | null, isSpam?: boolean | string | null, isAnonymous?: boolean | string | null, isEndUser?: boolean | string | null, isFollowing?: boolean | string | null, isDeleted?: boolean | string | null, isTrashed?: boolean | string | null, cf?: Record<string, any> | null, customFields?: Record<string, any> | null, customerHappiness?: { badPercentage?: number | string | null, okPercentage?: number | string | null, goodPercentage?: number | string | null } | null, zohoCRMContact?: { id?: string | number | null, type?: string | null } | null, owner?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, account?: { id?: string | number | null, accountName?: string | null, website?: string | null } | null }[]"
           }
         ]
       }
@@ -522,7 +522,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: string | number | null, firstName?: string | null, lastName?: string | null, email?: string | null, secondaryEmail?: string | null, phone?: string | null, mobile?: string | null, type?: string | null, title?: string | null, description?: string | null, street?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: number | string | null, facebook?: string | null, twitter?: string | null, photoURL?: string | null, webUrl?: string | null, accountId?: string | number | null, ownerId?: string | number | null, layoutId?: string | number | null, accountCount?: number | string | null, createdTime?: string | null, modifiedTime?: string | null, isSpam?: boolean | string | null, isAnonymous?: boolean | string | null, isEndUser?: boolean | string | null, isFollowing?: boolean | string | null, isDeleted?: boolean | string | null, isTrashed?: boolean | string | null, cf?: {} | null, customFields?: {} | null, customerHappiness?: { badPercentage?: number | string | null, okPercentage?: number | string | null, goodPercentage?: number | string | null } | null, zohoCRMContact?: { id?: string | number | null, type?: string | null } | null, owner?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, account?: { id?: string | number | null, accountName?: string | null, website?: string | null } | null }[]"
+            "type": "{ id?: string | number | null, firstName?: string | null, lastName?: string | null, email?: string | null, secondaryEmail?: string | null, phone?: string | null, mobile?: string | null, type?: string | null, title?: string | null, description?: string | null, street?: string | null, city?: string | null, state?: string | null, country?: string | null, zip?: number | string | null, facebook?: string | null, twitter?: string | null, photoURL?: string | null, webUrl?: string | null, accountId?: string | number | null, ownerId?: string | number | null, layoutId?: string | number | null, accountCount?: number | string | null, createdTime?: string | null, modifiedTime?: string | null, isSpam?: boolean | string | null, isAnonymous?: boolean | string | null, isEndUser?: boolean | string | null, isFollowing?: boolean | string | null, isDeleted?: boolean | string | null, isTrashed?: boolean | string | null, cf?: Record<string, any> | null, customFields?: Record<string, any> | null, customerHappiness?: { badPercentage?: number | string | null, okPercentage?: number | string | null, goodPercentage?: number | string | null } | null, zohoCRMContact?: { id?: string | number | null, type?: string | null } | null, owner?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, account?: { id?: string | number | null, accountName?: string | null, website?: string | null } | null }[]"
           }
         ]
       }
@@ -598,72 +598,72 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "nameInCustomerPortal",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sanitizedName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chatStatus",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "creatorId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "createdTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isDefault",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isEnabled",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "hasLogo",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isAssignToTeamEnabled",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isVisibleInCustomerPortal",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "associatedAgentIds",
             "optional": true,
-            "type": "string | number | null[]"
+            "type": "(string | number | null)[] | null"
           }
         ]
       }
@@ -689,7 +689,7 @@
           {
             "key": "count",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       }
@@ -783,7 +783,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: string | number | null, name?: string | null, description?: string | null, nameInCustomerPortal?: string | null, sanitizedName?: string | null, chatStatus?: string | null, creatorId?: string | number | null, createdTime?: string | null, isDefault?: boolean | string | null, isEnabled?: boolean | string | null, hasLogo?: boolean | string | null, isAssignToTeamEnabled?: boolean | string | null, isVisibleInCustomerPortal?: boolean | string | null, associatedAgentIds?: string | number | null[] | null }[]"
+            "type": "{ id?: string | number | null, name?: string | null, description?: string | null, nameInCustomerPortal?: string | null, sanitizedName?: string | null, chatStatus?: string | null, creatorId?: string | number | null, createdTime?: string | null, isDefault?: boolean | string | null, isEnabled?: boolean | string | null, hasLogo?: boolean | string | null, isAssignToTeamEnabled?: boolean | string | null, isVisibleInCustomerPortal?: boolean | string | null, associatedAgentIds?: (string | number | null)[] | null }[]"
           }
         ]
       }
@@ -827,7 +827,7 @@
           {
             "key": "teams",
             "optional": false,
-            "type": "{ id?: string | number | null, name?: string | null, description?: string | null, departmentId?: string | number | null, logoUrl?: string | null, agents?: string | number | null[] | null, derivedAgents?: string | number | null[] | null, roles?: string | number | null[] | null, rolesWithSubordinates?: string | number | null[] | null, subTeams?: string | number | null[] | null }[]"
+            "type": "{ id?: string | number | null, name?: string | null, description?: string | null, departmentId?: string | number | null, logoUrl?: string | null, agents?: (string | number | null)[] | null, derivedAgents?: (string | number | null)[] | null, roles?: (string | number | null)[] | null, rolesWithSubordinates?: (string | number | null)[] | null, subTeams?: (string | number | null)[] | null }[]"
           }
         ]
       }
@@ -934,7 +934,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: string | number | null, name?: string | null, description?: string | null, reportsTo?: string | number | null, isDefault?: boolean | string | null, isVisible?: boolean | string | null, shareDataWithPeers?: boolean | string | null, immediateSubRoles?: string | number | null[] | null }[]"
+            "type": "{ id?: string | number | null, name?: string | null, description?: string | null, reportsTo?: string | number | null, isDefault?: boolean | string | null, isVisible?: boolean | string | null, shareDataWithPeers?: boolean | string | null, immediateSubRoles?: (string | number | null)[] | null }[]"
           }
         ]
       }
@@ -961,7 +961,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: string | number | null, name?: string | null, description?: string | null, reportsTo?: string | number | null, isDefault?: boolean | string | null, isVisible?: boolean | string | null, shareDataWithPeers?: boolean | string | null, immediateSubRoles?: string | number | null[] | null }[]"
+            "type": "{ id?: string | number | null, name?: string | null, description?: string | null, reportsTo?: string | number | null, isDefault?: boolean | string | null, isVisible?: boolean | string | null, shareDataWithPeers?: boolean | string | null, immediateSubRoles?: (string | number | null)[] | null }[]"
           }
         ]
       }
@@ -1027,7 +1027,7 @@
           {
             "key": "include",
             "optional": true,
-            "type": "contacts | products | assignee | departments | team | contract | isRead | skills[]"
+            "type": "(contacts | products | assignee | departments | team | contract | isRead | skills)[]"
           }
         ]
       },
@@ -1037,287 +1037,287 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "ticketNumber",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "statusType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "priority",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "channel",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "channelCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "category",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subCategory",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "classification",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "language",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sentiment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resolution",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "departmentId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "contactId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "accountId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "assigneeId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "teamId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "productId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "createdBy",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "modifiedBy",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "layoutId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "slaId",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "dueDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "responseDueDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customerResponseTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "modifiedTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closedTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "onholdTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lockedTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "threadCount",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "commentCount",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "attachmentCount",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "taskCount",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "tagCount",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "followerCount",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "isSpam",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isOverDue",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isEscalated",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isRead",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isArchived",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isDeleted",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isTrashed",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "webUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "{ appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null }"
+            "type": "{ appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null } | null"
           },
           {
             "key": "cf",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "customFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "contact",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null }"
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
           },
           {
             "key": "assignee",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null }"
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
           },
           {
             "key": "department",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null }"
+            "type": "{ id?: string | number | null, name?: string | null } | null"
           },
           {
             "key": "team",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null }"
+            "type": "{ id?: string | number | null, name?: string | null } | null"
           },
           {
             "key": "product",
             "optional": true,
-            "type": "{ id?: string | number | null, productName?: string | null }"
+            "type": "{ id?: string | number | null, productName?: string | null } | null"
           }
         ]
       }
@@ -1350,7 +1350,7 @@
           {
             "key": "include",
             "optional": true,
-            "type": "plainText | source[]",
+            "type": "(plainText | source)[]",
             "description": "Extra data to include. plainText adds the plain text content"
           },
           {
@@ -1367,167 +1367,167 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "plainText",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contentType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "direction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "channel",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sentiment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "canReply",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "hasAttach",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isForward",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isDescriptionThread",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isContentTruncated",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "fullContentURL",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "fromEmailAddress",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "to",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cc",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bcc",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "replyTo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "facebookProfile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "twitterProfile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "attachmentCount",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null, size?: number | string | null, status?: string | null, href?: string | null, previewurl?: string | null }[]"
+            "type": "{ id?: string | number | null, name?: string | null, size?: number | string | null, status?: string | null, href?: string | null, previewurl?: string | null }[] | null"
           },
           {
             "key": "readReceipts",
             "optional": true,
-            "type": "{ senderName?: string | null, recipientType?: string | null, from?: string | null }[]"
+            "type": "{ senderName?: string | null, recipientType?: string | null, from?: string | null }[] | null"
           },
           {
             "key": "actions",
             "optional": true,
-            "type": "{ method?: string | null, rel?: string | null, href?: string | null }[]"
+            "type": "{ method?: string | null, rel?: string | null, href?: string | null }[] | null"
           },
           {
             "key": "keyWords",
             "optional": true,
-            "type": "string | null[]"
+            "type": "(string | null)[] | null"
           },
           {
             "key": "aspects",
             "optional": true,
-            "type": "string | null[]"
+            "type": "(string | null)[] | null"
           },
           {
             "key": "author",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null }"
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
           },
           {
             "key": "impersonatedUser",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null }"
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "{ appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null }"
+            "type": "{ appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null } | null"
           }
         ]
       }
@@ -1553,17 +1553,17 @@
           {
             "key": "content",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "modifiedTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "author",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null }"
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
           }
         ]
       }
@@ -1589,7 +1589,7 @@
           {
             "key": "include",
             "optional": true,
-            "type": "plainText | source[]",
+            "type": "(plainText | source)[]",
             "description": "Extra data to include. plainText adds the plain text content"
           }
         ]
@@ -1600,167 +1600,167 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "plainText",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contentType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "direction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "channel",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sentiment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "canReply",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "hasAttach",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isForward",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isDescriptionThread",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "isContentTruncated",
             "optional": true,
-            "type": "boolean | string"
+            "type": "boolean | string | null"
           },
           {
             "key": "fullContentURL",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "fromEmailAddress",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "to",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cc",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bcc",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "replyTo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "facebookProfile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "twitterProfile",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "attachmentCount",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null, size?: number | string | null, status?: string | null, href?: string | null, previewurl?: string | null }[]"
+            "type": "{ id?: string | number | null, name?: string | null, size?: number | string | null, status?: string | null, href?: string | null, previewurl?: string | null }[] | null"
           },
           {
             "key": "readReceipts",
             "optional": true,
-            "type": "{ senderName?: string | null, recipientType?: string | null, from?: string | null }[]"
+            "type": "{ senderName?: string | null, recipientType?: string | null, from?: string | null }[] | null"
           },
           {
             "key": "actions",
             "optional": true,
-            "type": "{ method?: string | null, rel?: string | null, href?: string | null }[]"
+            "type": "{ method?: string | null, rel?: string | null, href?: string | null }[] | null"
           },
           {
             "key": "keyWords",
             "optional": true,
-            "type": "string | null[]"
+            "type": "(string | null)[] | null"
           },
           {
             "key": "aspects",
             "optional": true,
-            "type": "string | null[]"
+            "type": "(string | null)[] | null"
           },
           {
             "key": "author",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null }"
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
           },
           {
             "key": "impersonatedUser",
             "optional": true,
-            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null }"
+            "type": "{ id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "{ appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null }"
+            "type": "{ appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null } | null"
           }
         ]
       }
@@ -1840,7 +1840,7 @@
           {
             "key": "include",
             "optional": true,
-            "type": "contacts | products | assignee | departments | team | isRead[]"
+            "type": "(contacts | products | assignee | departments | team | isRead)[]"
           },
           {
             "key": "fields",
@@ -1856,7 +1856,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: string | number | null, ticketNumber?: number | string | null, subject?: string | null, description?: string | null, status?: string | null, statusType?: string | null, priority?: string | null, channel?: string | null, channelCode?: string | null, category?: string | null, subCategory?: string | null, classification?: string | null, language?: string | null, sentiment?: string | null, resolution?: string | null, email?: string | null, phone?: string | null, departmentId?: string | number | null, contactId?: string | number | null, accountId?: string | number | null, assigneeId?: string | number | null, teamId?: string | number | null, productId?: string | number | null, createdBy?: string | number | null, modifiedBy?: string | number | null, layoutId?: string | number | null, slaId?: string | number | null, dueDate?: string | null, responseDueDate?: string | null, customerResponseTime?: string | null, createdTime?: string | null, modifiedTime?: string | null, closedTime?: string | null, onholdTime?: string | null, lockedTime?: string | null, threadCount?: number | string | null, commentCount?: number | string | null, attachmentCount?: number | string | null, taskCount?: number | string | null, tagCount?: number | string | null, followerCount?: number | string | null, isSpam?: boolean | string | null, isOverDue?: boolean | string | null, isEscalated?: boolean | string | null, isRead?: boolean | string | null, isArchived?: boolean | string | null, isDeleted?: boolean | string | null, isTrashed?: boolean | string | null, webUrl?: string | null, source?: { appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null } | null, cf?: {} | null, customFields?: {} | null, contact?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, assignee?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, department?: { id?: string | number | null, name?: string | null } | null, team?: { id?: string | number | null, name?: string | null } | null, product?: { id?: string | number | null, productName?: string | null } | null }[]"
+            "type": "{ id?: string | number | null, ticketNumber?: number | string | null, subject?: string | null, description?: string | null, status?: string | null, statusType?: string | null, priority?: string | null, channel?: string | null, channelCode?: string | null, category?: string | null, subCategory?: string | null, classification?: string | null, language?: string | null, sentiment?: string | null, resolution?: string | null, email?: string | null, phone?: string | null, departmentId?: string | number | null, contactId?: string | number | null, accountId?: string | number | null, assigneeId?: string | number | null, teamId?: string | number | null, productId?: string | number | null, createdBy?: string | number | null, modifiedBy?: string | number | null, layoutId?: string | number | null, slaId?: string | number | null, dueDate?: string | null, responseDueDate?: string | null, customerResponseTime?: string | null, createdTime?: string | null, modifiedTime?: string | null, closedTime?: string | null, onholdTime?: string | null, lockedTime?: string | null, threadCount?: number | string | null, commentCount?: number | string | null, attachmentCount?: number | string | null, taskCount?: number | string | null, tagCount?: number | string | null, followerCount?: number | string | null, isSpam?: boolean | string | null, isOverDue?: boolean | string | null, isEscalated?: boolean | string | null, isRead?: boolean | string | null, isArchived?: boolean | string | null, isDeleted?: boolean | string | null, isTrashed?: boolean | string | null, webUrl?: string | null, source?: { appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null } | null, cf?: Record<string, any> | null, customFields?: Record<string, any> | null, contact?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, assignee?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, department?: { id?: string | number | null, name?: string | null } | null, team?: { id?: string | number | null, name?: string | null } | null, product?: { id?: string | number | null, productName?: string | null } | null }[]"
           }
         ]
       }
@@ -1894,7 +1894,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: string | number | null, summary?: string | null, content?: string | null, plainText?: string | null, contentType?: string | null, status?: string | null, direction?: string | null, visibility?: string | null, channel?: string | null, sentiment?: string | null, createdTime?: string | null, canReply?: boolean | string | null, hasAttach?: boolean | string | null, isForward?: boolean | string | null, isDescriptionThread?: boolean | string | null, isContentTruncated?: boolean | string | null, fullContentURL?: string | null, fromEmailAddress?: string | null, to?: string | null, cc?: string | null, bcc?: string | null, replyTo?: string | null, facebookProfile?: string | null, twitterProfile?: string | null, attachmentCount?: number | string | null, attachments?: { id?: string | number | null, name?: string | null, size?: number | string | null, status?: string | null, href?: string | null, previewurl?: string | null }[] | null, readReceipts?: { senderName?: string | null, recipientType?: string | null, from?: string | null }[] | null, actions?: { method?: string | null, rel?: string | null, href?: string | null }[] | null, keyWords?: string | null[] | null, aspects?: string | null[] | null, author?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, impersonatedUser?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, source?: { appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null } | null, type?: string | null, commentedTime?: string | null, modifiedTime?: string | null, isPublic?: boolean | string | null, commenterId?: string | number | null, commenter?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, responderId?: string | number | null, respondedIn?: string | null, lastRatingIconURL?: string | null, attachmentIds?: string | number | null[] | null }[]"
+            "type": "{ id?: string | number | null, summary?: string | null, content?: string | null, plainText?: string | null, contentType?: string | null, status?: string | null, direction?: string | null, visibility?: string | null, channel?: string | null, sentiment?: string | null, createdTime?: string | null, canReply?: boolean | string | null, hasAttach?: boolean | string | null, isForward?: boolean | string | null, isDescriptionThread?: boolean | string | null, isContentTruncated?: boolean | string | null, fullContentURL?: string | null, fromEmailAddress?: string | null, to?: string | null, cc?: string | null, bcc?: string | null, replyTo?: string | null, facebookProfile?: string | null, twitterProfile?: string | null, attachmentCount?: number | string | null, attachments?: { id?: string | number | null, name?: string | null, size?: number | string | null, status?: string | null, href?: string | null, previewurl?: string | null }[] | null, readReceipts?: { senderName?: string | null, recipientType?: string | null, from?: string | null }[] | null, actions?: { method?: string | null, rel?: string | null, href?: string | null }[] | null, keyWords?: (string | null)[] | null, aspects?: (string | null)[] | null, author?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, impersonatedUser?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, source?: { appName?: string | null, extId?: string | null, permalink?: string | null, type?: string | null, appPhotoURL?: string | null } | null, type?: string | null, commentedTime?: string | null, modifiedTime?: string | null, isPublic?: boolean | string | null, commenterId?: string | number | null, commenter?: { id?: string | number | null, name?: string | null, firstName?: string | null, lastName?: string | null, email?: string | null, photoURL?: string | null, type?: string | null } | null, responderId?: string | number | null, respondedIn?: string | null, lastRatingIconURL?: string | null, attachmentIds?: (string | number | null)[] | null }[]"
           }
         ]
       }

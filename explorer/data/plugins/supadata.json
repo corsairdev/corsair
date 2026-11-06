@@ -1,7 +1,7 @@
 {
   "id": "supadata",
   "displayName": "Supadata",
-  "description": "Supadata plugin for Corsair",
+  "description": "Video data API for transcripts and metadata, YouTube videos, channels, playlists and search, and web page scraping and site mapping.",
   "npmPackageName": "@corsair-dev/supadata",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -94,12 +94,12 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "author",
@@ -109,7 +109,7 @@
           {
             "key": "stats",
             "optional": true,
-            "type": "{ likes?: number | null, comments?: number | null, shares?: number | null, views?: number | null }"
+            "type": "{ likes: number | null, comments: number | null, shares: number | null, views?: number | null }"
           },
           {
             "key": "media",
@@ -129,7 +129,7 @@
           {
             "key": "additionalData",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -200,7 +200,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "{ error: string, message: string, details: string, documentationUrl?: string }"
+            "type": "{ error: string, message: string, details: string, documentationUrl?: string } | null"
           },
           {
             "key": "content",
@@ -562,7 +562,7 @@
           {
             "key": "features",
             "optional": true,
-            "type": "360 | hd | subtitles | creative-commons | 3d | live | 4k | location | hdr | vr180[]"
+            "type": "(360 | hd | subtitles | creative-commons | 3d | live | 4k | location | hdr | vr180)[]"
           },
           {
             "key": "nextPageToken",
@@ -658,17 +658,17 @@
           {
             "key": "uploadDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "viewCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "likeCount",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "isLive",
@@ -722,6 +722,16 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "platform",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "id",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -754,6 +764,11 @@
       "filters": [
         {
           "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -935,6 +950,11 @@
       "filters": [
         {
           "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

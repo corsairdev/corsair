@@ -154,7 +154,7 @@
           {
             "key": "addressSpaceDesc",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reportedAddress",
@@ -212,8 +212,8 @@
           },
           {
             "key": "isWhitelisted",
-            "optional": true,
-            "type": "boolean"
+            "optional": false,
+            "type": "boolean | null"
           },
           {
             "key": "abuseConfidenceScore",
@@ -223,27 +223,27 @@
           {
             "key": "countryCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "countryName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "usageType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isp",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "hostnames",
@@ -268,7 +268,7 @@
           {
             "key": "lastReportedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reports",
@@ -393,12 +393,12 @@
           {
             "key": "nextPageUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previousPageUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",

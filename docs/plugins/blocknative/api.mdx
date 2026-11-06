@@ -36,15 +36,17 @@ await corsair.blocknative.api.gas.getBaseFeeEstimates({});
 | `currentBlockNumber` | `number` | No | — |
 | `msSinceLastBlock` | `number` | No | — |
 | `baseFeePerGas` | `number` | No | — |
-| `blobBaseFeePerGas` | `number` | No | — |
+| `blobBaseFeePerGas` | `number \| null` | No | — |
 | `estimatedBaseFees` | `object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="estimatedBaseFees full type">
 
 ```ts
-{
-}[]
+Record<string, {
+  confidence: number,
+  baseFee: number
+}[]>[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -133,8 +135,7 @@ await corsair.blocknative.api.gas.getOracles({});
   icon?: string,
   system?: string,
   network?: string,
-  addressByVersion?: {
-  },
+  addressByVersion?: Record<string, string>,
   rpcUrl?: string,
   blockExplorerUrl?: string
 }[]

@@ -54,6 +54,7 @@ const rows = await corsair.exa.db.imports.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `websetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 | `updatedAt` | `date` | equals, before, after, between |
 
@@ -80,6 +81,7 @@ const rows = await corsair.exa.db.monitors.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `websetId` | `string` | equals, contains, startsWith, endsWith, in |
+| `cadenceType` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 | `updatedAt` | `date` | equals, before, after, between |
 
@@ -138,6 +140,7 @@ const rows = await corsair.exa.db.webhookConfigs.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 | `updatedAt` | `date` | equals, before, after, between |
 
@@ -163,6 +166,7 @@ const rows = await corsair.exa.db.websets.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `externalId` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 | `updatedAt` | `date` | equals, before, after, between |

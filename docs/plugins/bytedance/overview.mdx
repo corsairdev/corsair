@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Bytedance plugin for Corsair"
+description: "Video generation API for starting Seedance video tasks and listing, reading, and canceling or deleting them."
 ---
 
-Use **Bytedance** through Corsair: one client, typed API calls, local DB sync.
+Use **ByteDance** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -44,6 +44,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +52,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -89,19 +90,22 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`tasks.get`**
+**List video tasks**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.bytedance.api.tasks.get({});
+await tenant.bytedance.api.tasks.list({});
 ```
 
 
-**`tasks.delete`**
+**Start a video task**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.bytedance.api.tasks.delete({});
+await tenant.bytedance.api.video.create({
+	model: 'seedance-1-0-pro-250528',
+	content: [{ type: 'text', text: 'A paper boat drifting down a rainy street' }],
+});
 ```
 
 
@@ -109,9 +113,17 @@ See the full list on the [API](/plugins/bytedance/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.bytedance.db.<entity>.search()` and `.list()`: `videoTasks`.
+Search synced video tasks without hitting ByteDance.
 
-See [Database](/plugins/bytedance/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.bytedance.db.videoTasks.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `videoTasks`. See [Database](/plugins/bytedance/database) for filters and operators.
 
 ## What's next
 

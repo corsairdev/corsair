@@ -1,0 +1,152 @@
+---
+title: Overview
+description: "Read Codacy code quality data - your account, organizations, repositories and their language and analysis tool settings, plus the catalog of analysis tools and their code patterns."
+---
+
+Use **Codacy** through Corsair: one client, typed API calls, local DB sync.
+
+The plugin uses a Codacy account API token: in Codacy, open your account, tab Access management, and click Create API token under Account API tokens. The token reaches the same organizations and repositories as your user, and stops working on the expiry date you pick when you create it. Corsair sends it in the `api-token` header and asks for it on the first call that needs it. Self-hosted setups can pass it to the factory instead:
+
+```ts
+codacy({ key: process.env.CODACY_API_TOKEN })
+```
+
+Things to know:
+
+- **Read only.** Every operation is a read. The plugin does not receive webhooks.
+- **Naming a repository.** Repository and organization operations take `provider` (`gh` for GitHub, `gl` for GitLab, `bb` for Bitbucket), `organization_name` and `repository_name` as they appear on the Git provider, for example `gh` / `codacy` / `codacy-analysis-cli`.
+- **Paging.** `organizations.list`, `repositories.list`, `tools.list` and `patterns.list` take `limit` (default 100) and `cursor`. Pass `pagination.cursor` from the response to get the next page; a response without a cursor is the last page.
+- **Tool UUIDs.** `patterns.list` and `patterns.get` take a tool's `uuid` from `tools.list` or `analysis.getConfig`.
+- **Rate limits.** On a 429 the plugin waits for Codacy's `Retry-After` and retries up to three times.
+- **Not covered.** Issues, commits, pull requests, coverage, security findings and any write (repository settings, tool or pattern configuration).
+
+**What you get:**
+
+- 10 typed API operations
+- 5 synced entities (`accounts`, `organizations`, `patterns`, `repositories`, `tools`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/codacy
+```
+```bash yarn
+yarn add corsair @corsair-dev/codacy
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/codacy
+```
+```bash bun
+bun add corsair @corsair-dev/codacy
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { codacy } from '@corsair-dev/codacy';
+
+export const corsair = createCorsair({
+	plugins: [
+		codacy(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+codacy()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'codacy',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List an organization's repositories**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.codacy.api.repositories.list({ provider: 'gh', organization_name: 'codacy', limit: 20 });
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/codacy/api) reference._
+
+
+See the full list on the [API](/plugins/codacy/api) page.
+
+## Query synced data
+
+`repositories.list` and `repositories.get` store each repository by `<provider>/<owner>/<name>`. Organizations, tools, patterns and your account are stored the same way; `analysis.getConfig` and `repositories.languages` are not stored.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.codacy.db.repositories.search({
+	data: { owner: 'codacy' },
+	limit: 20,
+});
+```
+
+Synced entities: `accounts`, `organizations`, `patterns`, `repositories`, `tools`. See [Database](/plugins/codacy/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/codacy/api">
+    Every `codacy.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/codacy/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

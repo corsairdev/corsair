@@ -35,7 +35,7 @@ await corsair.loyverse.api.categories.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `deleted_object_ids` | `string[]` | No | — |
+| `deleted_object_ids` | `string[] \| null` | No | — |
 
 
 
@@ -66,10 +66,10 @@ await corsair.loyverse.api.categories.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `color` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -155,10 +155,10 @@ await corsair.loyverse.api.categories.upsert({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `color` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -190,7 +190,7 @@ await corsair.loyverse.api.customers.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `deleted_object_ids` | `string[]` | No | — |
+| `deleted_object_ids` | `string[] \| null` | No | — |
 
 
 
@@ -221,25 +221,25 @@ await corsair.loyverse.api.customers.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone_number` | `string` | No | — |
-| `address` | `string` | No | — |
-| `city` | `string` | No | — |
-| `region` | `string` | No | — |
-| `postal_code` | `string` | No | — |
-| `country_code` | `string` | No | — |
-| `customer_code` | `string` | No | — |
-| `note` | `string` | No | — |
-| `first_visit` | `string` | No | — |
-| `last_visit` | `string` | No | — |
-| `total_visits` | `number` | No | — |
-| `total_spent` | `number` | No | — |
-| `total_points` | `number` | No | — |
-| `permanent_deletion_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `customer_code` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `first_visit` | `string \| null` | No | — |
+| `last_visit` | `string \| null` | No | — |
+| `total_visits` | `number \| null` | No | — |
+| `total_spent` | `number \| null` | No | — |
+| `total_points` | `number \| null` | No | — |
+| `permanent_deletion_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -332,15 +332,15 @@ await corsair.loyverse.api.customers.upsert({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `name` | `string` | Yes | — |
-| `email` | `string` | No | — |
-| `phone_number` | `string` | No | — |
-| `address` | `string` | No | — |
-| `city` | `string` | No | — |
-| `region` | `string` | No | — |
-| `postal_code` | `string` | No | — |
-| `country_code` | `string` | No | — |
-| `customer_code` | `string` | No | — |
-| `note` | `string` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `customer_code` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
 
 
 
@@ -349,25 +349,25 @@ await corsair.loyverse.api.customers.upsert({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone_number` | `string` | No | — |
-| `address` | `string` | No | — |
-| `city` | `string` | No | — |
-| `region` | `string` | No | — |
-| `postal_code` | `string` | No | — |
-| `country_code` | `string` | No | — |
-| `customer_code` | `string` | No | — |
-| `note` | `string` | No | — |
-| `first_visit` | `string` | No | — |
-| `last_visit` | `string` | No | — |
-| `total_visits` | `number` | No | — |
-| `total_spent` | `number` | No | — |
-| `total_points` | `number` | No | — |
-| `permanent_deletion_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `customer_code` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `first_visit` | `string \| null` | No | — |
+| `last_visit` | `string \| null` | No | — |
+| `total_visits` | `number \| null` | No | — |
+| `total_spent` | `number \| null` | No | — |
+| `total_points` | `number \| null` | No | — |
+| `permanent_deletion_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -399,7 +399,7 @@ await corsair.loyverse.api.discounts.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `deleted_object_ids` | `string[]` | No | — |
+| `deleted_object_ids` | `string[] \| null` | No | — |
 
 
 
@@ -430,15 +430,15 @@ await corsair.loyverse.api.discounts.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `type` | `string` | No | — |
-| `name` | `string` | No | — |
-| `discount_amount` | `number` | No | — |
-| `discount_percent` | `number` | No | — |
-| `stores` | `string[]` | No | — |
-| `restricted_access` | `boolean` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `discount_amount` | `number \| null` | No | — |
+| `discount_percent` | `number \| null` | No | — |
+| `stores` | `string[] \| null` | No | — |
+| `restricted_access` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -585,15 +585,15 @@ await corsair.loyverse.api.discounts.upsert({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `type` | `string` | No | — |
-| `name` | `string` | No | — |
-| `discount_amount` | `number` | No | — |
-| `discount_percent` | `number` | No | — |
-| `stores` | `string[]` | No | — |
-| `restricted_access` | `boolean` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `discount_amount` | `number \| null` | No | — |
+| `discount_percent` | `number \| null` | No | — |
+| `stores` | `string[] \| null` | No | — |
+| `restricted_access` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -626,14 +626,14 @@ await corsair.loyverse.api.employees.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone_number` | `string` | No | — |
-| `stores` | `string[]` | No | — |
-| `is_owner` | `boolean` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `stores` | `string[] \| null` | No | — |
+| `is_owner` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -831,7 +831,7 @@ await corsair.loyverse.api.items.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `deleted_object_ids` | `string[]` | No | — |
+| `deleted_object_ids` | `string[] \| null` | No | — |
 
 
 
@@ -893,29 +893,29 @@ await corsair.loyverse.api.items.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `handle` | `string` | No | — |
-| `item_name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `reference_id` | `string` | No | — |
-| `category_id` | `string` | No | — |
-| `track_stock` | `boolean` | No | — |
-| `sold_by_weight` | `boolean` | No | — |
-| `is_composite` | `boolean` | No | — |
-| `use_production` | `boolean` | No | — |
-| `components` | `object[]` | No | — |
-| `primary_supplier_id` | `string` | No | — |
-| `tax_ids` | `string[]` | No | — |
-| `modifier_ids` | `string[]` | No | — |
-| `form` | `string` | No | — |
-| `color` | `string` | No | — |
-| `image_url` | `string` | No | — |
-| `option1_name` | `string` | No | — |
-| `option2_name` | `string` | No | — |
-| `option3_name` | `string` | No | — |
-| `variants` | `object[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `handle` | `string \| null` | No | — |
+| `item_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `reference_id` | `string \| null` | No | — |
+| `category_id` | `string \| null` | No | — |
+| `track_stock` | `boolean \| null` | No | — |
+| `sold_by_weight` | `boolean \| null` | No | — |
+| `is_composite` | `boolean \| null` | No | — |
+| `use_production` | `boolean \| null` | No | — |
+| `components` | `object[] \| null` | No | — |
+| `primary_supplier_id` | `string \| null` | No | — |
+| `tax_ids` | `string[] \| null` | No | — |
+| `modifier_ids` | `string[] \| null` | No | — |
+| `form` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `image_url` | `string \| null` | No | — |
+| `option1_name` | `string \| null` | No | — |
+| `option2_name` | `string \| null` | No | — |
+| `option3_name` | `string \| null` | No | — |
+| `variants` | `object[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="components full type">
@@ -924,7 +924,7 @@ await corsair.loyverse.api.items.get({});
 {
   variant_id?: string | null,
   quantity?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -955,7 +955,7 @@ await corsair.loyverse.api.items.get({});
   created_at?: string | null,
   updated_at?: string | null,
   deleted_at?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1114,22 +1114,22 @@ await corsair.loyverse.api.items.upsert({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `item_name` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `reference_id` | `string` | No | — |
-| `category_id` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `reference_id` | `string \| null` | No | — |
+| `category_id` | `string \| null` | No | — |
 | `track_stock` | `boolean` | No | — |
 | `sold_by_weight` | `boolean` | No | — |
 | `is_composite` | `boolean` | No | — |
 | `use_production` | `boolean` | No | — |
 | `components` | `object[]` | No | — |
-| `primary_supplier_id` | `string` | No | — |
+| `primary_supplier_id` | `string \| null` | No | — |
 | `tax_ids` | `string[]` | No | — |
 | `modifier_ids` | `string[]` | No | — |
 | `form` | `SQUARE \| CIRCLE \| SUN \| OCTAGON` | No | — |
 | `color` | `GREY \| RED \| PINK \| ORANGE \| YELLOW \| GREEN \| BLUE \| PURPLE` | No | — |
-| `option1_name` | `string` | No | — |
-| `option2_name` | `string` | No | — |
-| `option3_name` | `string` | No | — |
+| `option1_name` | `string \| null` | No | — |
+| `option2_name` | `string \| null` | No | — |
+| `option3_name` | `string \| null` | No | — |
 | `variants` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -1178,29 +1178,29 @@ await corsair.loyverse.api.items.upsert({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `handle` | `string` | No | — |
-| `item_name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `reference_id` | `string` | No | — |
-| `category_id` | `string` | No | — |
-| `track_stock` | `boolean` | No | — |
-| `sold_by_weight` | `boolean` | No | — |
-| `is_composite` | `boolean` | No | — |
-| `use_production` | `boolean` | No | — |
-| `components` | `object[]` | No | — |
-| `primary_supplier_id` | `string` | No | — |
-| `tax_ids` | `string[]` | No | — |
-| `modifier_ids` | `string[]` | No | — |
-| `form` | `string` | No | — |
-| `color` | `string` | No | — |
-| `image_url` | `string` | No | — |
-| `option1_name` | `string` | No | — |
-| `option2_name` | `string` | No | — |
-| `option3_name` | `string` | No | — |
-| `variants` | `object[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `handle` | `string \| null` | No | — |
+| `item_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `reference_id` | `string \| null` | No | — |
+| `category_id` | `string \| null` | No | — |
+| `track_stock` | `boolean \| null` | No | — |
+| `sold_by_weight` | `boolean \| null` | No | — |
+| `is_composite` | `boolean \| null` | No | — |
+| `use_production` | `boolean \| null` | No | — |
+| `components` | `object[] \| null` | No | — |
+| `primary_supplier_id` | `string \| null` | No | — |
+| `tax_ids` | `string[] \| null` | No | — |
+| `modifier_ids` | `string[] \| null` | No | — |
+| `form` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `image_url` | `string \| null` | No | — |
+| `option1_name` | `string \| null` | No | — |
+| `option2_name` | `string \| null` | No | — |
+| `option3_name` | `string \| null` | No | — |
+| `variants` | `object[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="components full type">
@@ -1209,7 +1209,7 @@ await corsair.loyverse.api.items.upsert({});
 {
   variant_id?: string | null,
   quantity?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1240,7 +1240,7 @@ await corsair.loyverse.api.items.upsert({});
   created_at?: string | null,
   updated_at?: string | null,
   deleted_at?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1271,11 +1271,11 @@ await corsair.loyverse.api.merchant.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `business_name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `country` | `string` | No | — |
-| `currency` | `object` | No | — |
-| `created_at` | `string` | No | — |
+| `business_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `currency` | `object \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="currency full type">
@@ -1284,7 +1284,7 @@ await corsair.loyverse.api.merchant.get({});
 {
   code?: string | null,
   decimal_places?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1319,7 +1319,7 @@ await corsair.loyverse.api.modifiers.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `deleted_object_ids` | `string[]` | No | — |
+| `deleted_object_ids` | `string[] \| null` | No | — |
 
 
 
@@ -1350,13 +1350,13 @@ await corsair.loyverse.api.modifiers.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `position` | `number` | No | — |
-| `stores` | `string[]` | No | — |
-| `modifier_options` | `object[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `position` | `number \| null` | No | — |
+| `stores` | `string[] \| null` | No | — |
+| `modifier_options` | `object[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="modifier_options full type">
@@ -1370,7 +1370,7 @@ await corsair.loyverse.api.modifiers.get({});
   created_at?: string | null,
   updated_at?: string | null,
   deleted_at?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1486,13 +1486,13 @@ await corsair.loyverse.api.modifiers.upsert({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `position` | `number` | No | — |
-| `stores` | `string[]` | No | — |
-| `modifier_options` | `object[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `position` | `number \| null` | No | — |
+| `stores` | `string[] \| null` | No | — |
+| `modifier_options` | `object[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="modifier_options full type">
@@ -1506,7 +1506,7 @@ await corsair.loyverse.api.modifiers.upsert({});
   created_at?: string | null,
   updated_at?: string | null,
   deleted_at?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1536,13 +1536,13 @@ await corsair.loyverse.api.oidc.discovery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `issuer` | `string` | No | — |
-| `authorization_endpoint` | `string` | No | — |
-| `token_endpoint` | `string` | No | — |
-| `userinfo_endpoint` | `string` | No | — |
-| `jwks_uri` | `string` | No | — |
-| `scopes_supported` | `string[]` | No | — |
-| `response_types_supported` | `string[]` | No | — |
+| `issuer` | `string \| null` | No | — |
+| `authorization_endpoint` | `string \| null` | No | — |
+| `token_endpoint` | `string \| null` | No | — |
+| `userinfo_endpoint` | `string \| null` | No | — |
+| `jwks_uri` | `string \| null` | No | — |
+| `scopes_supported` | `string[] \| null` | No | — |
+| `response_types_supported` | `string[] \| null` | No | — |
 
 
 
@@ -1600,12 +1600,12 @@ await corsair.loyverse.api.paymentTypes.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `type` | `string` | No | — |
-| `stores` | `string[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `stores` | `string[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -1692,7 +1692,7 @@ await corsair.loyverse.api.posDevices.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `deleted_object_ids` | `string[]` | No | — |
+| `deleted_object_ids` | `string[] \| null` | No | — |
 
 
 
@@ -1723,10 +1723,10 @@ await corsair.loyverse.api.posDevices.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `store_id` | `string` | No | — |
-| `activated` | `boolean` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `store_id` | `string \| null` | No | — |
+| `activated` | `boolean \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -1812,10 +1812,10 @@ await corsair.loyverse.api.posDevices.upsert({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `store_id` | `string` | No | — |
-| `activated` | `boolean` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `store_id` | `string \| null` | No | — |
+| `activated` | `boolean \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -1903,33 +1903,33 @@ await corsair.loyverse.api.receipts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `receipt_number` | `string` | No | — |
-| `receipt_type` | `string` | No | — |
-| `refund_for` | `string` | No | — |
-| `order` | `string` | No | — |
-| `note` | `string` | No | — |
-| `receipt_date` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `cancelled_at` | `string` | No | — |
-| `source` | `string` | No | — |
-| `total_money` | `number` | No | — |
-| `total_tax` | `number` | No | — |
-| `total_discount` | `number` | No | — |
-| `points_earned` | `number` | No | — |
-| `points_deducted` | `number` | No | — |
-| `points_balance` | `number` | No | — |
-| `tip` | `number` | No | — |
-| `surcharge` | `number` | No | — |
-| `customer_id` | `string` | No | — |
-| `employee_id` | `string` | No | — |
-| `store_id` | `string` | No | — |
-| `pos_device_id` | `string` | No | — |
-| `dining_option` | `string` | No | — |
-| `total_discounts` | `object[]` | No | — |
-| `total_taxes` | `object[]` | No | — |
-| `line_items` | `object[]` | No | — |
-| `payments` | `object[]` | No | — |
+| `receipt_number` | `string \| null` | No | — |
+| `receipt_type` | `string \| null` | No | — |
+| `refund_for` | `string \| null` | No | — |
+| `order` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `receipt_date` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `cancelled_at` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `total_money` | `number \| null` | No | — |
+| `total_tax` | `number \| null` | No | — |
+| `total_discount` | `number \| null` | No | — |
+| `points_earned` | `number \| null` | No | — |
+| `points_deducted` | `number \| null` | No | — |
+| `points_balance` | `number \| null` | No | — |
+| `tip` | `number \| null` | No | — |
+| `surcharge` | `number \| null` | No | — |
+| `customer_id` | `string \| null` | No | — |
+| `employee_id` | `string \| null` | No | — |
+| `store_id` | `string \| null` | No | — |
+| `pos_device_id` | `string \| null` | No | — |
+| `dining_option` | `string \| null` | No | — |
+| `total_discounts` | `object[] \| null` | No | — |
+| `total_taxes` | `object[] \| null` | No | — |
+| `line_items` | `object[] \| null` | No | — |
+| `payments` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="total_discounts full type">
@@ -1942,7 +1942,7 @@ await corsair.loyverse.api.receipts.create({});
   percentage?: number | null,
   rate?: number | null,
   money_amount?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1956,7 +1956,7 @@ await corsair.loyverse.api.receipts.create({});
   percentage?: number | null,
   rate?: number | null,
   money_amount?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2000,7 +2000,7 @@ await corsair.loyverse.api.receipts.create({});
     price?: number | null,
     money_amount?: number | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2020,7 +2020,7 @@ await corsair.loyverse.api.receipts.create({});
     card_company?: string | null,
     card_number?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2053,33 +2053,33 @@ await corsair.loyverse.api.receipts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `receipt_number` | `string` | No | — |
-| `receipt_type` | `string` | No | — |
-| `refund_for` | `string` | No | — |
-| `order` | `string` | No | — |
-| `note` | `string` | No | — |
-| `receipt_date` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `cancelled_at` | `string` | No | — |
-| `source` | `string` | No | — |
-| `total_money` | `number` | No | — |
-| `total_tax` | `number` | No | — |
-| `total_discount` | `number` | No | — |
-| `points_earned` | `number` | No | — |
-| `points_deducted` | `number` | No | — |
-| `points_balance` | `number` | No | — |
-| `tip` | `number` | No | — |
-| `surcharge` | `number` | No | — |
-| `customer_id` | `string` | No | — |
-| `employee_id` | `string` | No | — |
-| `store_id` | `string` | No | — |
-| `pos_device_id` | `string` | No | — |
-| `dining_option` | `string` | No | — |
-| `total_discounts` | `object[]` | No | — |
-| `total_taxes` | `object[]` | No | — |
-| `line_items` | `object[]` | No | — |
-| `payments` | `object[]` | No | — |
+| `receipt_number` | `string \| null` | No | — |
+| `receipt_type` | `string \| null` | No | — |
+| `refund_for` | `string \| null` | No | — |
+| `order` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `receipt_date` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `cancelled_at` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `total_money` | `number \| null` | No | — |
+| `total_tax` | `number \| null` | No | — |
+| `total_discount` | `number \| null` | No | — |
+| `points_earned` | `number \| null` | No | — |
+| `points_deducted` | `number \| null` | No | — |
+| `points_balance` | `number \| null` | No | — |
+| `tip` | `number \| null` | No | — |
+| `surcharge` | `number \| null` | No | — |
+| `customer_id` | `string \| null` | No | — |
+| `employee_id` | `string \| null` | No | — |
+| `store_id` | `string \| null` | No | — |
+| `pos_device_id` | `string \| null` | No | — |
+| `dining_option` | `string \| null` | No | — |
+| `total_discounts` | `object[] \| null` | No | — |
+| `total_taxes` | `object[] \| null` | No | — |
+| `line_items` | `object[] \| null` | No | — |
+| `payments` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="total_discounts full type">
@@ -2092,7 +2092,7 @@ await corsair.loyverse.api.receipts.get({});
   percentage?: number | null,
   rate?: number | null,
   money_amount?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2106,7 +2106,7 @@ await corsair.loyverse.api.receipts.get({});
   percentage?: number | null,
   rate?: number | null,
   money_amount?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2150,7 +2150,7 @@ await corsair.loyverse.api.receipts.get({});
     price?: number | null,
     money_amount?: number | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2170,7 +2170,7 @@ await corsair.loyverse.api.receipts.get({});
     card_company?: string | null,
     card_number?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2376,33 +2376,33 @@ await corsair.loyverse.api.receipts.refund({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `receipt_number` | `string` | No | — |
-| `receipt_type` | `string` | No | — |
-| `refund_for` | `string` | No | — |
-| `order` | `string` | No | — |
-| `note` | `string` | No | — |
-| `receipt_date` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `cancelled_at` | `string` | No | — |
-| `source` | `string` | No | — |
-| `total_money` | `number` | No | — |
-| `total_tax` | `number` | No | — |
-| `total_discount` | `number` | No | — |
-| `points_earned` | `number` | No | — |
-| `points_deducted` | `number` | No | — |
-| `points_balance` | `number` | No | — |
-| `tip` | `number` | No | — |
-| `surcharge` | `number` | No | — |
-| `customer_id` | `string` | No | — |
-| `employee_id` | `string` | No | — |
-| `store_id` | `string` | No | — |
-| `pos_device_id` | `string` | No | — |
-| `dining_option` | `string` | No | — |
-| `total_discounts` | `object[]` | No | — |
-| `total_taxes` | `object[]` | No | — |
-| `line_items` | `object[]` | No | — |
-| `payments` | `object[]` | No | — |
+| `receipt_number` | `string \| null` | No | — |
+| `receipt_type` | `string \| null` | No | — |
+| `refund_for` | `string \| null` | No | — |
+| `order` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `receipt_date` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `cancelled_at` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `total_money` | `number \| null` | No | — |
+| `total_tax` | `number \| null` | No | — |
+| `total_discount` | `number \| null` | No | — |
+| `points_earned` | `number \| null` | No | — |
+| `points_deducted` | `number \| null` | No | — |
+| `points_balance` | `number \| null` | No | — |
+| `tip` | `number \| null` | No | — |
+| `surcharge` | `number \| null` | No | — |
+| `customer_id` | `string \| null` | No | — |
+| `employee_id` | `string \| null` | No | — |
+| `store_id` | `string \| null` | No | — |
+| `pos_device_id` | `string \| null` | No | — |
+| `dining_option` | `string \| null` | No | — |
+| `total_discounts` | `object[] \| null` | No | — |
+| `total_taxes` | `object[] \| null` | No | — |
+| `line_items` | `object[] \| null` | No | — |
+| `payments` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="total_discounts full type">
@@ -2415,7 +2415,7 @@ await corsair.loyverse.api.receipts.refund({});
   percentage?: number | null,
   rate?: number | null,
   money_amount?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2429,7 +2429,7 @@ await corsair.loyverse.api.receipts.refund({});
   percentage?: number | null,
   rate?: number | null,
   money_amount?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2473,7 +2473,7 @@ await corsair.loyverse.api.receipts.refund({});
     price?: number | null,
     money_amount?: number | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2493,7 +2493,7 @@ await corsair.loyverse.api.receipts.refund({});
     card_company?: string | null,
     card_number?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2618,19 +2618,19 @@ await corsair.loyverse.api.stores.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `address` | `string` | No | — |
-| `city` | `string` | No | — |
-| `region` | `string` | No | — |
-| `state` | `string` | No | — |
-| `postal_code` | `string` | No | — |
-| `country_code` | `string` | No | — |
-| `country` | `string` | No | — |
-| `phone_number` | `string` | No | — |
-| `description` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -2724,7 +2724,7 @@ await corsair.loyverse.api.suppliers.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `deleted_object_ids` | `string[]` | No | — |
+| `deleted_object_ids` | `string[] \| null` | No | — |
 
 
 
@@ -2755,21 +2755,21 @@ await corsair.loyverse.api.suppliers.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `contact` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone_number` | `string` | No | — |
-| `address_1` | `string` | No | — |
-| `address_2` | `string` | No | — |
-| `city` | `string` | No | — |
-| `region` | `string` | No | — |
-| `postal_code` | `string` | No | — |
-| `country_code` | `string` | No | — |
-| `website` | `string` | No | — |
-| `note` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `contact` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `address_1` | `string \| null` | No | — |
+| `address_2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -2857,17 +2857,17 @@ await corsair.loyverse.api.suppliers.upsert({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `name` | `string` | Yes | — |
-| `contact` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone_number` | `string` | No | — |
-| `address_1` | `string` | No | — |
-| `address_2` | `string` | No | — |
-| `city` | `string` | No | — |
-| `region` | `string` | No | — |
-| `postal_code` | `string` | No | — |
-| `country_code` | `string` | No | — |
-| `website` | `string` | No | — |
-| `note` | `string` | No | — |
+| `contact` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `address_1` | `string \| null` | No | — |
+| `address_2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
 
 
 
@@ -2876,21 +2876,21 @@ await corsair.loyverse.api.suppliers.upsert({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `contact` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone_number` | `string` | No | — |
-| `address_1` | `string` | No | — |
-| `address_2` | `string` | No | — |
-| `city` | `string` | No | — |
-| `region` | `string` | No | — |
-| `postal_code` | `string` | No | — |
-| `country_code` | `string` | No | — |
-| `website` | `string` | No | — |
-| `note` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `contact` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `address_1` | `string \| null` | No | — |
+| `address_2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -2922,7 +2922,7 @@ await corsair.loyverse.api.taxes.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `deleted_object_ids` | `string[]` | No | — |
+| `deleted_object_ids` | `string[] \| null` | No | — |
 
 
 
@@ -2953,13 +2953,13 @@ await corsair.loyverse.api.taxes.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `type` | `string` | No | — |
-| `rate` | `number` | No | — |
-| `stores` | `string[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `rate` | `number \| null` | No | — |
+| `stores` | `string[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -3050,13 +3050,13 @@ await corsair.loyverse.api.taxes.upsert({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `type` | `string` | No | — |
-| `rate` | `number` | No | — |
-| `stores` | `string[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `rate` | `number \| null` | No | — |
+| `stores` | `string[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -3088,7 +3088,7 @@ await corsair.loyverse.api.variants.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `deleted_object_ids` | `string[]` | No | — |
+| `deleted_object_ids` | `string[] \| null` | No | — |
 
 
 
@@ -3119,21 +3119,21 @@ await corsair.loyverse.api.variants.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `variant_id` | `string` | Yes | — |
-| `item_id` | `string` | No | — |
-| `sku` | `string` | No | — |
-| `reference_variant_id` | `string` | No | — |
-| `option1_value` | `string` | No | — |
-| `option2_value` | `string` | No | — |
-| `option3_value` | `string` | No | — |
-| `barcode` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `purchase_cost` | `number` | No | — |
-| `default_pricing_type` | `string` | No | — |
-| `default_price` | `number` | No | — |
-| `stores` | `object[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `item_id` | `string \| null` | No | — |
+| `sku` | `string \| null` | No | — |
+| `reference_variant_id` | `string \| null` | No | — |
+| `option1_value` | `string \| null` | No | — |
+| `option2_value` | `string \| null` | No | — |
+| `option3_value` | `string \| null` | No | — |
+| `barcode` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `purchase_cost` | `number \| null` | No | — |
+| `default_pricing_type` | `string \| null` | No | — |
+| `default_price` | `number \| null` | No | — |
+| `stores` | `object[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="stores full type">
@@ -3146,7 +3146,7 @@ await corsair.loyverse.api.variants.get({});
   available_for_sale?: boolean | null,
   optimal_stock?: number | null,
   low_stock?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3247,15 +3247,15 @@ await corsair.loyverse.api.variants.upsert({});
 | `variant_id` | `string` | No | — |
 | `item_id` | `string` | No | — |
 | `sku` | `string` | No | — |
-| `reference_variant_id` | `string` | No | — |
-| `option1_value` | `string` | No | — |
-| `option2_value` | `string` | No | — |
-| `option3_value` | `string` | No | — |
-| `barcode` | `string` | No | — |
+| `reference_variant_id` | `string \| null` | No | — |
+| `option1_value` | `string \| null` | No | — |
+| `option2_value` | `string \| null` | No | — |
+| `option3_value` | `string \| null` | No | — |
+| `barcode` | `string \| null` | No | — |
 | `cost` | `number` | No | — |
-| `purchase_cost` | `number` | No | — |
+| `purchase_cost` | `number \| null` | No | — |
 | `default_pricing_type` | `FIXED \| VARIABLE` | No | — |
-| `default_price` | `number` | No | — |
+| `default_price` | `number \| null` | No | — |
 | `stores` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -3281,21 +3281,21 @@ await corsair.loyverse.api.variants.upsert({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `variant_id` | `string` | Yes | — |
-| `item_id` | `string` | No | — |
-| `sku` | `string` | No | — |
-| `reference_variant_id` | `string` | No | — |
-| `option1_value` | `string` | No | — |
-| `option2_value` | `string` | No | — |
-| `option3_value` | `string` | No | — |
-| `barcode` | `string` | No | — |
-| `cost` | `number` | No | — |
-| `purchase_cost` | `number` | No | — |
-| `default_pricing_type` | `string` | No | — |
-| `default_price` | `number` | No | — |
-| `stores` | `object[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `item_id` | `string \| null` | No | — |
+| `sku` | `string \| null` | No | — |
+| `reference_variant_id` | `string \| null` | No | — |
+| `option1_value` | `string \| null` | No | — |
+| `option2_value` | `string \| null` | No | — |
+| `option3_value` | `string \| null` | No | — |
+| `barcode` | `string \| null` | No | — |
+| `cost` | `number \| null` | No | — |
+| `purchase_cost` | `number \| null` | No | — |
+| `default_pricing_type` | `string \| null` | No | — |
+| `default_price` | `number \| null` | No | — |
+| `stores` | `object[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="stores full type">
@@ -3308,7 +3308,7 @@ await corsair.loyverse.api.variants.upsert({});
   available_for_sale?: boolean | null,
   optimal_stock?: number | null,
   low_stock?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3343,7 +3343,7 @@ await corsair.loyverse.api.webhooks.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `deleted_object_ids` | `string[]` | No | — |
+| `deleted_object_ids` | `string[] \| null` | No | — |
 
 
 
@@ -3373,14 +3373,14 @@ await corsair.loyverse.api.webhooks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `merchant_id` | `string` | No | — |
-| `url` | `string` | No | — |
-| `type` | `string` | No | — |
-| `status` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `merchant_id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 
@@ -3457,14 +3457,14 @@ await corsair.loyverse.api.webhooks.upsert({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `merchant_id` | `string` | No | — |
-| `url` | `string` | No | — |
-| `type` | `string` | No | — |
-| `status` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `deleted_at` | `string` | No | — |
+| `id` | `string \| null` | No | — |
+| `merchant_id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
 
 
 

@@ -29,26 +29,8 @@ await corsair.anchorbrowser.api.agent.listAgentResources({});
 |------|------|----------|-------------|
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -75,26 +57,8 @@ await corsair.anchorbrowser.api.agent.pauseAgent({});
 |------|------|----------|-------------|
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -121,26 +85,8 @@ await corsair.anchorbrowser.api.agent.resumeAgent({});
 |------|------|----------|-------------|
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -165,38 +111,12 @@ await corsair.anchorbrowser.api.agent.uploadFile({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `object` | Yes | — |
+| `file` | `Record<string, any>` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `file_content_base64` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="file full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -225,26 +145,8 @@ await corsair.anchorbrowser.api.batchSessions.getBatchSessionStatus({});
 |------|------|----------|-------------|
 | `batchId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -273,26 +175,8 @@ await corsair.anchorbrowser.api.downloads.listSessionDownloads({});
 |------|------|----------|-------------|
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -319,37 +203,11 @@ await corsair.anchorbrowser.api.events.signalEvent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `eventName` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -377,26 +235,8 @@ await corsair.anchorbrowser.api.events.waitForEvent({});
 | `timeoutMs` | `number` | No | — |
 | `eventName` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -425,26 +265,8 @@ await corsair.anchorbrowser.api.extensions.deleteExtension({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -470,26 +292,8 @@ await corsair.anchorbrowser.api.extensions.listExtensions({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -514,39 +318,13 @@ await corsair.anchorbrowser.api.extensions.uploadExtension({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `object` | No | — |
+| `file` | `Record<string, any>` | No | — |
 | `name` | `string` | Yes | — |
 | `file_name` | `string` | No | — |
 | `file_content_base64` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="file full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -575,36 +353,10 @@ await corsair.anchorbrowser.api.integrations.createIntegration({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
-| `credentials` | `object` | Yes | — |
+| `credentials` | `Record<string, any>` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="credentials full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -631,26 +383,8 @@ await corsair.anchorbrowser.api.integrations.deleteIntegration({});
 |------|------|----------|-------------|
 | `integrationId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -676,26 +410,8 @@ await corsair.anchorbrowser.api.integrations.listIntegrations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -727,26 +443,8 @@ await corsair.anchorbrowser.api.osLevel.clickMouse({});
 | `button` | `string` | No | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -773,26 +471,8 @@ await corsair.anchorbrowser.api.osLevel.copySelectedText({});
 |------|------|----------|-------------|
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -821,26 +501,8 @@ await corsair.anchorbrowser.api.osLevel.doubleClickMouse({});
 | `y` | `number` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -871,26 +533,8 @@ await corsair.anchorbrowser.api.osLevel.dragAndDrop({});
 | `startY` | `number` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -917,26 +561,8 @@ await corsair.anchorbrowser.api.osLevel.getClipboardContent({});
 |------|------|----------|-------------|
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -965,26 +591,8 @@ await corsair.anchorbrowser.api.osLevel.moveMouse({});
 | `y` | `number` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1012,26 +620,8 @@ await corsair.anchorbrowser.api.osLevel.navigateToUrl({});
 | `url` | `string` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1059,26 +649,8 @@ await corsair.anchorbrowser.api.osLevel.pasteText({});
 | `text` | `string` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1107,26 +679,8 @@ await corsair.anchorbrowser.api.osLevel.performKeyboardShortcut({});
 | `hold_time` | `number` | No | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1156,26 +710,8 @@ await corsair.anchorbrowser.api.osLevel.pressMouseButton({});
 | `button` | `string` | No | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1205,26 +741,8 @@ await corsair.anchorbrowser.api.osLevel.releaseMouseButton({});
 | `button` | `string` | No | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1257,26 +775,8 @@ await corsair.anchorbrowser.api.osLevel.scrollSession({});
 | `deltaY` | `number` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1304,26 +804,8 @@ await corsair.anchorbrowser.api.osLevel.setClipboardContent({});
 | `text` | `string` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1352,26 +834,8 @@ await corsair.anchorbrowser.api.osLevel.typeText({});
 | `delay` | `number` | No | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1400,26 +864,8 @@ await corsair.anchorbrowser.api.pages.getSessionPages({});
 |------|------|----------|-------------|
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1452,26 +898,8 @@ await corsair.anchorbrowser.api.profiles.createProfile({});
 | `description` | `string` | No | — |
 | `dedicated_sticky_ip` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1498,26 +926,8 @@ await corsair.anchorbrowser.api.profiles.deleteProfile({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1544,26 +954,8 @@ await corsair.anchorbrowser.api.profiles.getProfile({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1589,26 +981,8 @@ await corsair.anchorbrowser.api.profiles.listProfiles({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1638,26 +1012,8 @@ await corsair.anchorbrowser.api.profiles.updateProfile({});
 | `session_id` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1686,26 +1042,8 @@ await corsair.anchorbrowser.api.recordings.listSessionRecordings({});
 |------|------|----------|-------------|
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1732,26 +1070,8 @@ await corsair.anchorbrowser.api.recordings.pauseSessionRecording({});
 |------|------|----------|-------------|
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1778,26 +1098,8 @@ await corsair.anchorbrowser.api.recordings.resumeSessionRecording({});
 |------|------|----------|-------------|
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1826,26 +1128,8 @@ await corsair.anchorbrowser.api.screenshots.takeScreenshot({});
 |------|------|----------|-------------|
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1873,26 +1157,8 @@ await corsair.anchorbrowser.api.sessions.endAllSessions({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1919,26 +1185,8 @@ await corsair.anchorbrowser.api.sessions.endBrowserSession({});
 |------|------|----------|-------------|
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -1965,26 +1213,8 @@ await corsair.anchorbrowser.api.sessions.getBrowserSession({});
 |------|------|----------|-------------|
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2026,26 +1256,8 @@ await corsair.anchorbrowser.api.sessions.listSessions({});
 | `extra_stealth` | `boolean` | No | — |
 | `profile_name` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2070,47 +1282,13 @@ await corsair.anchorbrowser.api.sessions.startBrowserSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `browser` | `object` | No | — |
-| `session` | `object` | No | — |
+| `browser` | `Record<string, any>` | No | — |
+| `session` | `Record<string, any>` | No | — |
 | `identities` | `any[]` | No | — |
 | `integrations` | `any[]` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="browser full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="session full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2140,26 +1318,8 @@ await corsair.anchorbrowser.api.tasks.createOrUpdateTaskDraft({});
 | `code` | `string` | Yes | — |
 | `taskId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2188,36 +1348,10 @@ await corsair.anchorbrowser.api.tasks.createTask({});
 | `name` | `string` | Yes | — |
 | `language` | `string` | Yes | — |
 | `description` | `string` | No | — |
-| `browserConfiguration` | `object` | No | — |
+| `browserConfiguration` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="browserConfiguration full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2244,26 +1378,8 @@ await corsair.anchorbrowser.api.tasks.deleteTask({});
 |------|------|----------|-------------|
 | `taskId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2291,26 +1407,8 @@ await corsair.anchorbrowser.api.tasks.deleteTaskVersion({});
 | `taskId` | `string` | Yes | — |
 | `taskVersion` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2339,36 +1437,10 @@ await corsair.anchorbrowser.api.tasks.deployTask({});
 | `taskId` | `string` | Yes | — |
 | `language` | `string` | No | — |
 | `description` | `string` | No | — |
-| `browserConfiguration` | `object` | No | — |
+| `browserConfiguration` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="browserConfiguration full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2395,26 +1467,8 @@ await corsair.anchorbrowser.api.tasks.getLatestTaskVersion({});
 |------|------|----------|-------------|
 | `taskId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2441,26 +1495,8 @@ await corsair.anchorbrowser.api.tasks.getTaskDraft({});
 |------|------|----------|-------------|
 | `taskId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2488,26 +1524,8 @@ await corsair.anchorbrowser.api.tasks.getTaskExecutionResult({});
 | `taskId` | `string` | Yes | — |
 | `executionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2534,26 +1552,8 @@ await corsair.anchorbrowser.api.tasks.getTaskMetadata({});
 |------|------|----------|-------------|
 | `taskId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2581,26 +1581,8 @@ await corsair.anchorbrowser.api.tasks.getTaskVersion({});
 | `taskId` | `string` | Yes | — |
 | `taskVersion` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2631,26 +1613,8 @@ await corsair.anchorbrowser.api.tasks.listTaskExecutions({});
 | `taskId` | `string` | Yes | — |
 | `version` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2678,26 +1642,8 @@ await corsair.anchorbrowser.api.tasks.listTasks({});
 | `page` | `string` | No | — |
 | `limit` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2724,26 +1670,8 @@ await corsair.anchorbrowser.api.tasks.listTaskVersions({});
 |------|------|----------|-------------|
 | `taskId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2773,36 +1701,10 @@ await corsair.anchorbrowser.api.tasks.publishTaskVersion({});
 | `language` | `string` | No | — |
 | `description` | `string` | No | — |
 | `taskVersion` | `string` | Yes | — |
-| `browserConfiguration` | `object` | No | — |
+| `browserConfiguration` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="browserConfiguration full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2828,49 +1730,15 @@ await corsair.anchorbrowser.api.tasks.runTask({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `async` | `boolean` | No | — |
-| `inputs` | `object` | No | — |
+| `inputs` | `Record<string, any>` | No | — |
 | `taskId` | `string` | Yes | — |
 | `version` | `string` | No | — |
 | `sessionId` | `string` | No | — |
 | `cleanupSessions` | `boolean` | No | — |
-| `overrideBrowserConfiguration` | `object` | No | — |
+| `overrideBrowserConfiguration` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="inputs full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="overrideBrowserConfiguration full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2895,48 +1763,14 @@ await corsair.anchorbrowser.api.tasks.runTaskByName({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `inputs` | `object` | No | — |
+| `inputs` | `Record<string, any>` | No | — |
 | `taskName` | `string` | Yes | — |
 | `sessionId` | `string` | No | — |
 | `taskSessionId` | `string` | No | — |
-| `overrideBrowserConfiguration` | `object` | No | — |
+| `overrideBrowserConfiguration` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="inputs full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="overrideBrowserConfiguration full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -2965,26 +1799,8 @@ await corsair.anchorbrowser.api.tasks.updateTaskMetadata({});
 | `taskId` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3019,26 +1835,8 @@ await corsair.anchorbrowser.api.tools.getWebpageContent({});
 | `page_index` | `number` | No | — |
 | `return_partial_on_timeout` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3071,48 +1869,14 @@ await corsair.anchorbrowser.api.tools.performWebTask({});
 | `provider` | `string` | No | — |
 | `max_steps` | `number` | No | — |
 | `sessionId` | `string` | No | — |
-| `output_schema` | `object` | No | — |
-| `secret_values` | `object` | No | — |
+| `output_schema` | `Record<string, any>` | No | — |
+| `secret_values` | `Record<string, any>` | No | — |
 | `detect_elements` | `boolean` | No | — |
 | `highlight_elements` | `boolean` | No | — |
 | `human_intervention` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="output_schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="secret_values full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3147,26 +1911,8 @@ await corsair.anchorbrowser.api.tools.screenshotWebpage({});
 | `scroll_all_content` | `boolean` | No | — |
 | `capture_full_height` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 
@@ -3193,37 +1939,11 @@ await corsair.anchorbrowser.api.uploads.uploadFilesToSession({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `object` | Yes | — |
+| `file` | `Record<string, any>` | Yes | — |
 | `sessionId` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="file full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 
 
 

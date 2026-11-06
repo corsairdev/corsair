@@ -1,0 +1,142 @@
+---
+title: Overview
+description: "Meeting bots, recordings and transcripts with Recall.ai - send bots to Zoom, Google Meet, Teams and Webex calls, control them in the call, read recordings, transcripts and media, schedule bots from calendars, and manage Google logins and Zoom OAuth credentials."
+---
+
+Use **Recall.ai** through Corsair: one client, typed API calls.
+
+Recall.ai needs two things from each tenant: an API key and the region it was created in. Create the key in the Recall dashboard of your region (for example `https://us-west-2.recall.ai/dashboard/developers/api-keys`). Recall runs a separate deployment per region, so a key only works on its own region's host. Corsair asks for the key on the first call that needs it; store the region with it in the tenant's `region` account field. Self-hosted setups can pass both to the factory instead:
+
+```ts
+recallai({ key: process.env.RECALLAI_API_KEY, region: 'eu-central-1' })
+```
+
+Things to know:
+
+- **Region.** One of `us-west-2`, `us-east-1`, `eu-central-1` or `ap-northeast-1`. A pasted host such as `eu-central-1.recall.ai` is read as its region; any other value is rejected, so requests only ever go to the four Recall hosts. Without a region, requests go to `us-west-2`. A 401 usually means the key and the region do not match.
+- **Bots cost money.** `bots.create` sends a bot to the meeting, and Recall bills for its time there. Without `join_at`, or with one less than 10 minutes out, the bot joins right away; Recall recommends scheduling at least 10 minutes ahead. `bots.update` and `bots.delete` work only on a scheduled bot that has not joined yet.
+- **In-call actions.** The `botActions` calls (chat, recording, pinning, audio, video and screenshare output) need the bot in the call; otherwise Recall answers 400. The calls that start something return the updated bot; the `stop*Output*` and `stopScreenshare` calls return nothing. `leaveBotCall` and `deleteBotMedia` cannot be undone.
+- **Transcripts after the call.** `recordings.createTranscript` takes the provider as an object keyed by provider name, for example `{ recallai_async: { language_code: 'en' } }`. Recall allows five a minute per bot.
+- **Calendar V1.** The meeting calls (`calendar.listMeetings`, `retrieveMeeting`, `updateMeeting`, `refreshMeetings`) and the user calls (`calendar.retrieveUser`, `updateUser`, `deleteUser`, `disconnectPlatform`) act for one calendar user and take their `calendar_auth_token`. Get it from `calendar.authenticate`; it is valid for a day. Calendar V2 (`calendars.*` and the `calendar` event calls) uses the API key alone.
+- **Paging.** `bots.list` pages by `page` number, or by cursor when you pass `use_cursor`. `calendar.listUsers` returns every user unless you pass `paginate: true`; then it pages by `page` number. The other lists return `next` as a URL; pass its `cursor` value back to get the next page.
+- **Rate limits.** Most lists allow 60 requests a minute per workspace. A 429 is retried up to five times, waiting for Recall's `Retry-After`.
+- **Webhooks.** The plugin does not receive Recall's webhooks. Bot and recording status changes arrive there; Recall asks integrations not to poll `bots.list` for them.
+- **No local data.** Every call returns live data from Recall.
+
+**What you get:**
+
+- 111 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/recallai
+```
+```bash yarn
+yarn add corsair @corsair-dev/recallai
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/recallai
+```
+```bash bun
+bun add corsair @corsair-dev/recallai
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { recallai } from '@corsair-dev/recallai';
+
+export const corsair = createCorsair({
+	plugins: [
+		recallai(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+recallai()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'recallai',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List finished bots**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.recallai.api.bots.list({
+	status: ['done'],
+});
+```
+
+
+**Send a bot to a meeting**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.recallai.api.bots.create({ meeting_url: 'https://meet.google.com/abc-defg-hij', bot_name: 'Meeting Notetaker' });
+```
+
+
+See the full list on the [API](/plugins/recallai/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/recallai/api">
+    Every `recallai.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

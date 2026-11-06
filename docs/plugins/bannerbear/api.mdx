@@ -30,12 +30,12 @@ await corsair.bannerbear.api.account.getAccountInfo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `created_at` | `string` | No | — |
+| `created_at` | `string \| null` | No | — |
 | `uid` | `string` | Yes | — |
-| `plan` | `string` | No | — |
-| `quota` | `object` | No | — |
-| `workspace` | `string` | No | — |
-| `api_key` | `object` | No | — |
+| `plan` | `string \| null` | No | — |
+| `quota` | `object \| null` | No | — |
+| `workspace` | `string \| null` | No | — |
+| `api_key` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="quota full type">
@@ -45,7 +45,7 @@ await corsair.bannerbear.api.account.getAccountInfo({});
   max: number,
   current: number,
   remaining: number
-}
+} | null
 ```
 </Accordion>
 
@@ -56,7 +56,7 @@ await corsair.bannerbear.api.account.getAccountInfo({});
   name?: string | null,
   scopes?: string[],
   allowed_origins?: string[]
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -84,12 +84,12 @@ await corsair.bannerbear.api.account.getAuth({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `created_at` | `string` | No | — |
+| `created_at` | `string \| null` | No | — |
 | `uid` | `string` | Yes | — |
-| `plan` | `string` | No | — |
-| `quota` | `object` | No | — |
-| `workspace` | `string` | No | — |
-| `api_key` | `object` | No | — |
+| `plan` | `string \| null` | No | — |
+| `quota` | `object \| null` | No | — |
+| `workspace` | `string \| null` | No | — |
+| `api_key` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="quota full type">
@@ -99,7 +99,7 @@ await corsair.bannerbear.api.account.getAuth({});
   max: number,
   current: number,
   remaining: number
-}
+} | null
 ```
 </Accordion>
 
@@ -110,7 +110,7 @@ await corsair.bannerbear.api.account.getAuth({});
   name?: string | null,
   scopes?: string[],
   allowed_origins?: string[]
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -138,19 +138,9 @@ await corsair.bannerbear.api.animations.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `template` | `string` | Yes | — |
-| `modifications` | `object` | Yes | — |
-| `formats` | `mp4 \| mov[]` | No | — |
+| `modifications` | `Record<string, any>` | Yes | — |
+| `formats` | `(mp4 \| mov)[]` | No | — |
 | `metadata` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="modifications full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -160,24 +150,14 @@ await corsair.bannerbear.api.animations.create({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `template` | `string` | No | — |
-| `files` | `object` | No | — |
-| `progress` | `number` | No | — |
-| `metadata` | `string` | No | — |
-| `error` | `string` | No | — |
-| `self` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="files full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `template` | `string \| null` | No | — |
+| `files` | `Record<string, string \| null> \| null` | No | — |
+| `progress` | `number \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `self` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `completed_at` | `string \| null` | No | — |
 
 
 
@@ -209,24 +189,14 @@ await corsair.bannerbear.api.animations.get({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `template` | `string` | No | — |
-| `files` | `object` | No | — |
-| `progress` | `number` | No | — |
-| `metadata` | `string` | No | — |
-| `error` | `string` | No | — |
-| `self` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="files full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `template` | `string \| null` | No | — |
+| `files` | `Record<string, string \| null> \| null` | No | — |
+| `progress` | `number \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `self` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `completed_at` | `string \| null` | No | — |
 
 
 
@@ -262,8 +232,7 @@ await corsair.bannerbear.api.animations.list({});
   uid: string,
   status: string,
   template?: string | null,
-  files?: {
-  } | null,
+  files?: Record<string, string | null> | null,
   progress?: number | null,
   metadata?: string | null,
   error?: string | null,
@@ -311,15 +280,15 @@ await corsair.bannerbear.api.animationTemplates.create({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `width` | `number` | No | — |
-| `height` | `number` | No | — |
-| `frame_rate` | `number` | No | — |
-| `duration_seconds` | `number` | No | — |
-| `preview` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `frame_rate` | `number \| null` | No | — |
+| `duration_seconds` | `number \| null` | No | — |
+| `preview` | `string \| null` | No | — |
 | `tags` | `string[]` | No | — |
-| `created_at` | `string` | No | — |
-| `self` | `string` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `self` | `string \| null` | No | — |
 
 
 
@@ -351,15 +320,15 @@ await corsair.bannerbear.api.animationTemplates.get({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `width` | `number` | No | — |
-| `height` | `number` | No | — |
-| `frame_rate` | `number` | No | — |
-| `duration_seconds` | `number` | No | — |
-| `preview` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `frame_rate` | `number \| null` | No | — |
+| `duration_seconds` | `number \| null` | No | — |
+| `preview` | `string \| null` | No | — |
 | `tags` | `string[]` | No | — |
-| `created_at` | `string` | No | — |
-| `self` | `string` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `self` | `string \| null` | No | — |
 
 
 
@@ -430,18 +399,8 @@ await corsair.bannerbear.api.images.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `template` | `string` | Yes | — |
-| `modifications` | `object` | Yes | — |
+| `modifications` | `Record<string, any>` | Yes | — |
 | `metadata` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="modifications full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -451,23 +410,13 @@ await corsair.bannerbear.api.images.create({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `template` | `string` | No | — |
-| `files` | `object` | No | — |
-| `metadata` | `string` | No | — |
-| `error` | `string` | No | — |
-| `self` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="files full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `template` | `string \| null` | No | — |
+| `files` | `Record<string, string \| null> \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `self` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `completed_at` | `string \| null` | No | — |
 
 
 
@@ -499,23 +448,13 @@ await corsair.bannerbear.api.images.get({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `template` | `string` | No | — |
-| `files` | `object` | No | — |
-| `metadata` | `string` | No | — |
-| `error` | `string` | No | — |
-| `self` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="files full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `template` | `string \| null` | No | — |
+| `files` | `Record<string, string \| null> \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `self` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `completed_at` | `string \| null` | No | — |
 
 
 
@@ -551,8 +490,7 @@ await corsair.bannerbear.api.images.list({});
   uid: string,
   status: string,
   template?: string | null,
-  files?: {
-  } | null,
+  files?: Record<string, string | null> | null,
   metadata?: string | null,
   error?: string | null,
   self?: string | null,
@@ -591,9 +529,9 @@ await corsair.bannerbear.api.instantUrls.create({});
 | `status` | `active \| disabled` | No | — |
 | `scale` | `1 \| 2 \| 3 \| 4` | No | — |
 | `rate_limit` | `boolean` | No | — |
-| `template_version` | `number` | No | — |
-| `max_renders` | `number` | No | — |
-| `expires_at` | `string` | No | — |
+| `template_version` | `number \| null` | No | — |
+| `max_renders` | `number \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
 
 
 
@@ -603,14 +541,14 @@ await corsair.bannerbear.api.instantUrls.create({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `template` | `string` | No | — |
+| `template` | `string \| null` | No | — |
 | `base_url` | `string` | No | — |
-| `sample_url` | `string` | No | — |
-| `mode` | `string` | No | — |
-| `security` | `string` | No | — |
-| `status` | `string` | No | — |
-| `signing_key` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `sample_url` | `string \| null` | No | — |
+| `mode` | `string \| null` | No | — |
+| `security` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `signing_key` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -690,10 +628,10 @@ await corsair.bannerbear.api.misc.joinPdfs({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `joined_pdf_url` | `string` | No | — |
-| `self` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `metadata` | `string` | No | — |
+| `joined_pdf_url` | `string \| null` | No | — |
+| `self` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `metadata` | `string \| null` | No | — |
 
 
 
@@ -722,17 +660,7 @@ await corsair.bannerbear.api.templates.create({});
 | `width` | `number` | No | — |
 | `height` | `number` | No | — |
 | `tags` | `string[]` | No | — |
-| `config` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `config` | `Record<string, any>` | No | — |
 
 
 
@@ -742,15 +670,15 @@ await corsair.bannerbear.api.templates.create({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `width` | `number` | No | — |
-| `height` | `number` | No | — |
-| `preview` | `string` | No | — |
-| `preview_url` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `preview` | `string \| null` | No | — |
+| `preview_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 | `tags` | `string[]` | No | — |
-| `self` | `string` | No | — |
+| `self` | `string \| null` | No | — |
 
 
 
@@ -812,15 +740,15 @@ await corsair.bannerbear.api.templates.get({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `width` | `number` | No | — |
-| `height` | `number` | No | — |
-| `preview` | `string` | No | — |
-| `preview_url` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `preview` | `string \| null` | No | — |
+| `preview_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 | `tags` | `string[]` | No | — |
-| `self` | `string` | No | — |
+| `self` | `string \| null` | No | — |
 
 
 
@@ -852,15 +780,15 @@ await corsair.bannerbear.api.templates.import({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `width` | `number` | No | — |
-| `height` | `number` | No | — |
-| `preview` | `string` | No | — |
-| `preview_url` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `preview` | `string \| null` | No | — |
+| `preview_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 | `tags` | `string[]` | No | — |
-| `self` | `string` | No | — |
+| `self` | `string \| null` | No | — |
 
 
 
@@ -947,11 +875,11 @@ await corsair.bannerbear.api.webhooksApi.create({});
 | `uid` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `url` | `string` | Yes | — |
-| `resource` | `string` | No | — |
-| `event` | `string` | No | — |
-| `status` | `string` | No | — |
-| `signing_key` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `resource` | `string \| null` | No | — |
+| `event` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `signing_key` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -1014,11 +942,11 @@ await corsair.bannerbear.api.webhooksApi.get({});
 | `uid` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `url` | `string` | Yes | — |
-| `resource` | `string` | No | — |
-| `event` | `string` | No | — |
-| `status` | `string` | No | — |
-| `signing_key` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `resource` | `string \| null` | No | — |
+| `event` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `signing_key` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -1043,17 +971,7 @@ await corsair.bannerbear.api.workflows.createWorkflowRun({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workflow` | `string` | Yes | — |
-| `inputs` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="inputs full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `inputs` | `Record<string, any>` | No | — |
 
 
 
@@ -1063,41 +981,15 @@ await corsair.bannerbear.api.workflows.createWorkflowRun({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `workflow` | `string` | No | — |
-| `progress` | `number` | No | — |
-| `inputs` | `object` | No | — |
-| `outputs` | `object` | No | — |
-| `steps` | `object[]` | No | — |
-| `error` | `string` | No | — |
-| `self` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="inputs full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="outputs full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="steps full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `workflow` | `string \| null` | No | — |
+| `progress` | `number \| null` | No | — |
+| `inputs` | `Record<string, any> \| null` | No | — |
+| `outputs` | `Record<string, any> \| null` | No | — |
+| `steps` | `Record<string, any>[] \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `self` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `completed_at` | `string \| null` | No | — |
 
 
 
@@ -1129,31 +1021,13 @@ await corsair.bannerbear.api.workflows.getWorkflow({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `tags` | `string[]` | No | — |
-| `inputs` | `object` | No | — |
-| `steps` | `object[]` | No | — |
-| `ui_write_access` | `string` | No | — |
-| `api_write_access` | `string` | No | — |
-| `created_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="inputs full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="steps full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `inputs` | `Record<string, any> \| null` | No | — |
+| `steps` | `Record<string, any>[] \| null` | No | — |
+| `ui_write_access` | `string \| null` | No | — |
+| `api_write_access` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -1185,41 +1059,15 @@ await corsair.bannerbear.api.workflows.getWorkflowRun({});
 |------|------|----------|-------------|
 | `uid` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `workflow` | `string` | No | — |
-| `progress` | `number` | No | — |
-| `inputs` | `object` | No | — |
-| `outputs` | `object` | No | — |
-| `steps` | `object[]` | No | — |
-| `error` | `string` | No | — |
-| `self` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="inputs full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="outputs full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="steps full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `workflow` | `string \| null` | No | — |
+| `progress` | `number \| null` | No | — |
+| `inputs` | `Record<string, any> \| null` | No | — |
+| `outputs` | `Record<string, any> \| null` | No | — |
+| `steps` | `Record<string, any>[] \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `self` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `completed_at` | `string \| null` | No | — |
 
 
 
@@ -1256,12 +1104,9 @@ await corsair.bannerbear.api.workflows.listWorkflowRuns({});
   status: string,
   workflow?: string | null,
   progress?: number | null,
-  inputs?: {
-  } | null,
-  outputs?: {
-  } | null,
-  steps?: {
-  }[] | null,
+  inputs?: Record<string, any> | null,
+  outputs?: Record<string, any> | null,
+  steps?: Record<string, any>[] | null,
   error?: string | null,
   self?: string | null,
   created_at?: string | null,
@@ -1305,10 +1150,8 @@ await corsair.bannerbear.api.workflows.listWorkflows({});
   name: string,
   description?: string | null,
   tags?: string[],
-  inputs?: {
-  } | null,
-  steps?: {
-  }[] | null,
+  inputs?: Record<string, any> | null,
+  steps?: Record<string, any>[] | null,
   ui_write_access?: string | null,
   api_write_access?: string | null,
   created_at?: string | null

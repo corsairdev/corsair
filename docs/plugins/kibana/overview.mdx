@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Kibana plugin for Corsair"
+description: "Elastic's data exploration and management interface, with endpoints for saved objects, data views, dashboards, alerting rules, cases, connectors, security detections, and Fleet."
 ---
 
 Use **Kibana** through Corsair: one client, typed API calls, local DB sync.
@@ -44,6 +44,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +52,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -89,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`alerting.listRules`**
+**Find saved objects**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.kibana.api.alerting.listRules({});
+await tenant.kibana.api.savedObjects.find({ type: 'dashboard' });
 ```
 
 
-**`alerting.createRule`**
+**Create a dashboard**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.kibana.api.alerting.createRule({});
+await tenant.kibana.api.dashboards.create({ title: 'Service overview' });
 ```
 
 
@@ -109,9 +110,17 @@ See the full list on the [API](/plugins/kibana/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.kibana.db.<entity>.search()` and `.list()`: `dataViews`, `savedObjects`, `spaces`.
+These tables exist, but Kibana calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/kibana/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.kibana.db.savedObjects.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `dataViews`, `savedObjects`, `spaces`. See [Database](/plugins/kibana/database) for filters and operators.
 
 ## What's next
 

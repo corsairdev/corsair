@@ -1,0 +1,8715 @@
+---
+title: API
+description: "API reference for Render: every `render.api.*` operation with input and output types."
+---
+
+Every `render.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Blueprints
+
+### disconnect
+
+`blueprints.disconnect`
+
+Disconnect a Render Blueprint; its resources are kept
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.blueprints.disconnect({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`blueprints.list`
+
+List Render Blueprints
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.blueprints.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string[]` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listSyncs
+
+`blueprints.listSyncs`
+
+List syncs for a Render blueprint
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.blueprints.listSyncs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`blueprints.retrieve`
+
+Retrieve a Render Blueprint
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.blueprints.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`blueprints.update`
+
+Update a Render Blueprint
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.blueprints.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### validate
+
+`blueprints.validate`
+
+Validate a Render Blueprint configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.blueprints.validate({ ownerId: 'tea-cjnxpkdhshc73d12t9i0', file: 'services:\n  - type: web\n    name: api\n    runtime: node\n' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+| `file` | `string` | Yes | Contents of the render.yaml to validate |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Build Sources
+
+### builds.list
+
+`buildSources.builds.list`
+
+List builds for a Render build source
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.buildSources.builds.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### builds.retrieve
+
+`buildSources.builds.retrieve`
+
+Retrieve a Render build source build
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.buildSources.builds.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+| `buildId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### builds.trigger
+
+`buildSources.builds.trigger`
+
+Trigger a Render build source build
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.buildSources.builds.trigger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`buildSources.create`
+
+Create a Render build source
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.buildSources.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `projectId` | `string` | No | — |
+| `git` | `Record<string, any>` | No | — |
+| `image` | `Record<string, any>` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`buildSources.delete`
+
+Delete a Render build source
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.buildSources.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.link
+
+`buildSources.envGroups.link`
+
+Link an environment group to a Render build source
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.buildSources.envGroups.link({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+| `envGroupId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.unlink
+
+`buildSources.envGroups.unlink`
+
+Unlink an environment group from a Render build source
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.buildSources.envGroups.unlink({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+| `envGroupId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envVars.delete
+
+`buildSources.envVars.delete`
+
+Delete an environment variable from a Render build source
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.buildSources.envVars.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envVars.list
+
+`buildSources.envVars.list`
+
+List environment variables for a Render build source
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.buildSources.envVars.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envVars.retrieve
+
+`buildSources.envVars.retrieve`
+
+Retrieve an environment variable for a Render build source
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.buildSources.envVars.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envVars.update
+
+`buildSources.envVars.update`
+
+Replace all environment variables on a Render build source with the given list; variables not listed are deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.buildSources.envVars.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+(
+  {
+    key: string,
+    value: string
+  } | {
+    key: string,
+    generateValue: boolean
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envVars.upsert
+
+`buildSources.envVars.upsert`
+
+Add or update an environment variable for a Render build source
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.buildSources.envVars.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`buildSources.list`
+
+List Render build sources
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.buildSources.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`buildSources.retrieve`
+
+Retrieve a Render build source
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.buildSources.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.delete
+
+`buildSources.secretFiles.delete`
+
+Delete a secret file from a Render build source
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.buildSources.secretFiles.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.list
+
+`buildSources.secretFiles.list`
+
+List secret files for a Render build source
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.buildSources.secretFiles.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.retrieve
+
+`buildSources.secretFiles.retrieve`
+
+Retrieve a secret file for a Render build source
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.buildSources.secretFiles.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.update
+
+`buildSources.secretFiles.update`
+
+Replace all secret files on a Render build source with the given list; files not listed are deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.buildSources.secretFiles.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.upsert
+
+`buildSources.secretFiles.upsert`
+
+Add or update a secret file for a Render build source
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.buildSources.secretFiles.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`buildSources.update`
+
+Update a Render build source
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.buildSources.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buildSourceId` | `string` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Dedicated Ips
+
+### create
+
+`dedicatedIps.create`
+
+Create a Render dedicated IP set
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.dedicatedIps.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `ownerId` | `string` | Yes | — |
+| `region` | `frankfurt \| oregon \| ohio \| singapore \| virginia` | Yes | — |
+| `description` | `string` | No | — |
+| `environmentIds` | `string[]` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`dedicatedIps.delete`
+
+Delete a Render dedicated IP set
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.dedicatedIps.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`dedicatedIps.list`
+
+List Render dedicated IP sets
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.dedicatedIps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | Yes | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`dedicatedIps.retrieve`
+
+Retrieve a Render dedicated IP set
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.dedicatedIps.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`dedicatedIps.update`
+
+Update a Render dedicated IP set
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.dedicatedIps.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Disks
+
+### create
+
+`disks.create`
+
+Create a disk for a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.disks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `sizeGB` | `number` | Yes | — |
+| `mountPath` | `string` | Yes | — |
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`disks.delete`
+
+Delete a Render disk
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.disks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`disks.list`
+
+List Render disks
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.disks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listSnapshots
+
+`disks.listSnapshots`
+
+List snapshots for a Render disk
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.disks.listSnapshots({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### restoreSnapshot
+
+`disks.restoreSnapshot`
+
+Restore a snapshot to a Render disk
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.render.api.disks.restoreSnapshot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `snapshotKey` | `string` | Yes | — |
+| `instanceId` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`disks.retrieve`
+
+Retrieve a Render disk
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.disks.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`disks.update`
+
+Update a Render disk
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.disks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `sizeGB` | `number` | No | — |
+| `mountPath` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Events
+
+### retrieve
+
+`events.retrieve`
+
+Retrieve a Render event
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.events.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Key Value
+
+### connectionInfo
+
+`keyValue.connectionInfo`
+
+Retrieve connection info for a Render Key Value instance
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.keyValue.connectionInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`keyValue.create`
+
+Create a Render Key Value instance
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.keyValue.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `ownerId` | `string` | Yes | — |
+| `plan` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`keyValue.delete`
+
+Delete a Render Key Value instance
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.keyValue.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`keyValue.list`
+
+List Render Key Value instances
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.keyValue.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string[]` | No | — |
+| `region` | `(frankfurt \| oregon \| ohio \| singapore \| virginia)[]` | No | — |
+| `ownerId` | `string[]` | No | — |
+| `environmentId` | `string[]` | No | — |
+| `createdBefore` | `string` | No | — |
+| `createdAfter` | `string` | No | — |
+| `updatedBefore` | `string` | No | — |
+| `updatedAfter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### resume
+
+`keyValue.resume`
+
+Resume a Render Key Value instance
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.keyValue.resume({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `undefined \| "" \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`keyValue.retrieve`
+
+Retrieve a Render Key Value instance
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.keyValue.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `redisId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### suspend
+
+`keyValue.suspend`
+
+Suspend a Render Key Value instance
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.keyValue.suspend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `undefined \| "" \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`keyValue.update`
+
+Update a Render Key Value instance
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.keyValue.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `redisId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `plan` | `string` | No | — |
+| `maxmemoryPolicy` | `string` | No | — |
+| `persistenceMode` | `string` | No | — |
+| `ipAllowList` | `Record<string, any>[]` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Logs
+
+### deleteOwnerStream
+
+`logs.deleteOwnerStream`
+
+Delete an owner log stream
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.logs.deleteOwnerStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteResourceStream
+
+`logs.deleteResourceStream`
+
+Delete a Render resource log stream
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.logs.deleteResourceStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`logs.list`
+
+List Render logs
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.logs.list({ ownerId: 'tea-cjnxpkdhshc73d12t9i0', resource: ['srv-d0k1q2r3s4t5u6v7w8x9'], limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | Yes | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `resource` | `string[]` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### resourceStreams
+
+`logs.resourceStreams`
+
+List resource log streams
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.logs.resourceStreams({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveOwnerStream
+
+`logs.retrieveOwnerStream`
+
+Retrieve a Render owner log stream
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.logs.retrieveOwnerStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveResourceStream
+
+`logs.retrieveResourceStream`
+
+Retrieve a Render resource log stream
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.logs.retrieveResourceStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateOwnerStream
+
+`logs.updateOwnerStream`
+
+Update an owner log stream
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.logs.updateOwnerStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `preview` | `send \| drop` | Yes | — |
+| `endpoint` | `string` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateResourceStream
+
+`logs.updateResourceStream`
+
+Set the log stream setting for one Render resource
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.logs.updateResourceStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceId` | `string` | Yes | — |
+| `setting` | `send \| drop` | Yes | — |
+| `endpoint` | `string` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### values
+
+`logs.values`
+
+List Render log values
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.logs.values({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | Yes | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `resource` | `string[]` | Yes | — |
+| `label` | `instance \| host \| statusCode \| method \| level \| type` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Maintenance
+
+### list
+
+`maintenance.list`
+
+List Render maintenance windows
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.maintenance.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`maintenance.retrieve`
+
+Retrieve a Render maintenance run
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.maintenance.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### trigger
+
+`maintenance.trigger`
+
+Trigger a Render maintenance run
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.maintenance.trigger({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `undefined \| "" \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`maintenance.update`
+
+Update a Render maintenance run
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.maintenance.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `scheduledAt` | `string` | No | — |
+
+
+
+**Output:** `undefined \| "" \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Metrics
+
+### activeConnections
+
+`metrics.activeConnections`
+
+Read active Render connections
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.activeConnections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### applicationFilterValues
+
+`metrics.applicationFilterValues`
+
+List Render application metric filter values
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.applicationFilterValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### bandwidth
+
+`metrics.bandwidth`
+
+Read Render bandwidth metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.bandwidth({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### bandwidthSources
+
+`metrics.bandwidthSources`
+
+Read Render bandwidth sources
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.bandwidthSources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### cpu
+
+`metrics.cpu`
+
+Read Render CPU metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.cpu({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### cpuLimit
+
+`metrics.cpuLimit`
+
+Read Render CPU limits
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.cpuLimit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### cpuTarget
+
+`metrics.cpuTarget`
+
+Read Render CPU target metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.cpuTarget({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteOwnerStream
+
+`metrics.deleteOwnerStream`
+
+Delete the metrics stream of a Render workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.metrics.deleteOwnerStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### diskCapacity
+
+`metrics.diskCapacity`
+
+Read Render disk capacity
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.diskCapacity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### diskUsage
+
+`metrics.diskUsage`
+
+Read Render disk usage
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.diskUsage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### httpFilterValues
+
+`metrics.httpFilterValues`
+
+List Render HTTP metric filter values
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.httpFilterValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### httpLatency
+
+`metrics.httpLatency`
+
+Read Render HTTP latency metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.httpLatency({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### httpRequests
+
+`metrics.httpRequests`
+
+Read Render HTTP request metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.httpRequests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### instanceCount
+
+`metrics.instanceCount`
+
+Read Render instance counts
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.instanceCount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### memory
+
+`metrics.memory`
+
+Read Render memory metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.memory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### memoryLimit
+
+`metrics.memoryLimit`
+
+Read Render memory limits
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.memoryLimit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### memoryTarget
+
+`metrics.memoryTarget`
+
+Read Render memory targets
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.memoryTarget({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### pathFilterValues
+
+`metrics.pathFilterValues`
+
+List Render path metric filter values
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.pathFilterValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### replicationLag
+
+`metrics.replicationLag`
+
+Read Render replication lag metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.replicationLag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveOwnerStream
+
+`metrics.retrieveOwnerStream`
+
+Retrieve metrics stream settings for a Render owner
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.retrieveOwnerStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### taskRunsCompleted
+
+`metrics.taskRunsCompleted`
+
+Read completed Render task run metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.taskRunsCompleted({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### taskRunsQueued
+
+`metrics.taskRunsQueued`
+
+Read queued Render task run metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.metrics.taskRunsQueued({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### upsertOwnerStream
+
+`metrics.upsertOwnerStream`
+
+Create or update metrics stream settings for a Render owner
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.metrics.upsertOwnerStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+| `provider` | `BETTER_STACK \| GRAFANA \| DATADOG \| NEW_RELIC \| HONEYCOMB \| SIGNOZ \| GROUNDCOVER \| LOGFIRE \| CUSTOM` | No | — |
+| `url` | `string` | No | — |
+| `token` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Notifications
+
+### listOverrides
+
+`notifications.listOverrides`
+
+List per-service notification overrides
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.notifications.listOverrides({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string[]` | No | — |
+| `serviceId` | `string[]` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveOwnerSettings
+
+`notifications.retrieveOwnerSettings`
+
+Retrieve notification settings for a Render workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.notifications.retrieveOwnerSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveServiceOverrides
+
+`notifications.retrieveServiceOverrides`
+
+Retrieve notification overrides for a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.notifications.retrieveServiceOverrides({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateOwnerSettings
+
+`notifications.updateOwnerSettings`
+
+Update notification settings for a Render workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.notifications.updateOwnerSettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+| `emailEnabled` | `boolean` | No | — |
+| `previewNotificationsEnabled` | `boolean` | No | — |
+| `notificationsToSend` | `none \| failure \| all` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateServiceOverrides
+
+`notifications.updateServiceOverrides`
+
+Update notification overrides for a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.notifications.updateServiceOverrides({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `previewNotificationsEnabled` | `default \| false \| true` | No | — |
+| `notificationsToSend` | `default \| none \| failure \| all` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Organizations
+
+### auditLogs
+
+`organizations.auditLogs`
+
+List audit logs for a Render organization
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.organizations.auditLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `startTime` | `string` | No | — |
+| `endTime` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Owners
+
+### auditLogs
+
+`owners.auditLogs`
+
+List audit logs for a Render owner
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.owners.auditLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `startTime` | `string` | No | — |
+| `endTime` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`owners.list`
+
+List Render owners
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.owners.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### members
+
+`owners.members`
+
+List Render owner members
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.owners.members({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeMember
+
+`owners.removeMember`
+
+Remove a member from a Render workspace
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.owners.removeMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`owners.retrieve`
+
+Retrieve a Render owner
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.owners.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateMember
+
+`owners.updateMember`
+
+Update a Render workspace member role
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.owners.updateMember({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `role` | `ADMIN \| DEVELOPER \| WORKSPACE_CONTRIBUTOR \| WORKSPACE_BILLING \| WORKSPACE_VIEWER` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Postgres
+
+### connectionInfo
+
+`postgres.connectionInfo`
+
+Retrieve connection info for a Render Postgres instance
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.postgres.connectionInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`postgres.create`
+
+Create a Render Postgres database
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.postgres.create({ name: 'orders-db', ownerId: 'tea-cjnxpkdhshc73d12t9i0', plan: 'basic_256mb', version: '17' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `ownerId` | `string` | Yes | — |
+| `plan` | `string` | Yes | — |
+| `version` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createExport
+
+`postgres.createExport`
+
+Create an export of a Render Postgres database
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.postgres.createExport({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createUser
+
+`postgres.createUser`
+
+Create a user for a Render Postgres database
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.postgres.createUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  username: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`postgres.delete`
+
+Delete a Render Postgres database
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.postgres.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteUser
+
+`postgres.deleteUser`
+
+Delete a user on a Render Postgres instance
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.postgres.deleteUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `username` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### failover
+
+`postgres.failover`
+
+Trigger a failover for a Render Postgres instance
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.postgres.failover({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `undefined \| "" \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`postgres.list`
+
+List Render Postgres databases
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.postgres.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listExports
+
+`postgres.listExports`
+
+List exports of a Render Postgres database
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.postgres.listExports({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listUsers
+
+`postgres.listUsers`
+
+List users of a Render Postgres database
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.postgres.listUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### processes
+
+`postgres.processes`
+
+List active queries for a Render Postgres database
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.postgres.processes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `processes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="processes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### recover
+
+`postgres.recover`
+
+Trigger point-in-time recovery for a Render Postgres instance
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.postgres.recover({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `restoreName` | `string` | No | — |
+| `restoreTime` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### recoveryInfo
+
+`postgres.recoveryInfo`
+
+Retrieve point-in-time recovery status for a Render Postgres instance
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.postgres.recoveryInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### restart
+
+`postgres.restart`
+
+Restart a Render Postgres instance
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.postgres.restart({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `undefined \| "" \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### resume
+
+`postgres.resume`
+
+Resume a Render Postgres instance
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.postgres.resume({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `undefined \| "" \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`postgres.retrieve`
+
+Retrieve a Render Postgres database
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.postgres.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sizes
+
+`postgres.sizes`
+
+List database sizes for a Render Postgres database
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.postgres.sizes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sizes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sizes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### suspend
+
+`postgres.suspend`
+
+Suspend a Render Postgres instance
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.postgres.suspend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `undefined \| "" \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### tableScans
+
+`postgres.tableScans`
+
+List table scans for a Render Postgres database
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.postgres.tableScans({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableScans` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tableScans full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### topQueries
+
+`postgres.topQueries`
+
+List top queries for a Render Postgres database
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.postgres.topQueries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topQueries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="topQueries full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`postgres.update`
+
+Update a Render Postgres database
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.postgres.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a Render project
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.projects.create({ name: 'storefront', ownerId: 'tea-cjnxpkdhshc73d12t9i0', environments: [{ name: 'production' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `ownerId` | `string` | Yes | — |
+| `environments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="environments full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a Render project
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`projects.list`
+
+List Render projects
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`projects.retrieve`
+
+Retrieve a Render project
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.projects.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a Render project
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Registry Credentials
+
+### create
+
+`registryCredentials.create`
+
+Create registry credentials
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.registryCredentials.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `registry` | `GITHUB \| GITLAB \| DOCKER \| GOOGLE_ARTIFACT \| AWS_ECR` | Yes | — |
+| `name` | `string` | Yes | — |
+| `username` | `string` | Yes | — |
+| `authToken` | `string` | Yes | — |
+| `ownerId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`registryCredentials.delete`
+
+Delete registry credentials
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.registryCredentials.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`registryCredentials.list`
+
+List registry credentials
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.registryCredentials.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`registryCredentials.retrieve`
+
+Retrieve registry credentials
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.registryCredentials.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`registryCredentials.update`
+
+Update registry credentials
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.registryCredentials.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `registry` | `GITHUB \| GITLAB \| DOCKER \| GOOGLE_ARTIFACT \| AWS_ECR` | Yes | — |
+| `name` | `string` | Yes | — |
+| `username` | `string` | Yes | — |
+| `authToken` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Services
+
+### cancelDeploy
+
+`services.cancelDeploy`
+
+Cancel a Render deployment
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.cancelDeploy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `deployId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `buildId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `finishedAt` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`services.create`
+
+Create a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `ownerId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createPreview
+
+`services.createPreview`
+
+Create an image-backed preview for a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.createPreview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `imagePath` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `plan` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### cronJobs.cancelRun
+
+`services.cronJobs.cancelRun`
+
+Cancel a run of a Render cron job
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.cronJobs.cancelRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cronJobId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### cronJobs.triggerRun
+
+`services.cronJobs.triggerRun`
+
+Trigger a run of a Render cron job
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.cronJobs.triggerRun({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cronJobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `startedAt` | `string` | No | — |
+| `finishedAt` | `string` | No | — |
+| `triggeredBy` | `string` | No | — |
+
+
+
+---
+
+### customDomains.create
+
+`services.customDomains.create`
+
+Add a custom domain to a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.customDomains.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### customDomains.delete
+
+`services.customDomains.delete`
+
+Delete a custom domain from a Render service
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.customDomains.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `customDomainNameOrID` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### customDomains.list
+
+`services.customDomains.list`
+
+List custom domains for a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.customDomains.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `name` | `string[]` | No | — |
+| `domainType` | `apex \| subdomain` | No | — |
+| `verificationStatus` | `verified \| unverified` | No | — |
+| `createdBefore` | `string` | No | — |
+| `createdAfter` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### customDomains.retrieve
+
+`services.customDomains.retrieve`
+
+Retrieve a custom domain on a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.customDomains.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `customDomainNameOrID` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### customDomains.verify
+
+`services.customDomains.verify`
+
+Re-run DNS verification for a custom domain on a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.customDomains.verify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `customDomainNameOrID` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`services.delete`
+
+Delete a Render service
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteAutoscaling
+
+`services.deleteAutoscaling`
+
+Delete autoscaling configuration for a Render service
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.deleteAutoscaling({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.create
+
+`services.envGroups.create`
+
+Create a Render environment group
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.envGroups.create({ name: 'shared-config', ownerId: 'tea-cjnxpkdhshc73d12t9i0', envVars: [{ key: 'LOG_LEVEL', value: 'info' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `ownerId` | `string` | Yes | — |
+| `envVars` | `object[]` | Yes | — |
+| `secretFiles` | `object[]` | No | — |
+| `serviceIds` | `string[]` | No | — |
+| `environmentId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="envVars full type">
+
+```ts
+(
+  {
+    key: string,
+    value: string
+  } | {
+    key: string,
+    generateValue: boolean
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="secretFiles full type">
+
+```ts
+{
+  name: string,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.delete
+
+`services.envGroups.delete`
+
+Delete a Render environment group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.envGroups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.envVars.delete
+
+`services.envGroups.envVars.delete`
+
+Delete one environment variable from a Render env group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.envGroups.envVars.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.envVars.retrieve
+
+`services.envGroups.envVars.retrieve`
+
+Retrieve one environment variable, including its value, from a Render env group
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.envGroups.envVars.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.envVars.upsert
+
+`services.envGroups.envVars.upsert`
+
+Add or update one environment variable in a Render env group
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.envGroups.envVars.upsert({ envGroupId: 'evg-d0k1q2r3s4t5u6v7w8x9', envVarKey: 'LOG_LEVEL', value: 'info' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+| `value` | `string` | No | — |
+| `generateValue` | `boolean` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.linkService
+
+`services.envGroups.linkService`
+
+Link a Render service to an env group
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.envGroups.linkService({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.list
+
+`services.envGroups.list`
+
+List Render environment groups
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.envGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string[]` | No | — |
+| `ownerId` | `string[]` | No | — |
+| `environmentId` | `string[]` | No | — |
+| `createdBefore` | `string` | No | — |
+| `createdAfter` | `string` | No | — |
+| `updatedBefore` | `string` | No | — |
+| `updatedAfter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.retrieve
+
+`services.envGroups.retrieve`
+
+Retrieve a Render environment group
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.envGroups.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.secretFiles.delete
+
+`services.envGroups.secretFiles.delete`
+
+Delete one secret file from a Render env group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.envGroups.secretFiles.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `secretFileName` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.secretFiles.retrieve
+
+`services.envGroups.secretFiles.retrieve`
+
+Retrieve one secret file, including its contents, from a Render env group
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.envGroups.secretFiles.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `secretFileName` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.secretFiles.upsert
+
+`services.envGroups.secretFiles.upsert`
+
+Add or update one secret file in a Render env group
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.envGroups.secretFiles.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `secretFileName` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.unlinkService
+
+`services.envGroups.unlinkService`
+
+Unlink a Render service from an environment group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.envGroups.unlinkService({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `envGroupId` | `string` | Yes | — |
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envGroups.update
+
+`services.envGroups.update`
+
+Update a Render environment group
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.envGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### environments.addResources
+
+`services.environments.addResources`
+
+Move services, databases or env groups into a Render environment
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.environments.addResources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environmentId` | `string` | Yes | — |
+| `resourceIds` | `string[]` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### environments.create
+
+`services.environments.create`
+
+Create a Render environment
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.environments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `projectId` | `string` | Yes | — |
+| `protectedStatus` | `unprotected \| protected` | No | — |
+| `networkIsolationEnabled` | `boolean` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### environments.delete
+
+`services.environments.delete`
+
+Delete a Render environment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.environments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### environments.list
+
+`services.environments.list`
+
+List Render environments
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.environments.list({ projectId: 'prj-d0k1q2r3s4t5u6v7w8x9' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### environments.removeResources
+
+`services.environments.removeResources`
+
+Remove resources from a Render environment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.environments.removeResources({ environmentId: 'evm-d0k1q2r3s4t5u6v7w8x9', resourceIds: ['srv-d0k1q2r3s4t5u6v7w8x9'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environmentId` | `string` | Yes | — |
+| `resourceIds` | `string[]` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### environments.retrieve
+
+`services.environments.retrieve`
+
+Retrieve a Render environment
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.environments.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### environments.update
+
+`services.environments.update`
+
+Update a Render environment
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.environments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envVars.delete
+
+`services.envVars.delete`
+
+Delete an environment variable from a Render service
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.envVars.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envVars.list
+
+`services.envVars.list`
+
+List environment variables for a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.envVars.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envVars.retrieve
+
+`services.envVars.retrieve`
+
+Retrieve one environment variable, including its value, from a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.envVars.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envVars.update
+
+`services.envVars.update`
+
+Replace all environment variables on a Render service with the given list; variables not listed are deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.envVars.update({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', body: [{ key: 'LOG_LEVEL', value: 'info' }, { key: 'SESSION_SECRET', generateValue: true }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+(
+  {
+    key: string,
+    value: string
+  } | {
+    key: string,
+    generateValue: boolean
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### envVars.upsert
+
+`services.envVars.upsert`
+
+Add or update one environment variable on a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.envVars.upsert({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', envVarKey: 'LOG_LEVEL', value: 'debug' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `envVarKey` | `string` | Yes | — |
+| `value` | `string` | No | — |
+| `generateValue` | `boolean` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### headers.add
+
+`services.headers.add`
+
+Add a response header rule to a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.headers.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### headers.delete
+
+`services.headers.delete`
+
+Delete a header from a Render service
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.headers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `headerId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### headers.list
+
+`services.headers.list`
+
+List headers for a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.headers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `path` | `string[]` | No | — |
+| `name` | `string[]` | No | — |
+| `value` | `string[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### headers.update
+
+`services.headers.update`
+
+Replace all response header rules on a Render service with the given list; rules not listed are deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.headers.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  path: string,
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### jobs.cancel
+
+`services.jobs.cancel`
+
+Cancel a running job on a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.jobs.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### jobs.create
+
+`services.jobs.create`
+
+Create a job run for a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.jobs.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `startCommand` | `string` | Yes | — |
+| `planId` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### jobs.list
+
+`services.jobs.list`
+
+List jobs for a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.jobs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### jobs.retrieve
+
+`services.jobs.retrieve`
+
+Retrieve a Render service job
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.jobs.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`services.list`
+
+List Render services accessible to the authenticated owner
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.list({ type: ['web_service'], region: ['oregon'], limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string[]` | No | — |
+| `type` | `string[]` | No | — |
+| `environmentId` | `string[]` | No | — |
+| `env` | `string[]` | No | — |
+| `region` | `string[]` | No | — |
+| `suspended` | `(suspended \| not_suspended)[]` | No | — |
+| `ownerId` | `string[]` | No | — |
+| `includePreviews` | `boolean` | No | — |
+| `createdBefore` | `string` | No | — |
+| `createdAfter` | `string` | No | — |
+| `updatedBefore` | `string` | No | — |
+| `updatedAfter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  service: {
+    id: string,
+    name: string,
+    type: string,
+    ownerId: string,
+    environmentId?: string | null,
+    createdAt?: string,
+    updatedAt?: string
+  },
+  cursor?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listDeploys
+
+`services.listDeploys`
+
+List deployments for a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.listDeploys({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', status: ['live'], limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `status` | `string[]` | No | — |
+| `createdBefore` | `string` | No | — |
+| `createdAfter` | `string` | No | — |
+| `updatedBefore` | `string` | No | — |
+| `updatedAfter` | `string` | No | — |
+| `finishedBefore` | `string` | No | — |
+| `finishedAfter` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listEvents
+
+`services.listEvents`
+
+List events for a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.listEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listInstances
+
+`services.listInstances`
+
+List the running instances of a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.listInstances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listOutboundIps
+
+`services.listOutboundIps`
+
+List outbound IPs for a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.listOutboundIps({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `dedicatedIpId` | `string` | No | — |
+| `ips` | `string[]` | Yes | — |
+
+
+
+---
+
+### purgeCache
+
+`services.purgeCache`
+
+Purge the cache for a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.purgeCache({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined \| "" \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### restart
+
+`services.restart`
+
+Restart a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.restart({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined \| "" \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### resume
+
+`services.resume`
+
+Resume a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.resume({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined \| "" \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`services.retrieve`
+
+Retrieve a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.retrieve({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `ownerId` | `string` | Yes | — |
+| `environmentId` | `string \| null` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### retrieveDeploy
+
+`services.retrieveDeploy`
+
+Retrieve one deploy of a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.retrieveDeploy({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', deployId: 'dep-d0k1q2r3s4t5u6v7w8y0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `deployId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### rollbackDeploy
+
+`services.rollbackDeploy`
+
+Roll back a Render service deployment
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.rollbackDeploy({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', deployId: 'dep-d0k1q2r3s4t5u6v7w8y0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `deployId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `buildId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `finishedAt` | `string` | No | — |
+
+
+
+---
+
+### routes.add
+
+`services.routes.add`
+
+Add a redirect or rewrite rule to a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.routes.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `type` | `redirect \| rewrite` | Yes | — |
+| `source` | `string` | Yes | — |
+| `destination` | `string` | Yes | — |
+| `priority` | `number` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### routes.delete
+
+`services.routes.delete`
+
+Delete a route from a Render service
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.routes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `routeId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### routes.list
+
+`services.routes.list`
+
+List the redirect and rewrite rules of a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.routes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `type` | `(redirect \| rewrite)[]` | No | — |
+| `source` | `string[]` | No | — |
+| `destination` | `string[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### routes.update
+
+`services.routes.update`
+
+Replace all redirect and rewrite rules on a Render service with the given list; rules not listed are deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.routes.update({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', body: [{ type: 'rewrite', source: '/app/*', destination: '/index.html' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type: redirect | rewrite,
+  source: string,
+  destination: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### routes.updatePriority
+
+`services.routes.updatePriority`
+
+Change the priority of one redirect or rewrite rule on a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.routes.updatePriority({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `routeId` | `string` | Yes | — |
+| `priority` | `number` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### scale
+
+`services.scale`
+
+Scale a Render service to a fixed instance count
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.scale({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', numInstances: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `numInstances` | `number` | Yes | — |
+
+
+
+**Output:** `undefined \| "" \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.delete
+
+`services.secretFiles.delete`
+
+Delete one secret file from a Render service
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.secretFiles.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `secretFileName` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.list
+
+`services.secretFiles.list`
+
+List secret files on a Render service, including their contents
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.secretFiles.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.retrieve
+
+`services.secretFiles.retrieve`
+
+Retrieve one secret file, including its contents, from a Render service
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.services.secretFiles.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `secretFileName` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.update
+
+`services.secretFiles.update`
+
+Replace all secret files on a Render service with the given list; files not listed are deleted
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.services.secretFiles.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### secretFiles.upsert
+
+`services.secretFiles.upsert`
+
+Add or update one secret file on a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.secretFiles.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `secretFileName` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### suspend
+
+`services.suspend`
+
+Suspend a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.suspend({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined \| "" \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### triggerDeploy
+
+`services.triggerDeploy`
+
+Trigger a Render deployment
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.triggerDeploy({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9', clearCache: 'clear' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `commitId` | `string` | No | — |
+| `buildId` | `string` | No | — |
+| `clearCache` | `clear \| do_not_clear` | No | — |
+| `imageUrl` | `string` | No | — |
+| `deployMode` | `deploy_only \| build_and_deploy` | No | — |
+
+
+
+**Output:** `object \| undefined \| ""`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  status?: string,
+  buildId?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  finishedAt?: string
+} | undefined | "" | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`services.update`
+
+Update a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `autoDeployTrigger` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `ownerId` | `string` | Yes | — |
+| `environmentId` | `string \| null` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### updateAutoscaling
+
+`services.updateAutoscaling`
+
+Update autoscaling for a Render service
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.services.updateAutoscaling({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceId` | `string` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `min` | `number` | Yes | — |
+| `max` | `number` | Yes | — |
+| `criteria` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="criteria full type">
+
+```ts
+{
+  cpu: {
+    enabled: boolean,
+    percentage: number
+  },
+  memory: {
+    enabled: boolean,
+    percentage: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## User
+
+### get
+
+`user.get`
+
+Retrieve the authenticated Render user
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.user.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook for a Render owner
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `enabled` | `boolean` | Yes | — |
+| `eventFilter` | `string[]` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a Render webhook
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List Render webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listEvents
+
+`webhooks.listEvents`
+
+List delivery events for a Render webhook
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.webhooks.listEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sentBefore` | `string` | No | — |
+| `sentAfter` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`webhooks.retrieve`
+
+Retrieve a Render webhook
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.webhooks.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a Render webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `url` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `eventFilter` | `string[]` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Workflows
+
+### create
+
+`workflows.create`
+
+Create a Render workflow
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.workflows.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `ownerId` | `string` | Yes | — |
+| `region` | `frankfurt \| oregon \| ohio \| singapore \| virginia` | Yes | — |
+| `runCommand` | `string` | Yes | — |
+| `buildConfig` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="buildConfig full type">
+
+```ts
+{
+  repo: string,
+  buildCommand: string,
+  runtime: elixir | go | node | python | ruby,
+  branch?: string,
+  rootDir?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`workflows.delete`
+
+Delete a Render workflow
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.workflows.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`workflows.list`
+
+List Render workflows
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.workflows.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`workflows.retrieve`
+
+Retrieve a Render workflow
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.workflows.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### taskRuns.cancel
+
+`workflows.taskRuns.cancel`
+
+Cancel a Render workflow task run
+
+**Risk:** `destructive`
+
+```ts
+await corsair.render.api.workflows.taskRuns.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### taskRuns.create
+
+`workflows.taskRuns.create`
+
+Start a Render workflow task run
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.workflows.taskRuns.create({ task: 'my-workflow/send-report', input: ['weekly'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `string` | Yes | — |
+| `input` | `any[] \| Record<string, any>` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### taskRuns.list
+
+`workflows.taskRuns.list`
+
+List Render task runs
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.workflows.taskRuns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### taskRuns.retrieve
+
+`workflows.taskRuns.retrieve`
+
+Retrieve a Render workflow task run
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.workflows.taskRuns.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### tasks.list
+
+`workflows.tasks.list`
+
+List Render tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.workflows.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### tasks.retrieve
+
+`workflows.tasks.retrieve`
+
+Retrieve a Render workflow task
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.workflows.tasks.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`workflows.update`
+
+Update a Render workflow
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.workflows.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### versions.create
+
+`workflows.versions.create`
+
+Create and deploy a Render workflow version
+
+**Risk:** `write`
+
+```ts
+await corsair.render.api.workflows.versions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | — |
+| `commit` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### versions.list
+
+`workflows.versions.list`
+
+List Render workflow versions
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.workflows.versions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### versions.retrieve
+
+`workflows.versions.retrieve`
+
+Retrieve a Render workflow version
+
+**Risk:** `read`
+
+```ts
+await corsair.render.api.workflows.versions.retrieve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `ownerId` | `string` | No | — |
+| `projectId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

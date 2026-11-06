@@ -1,0 +1,1609 @@
+{
+  "id": "workable",
+  "displayName": "Workable",
+  "description": "Recruiting and HR in Workable - jobs, candidates, hiring team members, departments, employees, time off and webhook subscriptions, plus the public job board of any Workable careers page.",
+  "npmPackageName": "@corsair-dev/workable",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 35,
+    "webhooks": 0,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "account"]
+    }
+  ],
+  "api": [
+    {
+      "path": "workable.api.accounts.get",
+      "shortPath": "accounts.get",
+      "description": "Get account metadata by subdomain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subdomain",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subdomain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.accounts.list",
+      "shortPath": "accounts.list",
+      "description": "List all Workable accounts accessible to the authenticated token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accounts",
+            "optional": false,
+            "type": "{ id?: string, name?: string | null, subdomain?: string | null, description?: string | null, summary?: string | null, website_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.candidates.list",
+      "shortPath": "candidates.list",
+      "description": "List candidates across all jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "since_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidates",
+            "optional": false,
+            "type": "{ id?: string, name?: string | null, firstname?: string | null, lastname?: string | null, email?: string | null, job?: { shortcode?: string | null, title?: string | null } | null, stage?: string | null, disqualified?: boolean | null, created_at?: Date | null, updated_at?: Date | null }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.customAttributes.list",
+      "shortPath": "customAttributes.list",
+      "description": "List custom attributes configured on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_attributes",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.departments.create",
+      "shortPath": "departments.create",
+      "description": "Create a department",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.departments.delete",
+      "shortPath": "departments.delete",
+      "description": "Delete a department",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.departments.list",
+      "shortPath": "departments.list",
+      "description": "List all departments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string, name?: string | null, parent_id?: string | null }[]"
+      }
+    },
+    {
+      "path": "workable.api.departments.merge",
+      "shortPath": "departments.merge",
+      "description": "Merge a department into another department",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "target_department_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.departments.update",
+      "shortPath": "departments.update",
+      "description": "Update a department's name or parent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.disqualificationReasons.list",
+      "shortPath": "disqualificationReasons.list",
+      "description": "List disqualification reasons",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[]"
+      }
+    },
+    {
+      "path": "workable.api.employeeFields.list",
+      "shortPath": "employeeFields.list",
+      "description": "List employee field definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[]"
+      }
+    },
+    {
+      "path": "workable.api.employees.create",
+      "shortPath": "employees.create",
+      "description": "Create an employee in draft or published state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "state",
+            "optional": false,
+            "type": "draft | published"
+          },
+          {
+            "key": "member_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employee",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "draft | published | string | null"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "manager_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.employees.get",
+      "shortPath": "employees.get",
+      "description": "Get a specific employee by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "member_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "draft | published | string | null"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "manager_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.employees.list",
+      "shortPath": "employees.list",
+      "description": "List/search employees",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "10 | 20 | 50 | 100"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "member_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employees",
+            "optional": false,
+            "type": "{ id?: string, firstname?: string | null, lastname?: string | null, email?: string | null, state?: draft | published | string | null, job_title?: string | null, department_id?: string | null, manager_id?: string | null }[]"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.employees.update",
+      "shortPath": "employees.update",
+      "description": "Update an employee's details",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "member_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "employee",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "draft | published | string | null"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "manager_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.employees.uploadDocuments",
+      "shortPath": "employees.uploadDocuments",
+      "description": "Upload documents for an employee",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "member_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "documents",
+            "optional": false,
+            "type": "{ url: string, name: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.events.list",
+      "shortPath": "events.list",
+      "description": "List scheduled events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "call | interview | meeting"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "candidate_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "member_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "user | team | all"
+          },
+          {
+            "key": "include_cancelled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "since_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.jobs.list",
+      "shortPath": "jobs.list",
+      "description": "List jobs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "draft | published | archived | closed"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "since_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_fields",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobs",
+            "optional": false,
+            "type": "{ id?: string, title?: string | null, shortcode?: string | null, state?: draft | published | closed | archived | string | null, department?: string | null, url?: string | null, created_at?: Date | null, updated_at?: Date | null }[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.legalEntities.list",
+      "shortPath": "legalEntities.list",
+      "description": "List account legal entities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[]"
+      }
+    },
+    {
+      "path": "workable.api.members.enable",
+      "shortPath": "members.enable",
+      "description": "Reactivate a deactivated member",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.members.invite",
+      "shortPath": "members.invite",
+      "description": "Invite a new member by email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "(ats.admin | ats.simple | ats.reviewer | hris.admin | hris.employee | hris.limited | workable.superadmin)[]"
+          },
+          {
+            "key": "member_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "collaboration_rules",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "headline",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "collaboration_rules",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.members.list",
+      "shortPath": "members.list",
+      "description": "List account members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "since_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shortcode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | inactive | all"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ id?: string, name?: string | null, headline?: string | null, email?: string | null, roles?: string[] | null, active?: boolean | null, collaboration_rules?: any[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.members.update",
+      "shortPath": "members.update",
+      "description": "Update a member's roles or collaboration rules",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "(ats.admin | ats.simple | ats.reviewer | hris.admin | hris.employee | hris.limited | workable.superadmin)[]"
+          },
+          {
+            "key": "collaboration_rules",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "headline",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "collaboration_rules",
+            "optional": true,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.permissionSets.list",
+      "shortPath": "permissionSets.list",
+      "description": "List permission sets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[]"
+      }
+    },
+    {
+      "path": "workable.api.publicJobs.list",
+      "shortPath": "publicJobs.list",
+      "description": "List an account's public job postings (no authentication required)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subdomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobs",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.publicLocations.list",
+      "shortPath": "publicLocations.list",
+      "description": "List the locations of an account's public jobs with per-country counts (no authentication required)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subdomain",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ code?: string | null, name?: string | null, count?: number | null, url?: string | null }[]"
+      }
+    },
+    {
+      "path": "workable.api.recruiters.list",
+      "shortPath": "recruiters.list",
+      "description": "List external recruiters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shortcode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recruiters",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.requisitions.list",
+      "shortPath": "requisitions.list",
+      "description": "List requisitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "since_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requisitions",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.stages.list",
+      "shortPath": "stages.list",
+      "description": "List recruitment pipeline stages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stages",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.subscriptions.create",
+      "shortPath": "subscriptions.create",
+      "description": "Subscribe to a candidate or employee webhook event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "candidate_created | candidate_moved | employee_created | employee_updated | employee_published | onboarding_completed | timeoff_updated"
+          },
+          {
+            "key": "args",
+            "optional": true,
+            "type": "{ account_id?: string, job_shortcode?: string, stage_slug?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.subscriptions.delete",
+      "shortPath": "subscriptions.delete",
+      "description": "Delete a webhook subscription",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.subscriptions.list",
+      "shortPath": "subscriptions.list",
+      "description": "List webhook subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptions",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.timeoffBalances.list",
+      "shortPath": "timeoffBalances.list",
+      "description": "List employee time-off balances",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "string",
+            "description": "The employee whose balances to read. Required with an account token; a user token defaults to its own employee."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "balances",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.timeoffCategories.list",
+      "shortPath": "timeoffCategories.list",
+      "description": "List time-off categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "workable.api.workSchedules.list",
+      "shortPath": "workSchedules.list",
+      "description": "List work schedules",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[]"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "workable.db.candidates.search",
+      "entityName": "candidates",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "stage",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "disqualified",
+          "type": "boolean",
+          "operators": ["equals"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "workable.db.departments.search",
+      "entityName": "departments",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "parent_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workable.db.employees.search",
+      "entityName": "employees",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "firstname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastname",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "job_title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "department_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "manager_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "workable.db.jobs.search",
+      "entityName": "jobs",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shortcode",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "department",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "updated_at",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    },
+    {
+      "path": "workable.db.members.search",
+      "entityName": "members",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "headline",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "active",
+          "type": "boolean",
+          "operators": ["equals"]
+        }
+      ]
+    }
+  ]
+}

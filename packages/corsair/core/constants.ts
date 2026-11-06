@@ -163,6 +163,8 @@ export const BaseProviders = [
 	'cloudinary',
 	'coassemble',
 	'coda',
+
+	'codacy',
 	'codeinterpreter',
 	'cody',
 	'coinbase',
@@ -196,6 +198,7 @@ export const BaseProviders = [
 	'diffbot',
 	'digitalocean',
 	'discord',
+	'dnsfilter',
 	'dockerhub',
 	'docmosis',
 	'docsumo',
@@ -207,10 +210,15 @@ export const BaseProviders = [
 	'dreamstudio',
 	'dripcel',
 	'dropbox',
+	'enginemailer',
 	'dropboxsign',
 	'dynapictures',
+	'emailoctopus',
 	'emelia',
+	'enigma',
 	'epicgames',
+	'esignatures',
+	'esputnik',
 	'everhour',
 	'exa',
 	'excel',
@@ -250,6 +258,7 @@ export const BaseProviders = [
 	'grafana',
 	'griptape',
 	'groqcloud',
+	'gumroad',
 	'habitica',
 	'hackernews',
 	'harvest',
@@ -276,6 +285,7 @@ export const BaseProviders = [
 	'kibana',
 	'kling',
 	'leexi',
+	'lever',
 	'linear',
 	'linkedin',
 	'litescrape',
@@ -286,11 +296,13 @@ export const BaseProviders = [
 	'mailchimp',
 	'mailtrap',
 	'marketstack',
+	'mem0',
 	'merriamwebsterdict',
 	'minimax',
 	'monday',
 	'mrscraper',
 	'neon',
+	'netsuite',
 	'nextdns',
 	'northflank',
 	'notion',
@@ -320,16 +332,21 @@ export const BaseProviders = [
 	'postman',
 	'prisma',
 	'pushbullet',
+	'qdrant',
 	'razorpay',
+	'recallai',
 	'reddit',
 	'reducto',
 	'remoet',
 	'removebg',
+	'render',
+	'replicate',
 	'replicate',
 	'replicate',
 	'replyio',
 	'resend',
 	'retailed',
+	'retellai',
 	'revai',
 	'rootly',
 	'runpod',
@@ -348,6 +365,7 @@ export const BaseProviders = [
 	'slack',
 	'slackbot',
 	'snapchat',
+	'snowflake',
 	'sourcegraph',
 	'spoki',
 	'spotify',
@@ -367,6 +385,7 @@ export const BaseProviders = [
 	'teams',
 	'telegram',
 	'textrazor',
+	'ticketmaster',
 	'ticktick',
 	'tikhub',
 	'timecamp',
@@ -413,6 +432,7 @@ export const BaseProviders = [
 	'wix',
 	'wiza',
 	'woodpeckerco',
+	'workable',
 	'workday',
 	'workiom',
 	'worldnewsapi',
@@ -582,6 +602,8 @@ export const ProviderDisplayNames = {
 	cloudinary: 'Cloudinary',
 	coassemble: 'Coassemble',
 	coda: 'Coda',
+
+	codacy: 'Codacy',
 	codeinterpreter: 'CodeInterpreter',
 	cody: 'Cody',
 	coinbase: 'Coinbase',
@@ -615,6 +637,7 @@ export const ProviderDisplayNames = {
 	diffbot: 'Diffbot',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
+	dnsfilter: 'DNSFilter',
 	dockerhub: 'Docker Hub',
 	docmosis: 'Docmosis',
 	docsumo: 'Docsumo',
@@ -626,10 +649,15 @@ export const ProviderDisplayNames = {
 	dreamstudio: 'DreamStudio',
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
+	enginemailer: 'Enginemailer',
 	dropboxsign: 'Dropbox Sign',
 	dynapictures: 'Dynapictures',
+	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
+	enigma: 'Enigma',
 	epicgames: 'Epic Games',
+	esignatures: 'eSignatures',
+	esputnik: 'eSputnik',
 	everhour: 'Everhour',
 	exa: 'Exa',
 	excel: 'Excel',
@@ -669,6 +697,7 @@ export const ProviderDisplayNames = {
 	grafana: 'Grafana',
 	griptape: 'Griptape',
 	groqcloud: 'GroqCloud',
+	gumroad: 'Gumroad',
 	habitica: 'Habitica',
 	hackernews: 'Hacker News',
 	harvest: 'Harvest',
@@ -695,6 +724,7 @@ export const ProviderDisplayNames = {
 	kibana: 'Kibana',
 	kling: 'Kling',
 	leexi: 'Leexi',
+	lever: 'Lever',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
 	litescrape: 'LiteScrape',
@@ -705,11 +735,13 @@ export const ProviderDisplayNames = {
 	mailchimp: 'Mailchimp',
 	mailtrap: 'Mailtrap',
 	marketstack: 'Marketstack',
+	mem0: 'Mem0',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	minimax: 'MiniMax',
 	monday: 'Monday',
 	mrscraper: 'MrScraper',
 	neon: 'Neon',
+	netsuite: 'NetSuite',
 	nextdns: 'NextDNS',
 	northflank: 'Northflank',
 	notion: 'Notion',
@@ -739,15 +771,19 @@ export const ProviderDisplayNames = {
 	postman: 'Postman',
 	prisma: 'Prisma',
 	pushbullet: 'Pushbullet',
+	qdrant: 'Qdrant',
 	razorpay: 'Razorpay',
+	recallai: 'Recall.ai',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
 	remoet: 'Remoet',
 	removebg: 'remove.bg',
+	render: 'Render',
 	replicate: 'Replicate',
 	replyio: 'Reply.io',
 	resend: 'Resend',
 	retailed: 'Retailed',
+	retellai: 'Retell AI',
 	revai: 'RevAI',
 	rootly: 'Rootly',
 	runpod: 'RunPod',
@@ -766,6 +802,7 @@ export const ProviderDisplayNames = {
 	slack: 'Slack',
 	slackbot: 'Slackbot',
 	snapchat: 'Snapchat',
+	snowflake: 'Snowflake',
 	sourcegraph: 'Sourcegraph',
 	spoki: 'Spoki',
 	spotify: 'Spotify',
@@ -785,6 +822,7 @@ export const ProviderDisplayNames = {
 	teams: 'Teams',
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
+	ticketmaster: 'Ticketmaster',
 	ticktick: 'TickTick',
 	tikhub: 'TikHub',
 	timecamp: 'TimeCamp',
@@ -831,6 +869,7 @@ export const ProviderDisplayNames = {
 	wix: 'Wix',
 	wiza: 'Wiza',
 	woodpeckerco: 'Woodpecker Co',
+	workable: 'Workable',
 	workday: 'Workday',
 	workiom: 'Workiom',
 	worldnewsapi: 'World News API',
@@ -1006,6 +1045,8 @@ export type AllProviders =
 	| 'cloudinary'
 	| 'coassemble'
 	| 'coda'
+
+	| 'codacy'
 	| 'codeinterpreter'
 	| 'cody'
 	| 'coinbase'
@@ -1050,10 +1091,15 @@ export type AllProviders =
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
+	| 'enginemailer'
 	| 'dropboxsign'
 	| 'dynapictures'
+	| 'emailoctopus'
 	| 'emelia'
+	| 'enigma'
 	| 'epicgames'
+	| 'esignatures'
+	| 'esputnik'
 	| 'everhour'
 	| 'exa'
 	| 'excel'
@@ -1093,6 +1139,7 @@ export type AllProviders =
 	| 'grafana'
 	| 'griptape'
 	| 'groqcloud'
+	| 'gumroad'
 	| 'habitica'
 	| 'hackernews'
 	| 'harvest'
@@ -1119,6 +1166,7 @@ export type AllProviders =
 	| 'kibana'
 	| 'kling'
 	| 'leexi'
+	| 'lever'
 	| 'linear'
 	| 'linkedin'
 	| 'litescrape'
@@ -1129,11 +1177,13 @@ export type AllProviders =
 	| 'mailchimp'
 	| 'mailtrap'
 	| 'marketstack'
+	| 'mem0'
 	| 'merriamwebsterdict'
 	| 'minimax'
 	| 'monday'
 	| 'mrscraper'
 	| 'neon'
+	| 'netsuite'
 	| 'nextdns'
 	| 'northflank'
 	| 'notion'
@@ -1163,16 +1213,21 @@ export type AllProviders =
 	| 'postman'
 	| 'prisma'
 	| 'pushbullet'
+	| 'qdrant'
 	| 'razorpay'
+	| 'recallai'
 	| 'reddit'
 	| 'reducto'
 	| 'remoet'
 	| 'removebg'
+	| 'render'
+	| 'replicate'
 	| 'replicate'
 	| 'replicate'
 	| 'replyio'
 	| 'resend'
 	| 'retailed'
+	| 'retellai'
 	| 'revai'
 	| 'rootly'
 	| 'runpod'
@@ -1191,6 +1246,7 @@ export type AllProviders =
 	| 'slack'
 	| 'slackbot'
 	| 'snapchat'
+	| 'snowflake'
 	| 'sourcegraph'
 	| 'spoki'
 	| 'spotify'
@@ -1210,6 +1266,7 @@ export type AllProviders =
 	| 'teams'
 	| 'telegram'
 	| 'textrazor'
+	| 'ticketmaster'
 	| 'ticktick'
 	| 'tikhub'
 	| 'timecamp'
@@ -1256,6 +1313,7 @@ export type AllProviders =
 	| 'wix'
 	| 'wiza'
 	| 'woodpeckerco'
+	| 'workable'
 	| 'workday'
 	| 'workiom'
 	| 'worldnewsapi'

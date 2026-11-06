@@ -306,8 +306,7 @@ await corsair.gmicloud.api.baremetals.listProducts({});
   name: string,
   price: number,
   productLine?: string,
-  spec: {
-  },
+  spec: Record<string, any>,
   type: Container | BareMetal | Storage | EIP,
   valid: boolean
 }[]
@@ -394,7 +393,7 @@ await corsair.gmicloud.api.chat.createCompletion({});
 | `model` | `string` | Yes | Model ID from models.list, e.g. deepseek-ai/DeepSeek-R1 |
 | `messages` | `object[]` | Yes | — |
 | `tools` | `object[]` | No | — |
-| `tool_choice` | `object` | No | — |
+| `tool_choice` | `none \| auto \| required \| object` | No | — |
 | `max_tokens` | `number` | No | — |
 | `temperature` | `number` | No | — |
 | `top_p` | `number` | No | — |
@@ -448,8 +447,7 @@ await corsair.gmicloud.api.chat.createCompletion({});
   function: {
     name: string,
     description?: string,
-    parameters?: {
-    },
+    parameters?: Record<string, any>,
     strict?: boolean
   }
 }[]
@@ -473,8 +471,7 @@ none | auto | required | {
 ```ts
 {
   type: text | json_object | json_schema,
-  json_schema?: {
-  }
+  json_schema?: Record<string, any>
 }
 ```
 </Accordion>
@@ -491,7 +488,7 @@ none | auto | required | {
 | `created` | `number` | Yes | — |
 | `model` | `string` | Yes | — |
 | `choices` | `object[]` | Yes | — |
-| `usage` | `object` | No | — |
+| `usage` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="choices full type">
@@ -501,7 +498,7 @@ none | auto | required | {
   index?: number,
   message: {
     role: string,
-    content?: string | null,
+    content: string | null,
     reasoning_content?: string | null,
     tool_calls?: {
       id: string,
@@ -524,7 +521,7 @@ none | auto | required | {
   prompt_tokens: number,
   completion_tokens: number,
   total_tokens: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -910,8 +907,7 @@ await corsair.gmicloud.api.containers.listProducts({});
   name: string,
   price: number,
   productLine?: string,
-  spec: {
-  },
+  spec: Record<string, any>,
   type: Container | BareMetal | Storage | EIP,
   valid: boolean
 }[]
@@ -1070,8 +1066,8 @@ await corsair.gmicloud.api.elasticIps.associate({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `instanceID` | `string` | No | set instanceID and instanceType to associate the elastic IP to the instance, set to null to disassociate the elastic IP from the instance |
-| `instanceType` | `baremetal \| container` | No | — |
+| `instanceID` | `string \| null` | No | set instanceID and instanceType to associate the elastic IP to the instance, set to null to disassociate the elastic IP from the instance |
+| `instanceType` | `baremetal \| container \| null` | No | — |
 
 
 
@@ -1148,8 +1144,8 @@ await corsair.gmicloud.api.elasticIps.get({});
 | `idc` | `string` | Yes | — |
 | `ipAddress` | `string` | Yes | IP address of the elastic IP. |
 | `product` | `string` | Yes | — |
-| `instanceID` | `string` | No | set instanceID and instanceType to associate the elastic IP to the instance, set to null to disassociate the elastic IP from the instance |
-| `instanceType` | `baremetal \| container` | No | — |
+| `instanceID` | `string \| null` | No | set instanceID and instanceType to associate the elastic IP to the instance, set to null to disassociate the elastic IP from the instance |
+| `instanceType` | `baremetal \| container \| null` | No | — |
 
 
 
@@ -1228,8 +1224,7 @@ await corsair.gmicloud.api.elasticIps.listProducts({});
   name: string,
   price: number,
   productLine?: string,
-  spec: {
-  },
+  spec: Record<string, any>,
   type: Container | BareMetal | Storage | EIP,
   valid: boolean
 }[]
@@ -1848,21 +1843,13 @@ await corsair.gmicloud.api.mediaModels.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `org_id` | `string` | No | — |
-| `brief_description` | `string` | No | — |
-| `detailed_description` | `string` | No | — |
-| `modalities` | `object` | No | — |
-| `parameters` | `object[]` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `brief_description` | `string \| null` | No | — |
+| `detailed_description` | `string \| null` | No | — |
+| `modalities` | `Record<string, any> \| null` | No | — |
+| `parameters` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="modalities full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="parameters full type">
 
 ```ts
@@ -1873,7 +1860,7 @@ await corsair.gmicloud.api.mediaModels.get({});
   type?: string | null,
   required?: boolean | null,
   default?: any
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1926,17 +1913,7 @@ await corsair.gmicloud.api.mediaRequests.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | Model ID from mediaModels.list |
-| `payload` | `object` | Yes | Model parameters, e.g. { prompt, durationSeconds, aspectRatio } |
-
-<AccordionGroup>
-<Accordion title="payload full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `payload` | `Record<string, any>` | Yes | Model parameters, e.g. &#123; prompt, durationSeconds, aspectRatio &#125; |
 
 
 
@@ -1947,9 +1924,9 @@ await corsair.gmicloud.api.mediaRequests.create({});
 | `request_id` | `string` | Yes | — |
 | `model` | `string` | Yes | — |
 | `status` | `string` | Yes | dispatched, processing, success, failed, or another queue state |
-| `created_at` | `number` | No | — |
-| `updated_at` | `number` | No | — |
-| `queued_at` | `number` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `updated_at` | `number \| null` | No | — |
+| `queued_at` | `number \| null` | No | — |
 
 
 
@@ -1982,31 +1959,13 @@ await corsair.gmicloud.api.mediaRequests.get({});
 | `request_id` | `string` | Yes | — |
 | `model` | `string` | Yes | — |
 | `status` | `string` | Yes | dispatched, processing, success, failed, or another queue state |
-| `created_at` | `number` | No | — |
-| `updated_at` | `number` | No | — |
-| `queued_at` | `number` | No | — |
-| `org_id` | `string` | No | — |
-| `is_public` | `boolean` | No | — |
-| `payload` | `object` | No | — |
-| `outcome` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="payload full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="outcome full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `created_at` | `number \| null` | No | — |
+| `updated_at` | `number \| null` | No | — |
+| `queued_at` | `number \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `is_public` | `boolean \| null` | No | — |
+| `payload` | `Record<string, any> \| null` | No | — |
+| `outcome` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -2123,7 +2082,7 @@ await corsair.gmicloud.api.router.autoroute({});
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
 | `message` | `object` | Yes | — |
-| `routing_metadata` | `object` | No | — |
+| `routing_metadata` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="message full type">
@@ -2131,7 +2090,7 @@ await corsair.gmicloud.api.router.autoroute({});
 ```ts
 {
   role: string,
-  content?: string | null
+  content: string | null
 }
 ```
 </Accordion>
@@ -2145,7 +2104,7 @@ await corsair.gmicloud.api.router.autoroute({});
   selected_mode?: string | null,
   fallback_models?: string[] | null,
   recommendation_id?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2225,26 +2184,8 @@ await corsair.gmicloud.api.sandboxes.create({});
 | `template_id` | `string` | Yes | Template identifier or name. |
 | `idc_name` | `string` | No | Target data center name, e.g. |
 | `timeout` | `number` | No | Time-to-live in seconds. |
-| `env_vars` | `object` | No | — |
-| `metadata` | `object` | No | Customer-defined key/value pairs; the platform does not interpret them. |
-
-<AccordionGroup>
-<Accordion title="env_vars full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `env_vars` | `Record<string, string>` | No | — |
+| `metadata` | `Record<string, string>` | No | Customer-defined key/value pairs; the platform does not interpret them. |
 
 
 
@@ -2362,8 +2303,7 @@ await corsair.gmicloud.api.sandboxes.get({});
     memory_mb?: number,
     disk_mb?: number
   },
-  metadata?: {
-  },
+  metadata?: Record<string, string>,
   latest_operation?: {
     type: create | delete | set_timeout,
     status: pending | succeeded | failed,
@@ -2409,18 +2349,8 @@ await corsair.gmicloud.api.sandboxes.list({});
 | `page` | `number` | No | Page number, starting from 1; default 1 |
 | `page_size` | `number` | No | Items per page; default 20, maximum 100 |
 | `idc_name` | `string` | No | Filter by data center name, e.g. |
-| `state` | `provisioning \| running \| failed[]` | No | Filter by external state. |
-| `metadata` | `object` | No | Filter by customer metadata key/value, e.g. |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `state` | `(provisioning \| running \| failed)[]` | No | Filter by external state. |
+| `metadata` | `Record<string, string>` | No | Filter by customer metadata key/value, e.g. |
 
 
 
@@ -2444,8 +2374,7 @@ await corsair.gmicloud.api.sandboxes.list({});
   template_id?: string,
   idc_name?: string,
   state?: provisioning | running | checkpointing | updating | failed,
-  metadata?: {
-  },
+  metadata?: Record<string, string>,
   created_at?: string,
   running_at?: string
 }[]
@@ -2519,17 +2448,7 @@ await corsair.gmicloud.api.sandboxes.updateMetadata({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Unique sandbox resource ID (UUID; the 'id' field of the create response). |
-| `metadata` | `object` | Yes | Customer metadata, replaced as a whole. |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | Yes | Customer metadata, replaced as a whole. |
 
 
 
@@ -2557,8 +2476,7 @@ await corsair.gmicloud.api.sandboxes.updateMetadata({});
     memory_mb?: number,
     disk_mb?: number
   },
-  metadata?: {
-  },
+  metadata?: Record<string, string>,
   latest_operation?: {
     type: create | delete | set_timeout,
     status: pending | succeeded | failed,
@@ -2622,13 +2540,13 @@ await corsair.gmicloud.api.sandboxExec.cancel({});
   execution_id: string,
   sandbox_id: string,
   status: pending | running | canceling | succeeded | failed | canceled,
-  exit_code?: number | null,
-  stdout?: string | null,
-  stderr?: string | null,
-  stdout_truncated?: boolean | null,
-  stderr_truncated?: boolean | null,
-  started_at?: string | null,
-  completed_at?: string | null
+  exit_code: number | null,
+  stdout: string | null,
+  stderr: string | null,
+  stdout_truncated: boolean | null,
+  stderr_truncated: boolean | null,
+  started_at: string | null,
+  completed_at: string | null
 } | {
   request_id?: string,
   execution_id: string,
@@ -2674,13 +2592,13 @@ await corsair.gmicloud.api.sandboxExec.get({});
 | `execution_id` | `string` | Yes | — |
 | `sandbox_id` | `string` | Yes | Echo of the data-plane addressing key (i.e. |
 | `status` | `pending \| running \| canceling \| succeeded \| failed \| canceled` | Yes | — |
-| `exit_code` | `number` | No | Process exit code; null while non-terminal or when canceled. |
-| `stdout` | `string` | No | Captured standard output, or null while not yet available. |
-| `stderr` | `string` | No | Captured standard error, or null while not yet available. |
-| `stdout_truncated` | `boolean` | No | — |
-| `stderr_truncated` | `boolean` | No | — |
-| `started_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
+| `exit_code` | `number \| null` | Yes | Process exit code; null while non-terminal or when canceled. |
+| `stdout` | `string \| null` | Yes | Captured standard output, or null while not yet available. |
+| `stderr` | `string \| null` | Yes | Captured standard error, or null while not yet available. |
+| `stdout_truncated` | `boolean \| null` | Yes | — |
+| `stderr_truncated` | `boolean \| null` | Yes | — |
+| `started_at` | `string \| null` | Yes | — |
+| `completed_at` | `string \| null` | Yes | — |
 
 
 
@@ -2708,7 +2626,7 @@ await corsair.gmicloud.api.sandboxExec.run({});
 | `request_id` | `string` | No | Optional request correlation identifier echoed in the response. |
 | `wait` | `boolean` | No | Wait for a terminal result before responding. |
 | `wait_timeout_seconds` | `number` | No | Maximum time to wait when 'wait=true', in seconds. |
-| `action` | `exec` | Yes | — |
+| `action` | `exec` | No | Defaults to "exec". |
 | `parameters` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -2717,8 +2635,7 @@ await corsair.gmicloud.api.sandboxExec.run({});
 ```ts
 {
   command: string,
-  envs?: {
-  },
+  envs?: Record<string, string>,
   cwd?: string
 }
 ```
@@ -2738,13 +2655,13 @@ await corsair.gmicloud.api.sandboxExec.run({});
   execution_id: string,
   sandbox_id: string,
   status: pending | running | canceling | succeeded | failed | canceled,
-  exit_code?: number | null,
-  stdout?: string | null,
-  stderr?: string | null,
-  stdout_truncated?: boolean | null,
-  stderr_truncated?: boolean | null,
-  started_at?: string | null,
-  completed_at?: string | null
+  exit_code: number | null,
+  stdout: string | null,
+  stderr: string | null,
+  stdout_truncated: boolean | null,
+  stderr_truncated: boolean | null,
+  started_at: string | null,
+  completed_at: string | null
 } | {
   request_id?: string,
   execution_id: string,
@@ -2781,7 +2698,7 @@ await corsair.gmicloud.api.sandboxFiles.download({});
 | `access_token` | `string` | Yes | sandbox_access_token returned by sandboxes.create or sandboxes.connect |
 | `path` | `string` | Yes | **Absolute path** inside the sandbox. |
 | `username` | `string` | No | Perform the file operation as this user; defaults to the sandbox's default user. |
-| `range` | `string` | No | Only honored in data centers with 'Accept-Ranges: bytes'; format 'bytes=<start>-<end>'. |
+| `range` | `string` | No | Only honored in data centers with 'Accept-Ranges: bytes'; format 'bytes=&lt;start&gt;-&lt;end&gt;'. |
 
 
 
@@ -2820,7 +2737,7 @@ await corsair.gmicloud.api.sandboxFiles.upload({});
 | `path` | `string` | Yes | **Absolute path** inside the sandbox. |
 | `username` | `string` | No | Perform the file operation as this user; defaults to the sandbox's default user. |
 | `content` | `string` | Yes | File content, as UTF-8 text or base64 (see encoding) |
-| `encoding` | `utf8 \| base64` | Yes | — |
+| `encoding` | `utf8 \| base64` | No | Defaults to "utf8". |
 
 
 
@@ -2920,7 +2837,7 @@ await corsair.gmicloud.api.sandboxTemplates.create({});
 | `description` | `string` | No | Human-readable Template description. |
 | `idc_name` | `string` | No | IDC that permanently owns the Template. |
 | `resources` | `object` | Yes | — |
-| `labels` | `object` | No | User-defined labels used for filtering. |
+| `labels` | `Record<string, string>` | No | User-defined labels used for filtering. |
 | `build` | `object` | No | Initial Build definition created and started with the Template (combined flow, every IDC supports it). |
 
 <AccordionGroup>
@@ -2940,14 +2857,6 @@ await corsair.gmicloud.api.sandboxTemplates.create({});
 ```
 </Accordion>
 
-<Accordion title="labels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="build full type">
 
 ```ts
@@ -2961,8 +2870,7 @@ await corsair.gmicloud.api.sandboxTemplates.create({});
     build_id?: string
   },
   commands?: string[],
-  envs?: {
-  },
+  envs?: Record<string, string>,
   start_cmd?: string
 }
 ```
@@ -3085,8 +2993,7 @@ await corsair.gmicloud.api.sandboxTemplates.get({});
     disk_size_mb: number,
     architecture: x86_64 | arm64
   },
-  labels?: {
-  },
+  labels?: Record<string, string>,
   current_build_id?: string | null,
   latest_build_id: string,
   latest_build_status: waiting | building | ready | error,
@@ -3142,8 +3049,7 @@ await corsair.gmicloud.api.sandboxTemplates.getBuild({});
   status: waiting | building | ready | error,
   artifact_state: absent | unknown | available | reclaimed | retained,
   source_type: image | template | sandbox,
-  source?: {
-  },
+  source?: Record<string, any>,
   resources: {
     cpu_count: number,
     memory_mb: number,
@@ -3273,8 +3179,7 @@ await corsair.gmicloud.api.sandboxTemplates.list({});
     disk_size_mb: number,
     architecture: x86_64 | arm64
   },
-  labels?: {
-  },
+  labels?: Record<string, string>,
   current_build_id?: string | null,
   latest_build_id: string,
   latest_build_status: waiting | building | ready | error,
@@ -3334,8 +3239,7 @@ await corsair.gmicloud.api.sandboxTemplates.listBuilds({});
   status: waiting | building | ready | error,
   artifact_state: absent | unknown | available | reclaimed | retained,
   source_type: image | template | sandbox,
-  source?: {
-  },
+  source?: Record<string, any>,
   resources: {
     cpu_count: number,
     memory_mb: number,
@@ -3382,17 +3286,7 @@ await corsair.gmicloud.api.sandboxTemplates.update({});
 | `idc_name` | `string` | No | Filter by data center name, e.g. |
 | `name` | `string` | No | New organization-scoped display name. |
 | `description` | `string` | No | New human-readable description. |
-| `labels` | `object` | No | Complete replacement of user-defined labels. |
-
-<AccordionGroup>
-<Accordion title="labels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `labels` | `Record<string, string>` | No | Complete replacement of user-defined labels. |
 
 
 
@@ -3421,8 +3315,7 @@ await corsair.gmicloud.api.sandboxTemplates.update({});
     disk_size_mb: number,
     architecture: x86_64 | arm64
   },
-  labels?: {
-  },
+  labels?: Record<string, string>,
   current_build_id?: string | null,
   latest_build_id: string,
   latest_build_status: waiting | building | ready | error,

@@ -119,6 +119,7 @@ const rows = await corsair.blackbaud.db.memberships.search({
 | `consec_years` | `number` | equals, gt, gte, lt, lte, in |
 | `constituent_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `notes` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
@@ -179,6 +180,7 @@ const rows = await corsair.blackbaud.db.paymentTransactions.search({
 | `application_fee` | `number` | equals, gt, gte, lt, lte, in |
 | `total_fees` | `number` | equals, gt, gte, lt, lte, in |
 | `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
 | `transaction_date` | `string` | equals, contains, startsWith, endsWith, in |
 | `pending_date` | `string` | equals, contains, startsWith, endsWith, in |
 | `transaction_type` | `string` | equals, contains, startsWith, endsWith, in |

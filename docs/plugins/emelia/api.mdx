@@ -30,7 +30,7 @@ await corsair.emelia.api.account.me({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `me` | `object` | No | — |
+| `me` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="me full type">
@@ -44,7 +44,7 @@ await corsair.emelia.api.account.me({});
   picture?: string,
   due_invoice?: boolean,
   joinedDate?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -136,17 +136,7 @@ await corsair.emelia.api.campaigns.addContact({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `contact` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="contact full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `contact` | `Record<string, any>` | Yes | — |
 
 
 
@@ -176,17 +166,7 @@ await corsair.emelia.api.campaigns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `options` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `options` | `Record<string, any>` | No | — |
 
 
 
@@ -194,7 +174,7 @@ await corsair.emelia.api.campaigns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `all_campaigns` | `object[]` | No | — |
+| `all_campaigns` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="all_campaigns full type">
@@ -208,7 +188,7 @@ await corsair.emelia.api.campaigns.list({});
   provider?: string,
   useManyProviders?: boolean,
   plannedStart?: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -267,17 +247,7 @@ await corsair.emelia.api.contacts.addToList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `contact` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="contact full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `contact` | `Record<string, any>` | Yes | — |
 
 
 
@@ -310,7 +280,7 @@ await corsair.emelia.api.contacts.listLists({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `contact_lists` | `object[]` | No | — |
+| `contact_lists` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="contact_lists full type">
@@ -322,7 +292,7 @@ await corsair.emelia.api.contacts.listLists({});
   contactCount?: number,
   fields?: string[],
   usedInCampaign?: boolean
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -350,17 +320,7 @@ await corsair.emelia.api.emailCampaigns.addContact({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campaignId` | `string` | Yes | — |
-| `contact` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="contact full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `contact` | `Record<string, string \| number \| boolean>` | Yes | — |
 
 
 
@@ -429,7 +389,7 @@ await corsair.emelia.api.emailCampaigns.listContacts({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -553,7 +513,7 @@ await corsair.emelia.api.linkedin.getActivities({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -610,7 +570,7 @@ await corsair.emelia.api.linkedin.listCampaigns({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -660,7 +620,7 @@ await corsair.emelia.api.providers.list({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -753,7 +713,7 @@ await corsair.emelia.api.restCampaigns.getActivities({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -810,7 +770,7 @@ await corsair.emelia.api.restCampaigns.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1135,7 +1095,7 @@ await corsair.emelia.api.webhooks.list({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">

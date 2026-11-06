@@ -58,11 +58,11 @@ A charge attempt failed
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `event` | Yes | — |
-| `api_version` | `string` | No | — |
+| `api_version` | `string \| null` | No | — |
 | `created` | `number` | Yes | — |
 | `livemode` | `boolean` | Yes | — |
 | `type` | `charge.failed` | Yes | — |
-| `request` | `object` | No | — |
+| `request` | `object \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -72,7 +72,7 @@ A charge attempt failed
 {
   id?: string | null,
   idempotency_key?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -94,8 +94,7 @@ A charge attempt failed
     payment_intent?: string | null,
     failure_code?: string | null,
     failure_message?: string | null,
-    metadata?: {
-    }
+    metadata?: Record<string, string>
   }
 }
 ```
@@ -134,8 +133,7 @@ A charge attempt failed
       payment_intent?: string | null,
       failure_code?: string | null,
       failure_message?: string | null,
-      metadata?: {
-      }
+      metadata?: Record<string, string>
     }
   }
 }
@@ -175,11 +173,11 @@ A charge was refunded
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `event` | Yes | — |
-| `api_version` | `string` | No | — |
+| `api_version` | `string \| null` | No | — |
 | `created` | `number` | Yes | — |
 | `livemode` | `boolean` | Yes | — |
 | `type` | `charge.refunded` | Yes | — |
-| `request` | `object` | No | — |
+| `request` | `object \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -189,7 +187,7 @@ A charge was refunded
 {
   id?: string | null,
   idempotency_key?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -211,8 +209,7 @@ A charge was refunded
     payment_intent?: string | null,
     failure_code?: string | null,
     failure_message?: string | null,
-    metadata?: {
-    }
+    metadata?: Record<string, string>
   }
 }
 ```
@@ -251,8 +248,7 @@ A charge was refunded
       payment_intent?: string | null,
       failure_code?: string | null,
       failure_message?: string | null,
-      metadata?: {
-      }
+      metadata?: Record<string, string>
     }
   }
 }
@@ -292,11 +288,11 @@ A charge was successfully completed
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `event` | Yes | — |
-| `api_version` | `string` | No | — |
+| `api_version` | `string \| null` | No | — |
 | `created` | `number` | Yes | — |
 | `livemode` | `boolean` | Yes | — |
 | `type` | `charge.succeeded` | Yes | — |
-| `request` | `object` | No | — |
+| `request` | `object \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -306,7 +302,7 @@ A charge was successfully completed
 {
   id?: string | null,
   idempotency_key?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -328,8 +324,7 @@ A charge was successfully completed
     payment_intent?: string | null,
     failure_code?: string | null,
     failure_message?: string | null,
-    metadata?: {
-    }
+    metadata?: Record<string, string>
   }
 }
 ```
@@ -368,8 +363,7 @@ A charge was successfully completed
       payment_intent?: string | null,
       failure_code?: string | null,
       failure_message?: string | null,
-      metadata?: {
-      }
+      metadata?: Record<string, string>
     }
   }
 }
@@ -411,11 +405,11 @@ A coupon was created
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `event` | Yes | — |
-| `api_version` | `string` | No | — |
+| `api_version` | `string \| null` | No | — |
 | `created` | `number` | Yes | — |
 | `livemode` | `boolean` | Yes | — |
 | `type` | `coupon.created` | Yes | — |
-| `request` | `object` | No | — |
+| `request` | `object \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -425,7 +419,7 @@ A coupon was created
 {
   id?: string | null,
   idempotency_key?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -447,8 +441,7 @@ A coupon was created
     valid?: boolean,
     created?: number,
     livemode?: boolean,
-    metadata?: {
-    }
+    metadata?: Record<string, string>
   }
 }
 ```
@@ -487,8 +480,7 @@ A coupon was created
       valid?: boolean,
       created?: number,
       livemode?: boolean,
-      metadata?: {
-      }
+      metadata?: Record<string, string>
     }
   }
 }
@@ -528,11 +520,11 @@ A coupon was deleted
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `event` | Yes | — |
-| `api_version` | `string` | No | — |
+| `api_version` | `string \| null` | No | — |
 | `created` | `number` | Yes | — |
 | `livemode` | `boolean` | Yes | — |
 | `type` | `coupon.deleted` | Yes | — |
-| `request` | `object` | No | — |
+| `request` | `object \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -542,7 +534,7 @@ A coupon was deleted
 {
   id?: string | null,
   idempotency_key?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -564,8 +556,7 @@ A coupon was deleted
     valid?: boolean,
     created?: number,
     livemode?: boolean,
-    metadata?: {
-    }
+    metadata?: Record<string, string>
   }
 }
 ```
@@ -604,8 +595,7 @@ A coupon was deleted
       valid?: boolean,
       created?: number,
       livemode?: boolean,
-      metadata?: {
-      }
+      metadata?: Record<string, string>
     }
   }
 }
@@ -647,11 +637,11 @@ A new customer was created
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `event` | Yes | — |
-| `api_version` | `string` | No | — |
+| `api_version` | `string \| null` | No | — |
 | `created` | `number` | Yes | — |
 | `livemode` | `boolean` | Yes | — |
 | `type` | `customer.created` | Yes | — |
-| `request` | `object` | No | — |
+| `request` | `object \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -661,7 +651,7 @@ A new customer was created
 {
   id?: string | null,
   idempotency_key?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -680,8 +670,7 @@ A new customer was created
     balance?: number,
     created?: number,
     livemode?: boolean,
-    metadata?: {
-    }
+    metadata?: Record<string, string>
   }
 }
 ```
@@ -717,8 +706,7 @@ A new customer was created
       balance?: number,
       created?: number,
       livemode?: boolean,
-      metadata?: {
-      }
+      metadata?: Record<string, string>
     }
   }
 }
@@ -758,11 +746,11 @@ A customer was deleted
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `event` | Yes | — |
-| `api_version` | `string` | No | — |
+| `api_version` | `string \| null` | No | — |
 | `created` | `number` | Yes | — |
 | `livemode` | `boolean` | Yes | — |
 | `type` | `customer.deleted` | Yes | — |
-| `request` | `object` | No | — |
+| `request` | `object \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -772,7 +760,7 @@ A customer was deleted
 {
   id?: string | null,
   idempotency_key?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -791,8 +779,7 @@ A customer was deleted
     balance?: number,
     created?: number,
     livemode?: boolean,
-    metadata?: {
-    }
+    metadata?: Record<string, string>
   }
 }
 ```
@@ -828,8 +815,7 @@ A customer was deleted
       balance?: number,
       created?: number,
       livemode?: boolean,
-      metadata?: {
-      }
+      metadata?: Record<string, string>
     }
   }
 }
@@ -869,11 +855,11 @@ A customer was updated
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `event` | Yes | — |
-| `api_version` | `string` | No | — |
+| `api_version` | `string \| null` | No | — |
 | `created` | `number` | Yes | — |
 | `livemode` | `boolean` | Yes | — |
 | `type` | `customer.updated` | Yes | — |
-| `request` | `object` | No | — |
+| `request` | `object \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -883,7 +869,7 @@ A customer was updated
 {
   id?: string | null,
   idempotency_key?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -902,8 +888,7 @@ A customer was updated
     balance?: number,
     created?: number,
     livemode?: boolean,
-    metadata?: {
-    }
+    metadata?: Record<string, string>
   }
 }
 ```
@@ -939,8 +924,7 @@ A customer was updated
       balance?: number,
       created?: number,
       livemode?: boolean,
-      metadata?: {
-      }
+      metadata?: Record<string, string>
     }
   }
 }
@@ -982,11 +966,11 @@ A payment intent payment failed
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `event` | Yes | — |
-| `api_version` | `string` | No | — |
+| `api_version` | `string \| null` | No | — |
 | `created` | `number` | Yes | — |
 | `livemode` | `boolean` | Yes | — |
 | `type` | `payment_intent.payment_failed` | Yes | — |
-| `request` | `object` | No | — |
+| `request` | `object \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -996,7 +980,7 @@ A payment intent payment failed
 {
   id?: string | null,
   idempotency_key?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1017,8 +1001,7 @@ A payment intent payment failed
     client_secret?: string | null,
     canceled_at?: number | null,
     cancellation_reason?: string | null,
-    metadata?: {
-    },
+    metadata?: Record<string, string>,
     last_payment_error?: {
       code?: string,
       message?: string,
@@ -1061,8 +1044,7 @@ A payment intent payment failed
       client_secret?: string | null,
       canceled_at?: number | null,
       cancellation_reason?: string | null,
-      metadata?: {
-      },
+      metadata?: Record<string, string>,
       last_payment_error?: {
         code?: string,
         message?: string,
@@ -1107,11 +1089,11 @@ A payment intent succeeded
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `event` | Yes | — |
-| `api_version` | `string` | No | — |
+| `api_version` | `string \| null` | No | — |
 | `created` | `number` | Yes | — |
 | `livemode` | `boolean` | Yes | — |
 | `type` | `payment_intent.succeeded` | Yes | — |
-| `request` | `object` | No | — |
+| `request` | `object \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1121,7 +1103,7 @@ A payment intent succeeded
 {
   id?: string | null,
   idempotency_key?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1142,8 +1124,7 @@ A payment intent succeeded
     client_secret?: string | null,
     canceled_at?: number | null,
     cancellation_reason?: string | null,
-    metadata?: {
-    },
+    metadata?: Record<string, string>,
     last_payment_error?: {
       code?: string,
       message?: string,
@@ -1186,8 +1167,7 @@ A payment intent succeeded
       client_secret?: string | null,
       canceled_at?: number | null,
       cancellation_reason?: string | null,
-      metadata?: {
-      },
+      metadata?: Record<string, string>,
       last_payment_error?: {
         code?: string,
         message?: string,
@@ -1234,11 +1214,11 @@ Stripe webhook endpoint connectivity test
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `event` | Yes | — |
-| `api_version` | `string` | No | — |
+| `api_version` | `string \| null` | No | — |
 | `created` | `number` | Yes | — |
 | `livemode` | `boolean` | Yes | — |
 | `type` | `v2.core.event_destination.ping` | Yes | — |
-| `request` | `object` | No | — |
+| `request` | `object \| null` | No | — |
 | `data` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -1248,7 +1228,7 @@ Stripe webhook endpoint connectivity test
 {
   id?: string | null,
   idempotency_key?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1256,8 +1236,7 @@ Stripe webhook endpoint connectivity test
 
 ```ts
 {
-  object: {
-  }
+  object: Record<string, any>
 }
 ```
 </Accordion>
@@ -1281,8 +1260,7 @@ Stripe webhook endpoint connectivity test
     idempotency_key?: string | null
   } | null,
   data: {
-    object: {
-    }
+    object: Record<string, any>
   }
 }
 ```

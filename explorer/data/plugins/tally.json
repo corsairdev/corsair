@@ -74,7 +74,7 @@
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -155,7 +155,7 @@
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -292,7 +292,7 @@
           {
             "key": "workspaceId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -458,7 +458,7 @@
           {
             "key": "questions",
             "optional": false,
-            "type": "{ id: string, type?: string, title?: string | null, isTitleModifiedByUser?: boolean, formId?: string, isDeleted?: boolean, numberOfResponses?: number, createdAt?: string, updatedAt?: string, fields?: {}[] }[]"
+            "type": "{ id: string, type?: string, title?: string | null, isTitleModifiedByUser?: boolean, formId?: string, isDeleted?: boolean, numberOfResponses?: number, createdAt?: string, updatedAt?: string, fields?: Record<string, any>[] }[]"
           },
           {
             "key": "hasResponses",
@@ -519,7 +519,7 @@
           {
             "key": "questions",
             "optional": true,
-            "type": "{ id: string, type?: string, title?: string | null, isTitleModifiedByUser?: boolean, formId?: string, isDeleted?: boolean, numberOfResponses?: number, createdAt?: string, updatedAt?: string, fields?: {}[] }[]"
+            "type": "{ id: string, type?: string, title?: string | null, isTitleModifiedByUser?: boolean, formId?: string, isDeleted?: boolean, numberOfResponses?: number, createdAt?: string, updatedAt?: string, fields?: Record<string, any>[] }[]"
           },
           {
             "key": "submission",
@@ -595,12 +595,12 @@
           {
             "key": "totalNumberOfSubmissionsPerFilter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, number>"
           },
           {
             "key": "questions",
             "optional": true,
-            "type": "{ id: string, type?: string, title?: string | null, isTitleModifiedByUser?: boolean, formId?: string, isDeleted?: boolean, numberOfResponses?: number, createdAt?: string, updatedAt?: string, fields?: {}[] }[]"
+            "type": "{ id: string, type?: string, title?: string | null, isTitleModifiedByUser?: boolean, formId?: string, isDeleted?: boolean, numberOfResponses?: number, createdAt?: string, updatedAt?: string, fields?: Record<string, any>[] }[]"
           },
           {
             "key": "submissions",
@@ -635,12 +635,12 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subscriptionPlan",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -711,7 +711,7 @@
           {
             "key": "signingSecret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -818,7 +818,7 @@
           {
             "key": "events",
             "optional": false,
-            "type": "{ id?: string, eventType?: string, deliveryStatus?: string, statusCode?: number | null, response?: string | null, retry?: number, payload?: {}, createdAt?: string, updatedAt?: string }[]"
+            "type": "{ id?: string, eventType?: string, deliveryStatus?: string, statusCode?: number | null, response?: string | null, retry?: number, payload?: Record<string, any>, createdAt?: string, updatedAt?: string }[]"
           },
           {
             "key": "page",

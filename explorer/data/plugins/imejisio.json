@@ -1,7 +1,7 @@
 {
   "id": "imejisio",
-  "displayName": "Imejisio",
-  "description": "Imejisio plugin for Corsair",
+  "displayName": "Imejis.io",
+  "description": "Image generation API for rendering designs from templates into images or PDFs.",
   "npmPackageName": "@corsair-dev/imejisio",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -34,7 +34,7 @@
           },
           {
             "key": "format",
-            "optional": false,
+            "optional": true,
             "type": "png | jpeg | webp | pdf",
             "description": "Output format. Defaults to jpeg per the Imejis OpenAPI spec"
           },
@@ -46,9 +46,9 @@
           },
           {
             "key": "delivery",
-            "optional": false,
+            "optional": true,
             "type": "stream | hosted | signed",
-            "description": "Delivery mode: stream (raw bytes normalized to base64), hosted (public URL), or signed (expiring URL)"
+            "description": "Delivery mode: stream (raw bytes normalized to base64), hosted (public URL), or signed (expiring URL). Defaults to \"stream\"."
           },
           {
             "key": "expiresIn",
@@ -59,14 +59,14 @@
           {
             "key": "overrides",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Key-value overrides for dynamic design template fields"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{ delivery: stream, format: png | jpeg | webp | pdf, contentType: string, base64: string } | { success?: boolean, delivery: hosted, url: string, format?: png | jpeg | webp | pdf, file?: {} } | { success?: boolean, delivery: signed, url: string, expiresAt?: string, format?: png | jpeg | webp | pdf, file?: {} }"
+        "type": "{ delivery: stream, format: png | jpeg | webp | pdf, contentType: string, base64: string } | { success?: boolean, delivery: hosted, url: string, format?: png | jpeg | webp | pdf, file?: Record<string, any> } | { success?: boolean, delivery: signed, url: string, expiresAt?: string, format?: png | jpeg | webp | pdf, file?: Record<string, any> }"
       }
     }
   ],
@@ -87,7 +87,17 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "delivery",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "format",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

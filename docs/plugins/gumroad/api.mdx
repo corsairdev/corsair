@@ -1,0 +1,4725 @@
+---
+title: API
+description: "API reference for Gumroad: every `gumroad.api.*` operation with input and output types."
+---
+
+Every `gumroad.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Custom Fields
+
+### create
+
+`customFields.create`
+
+Add a custom field to a product's checkout, optionally required
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.customFields.create({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `name` | `string` | Yes | — |
+| `required` | `true \| false` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `custom_field` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="custom_field full type">
+
+```ts
+{
+  name: string,
+  required?: string | boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`customFields.delete`
+
+Permanently delete a product's custom field by name
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gumroad.api.customFields.delete({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `name` | `string` | Yes | Name of the custom field |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`customFields.list`
+
+List a product's checkout custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.customFields.list({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `custom_fields` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="custom_fields full type">
+
+```ts
+{
+  name: string,
+  required?: string | boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customFields.update`
+
+Flip whether one of a product's custom fields is required
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.customFields.update({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `name` | `string` | Yes | Name of the existing custom field |
+| `required` | `true \| false` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `custom_field` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="custom_field full type">
+
+```ts
+{
+  name: string,
+  required?: string | boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Earnings
+
+### get
+
+`earnings.get`
+
+Read the annual earnings breakdown (gross, fees, taxes, affiliate credit, net) for one tax year
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.earnings.get({ year: '2025' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `year` | `number` | Yes | — |
+| `currency` | `string \| null` | No | — |
+| `gross_cents` | `number` | Yes | — |
+| `fees_cents` | `number` | Yes | — |
+| `taxes_cents` | `number` | Yes | — |
+| `affiliate_credit_cents` | `number` | Yes | — |
+| `net_cents` | `number` | Yes | — |
+
+
+
+---
+
+## Emails
+
+### create
+
+`emails.create`
+
+Create a draft audience email by subject, HTML body and audience, or send it immediately with publish=true
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gumroad.api.emails.create({ subject: 'Welcome', body: 'Thanks for your purchase' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject` | `string` | Yes | — |
+| `body` | `string` | Yes | HTML email body |
+| `audience` | `all \| audience \| customers \| seller \| followers \| follower \| product` | No | Defaults to "audience". |
+| `product_id` | `string` | No | Required when audience is "product" |
+| `link_id` | `string` | No | Product permalink |
+| `publish` | `true \| false` | No | "true" to send immediately |
+| `draft` | `true \| false` | No | "false" to send immediately |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `email` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="email full type">
+
+```ts
+{
+  id: string,
+  subject?: string | null,
+  message?: string | null,
+  audience_type?: string | null,
+  product_id?: string | null,
+  state?: string | null,
+  published_at?: string | null,
+  scheduled_at?: string | null,
+  send_emails?: boolean | null,
+  shown_on_profile?: boolean | null,
+  audience_count?: number | null,
+  recipients_count?: number | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`emails.delete`
+
+Delete an audience email
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gumroad.api.emails.delete({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Email id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`emails.get`
+
+Read one audience email by id
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.emails.get({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Email id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `email` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="email full type">
+
+```ts
+{
+  id: string,
+  subject?: string | null,
+  message?: string | null,
+  audience_type?: string | null,
+  product_id?: string | null,
+  state?: string | null,
+  published_at?: string | null,
+  scheduled_at?: string | null,
+  send_emails?: boolean | null,
+  shown_on_profile?: boolean | null,
+  audience_count?: number | null,
+  recipients_count?: number | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`emails.list`
+
+List the seller's audience emails, optionally filtered to published, scheduled or draft state
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.emails.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `published \| scheduled \| draft` | No | — |
+| `page_key` | `string` | No | Cursor from next_page_key of the previous response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `emails` | `object[]` | Yes | — |
+| `next_page_url` | `string \| null` | No | — |
+| `next_page_key` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  id: string,
+  subject?: string | null,
+  message?: string | null,
+  audience_type?: string | null,
+  product_id?: string | null,
+  state?: string | null,
+  published_at?: string | null,
+  scheduled_at?: string | null,
+  send_emails?: boolean | null,
+  shown_on_profile?: boolean | null,
+  audience_count?: number | null,
+  recipients_count?: number | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### preview
+
+`emails.preview`
+
+Send a preview of an audience email to the seller's own address
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.emails.preview({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Email id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `email` | `object` | Yes | — |
+| `preview_url` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="email full type">
+
+```ts
+{
+  id: string,
+  subject?: string | null,
+  message?: string | null,
+  audience_type?: string | null,
+  product_id?: string | null,
+  state?: string | null,
+  published_at?: string | null,
+  scheduled_at?: string | null,
+  send_emails?: boolean | null,
+  shown_on_profile?: boolean | null,
+  audience_count?: number | null,
+  recipients_count?: number | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### schedule
+
+`emails.schedule`
+
+Schedule a draft audience email to publish at a set time in the seller's timezone
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.emails.schedule({ id: 'bfi_30HLgGWL8H2wo_Gzlg==', to_be_published_at: '2027-01-01 09:00' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Email id |
+| `to_be_published_at` | `string` | Yes | Schedule time in the seller's timezone |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `email` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="email full type">
+
+```ts
+{
+  id: string,
+  subject?: string | null,
+  message?: string | null,
+  audience_type?: string | null,
+  product_id?: string | null,
+  state?: string | null,
+  published_at?: string | null,
+  scheduled_at?: string | null,
+  send_emails?: boolean | null,
+  shown_on_profile?: boolean | null,
+  audience_count?: number | null,
+  recipients_count?: number | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`emails.send`
+
+Publish a draft audience email and send it to its audience
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gumroad.api.emails.send({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Email id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `email` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="email full type">
+
+```ts
+{
+  id: string,
+  subject?: string | null,
+  message?: string | null,
+  audience_type?: string | null,
+  product_id?: string | null,
+  state?: string | null,
+  published_at?: string | null,
+  scheduled_at?: string | null,
+  send_emails?: boolean | null,
+  shown_on_profile?: boolean | null,
+  audience_count?: number | null,
+  recipients_count?: number | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unschedule
+
+`emails.unschedule`
+
+Cancel a scheduled audience email and turn it back into a draft
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.emails.unschedule({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Email id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `email` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="email full type">
+
+```ts
+{
+  id: string,
+  subject?: string | null,
+  message?: string | null,
+  audience_type?: string | null,
+  product_id?: string | null,
+  state?: string | null,
+  published_at?: string | null,
+  scheduled_at?: string | null,
+  send_emails?: boolean | null,
+  shown_on_profile?: boolean | null,
+  audience_count?: number | null,
+  recipients_count?: number | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### abort
+
+`files.abort`
+
+Cancel a multipart upload started by files.presign
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.files.abort({ upload_id: 'example-upload', key: 'uploads/abc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `status` | `accepted \| already_gone` | Yes | — |
+
+
+
+---
+
+### complete
+
+`files.complete`
+
+Finalize a multipart upload with the S3 upload id, key and part etags, returning the canonical file URL
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.files.complete({ upload_id: 'example-upload', key: 'uploads/abc', parts: [{ part_number: 1, etag: 'd41d8cd98f00b204e9800998ecf8427e' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `parts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parts full type">
+
+```ts
+{
+  part_number: number,
+  etag: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `file_url` | `string` | Yes | — |
+
+
+
+---
+
+### presign
+
+`files.presign`
+
+Start a multipart file upload and get presigned S3 URLs per 100 MB part (max 20 GB); the binary PUTs to S3 are client-side
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.files.presign({ file_size: 1024, filename: 'bundle.zip' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | — |
+| `file_size` | `number` | Yes | File size in bytes; max 20 GB |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `upload_id` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `file_url` | `string` | Yes | — |
+| `parts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="parts full type">
+
+```ts
+{
+  part_number: number,
+  presigned_url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Licenses
+
+### decrementUsesCount
+
+`licenses.decrementUsesCount`
+
+Decrement a license key use counter and read its purchase
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.licenses.decrementUsesCount({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `license_key` | `string` | Yes | License key provided by the customer |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `uses` | `number` | Yes | — |
+| `purchase` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="purchase full type">
+
+```ts
+{
+  id: string,
+  seller_id: string,
+  product_id: string,
+  product_name: string,
+  permalink?: string | null,
+  product_permalink?: string | null,
+  email: string,
+  price?: number | null,
+  gumroad_fee?: number | null,
+  currency?: string | null,
+  quantity?: number | null,
+  discover_fee_charged?: boolean | null,
+  can_contact?: boolean | null,
+  referrer?: string | null,
+  card?: {
+    visual?: string | null,
+    type?: string | null
+  } | null,
+  order_number?: number | null,
+  sale_id: string,
+  sale_timestamp?: string | null,
+  purchaser_id?: string | null,
+  subscription_id?: string | null,
+  variants?: string | null,
+  license_key: string,
+  is_multiseat_license?: boolean | null,
+  ip_country?: string | null,
+  recurrence?: string | null,
+  is_gift_receiver_purchase?: boolean | null,
+  refunded?: boolean | null,
+  disputed?: boolean | null,
+  dispute_won?: boolean | null,
+  created_at?: string | null,
+  custom_fields?: {
+  }[] | null,
+  chargebacked?: boolean | null,
+  subscription_ended_at?: string | null,
+  subscription_cancelled_at?: string | null,
+  subscription_failed_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### disable
+
+`licenses.disable`
+
+Disable a license key so it fails verification, and read its purchase
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gumroad.api.licenses.disable({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `license_key` | `string` | Yes | License key provided by the customer |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `uses` | `number` | Yes | — |
+| `purchase` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="purchase full type">
+
+```ts
+{
+  id: string,
+  seller_id: string,
+  product_id: string,
+  product_name: string,
+  permalink?: string | null,
+  product_permalink?: string | null,
+  email: string,
+  price?: number | null,
+  gumroad_fee?: number | null,
+  currency?: string | null,
+  quantity?: number | null,
+  discover_fee_charged?: boolean | null,
+  can_contact?: boolean | null,
+  referrer?: string | null,
+  card?: {
+    visual?: string | null,
+    type?: string | null
+  } | null,
+  order_number?: number | null,
+  sale_id: string,
+  sale_timestamp?: string | null,
+  purchaser_id?: string | null,
+  subscription_id?: string | null,
+  variants?: string | null,
+  license_key: string,
+  is_multiseat_license?: boolean | null,
+  ip_country?: string | null,
+  recurrence?: string | null,
+  is_gift_receiver_purchase?: boolean | null,
+  refunded?: boolean | null,
+  disputed?: boolean | null,
+  dispute_won?: boolean | null,
+  created_at?: string | null,
+  custom_fields?: {
+  }[] | null,
+  chargebacked?: boolean | null,
+  subscription_ended_at?: string | null,
+  subscription_cancelled_at?: string | null,
+  subscription_failed_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enable
+
+`licenses.enable`
+
+Re-enable a disabled license key and read its purchase
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.licenses.enable({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `license_key` | `string` | Yes | License key provided by the customer |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `uses` | `number` | Yes | — |
+| `purchase` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="purchase full type">
+
+```ts
+{
+  id: string,
+  seller_id: string,
+  product_id: string,
+  product_name: string,
+  permalink?: string | null,
+  product_permalink?: string | null,
+  email: string,
+  price?: number | null,
+  gumroad_fee?: number | null,
+  currency?: string | null,
+  quantity?: number | null,
+  discover_fee_charged?: boolean | null,
+  can_contact?: boolean | null,
+  referrer?: string | null,
+  card?: {
+    visual?: string | null,
+    type?: string | null
+  } | null,
+  order_number?: number | null,
+  sale_id: string,
+  sale_timestamp?: string | null,
+  purchaser_id?: string | null,
+  subscription_id?: string | null,
+  variants?: string | null,
+  license_key: string,
+  is_multiseat_license?: boolean | null,
+  ip_country?: string | null,
+  recurrence?: string | null,
+  is_gift_receiver_purchase?: boolean | null,
+  refunded?: boolean | null,
+  disputed?: boolean | null,
+  dispute_won?: boolean | null,
+  created_at?: string | null,
+  custom_fields?: {
+  }[] | null,
+  chargebacked?: boolean | null,
+  subscription_ended_at?: string | null,
+  subscription_cancelled_at?: string | null,
+  subscription_failed_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rotate
+
+`licenses.rotate`
+
+Rotate a license key to a new one; the previous key stops validating immediately
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.licenses.rotate({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `license_key` | `string` | Yes | License key provided by the customer |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `uses` | `number` | Yes | — |
+| `purchase` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="purchase full type">
+
+```ts
+{
+  id: string,
+  seller_id: string,
+  product_id: string,
+  product_name: string,
+  permalink?: string | null,
+  product_permalink?: string | null,
+  email: string,
+  price?: number | null,
+  gumroad_fee?: number | null,
+  currency?: string | null,
+  quantity?: number | null,
+  discover_fee_charged?: boolean | null,
+  can_contact?: boolean | null,
+  referrer?: string | null,
+  card?: {
+    visual?: string | null,
+    type?: string | null
+  } | null,
+  order_number?: number | null,
+  sale_id: string,
+  sale_timestamp?: string | null,
+  purchaser_id?: string | null,
+  subscription_id?: string | null,
+  variants?: string | null,
+  license_key: string,
+  is_multiseat_license?: boolean | null,
+  ip_country?: string | null,
+  recurrence?: string | null,
+  is_gift_receiver_purchase?: boolean | null,
+  refunded?: boolean | null,
+  disputed?: boolean | null,
+  dispute_won?: boolean | null,
+  created_at?: string | null,
+  custom_fields?: {
+  }[] | null,
+  chargebacked?: boolean | null,
+  subscription_ended_at?: string | null,
+  subscription_cancelled_at?: string | null,
+  subscription_failed_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verify
+
+`licenses.verify`
+
+Verify a license key against a product and read its purchase; increments the license use counter unless increment_uses_count is "false"
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.licenses.verify({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', license_key: 'A1B2C3D4-E5F60718-9ABCDEF0-1234ABCD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `license_key` | `string` | Yes | License key provided by the customer |
+| `increment_uses_count` | `true \| false` | No | "false" to leave the license use counter unchanged. Defaults to "true". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `uses` | `number` | Yes | — |
+| `purchase` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="purchase full type">
+
+```ts
+{
+  id: string,
+  seller_id: string,
+  product_id: string,
+  product_name: string,
+  permalink?: string | null,
+  product_permalink?: string | null,
+  email: string,
+  price?: number | null,
+  gumroad_fee?: number | null,
+  currency?: string | null,
+  quantity?: number | null,
+  discover_fee_charged?: boolean | null,
+  can_contact?: boolean | null,
+  referrer?: string | null,
+  card?: {
+    visual?: string | null,
+    type?: string | null
+  } | null,
+  order_number?: number | null,
+  sale_id: string,
+  sale_timestamp?: string | null,
+  purchaser_id?: string | null,
+  subscription_id?: string | null,
+  variants?: string | null,
+  license_key: string,
+  is_multiseat_license?: boolean | null,
+  ip_country?: string | null,
+  recurrence?: string | null,
+  is_gift_receiver_purchase?: boolean | null,
+  refunded?: boolean | null,
+  disputed?: boolean | null,
+  dispute_won?: boolean | null,
+  created_at?: string | null,
+  custom_fields?: {
+  }[] | null,
+  chargebacked?: boolean | null,
+  subscription_ended_at?: string | null,
+  subscription_cancelled_at?: string | null,
+  subscription_failed_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Media
+
+### create
+
+`media.create`
+
+Add a media library file from a public image URL or a direct-upload signed blob id
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.media.create({ url: 'https://example.com/logo.png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | A publicly reachable image URL |
+| `signed_blob_id` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `media` | `object` | Yes | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  extension?: string | null,
+  file_size?: number | null,
+  url?: string | null,
+  status?: {
+    type?: string | null
+  } | null,
+  file_group?: string | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`media.delete`
+
+Delete a media library file by id
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gumroad.api.media.delete({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Media file id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`media.list`
+
+List the authenticated user's media library files
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.media.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `media` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="media full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  extension?: string | null,
+  file_size?: number | null,
+  url?: string | null,
+  status?: {
+    type?: string | null
+  } | null,
+  file_group?: string | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Offer Codes
+
+### createForProduct
+
+`offerCodes.createForProduct`
+
+Create a fixed-amount or percentage offer code for a product, optionally universal, automatic and scheduled
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.offerCodes.createForProduct({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Example', amount_off: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `name` | `string` | Yes | The coupon code used at checkout |
+| `amount_off` | `number` | Yes | Amount in cents or percent |
+| `offer_type` | `cents \| percent` | No | Defaults to "cents". |
+| `max_purchase_count` | `number` | No | — |
+| `minimum_amount_cents` | `number` | No | — |
+| `universal` | `true \| false` | No | "true" applies the code to all products. Defaults to "false". |
+| `auto_apply` | `true \| false` | No | — |
+| `sale_label` | `string` | No | — |
+| `valid_at` | `string \| ""` | No | — |
+| `expires_at` | `string \| ""` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `offer_code` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="offer_code full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  amount_cents?: number | null,
+  percent_off?: number | null,
+  max_purchase_count?: number | null,
+  minimum_amount_cents?: number | null,
+  universal?: boolean | null,
+  currency_type?: string | null,
+  auto_apply?: boolean | null,
+  sale_label?: string | null,
+  valid_at?: string | null,
+  expires_at?: string | null,
+  times_used?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteForProduct
+
+`offerCodes.deleteForProduct`
+
+Permanently delete one of a product's offer codes
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gumroad.api.offerCodes.deleteForProduct({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `id` | `string` | Yes | Offer code id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`offerCodes.get`
+
+Read one store-wide offer code by id
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.offerCodes.get({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Store-wide offer code id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `offer_code` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="offer_code full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  amount_cents?: number | null,
+  percent_off?: number | null,
+  max_purchase_count?: number | null,
+  minimum_amount_cents?: number | null,
+  universal?: boolean | null,
+  currency_type?: string | null,
+  auto_apply?: boolean | null,
+  sale_label?: string | null,
+  valid_at?: string | null,
+  expires_at?: string | null,
+  times_used?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getForProduct
+
+`offerCodes.getForProduct`
+
+Read one of a product's offer codes by id
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.offerCodes.getForProduct({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `id` | `string` | Yes | Offer code id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `offer_code` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="offer_code full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  amount_cents?: number | null,
+  percent_off?: number | null,
+  max_purchase_count?: number | null,
+  minimum_amount_cents?: number | null,
+  universal?: boolean | null,
+  currency_type?: string | null,
+  auto_apply?: boolean | null,
+  sale_label?: string | null,
+  valid_at?: string | null,
+  expires_at?: string | null,
+  times_used?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`offerCodes.list`
+
+List the store's non-deleted offer codes, newest first, optionally filtered to automatic sales
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.offerCodes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `auto_apply` | `true \| false` | No | Filter by automatic application |
+| `page_key` | `string` | No | Cursor from next_page_key of the previous response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `offer_codes` | `object[]` | Yes | — |
+| `next_page_url` | `string \| null` | No | — |
+| `next_page_key` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="offer_codes full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  amount_cents?: number | null,
+  percent_off?: number | null,
+  max_purchase_count?: number | null,
+  minimum_amount_cents?: number | null,
+  universal?: boolean | null,
+  currency_type?: string | null,
+  auto_apply?: boolean | null,
+  sale_label?: string | null,
+  valid_at?: string | null,
+  expires_at?: string | null,
+  times_used?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForProduct
+
+`offerCodes.listForProduct`
+
+List all of a product's offer codes with amounts and redemption counts
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.offerCodes.listForProduct({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `offer_codes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="offer_codes full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  amount_cents?: number | null,
+  percent_off?: number | null,
+  max_purchase_count?: number | null,
+  minimum_amount_cents?: number | null,
+  universal?: boolean | null,
+  currency_type?: string | null,
+  auto_apply?: boolean | null,
+  sale_label?: string | null,
+  valid_at?: string | null,
+  expires_at?: string | null,
+  times_used?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`offerCodes.update`
+
+Update a store-wide offer code schedule, usage cap or minimum; the amount and universality cannot change
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.offerCodes.update({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Store-wide offer code id |
+| `max_purchase_count` | `number` | No | — |
+| `minimum_amount_cents` | `number` | No | — |
+| `auto_apply` | `true \| false` | No | — |
+| `sale_label` | `string` | No | — |
+| `valid_at` | `string \| ""` | No | — |
+| `expires_at` | `string \| ""` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `offer_code` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="offer_code full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  amount_cents?: number | null,
+  percent_off?: number | null,
+  max_purchase_count?: number | null,
+  minimum_amount_cents?: number | null,
+  universal?: boolean | null,
+  currency_type?: string | null,
+  auto_apply?: boolean | null,
+  sale_label?: string | null,
+  valid_at?: string | null,
+  expires_at?: string | null,
+  times_used?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateForProduct
+
+`offerCodes.updateForProduct`
+
+Update one of a product's offer codes: usage cap, minimum, automatic application and validity window
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.offerCodes.updateForProduct({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `id` | `string` | Yes | Offer code id |
+| `max_purchase_count` | `number` | No | — |
+| `minimum_amount_cents` | `number` | No | — |
+| `auto_apply` | `true \| false` | No | — |
+| `sale_label` | `string` | No | — |
+| `valid_at` | `string \| ""` | No | — |
+| `expires_at` | `string \| ""` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `offer_code` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="offer_code full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  amount_cents?: number | null,
+  percent_off?: number | null,
+  max_purchase_count?: number | null,
+  minimum_amount_cents?: number | null,
+  universal?: boolean | null,
+  currency_type?: string | null,
+  auto_apply?: boolean | null,
+  sale_label?: string | null,
+  valid_at?: string | null,
+  expires_at?: string | null,
+  times_used?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payouts
+
+### get
+
+`payouts.get`
+
+Read one payout with its sale ids and optional per-transaction breakdown lines
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.payouts.get({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Payout id |
+| `include_sales` | `true \| false` | No | "false" to exclude sales, refunded_sales and disputed_sales. Defaults to "true". |
+| `include_transactions` | `true \| false` | No | "true" to include the payout CSV transaction lines. Defaults to "false". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `payout` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payout full type">
+
+```ts
+{
+  id?: string | null,
+  amount?: string | null,
+  currency?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  processed_at?: string | null,
+  payment_processor?: string | null,
+  bank_account_visual?: string | null,
+  paypal_email?: string | null,
+  sales?: string[] | null,
+  refunded_sales?: string[] | null,
+  disputed_sales?: string[] | null,
+  transactions?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`payouts.list`
+
+List payouts with amount, currency, status and bank destination, filterable by date range
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.payouts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+| `page_key` | `string` | No | Cursor from next_page_key of the previous response |
+| `include_upcoming` | `true \| false` | No | "false" to exclude the upcoming payout. Defaults to "true". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `payouts` | `object[]` | Yes | — |
+| `next_page_url` | `string \| null` | No | — |
+| `next_page_key` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="payouts full type">
+
+```ts
+{
+  id?: string | null,
+  amount?: string | null,
+  currency?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  processed_at?: string | null,
+  payment_processor?: string | null,
+  bank_account_visual?: string | null,
+  paypal_email?: string | null,
+  sales?: string[] | null,
+  refunded_sales?: string[] | null,
+  disputed_sales?: string[] | null,
+  transactions?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upcoming
+
+`payouts.upcoming`
+
+Read the up to two upcoming payouts with their transaction lines
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.payouts.upcoming({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_sales` | `true \| false` | No | Defaults to "true". |
+| `include_transactions` | `true \| false` | No | Defaults to "false". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `payouts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payouts full type">
+
+```ts
+{
+  id?: string | null,
+  amount?: string | null,
+  currency?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  processed_at?: string | null,
+  payment_processor?: string | null,
+  bank_account_visual?: string | null,
+  paypal_email?: string | null,
+  sales?: string[] | null,
+  refunded_sales?: string[] | null,
+  disputed_sales?: string[] | null,
+  transactions?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### categoriesList
+
+`products.categoriesList`
+
+List every product category; a category path feeds the category parameter when creating or updating products
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.products.categoriesList({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `categories` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  label?: string | null,
+  path?: string | null,
+  parent_id?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### coversAdd
+
+`products.coversAdd`
+
+Attach a cover to a product from a public image/video or YouTube/Vimeo URL
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.products.coversAdd({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', url: 'https://example.com/cover.png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `url` | `string` | Yes | A publicly accessible image/video URL, or a YouTube/Vimeo URL |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `covers` | `object[]` | Yes | — |
+| `main_cover_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="covers full type">
+
+```ts
+{
+  id: string,
+  url?: string | null,
+  original_url?: string | null,
+  thumbnail?: string | null,
+  type?: string | null,
+  filetype?: string | null,
+  width?: number | null,
+  height?: number | null,
+  native_width?: number | null,
+  native_height?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### coversDelete
+
+`products.coversDelete`
+
+Permanently delete one of a product's covers by id
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gumroad.api.products.coversDelete({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `id` | `string` | Yes | Cover id from the covers response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `covers` | `object[]` | Yes | — |
+| `main_cover_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="covers full type">
+
+```ts
+{
+  id: string,
+  url?: string | null,
+  original_url?: string | null,
+  thumbnail?: string | null,
+  type?: string | null,
+  filetype?: string | null,
+  width?: number | null,
+  height?: number | null,
+  native_width?: number | null,
+  native_height?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`products.create`
+
+Create a product with name, price in cents, type, tags, refund policy, rich content pages and attached files
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.products.create({ name: 'Pencil Icon PSD', price: 100, native_type: 'digital' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `draft` | `true \| false` | No | "true" saves as an unpublished draft instead of publishing |
+| `published` | `true \| false` | No | "false" saves as an unpublished draft, same as draft="true" |
+| `native_type` | `digital \| course \| ebook \| membership \| bundle \| coffee \| call \| commission` | No | Product type; cannot be changed later |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | HTML |
+| `custom_permalink` | `string` | No | — |
+| `price` | `number` | Yes | Price in the smallest currency unit (e.g. cents) |
+| `price_currency_type` | `string` | No | Defaults to the account's currency |
+| `subscription_duration` | `monthly \| quarterly \| biannually \| yearly \| every_two_years` | No | Membership products only |
+| `customizable_price` | `true \| false` | No | "true" for pay-what-you-want |
+| `suggested_price_cents` | `number` | No | — |
+| `max_purchase_count` | `number` | No | — |
+| `category` | `string` | No | Full category path from categories.list |
+| `taxonomy_id` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `custom_summary` | `string` | No | — |
+| `refund_period` | `7 \| 14 \| 30 \| 183 \| inherit \| none` | No | Product-level refund policy |
+| `refund_fine_print` | `string` | No | — |
+| `rich_content` | `object[]` | No | — |
+| `files` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rich_content full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description: JsonValue
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  id?: string,
+  external_id?: string,
+  url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `product` | `object` | Yes | — |
+| `warning` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  published?: boolean | null,
+  deleted?: boolean | null,
+  price?: number | null,
+  currency?: string | null,
+  short_url?: string | null,
+  thumbnail_url?: string | null,
+  preview_url?: string | null,
+  custom_permalink?: string | null,
+  custom_summary?: string | null,
+  custom_receipt?: string | null,
+  custom_html?: string | null,
+  require_shipping?: boolean | null,
+  customizable_price?: boolean | null,
+  max_purchase_count?: number | null,
+  subscription_duration?: string | null,
+  tags?: string[] | null,
+  formatted_price?: string | null,
+  sales_count?: number | null,
+  sales_usd_cents?: number | null,
+  is_tiered_membership?: boolean | null,
+  recurrences?: string[] | null,
+  purchasing_power_parity_prices?: Record<string, number> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`products.delete`
+
+Permanently delete a product
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gumroad.api.products.delete({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Product id from products.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### disable
+
+`products.disable`
+
+Unpublish (disable) an existing product
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gumroad.api.products.disable({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Product id from products.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  published?: boolean | null,
+  deleted?: boolean | null,
+  price?: number | null,
+  currency?: string | null,
+  short_url?: string | null,
+  thumbnail_url?: string | null,
+  preview_url?: string | null,
+  custom_permalink?: string | null,
+  custom_summary?: string | null,
+  custom_receipt?: string | null,
+  custom_html?: string | null,
+  require_shipping?: boolean | null,
+  customizable_price?: boolean | null,
+  max_purchase_count?: number | null,
+  subscription_duration?: string | null,
+  tags?: string[] | null,
+  formatted_price?: string | null,
+  sales_count?: number | null,
+  sales_usd_cents?: number | null,
+  is_tiered_membership?: boolean | null,
+  recurrences?: string[] | null,
+  purchasing_power_parity_prices?: Record<string, number> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enable
+
+`products.enable`
+
+Publish (enable) an existing product
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.products.enable({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Product id from products.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  published?: boolean | null,
+  deleted?: boolean | null,
+  price?: number | null,
+  currency?: string | null,
+  short_url?: string | null,
+  thumbnail_url?: string | null,
+  preview_url?: string | null,
+  custom_permalink?: string | null,
+  custom_summary?: string | null,
+  custom_receipt?: string | null,
+  custom_html?: string | null,
+  require_shipping?: boolean | null,
+  customizable_price?: boolean | null,
+  max_purchase_count?: number | null,
+  subscription_duration?: string | null,
+  tags?: string[] | null,
+  formatted_price?: string | null,
+  sales_count?: number | null,
+  sales_usd_cents?: number | null,
+  is_tiered_membership?: boolean | null,
+  recurrences?: string[] | null,
+  purchasing_power_parity_prices?: Record<string, number> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`products.get`
+
+Get one product by id, including description, price, tags and purchasing-power-parity prices
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.products.get({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Product id from products.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  published?: boolean | null,
+  deleted?: boolean | null,
+  price?: number | null,
+  currency?: string | null,
+  short_url?: string | null,
+  thumbnail_url?: string | null,
+  preview_url?: string | null,
+  custom_permalink?: string | null,
+  custom_summary?: string | null,
+  custom_receipt?: string | null,
+  custom_html?: string | null,
+  require_shipping?: boolean | null,
+  customizable_price?: boolean | null,
+  max_purchase_count?: number | null,
+  subscription_duration?: string | null,
+  tags?: string[] | null,
+  formatted_price?: string | null,
+  sales_count?: number | null,
+  sales_usd_cents?: number | null,
+  is_tiered_membership?: boolean | null,
+  recurrences?: string[] | null,
+  purchasing_power_parity_prices?: Record<string, number> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+List the authenticated user's Gumroad products with price, publication state and sales counts
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.products.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `products` | `object[]` | Yes | — |
+| `next_page_url` | `string \| null` | No | — |
+| `next_page_key` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  published?: boolean | null,
+  deleted?: boolean | null,
+  price?: number | null,
+  currency?: string | null,
+  short_url?: string | null,
+  thumbnail_url?: string | null,
+  preview_url?: string | null,
+  custom_permalink?: string | null,
+  custom_summary?: string | null,
+  custom_receipt?: string | null,
+  custom_html?: string | null,
+  require_shipping?: boolean | null,
+  customizable_price?: boolean | null,
+  max_purchase_count?: number | null,
+  subscription_duration?: string | null,
+  tags?: string[] | null,
+  formatted_price?: string | null,
+  sales_count?: number | null,
+  sales_usd_cents?: number | null,
+  is_tiered_membership?: boolean | null,
+  recurrences?: string[] | null,
+  purchasing_power_parity_prices?: Record<string, number> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reviewsList
+
+`products.reviewsList`
+
+List one product's reviews with rating, message and the seller's public reply
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.products.reviewsList({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `page_key` | `string` | No | Cursor from next_page_key of the previous response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `product_reviews` | `object[]` | Yes | — |
+| `next_page_url` | `string \| null` | No | — |
+| `next_page_key` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="product_reviews full type">
+
+```ts
+{
+  id: string,
+  rating?: number | null,
+  message?: string | null,
+  created_at?: string | null,
+  purchase_id?: string | null,
+  rater_name?: string | null,
+  response?: {
+    message?: string | null,
+    created_at?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### thumbnailDelete
+
+`products.thumbnailDelete`
+
+Remove a product's thumbnail
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gumroad.api.products.thumbnailDelete({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `thumbnail` | `string \| null` | No | — |
+
+
+
+---
+
+### thumbnailSet
+
+`products.thumbnailSet`
+
+Set a product's thumbnail from a public image URL or a direct-upload signed blob id
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.products.thumbnailSet({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', url: 'https://example.com/thumb.png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `url` | `string` | No | — |
+| `signed_blob_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `thumbnail` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="thumbnail full type">
+
+```ts
+{
+  url?: string | null,
+  guid?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+Update a product; files and tags are full replacements, and custom_html or cover_ids can be rewritten
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.products.update({ id: 'A-m3CDDC5dlrSdKZp0RFhA==', name: 'Pencil Icon PSD v2', files: [{ url: 'https://example.com/bundle.zip' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Product id from products.list |
+| `name` | `string` | No | — |
+| `description` | `string` | No | HTML |
+| `custom_permalink` | `string` | No | — |
+| `price` | `number` | No | — |
+| `price_currency_type` | `string` | No | — |
+| `customizable_price` | `true \| false` | No | — |
+| `suggested_price_cents` | `number` | No | — |
+| `max_purchase_count` | `number` | No | — |
+| `quantity_enabled` | `true \| false` | No | — |
+| `is_adult` | `true \| false` | No | — |
+| `display_product_reviews` | `true \| false` | No | — |
+| `should_show_sales_count` | `true \| false` | No | — |
+| `category` | `string` | No | — |
+| `taxonomy_id` | `number` | No | — |
+| `tags` | `string[]` | No | Full replacement |
+| `custom_receipt` | `string` | No | — |
+| `custom_summary` | `string` | No | — |
+| `refund_period` | `7 \| 14 \| 30 \| 183 \| inherit \| none` | No | — |
+| `refund_fine_print` | `string` | No | — |
+| `custom_html` | `string` | No | Custom landing page HTML; an empty string clears it |
+| `cover_ids` | `string[]` | No | Display order |
+| `rich_content` | `object[]` | No | Full replacement |
+| `has_same_rich_content_for_all_variants` | `true \| false` | No | — |
+| `files` | `object[]` | No | Full replacement; omitted files are deleted |
+
+<AccordionGroup>
+<Accordion title="rich_content full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description: JsonValue
+}[]
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  id?: string,
+  external_id?: string,
+  url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `product` | `object` | Yes | — |
+| `warning` | `string \| null` | No | — |
+| `file_id_mappings` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  published?: boolean | null,
+  deleted?: boolean | null,
+  price?: number | null,
+  currency?: string | null,
+  short_url?: string | null,
+  thumbnail_url?: string | null,
+  preview_url?: string | null,
+  custom_permalink?: string | null,
+  custom_summary?: string | null,
+  custom_receipt?: string | null,
+  custom_html?: string | null,
+  require_shipping?: boolean | null,
+  customizable_price?: boolean | null,
+  max_purchase_count?: number | null,
+  subscription_duration?: string | null,
+  tags?: string[] | null,
+  formatted_price?: string | null,
+  sales_count?: number | null,
+  sales_usd_cents?: number | null,
+  is_tiered_membership?: boolean | null,
+  recurrences?: string[] | null,
+  purchasing_power_parity_prices?: Record<string, number> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Public
+
+### product
+
+`public.product`
+
+Read the public product page data for a permalink (price, covers, description, reviews); no authentication required
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.public.product({ seller: 'sahil', permalink: 'pencil' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `seller` | `string` | Yes | The seller's profile subdomain |
+| `permalink` | `string` | Yes | The product permalink |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_version` | `number` | Yes | — |
+| `id` | `string` | Yes | — |
+| `permalink` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `native_type` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `thumbnail_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `seller` | `object \| null` | No | — |
+| `price_cents` | `number \| null` | No | — |
+| `currency_code` | `string \| null` | No | — |
+| `price_formatted` | `string \| null` | No | — |
+| `is_pay_what_you_want` | `boolean \| null` | No | — |
+| `suggested_price_cents` | `number \| null` | No | — |
+| `is_recurring_billing` | `boolean \| null` | No | — |
+| `is_tiered_membership` | `boolean \| null` | No | — |
+| `recurrences` | `object \| null` | No | — |
+| `free_trial` | `object \| null` | No | — |
+| `description_html` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `covers` | `object[] \| null` | No | — |
+| `attributes` | `object[] \| null` | No | — |
+| `ratings` | `object \| null` | No | — |
+| `reviews` | `object[] \| null` | No | — |
+| `sales_count` | `number \| null` | No | — |
+| `options` | `object[] \| null` | No | — |
+| `quantity_remaining` | `number \| null` | No | — |
+| `is_quantity_enabled` | `boolean \| null` | No | — |
+| `is_sales_limited` | `boolean \| null` | No | — |
+| `is_published` | `boolean \| null` | No | — |
+| `is_physical` | `boolean \| null` | No | — |
+| `refund_policy` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="seller full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="recurrences full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="free_trial full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="covers full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="ratings full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="reviews full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="refund_policy full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### profile
+
+`public.profile`
+
+Read a creator's public profile with up to 100 visible products; no authentication required
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.public.profile({ username: 'sahil' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_version` | `number` | Yes | — |
+| `id` | `string` | Yes | — |
+| `username` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `bio` | `string \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `profile_url` | `string \| null` | No | — |
+| `subdomain` | `string \| null` | No | — |
+| `twitter_handle` | `string \| null` | No | — |
+| `is_verified` | `boolean \| null` | No | — |
+| `products` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Resource Subscriptions
+
+### list
+
+`resourceSubscriptions.list`
+
+List active subscriptions for one resource event type
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.resourceSubscriptions.list({ resource_name: 'sale' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource_name` | `sale \| refund \| dispute \| dispute_won \| cancellation \| subscription_updated \| subscription_ended \| subscription_restarted` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `resource_subscriptions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource_subscriptions full type">
+
+```ts
+{
+  id: string,
+  resource_name: string,
+  post_url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscribe
+
+`resourceSubscriptions.subscribe`
+
+Subscribe a post URL to one of the 8 resource event types (sales, refunds, disputes, subscription changes); receiving deliveries is out of scope
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.resourceSubscriptions.subscribe({ resource_name: 'sale', post_url: 'https://example.com/webhook' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource_name` | `sale \| refund \| dispute \| dispute_won \| cancellation \| subscription_updated \| subscription_ended \| subscription_restarted` | Yes | — |
+| `post_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `resource_subscription` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="resource_subscription full type">
+
+```ts
+{
+  id: string,
+  resource_name: string,
+  post_url: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### testEvent
+
+`resourceSubscriptions.testEvent`
+
+Queue a sample event for a resource subscription post URL
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.resourceSubscriptions.testEvent({ resource_subscription_id: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource_subscription_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribe
+
+`resourceSubscriptions.unsubscribe`
+
+Delete a resource subscription by id
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gumroad.api.resourceSubscriptions.unsubscribe({ resource_subscription_id: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource_subscription_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+## Sales
+
+### get
+
+`sales.get`
+
+Get one sale by id with price, fees, taxes, refund and chargeback state
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.sales.get({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Sale id from sales.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `sale` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sale full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  seller_id: string,
+  product_id: string,
+  product_name: string,
+  product_permalink?: string | null,
+  product_has_variants?: boolean | null,
+  created_at?: string | null,
+  price?: number | null,
+  gumroad_fee?: number | null,
+  tax_cents?: number | null,
+  shipping_cents?: number | null,
+  tip_cents?: number | null,
+  variants_price_cents?: number | null,
+  currency?: string | null,
+  order_id?: string | null,
+  license_key?: string | null,
+  access_revoked?: boolean | null,
+  partially_refunded?: boolean | null,
+  refunded?: boolean | null,
+  chargedback?: boolean | null,
+  disputed?: boolean | null,
+  sent_abandoned_cart_email?: boolean | null,
+  subscription_duration?: string | null,
+  formatted_display_price?: string | null,
+  formatted_total_price?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sales.list`
+
+List successful sales, filterable by date range, product, buyer email, order id, name or license key
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.sales.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `after` | `string` | No | Only sales after this date |
+| `before` | `string` | No | Only sales before this date |
+| `product_id` | `string` | No | Filter sales by product |
+| `email` | `string` | No | Filter sales by buyer email |
+| `order_id` | `string` | No | Filter sales by order id |
+| `name` | `string` | No | Filter sales by customer name |
+| `license_key` | `string` | No | Filter sales by license key |
+| `page_key` | `string` | No | Cursor from next_page_key of the previous response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `sales` | `object[]` | Yes | — |
+| `next_page_url` | `string \| null` | No | — |
+| `next_page_key` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sales full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  seller_id: string,
+  product_id: string,
+  product_name: string,
+  product_permalink?: string | null,
+  product_has_variants?: boolean | null,
+  created_at?: string | null,
+  price?: number | null,
+  gumroad_fee?: number | null,
+  tax_cents?: number | null,
+  shipping_cents?: number | null,
+  tip_cents?: number | null,
+  variants_price_cents?: number | null,
+  currency?: string | null,
+  order_id?: string | null,
+  license_key?: string | null,
+  access_revoked?: boolean | null,
+  partially_refunded?: boolean | null,
+  refunded?: boolean | null,
+  chargedback?: boolean | null,
+  disputed?: boolean | null,
+  sent_abandoned_cart_email?: boolean | null,
+  subscription_duration?: string | null,
+  formatted_display_price?: string | null,
+  formatted_total_price?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markAsShipped
+
+`sales.markAsShipped`
+
+Mark a physical sale as shipped with an optional tracking URL
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.sales.markAsShipped({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Sale id from sales.list |
+| `tracking_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `sale` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sale full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  seller_id: string,
+  product_id: string,
+  product_name: string,
+  product_permalink?: string | null,
+  product_has_variants?: boolean | null,
+  created_at?: string | null,
+  price?: number | null,
+  gumroad_fee?: number | null,
+  tax_cents?: number | null,
+  shipping_cents?: number | null,
+  tip_cents?: number | null,
+  variants_price_cents?: number | null,
+  currency?: string | null,
+  order_id?: string | null,
+  license_key?: string | null,
+  access_revoked?: boolean | null,
+  partially_refunded?: boolean | null,
+  refunded?: boolean | null,
+  chargedback?: boolean | null,
+  disputed?: boolean | null,
+  sent_abandoned_cart_email?: boolean | null,
+  subscription_duration?: string | null,
+  formatted_display_price?: string | null,
+  formatted_total_price?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### refund
+
+`sales.refund`
+
+Refund a sale fully, or partially with amount_cents; returns the updated sale
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gumroad.api.sales.refund({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Sale id from sales.list |
+| `amount_cents` | `number` | No | Partial refund amount; omit for a full refund |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `sale` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sale full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  seller_id: string,
+  product_id: string,
+  product_name: string,
+  product_permalink?: string | null,
+  product_has_variants?: boolean | null,
+  created_at?: string | null,
+  price?: number | null,
+  gumroad_fee?: number | null,
+  tax_cents?: number | null,
+  shipping_cents?: number | null,
+  tip_cents?: number | null,
+  variants_price_cents?: number | null,
+  currency?: string | null,
+  order_id?: string | null,
+  license_key?: string | null,
+  access_revoked?: boolean | null,
+  partially_refunded?: boolean | null,
+  refunded?: boolean | null,
+  chargedback?: boolean | null,
+  disputed?: boolean | null,
+  sent_abandoned_cart_email?: boolean | null,
+  subscription_duration?: string | null,
+  formatted_display_price?: string | null,
+  formatted_total_price?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resendReceipt
+
+`sales.resendReceipt`
+
+Resend the purchase receipt to the customer's email
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.sales.resendReceipt({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Sale id from sales.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### revokeAccess
+
+`sales.revokeAccess`
+
+Revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gumroad.api.sales.revokeAccess({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Sale id from sales.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `sale` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sale full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  seller_id: string,
+  product_id: string,
+  product_name: string,
+  product_permalink?: string | null,
+  product_has_variants?: boolean | null,
+  created_at?: string | null,
+  price?: number | null,
+  gumroad_fee?: number | null,
+  tax_cents?: number | null,
+  shipping_cents?: number | null,
+  tip_cents?: number | null,
+  variants_price_cents?: number | null,
+  currency?: string | null,
+  order_id?: string | null,
+  license_key?: string | null,
+  access_revoked?: boolean | null,
+  partially_refunded?: boolean | null,
+  refunded?: boolean | null,
+  chargedback?: boolean | null,
+  disputed?: boolean | null,
+  sent_abandoned_cart_email?: boolean | null,
+  subscription_duration?: string | null,
+  formatted_display_price?: string | null,
+  formatted_total_price?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### undoRevokeAccess
+
+`sales.undoRevokeAccess`
+
+Restore a buyer's access to a previously revoked sale
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.sales.undoRevokeAccess({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Sale id from sales.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `sale` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sale full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  seller_id: string,
+  product_id: string,
+  product_name: string,
+  product_permalink?: string | null,
+  product_has_variants?: boolean | null,
+  created_at?: string | null,
+  price?: number | null,
+  gumroad_fee?: number | null,
+  tax_cents?: number | null,
+  shipping_cents?: number | null,
+  tip_cents?: number | null,
+  variants_price_cents?: number | null,
+  currency?: string | null,
+  order_id?: string | null,
+  license_key?: string | null,
+  access_revoked?: boolean | null,
+  partially_refunded?: boolean | null,
+  refunded?: boolean | null,
+  chargedback?: boolean | null,
+  disputed?: boolean | null,
+  sent_abandoned_cart_email?: boolean | null,
+  subscription_duration?: string | null,
+  formatted_display_price?: string | null,
+  formatted_total_price?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscribers
+
+### get
+
+`subscribers.get`
+
+Read one subscriber by id with status, recurrence and license key
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.subscribers.get({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Subscriber id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `subscribers` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  product_id: string,
+  product_name: string,
+  user_id?: string | null,
+  user_email?: string | null,
+  purchase_ids?: string[] | null,
+  created_at?: string | null,
+  user_requested_cancellation_at?: string | null,
+  charge_occurrence_count?: number | null,
+  recurrence?: string | null,
+  cancelled_at?: string | null,
+  ended_at?: string | null,
+  failed_at?: string | null,
+  free_trial_ends_at?: string | null,
+  license_key: string,
+  status?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscribers.list`
+
+List one product's subscribers with status, recurrence and license key
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.subscribers.list({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `email` | `string` | No | Filter by subscriber email |
+| `paginated` | `true \| false` | No | "true" to page 100 at a time and get next_page_key (default "false") |
+| `page_key` | `string` | No | Cursor from next_page_key of the previous response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `subscribers` | `object[]` | Yes | — |
+| `next_page_url` | `string \| null` | No | — |
+| `next_page_key` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  product_id: string,
+  product_name: string,
+  user_id?: string | null,
+  user_email?: string | null,
+  purchase_ids?: string[] | null,
+  created_at?: string | null,
+  user_requested_cancellation_at?: string | null,
+  charge_occurrence_count?: number | null,
+  recurrence?: string | null,
+  cancelled_at?: string | null,
+  ended_at?: string | null,
+  failed_at?: string | null,
+  free_trial_ends_at?: string | null,
+  license_key: string,
+  status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tax Forms
+
+### download
+
+`taxForms.download`
+
+Download a tax form PDF for a year and form type as base64 with filename and content type
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.taxForms.download({ year: '2025', tax_form_type: 'us_1099_k' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `string` | Yes | — |
+| `tax_form_type` | `us_1099_k \| us_1099_misc` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | No | — |
+| `contentType` | `string` | Yes | — |
+| `contentBase64` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`taxForms.list`
+
+List generated tax forms (1099-K, 1099-MISC) for one tax year or every year
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.taxForms.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `year` | `string` | No | Omit to return forms for every year |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `tax_forms` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tax_forms full type">
+
+```ts
+{
+  tax_year?: number | null,
+  tax_form_type?: string | null,
+  filed_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### customHtmlGet
+
+`user.customHtmlGet`
+
+Read the profile's custom HTML landing page plus a rendered fallback of the current storefront
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.user.customHtmlGet({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `custom_html` | `string \| null` | No | — |
+| `rendered_html` | `string \| null` | No | — |
+| `has_landing_page` | `boolean \| null` | No | — |
+| `profile_url` | `string \| null` | No | — |
+
+
+
+---
+
+### customHtmlPreview
+
+`user.customHtmlPreview`
+
+Sanitize profile HTML and return the sanitized result without saving anything
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.user.customHtmlPreview({ custom_html: '<p>Hello</p>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_html` | `string` | Yes | The HTML to sanitize |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `custom_html` | `string \| null` | No | — |
+| `sanitization_report` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sanitization_report full type">
+
+```ts
+{
+  removed_tags?: string[] | null,
+  removed_attributes?: string[] | null,
+  total_removed?: number | null,
+  truncated?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### customHtmlUpdate
+
+`user.customHtmlUpdate`
+
+Publish or clear the profile custom HTML landing page; the response carries a sanitization report and the previous HTML for rollback
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.user.customHtmlUpdate({ custom_html: '<p>Hello</p>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_html` | `string \| null` | Yes | The profile landing page HTML; null clears it |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `custom_html` | `string \| null` | No | — |
+| `previous_custom_html` | `string \| null` | No | — |
+| `profile_url` | `string \| null` | No | — |
+| `sanitization_report` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sanitization_report full type">
+
+```ts
+{
+  removed_tags?: string[] | null,
+  removed_attributes?: string[] | null,
+  total_removed?: number | null,
+  truncated?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`user.get`
+
+Read the authenticated user's profile: name, bio, links and (with view_sales) email
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.user.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  bio?: string | null,
+  name?: string | null,
+  twitter_handle?: string | null,
+  user_id?: string | null,
+  email?: string | null,
+  url?: string | null,
+  profile_picture_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### refundPolicyGet
+
+`user.refundPolicyGet`
+
+Read the account-level refund policy
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.user.refundPolicyGet({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `refund_policy` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="refund_policy full type">
+
+```ts
+{
+  refund_period?: string | null,
+  title?: string | null,
+  fine_print?: string | null,
+  in_effect?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### refundPolicyUpdate
+
+`user.refundPolicyUpdate`
+
+Update the account-level refund policy period and its fine print (max 3000 characters)
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.user.refundPolicyUpdate({ refund_period: '30' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `refund_period` | `7 \| 14 \| 30 \| 183 \| none` | Yes | — |
+| `fine_print` | `string` | No | Send an empty value to clear it |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `refund_policy` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="refund_policy full type">
+
+```ts
+{
+  refund_period?: string | null,
+  title?: string | null,
+  fine_print?: string | null,
+  in_effect?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Variant Categories
+
+### create
+
+`variantCategories.create`
+
+Create a variant category on a product by title
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.variantCategories.create({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', title: 'Format' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `title` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `variant_category` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="variant_category full type">
+
+```ts
+{
+  id: string,
+  title: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`variantCategories.delete`
+
+Permanently delete a product's variant category
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gumroad.api.variantCategories.delete({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `id` | `string` | Yes | Variant category id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`variantCategories.get`
+
+Read one of a product's variant categories by id
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.variantCategories.get({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `id` | `string` | Yes | Variant category id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `variant_category` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="variant_category full type">
+
+```ts
+{
+  id: string,
+  title: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`variantCategories.list`
+
+List a product's variant categories
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.variantCategories.list({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `variant_categories` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="variant_categories full type">
+
+```ts
+{
+  id: string,
+  title: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`variantCategories.update`
+
+Rename one of a product's variant categories
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.variantCategories.update({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', id: 'A-m3CDDC5dlrSdKZp0RFhA==', title: 'Format' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `id` | `string` | Yes | Variant category id |
+| `title` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `variant_category` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="variant_category full type">
+
+```ts
+{
+  id: string,
+  title: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### variantsCreate
+
+`variantCategories.variantsCreate`
+
+Create a variant with a name, price difference in cents and optional purchase cap
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.variantCategories.variantsCreate({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1', name: 'Example', price_difference_cents: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `variant_category_id` | `string` | Yes | Variant category id |
+| `name` | `string` | Yes | — |
+| `price_difference_cents` | `number` | Yes | — |
+| `max_purchase_count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `variant` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="variant full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  price_difference_cents?: number | null,
+  max_purchase_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### variantsDelete
+
+`variantCategories.variantsDelete`
+
+Permanently delete a variant
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gumroad.api.variantCategories.variantsDelete({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `variant_category_id` | `string` | Yes | Variant category id |
+| `id` | `string` | Yes | Variant id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### variantsGet
+
+`variantCategories.variantsGet`
+
+Read one variant by id
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.variantCategories.variantsGet({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `variant_category_id` | `string` | Yes | Variant category id |
+| `id` | `string` | Yes | Variant id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `variant` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="variant full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  price_difference_cents?: number | null,
+  max_purchase_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### variantsList
+
+`variantCategories.variantsList`
+
+List the variants in one of a product's variant categories
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.variantCategories.variantsList({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `variant_category_id` | `string` | Yes | Variant category id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `variants` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="variants full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  price_difference_cents?: number | null,
+  max_purchase_count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### variantsUpdate
+
+`variantCategories.variantsUpdate`
+
+Update a variant name, price difference or purchase cap
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.variantCategories.variantsUpdate({ product_id: 'A-m3CDDC5dlrSdKZp0RFhA==', variant_category_id: '1', id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | Product id from products.list |
+| `variant_category_id` | `string` | Yes | Variant category id |
+| `id` | `string` | Yes | Variant id |
+| `name` | `string` | No | — |
+| `price_difference_cents` | `number` | No | — |
+| `max_purchase_count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `variant` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="variant full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  price_difference_cents?: number | null,
+  max_purchase_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workflows
+
+### emailsAdd
+
+`workflows.emailsAdd`
+
+Append one email step to a workflow with a delay in hours, days, weeks or months
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.workflows.emailsAdd({ workflow_id: 'wfl_30HLgGWL8H2wo_Gzlg==', subject: 'Welcome', body: 'Thanks for your purchase', delay_amount: 1, delay_unit: 'day' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflow_id` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `body` | `string` | Yes | HTML email body |
+| `delay_amount` | `number` | Yes | — |
+| `delay_unit` | `hour \| day \| week \| month` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `email` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="email full type">
+
+```ts
+{
+  id: string,
+  subject?: string | null,
+  message?: string | null,
+  audience_type?: string | null,
+  product_id?: string | null,
+  state?: string | null,
+  published_at?: string | null,
+  scheduled_at?: string | null,
+  send_emails?: boolean | null,
+  shown_on_profile?: boolean | null,
+  audience_count?: number | null,
+  recipients_count?: number | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  delay?: {
+    amount?: number | null,
+    unit?: string | null
+  } | null,
+  sent_count?: number | null,
+  open_count?: number | null,
+  open_rate?: number | null,
+  click_count?: number | null,
+  click_rate?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### emailsUpdate
+
+`workflows.emailsUpdate`
+
+Update one workflow email step subject, body or delay without changing publication state
+
+**Risk:** `write`
+
+```ts
+await corsair.gumroad.api.workflows.emailsUpdate({ workflow_id: 'wfl_30HLgGWL8H2wo_Gzlg==', email_id: 'bfi_30HLgGWL8H2wo_Gzlg==', subject: 'Welcome', body: 'Thanks for your purchase', delay_amount: 1, delay_unit: 'day' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflow_id` | `string` | Yes | — |
+| `email_id` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `delay_amount` | `number` | No | — |
+| `delay_unit` | `hour \| day \| week \| month` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `email` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="email full type">
+
+```ts
+{
+  id: string,
+  subject?: string | null,
+  message?: string | null,
+  audience_type?: string | null,
+  product_id?: string | null,
+  state?: string | null,
+  published_at?: string | null,
+  scheduled_at?: string | null,
+  send_emails?: boolean | null,
+  shown_on_profile?: boolean | null,
+  audience_count?: number | null,
+  recipients_count?: number | null,
+  url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  delay?: {
+    amount?: number | null,
+    unit?: string | null
+  } | null,
+  sent_count?: number | null,
+  open_count?: number | null,
+  open_rate?: number | null,
+  click_count?: number | null,
+  click_rate?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`workflows.get`
+
+Read one workflow with its email steps and delivery statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.workflows.get({ id: 'A-m3CDDC5dlrSdKZp0RFhA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Workflow id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `workflow` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="workflow full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  audience_type?: string | null,
+  trigger?: string | null,
+  product_id?: string | null,
+  variant_id?: string | null,
+  state?: string | null,
+  published_at?: string | null,
+  first_published_at?: string | null,
+  send_to_past_customers?: boolean | null,
+  emails_count?: number | null,
+  filters?: Record<string, string> | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  emails?: {
+    id: string,
+    subject?: string | null,
+    message?: string | null,
+    audience_type?: string | null,
+    product_id?: string | null,
+    state?: string | null,
+    published_at?: string | null,
+    scheduled_at?: string | null,
+    send_emails?: boolean | null,
+    shown_on_profile?: boolean | null,
+    audience_count?: number | null,
+    recipients_count?: number | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    delay?: {
+      amount?: number | null,
+      unit?: string | null
+    } | null,
+    sent_count?: number | null,
+    open_count?: number | null,
+    open_rate?: number | null,
+    click_count?: number | null,
+    click_rate?: number | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`workflows.list`
+
+List the seller's active workflows, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.gumroad.api.workflows.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `workflows` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="workflows full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  audience_type?: string | null,
+  trigger?: string | null,
+  product_id?: string | null,
+  variant_id?: string | null,
+  state?: string | null,
+  published_at?: string | null,
+  first_published_at?: string | null,
+  send_to_past_customers?: boolean | null,
+  emails_count?: number | null,
+  filters?: Record<string, string> | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  emails?: {
+    id: string,
+    subject?: string | null,
+    message?: string | null,
+    audience_type?: string | null,
+    product_id?: string | null,
+    state?: string | null,
+    published_at?: string | null,
+    scheduled_at?: string | null,
+    send_emails?: boolean | null,
+    shown_on_profile?: boolean | null,
+    audience_count?: number | null,
+    recipients_count?: number | null,
+    url?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    delay?: {
+      amount?: number | null,
+      unit?: string | null
+    } | null,
+    sent_count?: number | null,
+    open_count?: number | null,
+    open_rate?: number | null,
+    click_count?: number | null,
+    click_rate?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

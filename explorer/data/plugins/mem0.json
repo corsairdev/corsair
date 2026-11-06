@@ -1,0 +1,1106 @@
+{
+  "id": "mem0",
+  "displayName": "Mem0",
+  "description": "Long-term memory for AI agents with Mem0 - add, search, list, update and delete memories, read a memory's change history, and poll the events Mem0 queues for asynchronous work.",
+  "npmPackageName": "@corsair-dev/mem0",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "mem0.api.events.get",
+      "shortPath": "events.get",
+      "description": "Read one queued event by ID to see whether an add or delete finished, failed, or is still running",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": false,
+            "type": "string",
+            "description": "The event_id returned by memories.add or memories.deleteAll."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "ADD, SEARCH, DELETE_ALL and so on."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "PENDING, RUNNING, FAILED or SUCCEEDED."
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "any[] | Record<string, any> | null",
+            "description": "An array for ADD, SEARCH and GET_ALL, one object for UPDATE, and null for a delete."
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "latency",
+            "optional": true,
+            "type": "number | null",
+            "description": "Processing time in milliseconds."
+          },
+          {
+            "key": "graph_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.events.list",
+      "shortPath": "events.list",
+      "description": "List recent events for the organization and project, page by page, for dashboards or for finding failed writes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, event_type?: string | null, status?: string | null, payload?: Record<string, any> | null, metadata?: Record<string, any> | null, results?: any[] | Record<string, any> | null, created_at?: string | null, updated_at?: string | null, started_at?: string | null, completed_at?: string | null, latency?: number | null, graph_status?: string | null, error?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.memories.add",
+      "shortPath": "memories.add",
+      "description": "Extract memories from conversation messages and store them for a user, agent, app or run; processing is queued and returns an event_id to poll",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role: user | assistant | system, content: string }[]",
+            "description": "Conversation turns for Mem0 to extract memories from."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Scope memories to this user."
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string",
+            "description": "Scope memories to this agent."
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "string",
+            "description": "Scope memories to this app."
+          },
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string",
+            "description": "Scope memories to this run."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom key/value metadata attached to each memory."
+          },
+          {
+            "key": "infer",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true, which runs extraction. Set false to store each message verbatim, which also makes the response synchronous."
+          },
+          {
+            "key": "expiration_date",
+            "optional": true,
+            "type": "string",
+            "description": "Date through which the memory is visible. Expired memories are hidden unless `show_expired` is passed."
+          },
+          {
+            "key": "immutable",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false. Immutable memories are excluded from later update and consolidation."
+          },
+          {
+            "key": "includes",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text hint of what to include during extraction."
+          },
+          {
+            "key": "excludes",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text hint of what to exclude during extraction."
+          },
+          {
+            "key": "enable_graph",
+            "optional": true,
+            "type": "boolean",
+            "description": "Enable graph memory extraction for this call."
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number",
+            "description": "Unix epoch seconds used as the created_at of stored memories."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Poll this with events.get."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "PENDING when extraction is queued, SUCCEEDED when `infer` was false."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, data?: Record<string, any> | null, event?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.memories.batchDelete",
+      "shortPath": "memories.batchDelete",
+      "description": "Permanently delete up to 1000 memories in one call",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memory_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "The memories to delete, up to 1000 per call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number",
+            "description": "How many memories the request carried."
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.memories.batchUpdate",
+      "shortPath": "memories.batchUpdate",
+      "description": "Update up to 1000 memories in one call",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memories",
+            "optional": false,
+            "type": "{ memory_id: string, text: string }[]",
+            "description": "The memories to update, up to 1000 per call. Text is applied; use memories.update when metadata also has to change."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number",
+            "description": "How many memories the request carried."
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.memories.delete",
+      "shortPath": "memories.delete",
+      "description": "Permanently delete one memory; delete_linked also removes memories linked to it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memory_id",
+            "optional": false,
+            "type": "string",
+            "description": "The memory to delete."
+          },
+          {
+            "key": "delete_linked",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false. Also delete memories linked to this one, and report how many went in `cascade_count`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "memory_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cascade_count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Only present when `delete_linked` was true."
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.memories.deleteAll",
+      "shortPath": "memories.deleteAll",
+      "description": "Delete every memory matching a filter, or every memory for an entity when the filter is \"*\"; Mem0 queues the deletion and answers immediately",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Delete this user's memories. Pass \"*\" for every user."
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string",
+            "description": "Delete this agent's memories. Pass \"*\" for every agent."
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "string",
+            "description": "Delete this app's memories. Pass \"*\" for every app."
+          },
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string",
+            "description": "Delete this run's memories. Pass \"*\" for every run."
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only memories in this organization."
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only memories in this project."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Only memories whose metadata matches these keys. Values must be strings, numbers or booleans, because null and undefined reach the wire as no key at all."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Mem0 queues the deletion and answers immediately."
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.memories.get",
+      "shortPath": "memories.get",
+      "description": "Read one memory by its ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memory_id",
+            "optional": false,
+            "type": "string",
+            "description": "The memory to read."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "memory",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "List returns the run as `session_id`; search returns the same value as `run_id`."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "structured_attributes",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "System-derived breakdown of the creation time."
+          },
+          {
+            "key": "replaced_by",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "synthesized",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lifecycle_state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiration_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.memories.history",
+      "shortPath": "memories.history",
+      "description": "Read the change history of one memory: each ADD, UPDATE and DELETE with its old and new text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memory_id",
+            "optional": false,
+            "type": "string",
+            "description": "The memory to read."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "history",
+            "optional": false,
+            "type": "{ id: string, memory_id: string, input?: { role?: string | null, content?: string | null }[] | null, old_memory?: string | null, new_memory?: string | null, user_id?: string | null, agent_id?: string | null, app_id?: string | null, session_id?: string | null, categories?: string[] | null, event?: string | null, metadata?: Record<string, any> | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.memories.list",
+      "shortPath": "memories.list",
+      "description": "List stored memories page by page, filtered by entity, date range or category; entity IDs go inside `filters`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id, at the top level or inside AND/OR/NOT. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page. Defaults to 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page. Defaults to 100."
+          },
+          {
+            "key": "show_expired",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false. Include memories past their expiration_date."
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "Only memories created on or after this date."
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "Only memories created on or before this date."
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only memories tagged with any of these categories."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these fields come back per memory. A memory without them is absent from the result, not null."
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text keyword filter applied on top of `filters`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number",
+            "description": "Total number of memories matching the filters."
+          },
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null",
+            "description": "URL of the next page, or null on the last page."
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string, memory?: string, user_id?: string | null, agent_id?: string | null, app_id?: string | null, session_id?: string | null, metadata?: Record<string, any> | null, categories?: string[] | null, structured_attributes?: Record<string, any> | null, replaced_by?: string | null, synthesized?: boolean | null, lifecycle_state?: string | null, expiration_date?: string | null, created_at?: string, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.memories.search",
+      "shortPath": "memories.search",
+      "description": "Rank stored memories by relevance to a query with hybrid semantic, keyword and entity matching; entity IDs go inside `filters`",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Natural-language search query."
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id, at the top level or inside AND/OR/NOT. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard."
+          },
+          {
+            "key": "top_k",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results. Defaults to 10."
+          },
+          {
+            "key": "threshold",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum relevance score. Defaults to 0.1. Pass 0 to disable filtering."
+          },
+          {
+            "key": "rerank",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false. Apply the managed reranker, which adds latency."
+          },
+          {
+            "key": "show_expired",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false. Include memories past their expiration_date."
+          },
+          {
+            "key": "reference_date",
+            "optional": true,
+            "type": "number | string",
+            "description": "Date to simulate the search from. Accepts a Unix epoch, YYYY-MM-DD, or an ISO datetime."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these fields come back per memory. A memory without them is absent from the result, not null."
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only memories tagged with any of these categories."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string, memory?: string, score?: number | null, score_breakdown?: { semantic?: number | null, bm25?: number | null, entity?: number | null } | null, user_id?: string | null, agent_id?: string | null, app_id?: string | null, run_id?: string | null, metadata?: Record<string, any> | null, categories?: string[] | null, expiration_date?: string | null, created_at?: string, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.memories.update",
+      "shortPath": "memories.update",
+      "description": "Change one memory's text or metadata, or set its expiration date; pass expiration_date as null to clear one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memory_id",
+            "optional": false,
+            "type": "string",
+            "description": "The memory to update."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The new memory text."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Replacement metadata."
+          },
+          {
+            "key": "expiration_date",
+            "optional": true,
+            "type": "string | null",
+            "description": "New expiration date in YYYY-MM-DD form, or null to clear an existing one. null and an omitted field mean different things, so the key is sent whenever this is set."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "memory",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "app_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "List returns the run as `session_id`; search returns the same value as `run_id`."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "structured_attributes",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "System-derived breakdown of the creation time."
+          },
+          {
+            "key": "replaced_by",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "synthesized",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lifecycle_state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiration_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register a URL to receive Mem0 events for a project, subscribing it to memory add, update, delete or categorize and the ingest job events",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project to register the webhook on."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "A label for the webhook."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The HTTPS endpoint Mem0 posts events to."
+          },
+          {
+            "key": "event_types",
+            "optional": false,
+            "type": "(memory_add | memory_update | memory_delete | memory_categorize | ingest_job_completed | ingest_job_partially_completed | ingest_job_failed | ingest_job_cancelled)[]",
+            "description": "Events to subscribe to. Mem0 requires this: omitting it does not fall back to a default."
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true on Mem0 side."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_types",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "string | null",
+            "description": "Username of the account that created the webhook."
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "string | null",
+            "description": "Name of the project the webhook belongs to."
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Unregister a webhook so Mem0 stops posting events to its URL",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook to remove."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the webhooks registered on a project: each URL, its event subscriptions, and whether it is active",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "string",
+            "description": "The project whose webhooks to read. Mem0 scopes webhooks to a project."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ webhook_id: string, name?: string | null, url?: string | null, event_types?: string[] | null, owner?: string | null, is_active?: boolean | null, project?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mem0.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Change a webhook's label, URL or event subscriptions; the new event list replaces the old one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook to change."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The new label."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The new endpoint URL."
+          },
+          {
+            "key": "event_types",
+            "optional": true,
+            "type": "(memory_add | memory_update | memory_delete | memory_categorize | ingest_job_completed | ingest_job_partially_completed | ingest_job_failed | ingest_job_cancelled)[]",
+            "description": "The new event subscription list, replacing the old one."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "{ webhook_id: string, name?: string | null, url?: string | null, event_types?: string[] | null, owner?: string | null, is_active?: boolean | null, project?: string | null, created_at?: string | null, updated_at?: string | null }",
+            "description": "The webhook as it stands after the change, when Mem0 returns it."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -56,7 +56,7 @@ await corsair.dreamstudio.api.engines.list({});
 
 `generation.imageFromImage`
 
-Generate a new image from an init image and text prompts via POST /v1/generation/{engine_id}/image-to-image
+Generate a new image from an init image and text prompts via POST /v1/generation/&#123;engine_id&#125;/image-to-image
 
 **Risk:** `write`
 
@@ -71,7 +71,7 @@ await corsair.dreamstudio.api.generation.imageFromImage({});
 | `engine_id` | `string` | Yes | Engine id from GET /v1/engines/list |
 | `init_image` | `string` | Yes | Init image as base64 or a data URL |
 | `text_prompts` | `object[]` | Yes | — |
-| `init_image_mode` | `IMAGE_STRENGTH \| STEP_SCHEDULE` | Yes | — |
+| `init_image_mode` | `IMAGE_STRENGTH \| STEP_SCHEDULE` | No | Defaults to "IMAGE_STRENGTH". |
 | `image_strength` | `number` | No | — |
 | `step_schedule_start` | `number` | No | — |
 | `step_schedule_end` | `number` | No | — |

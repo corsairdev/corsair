@@ -39,10 +39,10 @@ await corsair.coinbase.api.accounts.get({});
 | `name` | `string` | No | — |
 | `primary` | `boolean` | No | — |
 | `type` | `string` | No | — |
-| `currency` | `object` | No | — |
+| `currency` | `string \| object` | No | — |
 | `balance` | `object` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 | `resource` | `string` | No | — |
 | `resource_path` | `string` | No | — |
 | `ready` | `boolean` | No | — |
@@ -189,17 +189,7 @@ await corsair.coinbase.api.data.getExchangeRates({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `currency` | `string` | Yes | — |
-| `rates` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="rates full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `rates` | `Record<string, string>` | Yes | — |
 
 
 
@@ -483,19 +473,9 @@ await corsair.coinbase.api.markets.getPublicTrades({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `trades` | `object[]` | No | — |
+| `trades` | `Record<string, any>[]` | No | — |
 | `best_bid` | `string` | No | — |
 | `best_ask` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="trades full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -553,19 +533,9 @@ await corsair.coinbase.api.markets.getTicker({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `trades` | `object[]` | No | — |
+| `trades` | `Record<string, any>[]` | No | — |
 | `best_bid` | `string` | No | — |
 | `best_ask` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="trades full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -880,19 +850,9 @@ await corsair.coinbase.api.markets.listTrades({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `trades` | `object[]` | No | — |
+| `trades` | `Record<string, any>[]` | No | — |
 | `best_bid` | `string` | No | — |
 | `best_ask` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="trades full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1187,16 +1147,16 @@ await corsair.coinbase.api.transactions.get({});
 | `status` | `string` | No | — |
 | `amount` | `object` | No | — |
 | `native_amount` | `object` | No | — |
-| `description` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 | `resource` | `string` | No | — |
 | `resource_path` | `string` | No | — |
 | `instant_exchange` | `boolean` | No | — |
 | `network` | `object` | No | — |
-| `to` | `object` | No | — |
-| `from` | `object` | No | — |
-| `details` | `object` | No | — |
+| `to` | `Record<string, any>` | No | — |
+| `from` | `Record<string, any>` | No | — |
+| `details` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="amount full type">
@@ -1228,30 +1188,6 @@ await corsair.coinbase.api.transactions.get({});
   name?: string,
   transaction_url?: string | null,
   status_description?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="to full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="from full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="details full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1335,12 +1271,9 @@ await corsair.coinbase.api.transactions.list({});
     transaction_url?: string | null,
     status_description?: string | null
   },
-  to?: {
-  },
-  from?: {
-  },
-  details?: {
-  }
+  to?: Record<string, any>,
+  from?: Record<string, any>,
+  details?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1372,11 +1305,11 @@ await corsair.coinbase.api.user.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `username` | `string` | No | — |
-| `profile_location` | `string` | No | — |
-| `profile_bio` | `string` | No | — |
-| `profile_url` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `username` | `string \| null` | No | — |
+| `profile_location` | `string \| null` | No | — |
+| `profile_bio` | `string \| null` | No | — |
+| `profile_url` | `string \| null` | No | — |
 | `avatar_url` | `string` | No | — |
 | `resource` | `string` | No | — |
 | `resource_path` | `string` | No | — |
@@ -1385,7 +1318,7 @@ await corsair.coinbase.api.user.get({});
 | `native_currency` | `string` | No | — |
 | `bitcoin_unit` | `string` | No | — |
 | `country` | `object` | No | — |
-| `created_at` | `string` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="country full type">

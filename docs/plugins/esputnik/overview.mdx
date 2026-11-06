@@ -1,0 +1,140 @@
+---
+title: Overview
+description: "Manage eSputnik contacts and segments, send events and orders, edit and send email, SMS, Viber, push and Telegram messages, and run broadcasts."
+---
+
+Use **eSputnik** through Corsair: one client, typed API calls.
+
+**API key.** Create a key in eSputnik under your profile > Settings > API and give it the access rights the operations you call need. The plugin sends it with HTTP Basic auth as the password. Keys have no expiry date, but eSputnik disables a key that goes unused for 90 days; turn it back on in the same place.
+
+**Things to know:**
+
+- **Rate limits.** Message reads (`getEmail`, `getViberMessage` and the like) allow 500 requests an hour. Contact writes allow 200 a second, and `addContact` rejects the same contact twice within a minute (409). Calls that hit 429 are retried with backoff.
+- **Acknowledgements.** Deletes, updates and segment or unsubscribe changes return `undefined`: eSputnik answers them with an empty body or a sentence such as "Email with id='42' has been deleted". A failure throws, and the error message carries eSputnik's explanation when it sends one ("Contact not found").
+- **Lists.** List operations always return an array, including when eSputnik sends a single match as a bare object (email template search does) or an empty body.
+- **Not set up yet.** `site.getScript` and `site.getWebPushScript` fail until a domain is registered, `productFeeds.getProductFeedsConfiguration` answers 404 until a feed is configured, and `contacts.getGroupContacts` works on static segments only.
+- **Contact fields.** Additional fields are `{ id, value }` pairs. List the ids with `contacts.getAdditionalFields`.
+- **Activity.** `contacts.contactActivity` has to be enabled by eSputnik support first and keeps 90 days. `contacts.contactMessages` needs a contact identifier and a `dateFrom` less than a year old.
+- **Broadcasts.** Broadcast ids are strings. `broadcasts.createBroadcast` sends a prepared message (`messageId`) to segment ids (`groups`).
+- **Event tokens.** `account.generateApiToken` returns a bearer token for eSputnik's event endpoints. Treat the result as a secret.
+- **No local sync.** Data is read from eSputnik on each call; nothing is stored in the Corsair database.
+
+**What you get:**
+
+- 108 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/esputnik
+```
+```bash yarn
+yarn add corsair @corsair-dev/esputnik
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/esputnik
+```
+```bash bun
+bun add corsair @corsair-dev/esputnik
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { esputnik } from '@corsair-dev/esputnik';
+
+export const corsair = createCorsair({
+	plugins: [
+		esputnik(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+esputnik()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'esputnik',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Find a contact by email**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.esputnik.api.contacts.searchContacts({ email: 'ada@example.com', maxrows: 10 });
+```
+
+
+**Create or update a contact**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.esputnik.api.contacts.addContact({
+	firstName: 'Ada',
+	channels: [{ type: 'email', value: 'ada@example.com' }],
+	fields: [{ id: 79814, value: 'gold' }],
+});
+```
+
+
+See the full list on the [API](/plugins/esputnik/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/esputnik/api">
+    Every `esputnik.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

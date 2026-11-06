@@ -1,9 +1,9 @@
 ---
 title: Database
-description: "RevAI local sync: searchable entities, `.search()` filters, and operators."
+description: "Rev AI local sync: searchable entities, `.search()` filters, and operators."
 ---
 
-The RevAI plugin syncs data locally. Use `corsair.revai.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+The Rev AI plugin syncs data locally. Use `corsair.revai.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
@@ -27,9 +27,11 @@ const rows = await corsair.revai.db.job.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_on` | `date` | equals, before, after, between |
 | `completed_on` | `date` | equals, before, after, between |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `metadata` | `string` | equals, contains, startsWith, endsWith, in |
 | `media_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `callback_url` | `string` | equals, contains, startsWith, endsWith, in |

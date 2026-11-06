@@ -431,12 +431,12 @@
           {
             "key": "middleName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "nickName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "emailAddresses",
@@ -446,7 +446,7 @@
           {
             "key": "mobilePhone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "homePhones",
@@ -461,27 +461,27 @@
           {
             "key": "jobTitle",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companyName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "department",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "officeLocation",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "birthday",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "personalNotes",
@@ -729,12 +729,12 @@
           {
             "key": "middleName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "nickName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "emailAddresses",
@@ -744,7 +744,7 @@
           {
             "key": "mobilePhone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "homePhones",
@@ -759,27 +759,27 @@
           {
             "key": "jobTitle",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companyName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "department",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "officeLocation",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "birthday",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "personalNotes",
@@ -996,17 +996,17 @@
           {
             "key": "location",
             "optional": true,
-            "type": "{ displayName?: string, address?: {} }"
+            "type": "{ displayName?: string, address?: Record<string, any> }"
           },
           {
             "key": "locations",
             "optional": true,
-            "type": "{ displayName?: string, address?: {} }[]"
+            "type": "{ displayName?: string, address?: Record<string, any> }[]"
           },
           {
             "key": "attendees",
             "optional": true,
-            "type": "{ type?: string, status?: {}, emailAddress?: { name?: string, address?: string } }[]"
+            "type": "{ type?: string, status?: Record<string, any>, emailAddress?: { name?: string, address?: string } }[]"
           },
           {
             "key": "organizer",
@@ -1086,12 +1086,12 @@
           {
             "key": "recurrence",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "responseStatus",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "responseRequested",
@@ -1101,12 +1101,12 @@
           {
             "key": "seriesMasterId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "transactionId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdDateTime",
@@ -1121,7 +1121,7 @@
           {
             "key": "onlineMeeting",
             "optional": true,
-            "type": "{ joinUrl?: string, conferenceId?: string, tollNumber?: string }"
+            "type": "{ joinUrl?: string, conferenceId?: string, tollNumber?: string } | null"
           },
           {
             "key": "onlineMeetingProvider",
@@ -1131,7 +1131,7 @@
           {
             "key": "onlineMeetingUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reminderMinutesBeforeStart",
@@ -1187,7 +1187,7 @@
           {
             "key": "proposedNewTime",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1254,17 +1254,17 @@
           {
             "key": "attendees",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "timeConstraint",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "locationConstraint",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "meetingDuration",
@@ -1309,7 +1309,7 @@
           {
             "key": "meetingTimeSuggestions",
             "optional": true,
-            "type": "{ confidence?: number, organizerAvailability?: string, suggestionReason?: string, meetingTimeSlot?: { start?: { dateTime: string, timeZone: string }, end?: { dateTime: string, timeZone: string } }, attendeeAvailability?: { attendee?: { type?: string, status?: {}, emailAddress?: { name?: string, address?: string } }, availability?: string }[], locations?: { displayName?: string, address?: {} }[] }[]"
+            "type": "{ confidence?: number, organizerAvailability?: string, suggestionReason?: string, meetingTimeSlot?: { start?: { dateTime: string, timeZone: string }, end?: { dateTime: string, timeZone: string } }, attendeeAvailability?: { attendee?: { type?: string, status?: Record<string, any>, emailAddress?: { name?: string, address?: string } }, availability?: string }[], locations?: { displayName?: string, address?: Record<string, any> }[] }[]"
           },
           {
             "key": "emptySuggestionsReason",
@@ -1380,17 +1380,17 @@
           {
             "key": "location",
             "optional": true,
-            "type": "{ displayName?: string, address?: {} }"
+            "type": "{ displayName?: string, address?: Record<string, any> }"
           },
           {
             "key": "locations",
             "optional": true,
-            "type": "{ displayName?: string, address?: {} }[]"
+            "type": "{ displayName?: string, address?: Record<string, any> }[]"
           },
           {
             "key": "attendees",
             "optional": true,
-            "type": "{ type?: string, status?: {}, emailAddress?: { name?: string, address?: string } }[]"
+            "type": "{ type?: string, status?: Record<string, any>, emailAddress?: { name?: string, address?: string } }[]"
           },
           {
             "key": "organizer",
@@ -1470,12 +1470,12 @@
           {
             "key": "recurrence",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "responseStatus",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "responseRequested",
@@ -1485,12 +1485,12 @@
           {
             "key": "seriesMasterId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "transactionId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdDateTime",
@@ -1505,7 +1505,7 @@
           {
             "key": "onlineMeeting",
             "optional": true,
-            "type": "{ joinUrl?: string, conferenceId?: string, tollNumber?: string }"
+            "type": "{ joinUrl?: string, conferenceId?: string, tollNumber?: string } | null"
           },
           {
             "key": "onlineMeetingProvider",
@@ -1515,7 +1515,7 @@
           {
             "key": "onlineMeetingUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reminderMinutesBeforeStart",
@@ -1581,7 +1581,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "@odata.context",
@@ -1652,7 +1652,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{ id?: string, subject?: string, body?: { contentType?: string, content?: string }, bodyPreview?: string, start?: { dateTime: string, timeZone: string }, end?: { dateTime: string, timeZone: string }, location?: { displayName?: string, address?: {} }, locations?: { displayName?: string, address?: {} }[], attendees?: { type?: string, status?: {}, emailAddress?: { name?: string, address?: string } }[], organizer?: { name?: string, address?: string }, isAllDay?: boolean, isCancelled?: boolean, isOrganizer?: boolean, isDraft?: boolean, isOnlineMeeting?: boolean, isReminderOn?: boolean, showAs?: string, importance?: string, sensitivity?: string, type?: string, iCalUId?: string, webLink?: string, changeKey?: string, categories?: string[], recurrence?: {} | null, responseStatus?: {}, responseRequested?: boolean, seriesMasterId?: string | null, transactionId?: string | null, createdDateTime?: string, lastModifiedDateTime?: string, onlineMeeting?: { joinUrl?: string, conferenceId?: string, tollNumber?: string } | null, onlineMeetingProvider?: string, onlineMeetingUrl?: string | null, reminderMinutesBeforeStart?: number, allowNewTimeProposals?: boolean, hasAttachments?: boolean, hideAttendees?: boolean }[]"
+            "type": "{ id?: string, subject?: string, body?: { contentType?: string, content?: string }, bodyPreview?: string, start?: { dateTime: string, timeZone: string }, end?: { dateTime: string, timeZone: string }, location?: { displayName?: string, address?: Record<string, any> }, locations?: { displayName?: string, address?: Record<string, any> }[], attendees?: { type?: string, status?: Record<string, any>, emailAddress?: { name?: string, address?: string } }[], organizer?: { name?: string, address?: string }, isAllDay?: boolean, isCancelled?: boolean, isOrganizer?: boolean, isDraft?: boolean, isOnlineMeeting?: boolean, isReminderOn?: boolean, showAs?: string, importance?: string, sensitivity?: string, type?: string, iCalUId?: string, webLink?: string, changeKey?: string, categories?: string[], recurrence?: Record<string, any> | null, responseStatus?: Record<string, any>, responseRequested?: boolean, seriesMasterId?: string | null, transactionId?: string | null, createdDateTime?: string, lastModifiedDateTime?: string, onlineMeeting?: { joinUrl?: string, conferenceId?: string, tollNumber?: string } | null, onlineMeetingProvider?: string, onlineMeetingUrl?: string | null, reminderMinutesBeforeStart?: number, allowNewTimeProposals?: boolean, hasAttachments?: boolean, hideAttendees?: boolean }[]"
           },
           {
             "key": "@odata.context",
@@ -1693,7 +1693,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "start_datetime",
@@ -1718,7 +1718,7 @@
           {
             "key": "attendees",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "show_as",
@@ -1768,17 +1768,17 @@
           {
             "key": "location",
             "optional": true,
-            "type": "{ displayName?: string, address?: {} }"
+            "type": "{ displayName?: string, address?: Record<string, any> }"
           },
           {
             "key": "locations",
             "optional": true,
-            "type": "{ displayName?: string, address?: {} }[]"
+            "type": "{ displayName?: string, address?: Record<string, any> }[]"
           },
           {
             "key": "attendees",
             "optional": true,
-            "type": "{ type?: string, status?: {}, emailAddress?: { name?: string, address?: string } }[]"
+            "type": "{ type?: string, status?: Record<string, any>, emailAddress?: { name?: string, address?: string } }[]"
           },
           {
             "key": "organizer",
@@ -1858,12 +1858,12 @@
           {
             "key": "recurrence",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "responseStatus",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "responseRequested",
@@ -1873,12 +1873,12 @@
           {
             "key": "seriesMasterId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "transactionId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdDateTime",
@@ -1893,7 +1893,7 @@
           {
             "key": "onlineMeeting",
             "optional": true,
-            "type": "{ joinUrl?: string, conferenceId?: string, tollNumber?: string }"
+            "type": "{ joinUrl?: string, conferenceId?: string, tollNumber?: string } | null"
           },
           {
             "key": "onlineMeetingProvider",
@@ -1903,7 +1903,7 @@
           {
             "key": "onlineMeetingUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "reminderMinutesBeforeStart",
@@ -2309,7 +2309,7 @@
           {
             "key": "item",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "attachment",
@@ -2436,7 +2436,7 @@
           {
             "key": "updates",
             "optional": false,
-            "type": "{ message_id: string, patch: {} }[]"
+            "type": "{ message_id: string, patch: Record<string, any> }[]"
           },
           {
             "key": "user_id",
@@ -2512,7 +2512,7 @@
           {
             "key": "attachment",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2637,7 +2637,7 @@
           {
             "key": "flag",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "internetMessageId",
@@ -2657,12 +2657,12 @@
           {
             "key": "isReadReceiptRequested",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isDeliveryReceiptRequested",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -2885,7 +2885,7 @@
           {
             "key": "flag",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "internetMessageId",
@@ -2905,12 +2905,12 @@
           {
             "key": "isReadReceiptRequested",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isDeliveryReceiptRequested",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -3041,7 +3041,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{ id?: string, subject?: string, body?: { contentType?: string, content?: string }, bodyPreview?: string, from?: { name?: string, address?: string }, sender?: { name?: string, address?: string }, toRecipients?: { name?: string, address?: string }[], ccRecipients?: { name?: string, address?: string }[], bccRecipients?: { name?: string, address?: string }[], replyTo?: { name?: string, address?: string }[], isRead?: boolean, isDraft?: boolean, hasAttachments?: boolean, importance?: string, conversationId?: string, parentFolderId?: string, sentDateTime?: string, receivedDateTime?: string, createdDateTime?: string, lastModifiedDateTime?: string, webLink?: string, changeKey?: string, categories?: string[], flag?: {}, internetMessageId?: string, conversationIndex?: string, inferenceClassification?: string, isReadReceiptRequested?: boolean | null, isDeliveryReceiptRequested?: boolean | null }[]"
+            "type": "{ id?: string, subject?: string, body?: { contentType?: string, content?: string }, bodyPreview?: string, from?: { name?: string, address?: string }, sender?: { name?: string, address?: string }, toRecipients?: { name?: string, address?: string }[], ccRecipients?: { name?: string, address?: string }[], bccRecipients?: { name?: string, address?: string }[], replyTo?: { name?: string, address?: string }[], isRead?: boolean, isDraft?: boolean, hasAttachments?: boolean, importance?: string, conversationId?: string, parentFolderId?: string, sentDateTime?: string, receivedDateTime?: string, createdDateTime?: string, lastModifiedDateTime?: string, webLink?: string, changeKey?: string, categories?: string[], flag?: Record<string, any>, internetMessageId?: string, conversationIndex?: string, inferenceClassification?: string, isReadReceiptRequested?: boolean | null, isDeliveryReceiptRequested?: boolean | null }[]"
           },
           {
             "key": "@odata.context",
@@ -3202,7 +3202,7 @@
           {
             "key": "flag",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "internetMessageId",
@@ -3222,12 +3222,12 @@
           {
             "key": "isReadReceiptRequested",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isDeliveryReceiptRequested",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }
@@ -3283,7 +3283,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{ id?: string, subject?: string, body?: { contentType?: string, content?: string }, bodyPreview?: string, from?: { name?: string, address?: string }, sender?: { name?: string, address?: string }, toRecipients?: { name?: string, address?: string }[], ccRecipients?: { name?: string, address?: string }[], bccRecipients?: { name?: string, address?: string }[], replyTo?: { name?: string, address?: string }[], isRead?: boolean, isDraft?: boolean, hasAttachments?: boolean, importance?: string, conversationId?: string, parentFolderId?: string, sentDateTime?: string, receivedDateTime?: string, createdDateTime?: string, lastModifiedDateTime?: string, webLink?: string, changeKey?: string, categories?: string[], flag?: {}, internetMessageId?: string, conversationIndex?: string, inferenceClassification?: string, isReadReceiptRequested?: boolean | null, isDeliveryReceiptRequested?: boolean | null }[]"
+            "type": "{ id?: string, subject?: string, body?: { contentType?: string, content?: string }, bodyPreview?: string, from?: { name?: string, address?: string }, sender?: { name?: string, address?: string }, toRecipients?: { name?: string, address?: string }[], ccRecipients?: { name?: string, address?: string }[], bccRecipients?: { name?: string, address?: string }[], replyTo?: { name?: string, address?: string }[], isRead?: boolean, isDraft?: boolean, hasAttachments?: boolean, importance?: string, conversationId?: string, parentFolderId?: string, sentDateTime?: string, receivedDateTime?: string, createdDateTime?: string, lastModifiedDateTime?: string, webLink?: string, changeKey?: string, categories?: string[], flag?: Record<string, any>, internetMessageId?: string, conversationIndex?: string, inferenceClassification?: string, isReadReceiptRequested?: boolean | null, isDeliveryReceiptRequested?: boolean | null }[]"
           },
           {
             "key": "@odata.count",
@@ -3349,7 +3349,7 @@
           {
             "key": "response_body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -3405,7 +3405,7 @@
           {
             "key": "value",
             "optional": true,
-            "type": "{ id?: string, subject?: string, body?: { contentType?: string, content?: string }, bodyPreview?: string, from?: { name?: string, address?: string }, sender?: { name?: string, address?: string }, toRecipients?: { name?: string, address?: string }[], ccRecipients?: { name?: string, address?: string }[], bccRecipients?: { name?: string, address?: string }[], replyTo?: { name?: string, address?: string }[], isRead?: boolean, isDraft?: boolean, hasAttachments?: boolean, importance?: string, conversationId?: string, parentFolderId?: string, sentDateTime?: string, receivedDateTime?: string, createdDateTime?: string, lastModifiedDateTime?: string, webLink?: string, changeKey?: string, categories?: string[], flag?: {}, internetMessageId?: string, conversationIndex?: string, inferenceClassification?: string, isReadReceiptRequested?: boolean | null, isDeliveryReceiptRequested?: boolean | null }[]"
+            "type": "{ id?: string, subject?: string, body?: { contentType?: string, content?: string }, bodyPreview?: string, from?: { name?: string, address?: string }, sender?: { name?: string, address?: string }, toRecipients?: { name?: string, address?: string }[], ccRecipients?: { name?: string, address?: string }[], bccRecipients?: { name?: string, address?: string }[], replyTo?: { name?: string, address?: string }[], isRead?: boolean, isDraft?: boolean, hasAttachments?: boolean, importance?: string, conversationId?: string, parentFolderId?: string, sentDateTime?: string, receivedDateTime?: string, createdDateTime?: string, lastModifiedDateTime?: string, webLink?: string, changeKey?: string, categories?: string[], flag?: Record<string, any>, internetMessageId?: string, conversationIndex?: string, inferenceClassification?: string, isReadReceiptRequested?: boolean | null, isDeliveryReceiptRequested?: boolean | null }[]"
           },
           {
             "key": "@odata.context",
@@ -3476,7 +3476,7 @@
           {
             "key": "attachment",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3491,7 +3491,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -3568,27 +3568,27 @@
           {
             "key": "to_recipients",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "cc_recipients",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "bcc_recipients",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "reply_to",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "flag",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "inference_classification",
@@ -3728,7 +3728,7 @@
           {
             "key": "flag",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "internetMessageId",
@@ -3748,12 +3748,12 @@
           {
             "key": "isReadReceiptRequested",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "isDeliveryReceiptRequested",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           }
         ]
       }

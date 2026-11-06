@@ -1,0 +1,6953 @@
+---
+title: API
+description: "API reference for Lever: every `lever.api.*` operation with input and output types."
+---
+
+Every `lever.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Applications
+
+### list
+
+`applications.list`
+
+List applications belonging to a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.applications.list({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  opportunityId?: string | null,
+  candidateId?: string | null,
+  createdAt?: number | string | null,
+  type?: string | null,
+  posting?: string | {
+  } | null,
+  postingHiringManager?: string | {
+  } | null,
+  postingOwner?: string | {
+  } | null,
+  user?: string | {
+  } | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: {
+    type?: string | null,
+    value?: string | null
+  } | string | null,
+  company?: string | null,
+  links?: string[] | null,
+  comments?: string | null,
+  customQuestions?: {
+  }[] | null,
+  archived?: {
+  } | null,
+  requisitionForHire?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDeleted
+
+`applications.listDeleted`
+
+List deleted applications
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.applications.listDeleted({ deleted_at_start: 1711929600000, deleted_at_end: 1714521600000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+| `deleted_at_start` | `number` | Yes | — |
+| `deleted_at_end` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  deletedAt?: number | string | null,
+  opportunityId?: string | null,
+  postingId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`applications.retrieve`
+
+Retrieve a single application of a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.applications.retrieve({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', applicationId: '6ffe4153-60bb-4e30-bfbe-bd9b9775879c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `applicationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  opportunityId?: string | null,
+  candidateId?: string | null,
+  createdAt?: number | string | null,
+  type?: string | null,
+  posting?: string | {
+  } | null,
+  postingHiringManager?: string | {
+  } | null,
+  postingOwner?: string | {
+  } | null,
+  user?: string | {
+  } | null,
+  name?: string | null,
+  email?: string | null,
+  phone?: {
+    type?: string | null,
+    value?: string | null
+  } | string | null,
+  company?: string | null,
+  links?: string[] | null,
+  comments?: string | null,
+  customQuestions?: {
+  }[] | null,
+  archived?: {
+  } | null,
+  requisitionForHire?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Archive Reasons
+
+### list
+
+`archiveReasons.list`
+
+List archive reasons configured for the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.archiveReasons.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+| `type` | `hired \| non-hired` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  status?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`archiveReasons.retrieve`
+
+Retrieve a single archive reason by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.archiveReasons.retrieve({ archiveReasonId: '63dd55b2-a99f-4e7b-985f-22c7bf80ab42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `archiveReasonId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  status?: string | null,
+  type?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Audit Events
+
+### list
+
+`auditEvents.list`
+
+List workspace audit events
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.auditEvents.list({ type: 'user:added' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+| `type` | `string` | No | — |
+| `user_id` | `string` | No | — |
+| `target_type` | `string` | No | — |
+| `target_id` | `string` | No | — |
+| `created_at_start` | `number` | No | — |
+| `created_at_end` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  createdAt?: number | string | null,
+  type?: string | null,
+  user?: {
+  } | null,
+  target?: {
+  } | null,
+  meta?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### retrieve
+
+`contacts.retrieve`
+
+Retrieve a single contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.contacts.retrieve({ contactId: 'c38e60e9-5992-45e5-8f81-d4b2d65c95b1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  isAnonymized?: boolean | null,
+  location?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.contacts.update({ contactId: 'c38e60e9-5992-45e5-8f81-d4b2d65c95b1', name: 'Jane Doe' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `headline` | `string` | No | — |
+| `location` | `string \| object` | No | — |
+| `phones` | `object[]` | No | — |
+| `emails` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+string | {
+}
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  value: string,
+  type?: mobile | home | work | skype | other
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  isAnonymized?: boolean | null,
+  location?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Disposition Stages
+
+### list
+
+`dispositionStages.list`
+
+List disposition stages configured for the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.dispositionStages.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  stages: {
+    id: string,
+    text?: string | null,
+    pipeline?: string | null,
+    rank?: number | null,
+    hasInterview?: boolean | null
+  }[],
+  archiveReasons?: {
+    id: string,
+    text?: string | null,
+    type?: string | null,
+    status?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Eeo
+
+### retrieveAnonymous
+
+`eeo.retrieveAnonymous`
+
+Retrieve anonymized EEO responses
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.eeo.retrieveAnonymous({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fromDate` | `number` | No | — |
+| `toDate` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  eeoResponses: {
+    opportunityId?: string | null,
+    contact?: string | {
+    } | null,
+    posting?: string | {
+    } | null,
+    currentStage?: string | {
+    } | null,
+    hiringManager?: string | {
+    } | null,
+    gender?: string | null,
+    race?: string | null,
+    veteran?: string | null,
+    disability?: string | null,
+    disabilitySignatureDate?: string | null,
+    appliedAt?: number | string | null,
+    eeoSurveyRespondedAt?: number | string | null,
+    applicationArchivedAt?: number | string | null,
+    applicationArchivedBy?: string | {
+    } | null,
+    hiredDate?: number | string | null,
+    origin?: string | null,
+    source?: string | null,
+    requisitionCodes?: string[] | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveWithPii
+
+`eeo.retrieveWithPii`
+
+Retrieve EEO responses including personally identifiable information
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.eeo.retrieveWithPii({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expand` | `string \| string[]` | No | — |
+| `created_at_start` | `number` | No | — |
+| `created_at_end` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  eeoResponses: {
+    opportunityId?: string | null,
+    contact?: string | {
+    } | null,
+    posting?: string | {
+    } | null,
+    currentStage?: string | {
+    } | null,
+    hiringManager?: string | {
+    } | null,
+    gender?: string | null,
+    race?: string | null,
+    veteran?: string | null,
+    disability?: string | null,
+    disabilitySignatureDate?: string | null,
+    appliedAt?: number | string | null,
+    eeoSurveyRespondedAt?: number | string | null,
+    applicationArchivedAt?: number | string | null,
+    applicationArchivedBy?: string | {
+    } | null,
+    hiredDate?: number | string | null,
+    origin?: string | null,
+    source?: string | null,
+    requisitionCodes?: string[] | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Feedback
+
+### create
+
+`feedback.create`
+
+Submit a feedback form for a pipeline opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.feedback.create({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed',
+	baseTemplateId: 'a12851f5-25cd-495b-9dae-b29b02d0b49d',
+	fieldValues: [{ id: '6ee25ace-dae2-4aa1-a1d2-9687464a691f', value: '4 - Strong Hire' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `baseTemplateId` | `string` | Yes | — |
+| `panel` | `string` | No | — |
+| `interview` | `string` | No | — |
+| `fieldValues` | `object[]` | No | — |
+| `createdAt` | `number` | No | — |
+| `completedAt` | `number` | No | — |
+| `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+<AccordionGroup>
+<Accordion title="fieldValues full type">
+
+```ts
+{
+  id: string,
+  value: string | number | boolean | null | (string | number | {
+  })[] | {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    id: string,
+    type?: string | null,
+    text?: string | null,
+    instructions?: string | null,
+    baseTemplateId?: string | null,
+    fields?: {
+      id?: string | null,
+      type?: string | null,
+      text?: string | null,
+      description?: string | null,
+      required?: boolean | null,
+      value?: any,
+      options?: {
+      }[] | null
+    }[] | null,
+    user?: string | {
+    } | null,
+    panel?: string | {
+    } | null,
+    interview?: string | {
+    } | null,
+    createdAt?: number | string | null,
+    updatedAt?: number | string | null,
+    completedAt?: number | string | null,
+    deletedAt?: number | string | null
+  }
+} | {
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  panel?: string | {
+  } | null,
+  interview?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`feedback.delete`
+
+Delete a feedback form from a pipeline opportunity
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lever.api.feedback.delete({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', feedbackId: 'c64fb192-d6d8-42dc-ac82-47cb87e9839c', perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `feedbackId` | `string` | Yes | — |
+| `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`feedback.list`
+
+List feedback forms on a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.feedback.list({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  panel?: string | {
+  } | null,
+  interview?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`feedback.retrieve`
+
+Retrieve a single feedback form by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.feedback.retrieve({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', feedbackId: 'c64fb192-d6d8-42dc-ac82-47cb87e9839c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `feedbackId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  panel?: string | {
+  } | null,
+  interview?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`feedback.update`
+
+Update a feedback form on a pipeline opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.feedback.update({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	feedbackId: 'c64fb192-d6d8-42dc-ac82-47cb87e9839c',
+	perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed',
+	completedAt: 1600275449372,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `feedbackId` | `string` | Yes | — |
+| `fieldValues` | `object[]` | No | — |
+| `completedAt` | `number` | No | — |
+| `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+<AccordionGroup>
+<Accordion title="fieldValues full type">
+
+```ts
+{
+  id: string,
+  value: string | number | boolean | null | (string | number | {
+  })[] | {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  panel?: string | {
+  } | null,
+  interview?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Feedback Templates
+
+### create
+
+`feedbackTemplates.create`
+
+Create a feedback template for the workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.feedbackTemplates.create({ text: 'Phone Screen Feedback Form', instructions: 'Please fill out all required fields.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `instructions` | `string` | No | — |
+| `group` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  type: string,
+  text: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  stage?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`feedbackTemplates.delete`
+
+Delete a feedback template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lever.api.feedbackTemplates.delete({ feedbackTemplateId: '5b0f589c-b0c2-4e84-bf83-0f2ca48fc48a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `feedbackTemplateId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`feedbackTemplates.list`
+
+List feedback templates configured for the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.feedbackTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  stage?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`feedbackTemplates.retrieve`
+
+Retrieve a single feedback template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.feedbackTemplates.retrieve({ feedbackTemplateId: '5b0f589c-b0c2-4e84-bf83-0f2ca48fc48a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `feedbackTemplateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  stage?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`feedbackTemplates.update`
+
+Update a feedback template
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.feedbackTemplates.update({ feedbackTemplateId: '5b0f589c-b0c2-4e84-bf83-0f2ca48fc48a', text: 'Updated feedback form' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | No | — |
+| `instructions` | `string` | No | — |
+| `group` | `string` | No | — |
+| `fields` | `object[]` | No | — |
+| `feedbackTemplateId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  type: string,
+  text: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  stage?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### delete
+
+`files.delete`
+
+Delete a file from a pipeline opportunity
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lever.api.files.delete({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', fileId: 'b02a3b97-dc41-48e3-b003-44d211ed2a4c', perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `fileId` | `string` | Yes | — |
+| `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### download
+
+`files.download`
+
+Download the raw bytes of an opportunity file
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.files.download({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', fileId: 'b02a3b97-dc41-48e3-b003-44d211ed2a4c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `fileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`files.list`
+
+List files attached to a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.files.list({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `uploaded_at_start` | `number` | No | — |
+| `uploaded_at_end` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  downloadUrl?: string | null,
+  ext?: string | null,
+  name?: string | null,
+  uploadedAt?: number | string | null,
+  status?: string | null,
+  size?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`files.retrieve`
+
+Retrieve a single file attached to a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.files.retrieve({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', fileId: 'b02a3b97-dc41-48e3-b003-44d211ed2a4c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `fileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  downloadUrl?: string | null,
+  ext?: string | null,
+  name?: string | null,
+  uploadedAt?: number | string | null,
+  status?: string | null,
+  size?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Forms
+
+### create
+
+`forms.create`
+
+Submit a form for a pipeline opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.forms.create({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	baseTemplateId: '806ad14a-2fe5-4b42-b2da-3f90dc0a16d9',
+	fields: [{ type: 'currency', text: 'Compensation', value: 75000 }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `baseTemplateId` | `string` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+| `secret` | `boolean` | No | — |
+| `perform_as` | `string` | No | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  type: string,
+  text: string,
+  value?: string | number | boolean | null | (string | number | {
+  })[] | {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data: {
+    id: string,
+    type?: string | null,
+    text?: string | null,
+    instructions?: string | null,
+    baseTemplateId?: string | null,
+    fields?: {
+      id?: string | null,
+      type?: string | null,
+      text?: string | null,
+      description?: string | null,
+      required?: boolean | null,
+      value?: any,
+      options?: {
+      }[] | null
+    }[] | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    secret?: boolean | null,
+    group?: string | {
+    } | null,
+    createdAt?: number | string | null,
+    completedAt?: number | string | null,
+    deletedAt?: number | string | null
+  }
+} | {
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  secret?: boolean | null,
+  group?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`forms.list`
+
+List form submissions on a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.forms.list({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  secret?: boolean | null,
+  group?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`forms.retrieve`
+
+Retrieve a single form submission by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.forms.retrieve({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', formId: '8f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `formId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  secret?: boolean | null,
+  group?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  completedAt?: number | string | null,
+  deletedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Form Templates
+
+### create
+
+`formTemplates.create`
+
+Create a form template for the workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.formTemplates.create({
+	text: 'Offer information',
+	fields: [{ type: 'date', text: 'Start Date', required: true }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `instructions` | `string` | No | — |
+| `group` | `string` | No | — |
+| `secretByDefault` | `boolean` | No | — |
+| `fields` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  type: string,
+  text: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  secretByDefault?: boolean | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`formTemplates.delete`
+
+Delete a form template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lever.api.formTemplates.delete({ formTemplateId: '8f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formTemplateId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`formTemplates.list`
+
+List form templates configured for the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.formTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  secretByDefault?: boolean | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`formTemplates.retrieve`
+
+Retrieve a single form template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.formTemplates.retrieve({ formTemplateId: '8f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formTemplateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  secretByDefault?: boolean | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`formTemplates.update`
+
+Update a form template
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.formTemplates.update({ formTemplateId: '8f1c2d3e-4a5b-4c6d-8e9f-0a1b2c3d4e5f', text: 'Updated offer information' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | No | — |
+| `instructions` | `string` | No | — |
+| `group` | `string` | No | — |
+| `secretByDefault` | `boolean` | No | — |
+| `fields` | `object[]` | No | — |
+| `formTemplateId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  type: string,
+  text: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  group?: string | {
+  } | null,
+  secretByDefault?: boolean | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Interviews
+
+### create
+
+`interviews.create`
+
+Schedule an interview for a pipeline opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.interviews.create({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed',
+	panel: 'fdb313e8-13c5-47de-9e51-6a21a4d76ff6',
+	interviewers: [{ id: '412f5bf5-1509-4916-ba5b-8b16a5c3ce6d' }],
+	date: 1700000000000,
+	duration: 60,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `panel` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `note` | `string` | No | — |
+| `interviewers` | `object[]` | Yes | — |
+| `date` | `number` | Yes | — |
+| `duration` | `number` | Yes | — |
+| `location` | `string` | No | — |
+| `feedbackTemplate` | `string` | No | — |
+| `feedbackReminder` | `once \| daily \| frequently \| none` | No | — |
+| `conferenceData` | `object \| null` | No | — |
+| `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+<AccordionGroup>
+<Accordion title="interviewers full type">
+
+```ts
+{
+  id: string,
+  feedbackTemplate?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="conferenceData full type">
+
+```ts
+{
+  conferenceUrl: string,
+  conferenceSolution?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  data: {
+    id: string,
+    panel?: string | {
+    } | null,
+    subject?: string | null,
+    note?: string | null,
+    interviewers?: {
+    }[] | null,
+    timezone?: string | null,
+    createdAt?: number | string | null,
+    date?: number | string | null,
+    duration?: number | null,
+    location?: string | null,
+    feedbackTemplate?: string | {
+    } | null,
+    feedbackForms?: (string | {
+    })[] | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    canceledAt?: number | string | null,
+    postings?: (string | {
+    })[] | null,
+    gcalEventUrl?: string | null,
+    conferences?: {
+    }[] | null
+  }[],
+  hasNext?: boolean,
+  next?: string
+} | {
+  id: string,
+  panel?: string | {
+  } | null,
+  subject?: string | null,
+  note?: string | null,
+  interviewers?: {
+  }[] | null,
+  timezone?: string | null,
+  createdAt?: number | string | null,
+  date?: number | string | null,
+  duration?: number | null,
+  location?: string | null,
+  feedbackTemplate?: string | {
+  } | null,
+  feedbackForms?: (string | {
+  })[] | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  canceledAt?: number | string | null,
+  postings?: (string | {
+  })[] | null,
+  gcalEventUrl?: string | null,
+  conferences?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`interviews.delete`
+
+Delete a scheduled interview
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lever.api.interviews.delete({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', interviewId: '6ff55c8e-fe04-4eb4-835a-630b1c0da421', perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `interviewId` | `string` | Yes | — |
+| `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`interviews.list`
+
+List interviews scheduled for a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.interviews.list({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `expand` | `string \| string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  panel?: string | {
+  } | null,
+  subject?: string | null,
+  note?: string | null,
+  interviewers?: {
+  }[] | null,
+  timezone?: string | null,
+  createdAt?: number | string | null,
+  date?: number | string | null,
+  duration?: number | null,
+  location?: string | null,
+  feedbackTemplate?: string | {
+  } | null,
+  feedbackForms?: (string | {
+  })[] | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  canceledAt?: number | string | null,
+  postings?: (string | {
+  })[] | null,
+  gcalEventUrl?: string | null,
+  conferences?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`interviews.retrieve`
+
+Retrieve a single interview by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.interviews.retrieve({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', interviewId: '6ff55c8e-fe04-4eb4-835a-630b1c0da421' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `interviewId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  panel?: string | {
+  } | null,
+  subject?: string | null,
+  note?: string | null,
+  interviewers?: {
+  }[] | null,
+  timezone?: string | null,
+  createdAt?: number | string | null,
+  date?: number | string | null,
+  duration?: number | null,
+  location?: string | null,
+  feedbackTemplate?: string | {
+  } | null,
+  feedbackForms?: (string | {
+  })[] | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  canceledAt?: number | string | null,
+  postings?: (string | {
+  })[] | null,
+  gcalEventUrl?: string | null,
+  conferences?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`interviews.update`
+
+Update a scheduled interview
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.interviews.update({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	interviewId: '6ff55c8e-fe04-4eb4-835a-630b1c0da421',
+	perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed',
+	panel: 'fdb313e8-13c5-47de-9e51-6a21a4d76ff6',
+	interviewers: [{ id: '412f5bf5-1509-4916-ba5b-8b16a5c3ce6d' }],
+	date: 1700100000000,
+	duration: 60,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `interviewId` | `string` | Yes | — |
+| `panel` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `note` | `string` | No | — |
+| `interviewers` | `object[]` | Yes | — |
+| `date` | `number` | Yes | — |
+| `duration` | `number` | Yes | — |
+| `location` | `string` | No | — |
+| `feedbackTemplate` | `string` | No | — |
+| `feedbackReminder` | `once \| daily \| frequently \| none` | No | — |
+| `conferenceData` | `object \| null` | No | — |
+| `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+<AccordionGroup>
+<Accordion title="interviewers full type">
+
+```ts
+{
+  id: string,
+  feedbackTemplate?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="conferenceData full type">
+
+```ts
+{
+  conferenceUrl: string,
+  conferenceSolution?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  data: {
+    id: string,
+    panel?: string | {
+    } | null,
+    subject?: string | null,
+    note?: string | null,
+    interviewers?: {
+    }[] | null,
+    timezone?: string | null,
+    createdAt?: number | string | null,
+    date?: number | string | null,
+    duration?: number | null,
+    location?: string | null,
+    feedbackTemplate?: string | {
+    } | null,
+    feedbackForms?: (string | {
+    })[] | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    canceledAt?: number | string | null,
+    postings?: (string | {
+    })[] | null,
+    gcalEventUrl?: string | null,
+    conferences?: {
+    }[] | null
+  }[],
+  hasNext?: boolean,
+  next?: string
+} | {
+  id: string,
+  panel?: string | {
+  } | null,
+  subject?: string | null,
+  note?: string | null,
+  interviewers?: {
+  }[] | null,
+  timezone?: string | null,
+  createdAt?: number | string | null,
+  date?: number | string | null,
+  duration?: number | null,
+  location?: string | null,
+  feedbackTemplate?: string | {
+  } | null,
+  feedbackForms?: (string | {
+  })[] | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  canceledAt?: number | string | null,
+  postings?: (string | {
+  })[] | null,
+  gcalEventUrl?: string | null,
+  conferences?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notes
+
+### create
+
+`notes.create`
+
+Add a note to a pipeline opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.notes.create({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', value: 'Strong backend background' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `secret` | `boolean` | No | — |
+| `score` | `number` | No | — |
+| `notifyFollowers` | `boolean` | No | — |
+| `createdAt` | `number` | No | — |
+| `note_id` | `string` | No | Add this as a threaded comment on an existing note |
+| `perform_as` | `string` | No | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  noteId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`notes.delete`
+
+Delete a note from a pipeline opportunity
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lever.api.notes.delete({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', noteId: 'b1dbbcfe-281c-46a0-8f51-57049158d3f3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `noteId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`notes.list`
+
+List notes on a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.notes.list({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  secret?: boolean | null,
+  completedAt?: number | string | null,
+  createdAt?: number | string | null,
+  deletedAt?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`notes.retrieve`
+
+Retrieve a single note on a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.notes.retrieve({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', noteId: 'b1dbbcfe-281c-46a0-8f51-57049158d3f3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `noteId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  user?: string | {
+  } | null,
+  secret?: boolean | null,
+  completedAt?: number | string | null,
+  createdAt?: number | string | null,
+  deletedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`notes.update`
+
+Update a note on a pipeline opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.notes.update({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	noteId: 'b1dbbcfe-281c-46a0-8f51-57049158d3f3',
+	values: [{ value: 'Strong backend background' }, { value: 'Moving to onsite' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `noteId` | `string` | Yes | — |
+| `values` | `object[]` | Yes | — |
+| `user` | `string` | No | — |
+| `secret` | `boolean` | No | — |
+| `score` | `number` | No | — |
+| `createdAt` | `number` | No | — |
+| `completedAt` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  value: string,
+  createdAt?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  noteId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Offers
+
+### download
+
+`offers.download`
+
+Download the raw bytes of an offer file
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.offers.download({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', offerId: 'a72d66c0-0fd7-4bf8-99ce-dc5979358862' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `offerId` | `string` | Yes | — |
+| `status` | `sent \| signed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`offers.list`
+
+List offers for a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.offers.list({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `expand` | `string \| string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  createdAt?: number | string | null,
+  status?: string | null,
+  creator?: string | {
+  } | null,
+  fields?: {
+    text?: string | null,
+    identifier?: string | null,
+    value?: any
+  }[] | null,
+  sentDocument?: {
+    fileName?: string | null,
+    uploadedAt?: number | string | null,
+    downloadUrl?: string | null
+  } | null,
+  signedDocument?: {
+    fileName?: string | null,
+    uploadedAt?: number | string | null,
+    downloadUrl?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Opportunities
+
+### addLinks
+
+`opportunities.addLinks`
+
+Add web links (LinkedIn, portfolio) to an opportunity's contact
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.opportunities.addLinks({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	links: ['linkedin.com/in/jane-doe'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `links` | `string[]` | Yes | — |
+| `perform_as` | `string` | No | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### addSources
+
+`opportunities.addSources`
+
+Add sourcing sources to a pipeline opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.opportunities.addSources({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	sources: ['LinkedIn'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `sources` | `string[]` | Yes | — |
+| `perform_as` | `string` | No | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### addTags
+
+`opportunities.addTags`
+
+Add tags to a pipeline opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.opportunities.addTags({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	tags: ['remote'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+| `perform_as` | `string` | No | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`opportunities.create`
+
+Create a pipeline opportunity for a candidate profile
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.opportunities.create({
+	perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed',
+	name: 'Jane Doe',
+	headline: 'Backend engineer',
+	emails: ['jane@example.com'],
+	postings: ['f2f01e16-27f8-4711-a728-7d49499795a0'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+| `parse` | `boolean` | No | — |
+| `perform_as_posting_owner` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `headline` | `string` | No | — |
+| `contact` | `string` | No | — |
+| `location` | `string` | No | — |
+| `emails` | `string[]` | No | — |
+| `phones` | `object[]` | No | — |
+| `links` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `sources` | `string[]` | No | — |
+| `stage` | `string` | No | — |
+| `owner` | `string` | No | — |
+| `followers` | `string[]` | No | — |
+| `postings` | `string[]` | No | — |
+| `origin` | `agency \| applied \| internal \| referred \| sourced \| university` | No | — |
+| `createdAt` | `number` | No | — |
+| `archived` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="phones full type">
+
+```ts
+{
+  value: string,
+  type?: mobile | home | work | skype | other
+}[]
+```
+</Accordion>
+
+<Accordion title="archived full type">
+
+```ts
+{
+  reason: string,
+  archivedAt?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  contact?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null,
+  confidentiality?: string | null,
+  location?: string | null,
+  locationDetails?: {
+  } | null,
+  links?: string[] | null,
+  archived?: {
+    archivedAt?: number | string | null,
+    reason?: string | {
+    } | null
+  } | null,
+  tags?: string[] | null,
+  sources?: string[] | null,
+  stageChanges?: {
+  }[] | null,
+  origin?: string | null,
+  sourcedBy?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  followers?: (string | {
+  })[] | null,
+  applications?: (string | {
+  })[] | null,
+  stage?: string | {
+  } | null,
+  resume?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  lastInteractionAt?: number | string | null,
+  lastAdvancedAt?: number | string | null,
+  snoozedUntil?: number | string | null,
+  isAnonymized?: boolean | null,
+  dataProtection?: {
+  } | null,
+  urls?: {
+    list?: string | null,
+    show?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`opportunities.list`
+
+List pipeline opportunities with filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.opportunities.list({ limit: 50, stage_id: '00922a60-7c15-422b-b086-f62000824fd7' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+| `include` | `string \| string[]` | No | — |
+| `expand` | `string \| string[]` | No | — |
+| `tag` | `string \| string[]` | No | — |
+| `email` | `string` | No | — |
+| `origin` | `string \| string[]` | No | — |
+| `source` | `string \| string[]` | No | — |
+| `confidentiality` | `confidential \| non-confidential \| all` | No | — |
+| `stage_id` | `string \| string[]` | No | — |
+| `posting_id` | `string \| string[]` | No | — |
+| `archived_posting_id` | `string \| string[]` | No | — |
+| `created_at_start` | `number` | No | — |
+| `created_at_end` | `number` | No | — |
+| `updated_at_start` | `number` | No | — |
+| `updated_at_end` | `number` | No | — |
+| `advanced_at_start` | `number` | No | — |
+| `advanced_at_end` | `number` | No | — |
+| `archived_at_start` | `number` | No | — |
+| `archived_at_end` | `number` | No | — |
+| `archived` | `boolean` | No | — |
+| `archive_reason_id` | `string \| string[]` | No | — |
+| `snoozed` | `boolean` | No | — |
+| `contact_id` | `string \| string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  contact?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null,
+  confidentiality?: string | null,
+  location?: string | null,
+  locationDetails?: {
+  } | null,
+  links?: string[] | null,
+  archived?: {
+    archivedAt?: number | string | null,
+    reason?: string | {
+    } | null
+  } | null,
+  tags?: string[] | null,
+  sources?: string[] | null,
+  stageChanges?: {
+  }[] | null,
+  origin?: string | null,
+  sourcedBy?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  followers?: (string | {
+  })[] | null,
+  applications?: (string | {
+  })[] | null,
+  stage?: string | {
+  } | null,
+  resume?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  lastInteractionAt?: number | string | null,
+  lastAdvancedAt?: number | string | null,
+  snoozedUntil?: number | string | null,
+  isAnonymized?: boolean | null,
+  dataProtection?: {
+  } | null,
+  urls?: {
+    list?: string | null,
+    show?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDeleted
+
+`opportunities.listDeleted`
+
+List deleted pipeline opportunities
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.opportunities.listDeleted({ deleted_at_start: 1711929600000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+| `deleted_at_start` | `number` | No | — |
+| `deleted_at_end` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  deletedAt?: number | string | null,
+  opportunityId?: string | null,
+  postingId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFileActions
+
+`opportunities.listFileActions`
+
+List file actions recorded for a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.opportunities.listFileActions({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+| `occurred_at_start` | `number` | No | — |
+| `occurred_at_end` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  opportunityId?: string | null,
+  type?: string | null,
+  occurredAt?: number | string | null,
+  createdAt?: number | string | null,
+  user?: string | {
+  } | null,
+  meta?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeLinks
+
+`opportunities.removeLinks`
+
+Remove web links from an opportunity's contact
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.opportunities.removeLinks({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	links: ['linkedin.com/in/jane-doe'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `links` | `string[]` | Yes | — |
+| `perform_as` | `string` | No | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeSources
+
+`opportunities.removeSources`
+
+Remove sourcing sources from a pipeline opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.opportunities.removeSources({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	sources: ['LinkedIn'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `sources` | `string[]` | Yes | — |
+| `perform_as` | `string` | No | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeTags
+
+`opportunities.removeTags`
+
+Remove tags from a pipeline opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.opportunities.removeTags({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	tags: ['remote'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+| `perform_as` | `string` | No | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`opportunities.retrieve`
+
+Retrieve a single pipeline opportunity by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.opportunities.retrieve({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', expand: 'stage' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `include` | `string \| string[]` | No | — |
+| `expand` | `string \| string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  contact?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null,
+  confidentiality?: string | null,
+  location?: string | null,
+  locationDetails?: {
+  } | null,
+  links?: string[] | null,
+  archived?: {
+    archivedAt?: number | string | null,
+    reason?: string | {
+    } | null
+  } | null,
+  tags?: string[] | null,
+  sources?: string[] | null,
+  stageChanges?: {
+  }[] | null,
+  origin?: string | null,
+  sourcedBy?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  followers?: (string | {
+  })[] | null,
+  applications?: (string | {
+  })[] | null,
+  stage?: string | {
+  } | null,
+  resume?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  lastInteractionAt?: number | string | null,
+  lastAdvancedAt?: number | string | null,
+  snoozedUntil?: number | string | null,
+  isAnonymized?: boolean | null,
+  dataProtection?: {
+  } | null,
+  urls?: {
+    list?: string | null,
+    show?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateArchivedState
+
+`opportunities.updateArchivedState`
+
+Archive or unarchive a pipeline opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.opportunities.updateArchivedState({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', reason: '63dd55b2-a99f-4e7b-985f-22c7bf80ab42', cleanInterviews: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `reason` | `string \| null` | Yes | — |
+| `cleanInterviews` | `boolean` | No | — |
+| `requisitionId` | `string` | No | — |
+| `perform_as` | `string` | No | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  contact?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null,
+  confidentiality?: string | null,
+  location?: string | null,
+  locationDetails?: {
+  } | null,
+  links?: string[] | null,
+  archived?: {
+    archivedAt?: number | string | null,
+    reason?: string | {
+    } | null
+  } | null,
+  tags?: string[] | null,
+  sources?: string[] | null,
+  stageChanges?: {
+  }[] | null,
+  origin?: string | null,
+  sourcedBy?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  followers?: (string | {
+  })[] | null,
+  applications?: (string | {
+  })[] | null,
+  stage?: string | {
+  } | null,
+  resume?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  lastInteractionAt?: number | string | null,
+  lastAdvancedAt?: number | string | null,
+  snoozedUntil?: number | string | null,
+  isAnonymized?: boolean | null,
+  dataProtection?: {
+  } | null,
+  urls?: {
+    list?: string | null,
+    show?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateStage
+
+`opportunities.updateStage`
+
+Move a pipeline opportunity to a different hiring stage
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.opportunities.updateStage({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', stage: '00922a60-7c15-422b-b086-f62000824fd7' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `stage` | `string` | Yes | — |
+| `perform_as` | `string` | No | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  headline?: string | null,
+  contact?: string | {
+  } | null,
+  emails?: string[] | null,
+  phones?: {
+    type?: string | null,
+    value?: string | null
+  }[] | null,
+  confidentiality?: string | null,
+  location?: string | null,
+  locationDetails?: {
+  } | null,
+  links?: string[] | null,
+  archived?: {
+    archivedAt?: number | string | null,
+    reason?: string | {
+    } | null
+  } | null,
+  tags?: string[] | null,
+  sources?: string[] | null,
+  stageChanges?: {
+  }[] | null,
+  origin?: string | null,
+  sourcedBy?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  followers?: (string | {
+  })[] | null,
+  applications?: (string | {
+  })[] | null,
+  stage?: string | {
+  } | null,
+  resume?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  lastInteractionAt?: number | string | null,
+  lastAdvancedAt?: number | string | null,
+  snoozedUntil?: number | string | null,
+  isAnonymized?: boolean | null,
+  dataProtection?: {
+  } | null,
+  urls?: {
+    list?: string | null,
+    show?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Panels
+
+### create
+
+`panels.create`
+
+Create an interview panel for a pipeline opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.panels.create({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed',
+	timezone: 'America/Los_Angeles',
+	note: 'Panel for Rachel',
+	interviews: [{
+		interviewers: [{ id: '412f5bf5-1509-4916-ba5b-8b16a5c3ce6d' }],
+		date: 1700000000000,
+		duration: 30,
+	}],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `applications` | `string[]` | No | — |
+| `timezone` | `string` | Yes | — |
+| `feedbackReminder` | `once \| daily \| frequently \| none` | No | — |
+| `note` | `string` | No | — |
+| `externalUrl` | `string` | No | — |
+| `interviews` | `object[]` | Yes | — |
+| `opportunityId` | `string` | Yes | — |
+| `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+<AccordionGroup>
+<Accordion title="interviews full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  data: {
+    id: string,
+    applications?: (string | {
+    })[] | null,
+    canceledAt?: number | string | null,
+    createdAt?: number | string | null,
+    start?: number | string | null,
+    end?: number | string | null,
+    timezone?: string | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    note?: string | null,
+    externallyManaged?: boolean | null,
+    externalUrl?: string | null,
+    interviews?: {
+      id: string,
+      panel?: string | {
+      } | null,
+      subject?: string | null,
+      note?: string | null,
+      interviewers?: {
+      }[] | null,
+      timezone?: string | null,
+      createdAt?: number | string | null,
+      date?: number | string | null,
+      duration?: number | null,
+      location?: string | null,
+      feedbackTemplate?: string | {
+      } | null,
+      feedbackForms?: (string | {
+      })[] | null,
+      feedbackReminder?: string | null,
+      user?: string | {
+      } | null,
+      stage?: string | {
+      } | null,
+      canceledAt?: number | string | null,
+      postings?: (string | {
+      })[] | null,
+      gcalEventUrl?: string | null,
+      conferences?: {
+      }[] | null
+    }[] | null
+  }[],
+  hasNext?: boolean,
+  next?: string
+} | {
+  id: string,
+  applications?: (string | {
+  })[] | null,
+  canceledAt?: number | string | null,
+  createdAt?: number | string | null,
+  start?: number | string | null,
+  end?: number | string | null,
+  timezone?: string | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  note?: string | null,
+  externallyManaged?: boolean | null,
+  externalUrl?: string | null,
+  interviews?: {
+    id: string,
+    panel?: string | {
+    } | null,
+    subject?: string | null,
+    note?: string | null,
+    interviewers?: {
+    }[] | null,
+    timezone?: string | null,
+    createdAt?: number | string | null,
+    date?: number | string | null,
+    duration?: number | null,
+    location?: string | null,
+    feedbackTemplate?: string | {
+    } | null,
+    feedbackForms?: (string | {
+    })[] | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    canceledAt?: number | string | null,
+    postings?: (string | {
+    })[] | null,
+    gcalEventUrl?: string | null,
+    conferences?: {
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`panels.delete`
+
+Delete an interview panel
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lever.api.panels.delete({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', panelId: 'a402cff4-ecca-4e40-8a89-9f21d374aea3', perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `panelId` | `string` | Yes | — |
+| `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`panels.list`
+
+List interview panels for a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.panels.list({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  applications?: (string | {
+  })[] | null,
+  canceledAt?: number | string | null,
+  createdAt?: number | string | null,
+  start?: number | string | null,
+  end?: number | string | null,
+  timezone?: string | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  note?: string | null,
+  externallyManaged?: boolean | null,
+  externalUrl?: string | null,
+  interviews?: {
+    id: string,
+    panel?: string | {
+    } | null,
+    subject?: string | null,
+    note?: string | null,
+    interviewers?: {
+    }[] | null,
+    timezone?: string | null,
+    createdAt?: number | string | null,
+    date?: number | string | null,
+    duration?: number | null,
+    location?: string | null,
+    feedbackTemplate?: string | {
+    } | null,
+    feedbackForms?: (string | {
+    })[] | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    canceledAt?: number | string | null,
+    postings?: (string | {
+    })[] | null,
+    gcalEventUrl?: string | null,
+    conferences?: {
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`panels.retrieve`
+
+Retrieve a single interview panel by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.panels.retrieve({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', panelId: 'a402cff4-ecca-4e40-8a89-9f21d374aea3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `panelId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  applications?: (string | {
+  })[] | null,
+  canceledAt?: number | string | null,
+  createdAt?: number | string | null,
+  start?: number | string | null,
+  end?: number | string | null,
+  timezone?: string | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  note?: string | null,
+  externallyManaged?: boolean | null,
+  externalUrl?: string | null,
+  interviews?: {
+    id: string,
+    panel?: string | {
+    } | null,
+    subject?: string | null,
+    note?: string | null,
+    interviewers?: {
+    }[] | null,
+    timezone?: string | null,
+    createdAt?: number | string | null,
+    date?: number | string | null,
+    duration?: number | null,
+    location?: string | null,
+    feedbackTemplate?: string | {
+    } | null,
+    feedbackForms?: (string | {
+    })[] | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    canceledAt?: number | string | null,
+    postings?: (string | {
+    })[] | null,
+    gcalEventUrl?: string | null,
+    conferences?: {
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`panels.update`
+
+Update an interview panel
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.panels.update({
+	opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145',
+	panelId: 'a402cff4-ecca-4e40-8a89-9f21d374aea3',
+	perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed',
+	timezone: 'America/Los_Angeles',
+	note: 'Updated panel',
+	interviews: [{
+		id: '4f5beb46-1404-48f7-b841-2c100278d4de',
+		interviewers: [{ id: '412f5bf5-1509-4916-ba5b-8b16a5c3ce6d' }],
+		date: 1700000000000,
+		duration: 45,
+	}],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `panelId` | `string` | Yes | — |
+| `applications` | `string[]` | No | — |
+| `timezone` | `string` | Yes | — |
+| `feedbackReminder` | `once \| daily \| frequently \| none` | No | — |
+| `note` | `string` | No | — |
+| `externalUrl` | `string` | No | — |
+| `interviews` | `object[]` | Yes | — |
+| `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+<AccordionGroup>
+<Accordion title="interviews full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  data: {
+    id: string,
+    applications?: (string | {
+    })[] | null,
+    canceledAt?: number | string | null,
+    createdAt?: number | string | null,
+    start?: number | string | null,
+    end?: number | string | null,
+    timezone?: string | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    note?: string | null,
+    externallyManaged?: boolean | null,
+    externalUrl?: string | null,
+    interviews?: {
+      id: string,
+      panel?: string | {
+      } | null,
+      subject?: string | null,
+      note?: string | null,
+      interviewers?: {
+      }[] | null,
+      timezone?: string | null,
+      createdAt?: number | string | null,
+      date?: number | string | null,
+      duration?: number | null,
+      location?: string | null,
+      feedbackTemplate?: string | {
+      } | null,
+      feedbackForms?: (string | {
+      })[] | null,
+      feedbackReminder?: string | null,
+      user?: string | {
+      } | null,
+      stage?: string | {
+      } | null,
+      canceledAt?: number | string | null,
+      postings?: (string | {
+      })[] | null,
+      gcalEventUrl?: string | null,
+      conferences?: {
+      }[] | null
+    }[] | null
+  }[],
+  hasNext?: boolean,
+  next?: string
+} | {
+  id: string,
+  applications?: (string | {
+  })[] | null,
+  canceledAt?: number | string | null,
+  createdAt?: number | string | null,
+  start?: number | string | null,
+  end?: number | string | null,
+  timezone?: string | null,
+  feedbackReminder?: string | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  note?: string | null,
+  externallyManaged?: boolean | null,
+  externalUrl?: string | null,
+  interviews?: {
+    id: string,
+    panel?: string | {
+    } | null,
+    subject?: string | null,
+    note?: string | null,
+    interviewers?: {
+    }[] | null,
+    timezone?: string | null,
+    createdAt?: number | string | null,
+    date?: number | string | null,
+    duration?: number | null,
+    location?: string | null,
+    feedbackTemplate?: string | {
+    } | null,
+    feedbackForms?: (string | {
+    })[] | null,
+    feedbackReminder?: string | null,
+    user?: string | {
+    } | null,
+    stage?: string | {
+    } | null,
+    canceledAt?: number | string | null,
+    postings?: (string | {
+    })[] | null,
+    gcalEventUrl?: string | null,
+    conferences?: {
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Postings
+
+### apply
+
+`postings.apply`
+
+Submit an application to a job posting
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.postings.apply({
+	postingId: '5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a',
+	personalInformation: [{ name: 'fullName', value: 'Jane Doe' }, { name: 'email', value: 'jane@example.com' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postingId` | `string` | Yes | — |
+| `send_confirmation_email` | `boolean` | No | — |
+| `personalInformation` | `object[]` | Yes | — |
+| `customQuestions` | `object[]` | No | — |
+| `eeoResponses` | `Record<string, string>` | No | — |
+| `urls` | `object[]` | No | — |
+| `ipAddress` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `source` | `string` | No | — |
+| `consent` | `object` | No | — |
+| `diversitySurvey` | `object` | No | — |
+| `origin` | `applied \| internal` | No | — |
+
+<AccordionGroup>
+<Accordion title="personalInformation full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="customQuestions full type">
+
+```ts
+{
+  id: string,
+  fields: {
+    value: string | number | boolean | null | (string | number | {
+    })[] | {
+    }
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="consent full type">
+
+```ts
+{
+  marketing: boolean
+}
+```
+</Accordion>
+
+<Accordion title="diversitySurvey full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  applicationId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`postings.create`
+
+Create a job posting
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.postings.create({
+	perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed',
+	text: 'Senior Backend Engineer',
+	categories: {
+		team: 'Platform',
+		department: 'Engineering',
+		location: 'San Francisco',
+		commitment: 'Full-time',
+	},
+	content: { descriptionHtml: '<div>Build and run our core services.</div>' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `state` | `published \| internal \| closed \| draft \| pending \| rejected` | No | — |
+| `distributionChannels` | `(public \| internal)[]` | No | — |
+| `owner` | `string` | No | — |
+| `hiringManager` | `string` | No | — |
+| `categories` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+| `content` | `object` | No | — |
+| `workplaceType` | `onsite \| remote \| hybrid \| unspecified` | No | — |
+| `requisitionCodes` | `string[]` | No | — |
+| `salaryDescriptionHtml` | `string` | No | — |
+| `salaryRange` | `object` | No | — |
+| `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  team?: string,
+  department?: string,
+  location?: string,
+  commitment?: string,
+  locationDetails?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+{
+  descriptionHtml?: string,
+  lists?: {
+    text: string,
+    content: string
+  }[],
+  closingPostingHtml?: string
+}
+```
+</Accordion>
+
+<Accordion title="salaryRange full type">
+
+```ts
+{
+  min?: number,
+  max?: number,
+  currency?: string,
+  interval?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  user?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  hiringManager?: string | {
+  } | null,
+  confidentiality?: string | null,
+  categories?: {
+    team?: string | null,
+    department?: string | null,
+    location?: string | null,
+    commitment?: string | null,
+    level?: string | null,
+    allLocations?: string[] | null
+  } | null,
+  content?: {
+  } | null,
+  country?: string | null,
+  followers?: (string | {
+  })[] | null,
+  tags?: string[] | null,
+  state?: string | null,
+  distributionChannels?: string[] | null,
+  reqCode?: string | null,
+  requisitionCodes?: string[] | null,
+  salaryDescription?: string | null,
+  salaryDescriptionHtml?: string | null,
+  salaryRange?: {
+  } | null,
+  urls?: {
+  } | null,
+  workplaceType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`postings.list`
+
+List job postings
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.postings.list({ state: 'published', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+| `include` | `string \| string[]` | No | — |
+| `expand` | `string \| string[]` | No | — |
+| `state` | `string \| string[]` | No | — |
+| `distributionChannel` | `string \| string[]` | No | — |
+| `confidentiality` | `confidential \| non-confidential \| all` | No | — |
+| `group` | `location \| team \| department \| commitment` | No | — |
+| `team` | `string \| string[]` | No | — |
+| `department` | `string \| string[]` | No | — |
+| `location` | `string \| string[]` | No | — |
+| `commitment` | `string \| string[]` | No | — |
+| `level` | `string \| string[]` | No | — |
+| `tag` | `string \| string[]` | No | — |
+| `updated_at_start` | `number` | No | — |
+| `updated_at_end` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  user?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  hiringManager?: string | {
+  } | null,
+  confidentiality?: string | null,
+  categories?: {
+    team?: string | null,
+    department?: string | null,
+    location?: string | null,
+    commitment?: string | null,
+    level?: string | null,
+    allLocations?: string[] | null
+  } | null,
+  content?: {
+  } | null,
+  country?: string | null,
+  followers?: (string | {
+  })[] | null,
+  tags?: string[] | null,
+  state?: string | null,
+  distributionChannels?: string[] | null,
+  reqCode?: string | null,
+  requisitionCodes?: string[] | null,
+  salaryDescription?: string | null,
+  salaryDescriptionHtml?: string | null,
+  salaryRange?: {
+  } | null,
+  urls?: {
+  } | null,
+  workplaceType?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDeleted
+
+`postings.listDeleted`
+
+List deleted job postings
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.postings.listDeleted({ deleted_at_start: 1711929600000, deleted_at_end: 1714521600000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+| `deleted_at_start` | `number` | Yes | — |
+| `deleted_at_end` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  deletedAt?: number | string | null,
+  opportunityId?: string | null,
+  postingId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUsers
+
+`postings.listUsers`
+
+List users with access to a job posting
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.postings.listUsers({ postingId: '5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postingId` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  posting: {
+    id: string,
+    text?: string | null
+  },
+  users?: {
+    id: string,
+    name?: string | null,
+    email?: string | null,
+    inheritedFromRoleId?: string | null,
+    conditions?: {
+    } | null
+  }[] | null,
+  roles?: {
+    id: string,
+    name?: string | null,
+    isReadOnly?: boolean | null,
+    conditions?: {
+    } | null
+  }[] | null
+} | {
+  data: {
+    posting: {
+      id: string,
+      text?: string | null
+    },
+    users?: {
+      id: string,
+      name?: string | null,
+      email?: string | null,
+      inheritedFromRoleId?: string | null,
+      conditions?: {
+      } | null
+    }[] | null,
+    roles?: {
+      id: string,
+      name?: string | null,
+      isReadOnly?: boolean | null,
+      conditions?: {
+      } | null
+    }[] | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`postings.retrieve`
+
+Retrieve a single job posting by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.postings.retrieve({ postingId: '5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postingId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  user?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  hiringManager?: string | {
+  } | null,
+  confidentiality?: string | null,
+  categories?: {
+    team?: string | null,
+    department?: string | null,
+    location?: string | null,
+    commitment?: string | null,
+    level?: string | null,
+    allLocations?: string[] | null
+  } | null,
+  content?: {
+  } | null,
+  country?: string | null,
+  followers?: (string | {
+  })[] | null,
+  tags?: string[] | null,
+  state?: string | null,
+  distributionChannels?: string[] | null,
+  reqCode?: string | null,
+  requisitionCodes?: string[] | null,
+  salaryDescription?: string | null,
+  salaryDescriptionHtml?: string | null,
+  salaryRange?: {
+  } | null,
+  urls?: {
+  } | null,
+  workplaceType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveApplicationQuestions
+
+`postings.retrieveApplicationQuestions`
+
+Retrieve the application questions configured for a posting
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.postings.retrieveApplicationQuestions({ postingId: '5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postingId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  customQuestions?: {
+  }[] | null,
+  personalInformation?: {
+  }[] | null,
+  urls?: {
+  }[] | null,
+  eeoQuestions?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`postings.update`
+
+Update an existing job posting
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.postings.update({ postingId: '5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a', perform_as: '8d49b010-cc6a-4f40-ace5-e86061c677ed', text: 'Staff Backend Engineer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postingId` | `string` | Yes | — |
+| `text` | `string` | No | — |
+| `state` | `published \| internal \| closed \| draft \| pending \| rejected` | No | — |
+| `distributionChannels` | `(public \| internal)[]` | No | — |
+| `owner` | `string` | No | — |
+| `hiringManager` | `string` | No | — |
+| `categories` | `object` | No | — |
+| `tags` | `string[]` | No | — |
+| `content` | `object` | No | — |
+| `workplaceType` | `onsite \| remote \| hybrid \| unspecified` | No | — |
+| `requisitionCodes` | `string[]` | No | — |
+| `salaryDescriptionHtml` | `string` | No | — |
+| `salaryRange` | `object` | No | — |
+| `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  team?: string,
+  department?: string,
+  location?: string,
+  commitment?: string,
+  locationDetails?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+{
+  descriptionHtml?: string,
+  lists?: {
+    text: string,
+    content: string
+  }[],
+  closingPostingHtml?: string
+}
+```
+</Accordion>
+
+<Accordion title="salaryRange full type">
+
+```ts
+{
+  min?: number,
+  max?: number,
+  currency?: string,
+  interval?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  user?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  hiringManager?: string | {
+  } | null,
+  confidentiality?: string | null,
+  categories?: {
+    team?: string | null,
+    department?: string | null,
+    location?: string | null,
+    commitment?: string | null,
+    level?: string | null,
+    allLocations?: string[] | null
+  } | null,
+  content?: {
+  } | null,
+  country?: string | null,
+  followers?: (string | {
+  })[] | null,
+  tags?: string[] | null,
+  state?: string | null,
+  distributionChannels?: string[] | null,
+  reqCode?: string | null,
+  requisitionCodes?: string[] | null,
+  salaryDescription?: string | null,
+  salaryDescriptionHtml?: string | null,
+  salaryRange?: {
+  } | null,
+  urls?: {
+  } | null,
+  workplaceType?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Referrals
+
+### list
+
+`referrals.list`
+
+List referrals on a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.referrals.list({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  referrer?: string | {
+  } | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  completedAt?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`referrals.retrieve`
+
+Retrieve a single referral by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.referrals.retrieve({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', referralId: '4f7b1a2e-0d8c-4b0a-9e2b-9f1b7b2f3a4b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `referralId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  text?: string | null,
+  instructions?: string | null,
+  baseTemplateId?: string | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  referrer?: string | {
+  } | null,
+  user?: string | {
+  } | null,
+  stage?: string | {
+  } | null,
+  createdAt?: number | string | null,
+  completedAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Requisition Fields
+
+### addOptions
+
+`requisitionFields.addOptions`
+
+Add dropdown options to a requisition field
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.requisitionFields.addOptions({
+	requisitionFieldId: 'work_type',
+	values: [{ text: 'hourly' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requisitionFieldId` | `string` | Yes | — |
+| `values` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  text: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  type?: string | null,
+  isRequired?: boolean | null,
+  subfields?: {
+  }[] | null,
+  options?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`requisitionFields.create`
+
+Create a requisition field for the workspace
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.requisitionFields.create({
+	id: 'work_type',
+	text: 'Work type',
+	type: 'dropdown',
+	options: [{ text: 'full time' }, { text: 'part time' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `type` | `string` | Yes | One of number, text, date, object or dropdown |
+| `isRequired` | `boolean` | No | — |
+| `subfields` | `object[]` | No | — |
+| `options` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="subfields full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  type: number | text | date
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  text: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  type?: string | null,
+  isRequired?: boolean | null,
+  subfields?: {
+  }[] | null,
+  options?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`requisitionFields.delete`
+
+Delete a requisition field
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lever.api.requisitionFields.delete({ requisitionFieldId: 'work_type' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requisitionFieldId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteOptions
+
+`requisitionFields.deleteOptions`
+
+Remove dropdown option values from a requisition field
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.lever.api.requisitionFields.deleteOptions({
+	requisitionFieldId: 'work_type',
+	values: ['5dc3d8e7-db49-44e5-99e9-fec13a305533'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requisitionFieldId` | `string` | Yes | — |
+| `values` | `string[]` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`requisitionFields.list`
+
+List requisition fields configured for the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.requisitionFields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+| `isRequired` | `boolean` | No | — |
+| `type` | `number \| text \| date \| object \| dropdown` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  type?: string | null,
+  isRequired?: boolean | null,
+  subfields?: {
+  }[] | null,
+  options?: {
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replaceOptions
+
+`requisitionFields.replaceOptions`
+
+Replace the dropdown options of a requisition field
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lever.api.requisitionFields.replaceOptions({
+	requisitionFieldId: 'work_type',
+	values: [{ id: '401cac37-a8a2-40b8-b175-b45fa0d69301', text: 'remote - part time' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requisitionFieldId` | `string` | Yes | — |
+| `values` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  id?: string,
+  text: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  type?: string | null,
+  isRequired?: boolean | null,
+  subfields?: {
+  }[] | null,
+  options?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`requisitionFields.retrieve`
+
+Retrieve a single requisition field by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.requisitionFields.retrieve({ requisitionFieldId: 'work_type' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requisitionFieldId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  type?: string | null,
+  isRequired?: boolean | null,
+  subfields?: {
+  }[] | null,
+  options?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`requisitionFields.update`
+
+Update a requisition field
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.requisitionFields.update({ requisitionFieldId: 'work_type', text: 'Work type', type: 'dropdown' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `text` | `string` | No | — |
+| `type` | `string` | No | One of number, text, date, object or dropdown |
+| `isRequired` | `boolean` | No | — |
+| `subfields` | `object[]` | No | — |
+| `options` | `object[]` | No | — |
+| `requisitionFieldId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subfields full type">
+
+```ts
+{
+  id: string,
+  text: string,
+  type: number | text | date
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  text: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  type?: string | null,
+  isRequired?: boolean | null,
+  subfields?: {
+  }[] | null,
+  options?: {
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Requisitions
+
+### create
+
+`requisitions.create`
+
+Create a requisition
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.requisitions.create({ requisitionCode: 'ENG-9', name: 'Junior Software Engineer, Platform', headcountTotal: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requisitionCode` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `headcountTotal` | `number \| unlimited` | Yes | — |
+| `backfill` | `boolean` | No | — |
+| `compensationBand` | `object` | No | — |
+| `createdAt` | `number` | No | — |
+| `customFields` | `object` | No | — |
+| `employmentStatus` | `string` | No | — |
+| `hiringManager` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `location` | `string` | No | — |
+| `owner` | `string` | No | — |
+| `status` | `draft \| open \| closed \| onHold` | No | — |
+| `team` | `string` | No | — |
+| `department` | `string` | No | — |
+| `postingIds` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="compensationBand full type">
+
+```ts
+{
+  currency?: string,
+  interval?: string,
+  min?: number,
+  max?: number
+}
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  requisitionCode?: string | null,
+  name?: string | null,
+  backfill?: boolean | null,
+  confidentiality?: string | null,
+  createdAt?: number | string | null,
+  creator?: string | {
+  } | null,
+  headcountHired?: number | null,
+  headcountTotal?: number | string | null,
+  status?: string | null,
+  hiringManager?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  compensationBand?: {
+  } | null,
+  employmentStatus?: string | null,
+  location?: string | null,
+  internalNotes?: string | null,
+  postings?: (string | {
+  })[] | null,
+  department?: string | null,
+  team?: string | null,
+  offerIds?: string[] | null,
+  approval?: {
+  } | null,
+  customFields?: {
+  } | null,
+  timeToFillStartAt?: number | string | null,
+  timeToFillEndAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`requisitions.delete`
+
+Delete a requisition
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lever.api.requisitions.delete({ requisitionId: '52881d44-4f95-4fcb-bf28-2b344ea58889' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requisitionId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`requisitions.list`
+
+List requisitions
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.requisitions.list({ status: 'open' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+| `created_at_start` | `number` | No | — |
+| `created_at_end` | `number` | No | — |
+| `requisition_code` | `string` | No | — |
+| `status` | `string` | No | — |
+| `confidentiality` | `confidential \| non-confidential \| all` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  requisitionCode?: string | null,
+  name?: string | null,
+  backfill?: boolean | null,
+  confidentiality?: string | null,
+  createdAt?: number | string | null,
+  creator?: string | {
+  } | null,
+  headcountHired?: number | null,
+  headcountTotal?: number | string | null,
+  status?: string | null,
+  hiringManager?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  compensationBand?: {
+  } | null,
+  employmentStatus?: string | null,
+  location?: string | null,
+  internalNotes?: string | null,
+  postings?: (string | {
+  })[] | null,
+  department?: string | null,
+  team?: string | null,
+  offerIds?: string[] | null,
+  approval?: {
+  } | null,
+  customFields?: {
+  } | null,
+  timeToFillStartAt?: number | string | null,
+  timeToFillEndAt?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`requisitions.retrieve`
+
+Retrieve a single requisition by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.requisitions.retrieve({ requisitionId: '52881d44-4f95-4fcb-bf28-2b344ea58889' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requisitionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  requisitionCode?: string | null,
+  name?: string | null,
+  backfill?: boolean | null,
+  confidentiality?: string | null,
+  createdAt?: number | string | null,
+  creator?: string | {
+  } | null,
+  headcountHired?: number | null,
+  headcountTotal?: number | string | null,
+  status?: string | null,
+  hiringManager?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  compensationBand?: {
+  } | null,
+  employmentStatus?: string | null,
+  location?: string | null,
+  internalNotes?: string | null,
+  postings?: (string | {
+  })[] | null,
+  department?: string | null,
+  team?: string | null,
+  offerIds?: string[] | null,
+  approval?: {
+  } | null,
+  customFields?: {
+  } | null,
+  timeToFillStartAt?: number | string | null,
+  timeToFillEndAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`requisitions.update`
+
+Update a requisition
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.requisitions.update({
+	requisitionId: '52881d44-4f95-4fcb-bf28-2b344ea58889',
+	requisitionCode: 'ENG-9',
+	name: 'Junior Software Engineer, Platform',
+	headcountTotal: 10,
+	internalNotes: 'Filled in Q3',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requisitionCode` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `headcountTotal` | `number \| unlimited` | Yes | — |
+| `backfill` | `boolean` | No | — |
+| `compensationBand` | `object` | No | — |
+| `createdAt` | `number` | No | — |
+| `customFields` | `object` | No | — |
+| `employmentStatus` | `string` | No | — |
+| `hiringManager` | `string` | No | — |
+| `internalNotes` | `string` | No | — |
+| `location` | `string` | No | — |
+| `owner` | `string` | No | — |
+| `status` | `draft \| open \| closed \| onHold` | No | — |
+| `team` | `string` | No | — |
+| `department` | `string` | No | — |
+| `postingIds` | `string[]` | No | — |
+| `requisitionId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="compensationBand full type">
+
+```ts
+{
+  currency?: string,
+  interval?: string,
+  min?: number,
+  max?: number
+}
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  requisitionCode?: string | null,
+  name?: string | null,
+  backfill?: boolean | null,
+  confidentiality?: string | null,
+  createdAt?: number | string | null,
+  creator?: string | {
+  } | null,
+  headcountHired?: number | null,
+  headcountTotal?: number | string | null,
+  status?: string | null,
+  hiringManager?: string | {
+  } | null,
+  owner?: string | {
+  } | null,
+  compensationBand?: {
+  } | null,
+  employmentStatus?: string | null,
+  location?: string | null,
+  internalNotes?: string | null,
+  postings?: (string | {
+  })[] | null,
+  department?: string | null,
+  team?: string | null,
+  offerIds?: string[] | null,
+  approval?: {
+  } | null,
+  customFields?: {
+  } | null,
+  timeToFillStartAt?: number | string | null,
+  timeToFillEndAt?: number | string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Resumes
+
+### download
+
+`resumes.download`
+
+Download the raw bytes of an opportunity resume
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.resumes.download({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', resumeId: 'b02a3b97-dc41-48e3-b003-44d211ed2a4c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `resumeId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`resumes.list`
+
+List resumes attached to a pipeline opportunity
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.resumes.list({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `uploaded_at_start` | `number` | No | — |
+| `uploaded_at_end` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  createdAt?: number | string | null,
+  file?: {
+    name?: string | null,
+    ext?: string | null,
+    downloadUrl?: string | null,
+    uploadedAt?: number | string | null,
+    status?: string | null,
+    size?: number | string | null
+  } | null,
+  parsedData?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`resumes.retrieve`
+
+Retrieve a single resume by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.resumes.retrieve({ opportunityId: '250d8f03-738a-4bba-a671-8a3d73477145', resumeId: 'b02a3b97-dc41-48e3-b003-44d211ed2a4c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `opportunityId` | `string` | Yes | — |
+| `resumeId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  createdAt?: number | string | null,
+  file?: {
+    name?: string | null,
+    ext?: string | null,
+    downloadUrl?: string | null,
+    uploadedAt?: number | string | null,
+    status?: string | null,
+    size?: number | string | null
+  } | null,
+  parsedData?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sources
+
+### list
+
+`sources.list`
+
+List sourcing sources configured for the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.sources.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  text: string,
+  count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stages
+
+### list
+
+`stages.list`
+
+List hiring stages configured for the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.stages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`stages.retrieve`
+
+Retrieve a single hiring stage by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.stages.retrieve({ stageId: '4a2b1c3d-5e6f-4a7b-8c9d-0e1f2a3b4c5d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stageId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Surveys
+
+### retrieveDiversity
+
+`surveys.retrieveDiversity`
+
+Retrieve the diversity survey for a job posting
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.surveys.retrieveDiversity({ postingId: '5d0f2f8a-1b2c-4d3e-9f4a-5b6c7d8e9f0a', country_code: 'US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postingId` | `string` | Yes | — |
+| `country_code` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  text?: string | null,
+  instructions?: string | null,
+  candidateLocations?: {
+  } | null,
+  fields?: {
+    id?: string | null,
+    type?: string | null,
+    text?: string | null,
+    description?: string | null,
+    required?: boolean | null,
+    value?: any,
+    options?: {
+    }[] | null
+  }[] | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### list
+
+`tags.list`
+
+List tags configured for the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.tags.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  text: string,
+  count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Create a workspace user
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.users.create({ name: 'Chandler Bing', email: 'chandler@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `accessRole` | `string` | No | — |
+| `externalDirectoryId` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `managerId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  accessRole?: string | null,
+  photo?: string | null,
+  createdAt?: number | string | null,
+  deactivatedAt?: number | string | null,
+  externalDirectoryId?: string | null,
+  linkedContactIds?: string[] | null,
+  jobTitle?: string | null,
+  managerId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deactivate
+
+`users.deactivate`
+
+Deactivate a workspace user
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.users.deactivate({ userId: '8d49b010-cc6a-4f40-ace5-e86061c677ed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  accessRole?: string | null,
+  photo?: string | null,
+  createdAt?: number | string | null,
+  deactivatedAt?: number | string | null,
+  externalDirectoryId?: string | null,
+  linkedContactIds?: string[] | null,
+  jobTitle?: string | null,
+  managerId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List workspace users
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.users.list({ includeDeactivated: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `string` | No | The `next` token returned by the previous page |
+| `include` | `string \| string[]` | No | — |
+| `email` | `string` | No | — |
+| `accessRole` | `string` | No | — |
+| `includeDeactivated` | `boolean` | No | — |
+| `external_directory_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  accessRole?: string | null,
+  photo?: string | null,
+  createdAt?: number | string | null,
+  deactivatedAt?: number | string | null,
+  externalDirectoryId?: string | null,
+  linkedContactIds?: string[] | null,
+  jobTitle?: string | null,
+  managerId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reactivate
+
+`users.reactivate`
+
+Reactivate a workspace user
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.users.reactivate({ userId: '8d49b010-cc6a-4f40-ace5-e86061c677ed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  accessRole?: string | null,
+  photo?: string | null,
+  createdAt?: number | string | null,
+  deactivatedAt?: number | string | null,
+  externalDirectoryId?: string | null,
+  linkedContactIds?: string[] | null,
+  jobTitle?: string | null,
+  managerId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieve
+
+`users.retrieve`
+
+Retrieve a single workspace user by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.users.retrieve({ userId: '8d49b010-cc6a-4f40-ace5-e86061c677ed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  accessRole?: string | null,
+  photo?: string | null,
+  createdAt?: number | string | null,
+  deactivatedAt?: number | string | null,
+  externalDirectoryId?: string | null,
+  linkedContactIds?: string[] | null,
+  jobTitle?: string | null,
+  managerId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`users.update`
+
+Update a workspace user
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.users.update({ userId: '8d49b010-cc6a-4f40-ace5-e86061c677ed', name: 'Chandler Bing' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `accessRole` | `string` | No | — |
+| `externalDirectoryId` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `managerId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  accessRole?: string | null,
+  photo?: string | null,
+  createdAt?: number | string | null,
+  deactivatedAt?: number | string | null,
+  externalDirectoryId?: string | null,
+  linkedContactIds?: string[] | null,
+  jobTitle?: string | null,
+  managerId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Register a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.webhooks.create({ url: 'https://example.test/hook', event: 'candidateStageChange' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `event` | `string` | Yes | — |
+| `configuration` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="configuration full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  data: {
+    id: string,
+    url?: string | null,
+    event?: string | null,
+    createdAt?: number | string | null,
+    updatedAt?: number | string | null,
+    configuration?: {
+    } | null
+  }
+} | {
+  id: string,
+  url?: string | null,
+  event?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  configuration?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a registered webhook
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lever.api.webhooks.delete({ webhookId: '7988b225-3cc1-44f3-8fcb-bae013cc490d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List registered webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.lever.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  url?: string | null,
+  event?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  configuration?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a registered webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.lever.api.webhooks.update({ webhookId: '7988b225-3cc1-44f3-8fcb-bae013cc490d', url: 'https://example.test/hook' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `configuration` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="configuration full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  url?: string | null,
+  event?: string | null,
+  createdAt?: number | string | null,
+  updatedAt?: number | string | null,
+  configuration?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
