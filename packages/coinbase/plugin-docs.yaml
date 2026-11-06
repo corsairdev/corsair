@@ -1,0 +1,23 @@
+displayName: Coinbase
+description: Crypto exchange and wallet platform. Read accounts, transactions, payment methods, prices, exchange rates, and currencies.
+domain: coinbase.com
+examples:
+  read:
+    path: accounts.list
+    title: List accounts
+  write:
+    path: prices.getSpot
+    title: Get a spot price
+    args:
+      currency_pair: BTC-USD
+dbExample:
+  entity: accounts
+  note: >-
+    This table exists, but Coinbase calls don't fill it yet. This returns only rows
+    you have written yourself.
+  limit: 50
+exampleWebhook:
+  path: notifications.newPayment
+  note: Fires when a new payment is received.
+  after: |
+    console.log('Coinbase payment:', result.data);

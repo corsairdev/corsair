@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Docupost plugin for Corsair"
+description: "Mail API for sending letters and postcards and checking the account balance."
 ---
 
-Use **Docupost** through Corsair: one client, typed API calls.
+Use **DocuPost** through Corsair: one client, typed API calls.
 
 **What you get:**
 
@@ -89,7 +89,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.balance`**
+**Check the account balance**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -97,11 +97,24 @@ await tenant.docupost.api.account.balance({});
 ```
 
 
-**`send.letter`**
+**Send a postcard**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.docupost.api.send.letter({});
+await tenant.docupost.api.send.postcard({
+	to_name: 'Ada Lovelace',
+	to_address: '123 Main St',
+	to_city: 'Austin',
+	to_state: 'TX',
+	to_zip: '78701',
+	from_name: 'Corsair',
+	from_address: '456 Market St',
+	from_city: 'San Francisco',
+	from_state: 'CA',
+	from_zip: '94105',
+	front_image_url: 'https://example.com/front.png',
+	back_image_url: 'https://example.com/back.png',
+});
 ```
 
 

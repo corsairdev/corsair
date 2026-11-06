@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Appointo plugin for Corsair"
+description: "Appointment scheduling platform. List products, appointments, bookings and subscriptions, check availability, and create, update, reschedule, or cancel bookings."
 ---
 
 Use **Appointo** through Corsair: one client, typed API calls.
@@ -89,19 +89,24 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`appointments.getAvailability`**
+**List products**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.appointo.api.appointments.getAvailability({});
+await tenant.appointo.api.products.list({});
 ```
 
 
-**`appointments.upsertConfig`**
+**Create a booking**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.appointo.api.appointments.upsertConfig({});
+await tenant.appointo.api.bookings.create({
+	appointment_id: 12345,
+	timestring: '2026-01-15T10:00:00Z',
+	email: 'you@example.com',
+	name: 'Octo Cat',
+});
 ```
 
 

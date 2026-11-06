@@ -1,0 +1,17 @@
+displayName: Composio
+description: Tool integration platform for AI agents. List toolkits and tools, execute them, manage connected accounts, and create sessions.
+domain: composio.dev
+examples:
+  read:
+    path: toolkits.list
+    title: List toolkits
+  write:
+    path: tools.execute
+    title: Execute a tool
+    args:
+      tool_slug: GITHUB_GET_THE_AUTHENTICATED_USER
+      arguments: {}
+dbExample:
+  entity: toolkits
+  note: Search synced toolkits without hitting Composio.
+  limit: 50

@@ -162,7 +162,7 @@ await corsair.enginemailer.api.campaigns.deleteCampaign({ campaignid: 2200 });
 
 Remove a recipient list from a campaign
 
-**Risk:** `destructive` · **Irreversible**
+**Risk:** `destructive`
 
 ```ts
 await corsair.enginemailer.api.campaigns.deleteRecipientList({ campaignid: 2200 });
@@ -487,7 +487,7 @@ await corsair.enginemailer.api.n8n.connect({});
 
 Unsubscribe a subscriber through Enginemailer N8N
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.enginemailer.api.n8n.deactivateSubscriber({ email: 'ada@example.com' });
@@ -930,9 +930,9 @@ await corsair.enginemailer.api.subscribers.activate({ email: 'ada@example.com' }
 
 `subscribers.batchUpdateStatus`
 
-Update subscriber status in a batch
+Get the status of a batch subscriber update by its job ID
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.enginemailer.api.subscribers.batchUpdateStatus({ ID: 12345 });
@@ -1253,7 +1253,7 @@ await corsair.enginemailer.api.subscribers.insert({
 
 Unsubscribe a subscriber
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.enginemailer.api.subscribers.unsubscribe({ email: 'ada@example.com' });

@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Wix plugin for Corsair"
+description: "Website platform API for sites, contacts, stores, orders, bookings, members, events, forms, CMS data, media, marketing, and billing."
 ---
 
 Use **Wix** through Corsair: one client, typed API calls, local DB sync.
@@ -103,19 +103,22 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`billing.listDefaultTaxGroups`**
+**List contacts**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.wix.api.billing.listDefaultTaxGroups({});
+await tenant.wix.api.contacts.list({});
 ```
 
 
-**`automations.bulkUpdateStorageItemTags`**
+**Add labels to a contact**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.wix.api.automations.bulkUpdateStorageItemTags({});
+await tenant.wix.api.contacts.addLabels({
+	contactId: '11111111-2222-3333-4444-555555555555',
+	labelKeys: ['custom.vip'],
+});
 ```
 
 
@@ -123,9 +126,17 @@ See the full list on the [API](/plugins/wix/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.wix.db.<entity>.search()` and `.list()`: `bookingCategories`, `brands`, `campaigns`, `contacts`, `coupons`, `currencies`, `customFields`, `extendedBookings`, `forms`, `formSubmissions`, `groupRequests`, `inventoryItems`, `locations`, `manualTaxMappings`, `moderationRules`, `orders`, `products`, `siteFolders`, `taxGroups`.
+This table exists, but Wix calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/wix/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.wix.db.contacts.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `bookingCategories`, `brands`, `campaigns`, `contacts`, `coupons`, `currencies`, `customFields`, `extendedBookings`, `forms`, `formSubmissions`, `groupRequests`, `inventoryItems`, `locations`, `manualTaxMappings`, `moderationRules`, `orders`, `products`, `siteFolders`, `taxGroups`. See [Database](/plugins/wix/database) for filters and operators.
 
 ## What's next
 

@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Cloudcart plugin for Corsair"
+description: "Ecommerce platform. Manage products, variants, categories, properties, customers, orders, carts, discounts, blog posts, subscribers, and webhooks."
 ---
 
-Use **Cloudcart** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+Use **CloudCart** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
 **What you get:**
 
@@ -91,19 +91,24 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`blogs.getBlogAuthor`**
+**List products**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cloudcart.api.blogs.getBlogAuthor({});
+await tenant.cloudcart.api.products.listProducts({});
 ```
 
 
-**`blogs.createBlogCategory`**
+**Create a product**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cloudcart.api.blogs.createBlogCategory({});
+await tenant.cloudcart.api.products.createProduct({
+	data: {
+		type: 'products',
+		attributes: { name: 'Blue T-shirt' },
+	},
+});
 ```
 
 
@@ -111,15 +116,37 @@ See the full list on the [API](/plugins/cloudcart/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.cloudcart.db.<entity>.search()` and `.list()`: `categories`, `customers`, `orders`, `products`, `variants`.
+This table exists, but Cloudcart calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/cloudcart/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cloudcart.db.products.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `categories`, `customers`, `orders`, `products`, `variants`. See [Database](/plugins/cloudcart/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **3** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a customer places an order.
 
-See [Webhooks](/plugins/cloudcart/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+cloudcart({
+    webhookHooks: {
+        order: {
+            created: {
+                after: async (ctx, result) => {
+                    console.log('Cloudcart order created:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/cloudcart/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 

@@ -82,10 +82,23 @@ const retryIssue = {
 
 export const SubmitStatementInputSchema = z
 	.object({
-		requestId: UuidShape.optional(),
-		async: z.boolean().optional(),
-		nullable: z.boolean().optional(),
-		retry: z.boolean().optional(),
+		requestId: UuidShape.optional().describe(
+			'UUID-shaped request ID (8-4-4-4-12 hex).',
+		),
+		async: z
+			.boolean()
+			.optional()
+			.describe('Return the handle immediately when true.'),
+		nullable: z
+			.boolean()
+			.optional()
+			.describe('`false` returns SQL NULL as the string `"null"`.'),
+		retry: z
+			.boolean()
+			.optional()
+			.describe(
+				'Requires `requestId`. Set `true` with the `requestId` of the original request to resubmit it; Snowflake does not run it twice. A new `requestId` runs the statement again.',
+			),
 		statement: z.string().min(1),
 		timeout: TimeoutSchema.optional(),
 		database: NonEmpty.optional(),
@@ -102,10 +115,17 @@ export type SubmitStatementInput = z.infer<typeof SubmitStatementInputSchema>;
 
 export const GetStatementInputSchema = z
 	.object({
-		statementHandle: UuidShape,
-		requestId: UuidShape.optional(),
-		partition: z.number().int().min(0).optional(),
-		retry: z.boolean().optional(),
+		statementHandle: UuidShape.describe('UUID-shaped handle (8-4-4-4-12 hex).'),
+		requestId: UuidShape.optional().describe(
+			'UUID-shaped request ID (8-4-4-4-12 hex).',
+		),
+		partition: z
+			.number()
+			.int()
+			.min(0)
+			.optional()
+			.describe('Partition index, starting at 0.'),
+		retry: z.boolean().optional().describe('Requires `requestId`.'),
 	})
 	.strict()
 	.refine(retryNeedsRequestId, retryIssue);
@@ -114,9 +134,11 @@ export type GetStatementInput = z.infer<typeof GetStatementInputSchema>;
 
 export const CancelStatementInputSchema = z
 	.object({
-		statementHandle: UuidShape,
-		requestId: UuidShape.optional(),
-		retry: z.boolean().optional(),
+		statementHandle: UuidShape.describe('UUID-shaped handle (8-4-4-4-12 hex).'),
+		requestId: UuidShape.optional().describe(
+			'UUID-shaped request ID (8-4-4-4-12 hex).',
+		),
+		retry: z.boolean().optional().describe('Requires `requestId`.'),
 	})
 	.strict()
 	.refine(retryNeedsRequestId, retryIssue);
@@ -172,7 +194,10 @@ export const StatementResultSchema = z
 		createdOn: z.number().optional(),
 		statementStatusUrl: z.string().optional(),
 		resultSetMetaData: ResultSetMetaDataSchema.optional(),
-		data: z.array(z.array(z.string().nullable())).optional(),
+		data: z
+			.array(z.array(z.string().nullable()))
+			.optional()
+			.describe('Rows. Each cell is a string or null.'),
 		stats: StatsSchema.optional(),
 	})
 	.loose();

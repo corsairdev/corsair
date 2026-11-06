@@ -1,0 +1,19 @@
+displayName: Runpod
+description: GPU cloud platform for managing Pods, Serverless endpoints, templates, clusters, secrets, and registry credentials, and for browsing GPU and CPU types.
+domain: runpod.io
+examples:
+  read:
+    path: pods.list
+    title: List Pods
+  write:
+    path: secrets.create
+    title: Create a secret
+    args:
+      name: HF_TOKEN
+      value: replace-with-your-token
+dbExample:
+  entity: pods
+  note: >-
+    This table exists, but Runpod calls don't fill it yet. This returns only
+    rows you have written yourself.
+  limit: 50

@@ -1,0 +1,16 @@
+displayName: Emelia
+description: B2B prospecting tool for managing email and LinkedIn campaigns, contacts, webhooks, sending providers, and the blacklist.
+domain: emelia.io
+examples:
+  read:
+    path: campaigns.list
+    title: List campaigns
+  write:
+    path: restCampaigns.create
+    title: Create a campaign
+    args:
+      name: Spring outreach
+dbExample:
+  entity: campaign
+  note: These tables exist, but Emelia calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50

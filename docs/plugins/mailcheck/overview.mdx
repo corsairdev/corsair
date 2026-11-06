@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Mailcheck plugin for Corsair"
+description: "Email verification API for validating email addresses and email domains."
 ---
 
 Use **Mailcheck** through Corsair: one client, typed API calls.
@@ -89,17 +89,20 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`domain.validate`**
+**Validate a domain**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.mailcheck.api.domain.validate({});
+await tenant.mailcheck.api.domain.validate({ domain: 'example.com' });
 ```
 
 
-**Write**
+**Verify an email address**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/mailcheck/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.mailcheck.api.email.verify({ email: 'you@example.com' });
+```
 
 
 See the full list on the [API](/plugins/mailcheck/api) page.

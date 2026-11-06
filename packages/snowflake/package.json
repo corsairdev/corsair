@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/snowflake",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Run SQL on Snowflake: submit a statement, fetch a result partition, or cancel execution.",
   "type": "module",
   "main": "./dist/index.js",

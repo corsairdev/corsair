@@ -36,3 +36,7 @@ apiExamples:
     call: "{ name: 'Bluestone Lane', address: { city: 'New York', state: 'NY' } }"
   legalEntities.get:
     call: "{ name: 'Starbucks Corporation' }"
+apiNotes:
+  brands.match: At least one of `name`, `website`, `phoneNumber` or `prompt` is required, and `prompt` cannot be combined with any of them or with `address`.
+  legalEntities.get: At least one of `id` or `name` is required. The `registeredEntities`, `addresses` and `brands` lists return their first page of up to three entries; each carries a `pageInfo` with `hasNextPage` when more exist.
+  locations.match: At least one of `name`, `website`, `phoneNumber` or `address` is required.

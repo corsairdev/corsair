@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Callingly plugin for Corsair"
+description: "Speed-to-lead platform. Manage leads, calls, agents and their schedules, teams, clients, and webhooks."
 ---
 
 Use **Callingly** through Corsair: one client, typed API calls, local DB sync.
@@ -90,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`agents.getSchedule`**
+**List leads**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.callingly.api.agents.getSchedule({});
+await tenant.callingly.api.leads.list({});
 ```
 
 
-**`agents.create`**
+**Create a call**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.callingly.api.agents.create({});
+await tenant.callingly.api.calls.create({ team_id: 123, phone_number: '+15555550123', first_name: 'Octo' });
 ```
 
 
@@ -110,9 +110,17 @@ See the full list on the [API](/plugins/callingly/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.callingly.db.<entity>.search()` and `.list()`: `calls`, `clients`, `leads`, `schedules`, `teams`, `teamUsers`, `users`, `webhooks`.
+Search synced leads without hitting Callingly.
 
-See [Database](/plugins/callingly/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.callingly.db.leads.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `calls`, `clients`, `leads`, `schedules`, `teams`, `teamUsers`, `users`, `webhooks`. See [Database](/plugins/callingly/database) for filters and operators.
 
 ## What's next
 

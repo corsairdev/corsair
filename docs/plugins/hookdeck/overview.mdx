@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Hookdeck plugin for Corsair"
+description: "Webhook infrastructure platform, with endpoints for creating and managing connections that route events from sources to destinations."
 ---
 
 Use **Hookdeck** through Corsair: one client, typed API calls.
@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`connections.get`**
+**List connections**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.hookdeck.api.connections.get({});
+await tenant.hookdeck.api.connections.list({});
 ```
 
 
-**`connections.create`**
+**Create a connection**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.hookdeck.api.connections.create({});
+await tenant.hookdeck.api.connections.create({ name: 'stripe-to-api' });
 ```
 
 

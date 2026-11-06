@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Akta plugin for Corsair"
+description: "Company intelligence API for looking up companies, enriching firmographic data, and reading employee reviews, product reviews, and industry news."
 ---
 
 Use **Akta** through Corsair: one client, typed API calls, local DB sync.
@@ -90,26 +90,40 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`company.employeeReviews`**
+**Search companies**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.akta.api.company.employeeReviews({});
+await tenant.akta.api.company.search({ query: 'Canva' });
 ```
 
 
-**Write**
+**Enrich a company**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/akta/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.akta.api.company.enrich({
+	company: 'https://canva.com',
+	sections: ['firmographic'],
+});
+```
 
 
 See the full list on the [API](/plugins/akta/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.akta.db.<entity>.search()` and `.list()`: `companies`, `newsArticles`.
+Search synced companies without hitting Akta.
 
-See [Database](/plugins/akta/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.akta.db.companies.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `companies`, `newsArticles`. See [Database](/plugins/akta/database) for filters and operators.
 
 ## What's next
 

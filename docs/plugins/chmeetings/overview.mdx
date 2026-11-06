@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "ChMeetings plugin for Corsair"
+description: "Church management platform. Manage people, families, groups, organizations, and events, and read attendance, notes, and settings."
 ---
 
 Use **ChMeetings** through Corsair: one client, typed API calls, local DB sync.
@@ -90,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`attendance.list`**
+**List people**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.chmeetings.api.attendance.list({});
+await tenant.chmeetings.api.people.list({});
 ```
 
 
-**`families.create`**
+**Add a person**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.chmeetings.api.families.create({});
+await tenant.chmeetings.api.people.create({ first_name: 'Jane', last_name: 'Doe', email: 'you@example.com' });
 ```
 
 
@@ -110,9 +110,17 @@ See the full list on the [API](/plugins/chmeetings/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.chmeetings.db.<entity>.search()` and `.list()`: `events`, `organizations`, `people`.
+This table exists, but ChMeetings calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/chmeetings/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.chmeetings.db.people.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `events`, `organizations`, `people`. See [Database](/plugins/chmeetings/database) for filters and operators.
 
 ## What's next
 

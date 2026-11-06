@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Flutterwave plugin for Corsair"
+description: "Payments API for accepting charges and payment links, and managing transfers, beneficiaries, subaccounts, virtual accounts, subscriptions, settlements, refunds, bills, banks, and wallet balances."
 ---
 
 Use **Flutterwave** through Corsair: one client, typed API calls.
@@ -89,19 +89,25 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`banks.getBranches`**
+**List transactions**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.flutterwave.api.banks.getBranches({});
+await tenant.flutterwave.api.transactions.list({});
 ```
 
 
-**`beneficiaries.create`**
+**Create a payment link**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.flutterwave.api.beneficiaries.create({});
+await tenant.flutterwave.api.paymentLinks.create({
+	tx_ref: 'order-1001',
+	amount: 1000,
+	currency: 'NGN',
+	redirect_url: 'https://example.com/thanks',
+	customer: { email: 'you@example.com' },
+});
 ```
 
 

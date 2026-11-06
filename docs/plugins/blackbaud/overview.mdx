@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Blackbaud plugin for Corsair"
+description: "Nonprofit software API for Raiser's Edge NXT gifts, gift batches, and membership details, SKY Payments transactions, and OneRoster discovery."
 ---
 
 Use **Blackbaud** through Corsair: one client, typed API calls, local DB sync.
@@ -90,19 +90,31 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`gifts.getGiftById`**
+**Get a gift**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.blackbaud.api.gifts.getGiftById({});
+await tenant.blackbaud.api.gifts.getGiftById({ gift_id: '1234' });
 ```
 
 
-**`batch.addGiftsToBatch`**
+**Add gifts to a batch**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.blackbaud.api.batch.addGiftsToBatch({});
+await tenant.blackbaud.api.batch.addGiftsToBatch({
+	batch_id: '5678',
+	gifts: [{
+		amount: { value: 50 },
+		constituent_id: '9012',
+		type: 'Donation',
+		gift_splits: [{
+			amount: { value: 50 },
+			fund_id: '3456',
+		}],
+		payments: [{ payment_method: 'Cash' }],
+	}],
+});
 ```
 
 
@@ -110,9 +122,17 @@ See the full list on the [API](/plugins/blackbaud/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.blackbaud.db.<entity>.search()` and `.list()`: `batchGifts`, `gifts`, `memberships`, `oneRosterKeys`, `paymentTransactions`.
+Search synced gifts without hitting Blackbaud.
 
-See [Database](/plugins/blackbaud/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.blackbaud.db.gifts.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `batchGifts`, `gifts`, `memberships`, `oneRosterKeys`, `paymentTransactions`. See [Database](/plugins/blackbaud/database) for filters and operators.
 
 ## What's next
 

@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Imejisio plugin for Corsair"
+description: "Image generation API for rendering designs from templates into images or PDFs."
 ---
 
-Use **Imejisio** through Corsair: one client, typed API calls, local DB sync.
+Use **Imejis.io** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -90,9 +90,12 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Read**
+**Render a design**
 
-_No read-style endpoint inferred; pick any operation from the [API](/plugins/imejisio/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.imejisio.api.designs.render({ designId: 'design_123' });
+```
 
 
 **`designs.render`**
@@ -107,9 +110,17 @@ See the full list on the [API](/plugins/imejisio/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.imejisio.db.<entity>.search()` and `.list()`: `renders`.
+Search synced renders without hitting Imejis.io.
 
-See [Database](/plugins/imejisio/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.imejisio.db.renders.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `renders`. See [Database](/plugins/imejisio/database) for filters and operators.
 
 ## What's next
 

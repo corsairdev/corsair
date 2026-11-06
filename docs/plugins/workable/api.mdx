@@ -302,7 +302,7 @@ await corsair.workable.api.departments.list({});
 
 Merge a department into another department
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.workable.api.departments.merge({ id: '3ff4d641', target_department_id: '3ff4d64b', force: true });

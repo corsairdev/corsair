@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Veriphone plugin for Corsair"
+description: "Phone number validation API for verifying numbers, listing supported countries, checking credit usage, and fetching example numbers."
 ---
 
 Use **Veriphone** through Corsair: one client, typed API calls.
@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`coverage`**
+**Check credit balance**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.veriphone.api.coverage({});
+await tenant.veriphone.api.credits({});
 ```
 
 
-**`verifyPhoneNumber`**
+**Verify a phone number**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.veriphone.api.verifyPhoneNumber({});
+await tenant.veriphone.api.verifyPhoneNumber({ phone: '+14155552671' });
 ```
 
 

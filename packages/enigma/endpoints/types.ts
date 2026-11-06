@@ -193,7 +193,7 @@ const BrandsMatchInputSchema = z
 export type BrandsMatchInput = z.input<typeof BrandsMatchInputSchema>;
 
 const BrandsMatchResponseSchema = z.object({
-	brand: BrandSummarySchema.nullish(),
+	brand: BrandSummarySchema.nullish().describe('`null` when nothing matched.'),
 });
 
 export type BrandsMatchResponse = z.infer<typeof BrandsMatchResponseSchema>;
@@ -247,7 +247,8 @@ const BrandsGetResponseSchema = z.object({
 				.loose(),
 		})
 		.loose()
-		.nullish(),
+		.nullish()
+		.describe('`null` when nothing matched.'),
 });
 
 const LocationsMatchInputSchema = z
@@ -278,7 +279,9 @@ export type LocationsMatchResponse = z.infer<
 >;
 
 const LocationsMatchResponseSchema = z.object({
-	location: LocationDetailSchema.nullish(),
+	location: LocationDetailSchema.nullish().describe(
+		'`null` when nothing matched.',
+	),
 });
 
 const LegalEntitiesGetInputSchema = z
@@ -300,7 +303,9 @@ export type LegalEntitiesGetResponse = z.infer<
 >;
 
 const LegalEntitiesGetResponseSchema = z.object({
-	legalEntity: LegalEntityDetailSchema.nullish(),
+	legalEntity: LegalEntityDetailSchema.nullish().describe(
+		'`null` when nothing matched.',
+	),
 });
 
 export type EnigmaEndpointInputs = {

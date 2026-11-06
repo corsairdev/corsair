@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Classmarker plugin for Corsair"
+description: "Online exam platform. Manage tests, users, groups, question banks, categories, and access lists, and read results, certificates, and webhooks."
 ---
 
-Use **Classmarker** through Corsair: one client, typed API calls, local DB sync.
+Use **ClassMarker** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -90,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`categories.list`**
+**List tests**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.classmarker.api.categories.list({});
+await tenant.classmarker.api.tests.list({});
 ```
 
 
-**`accessLists.addCodes`**
+**Create a user**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.classmarker.api.accessLists.addCodes({});
+await tenant.classmarker.api.users.create({ first_name: 'Jane', last_name: 'Doe', email: 'you@example.com' });
 ```
 
 
@@ -110,9 +110,17 @@ See the full list on the [API](/plugins/classmarker/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.classmarker.db.<entity>.search()` and `.list()`: `results`.
+This table exists, but ClassMarker calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/classmarker/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.classmarker.db.results.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `results`. See [Database](/plugins/classmarker/database) for filters and operators.
 
 ## What's next
 

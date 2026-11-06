@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Alibaba plugin for Corsair"
+description: "Generative AI API for creating images with Qwen-Image and Wan, starting Wan video generation and editing tasks, and checking task status."
 ---
 
-Use **Alibaba** through Corsair: one client, typed API calls, local DB sync.
+Use **Alibaba Cloud Model Studio** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -90,11 +90,11 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`tasks.get`**
+**Check a task**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.alibaba.api.tasks.get({});
+await tenant.alibaba.api.tasks.get({ task_id: '0385dc79-5ff8-4d82-bcb6-xxxxxxxxxxxx' });
 ```
 
 
@@ -110,9 +110,17 @@ See the full list on the [API](/plugins/alibaba/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.alibaba.db.<entity>.search()` and `.list()`: `images`, `videoTasks`.
+Search synced images without hitting Alibaba Cloud.
 
-See [Database](/plugins/alibaba/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.alibaba.db.images.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `images`, `videoTasks`. See [Database](/plugins/alibaba/database) for filters and operators.
 
 ## What's next
 

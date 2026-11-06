@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "ContactOut plugin for Corsair"
+description: "Contact data platform. Enrich and search people and companies, find and verify emails and phones, and check account usage."
 ---
 
 Use **ContactOut** through Corsair: one client, typed API calls, local DB sync.
@@ -90,26 +90,37 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.stats`**
+**Search for people**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.contactout.api.account.stats({});
+await tenant.contactout.api.people.search({});
 ```
 
 
-**Write**
+**Enrich a LinkedIn profile**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/contactout/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.contactout.api.linkedin.enrich({ profile: 'https://www.linkedin.com/in/example' });
+```
 
 
 See the full list on the [API](/plugins/contactout/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.contactout.db.<entity>.search()` and `.list()`: `companies`, `profiles`.
+Search synced profiles without hitting ContactOut.
 
-See [Database](/plugins/contactout/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.contactout.db.profiles.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `companies`, `profiles`. See [Database](/plugins/contactout/database) for filters and operators.
 
 ## What's next
 

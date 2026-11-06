@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Waboxapp plugin for Corsair"
+description: "WhatsApp messaging API for sending text, image, link, and media messages and checking the linked account status."
 ---
 
-Use **Waboxapp** through Corsair: one client, typed API calls, local DB sync.
+Use **waboxapp** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -90,7 +90,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`accounts.getStatus`**
+**Check account status**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -98,11 +98,11 @@ await tenant.waboxapp.api.accounts.getStatus({});
 ```
 
 
-**`messages.sendChat`**
+**Send a WhatsApp message**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.waboxapp.api.messages.sendChat({});
+await tenant.waboxapp.api.messages.sendChat({ to: '14155552671', text: 'Hello from Corsair' });
 ```
 
 
@@ -110,9 +110,17 @@ See the full list on the [API](/plugins/waboxapp/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.waboxapp.db.<entity>.search()` and `.list()`: `accounts`, `messages`.
+This table exists, but waboxapp calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/waboxapp/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.waboxapp.db.messages.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `accounts`, `messages`. See [Database](/plugins/waboxapp/database) for filters and operators.
 
 ## What's next
 

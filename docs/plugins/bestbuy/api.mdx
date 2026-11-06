@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for Best Buy Remix API: every `bestbuy.api.*` operation with input and output types."
+description: "API reference for Best Buy: every `bestbuy.api.*` operation with input and output types."
 ---
 
 Every `bestbuy.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -406,7 +406,7 @@ await corsair.bestbuy.api.products.list({});
 | `sku` | `string \| number` | No | Filter for a specific SKU |
 | `upc` | `string` | No | Filter for a specific UPC |
 | `name` | `string` | No | Filter by product name with wildcard, e.g. iPad* |
-| `salePrice` | `string` | No | Filter by sale price, e.g. 'salePrice>100' or '>100' |
+| `salePrice` | `string` | No | Filter by sale price, e.g. 'salePrice&gt;100' or '&gt;100' |
 | `categoryPathId` | `string` | No | Filter products by categoryPath.id |
 | `page` | `number` | No | Page number to retrieve (1-based) |
 | `pageSize` | `number` | No | Number of products per page (1-100) |
@@ -801,7 +801,7 @@ await corsair.bestbuy.api.stores.list({});
 | `postalCode` | `string` | No | Filter stores by postal code |
 | `storeType` | `string` | No | Filter stores by store type |
 | `services` | `string` | No | Filter by services.service, comma-separated |
-| `page` | `number` | No | Page number to retrieve (must be > 0) |
+| `page` | `number` | No | Page number to retrieve (must be &gt; 0) |
 | `pageSize` | `number` | No | Number of results per page (1-100) |
 | `show` | `string` | No | Comma-separated store fields to include |
 | `sort` | `string` | No | Sort directive, e.g. 'city.asc' or 'name.dsc' |

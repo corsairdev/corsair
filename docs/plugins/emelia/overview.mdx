@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Emelia plugin for Corsair"
+description: "B2B prospecting tool for managing email and LinkedIn campaigns, contacts, webhooks, sending providers, and the blacklist."
 ---
 
 Use **Emelia** through Corsair: one client, typed API calls, local DB sync.
@@ -90,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.me`**
+**List campaigns**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.emelia.api.account.me({});
+await tenant.emelia.api.campaigns.list({});
 ```
 
 
-**`blacklist.add`**
+**Create a campaign**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.emelia.api.blacklist.add({});
+await tenant.emelia.api.restCampaigns.create({ name: 'Spring outreach' });
 ```
 
 
@@ -110,9 +110,17 @@ See the full list on the [API](/plugins/emelia/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.emelia.db.<entity>.search()` and `.list()`: `campaign`, `contactList`.
+These tables exist, but Emelia calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/emelia/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.emelia.db.campaign.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `campaign`, `contactList`. See [Database](/plugins/emelia/database) for filters and operators.
 
 ## What's next
 

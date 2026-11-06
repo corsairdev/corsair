@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "CDR Platform plugin for Corsair"
+description: "Carbon dioxide removal API. Price and purchase CO2 removal portfolios, retrieve removal certificates, and check service health."
 ---
 
 Use **CDR Platform** through Corsair: one client, typed API calls, local DB sync.
@@ -90,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`cdr.price`**
+**Get a certificate**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cdrplatform.api.cdr.price({});
+await tenant.cdrplatform.api.certificate.get({ id: 'abc-def-ghi' });
 ```
 
 
-**`cdr.purchase`**
+**Check service health**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cdrplatform.api.cdr.purchase({});
+await tenant.cdrplatform.api.health.check({});
 ```
 
 
@@ -110,9 +110,17 @@ See the full list on the [API](/plugins/cdrplatform/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.cdrplatform.db.<entity>.search()` and `.list()`: `certificates`, `priceQuotes`, `removalRequests`.
+Search synced certificates without hitting CDR Platform.
 
-See [Database](/plugins/cdrplatform/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cdrplatform.db.certificates.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `certificates`, `priceQuotes`, `removalRequests`. See [Database](/plugins/cdrplatform/database) for filters and operators.
 
 ## What's next
 

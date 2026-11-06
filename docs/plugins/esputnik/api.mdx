@@ -952,7 +952,7 @@ await corsair.esputnik.api.contacts.deleteContactById({});
 
 Remove emails from the eSputnik unsubscribe list
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.esputnik.api.contacts.deleteFromUnsubscribed({});
@@ -2364,7 +2364,7 @@ await corsair.esputnik.api.preprocessor.getPreprocessorFileStatus({});
 
 Replace the data of an eSputnik preprocessor file
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.esputnik.api.preprocessor.updatePreprocessorFile({});
