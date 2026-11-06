@@ -141,3 +141,211 @@ apiExamples:
     call: "{}"
   account.identity:
     call: "{}"
+  deals.list:
+    call: "{ limit: 50 }"
+  deals.get:
+    call: "{ id: 55 }"
+  deals.create:
+    call: "{ name: '812 Oak Street', stageId: 7, price: 520000, description: 'Buyer tour scheduled' }"
+  deals.update:
+    call: "{ id: 55, price: 535000 }"
+  deals.delete:
+    call: "{ id: 55 }"
+  pipelines.list:
+    call: "{}"
+  pipelines.create:
+    call: "{ name: 'Buyer pipeline', stages: ['New', 'Touring', 'Offer'] }"
+  pipelines.get:
+    call: "{ id: 2 }"
+  pipelines.update:
+    call: "{ id: 2, name: 'Buyer pipeline 2026' }"
+  pipelines.delete:
+    call: "{ id: 2 }"
+  stages.list:
+    call: "{}"
+  stages.create:
+    call: "{ name: 'Touring', orderWeight: 3 }"
+  stages.get:
+    call: "{ id: 7 }"
+  stages.update:
+    call: "{ id: 7, name: 'Active touring' }"
+  stages.delete:
+    call: "{ id: 7 }"
+  dealCustomFields.list:
+    call: "{}"
+  dealCustomFields.create:
+    call: "{ label: 'Closing date', type: 'date' }"
+  dealCustomFields.get:
+    call: "{ id: 9 }"
+  dealCustomFields.update:
+    call: "{ id: 9, label: 'Expected closing date' }"
+  dealCustomFields.delete:
+    call: "{ id: 9 }"
+  dealAttachments.create:
+    call: "{ dealId: 55, uri: 'https://files.example.com/offer.pdf', fileName: 'offer.pdf' }"
+  dealAttachments.get:
+    call: "{ id: 61 }"
+  dealAttachments.update:
+    call: "{ id: 61, dealId: 55, uri: 'https://files.example.com/offer-v2.pdf', fileName: 'offer-v2.pdf' }"
+  dealAttachments.delete:
+    call: "{ id: 61 }"
+  appointmentOutcomes.list:
+    call: "{}"
+  appointmentOutcomes.create:
+    call: "{ name: 'Met at property', orderWeight: 1 }"
+  appointmentOutcomes.get:
+    call: "{ id: 4 }"
+  appointmentOutcomes.update:
+    call: "{ id: 4, name: 'Met at property (completed)' }"
+  appointmentOutcomes.delete:
+    call: "{ id: 4, assignOutcomeId: 5 }"
+  customFields.list:
+    call: "{}"
+  customFields.create:
+    call: "{ label: 'Preferred contact', type: 'text' }"
+  customFields.get:
+    call: "{ id: 12 }"
+  customFields.update:
+    call: "{ id: 12, label: 'Preferred contact method' }"
+  customFields.delete:
+    call: "{ id: 12 }"
+  templates.list:
+    call: "{ limit: 50 }"
+  templates.create:
+    call: "{ name: 'Tour follow-up', subject: 'Great meeting you', body: 'Hi {{first_name}}, ...', isShared: true }"
+  templates.get:
+    call: "{ id: 3 }"
+  templates.update:
+    call: "{ id: 3, subject: 'Great meeting you today' }"
+  templates.delete:
+    call: "{ id: 3 }"
+  templates.merge:
+    call: "{ templateId: 3, mergePersonId: 123 }"
+  textMessageTemplates.list:
+    call: "{ limit: 50 }"
+  textMessageTemplates.create:
+    call: "{ name: 'Tour reminder', message: 'See you at the tour tomorrow!', isShared: true }"
+  textMessageTemplates.get:
+    call: "{ id: 5 }"
+  textMessageTemplates.update:
+    call: "{ id: 5, message: 'Reminder: tour tomorrow at 5pm.' }"
+  textMessageTemplates.delete:
+    call: "{ id: 5 }"
+  textMessageTemplates.merge:
+    call: "{ templateId: 5, personId: 123 }"
+  emCampaigns.list:
+    call: "{ limit: 25 }"
+  emCampaigns.create:
+    call: "{ name: 'Spring newsletter', subject: 'New listings this spring', bodyHtml: '<p>Hi {{first_name}}</p>', origin: 'custom' }"
+  emCampaigns.update:
+    call: "{ id: 8, subject: 'New listings this April' }"
+  emEvents.list:
+    call: "{ limit: 50 }"
+  emEvents.create:
+    call: "{ emEvents: [{ type: 'open', email: 'jordan@acme-logistics.com' }] }"
+  users.list:
+    call: "{}"
+  users.get:
+    call: "{ id: 1 }"
+  users.delete:
+    call: "{ id: 14 }"
+  teams.list:
+    call: "{}"
+  teams.create:
+    call: "{ name: 'Downtown crew', userIds: [1, 4], leaderIds: [1] }"
+  teams.get:
+    call: "{ id: 3 }"
+  teams.update:
+    call: "{ id: 3, name: 'Downtown team' }"
+  teams.delete:
+    call: "{ id: 3 }"
+  groups.list:
+    call: "{}"
+  groups.create:
+    call: "{ name: 'Round robin intake', users: [1, 4, 6], distribution: 'round_robin' }"
+  groups.get:
+    call: "{ id: 2 }"
+  groups.update:
+    call: "{ id: 2, name: 'Intake group' }"
+  groups.delete:
+    call: "{ id: 2 }"
+  groups.roundRobin:
+    call: "{}"
+  ponds.list:
+    call: "{}"
+  ponds.create:
+    call: "{ name: 'Buyer pond', userId: 1, userIds: [1, 4] }"
+  ponds.get:
+    call: "{ id: 6 }"
+  ponds.update:
+    call: "{ id: 6, name: 'Buyer pond 2026' }"
+  ponds.delete:
+    call: "{ id: 6 }"
+  rateLimit.limits:
+    call: "{}"
+  rateLimit.usage:
+    call: "{}"
+  automations.list:
+    call: "{}"
+  automations.get:
+    call: "{ id: 10 }"
+  automationsPeople.list:
+    call: "{ automationId: 10 }"
+  automationsPeople.get:
+    call: "{ id: 77 }"
+  automationsPeople.create:
+    call: "{ automationId: 10, personId: 123 }"
+  automationsPeople.update:
+    call: "{ id: 77, isFinished: true }"
+  actionPlans.list:
+    call: "{}"
+  actionPlansPeople.list:
+    call: "{ personId: 123 }"
+  actionPlansPeople.create:
+    call: "{ personId: 123, actionPlanId: 3 }"
+  actionPlansPeople.update:
+    call: "{ id: 41, isFinished: true }"
+  webhooks.list:
+    call: "{}"
+  webhooks.create:
+    call: "{ event: 'people.created', url: 'https://hooks.example.com/fub' }"
+  webhooks.get:
+    call: "{ id: 18 }"
+  webhooks.update:
+    call: "{ id: 18, url: 'https://hooks.example.com/fub-v2' }"
+  webhooks.delete:
+    call: "{ id: 18 }"
+  webhookEvents.get:
+    call: "{ id: 9001 }"
+  inboxApps.deactivate:
+    call: "{ inboxAppId: 'app_123' }"
+  inboxApps.deleteParticipant:
+    call: "{ inboxAppId: 'app_123', extConversationId: 'conv_88', participantId: 'part_5' }"
+  inboxApps.getParticipants:
+    call: "{ inboxAppId: 'app_123', extConversationId: 'conv_88' }"
+  inboxApps.createParticipant:
+    call: "{ inboxAppId: 'app_123', extConversationId: 'conv_88', participant: { externalId: 'part_6', name: 'Sam Rivera' } }"
+  inboxApps.addMessage:
+    call: "{ inboxAppId: 'app_123', externalConversationId: 'conv_88', externalMessageId: 'msg_910', message: 'Offer accepted!' }"
+  inboxApps.addNote:
+    call: "{ inboxAppId: 'app_123', externalConversationId: 'conv_88', note: 'Client prefers evening calls' }"
+  inboxApps.addSystemConfirmationMessage:
+    call: "{ inboxAppId: 'app_123', externalConversationId: 'conv_88', message: 'Conversation synced' }"
+  inboxApps.install:
+    call: "{ publishedInboxAppId: 'pub_app_1', userId: 1, subscriptionUrl: 'https://hooks.example.com/inbox' }"
+  inboxApps.updateConversation:
+    call: "{ inboxAppId: 'app_123', extConversationId: 'conv_88', name: 'Offer negotiation' }"
+  inboxApps.updateMessage:
+    call: "{ inboxAppId: 'app_123', externalMessageId: 'msg_910', message: 'Offer accepted and signed!' }"
+  inboxApps.installedApp:
+    call: "{ publishedInboxAppId: 'pub_app_1' }"
+  teamInboxes.list:
+    call: "{}"
+  reactions.create:
+    call: "{ refType: 'note', refId: '21', body: '👍' }"
+  reactions.get:
+    call: "{ id: 31 }"
+  reactions.delete:
+    call: "{ refType: 'note', refId: '21' }"
+  threadedReplies.get:
+    call: "{ id: 44 }"

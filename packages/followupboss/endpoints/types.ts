@@ -6,13 +6,13 @@ import { z } from 'zod';
 // field FUB adds or omits cannot fail a call that has already happened. Field
 // reference: https://docs.followupboss.com/reference
 
-const IdSchema = z.number().int().positive();
+export const IdSchema = z.number().int().positive();
 
 // ── shared provider shapes ─────────────────────────────────────────────────
 
 // _metadata block documented on the Pagination guide, present on list
 // responses. `next` is the keyset cursor FUB enforces for deep pagination.
-const FubMetadataSchema = z
+export const FubMetadataSchema = z
 	.object({
 		collection: z.string().nullish(),
 		offset: z.number().nullish(),
@@ -23,7 +23,7 @@ const FubMetadataSchema = z
 	})
 	.loose();
 
-const ListQuerySchema = z.object({
+export const ListQuerySchema = z.object({
 	limit: z
 		.number()
 		.int()
@@ -39,21 +39,21 @@ const ListQuerySchema = z.object({
 		.describe('Number of rows to skip before returning results.'),
 });
 
-const EmailSchema = z
+export const EmailSchema = z
 	.object({
 		value: z.string().nullish(),
 		type: z.string().nullish(),
 	})
 	.loose();
 
-const PhoneSchema = z
+export const PhoneSchema = z
 	.object({
 		value: z.string().nullish(),
 		type: z.string().nullish(),
 	})
 	.loose();
 
-const AddressSchema = z
+export const AddressSchema = z
 	.object({
 		type: z.string().nullish(),
 		street: z.string().nullish(),
@@ -66,9 +66,9 @@ const AddressSchema = z
 
 // unknown: FUB custom fields are user-defined keys (`customClose Price` and
 // similar), so their map cannot be enumerated; values pass through as sent.
-const CustomFieldsSchema = z.record(z.string(), z.unknown());
+export const CustomFieldsSchema = z.record(z.string(), z.unknown());
 
-const TimeframeSchema = z
+export const TimeframeSchema = z
 	.object({
 		name: z.string().nullish(),
 		from: z.string().nullish(),
@@ -250,7 +250,7 @@ export type PeopleUpdateResponse = z.infer<typeof PeopleUpdateResponseSchema>;
 
 // Most FUB deletes answer 200 with the deleted resource (or 204 with no body);
 // the envelope is optional and only passed through when present.
-const DeletedResponseSchema = z
+export const DeletedResponseSchema = z
 	.object({
 		id: IdSchema,
 		// unknown: FUB may echo the deleted resource in the 200 body.
