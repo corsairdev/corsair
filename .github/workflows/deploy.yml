@@ -13,6 +13,12 @@ permissions:
   id-token: write
   actions: write # starts release-on-merge.yml once this run has published
 
+# One publish at a time; a newer pending run replaces an older one, and every
+# run publishes whatever npm is missing.
+concurrency:
+  group: deploy-npm
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-24.04
@@ -50,7 +56,10 @@ jobs:
       # release-on-merge.yml leaves a version npm doesn't have yet alone, so a
       # change merged while this was publishing waits. Now that the versions
       # are on npm, it can release that change.
+      # Also after a partial failure: packages that did publish can release
+      # what merged meanwhile.
       - name: Release anything merged while this published
+        if: ${{ !cancelled() }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run release-on-merge.yml --repo "$GITHUB_REPOSITORY" --ref main

@@ -95,6 +95,18 @@ function tryGit(cwd, args) {
 	}
 }
 
+/** Workspace packages a package needs at runtime (pinned to an exact version on publish). */
+function runtimeWorkspaceDeps(pkg) {
+	return Object.entries({
+		...(pkg.dependencies ?? {}),
+		...(pkg.optionalDependencies ?? {}),
+	})
+		.filter(
+			([, spec]) => typeof spec === 'string' && spec.startsWith('workspace:'),
+		)
+		.map(([name]) => name);
+}
+
 export function listPackages(cwd) {
 	const out = [];
 	for (const root of PACKAGE_ROOTS) {
@@ -107,23 +119,51 @@ export function listPackages(cwd) {
 			if (!existsSync(pkgPath)) continue;
 			const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
 			if (pkg.private || !pkg.name || !pkg.version) continue;
-			out.push({ dir, name: pkg.name, version: pkg.version });
+			out.push({
+				dir,
+				name: pkg.name,
+				version: pkg.version,
+				deps: runtimeWorkspaceDeps(pkg),
+			});
 		}
 	}
 	return out.sort((a, b) => a.dir.localeCompare(b.dir));
 }
 
-/** The newest first-parent commit on HEAD that introduced `"version": "<v>"`. */
+function topLevelVersionAt(cwd, rev, path) {
+	const text = tryGit(cwd, ['show', `${rev}:${path}`]);
+	if (text === null) return null;
+	try {
+		return JSON.parse(text).version ?? null;
+	} catch {
+		return null;
+	}
+}
+
+/**
+ * The newest first-parent commit on HEAD whose package.json moved the
+ * top-level version to `version` (a nested "version" key doesn't count).
+ */
 function versionSetCommit(cwd, dir, version) {
-	const out = git(cwd, [
+	const path = `${dir}/package.json`;
+	const commits = git(cwd, [
 		'log',
 		'--first-parent',
-		'--format=%H',
-		`-S"version": "${version}"`,
+		'--format=%H %P',
 		'--',
-		`${dir}/package.json`,
-	]);
-	return out.split('\n')[0] || null;
+		path,
+	])
+		.split('\n')
+		.filter(Boolean);
+	for (const line of commits) {
+		const [sha, firstParent] = line.split(' ');
+		if (topLevelVersionAt(cwd, sha, path) !== version) continue;
+		const before = firstParent
+			? topLevelVersionAt(cwd, firstParent, path)
+			: null;
+		if (before !== version) return sha;
+	}
+	return null;
 }
 
 /** Files in the package that changed between `base` and HEAD and can change what ships. */
@@ -155,10 +195,28 @@ async function mapLimit(items, limit, fn) {
 }
 
 /**
+ * The next patch after the newer of the repo version and npm's latest, skipped
+ * past any number npm already has (a version can never be published twice).
+ * Not past the highest version on npm: `corsair` has a stray 1.0.0 and the
+ * 2016 0.0.x of the name's previous owner, while latest is 0.1.x.
+ */
+export function nextFreeVersion(repoVersion, latest, npmVersions = []) {
+	const taken = new Set(npmVersions);
+	let next = nextPatch(
+		latest && compareVersions(latest, repoVersion) === 1 ? latest : repoVersion,
+	);
+	while (taken.has(next)) next = nextPatch(next);
+	return next;
+}
+
+/**
  * Works out what to release. `registry.versions(name)` returns the versions on
  * npm and the latest dist-tag ({ versions: Set, latest }), or null when the
  * package isn't on npm. It is only asked about packages without a tag for
  * their current version, and about packages being bumped.
+ *
+ * Returns { bumps, tags, waiting }: `waiting` lists current versions npm
+ * doesn't have yet, which deploy.yml still has to publish.
  */
 export async function planRelease({ cwd, registry, log = () => {} }) {
 	const packages = listPackages(cwd);
@@ -166,18 +224,25 @@ export async function planRelease({ cwd, registry, log = () => {} }) {
 		git(cwd, ['tag', '--list']).split('\n').filter(Boolean),
 	);
 	const tags = [];
-	const bumps = [];
+	const waiting = [];
+	// Released packages: their current version is on npm.
+	const released = new Map();
+	const npmCache = new Map();
+	const npmVersions = async (name) => {
+		if (!npmCache.has(name)) npmCache.set(name, await registry.versions(name));
+		return npmCache.get(name);
+	};
 
 	await mapLimit(packages, 8, async (pkg) => {
 		const tag = releaseTag(pkg.name, pkg.version);
 		let base = existingTags.has(tag)
 			? git(cwd, ['rev-list', '-n', '1', tag])
 			: null;
-		let npm = null;
 		if (!base) {
-			npm = await registry.versions(pkg.name);
+			const npm = await npmVersions(pkg.name);
 			if (!npm?.versions.has(pkg.version)) {
 				log(`WAIT ${tag}: not on npm yet; deploy.yml publishes it`);
+				waiting.push({ name: pkg.name, version: pkg.version });
 				return;
 			}
 			base = versionSetCommit(cwd, pkg.dir, pkg.version);
@@ -187,49 +252,108 @@ export async function planRelease({ cwd, registry, log = () => {} }) {
 			}
 			tags.push({ tag, sha: base });
 		}
+		released.set(pkg.name, { pkg, files: shippedChanges(cwd, base, pkg.dir) });
+	});
 
-		const files = shippedChanges(cwd, base, pkg.dir);
-		if (files.length === 0) return;
-
-		npm ??= await registry.versions(pkg.name);
-		const latest = npm?.latest;
-		const from =
-			latest && compareVersions(latest, pkg.version) === 1
-				? latest
-				: pkg.version;
-		if (!parseVersion(from)) {
-			log(`SKIP ${pkg.name}: ${from} is not a plain x.y.z version`);
+	const bumps = new Map();
+	const bump = async (pkg, files) => {
+		const npm = await npmVersions(pkg.name);
+		if (!parseVersion(pkg.version)) {
+			log(`SKIP ${pkg.name}: ${pkg.version} is not a plain x.y.z version`);
 			return;
 		}
-		bumps.push({
+		bumps.set(pkg.name, {
 			name: pkg.name,
 			dir: pkg.dir,
 			from: pkg.version,
-			to: nextPatch(from),
+			to: nextFreeVersion(pkg.version, npm?.latest, [...(npm?.versions ?? [])]),
 			files,
 		});
-	});
+	};
+	for (const { pkg, files } of released.values()) {
+		if (files.length > 0) await bump(pkg, files);
+	}
+
+	// pnpm publish pins a workspace dependency to its exact version, so a
+	// package that depends on a bumped one at runtime (cli, mcp and studio on
+	// corsair, corsair on its frpc binaries) is released again to pick it up.
+	for (let grew = true; grew; ) {
+		grew = false;
+		for (const { pkg } of released.values()) {
+			if (bumps.has(pkg.name)) continue;
+			const bumpedDeps = pkg.deps.filter((d) => bumps.has(d));
+			if (bumpedDeps.length === 0) continue;
+			await bump(
+				pkg,
+				bumpedDeps.map((d) => `depends on ${d} ${bumps.get(d).to}`),
+			);
+			grew = bumps.has(pkg.name);
+		}
+	}
 
 	const byName = (a, b) => (a.name ?? a.tag).localeCompare(b.name ?? b.tag);
-	return { bumps: bumps.sort(byName), tags: tags.sort(byName) };
+	return {
+		bumps: [...bumps.values()].sort(byName),
+		tags: tags.sort(byName),
+		waiting: waiting.sort(byName),
+	};
 }
 
-/** Rewrites only the version field, keeping the file's formatting. */
+/**
+ * Where the top-level "version" value sits in package.json text: a small scan
+ * that tracks object depth outside strings, so a nested "version" key (or a
+ * dependency named version) is never the one rewritten.
+ */
+export function topLevelVersionRange(text) {
+	let depth = 0;
+	let i = 0;
+	const readString = (start) => {
+		let j = start + 1;
+		while (j < text.length && text[j] !== '"') j += text[j] === '\\' ? 2 : 1;
+		return j; // index of the closing quote
+	};
+	while (i < text.length) {
+		const ch = text[i];
+		if (ch === '"') {
+			const end = readString(i);
+			const key = text.slice(i + 1, end);
+			let k = end + 1;
+			while (/\s/.test(text[k] ?? '')) k++;
+			if (depth === 1 && key === 'version' && text[k] === ':') {
+				k++;
+				while (/\s/.test(text[k] ?? '')) k++;
+				if (text[k] !== '"') return null;
+				return { start: k + 1, end: readString(k) };
+			}
+			i = end + 1;
+			continue;
+		}
+		if (ch === '{' || ch === '[') depth++;
+		else if (ch === '}' || ch === ']') depth--;
+		i++;
+	}
+	return null;
+}
+
+/** Rewrites only the top-level version, keeping the file's formatting. */
 export function applyBump(cwd, bump) {
 	const path = join(cwd, bump.dir, 'package.json');
 	const text = readFileSync(path, 'utf-8');
-	const re = new RegExp(`("version"\\s*:\\s*")${bump.from.replace(/\./g, '\\.')}(")`);
-	if (!re.test(text)) {
-		throw new Error(`${path}: version ${bump.from} not found`);
+	const range = topLevelVersionRange(text);
+	if (!range || text.slice(range.start, range.end) !== bump.from) {
+		throw new Error(`${path}: top-level version ${bump.from} not found`);
 	}
-	writeFileSync(path, text.replace(re, `$1${bump.to}$2`));
+	writeFileSync(
+		path,
+		text.slice(0, range.start) + bump.to + text.slice(range.end),
+	);
 }
 
 /** The npm registry, read with the abbreviated packument (one request per package). */
 export function npmRegistry(base = 'https://registry.npmjs.org') {
 	return {
 		async versions(name) {
-			const url = `${base}/${name.replace('/', '%2F')}`;
+			const url = `${base}/${name.replaceAll('/', '%2F')}`;
 			for (let attempt = 1; ; attempt++) {
 				const res = await fetch(url, {
 					headers: { accept: 'application/vnd.npm.install-v1+json' },
@@ -256,7 +380,10 @@ export function npmRegistry(base = 'https://registry.npmjs.org') {
 	};
 }
 
-if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) {
+if (
+	process.argv[1] &&
+	import.meta.url === new URL(`file://${process.argv[1]}`).href
+) {
 	const args = process.argv.slice(2);
 	const dryRun = args.includes('--dry-run');
 	const outIdx = args.indexOf('--out');
@@ -268,7 +395,9 @@ if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).
 		registry: npmRegistry(),
 		log: (line) => console.log(line),
 	});
-	for (const t of plan.tags) console.log(`TAG ${t.tag} -> ${t.sha.slice(0, 9)}`);
+	for (const t of plan.tags)
+		console.log(`TAG ${t.tag} -> ${t.sha.slice(0, 9)}`);
+	for (const w of plan.waiting) console.log(`WAITING ${w.name}@${w.version}`);
 	for (const b of plan.bumps) {
 		console.log(`BUMP ${b.name} ${b.from} -> ${b.to} (${b.files.join(', ')})`);
 		if (!dryRun) applyBump(cwd, b);
