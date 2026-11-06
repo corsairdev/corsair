@@ -69,7 +69,8 @@ await corsair.adyntel.api.google.ads({ company_domain: 'clay.com', country_code:
     content?: string | null,
     height?: number | null,
     width?: number | null
-  }[] | null
+  }[] | null,
+  extracted_text?: string | null
 }[]
 ```
 </Accordion>
@@ -115,17 +116,22 @@ await corsair.adyntel.api.google.shopping({ company_domain: 'tesla.com', shoppin
 ```ts
 {
   advertiser_id?: string | null,
-  advertiser_name?: string | null,
   creative_id?: string | null,
-  original_url?: string | null,
+  title?: string | null,
   format?: string | null,
-  start?: string | null,
-  last_seen?: string | null,
-  variants?: {
-    content?: string | null,
+  first_shown?: string | null,
+  last_shown?: string | null,
+  url?: string | null,
+  preview_url?: string | null,
+  preview_image?: {
     height?: number | null,
-    width?: number | null
-  }[] | null
+    width?: number | null,
+    url?: string | null
+  } | null,
+  rank_group?: number | null,
+  rank_absolute?: number | null,
+  type?: string | null,
+  verified?: boolean | null
 }[]
 ```
 </Accordion>
@@ -169,17 +175,22 @@ await corsair.adyntel.api.google.shoppingStatus({ id: '12172142-7717-0066-0000-f
 ```ts
 {
   advertiser_id?: string | null,
-  advertiser_name?: string | null,
   creative_id?: string | null,
-  original_url?: string | null,
+  title?: string | null,
   format?: string | null,
-  start?: string | null,
-  last_seen?: string | null,
-  variants?: {
-    content?: string | null,
+  first_shown?: string | null,
+  last_shown?: string | null,
+  url?: string | null,
+  preview_url?: string | null,
+  preview_image?: {
     height?: number | null,
-    width?: number | null
-  }[] | null
+    width?: number | null,
+    url?: string | null
+  } | null,
+  rank_group?: number | null,
+  rank_absolute?: number | null,
+  type?: string | null,
+  verified?: boolean | null
 }[]
 ```
 </Accordion>
@@ -317,7 +328,7 @@ await corsair.adyntel.api.linkedin.ads({ company_domain: 'clay.com', date_filter
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `company_domain` | `string` | No | The bare domain, without `https://` or `www.`. |
-| `linkedin_page_id` | `string` | No | The numeric page ID, as a string or number. |
+| `linkedin_page_id` | `string \| number` | No | The numeric page ID, as a string or number. |
 | `linkedin_page_ids` | `string[]` | No | Batch mode: several pages in one call. |
 | `company_domains` | `string[]` | No | Batch mode: several domains in one call. |
 | `date_filter` | `object` | No | Cannot be combined with `impression_data`; together they are a 422. |
@@ -426,7 +437,7 @@ await corsair.adyntel.api.linkedin.keywordSearch({ keyword: 'webinar', country: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `keyword` | `string` | Yes | The phrase to search ads for. |
-| `country` | `string` | No | ISO 3166-1 alpha-2 code, e.g. `US`. Meta also accepts `ALL`. |
+| `country` | `string` | No | ISO 3166-1 alpha-2 code, e.g. `US`. |
 | `dateOption` | `current-month \| current-year \| last-30-days \| last-year \| custom-date-range` | No | `custom-date-range` needs `startDate` and `endDate`. |
 | `startDate` | `string` | No | `YYYY-MM-DD`. |
 | `endDate` | `string` | No | `YYYY-MM-DD`. |
@@ -565,6 +576,7 @@ await corsair.adyntel.api.meta.ads({ company_domain: 'zappos.com', media_type: '
   start_date?: number | null,
   end_date?: number | null,
   total_active_time?: number | null,
+  is_ugc_video?: boolean | null,
   snapshot?: {
     page_id?: string | number | null,
     page_name?: string | null,

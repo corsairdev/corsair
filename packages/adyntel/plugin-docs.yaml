@@ -14,8 +14,8 @@ overviewNote: |
   - **`all_ads` is a one-way door.** It follows the token to the end, costs one credit per page, needs a `webhook_url`, and the docs state there is no way to stop it.
   - **Webhooks are yours to receive.** Setting `webhook_url` makes Adyntel answer with a `jobId` and POST the results to that URL later. This plugin does not host that receiver; the response carries `jobId` or `jobIds` so you can tell a queued job from a result.
   - **Two filters reject rather than ignore.** On Meta, an unrecognised `language` is a 422 before anything is scraped. On Google, an unrecognised `media_type` is silently treated as `all`, so a typo widens the result instead of failing it.
-  - **Country support differs per endpoint.** Meta accepts one code or an array of up to 20 (the array needs `webhook_url` and costs one credit per country). Google accepts one per call. TikTok's keyword search accepts European codes only, and `US` is not one of them.
-  - **TikTok wraps its answers.** `tiktok.keywordSearch` and `tiktok.adDetails` return `{ code, data }` and send a non-zero `code` with a 200. The plugin throws on a non-zero code so a failure cannot read as "no ads".
+  - **Country support differs per endpoint.** Meta accepts one code or an array of up to 20 (the array needs `webhook_url` and costs one credit per country). Google accepts one per call. TikTok's keyword search accepts European codes only; the schema rejects `US` rather than letting the API answer with nothing.
+  - **TikTok wraps its answers.** `tiktok.keywordSearch` and `tiktok.adDetails` return `{ code, data }` and can send a non-zero `code` with a 200. The plugin throws an `AdyntelAPIError` on a non-zero code so a failure cannot read as "no ads"; its `providerCode` holds the code, and it is not retried because the scrape already ran.
 references:
   - title: Adyntel API reference
     url: https://docs.adyntel.com/openapi-docs/existing-endpoints
