@@ -1,5 +1,5 @@
 displayName: Prisma
-description: Prisma plugin for Corsair
+description: "Database platform API. Manage Prisma Postgres workspaces, projects, databases, API keys, backups and integrations, and run read-only queries, writes and schema inspection over Postgres."
 overviewNote: |
   Prisma is the company behind Prisma ORM and the Prisma Data Platform: Prisma
   Postgres (managed PostgreSQL), Accelerate (global database cache), and the
