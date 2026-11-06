@@ -64,11 +64,13 @@ export const create: FollowUpBossEndpoints['peopleCreate'] = (ctx, input) =>
 			output: Outputs.peopleCreate,
 		},
 		input,
-		({ deduplicate, ...body }) => ({
+		({ deduplicate, customFields, ...rest }) => ({
 			method: 'POST',
 			path: '/people',
 			query: { deduplicate },
-			body,
+			// FUB takes custom fields as top-level custom* keys, not a nested
+			// customFields object; the map merges into the payload.
+			body: { ...rest, ...(customFields ?? {}) },
 		}),
 		{
 			// 201 arrives as the created person, either bare or wrapped.
@@ -86,11 +88,12 @@ export const update: FollowUpBossEndpoints['peopleUpdate'] = (ctx, input) =>
 			output: Outputs.peopleUpdate,
 		},
 		input,
-		({ id, mergeTags, ...body }) => ({
+		({ id, mergeTags, customFields, ...rest }) => ({
 			method: 'PUT',
 			path: `/people/${segment(id)}`,
 			query: { mergeTags },
-			body,
+			// Same top-level custom* merge as create.
+			body: { ...rest, ...(customFields ?? {}) },
 		}),
 		{
 			shape: (raw) => envelopeOne(raw, 'people'),

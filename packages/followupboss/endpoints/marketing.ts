@@ -1,5 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type { FollowUpBossContext, FollowUpBossEndpoints } from '..';
+import type { FollowUpBossEndpoints } from '..';
 import { segment } from '../client';
 import { call, envelopeMany, envelopeMeta, envelopeOne } from './call';
 import {
@@ -138,138 +138,126 @@ export const templatesMerge: FollowUpBossEndpoints['templatesMerge'] = (
 
 // ── text message templates ─────────────────────────────────────────────────
 
-export const textMessageTemplatesList: FollowUpBossEndpoints['textMessageTemplatesList'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'textMessageTemplates.list',
-			input: Inputs.textMessageTemplatesList,
-			output: Outputs.textMessageTemplatesList,
-		},
-		input,
-		(query) => ({ method: 'GET', path: '/textMessageTemplates', query }),
-		{
-			shape: (raw) => ({
-				textmessagetemplates: envelopeMany(raw, 'textmessagetemplates'),
-				_metadata: envelopeMeta(raw),
-			}),
-			log: (_, result) => ({ count: result.textmessagetemplates.length }),
-		},
-	);
+export const textMessageTemplatesList: FollowUpBossEndpoints['textMessageTemplatesList'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'textMessageTemplates.list',
+				input: Inputs.textMessageTemplatesList,
+				output: Outputs.textMessageTemplatesList,
+			},
+			input,
+			(query) => ({ method: 'GET', path: '/textMessageTemplates', query }),
+			{
+				shape: (raw) => ({
+					textmessagetemplates: envelopeMany(raw, 'textmessagetemplates'),
+					_metadata: envelopeMeta(raw),
+				}),
+				log: (_, result) => ({ count: result.textmessagetemplates.length }),
+			},
+		);
 
 // The published OAS paths this create as POST '//textMessageTemplates' with a
 // doubled slash; the single-slash collection path its sibling GET uses is sent
 // instead.
-export const textMessageTemplatesCreate: FollowUpBossEndpoints['textMessageTemplatesCreate'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'textMessageTemplates.create',
-			input: Inputs.textMessageTemplatesCreate,
-			output: Outputs.textMessageTemplatesCreate,
-		},
-		input,
-		(body) => ({ method: 'POST', path: '/textMessageTemplates', body }),
-		{
-			// Unlike the email template create, this one answers 200, not 201.
-			shape: (raw) => envelopeOne(raw, 'textmessagetemplates'),
-			log: (_, result) => ({ textMessageTemplateId: result.id ?? undefined }),
-		},
-	);
+export const textMessageTemplatesCreate: FollowUpBossEndpoints['textMessageTemplatesCreate'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'textMessageTemplates.create',
+				input: Inputs.textMessageTemplatesCreate,
+				output: Outputs.textMessageTemplatesCreate,
+			},
+			input,
+			(body) => ({ method: 'POST', path: '/textMessageTemplates', body }),
+			{
+				// Unlike the email template create, this one answers 200, not 201.
+				shape: (raw) => envelopeOne(raw, 'textmessagetemplates'),
+				log: (_, result) => ({ textMessageTemplateId: result.id ?? undefined }),
+			},
+		);
 
-export const textMessageTemplatesGet: FollowUpBossEndpoints['textMessageTemplatesGet'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'textMessageTemplates.get',
-			input: Inputs.textMessageTemplatesGet,
-			output: Outputs.textMessageTemplatesGet,
-		},
-		input,
-		({ id }) => ({
-			method: 'GET',
-			path: `/textMessageTemplates/${segment(id)}`,
-		}),
-		{
-			shape: (raw) => envelopeOne(raw, 'textmessagetemplates'),
-			log: ({ id }) => ({ textMessageTemplateId: id }),
-		},
-	);
+export const textMessageTemplatesGet: FollowUpBossEndpoints['textMessageTemplatesGet'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'textMessageTemplates.get',
+				input: Inputs.textMessageTemplatesGet,
+				output: Outputs.textMessageTemplatesGet,
+			},
+			input,
+			({ id }) => ({
+				method: 'GET',
+				path: `/textMessageTemplates/${segment(id)}`,
+			}),
+			{
+				shape: (raw) => envelopeOne(raw, 'textmessagetemplates'),
+				log: ({ id }) => ({ textMessageTemplateId: id }),
+			},
+		);
 
-export const textMessageTemplatesUpdate: FollowUpBossEndpoints['textMessageTemplatesUpdate'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'textMessageTemplates.update',
-			input: Inputs.textMessageTemplatesUpdate,
-			output: Outputs.textMessageTemplatesUpdate,
-		},
-		input,
-		({ id, ...body }) => ({
-			method: 'PUT',
-			path: `/textMessageTemplates/${segment(id)}`,
-			body,
-		}),
-		{
-			shape: (raw) => envelopeOne(raw, 'textmessagetemplates'),
-			log: ({ id }) => ({ textMessageTemplateId: id }),
-		},
-	);
+export const textMessageTemplatesUpdate: FollowUpBossEndpoints['textMessageTemplatesUpdate'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'textMessageTemplates.update',
+				input: Inputs.textMessageTemplatesUpdate,
+				output: Outputs.textMessageTemplatesUpdate,
+			},
+			input,
+			({ id, ...body }) => ({
+				method: 'PUT',
+				path: `/textMessageTemplates/${segment(id)}`,
+				body,
+			}),
+			{
+				shape: (raw) => envelopeOne(raw, 'textmessagetemplates'),
+				log: ({ id }) => ({ textMessageTemplateId: id }),
+			},
+		);
 
-export const textMessageTemplatesDelete: FollowUpBossEndpoints['textMessageTemplatesDelete'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'textMessageTemplates.delete',
-			input: Inputs.textMessageTemplatesDelete,
-			output: Outputs.textMessageTemplatesDelete,
-		},
-		input,
-		({ id }) => ({
-			method: 'DELETE',
-			path: `/textMessageTemplates/${segment(id)}`,
-		}),
-		{
-			// unknown: the 200 body is an empty `{}` per the spec, but FUB may
-			// echo the deleted template.
-			shape: (raw, { id }) => ({ id, resource: asRecord(raw) }),
-			log: ({ id }) => ({ textMessageTemplateId: id }),
-		},
-	);
+export const textMessageTemplatesDelete: FollowUpBossEndpoints['textMessageTemplatesDelete'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'textMessageTemplates.delete',
+				input: Inputs.textMessageTemplatesDelete,
+				output: Outputs.textMessageTemplatesDelete,
+			},
+			input,
+			({ id }) => ({
+				method: 'DELETE',
+				path: `/textMessageTemplates/${segment(id)}`,
+			}),
+			{
+				// unknown: the 200 body is an empty `{}` per the spec, but FUB may
+				// echo the deleted template.
+				shape: (raw, { id }) => ({ id, resource: asRecord(raw) }),
+				log: ({ id }) => ({ textMessageTemplateId: id }),
+			},
+		);
 
-export const textMessageTemplatesMerge: FollowUpBossEndpoints['textMessageTemplatesMerge'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'textMessageTemplates.merge',
-			input: Inputs.textMessageTemplatesMerge,
-			output: Outputs.textMessageTemplatesMerge,
-		},
-		input,
-		(body) => ({ method: 'POST', path: '/textMessageTemplates/merge', body }),
-		{
-			shape: (raw) => envelopeOne(raw, 'textmessagetemplates'),
-			log: ({ templateId }) => ({ templateId }),
-		},
-	);
+export const textMessageTemplatesMerge: FollowUpBossEndpoints['textMessageTemplatesMerge'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'textMessageTemplates.merge',
+				input: Inputs.textMessageTemplatesMerge,
+				output: Outputs.textMessageTemplatesMerge,
+			},
+			input,
+			(body) => ({ method: 'POST', path: '/textMessageTemplates/merge', body }),
+			{
+				shape: (raw) => envelopeOne(raw, 'textmessagetemplates'),
+				log: ({ templateId }) => ({ templateId }),
+			},
+		);
 
 // ── email marketing campaigns ──────────────────────────────────────────────
 
@@ -382,7 +370,7 @@ export const emEventsCreate: FollowUpBossEndpoints['emEventsCreate'] = (
 		{
 			// unknown: the notify answers 200 with the id lists; an empty body
 			// passes as an empty result.
-			shape: (raw) => (raw === undefined ? {} : (asRecord(raw) ?? {})),
+			shape: (raw) => (raw === undefined ? {} : raw),
 			log: (_, result) => ({ count: result.emEventIds?.length ?? 0 }),
 		},
 	);

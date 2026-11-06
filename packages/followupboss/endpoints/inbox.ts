@@ -1,5 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type { FollowUpBossContext, FollowUpBossEndpoints } from '..';
+import type { FollowUpBossEndpoints } from '..';
 import { segment } from '../client';
 import { call, envelopeMany, envelopeMeta, envelopeOne } from './call';
 import {
@@ -37,79 +37,75 @@ export const inboxAppsDeactivate: FollowUpBossEndpoints['inboxAppsDeactivate'] =
 			},
 		);
 
-export const inboxAppsDeleteParticipant: FollowUpBossEndpoints['inboxAppsDeleteParticipant'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'inboxApps.deleteParticipant',
-			input: Inputs.inboxAppsDeleteParticipant,
-			output: Outputs.inboxAppsDeleteParticipant,
-		},
-		input,
-		({ inboxAppId, extConversationId, participantId }) => ({
-			method: 'DELETE',
-			path: `/inboxApps/${segment(inboxAppId)}/conversations/${segment(extConversationId)}/participants/${segment(participantId)}`,
-		}),
-		{
-			// Removal answers 204 with no body.
-			shape: (_, { participantId }) => ({ success: true, participantId }),
-			log: ({ inboxAppId, extConversationId, participantId }) => ({
-				inboxAppId,
-				extConversationId,
-				participantId,
+export const inboxAppsDeleteParticipant: FollowUpBossEndpoints['inboxAppsDeleteParticipant'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'inboxApps.deleteParticipant',
+				input: Inputs.inboxAppsDeleteParticipant,
+				output: Outputs.inboxAppsDeleteParticipant,
+			},
+			input,
+			({ inboxAppId, extConversationId, participantId }) => ({
+				method: 'DELETE',
+				path: `/inboxApps/${segment(inboxAppId)}/conversations/${segment(extConversationId)}/participants/${segment(participantId)}`,
 			}),
-		},
-	);
+			{
+				// Removal answers 204 with no body.
+				shape: (_, { participantId }) => ({ success: true, participantId }),
+				log: ({ inboxAppId, extConversationId, participantId }) => ({
+					inboxAppId,
+					extConversationId,
+					participantId,
+				}),
+			},
+		);
 
-export const inboxAppsGetParticipants: FollowUpBossEndpoints['inboxAppsGetParticipants'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'inboxApps.getParticipants',
-			input: Inputs.inboxAppsGetParticipants,
-			output: Outputs.inboxAppsGetParticipants,
-		},
-		input,
-		({ inboxAppId, extConversationId }) => ({
-			method: 'GET',
-			path: `/inboxApps/${segment(inboxAppId)}/conversations/${segment(extConversationId)}/participants`,
-		}),
-		{
-			// The participants list is a bare array, not an envelope.
-			shape: (raw) => (Array.isArray(raw) ? raw : []),
-			log: (_, result) => ({ count: result.length }),
-		},
-	);
+export const inboxAppsGetParticipants: FollowUpBossEndpoints['inboxAppsGetParticipants'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'inboxApps.getParticipants',
+				input: Inputs.inboxAppsGetParticipants,
+				output: Outputs.inboxAppsGetParticipants,
+			},
+			input,
+			({ inboxAppId, extConversationId }) => ({
+				method: 'GET',
+				path: `/inboxApps/${segment(inboxAppId)}/conversations/${segment(extConversationId)}/participants`,
+			}),
+			{
+				// The participants list is a bare array, not an envelope. A missing
+				// body stays empty; anything defined passes through so the output
+				// schema's z.array rejects malformed replies instead of masking them.
+				shape: (raw) => (raw === undefined ? [] : raw),
+				log: (_, result) => ({ count: result.length }),
+			},
+		);
 
-export const inboxAppsCreateParticipant: FollowUpBossEndpoints['inboxAppsCreateParticipant'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'inboxApps.createParticipant',
-			input: Inputs.inboxAppsCreateParticipant,
-			output: Outputs.inboxAppsCreateParticipant,
-		},
-		input,
-		({ inboxAppId, extConversationId, body }) => ({
-			method: 'POST',
-			path: `/inboxApps/${segment(inboxAppId)}/conversations/${segment(extConversationId)}/participants`,
-			body,
-		}),
-		{
-			// Adding a participant answers 201 with the participant.
-			shape: (raw) => envelopeOne(raw, 'participants'),
-			log: (_, result) => ({ participantId: result.id ?? undefined }),
-		},
-	);
+export const inboxAppsCreateParticipant: FollowUpBossEndpoints['inboxAppsCreateParticipant'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'inboxApps.createParticipant',
+				input: Inputs.inboxAppsCreateParticipant,
+				output: Outputs.inboxAppsCreateParticipant,
+			},
+			input,
+			({ inboxAppId, extConversationId, body }) => ({
+				method: 'POST',
+				path: `/inboxApps/${segment(inboxAppId)}/conversations/${segment(extConversationId)}/participants`,
+				body,
+			}),
+			{
+				// Adding a participant answers 201 with the participant.
+				shape: (raw) => envelopeOne(raw, 'participants'),
+				log: (_, result) => ({ participantId: result.id ?? undefined }),
+			},
+		);
 
 export const inboxAppsAddMessage: FollowUpBossEndpoints['inboxAppsAddMessage'] =
 	(ctx, input) =>
@@ -157,29 +153,27 @@ export const inboxAppsAddNote: FollowUpBossEndpoints['inboxAppsAddNote'] = (
 		},
 	);
 
-export const inboxAppsAddSystemConfirmationMessage: FollowUpBossEndpoints['inboxAppsAddSystemConfirmationMessage'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'inboxApps.addSystemConfirmationMessage',
-			input: Inputs.inboxAppsAddSystemConfirmationMessage,
-			output: Outputs.inboxAppsAddSystemConfirmationMessage,
-		},
-		input,
-		({ inboxAppId, ...body }) => ({
-			method: 'POST',
-			path: `/inboxApps/${segment(inboxAppId)}/systemMessage`,
-			body,
-		}),
-		{
-			// Adding a system confirmation message answers 201 with the message.
-			shape: (raw) => envelopeOne(raw, 'messages'),
-			log: (_, result) => ({ messageId: result.id ?? undefined }),
-		},
-	);
+export const inboxAppsAddSystemConfirmationMessage: FollowUpBossEndpoints['inboxAppsAddSystemConfirmationMessage'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'inboxApps.addSystemConfirmationMessage',
+				input: Inputs.inboxAppsAddSystemConfirmationMessage,
+				output: Outputs.inboxAppsAddSystemConfirmationMessage,
+			},
+			input,
+			({ inboxAppId, ...body }) => ({
+				method: 'POST',
+				path: `/inboxApps/${segment(inboxAppId)}/systemMessage`,
+				body,
+			}),
+			{
+				// Adding a system confirmation message answers 201 with the message.
+				shape: (raw) => envelopeOne(raw, 'messages'),
+				log: (_, result) => ({ messageId: result.id ?? undefined }),
+			},
+		);
 
 export const inboxAppsInstall: FollowUpBossEndpoints['inboxAppsInstall'] = (
 	ctx,
@@ -201,76 +195,70 @@ export const inboxAppsInstall: FollowUpBossEndpoints['inboxAppsInstall'] = (
 		},
 	);
 
-export const inboxAppsUpdateConversation: FollowUpBossEndpoints['inboxAppsUpdateConversation'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'inboxApps.updateConversation',
-			input: Inputs.inboxAppsUpdateConversation,
-			output: Outputs.inboxAppsUpdateConversation,
-		},
-		input,
-		({ inboxAppId, extConversationId, ...body }) => ({
-			method: 'PUT',
-			path: `/inboxApps/${segment(inboxAppId)}/conversations/${segment(extConversationId)}`,
-			body,
-		}),
-		{
-			shape: (raw) => envelopeOne(raw, 'conversations'),
-			log: ({ inboxAppId, extConversationId }) => ({
-				inboxAppId,
-				extConversationId,
+export const inboxAppsUpdateConversation: FollowUpBossEndpoints['inboxAppsUpdateConversation'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'inboxApps.updateConversation',
+				input: Inputs.inboxAppsUpdateConversation,
+				output: Outputs.inboxAppsUpdateConversation,
+			},
+			input,
+			({ inboxAppId, extConversationId, ...body }) => ({
+				method: 'PUT',
+				path: `/inboxApps/${segment(inboxAppId)}/conversations/${segment(extConversationId)}`,
+				body,
 			}),
-		},
-	);
+			{
+				shape: (raw) => envelopeOne(raw, 'conversations'),
+				log: ({ inboxAppId, extConversationId }) => ({
+					inboxAppId,
+					extConversationId,
+				}),
+			},
+		);
 
-export const inboxAppsUpdateMessage: FollowUpBossEndpoints['inboxAppsUpdateMessage'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'inboxApps.updateMessage',
-			input: Inputs.inboxAppsUpdateMessage,
-			output: Outputs.inboxAppsUpdateMessage,
-		},
-		input,
-		({ inboxAppId, ...body }) => ({
-			method: 'PUT',
-			path: `/inboxApps/${segment(inboxAppId)}/message`,
-			body,
-		}),
-		{
-			shape: (raw) => envelopeOne(raw, 'messages'),
-			log: ({ inboxAppId }) => ({ inboxAppId }),
-		},
-	);
+export const inboxAppsUpdateMessage: FollowUpBossEndpoints['inboxAppsUpdateMessage'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'inboxApps.updateMessage',
+				input: Inputs.inboxAppsUpdateMessage,
+				output: Outputs.inboxAppsUpdateMessage,
+			},
+			input,
+			({ inboxAppId, ...body }) => ({
+				method: 'PUT',
+				path: `/inboxApps/${segment(inboxAppId)}/message`,
+				body,
+			}),
+			{
+				shape: (raw) => envelopeOne(raw, 'messages'),
+				log: ({ inboxAppId }) => ({ inboxAppId }),
+			},
+		);
 
-export const inboxAppsInstalledApp: FollowUpBossEndpoints['inboxAppsInstalledApp'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'inboxApps.installedApp',
-			input: Inputs.inboxAppsInstalledApp,
-			output: Outputs.inboxAppsInstalledApp,
-		},
-		input,
-		({ publishedInboxAppId }) => ({
-			method: 'GET',
-			path: `/inboxApps/installedApps/${segment(publishedInboxAppId)}`,
-		}),
-		{
-			shape: (raw) => ({ inboxApps: envelopeMany(raw, 'inboxApps') }),
-			log: (_, result) => ({ count: result.inboxApps.length }),
-		},
-	);
+export const inboxAppsInstalledApp: FollowUpBossEndpoints['inboxAppsInstalledApp'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'inboxApps.installedApp',
+				input: Inputs.inboxAppsInstalledApp,
+				output: Outputs.inboxAppsInstalledApp,
+			},
+			input,
+			({ publishedInboxAppId }) => ({
+				method: 'GET',
+				path: `/inboxApps/installedApps/${segment(publishedInboxAppId)}`,
+			}),
+			{
+				shape: (raw) => ({ inboxApps: envelopeMany(raw, 'inboxApps') }),
+				log: (_, result) => ({ count: result.inboxApps.length }),
+			},
+		);
 
 // ── teamInboxes ────────────────────────────────────────────────────────────
 

@@ -419,8 +419,10 @@ export type PondsGetResponse = z.infer<typeof PondsGetResponseSchema>;
 const PondsUpdateInputSchema = z.object({
 	id: IdSchema.describe('The pond ID.'),
 	name: z.string().optional(),
-	userId: IdSchema.optional(),
-	userIds: z.array(z.number().int()).optional(),
+	// The published PUT types userId/userIds as strings while every other
+	// surface uses integers; both spellings are accepted and integers kept.
+	userId: z.union([IdSchema, z.string().regex(/^\d+$/)]).optional(),
+	userIds: z.array(z.union([IdSchema, z.string().regex(/^\d+$/)])).optional(),
 });
 
 export type PondsUpdateInput = z.infer<typeof PondsUpdateInputSchema>;

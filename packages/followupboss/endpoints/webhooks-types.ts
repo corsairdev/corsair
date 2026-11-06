@@ -168,7 +168,10 @@ const WebhooksCreateInputSchema = z.object({
 		.describe('The event the webhook responds to.'),
 	url: z
 		.string()
-		.describe('The webhook endpoint URL; must be a secure https endpoint.'),
+		.url()
+		.refine((value) => value.startsWith('https://'), {
+			message: 'The webhook endpoint must use https.',
+		}),
 });
 
 export type WebhooksCreateInput = z.infer<typeof WebhooksCreateInputSchema>;

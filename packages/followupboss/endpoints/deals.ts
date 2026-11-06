@@ -1,5 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type { FollowUpBossContext, FollowUpBossEndpoints } from '..';
+import type { FollowUpBossEndpoints } from '..';
 import { segment } from '../client';
 import { call, envelopeMany, envelopeMeta, envelopeOne } from './call';
 import {
@@ -334,27 +334,25 @@ export const stagesDelete: FollowUpBossEndpoints['stagesDelete'] = (
 
 // ── deal custom fields ─────────────────────────────────────────────────────
 
-export const dealCustomFieldsList: FollowUpBossEndpoints['dealCustomFieldsList'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'dealCustomFields.list',
-			input: Inputs.dealCustomFieldsList,
-			output: Outputs.dealCustomFieldsList,
-		},
-		input,
-		(query) => ({ method: 'GET', path: '/dealCustomFields', query }),
-		{
-			shape: (raw) => ({
-				dealCustomfields: dealCustomFieldsMany(raw),
-				_metadata: envelopeMeta(raw),
-			}),
-			log: (_, result) => ({ count: result.dealCustomfields.length }),
-		},
-	);
+export const dealCustomFieldsList: FollowUpBossEndpoints['dealCustomFieldsList'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'dealCustomFields.list',
+				input: Inputs.dealCustomFieldsList,
+				output: Outputs.dealCustomFieldsList,
+			},
+			input,
+			(query) => ({ method: 'GET', path: '/dealCustomFields', query }),
+			{
+				shape: (raw) => ({
+					dealCustomfields: dealCustomFieldsMany(raw),
+					_metadata: envelopeMeta(raw),
+				}),
+				log: (_, result) => ({ count: result.dealCustomfields.length }),
+			},
+		);
 
 export const dealCustomFieldsGet: FollowUpBossEndpoints['dealCustomFieldsGet'] =
 	(ctx, input) =>
@@ -373,92 +371,84 @@ export const dealCustomFieldsGet: FollowUpBossEndpoints['dealCustomFieldsGet'] =
 			},
 		);
 
-export const dealCustomFieldsCreate: FollowUpBossEndpoints['dealCustomFieldsCreate'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'dealCustomFields.create',
-			input: Inputs.dealCustomFieldsCreate,
-			output: Outputs.dealCustomFieldsCreate,
-		},
-		input,
-		(body) => ({ method: 'POST', path: '/dealCustomFields', body }),
-		{
-			shape: (raw) => envelopeOne(raw, 'dealCustomfields'),
-			log: (_, result) => ({ customFieldId: result.id ?? undefined }),
-		},
-	);
+export const dealCustomFieldsCreate: FollowUpBossEndpoints['dealCustomFieldsCreate'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'dealCustomFields.create',
+				input: Inputs.dealCustomFieldsCreate,
+				output: Outputs.dealCustomFieldsCreate,
+			},
+			input,
+			(body) => ({ method: 'POST', path: '/dealCustomFields', body }),
+			{
+				shape: (raw) => envelopeOne(raw, 'dealCustomfields'),
+				log: (_, result) => ({ customFieldId: result.id ?? undefined }),
+			},
+		);
 
-export const dealCustomFieldsUpdate: FollowUpBossEndpoints['dealCustomFieldsUpdate'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'dealCustomFields.update',
-			input: Inputs.dealCustomFieldsUpdate,
-			output: Outputs.dealCustomFieldsUpdate,
-		},
-		input,
-		({ id, ...body }) => ({
-			method: 'PUT',
-			path: `/dealCustomFields/${segment(id)}`,
-			body,
-		}),
-		{
-			shape: (raw) => envelopeOne(raw, 'dealCustomfields'),
-			log: ({ id }) => ({ customFieldId: id }),
-		},
-	);
+export const dealCustomFieldsUpdate: FollowUpBossEndpoints['dealCustomFieldsUpdate'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'dealCustomFields.update',
+				input: Inputs.dealCustomFieldsUpdate,
+				output: Outputs.dealCustomFieldsUpdate,
+			},
+			input,
+			({ id, ...body }) => ({
+				method: 'PUT',
+				path: `/dealCustomFields/${segment(id)}`,
+				body,
+			}),
+			{
+				shape: (raw) => envelopeOne(raw, 'dealCustomfields'),
+				log: ({ id }) => ({ customFieldId: id }),
+			},
+		);
 
-export const dealCustomFieldsDelete: FollowUpBossEndpoints['dealCustomFieldsDelete'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'dealCustomFields.delete',
-			input: Inputs.dealCustomFieldsDelete,
-			output: Outputs.dealCustomFieldsDelete,
-		},
-		input,
-		({ id }) => ({
-			method: 'DELETE',
-			path: `/dealCustomFields/${segment(id)}`,
-		}),
-		{
-			// unknown: the 200 body is documented as empty here.
-			shape: (raw, { id }) => ({ id, resource: asRecord(raw) }),
-			log: ({ id }) => ({ customFieldId: id }),
-		},
-	);
+export const dealCustomFieldsDelete: FollowUpBossEndpoints['dealCustomFieldsDelete'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'dealCustomFields.delete',
+				input: Inputs.dealCustomFieldsDelete,
+				output: Outputs.dealCustomFieldsDelete,
+			},
+			input,
+			({ id }) => ({
+				method: 'DELETE',
+				path: `/dealCustomFields/${segment(id)}`,
+			}),
+			{
+				// unknown: the 200 body is documented as empty here.
+				shape: (raw, { id }) => ({ id, resource: asRecord(raw) }),
+				log: ({ id }) => ({ customFieldId: id }),
+			},
+		);
 
 // ── deal attachments ───────────────────────────────────────────────────────
 
-export const dealAttachmentsCreate: FollowUpBossEndpoints['dealAttachmentsCreate'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'dealAttachments.create',
-			input: Inputs.dealAttachmentsCreate,
-			output: Outputs.dealAttachmentsCreate,
-		},
-		input,
-		(body) => ({ method: 'POST', path: '/dealAttachments', body }),
-		{
-			// 201 arrives as the bare attachment.
-			shape: (raw) => envelopeOne(raw, 'dealAttachments'),
-			log: (_, result) => ({ attachmentId: result.id ?? undefined }),
-		},
-	);
+export const dealAttachmentsCreate: FollowUpBossEndpoints['dealAttachmentsCreate'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'dealAttachments.create',
+				input: Inputs.dealAttachmentsCreate,
+				output: Outputs.dealAttachmentsCreate,
+			},
+			input,
+			(body) => ({ method: 'POST', path: '/dealAttachments', body }),
+			{
+				// 201 arrives as the bare attachment.
+				shape: (raw) => envelopeOne(raw, 'dealAttachments'),
+				log: (_, result) => ({ attachmentId: result.id ?? undefined }),
+			},
+		);
 
 export const dealAttachmentsGet: FollowUpBossEndpoints['dealAttachmentsGet'] = (
 	ctx,
@@ -479,162 +469,148 @@ export const dealAttachmentsGet: FollowUpBossEndpoints['dealAttachmentsGet'] = (
 		},
 	);
 
-export const dealAttachmentsUpdate: FollowUpBossEndpoints['dealAttachmentsUpdate'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'dealAttachments.update',
-			input: Inputs.dealAttachmentsUpdate,
-			output: Outputs.dealAttachmentsUpdate,
-		},
-		input,
-		({ id, ...body }) => ({
-			method: 'PUT',
-			path: `/dealAttachments/${segment(id)}`,
-			body,
-		}),
-		{
-			shape: (raw) => envelopeOne(raw, 'dealAttachments'),
-			log: ({ id }) => ({ attachmentId: id }),
-		},
-	);
+export const dealAttachmentsUpdate: FollowUpBossEndpoints['dealAttachmentsUpdate'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'dealAttachments.update',
+				input: Inputs.dealAttachmentsUpdate,
+				output: Outputs.dealAttachmentsUpdate,
+			},
+			input,
+			({ id, ...body }) => ({
+				method: 'PUT',
+				path: `/dealAttachments/${segment(id)}`,
+				body,
+			}),
+			{
+				shape: (raw) => envelopeOne(raw, 'dealAttachments'),
+				log: ({ id }) => ({ attachmentId: id }),
+			},
+		);
 
-export const dealAttachmentsDelete: FollowUpBossEndpoints['dealAttachmentsDelete'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'dealAttachments.delete',
-			input: Inputs.dealAttachmentsDelete,
-			output: Outputs.dealAttachmentsDelete,
-		},
-		input,
-		({ id }) => ({
-			method: 'DELETE',
-			path: `/dealAttachments/${segment(id)}`,
-		}),
-		{
-			// unknown: FUB may echo the deleted attachment in the 200 body.
-			shape: (raw, { id }) => ({ id, resource: asRecord(raw) }),
-			log: ({ id }) => ({ attachmentId: id }),
-		},
-	);
+export const dealAttachmentsDelete: FollowUpBossEndpoints['dealAttachmentsDelete'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'dealAttachments.delete',
+				input: Inputs.dealAttachmentsDelete,
+				output: Outputs.dealAttachmentsDelete,
+			},
+			input,
+			({ id }) => ({
+				method: 'DELETE',
+				path: `/dealAttachments/${segment(id)}`,
+			}),
+			{
+				// unknown: FUB may echo the deleted attachment in the 200 body.
+				shape: (raw, { id }) => ({ id, resource: asRecord(raw) }),
+				log: ({ id }) => ({ attachmentId: id }),
+			},
+		);
 
 // ── appointment outcomes ───────────────────────────────────────────────────
 
-export const appointmentOutcomesList: FollowUpBossEndpoints['appointmentOutcomesList'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'appointmentOutcomes.list',
-			input: Inputs.appointmentOutcomesList,
-			output: Outputs.appointmentOutcomesList,
-		},
-		input,
-		(query) => ({ method: 'GET', path: '/appointmentOutcomes', query }),
-		{
-			shape: (raw) => ({
-				appointmentoutcomes: appointmentOutcomesMany(raw),
-				_metadata: envelopeMeta(raw),
+export const appointmentOutcomesList: FollowUpBossEndpoints['appointmentOutcomesList'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'appointmentOutcomes.list',
+				input: Inputs.appointmentOutcomesList,
+				output: Outputs.appointmentOutcomesList,
+			},
+			input,
+			(query) => ({ method: 'GET', path: '/appointmentOutcomes', query }),
+			{
+				shape: (raw) => ({
+					appointmentoutcomes: appointmentOutcomesMany(raw),
+					_metadata: envelopeMeta(raw),
+				}),
+				log: (_, result) => ({ count: result.appointmentoutcomes.length }),
+			},
+		);
+
+export const appointmentOutcomesGet: FollowUpBossEndpoints['appointmentOutcomesGet'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'appointmentOutcomes.get',
+				input: Inputs.appointmentOutcomesGet,
+				output: Outputs.appointmentOutcomesGet,
+			},
+			input,
+			({ id }) => ({
+				method: 'GET',
+				path: `/appointmentOutcomes/${segment(id)}`,
 			}),
-			log: (_, result) => ({ count: result.appointmentoutcomes.length }),
-		},
-	);
+			{
+				shape: (raw) => envelopeOne(raw, 'appointmentoutcomes'),
+				log: ({ id }) => ({ outcomeId: id }),
+			},
+		);
 
-export const appointmentOutcomesGet: FollowUpBossEndpoints['appointmentOutcomesGet'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'appointmentOutcomes.get',
-			input: Inputs.appointmentOutcomesGet,
-			output: Outputs.appointmentOutcomesGet,
-		},
-		input,
-		({ id }) => ({
-			method: 'GET',
-			path: `/appointmentOutcomes/${segment(id)}`,
-		}),
-		{
-			shape: (raw) => envelopeOne(raw, 'appointmentoutcomes'),
-			log: ({ id }) => ({ outcomeId: id }),
-		},
-	);
+export const appointmentOutcomesCreate: FollowUpBossEndpoints['appointmentOutcomesCreate'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'appointmentOutcomes.create',
+				input: Inputs.appointmentOutcomesCreate,
+				output: Outputs.appointmentOutcomesCreate,
+			},
+			input,
+			(body) => ({ method: 'POST', path: '/appointmentOutcomes', body }),
+			{
+				shape: (raw) => envelopeOne(raw, 'appointmentoutcomes'),
+				log: (_, result) => ({ outcomeId: result.id ?? undefined }),
+			},
+		);
 
-export const appointmentOutcomesCreate: FollowUpBossEndpoints['appointmentOutcomesCreate'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'appointmentOutcomes.create',
-			input: Inputs.appointmentOutcomesCreate,
-			output: Outputs.appointmentOutcomesCreate,
-		},
-		input,
-		(body) => ({ method: 'POST', path: '/appointmentOutcomes', body }),
-		{
-			shape: (raw) => envelopeOne(raw, 'appointmentoutcomes'),
-			log: (_, result) => ({ outcomeId: result.id ?? undefined }),
-		},
-	);
-
-export const appointmentOutcomesUpdate: FollowUpBossEndpoints['appointmentOutcomesUpdate'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'appointmentOutcomes.update',
-			input: Inputs.appointmentOutcomesUpdate,
-			output: Outputs.appointmentOutcomesUpdate,
-		},
-		input,
-		({ id, ...body }) => ({
-			method: 'PUT',
-			path: `/appointmentOutcomes/${segment(id)}`,
-			body,
-		}),
-		{
-			shape: (raw) => envelopeOne(raw, 'appointmentoutcomes'),
-			log: ({ id }) => ({ outcomeId: id }),
-		},
-	);
+export const appointmentOutcomesUpdate: FollowUpBossEndpoints['appointmentOutcomesUpdate'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'appointmentOutcomes.update',
+				input: Inputs.appointmentOutcomesUpdate,
+				output: Outputs.appointmentOutcomesUpdate,
+			},
+			input,
+			({ id, ...body }) => ({
+				method: 'PUT',
+				path: `/appointmentOutcomes/${segment(id)}`,
+				body,
+			}),
+			{
+				shape: (raw) => envelopeOne(raw, 'appointmentoutcomes'),
+				log: ({ id }) => ({ outcomeId: id }),
+			},
+		);
 
 // Deleting an outcome requires the query parameter that reassigns the
 // existing appointments to another outcome, and the 200 body is an array.
-export const appointmentOutcomesDelete: FollowUpBossEndpoints['appointmentOutcomesDelete'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'appointmentOutcomes.delete',
-			input: Inputs.appointmentOutcomesDelete,
-			output: Outputs.appointmentOutcomesDelete,
-		},
-		input,
-		({ id, assignOutcomeId }) => ({
-			method: 'DELETE',
-			path: `/appointmentOutcomes/${segment(id)}`,
-			query: { assignOutcomeId },
-		}),
-		{
-			// unknown: the 200 body is an empty array, not a record.
-			shape: (raw, { id }) => ({ id, resource: asRecord(raw) }),
-			log: ({ id, assignOutcomeId }) => ({ outcomeId: id, assignOutcomeId }),
-		},
-	);
+export const appointmentOutcomesDelete: FollowUpBossEndpoints['appointmentOutcomesDelete'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'appointmentOutcomes.delete',
+				input: Inputs.appointmentOutcomesDelete,
+				output: Outputs.appointmentOutcomesDelete,
+			},
+			input,
+			({ id, assignOutcomeId }) => ({
+				method: 'DELETE',
+				path: `/appointmentOutcomes/${segment(id)}`,
+				query: { assignOutcomeId },
+			}),
+			{
+				// unknown: the 200 body is an empty array, not a record.
+				shape: (raw, { id }) => ({ id, resource: asRecord(raw) }),
+				log: ({ id, assignOutcomeId }) => ({ outcomeId: id, assignOutcomeId }),
+			},
+		);

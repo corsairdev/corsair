@@ -336,7 +336,7 @@ apiExamples:
   inboxApps.updateConversation:
     call: "{ inboxAppId: 'app_123', extConversationId: 'conv_88', name: 'Offer negotiation' }"
   inboxApps.updateMessage:
-    call: "{ inboxAppId: 'app_123', externalMessageId: 'msg_910', message: 'Offer accepted and signed!' }"
+    call: "{ inboxAppId: 'app_123', externalMessageId: 'msg_910', deliveryStatus: 'Read' }"
   inboxApps.installedApp:
     call: "{ publishedInboxAppId: 'pub_app_1' }"
   teamInboxes.list:

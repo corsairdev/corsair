@@ -55,7 +55,7 @@ export const ThreadedReplySchema = z
 		refType: z.string().nullish(),
 		refId: IdSchema.nullish(),
 		body: z.string().nullish(),
-		reactions: ReactionSchema.nullish(),
+		reactions: z.union([ReactionSchema, z.array(ReactionSchema)]).nullish(),
 	})
 	.loose();
 

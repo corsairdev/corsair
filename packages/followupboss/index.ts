@@ -1857,6 +1857,10 @@ export function followupboss<const T extends FollowUpBossPluginOptions>(
 
 export { FollowUpBossAPIError } from './client';
 export type {
+	FollowUpBossEndpointInputs,
+	FollowUpBossEndpointOutputs,
+} from './endpoints/registry';
+export type {
 	FollowUpBossAppointment,
 	FollowUpBossAppointmentType,
 	FollowUpBossCall,
@@ -1872,8 +1876,4 @@ export type {
 	FollowUpBossTask,
 	FollowUpBossTextMessage,
 } from './endpoints/types';
-export type {
-	FollowUpBossEndpointInputs,
-	FollowUpBossEndpointOutputs,
-} from './endpoints/registry';
 export { TASK_TYPES } from './endpoints/types';
