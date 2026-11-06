@@ -608,15 +608,6 @@ export const ListEmployeesInputSchema = z
 
 export const ListEmployeesOutputSchema = passthroughResponse;
 
-export const ListIntegrationsInputSchema = z
-	.object({
-		limit: z.number().optional(),
-		offset: z.number().optional(),
-	})
-	.passthrough(); // NetSuite responses may include additional fields beyond those declared
-
-export const ListIntegrationsOutputSchema = passthroughResponse;
-
 export const ListInvoicesInputSchema = z
 	.object({
 		q: z.string().optional(),
@@ -1081,7 +1072,6 @@ export type NetSuiteEndpointInputs = {
 	listCustomerPayments: z.infer<typeof ListCustomerPaymentsInputSchema>;
 	listDatasets: z.infer<typeof ListDatasetsInputSchema>;
 	listEmployees: z.infer<typeof ListEmployeesInputSchema>;
-	listIntegrations: z.infer<typeof ListIntegrationsInputSchema>;
 	listInvoices: z.infer<typeof ListInvoicesInputSchema>;
 	listItemFulfillments: z.infer<typeof ListItemFulfillmentsInputSchema>;
 	listItemReceipts: z.infer<typeof ListItemReceiptsInputSchema>;
@@ -1179,7 +1169,6 @@ export type NetSuiteEndpointOutputs = {
 	listCustomerPayments: z.infer<typeof ListCustomerPaymentsOutputSchema>;
 	listDatasets: z.infer<typeof ListDatasetsOutputSchema>;
 	listEmployees: z.infer<typeof ListEmployeesOutputSchema>;
-	listIntegrations: z.infer<typeof ListIntegrationsOutputSchema>;
 	listInvoices: z.infer<typeof ListInvoicesOutputSchema>;
 	listItemFulfillments: z.infer<typeof ListItemFulfillmentsOutputSchema>;
 	listItemReceipts: z.infer<typeof ListItemReceiptsOutputSchema>;
@@ -1279,7 +1268,6 @@ export const NetSuiteEndpointInputSchemas = {
 	listCustomerPayments: ListCustomerPaymentsInputSchema,
 	listDatasets: ListDatasetsInputSchema,
 	listEmployees: ListEmployeesInputSchema,
-	listIntegrations: ListIntegrationsInputSchema,
 	listInvoices: ListInvoicesInputSchema,
 	listItemFulfillments: ListItemFulfillmentsInputSchema,
 	listItemReceipts: ListItemReceiptsInputSchema,
@@ -1367,7 +1355,6 @@ export const NetSuiteEndpointOutputSchemas = {
 	listCustomerPayments: ListCustomerPaymentsOutputSchema,
 	listDatasets: ListDatasetsOutputSchema,
 	listEmployees: ListEmployeesOutputSchema,
-	listIntegrations: ListIntegrationsOutputSchema,
 	listInvoices: ListInvoicesOutputSchema,
 	listItemFulfillments: ListItemFulfillmentsOutputSchema,
 	listItemReceipts: ListItemReceiptsOutputSchema,

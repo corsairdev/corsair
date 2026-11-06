@@ -31,8 +31,7 @@ export type RouteSpec = {
 		| 'authorize-account'
 		| 'authorize-system'
 		| 'jwt-client-assertion'
-		| 'reference-select'
-		| 'list-integrations';
+		| 'reference-select';
 };
 
 const listQuery = ['q', 'limit', 'offset'];
@@ -364,17 +363,6 @@ export const netSuiteSpecs = {
 		metaDescription: 'List SuiteAnalytics Workbook datasets',
 	},
 	listEmployees: list('employee', 'List NetSuite employee records'),
-	listIntegrations: {
-		method: 'POST',
-		path: '/query/v1/suiteql',
-		query: ['limit', 'offset'],
-		body: 'none',
-		preferTransient: true,
-		riskLevel: 'read',
-		metaDescription:
-			'List NetSuite integration applications and their client IDs',
-		custom: 'list-integrations',
-	},
 	listInvoices: list('invoice', 'List NetSuite invoice records'),
 	listItemFulfillments: list(
 		'itemFulfillment',

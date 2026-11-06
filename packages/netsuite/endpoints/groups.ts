@@ -89,7 +89,6 @@ export const netSuiteOperationGroups = {
 	query: ['runSuiteqlQuery', 'listDatasets', 'executeDataset'],
 	asyncJobs: ['asyncGetJobStatus', 'asyncGetJobTask', 'asyncGetJobTaskResult'],
 	system: ['getServerTime', 'getGovernanceLimits', 'getDatacenterUrls'],
-	integrations: ['listIntegrations'],
 	oauth: [
 		'oauth2AuthorizeAccountDomain',
 		'oauth2AuthorizeSystemDomain',

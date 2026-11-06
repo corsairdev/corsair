@@ -1,6 +1,5 @@
 import { createSign, constants as cryptoConstants } from 'node:crypto';
 import { logEventFromContext } from 'corsair/core';
-import { ApiError } from 'corsair/http';
 import type { NetSuiteContext } from '..';
 import {
 	makeNetSuiteRequest,
@@ -705,36 +704,6 @@ async function customEndpoint(
 			},
 		);
 		return { field: selectField, ...referenced };
-	}
-
-	if (spec.custom === 'list-integrations') {
-		const query = buildQuery(input, spec);
-		const run = async (table: string) =>
-			await makeNetSuiteRequest<Record<string, unknown>>(
-				'/query/v1/suiteql',
-				ctx.key,
-				{
-					method: 'POST',
-					accountId,
-					query,
-					headers: { Prefer: 'transient' },
-					body: { q: `SELECT * FROM ${table} ORDER BY id` },
-				},
-			);
-		try {
-			return await run('integrationapplication');
-		} catch (error) {
-			if (
-				error instanceof ApiError &&
-				error.status === 400 &&
-				/integrationapplication|invalid table|unknown table/i.test(
-					`${error.message} ${JSON.stringify(error.body ?? '')}`,
-				)
-			) {
-				return await run('integration');
-			}
-			throw error;
-		}
 	}
 
 	throw new Error(`[netsuite] unsupported custom endpoint ${key}`);

@@ -38,8 +38,8 @@ await corsair.netsuite.api.asyncJobs.asyncGetJobStatus({ jobId: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -64,22 +64,6 @@ await corsair.netsuite.api.asyncJobs.asyncGetJobStatus({ jobId: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -117,8 +101,8 @@ await corsair.netsuite.api.asyncJobs.asyncGetJobTask({ jobId: '123', taskId: '45
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -143,22 +127,6 @@ await corsair.netsuite.api.asyncJobs.asyncGetJobTask({ jobId: '123', taskId: '45
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -196,8 +164,8 @@ await corsair.netsuite.api.asyncJobs.asyncGetJobTaskResult({ jobId: '123', taskI
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -222,22 +190,6 @@ await corsair.netsuite.api.asyncJobs.asyncGetJobTaskResult({ jobId: '123', taskI
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -270,22 +222,12 @@ await corsair.netsuite.api.customerPayments.createCustomerPayment({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
 | `Prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `X-NetSuite-Idempotency-Key` | `string` | No | — |
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |
 | `X-NetSuite-PropertyValueValidation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -296,8 +238,8 @@ await corsair.netsuite.api.customerPayments.createCustomerPayment({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -322,22 +264,6 @@ await corsair.netsuite.api.customerPayments.createCustomerPayment({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -374,8 +300,8 @@ await corsair.netsuite.api.customerPayments.deleteCustomerPayment({ id: '123' })
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -400,22 +326,6 @@ await corsair.netsuite.api.customerPayments.deleteCustomerPayment({ id: '123' })
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -455,8 +365,8 @@ await corsair.netsuite.api.customerPayments.getCustomerPayment({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -481,22 +391,6 @@ await corsair.netsuite.api.customerPayments.getCustomerPayment({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -535,8 +429,8 @@ await corsair.netsuite.api.customerPayments.listCustomerPayments({ limit: 20 });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -561,22 +455,6 @@ await corsair.netsuite.api.customerPayments.listCustomerPayments({ limit: 20 });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -606,23 +484,13 @@ await corsair.netsuite.api.customerPayments.updateCustomerPayment({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `replace` | `string` | No | — |
 | `replaceSelectedFields` | `boolean` | No | — |
 | `prefer` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `property_name_validation` | `string` | No | — |
 | `property_value_validation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -633,8 +501,8 @@ await corsair.netsuite.api.customerPayments.updateCustomerPayment({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -659,22 +527,6 @@ await corsair.netsuite.api.customerPayments.updateCustomerPayment({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -709,22 +561,12 @@ await corsair.netsuite.api.customers.createCustomer({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
 | `Prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `X-NetSuite-Idempotency-Key` | `string` | No | — |
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |
 | `X-NetSuite-PropertyValueValidation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -735,8 +577,8 @@ await corsair.netsuite.api.customers.createCustomer({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -761,22 +603,6 @@ await corsair.netsuite.api.customers.createCustomer({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -813,8 +639,8 @@ await corsair.netsuite.api.customers.deleteCustomer({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -839,22 +665,6 @@ await corsair.netsuite.api.customers.deleteCustomer({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -894,8 +704,8 @@ await corsair.netsuite.api.customers.getCustomer({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -920,22 +730,6 @@ await corsair.netsuite.api.customers.getCustomer({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -965,23 +759,13 @@ await corsair.netsuite.api.customers.updateCustomer({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `replace` | `string` | No | — |
 | `replaceSelectedFields` | `boolean` | No | — |
 | `prefer` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `property_name_validation` | `string` | No | — |
 | `property_value_validation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -992,8 +776,8 @@ await corsair.netsuite.api.customers.updateCustomer({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -1018,22 +802,6 @@ await corsair.netsuite.api.customers.updateCustomer({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -1063,22 +831,12 @@ await corsair.netsuite.api.employees.createEmployee({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
 | `Prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `X-NetSuite-Idempotency-Key` | `string` | No | — |
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |
 | `X-NetSuite-PropertyValueValidation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1089,8 +847,8 @@ await corsair.netsuite.api.employees.createEmployee({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -1115,22 +873,6 @@ await corsair.netsuite.api.employees.createEmployee({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -1167,8 +909,8 @@ await corsair.netsuite.api.employees.deleteEmployee({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -1193,22 +935,6 @@ await corsair.netsuite.api.employees.deleteEmployee({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -1248,8 +974,8 @@ await corsair.netsuite.api.employees.getEmployee({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -1274,22 +1000,6 @@ await corsair.netsuite.api.employees.getEmployee({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -1328,8 +1038,8 @@ await corsair.netsuite.api.employees.listEmployees({ limit: 20 });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -1354,22 +1064,6 @@ await corsair.netsuite.api.employees.listEmployees({ limit: 20 });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -1399,7 +1093,7 @@ await corsair.netsuite.api.employees.updateEmployee({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `Prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `replaceSelectedFields` | `boolean` | No | — |
@@ -1407,16 +1101,6 @@ await corsair.netsuite.api.employees.updateEmployee({
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |
 | `X-NetSuite-PropertyValueValidation` | `string` | No | — |
 
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output**
@@ -1426,8 +1110,8 @@ await corsair.netsuite.api.employees.updateEmployee({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -1452,103 +1136,6 @@ await corsair.netsuite.api.employees.updateEmployee({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-## Integrations
-
-### listIntegrations
-
-`integrations.listIntegrations`
-
-List NetSuite integration applications and their client IDs
-
-**Risk:** `read`
-
-```ts
-await corsair.netsuite.api.integrations.listIntegrations({ limit: 20 });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `limit` | `number` | No | — |
-| `offset` | `number` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string \| number` | No | — |
-| `externalId` | `string` | No | — |
-| `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
-| `count` | `number` | No | — |
-| `offset` | `number` | No | — |
-| `totalResults` | `number` | No | — |
-| `hasMore` | `boolean` | No | — |
-| `access_token` | `string` | No | — |
-| `refresh_token` | `string` | No | — |
-| `id_token` | `string` | No | — |
-| `token_type` | `string` | No | — |
-| `expires_in` | `number \| string` | No | — |
-| `expires_at` | `number` | No | — |
-| `scope` | `string` | No | — |
-| `authorization_url` | `string` | No | — |
-| `url` | `string` | No | — |
-| `client_assertion` | `string` | No | — |
-| `client_assertion_type` | `string` | No | — |
-| `token_url` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="links full type">
-
-```ts
-{
-  rel?: string,
-  href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -1587,22 +1174,12 @@ await corsair.netsuite.api.invoices.createInvoice({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
 | `Prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `X-NetSuite-Idempotency-Key` | `string` | No | — |
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |
 | `X-NetSuite-PropertyValueValidation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1613,8 +1190,8 @@ await corsair.netsuite.api.invoices.createInvoice({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -1639,22 +1216,6 @@ await corsair.netsuite.api.invoices.createInvoice({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -1691,8 +1252,8 @@ await corsair.netsuite.api.invoices.deleteInvoice({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -1717,22 +1278,6 @@ await corsair.netsuite.api.invoices.deleteInvoice({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -1772,8 +1317,8 @@ await corsair.netsuite.api.invoices.getInvoice({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -1798,22 +1343,6 @@ await corsair.netsuite.api.invoices.getInvoice({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -1852,8 +1381,8 @@ await corsair.netsuite.api.invoices.listInvoices({ limit: 20 });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -1878,22 +1407,6 @@ await corsair.netsuite.api.invoices.listInvoices({ limit: 20 });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -1923,23 +1436,13 @@ await corsair.netsuite.api.invoices.updateInvoice({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `replace` | `string` | No | — |
 | `replaceSelectedFields` | `boolean` | No | — |
 | `prefer` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `property_name_validation` | `string` | No | — |
 | `property_value_validation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1950,8 +1453,8 @@ await corsair.netsuite.api.invoices.updateInvoice({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -1976,22 +1479,6 @@ await corsair.netsuite.api.invoices.updateInvoice({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -2032,8 +1519,8 @@ await corsair.netsuite.api.itemFulfillments.deleteItemFulfillment({ id: '123' })
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -2058,22 +1545,6 @@ await corsair.netsuite.api.itemFulfillments.deleteItemFulfillment({ id: '123' })
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -2113,8 +1584,8 @@ await corsair.netsuite.api.itemFulfillments.getItemFulfillment({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -2139,22 +1610,6 @@ await corsair.netsuite.api.itemFulfillments.getItemFulfillment({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -2193,8 +1648,8 @@ await corsair.netsuite.api.itemFulfillments.listItemFulfillments({ limit: 20 });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -2219,22 +1674,6 @@ await corsair.netsuite.api.itemFulfillments.listItemFulfillments({ limit: 20 });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -2264,23 +1703,13 @@ await corsair.netsuite.api.itemFulfillments.updateItemFulfillment({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `replace_selected_fields` | `boolean` | No | — |
 | `property_name_validation` | `string` | No | — |
 | `property_value_validation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2291,8 +1720,8 @@ await corsair.netsuite.api.itemFulfillments.updateItemFulfillment({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -2317,22 +1746,6 @@ await corsair.netsuite.api.itemFulfillments.updateItemFulfillment({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -2371,8 +1784,8 @@ await corsair.netsuite.api.itemReceipts.deleteItemReceipt({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -2397,22 +1810,6 @@ await corsair.netsuite.api.itemReceipts.deleteItemReceipt({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -2452,8 +1849,8 @@ await corsair.netsuite.api.itemReceipts.getItemReceipt({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -2478,22 +1875,6 @@ await corsair.netsuite.api.itemReceipts.getItemReceipt({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -2532,8 +1913,8 @@ await corsair.netsuite.api.itemReceipts.listItemReceipts({ limit: 20 });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -2558,22 +1939,6 @@ await corsair.netsuite.api.itemReceipts.listItemReceipts({ limit: 20 });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -2603,23 +1968,13 @@ await corsair.netsuite.api.itemReceipts.updateItemReceipt({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `replaceSelectedFields` | `boolean` | No | — |
 | `property_name_validation` | `string` | No | — |
 | `property_value_validation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2630,8 +1985,8 @@ await corsair.netsuite.api.itemReceipts.updateItemReceipt({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -2656,22 +2011,6 @@ await corsair.netsuite.api.itemReceipts.updateItemReceipt({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -2702,23 +2041,13 @@ await corsair.netsuite.api.items.createItem({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
 | `Prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `record_type` | `string` | No | — |
 | `X-NetSuite-Idempotency-Key` | `string` | No | — |
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |
 | `X-NetSuite-PropertyValueValidation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2729,8 +2058,8 @@ await corsair.netsuite.api.items.createItem({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -2755,22 +2084,6 @@ await corsair.netsuite.api.items.createItem({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -2808,8 +2121,8 @@ await corsair.netsuite.api.items.deleteItem({ item_record_type: 'inventoryItem',
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -2834,22 +2147,6 @@ await corsair.netsuite.api.items.deleteItem({ item_record_type: 'inventoryItem',
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -2889,8 +2186,8 @@ await corsair.netsuite.api.items.getItem({ itemRecordType: 'inventoryItem', id: 
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -2915,22 +2212,6 @@ await corsair.netsuite.api.items.getItem({ itemRecordType: 'inventoryItem', id: 
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -2961,7 +2242,7 @@ await corsair.netsuite.api.items.updateItem({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `item_type` | `string` | Yes | — |
@@ -2969,16 +2250,6 @@ await corsair.netsuite.api.items.updateItem({
 | `replace_selected_fields` | `boolean` | No | — |
 | `property_name_validation` | `string` | No | — |
 | `property_value_validation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2989,8 +2260,8 @@ await corsair.netsuite.api.items.updateItem({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -3015,22 +2286,6 @@ await corsair.netsuite.api.items.updateItem({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -3071,22 +2326,12 @@ await corsair.netsuite.api.journalEntries.createJournalEntry({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
 | `Prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `X-NetSuite-Idempotency-Key` | `string` | No | — |
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |
 | `X-NetSuite-PropertyValueValidation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3097,8 +2342,8 @@ await corsair.netsuite.api.journalEntries.createJournalEntry({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -3123,22 +2368,6 @@ await corsair.netsuite.api.journalEntries.createJournalEntry({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -3177,8 +2406,8 @@ await corsair.netsuite.api.journalEntries.deleteJournalEntry({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -3203,22 +2432,6 @@ await corsair.netsuite.api.journalEntries.deleteJournalEntry({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -3258,8 +2471,8 @@ await corsair.netsuite.api.journalEntries.getJournalEntry({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -3284,22 +2497,6 @@ await corsair.netsuite.api.journalEntries.getJournalEntry({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -3338,8 +2535,8 @@ await corsair.netsuite.api.journalEntries.listJournalEntries({ limit: 20 });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -3364,22 +2561,6 @@ await corsair.netsuite.api.journalEntries.listJournalEntries({ limit: 20 });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -3409,23 +2590,13 @@ await corsair.netsuite.api.journalEntries.updateJournalEntry({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `replace_selected_fields` | `boolean` | No | — |
 | `property_name_validation` | `string` | No | — |
 | `property_value_validation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3436,8 +2607,8 @@ await corsair.netsuite.api.journalEntries.updateJournalEntry({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -3462,22 +2633,6 @@ await corsair.netsuite.api.journalEntries.updateJournalEntry({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -3517,8 +2672,8 @@ await corsair.netsuite.api.metadata.getRecordMetadata({ record_type: 'customer' 
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -3543,22 +2698,6 @@ await corsair.netsuite.api.metadata.getRecordMetadata({ record_type: 'customer' 
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -3596,8 +2735,8 @@ await corsair.netsuite.api.metadata.listMetadataCatalog({});
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -3622,22 +2761,6 @@ await corsair.netsuite.api.metadata.listMetadataCatalog({});
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -3689,8 +2812,8 @@ await corsair.netsuite.api.oauth.createJwtClientAssertion({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -3715,22 +2838,6 @@ await corsair.netsuite.api.oauth.createJwtClientAssertion({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -3781,8 +2888,8 @@ await corsair.netsuite.api.oauth.oauth2AuthorizeAccountDomain({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -3807,22 +2914,6 @@ await corsair.netsuite.api.oauth.oauth2AuthorizeAccountDomain({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -3874,8 +2965,8 @@ await corsair.netsuite.api.oauth.oauth2AuthorizeSystemDomain({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -3900,22 +2991,6 @@ await corsair.netsuite.api.oauth.oauth2AuthorizeSystemDomain({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -3947,8 +3022,8 @@ await corsair.netsuite.api.oauth.oauth2GetJwksKeys({});
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -3973,22 +3048,6 @@ await corsair.netsuite.api.oauth.oauth2GetJwksKeys({});
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -4025,8 +3084,8 @@ await corsair.netsuite.api.oauth.oauth2Logout({ id_token_hint: 'id-token-xxx' })
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -4051,22 +3110,6 @@ await corsair.netsuite.api.oauth.oauth2Logout({ id_token_hint: 'id-token-xxx' })
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -4105,8 +3148,8 @@ await corsair.netsuite.api.oauth.oauth2RevokeRefreshToken({ token: 'refresh-toke
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -4131,22 +3174,6 @@ await corsair.netsuite.api.oauth.oauth2RevokeRefreshToken({ token: 'refresh-toke
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -4193,8 +3220,8 @@ await corsair.netsuite.api.oauth.oauth2TokenAuthorizationCode({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -4219,22 +3246,6 @@ await corsair.netsuite.api.oauth.oauth2TokenAuthorizationCode({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -4273,8 +3284,8 @@ await corsair.netsuite.api.oauth.oauth2TokenClientCredentials({ client_assertion
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -4299,22 +3310,6 @@ await corsair.netsuite.api.oauth.oauth2TokenClientCredentials({ client_assertion
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -4353,8 +3348,8 @@ await corsair.netsuite.api.oauth.oauth2TokenRefresh({ refresh_token: 'refresh-to
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -4379,22 +3374,6 @@ await corsair.netsuite.api.oauth.oauth2TokenRefresh({ refresh_token: 'refresh-to
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -4430,51 +3409,17 @@ await corsair.netsuite.api.purchaseOrders.createPurchaseOrder({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `item` | `object` | Yes | — |
+| `item` | `Record<string, any>` | Yes | — |
 | `memo` | `string` | No | — |
 | `Prefer` | `string` | No | — |
-| `entity` | `object` | Yes | — |
+| `entity` | `Record<string, any>` | Yes | — |
 | `replace` | `string` | No | — |
-| `location` | `object` | No | — |
+| `location` | `Record<string, any>` | No | — |
 | `tranDate` | `string` | No | — |
-| `customForm` | `object` | No | — |
+| `customForm` | `Record<string, any>` | No | — |
 | `X-NetSuite-Idempotency-Key` | `string` | No | — |
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |
 | `X-NetSuite-PropertyValueValidation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="item full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="entity full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="customForm full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4485,8 +3430,8 @@ await corsair.netsuite.api.purchaseOrders.createPurchaseOrder({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -4511,22 +3456,6 @@ await corsair.netsuite.api.purchaseOrders.createPurchaseOrder({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -4563,8 +3492,8 @@ await corsair.netsuite.api.purchaseOrders.deletePurchaseOrder({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -4589,22 +3518,6 @@ await corsair.netsuite.api.purchaseOrders.deletePurchaseOrder({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -4644,8 +3557,8 @@ await corsair.netsuite.api.purchaseOrders.getPurchaseOrder({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -4670,22 +3583,6 @@ await corsair.netsuite.api.purchaseOrders.getPurchaseOrder({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -4724,8 +3621,8 @@ await corsair.netsuite.api.purchaseOrders.listPurchaseOrders({ limit: 20 });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -4750,22 +3647,6 @@ await corsair.netsuite.api.purchaseOrders.listPurchaseOrders({ limit: 20 });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -4795,23 +3676,13 @@ await corsair.netsuite.api.purchaseOrders.updatePurchaseOrder({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `replace` | `string` | No | — |
 | `prefer` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `replaceSelectedFields` | `boolean` | No | — |
 | `property_name_validation` | `string` | No | — |
 | `property_value_validation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4822,8 +3693,8 @@ await corsair.netsuite.api.purchaseOrders.updatePurchaseOrder({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -4848,22 +3719,6 @@ await corsair.netsuite.api.purchaseOrders.updatePurchaseOrder({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -4904,8 +3759,8 @@ await corsair.netsuite.api.query.executeDataset({ dataset_id: 'custdataset_sales
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -4930,22 +3785,6 @@ await corsair.netsuite.api.query.executeDataset({ dataset_id: 'custdataset_sales
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -4983,8 +3822,8 @@ await corsair.netsuite.api.query.listDatasets({ limit: 20 });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -5009,22 +3848,6 @@ await corsair.netsuite.api.query.listDatasets({ limit: 20 });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -5063,8 +3886,8 @@ await corsair.netsuite.api.query.runSuiteqlQuery({ q: 'SELECT id, companyName FR
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -5089,22 +3912,6 @@ await corsair.netsuite.api.query.runSuiteqlQuery({ q: 'SELECT id, companyName FR
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -5140,23 +3947,13 @@ await corsair.netsuite.api.records.createRecord({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
 | `Prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `record_type` | `string` | Yes | — |
 | `X-NetSuite-Idempotency-Key` | `string` | No | — |
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |
 | `X-NetSuite-PropertyValueValidation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5167,8 +3964,8 @@ await corsair.netsuite.api.records.createRecord({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -5193,22 +3990,6 @@ await corsair.netsuite.api.records.createRecord({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -5249,8 +4030,8 @@ await corsair.netsuite.api.records.getReferenceSelectField({ record_type: 'custo
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -5275,22 +4056,6 @@ await corsair.netsuite.api.records.getReferenceSelectField({ record_type: 'custo
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -5331,8 +4096,8 @@ await corsair.netsuite.api.records.getSublistCollection({ record_type: 'customer
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -5357,22 +4122,6 @@ await corsair.netsuite.api.records.getSublistCollection({ record_type: 'customer
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -5418,8 +4167,8 @@ await corsair.netsuite.api.records.getSublistLine({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -5444,22 +4193,6 @@ await corsair.netsuite.api.records.getSublistLine({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -5498,8 +4231,8 @@ await corsair.netsuite.api.records.getSubrecord({ record_type: 'salesOrder', id:
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -5524,22 +4257,6 @@ await corsair.netsuite.api.records.getSubrecord({ record_type: 'salesOrder', id:
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -5579,8 +4296,8 @@ await corsair.netsuite.api.records.listRecords({ recordType: 'customer', limit: 
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -5605,22 +4322,6 @@ await corsair.netsuite.api.records.listRecords({ recordType: 'customer', limit: 
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -5649,22 +4350,12 @@ await corsair.netsuite.api.records.transformRecord({ source_record_type: 'salesO
 | `Prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `record_id` | `string \| number` | Yes | — |
-| `record_body` | `object` | No | — |
+| `record_body` | `Record<string, any>` | No | — |
 | `source_record_type` | `string` | Yes | — |
 | `target_record_type` | `string` | Yes | — |
 | `X-NetSuite-Idempotency-Key` | `string` | No | — |
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |
 | `X-NetSuite-PropertyValueValidation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="record_body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5675,8 +4366,8 @@ await corsair.netsuite.api.records.transformRecord({ source_record_type: 'salesO
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -5701,22 +4392,6 @@ await corsair.netsuite.api.records.transformRecord({ source_record_type: 'salesO
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -5750,20 +4425,10 @@ await corsair.netsuite.api.records.upsertRecordByExternalId({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
 | `external_id` | `string` | Yes | — |
 | `record_type` | `string` | Yes | — |
 | `replace` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5774,8 +4439,8 @@ await corsair.netsuite.api.records.upsertRecordByExternalId({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -5800,22 +4465,6 @@ await corsair.netsuite.api.records.upsertRecordByExternalId({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -5851,45 +4500,19 @@ await corsair.netsuite.api.salesOrders.createSalesOrder({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `item` | `object` | Yes | — |
+| `item` | `Record<string, any>` | Yes | — |
 | `memo` | `string` | No | — |
 | `Prefer` | `string` | No | — |
-| `entity` | `object` | Yes | — |
+| `entity` | `Record<string, any>` | Yes | — |
 | `replace` | `string` | No | — |
 | `tranDate` | `string` | No | — |
-| `promocode` | `object` | No | — |
+| `promocode` | `Record<string, any>` | No | — |
 | `customForm` | `string` | No | — |
 | `orderStatus` | `string` | No | — |
 | `otherrefnum` | `string` | No | — |
 | `X-NetSuite-Idempotency-Key` | `string` | No | — |
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |
 | `X-NetSuite-PropertyValueValidation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="item full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="entity full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="promocode full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5900,8 +4523,8 @@ await corsair.netsuite.api.salesOrders.createSalesOrder({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -5926,22 +4549,6 @@ await corsair.netsuite.api.salesOrders.createSalesOrder({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -5978,8 +4585,8 @@ await corsair.netsuite.api.salesOrders.deleteSalesOrder({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -6004,22 +4611,6 @@ await corsair.netsuite.api.salesOrders.deleteSalesOrder({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -6059,8 +4650,8 @@ await corsair.netsuite.api.salesOrders.getSalesOrder({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -6085,22 +4676,6 @@ await corsair.netsuite.api.salesOrders.getSalesOrder({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -6139,8 +4714,8 @@ await corsair.netsuite.api.salesOrders.listSalesOrders({ limit: 20 });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -6165,22 +4740,6 @@ await corsair.netsuite.api.salesOrders.listSalesOrders({ limit: 20 });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -6210,23 +4769,13 @@ await corsair.netsuite.api.salesOrders.updateSalesOrder({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `replace` | `string` | No | — |
 | `replaceSelectedFields` | `boolean` | No | — |
 | `prefer` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `property_name_validation` | `string` | No | — |
 | `property_value_validation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6237,8 +4786,8 @@ await corsair.netsuite.api.salesOrders.updateSalesOrder({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -6263,22 +4812,6 @@ await corsair.netsuite.api.salesOrders.updateSalesOrder({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -6318,8 +4851,8 @@ await corsair.netsuite.api.system.getDatacenterUrls({ account: 'TSTDRV123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -6344,22 +4877,6 @@ await corsair.netsuite.api.system.getDatacenterUrls({ account: 'TSTDRV123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -6391,8 +4908,8 @@ await corsair.netsuite.api.system.getGovernanceLimits({});
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -6417,22 +4934,6 @@ await corsair.netsuite.api.system.getGovernanceLimits({});
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -6464,8 +4965,8 @@ await corsair.netsuite.api.system.getServerTime({});
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -6490,22 +4991,6 @@ await corsair.netsuite.api.system.getServerTime({});
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -6543,22 +5028,12 @@ await corsair.netsuite.api.vendorBills.createVendorBill({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
 | `Prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `X-NetSuite-Idempotency-Key` | `string` | No | — |
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |
 | `X-NetSuite-PropertyValueValidation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6569,8 +5044,8 @@ await corsair.netsuite.api.vendorBills.createVendorBill({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -6595,22 +5070,6 @@ await corsair.netsuite.api.vendorBills.createVendorBill({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -6650,8 +5109,8 @@ await corsair.netsuite.api.vendorBills.getVendorBill({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -6676,22 +5135,6 @@ await corsair.netsuite.api.vendorBills.getVendorBill({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -6721,23 +5164,13 @@ await corsair.netsuite.api.vendorBills.updateVendorBill({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `replaceSelectedFields` | `boolean` | No | — |
 | `property_name_validation` | `string` | No | — |
 | `property_value_validation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6748,8 +5181,8 @@ await corsair.netsuite.api.vendorBills.updateVendorBill({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -6774,22 +5207,6 @@ await corsair.netsuite.api.vendorBills.updateVendorBill({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -6828,8 +5245,8 @@ await corsair.netsuite.api.vendorPayments.deleteVendorPayment({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -6854,22 +5271,6 @@ await corsair.netsuite.api.vendorPayments.deleteVendorPayment({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -6909,8 +5310,8 @@ await corsair.netsuite.api.vendorPayments.getVendorPayment({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -6935,22 +5336,6 @@ await corsair.netsuite.api.vendorPayments.getVendorPayment({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -6989,8 +5374,8 @@ await corsair.netsuite.api.vendorPayments.listVendorPayments({ limit: 20 });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -7015,22 +5400,6 @@ await corsair.netsuite.api.vendorPayments.listVendorPayments({ limit: 20 });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -7060,23 +5429,13 @@ await corsair.netsuite.api.vendorPayments.updateVendorPayment({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `replaceSelectedFields` | `boolean` | No | — |
 | `property_name_validation` | `string` | No | — |
 | `property_value_validation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -7087,8 +5446,8 @@ await corsair.netsuite.api.vendorPayments.updateVendorPayment({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -7113,22 +5472,6 @@ await corsair.netsuite.api.vendorPayments.updateVendorPayment({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -7163,22 +5506,12 @@ await corsair.netsuite.api.vendors.createVendor({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
 | `Prefer` | `string` | No | — |
 | `replace` | `string` | No | — |
 | `X-NetSuite-Idempotency-Key` | `string` | No | — |
 | `X-NetSuite-PropertyNameValidation` | `string` | No | — |
 | `X-NetSuite-PropertyValueValidation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -7189,8 +5522,8 @@ await corsair.netsuite.api.vendors.createVendor({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -7215,22 +5548,6 @@ await corsair.netsuite.api.vendors.createVendor({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -7270,8 +5587,8 @@ await corsair.netsuite.api.vendors.getVendor({ id: '123' });
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -7296,22 +5613,6 @@ await corsair.netsuite.api.vendors.getVendor({ id: '123' });
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -7341,23 +5642,13 @@ await corsair.netsuite.api.vendors.updateVendor({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `replace` | `string` | No | — |
 | `replaceSelectedFields` | `boolean` | No | — |
 | `prefer` | `string` | No | — |
 | `idempotency_key` | `string` | No | — |
 | `property_name_validation` | `string` | No | — |
 | `property_value_validation` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -7368,8 +5659,8 @@ await corsair.netsuite.api.vendors.updateVendor({
 | `id` | `string \| number` | No | — |
 | `externalId` | `string` | No | — |
 | `links` | `object[]` | No | — |
-| `location` | `object` | No | — |
-| `items` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
 | `count` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `totalResults` | `number` | No | — |
@@ -7394,22 +5685,6 @@ await corsair.netsuite.api.vendors.updateVendor({
 {
   rel?: string,
   href?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="location full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>

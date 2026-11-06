@@ -29,7 +29,6 @@ pnpm add @corsair-dev/netsuite
 | `employees.getEmployee` | `netsuite.api.employees.getEmployee` | `read` | Get a NetSuite employee record by internal ID |
 | `employees.listEmployees` | `netsuite.api.employees.listEmployees` | `read` | List NetSuite employee records |
 | `employees.updateEmployee` | `netsuite.api.employees.updateEmployee` | `write` | Update a NetSuite employee record |
-| `integrations.listIntegrations` | `netsuite.api.integrations.listIntegrations` | `read` | List NetSuite integration applications and their client IDs |
 | `invoices.createInvoice` | `netsuite.api.invoices.createInvoice` | `write` | Create a NetSuite invoice record |
 | `invoices.deleteInvoice` | `netsuite.api.invoices.deleteInvoice` | `destructive` | Delete a NetSuite invoice record |
 | `invoices.getInvoice` | `netsuite.api.invoices.getInvoice` | `read` | Get a NetSuite invoice record by internal ID |

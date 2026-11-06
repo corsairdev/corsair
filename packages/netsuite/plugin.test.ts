@@ -178,15 +178,15 @@ const specs = netSuiteSpecs as Record<
 const keys = Object.keys(specs) as NetSuiteSpecKey[];
 
 describe('NetSuite plugin', () => {
-	it('wires OAuth2, 85 endpoints, schemas and metadata', () => {
+	it('wires OAuth2, 84 endpoints, schemas and metadata', () => {
 		const plugin = netsuite({ accountId: ACCOUNT });
 		expect(plugin.id).toBe('netsuite');
 		expect((plugin.options as { authType?: string }).authType).toBe('oauth_2');
 		expect(plugin.oauthConfig?.scopes).toEqual(['rest_webservices']);
 		expect(plugin.webhooks).toEqual({});
-		expect(keys).toHaveLength(85);
-		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(85);
-		expect(Object.keys(plugin.endpointSchemas ?? {})).toHaveLength(85);
+		expect(keys).toHaveLength(84);
+		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(84);
+		expect(Object.keys(plugin.endpointSchemas ?? {})).toHaveLength(84);
 		expect(plugin.endpointMeta?.['oauth.oauth2Logout']?.riskLevel).toBe(
 			'write',
 		);
@@ -204,7 +204,7 @@ describe('NetSuite plugin', () => {
 				paths.push(`${group}.${op}`);
 			}
 		}
-		expect(paths).toHaveLength(85);
+		expect(paths).toHaveLength(84);
 		expect(new Set(paths.map((path) => path.split('.')[1]))).toEqual(
 			new Set(keys),
 		);
@@ -515,29 +515,6 @@ describe('endpoint dispatch', () => {
 		});
 		const secondUrl = String(jest.mocked(globalThis.fetch).mock.calls[1]?.[0]);
 		expect(secondUrl).toContain('expandSubResources=true');
-	});
-
-	it('falls back to the integration table when SuiteQL rejects integrationapplication', async () => {
-		const bodies: string[] = [];
-		let calls = 0;
-		globalThis.fetch = jest.fn(
-			async (_url: string | URL | Request, init?: RequestInit) => {
-				calls += 1;
-				bodies.push(String(init?.body ?? ''));
-				if (calls === 1) {
-					return jsonResponse(
-						{ error: { message: 'Invalid table integrationapplication' } },
-						400,
-					);
-				}
-				return jsonResponse({ items: [] });
-			},
-		) as unknown as typeof fetch;
-
-		await NetSuite.listIntegrations(mockCtx() as never, { limit: 20 });
-		expect(calls).toBe(2);
-		expect(bodies[0]).toContain('integrationapplication');
-		expect(bodies[1]).toContain('FROM integration');
 	});
 
 	it('defaults the client assertion type for client-credentials tokens', async () => {

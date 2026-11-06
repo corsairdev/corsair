@@ -201,8 +201,6 @@ apiExamples:
     limit: 20
   employees.listEmployees:
     limit: 20
-  integrations.listIntegrations:
-    limit: 20
   invoices.listInvoices:
     limit: 20
   itemFulfillments.listItemFulfillments:
