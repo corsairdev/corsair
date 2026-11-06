@@ -85,11 +85,15 @@ export const errorHandlers = {
 		},
 	},
 	// Network failures and fetch timeouts never reached Adyntel, so nothing was
-	// scraped or charged and a retry is safe for reads. A write is not replayed:
-	// a timeout can arrive after the scrape started and the credit was spent.
+	// scraped or charged and a retry is safe for reads. Two things must not
+	// reach the HTTP layer at all: a provider rejection (a non-zero code with a
+	// 200) and a validation error, both of which have no status. Replaying
+	// either would bill for the same scrape twice.
 	NETWORK_ERROR: {
 		match: (error: Error) =>
-			error instanceof AdyntelAPIError && error.status === undefined,
+			error instanceof AdyntelAPIError &&
+			error.status === undefined &&
+			!error.isProviderRejection,
 		handler: async (error: Error) => {
 			const retriable = error instanceof AdyntelAPIError && isRead(error);
 			return {
@@ -97,6 +101,13 @@ export const errorHandlers = {
 				retryStrategy: 'exponential_backoff' as const,
 			};
 		},
+	},
+	// The API answered 200 and reported a failure in the body. A retry sends the
+	// same request, and the scrape has already been charged.
+	PROVIDER_REJECTION_ERROR: {
+		match: (error: Error) =>
+			error instanceof AdyntelAPIError && error.isProviderRejection,
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
 		match: () => true,

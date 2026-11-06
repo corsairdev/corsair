@@ -132,6 +132,22 @@ describe('error handlers', () => {
 		).toBe(0);
 	});
 
+	it('does not treat a provider rejection as a network failure', async () => {
+		const rejection = new AdyntelAPIError('code 40001', {
+			operation: 'tiktokSearch',
+			providerCode: 40001,
+		});
+
+		// A non-zero code arrives with a 200, so it has no status either. It must
+		// not match NETWORK_ERROR, which would retry a call already billed.
+		expect(rejection.status).toBeUndefined();
+		expect(errorHandlers.NETWORK_ERROR.match(rejection)).toBe(false);
+		expect(errorHandlers.PROVIDER_REJECTION_ERROR.match(rejection)).toBe(true);
+		expect(
+			(await run(errorHandlers.PROVIDER_REJECTION_ERROR, rejection)).maxRetries,
+		).toBe(0);
+	});
+
 	it('does not retry a 404', async () => {
 		expect(errorHandlers.NOT_FOUND_ERROR.match(adyntelError(404, 'x'))).toBe(
 			true,

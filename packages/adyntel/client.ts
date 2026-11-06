@@ -52,6 +52,12 @@ export class AdyntelAPIError extends Error {
 	readonly method?: string;
 	/** The Adyntel operation name, e.g. `googleAds`, used to pick a retry. */
 	readonly operation?: string;
+	/**
+	 * A non-zero business code the API sent with a 200, as TikTok's endpoints
+	 * do. Distinguishes a provider rejection from a transport failure, which
+	 * both arrive here without an HTTP status.
+	 */
+	readonly providerCode?: number;
 	// unknown: error bodies are usually `{ message }` or `{ detail }`, but a
 	// proxy in front of the API can answer with HTML or plain text.
 	readonly body?: unknown;
@@ -66,6 +72,7 @@ export class AdyntelAPIError extends Error {
 			retryAfter?: number;
 			method?: string;
 			operation?: string;
+			providerCode?: number;
 		} = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
@@ -76,11 +83,17 @@ export class AdyntelAPIError extends Error {
 		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
 		this.method = options.method ?? cause?.request.method;
 		this.operation = options.operation;
+		this.providerCode = options.providerCode;
 	}
 
 	/** True for a 429. */
 	get isRateLimit(): boolean {
 		return this.status === 429;
+	}
+
+	/** True when the API answered 200 but reported a failure in its body. */
+	get isProviderRejection(): boolean {
+		return this.providerCode !== undefined;
 	}
 }
 

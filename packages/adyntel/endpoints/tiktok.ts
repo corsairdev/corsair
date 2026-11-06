@@ -12,12 +12,16 @@ import {
  * with no ads, which reads exactly like a company running no ads.
  */
 // unknown: the parsed body of a TikTok response, before the output schema runs.
+// `operation` must be the API's own operationId, not the dotted event name:
+// error-handlers.ts classifies reads by operationId, and a mismatch would
+// silently mark this read unretriable.
 function assertTikTokCode(raw: unknown, operation: string): void {
 	if (!raw || typeof raw !== 'object') return;
 	const code = (raw as { code?: unknown }).code;
 	if (typeof code === 'number' && code !== 0) {
 		throw new AdyntelAPIError(`Adyntel ${operation} returned code ${code}`, {
 			operation,
+			providerCode: code,
 			body: raw,
 		});
 	}
@@ -64,7 +68,7 @@ export const keywordSearch: AdyntelEndpoints['tiktokKeywordSearch'] = (
 		}),
 		{
 			shape: (raw) => {
-				assertTikTokCode(raw, 'tiktok.keywordSearch');
+				assertTikTokCode(raw, 'tiktokSearch');
 				return raw;
 			},
 			log: (_, result) => ({
@@ -90,7 +94,7 @@ export const adDetails: AdyntelEndpoints['tiktokAdDetails'] = (ctx, input) =>
 		}),
 		{
 			shape: (raw) => {
-				assertTikTokCode(raw, 'tiktok.adDetails');
+				assertTikTokCode(raw, 'tiktokAdDetails');
 				return raw;
 			},
 			log: (_, result) => ({

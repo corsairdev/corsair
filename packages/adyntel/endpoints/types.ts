@@ -298,6 +298,8 @@ const MetaAdSchema = z
 		/** Unix seconds. `null` while the ad still runs. */
 		end_date: z.number().nullish(),
 		total_active_time: z.number().nullish(),
+		/** Present only when the call sent `check_ugc: true`. */
+		is_ugc_video: z.boolean().nullish(),
 		snapshot: MetaSnapshotSchema.nullish(),
 	})
 	.loose();
@@ -447,6 +449,13 @@ const GoogleAdSchema = z
 		/** `YYYY-MM-DD`. */
 		last_seen: z.string().nullish(),
 		variants: z.array(GoogleAdVariantSchema).nullish(),
+		/**
+		 * The text inside the creative. Present only when the call sent
+		 * `extract_text: true`, which costs an extra credit. The docs name the
+		 * parameter `extract-text` but do not name this field, so it is read
+		 * defensively.
+		 */
+		extracted_text: z.string().nullish(),
 	})
 	.loose();
 
@@ -464,6 +473,47 @@ const GoogleAdsResponseSchema = z
 	.loose();
 
 export type GoogleAdsResponse = z.output<typeof GoogleAdsResponseSchema>;
+
+/**
+ * `/google_shopping` and `/google_shopping_status` return a different object
+ * from `/google`. The shopping payload is DataForSEO's: `first_shown` and
+ * `last_shown` are timestamps rather than dates, and a preview carries a rank
+ * and a verification flag. Sharing the `/google` schema would parse without
+ * throwing (both are `.loose()`) while typing every one of these fields as
+ * absent, so they get their own schema.
+ */
+const GoogleShoppingAdSchema = z
+	.object({
+		advertiser_id: z.string().nullish(),
+		creative_id: z.string().nullish(),
+		title: z.string().nullish(),
+		/** `text`, `image`, `video`. */
+		format: z.string().nullish(),
+		/** A timestamp string, e.g. `2024-02-27 01:02:34 +00:00`. */
+		first_shown: z.string().nullish(),
+		last_shown: z.string().nullish(),
+		url: z.string().nullish(),
+		preview_url: z
+			.string()
+			.nullish()
+			.describe(
+				'JavaScript preview for a display creative. Null for text ads.',
+			),
+		preview_image: z
+			.object({
+				height: z.number().nullish(),
+				width: z.number().nullish(),
+				url: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+		rank_group: z.number().nullish(),
+		rank_absolute: z.number().nullish(),
+		/** `ads_search`. */
+		type: z.string().nullish(),
+		verified: z.boolean().nullish(),
+	})
+	.loose();
 
 // ── google.shopping ───────────────────────────────────────────────────────
 
@@ -495,7 +545,7 @@ const GoogleShoppingResponseSchema = z
 			.describe('Queued task ID. Poll it with `google.shoppingStatus`.'),
 		status: z.string().nullish(),
 		message: z.string().nullish(),
-		ads: z.array(GoogleAdSchema).nullish(),
+		ads: z.array(GoogleShoppingAdSchema).nullish(),
 	})
 	.loose();
 
@@ -524,7 +574,7 @@ const GoogleShoppingStatusResponseSchema = z
 			.describe('Set when the scrape is still running.'),
 		message: z.string().nullish(),
 		ads: z
-			.array(GoogleAdSchema)
+			.array(GoogleShoppingAdSchema)
 			.nullish()
 			.describe('Present once the scrape finished and found ads.'),
 	})
@@ -579,8 +629,7 @@ const LinkedInAdsInputSchema = z
 			.describe('The bare domain, without `https://` or `www.`.')
 			.optional(),
 		linkedin_page_id: z
-			.string()
-			.min(1)
+			.union([z.string().min(1), z.number().int().positive()])
 			.describe('The numeric page ID, as a string or number.')
 			.optional(),
 		linkedin_page_ids: z
@@ -666,7 +715,12 @@ export const LINKEDIN_KEYWORD_DATE_OPTIONS = [
 const LinkedInKeywordSearchInputSchema = z
 	.object({
 		keyword: z.string().min(1).describe('The phrase to search ads for.'),
-		country: CountryCodeSchema.optional(),
+		country: z
+			.string()
+			.trim()
+			.min(2)
+			.describe('ISO 3166-1 alpha-2 code, e.g. `US`.')
+			.optional(),
 		dateOption: z
 			.enum(LINKEDIN_KEYWORD_DATE_OPTIONS)
 			.describe('`custom-date-range` needs `startDate` and `endDate`.')
@@ -811,7 +865,12 @@ const TikTokKeywordSearchInputSchema = z.object({
 	keyword: z.string().min(1).describe('The phrase to search ads for.'),
 	country_code: CountryCodeSchema.describe(
 		'European country codes only on this endpoint; `US` is not accepted. Leave it out for global results.',
-	).optional(),
+	)
+		.refine((code) => code.toUpperCase() !== 'US', {
+			message:
+				'TikTok keyword search does not accept `US`; it covers European countries only.',
+		})
+		.optional(),
 });
 
 export type TikTokKeywordSearchInput = z.input<

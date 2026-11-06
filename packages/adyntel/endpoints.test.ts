@@ -279,6 +279,24 @@ describe('google.ads', () => {
 			invoke(Google.ads, { company_domain: 'clay.com' }),
 		).resolves.toEqual({});
 	});
+
+	it('reads extracted_text, which extract_text pays a credit for', async () => {
+		respond({
+			...googleAdsResponse,
+			ads: [
+				{ creative_id: '1', extracted_text: 'Buy one, get one free' },
+				{ creative_id: '2', extracted_text: null },
+			],
+		});
+
+		const result = (await invoke(Google.ads, {
+			company_domain: 'clay.com',
+			extract_text: true,
+		})) as { ads?: { extracted_text?: string | null }[] };
+
+		expect(result.ads?.[0]?.extracted_text).toBe('Buy one, get one free');
+		expect(result.ads?.[1]?.extracted_text).toBeNull();
+	});
 });
 
 describe('google.shopping', () => {
@@ -324,6 +342,21 @@ describe('google.shoppingStatus', () => {
 		expect(result.ads).toHaveLength(1);
 	});
 
+	it('reports the shopping ad shape, which differs from the /google ad', async () => {
+		respond(googleShoppingAds);
+
+		const result = (await invoke(Google.shoppingStatus, {
+			id: '12172142-7717-0066-0000-f1e50ca3d579',
+		})) as typeof googleShoppingAds;
+
+		// DataForSEO fields: a preview image and a rank, not `/google`'s
+		// `variants` and `last_seen`.
+		expect(result.ads?.[0]?.preview_image?.width).toBe(380);
+		expect(result.ads?.[0]?.rank_absolute).toBe(1);
+		expect(result.ads?.[0]?.verified).toBe(true);
+		expect(result.ads?.[0]?.first_shown).toBe('2024-02-27 01:02:34 +00:00');
+	});
+
 	it('reports a still-running task without failing', async () => {
 		respond(googleShoppingPending, 202);
 
@@ -360,6 +393,16 @@ describe('linkedin.ads', () => {
 
 		expect(lastRequest().bodyRecord).toMatchObject({
 			linkedin_page_id: '15564',
+		});
+	});
+
+	it('accepts a numeric page ID, which the docs type as a number', async () => {
+		respond(linkedinAdsResponse);
+
+		await invoke(LinkedIn.ads, { linkedin_page_id: 15564 });
+
+		expect(lastRequest().bodyRecord).toMatchObject({
+			linkedin_page_id: 15564,
 		});
 	});
 
@@ -605,7 +648,8 @@ describe('tiktok.keywordSearch', () => {
 
 		expect(error).toBeInstanceOf(AdyntelAPIError);
 		expect((error as AdyntelAPIError).message).toContain('code 40001');
-		expect((error as AdyntelAPIError).operation).toBe('tiktok.keywordSearch');
+		// The operationId, not the dotted event name: retries classify on it.
+		expect((error as AdyntelAPIError).operation).toBe('tiktokSearch');
 	});
 
 	it('accepts code 0 as success', async () => {
@@ -645,6 +689,51 @@ describe('tiktok.adDetails', () => {
 
 	it('rejects an empty id', async () => {
 		await expect(invoke(TikTok.adDetails, { id: '' })).rejects.toThrow();
+	});
+});
+
+describe('tiktok keyword country support', () => {
+	it('rejects US, which only the European ad library covers', async () => {
+		await expect(
+			invoke(TikTok.keywordSearch, { keyword: 'toys', country_code: 'US' }),
+		).rejects.toThrow(/European/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts a European code', async () => {
+		respond(tiktokKeywordSearchResponse);
+
+		await invoke(TikTok.keywordSearch, { keyword: 'toys', country_code: 'de' });
+
+		expect(lastRequest().bodyRecord.country_code).toBe('de');
+	});
+});
+
+describe('TikTok provider codes', () => {
+	it('marks a non-zero code as a provider rejection, not a transport failure', async () => {
+		respond(tiktokNonZeroCode, 200);
+
+		const error = (await invoke(TikTok.keywordSearch, {
+			keyword: 'toys',
+		}).catch((e: unknown) => e)) as AdyntelAPIError;
+
+		expect(error.isProviderRejection).toBe(true);
+		// A transport failure has no status either, so this flag is what keeps a
+		// billed call from being retried as if the network had dropped.
+		expect(error.status).toBeUndefined();
+		expect(error.providerCode).toBe(40001);
+	});
+
+	it('names the operation the same way the client does, so retries classify', async () => {
+		respond(tiktokNonZeroCode, 200);
+
+		const error = (await invoke(TikTok.keywordSearch, {
+			keyword: 'toys',
+		}).catch((e: unknown) => e)) as AdyntelAPIError;
+
+		// error-handlers.ts classifies reads by operationId, so a dotted event
+		// name here would silently mark this read unretriable.
+		expect(error.operation).toBe('tiktokSearch');
 	});
 });
 
