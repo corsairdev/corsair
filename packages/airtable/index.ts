@@ -71,6 +71,7 @@ export type AirtableEndpoints = {
 	recordsGet: AirtableEndpoint<'recordsGet'>;
 	recordsSearch: AirtableEndpoint<'recordsSearch'>;
 	recordsUpdate: AirtableEndpoint<'recordsUpdate'>;
+	webhooksGetPayloads: AirtableEndpoint<'webhooksGetPayloads'>;
 };
 
 type AirtableWebhook<
@@ -140,6 +141,10 @@ export const airtableEndpointSchemas = {
 	'records.update': {
 		input: AirtableEndpointInputSchemas.recordsUpdate,
 		output: AirtableEndpointOutputSchemas.recordsUpdate,
+	},
+	'webhooks.getPayloads': {
+		input: AirtableEndpointInputSchemas.webhooksGetPayloads,
+		output: AirtableEndpointOutputSchemas.webhooksGetPayloads,
 	},
 } as const;
 
