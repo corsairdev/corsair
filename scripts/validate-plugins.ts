@@ -1,5 +1,9 @@
 import fs from 'fs';
 import path from 'path';
+import {
+	PLUGIN_DOCS_FILE,
+	pluginDocsYamlProblems,
+} from './plugin-docs-requirements.ts';
 
 const PACKAGES_DIR = path.join(process.cwd(), 'packages');
 const IGNORED_PACKAGES = ['corsair', 'cli', 'mcp', 'studio', 'ui', 'app'];
@@ -219,6 +223,27 @@ for (const plugin of plugins) {
 			plugin,
 			'test:manual script is forbidden. All tests should be automated and run via the standard "test" script.',
 		);
+	}
+
+	// 6. plugin-docs.yaml names and describes the plugin for the docs, the
+	// catalog and corsair.dev. Without it the generator invents a name.
+	const docsYamlPath = path.join(pluginPath, PLUGIN_DOCS_FILE);
+	if (!fs.existsSync(docsYamlPath)) {
+		logError(
+			plugin,
+			`Missing ${PLUGIN_DOCS_FILE}`,
+			'Add displayName and description (see packages/slack/plugin-docs.yaml), then run pnpm generate:docs -- --plugin=<id>',
+		);
+	} else {
+		for (const problem of pluginDocsYamlProblems(
+			fs.readFileSync(docsYamlPath, 'utf8'),
+		)) {
+			logError(
+				plugin,
+				`${PLUGIN_DOCS_FILE} ${problem}`,
+				'See packages/slack/plugin-docs.yaml',
+			);
+		}
 	}
 }
 
