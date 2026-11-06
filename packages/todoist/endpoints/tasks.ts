@@ -103,8 +103,9 @@ export const getMany: TodoistEndpoints['tasksGetMany'] = async (ctx, input) => {
 		},
 	});
 
-	if (Array.isArray(result) && ctx.db.tasks) {
-		for (const task of result) {
+	const tasks = Array.isArray(result) ? result : (result.results ?? []);
+	if (ctx.db.tasks) {
+		for (const task of tasks) {
 			await ctx.db.tasks.upsertByEntityId(task.id, {
 				...task,
 			});

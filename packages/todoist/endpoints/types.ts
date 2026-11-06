@@ -111,6 +111,8 @@ const TasksGetManyInputSchema = z.object({
 	label: z.string().optional(),
 	filter: z.string().optional(),
 	ids: z.array(z.string()).optional(),
+	cursor: z.string().optional(),
+	limit: z.number().optional(),
 });
 
 // item_move takes exactly one destination. order stays optional so existing callers still compile, and the handler leaves it off the body.
@@ -352,6 +354,8 @@ const TasksGetManyResponseSchema = z.union([
 	z.array(TaskSchema),
 	z
 		.object({
+			results: z.array(TaskSchema).optional(),
+			next_cursor: z.string().nullable().optional(),
 			tasks: z.array(TaskSchema).optional(),
 		})
 		.loose(),
