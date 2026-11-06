@@ -32,27 +32,36 @@ jobs:
     if: >-
       github.event_name != 'push' ||
       !(startsWith(github.event.head_commit.message, 'chore(release):') &&
-        github.event.head_commit.author.email == '41898282+github-actions[bot]@users.noreply.github.com')
+        github.event.head_commit.author.email == '353438335+corsair-releases[bot]@users.noreply.github.com')
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - name: Check the deploy key
+      - name: Check the release app credentials
         env:
-          KEY: ${{ secrets.RELEASE_DEPLOY_KEY }}
+          APP_ID: ${{ vars.RELEASE_APP_ID }}
+          KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
         run: |
-          if [ -z "$KEY" ]; then
-            echo "::error::RELEASE_DEPLOY_KEY is not set. It is the deploy key the main ruleset lets push release commits."
+          if [ -z "$APP_ID" ] || [ -z "$KEY" ]; then
+            echo "::error::RELEASE_APP_ID (variable) and RELEASE_APP_PRIVATE_KEY (secret) must both be set. They belong to the Corsair Releases GitHub App, which the main ruleset lets push release commits."
             exit 1
           fi
 
       # The main ruleset requires a PR for every other push. Its bypass list
-      # holds deploy keys, and this is the repo's only deploy key with write
-      # access, so the release commit and tags go through it.
+      # holds the Corsair Releases GitHub App, so the release commit and tags
+      # are pushed with that app's installation token. Unlike GITHUB_TOKEN, a
+      # push made with it starts deploy.yml, which publishes the bumps.
+      - name: Get a Corsair Releases token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         with:
           ref: main
           fetch-depth: 0
-          ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - uses: actions/setup-node@v4
         with:
@@ -62,8 +71,8 @@ jobs:
         env:
           PLAN: ${{ runner.temp }}/release-plan.json
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "corsair-releases[bot]"
+          git config user.email "353438335+corsair-releases[bot]@users.noreply.github.com"
 
           # If another merge lands first, the push is refused: plan again on
           # the new main instead of rebasing bumps that may no longer apply.
