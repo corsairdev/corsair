@@ -38,6 +38,10 @@ function respond(body: unknown, status = 200) {
 	);
 }
 
+function respondEmpty(status: number) {
+	fetchMock.mockResolvedValueOnce(new Response(null, { status }));
+}
+
 function lastRequest() {
 	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
 	const parsed = new URL(url);
@@ -335,6 +339,28 @@ describe('actionPlansPeople', () => {
 			actionPlansPeople: [actionPlanPerson],
 			_metadata: metadata('actionPlansPeople'),
 		});
+	});
+
+	it('create accepts a truly empty 200 body', async () => {
+		respondEmpty(200);
+
+		const result = await invoke(ActionPlansPeople.create, {
+			personId: 10810,
+			actionPlanId: 2,
+		});
+
+		expect(result).toEqual({});
+	});
+
+	it('update accepts a truly empty 200 body', async () => {
+		respondEmpty(200);
+
+		const result = await invoke(ActionPlansPeople.update, {
+			id: 41,
+			status: 'Paused',
+		});
+
+		expect(result).toEqual({});
 	});
 
 	it('create applies an action plan to a person and answers the bare 200 body', async () => {

@@ -6,11 +6,15 @@ import {
 	AutomationsOutputSchemas as Outputs,
 } from './automations-types';
 import { call, envelopeMany, envelopeMeta, envelopeOne } from './call';
+import type { FollowUpBossEndpointInputs } from './registry';
 
 // ── automations ────────────────────────────────────────────────────────────
 
 export const Automations = {
-	list: (ctx: FollowUpBossContext, input: unknown) =>
+	list: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['automationsList'],
+	) =>
 		call(
 			ctx,
 			{
@@ -29,7 +33,10 @@ export const Automations = {
 			},
 		),
 
-	get: (ctx: FollowUpBossContext, input: unknown) =>
+	get: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['automationsGet'],
+	) =>
 		call(
 			ctx,
 			{
@@ -51,7 +58,10 @@ export const Automations = {
 // ── automations people ─────────────────────────────────────────────────────
 
 export const AutomationsPeople = {
-	list: (ctx: FollowUpBossContext, input: unknown) =>
+	list: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['automationsPeopleList'],
+	) =>
 		call(
 			ctx,
 			{
@@ -70,7 +80,10 @@ export const AutomationsPeople = {
 			},
 		),
 
-	create: (ctx: FollowUpBossContext, input: unknown) =>
+	create: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['automationsPeopleCreate'],
+	) =>
 		call(
 			ctx,
 			{
@@ -81,14 +94,17 @@ export const AutomationsPeople = {
 			input,
 			(body) => ({ method: 'POST', path: '/automationsPeople', body }),
 			{
-				shape: (raw) => envelopeOne(raw, 'automationsPeople'),
+				shape: (raw) => envelopeOne(raw, 'automationsPeople') ?? {},
 				log: (_, result) => ({
 					automationPersonId: result.id ?? undefined,
 				}),
 			},
 		),
 
-	update: (ctx: FollowUpBossContext, input: unknown) =>
+	update: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['automationsPeopleUpdate'],
+	) =>
 		call(
 			ctx,
 			{
@@ -103,12 +119,15 @@ export const AutomationsPeople = {
 				body,
 			}),
 			{
-				shape: (raw) => envelopeOne(raw, 'automationsPeople'),
+				shape: (raw) => envelopeOne(raw, 'automationsPeople') ?? {},
 				log: ({ id }) => ({ automationPersonId: id }),
 			},
 		),
 
-	get: (ctx: FollowUpBossContext, input: unknown) =>
+	get: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['automationsPeopleGet'],
+	) =>
 		call(
 			ctx,
 			{
@@ -123,7 +142,7 @@ export const AutomationsPeople = {
 			}),
 			{
 				// A single fetch arrives bare or as the one-element envelope.
-				shape: (raw) => envelopeOne(raw, 'automationsPeople'),
+				shape: (raw) => envelopeOne(raw, 'automationsPeople') ?? {},
 				log: ({ id }) => ({ automationPersonId: id }),
 			},
 		),
@@ -132,7 +151,10 @@ export const AutomationsPeople = {
 // ── action plans ───────────────────────────────────────────────────────────
 
 export const ActionPlans = {
-	list: (ctx: FollowUpBossContext, input: unknown) =>
+	list: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['actionPlansList'],
+	) =>
 		call(
 			ctx,
 			{
@@ -166,7 +188,10 @@ export const ActionPlans = {
 // ── action plans people ────────────────────────────────────────────────────
 
 export const ActionPlansPeople = {
-	list: (ctx: FollowUpBossContext, input: unknown) =>
+	list: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['actionPlansPeopleList'],
+	) =>
 		call(
 			ctx,
 			{
@@ -185,7 +210,10 @@ export const ActionPlansPeople = {
 			},
 		),
 
-	create: (ctx: FollowUpBossContext, input: unknown) =>
+	create: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['actionPlansPeopleCreate'],
+	) =>
 		call(
 			ctx,
 			{
@@ -199,14 +227,17 @@ export const ActionPlansPeople = {
 				// unknown: the published example answers 200 with an empty body,
 				// while the live API may echo the created pairing; envelopeOne
 				// accepts either.
-				shape: (raw) => envelopeOne(raw, 'actionPlansPeople'),
+				shape: (raw) => envelopeOne(raw, 'actionPlansPeople') ?? {},
 				log: (_, result) => ({
 					actionPlanPersonId: result.id ?? undefined,
 				}),
 			},
 		),
 
-	update: (ctx: FollowUpBossContext, input: unknown) =>
+	update: (
+		ctx: FollowUpBossContext,
+		input: FollowUpBossEndpointInputs['actionPlansPeopleUpdate'],
+	) =>
 		call(
 			ctx,
 			{
@@ -222,7 +253,7 @@ export const ActionPlansPeople = {
 			}),
 			{
 				// unknown: same open 200 body as create.
-				shape: (raw) => envelopeOne(raw, 'actionPlansPeople'),
+				shape: (raw) => envelopeOne(raw, 'actionPlansPeople') ?? {},
 				log: ({ id }) => ({ actionPlanPersonId: id }),
 			},
 		),
