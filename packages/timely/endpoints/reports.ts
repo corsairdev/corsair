@@ -1,57 +1,50 @@
-import { logEventFromContext } from 'corsair/core';
 import type { TimelyEndpoints } from '..';
-import { makeTimelyRequest } from '../client';
-import type { TimelyEndpointOutputs } from './types';
+import { joinIds, resolveTimelyAccountId, timelyCall } from './shared';
 import {
-	TimelyEndpointInputSchemas,
-	TimelyEndpointOutputSchemas,
+	TimelyEndpointInputSchemas as In,
+	TimelyEndpointOutputSchemas as Out,
 } from './types';
 
-function idOf(v: unknown): string {
-	return String(v);
-}
-function accountIdOf(input: {
-	accountId?: unknown;
-	account_id?: unknown;
-}): string {
-	return idOf(input.accountId ?? input.account_id);
-}
+// Timely has no stored reports: both routes compute totals for a date range.
 
-export const list: TimelyEndpoints['reportsList'] = async (ctx, input) => {
-	const parsedInput = TimelyEndpointInputSchemas.reportsList.parse(input ?? {});
-	const accountId = accountIdOf(parsedInput);
-	const query: Record<string, unknown> = {
-		page: parsedInput.page,
-		per_page: parsedInput.perPage ?? parsedInput.per_page,
-	};
-	const response = await makeTimelyRequest<
-		TimelyEndpointOutputs['reportsList']
-	>(`/${accountId}/reports`, ctx.key, { method: 'GET', query });
-	const parsedResponse =
-		TimelyEndpointOutputSchemas.reportsList.parse(response);
-	await logEventFromContext(
-		ctx,
-		'timely.reports.list',
-		{ ...parsedInput },
-		'completed',
-	);
-	return parsedResponse;
+export const totals: TimelyEndpoints['reportsTotals'] = async (ctx, input) => {
+	const parsed = In.reportsTotals.parse(input ?? {});
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	return timelyCall(ctx, {
+		event: 'timely.reports.totals',
+		input: parsed,
+		path: `/${accountId}/reports`,
+		query: {
+			since: parsed.since,
+			until: parsed.until,
+			user_ids: joinIds(parsed.user_ids),
+			project_ids: joinIds(parsed.project_ids),
+			client_ids: joinIds(parsed.client_ids),
+		},
+		output: Out.reportsTotals,
+	});
 };
 
-export const get: TimelyEndpoints['reportsGet'] = async (ctx, input) => {
-	const parsedInput = TimelyEndpointInputSchemas.reportsGet.parse(input);
-	const accountId = accountIdOf(parsedInput);
-	const response = await makeTimelyRequest<TimelyEndpointOutputs['reportsGet']>(
-		`/${accountId}/reports/${idOf(parsedInput.id)}`,
-		ctx.key,
-		{ method: 'GET' },
-	);
-	const parsedResponse = TimelyEndpointOutputSchemas.reportsGet.parse(response);
-	await logEventFromContext(
-		ctx,
-		'timely.reports.get',
-		{ ...parsedInput },
-		'completed',
-	);
-	return parsedResponse;
+export const filter: TimelyEndpoints['reportsFilter'] = async (ctx, input) => {
+	const parsed = In.reportsFilter.parse(input);
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	return timelyCall(ctx, {
+		event: 'timely.reports.filter',
+		input: parsed,
+		path: `/${accountId}/reports/filter`,
+		query: {
+			since: parsed.since,
+			until: parsed.until,
+			user_ids: joinIds(parsed.user_ids),
+			project_ids: joinIds(parsed.project_ids),
+			client_ids: joinIds(parsed.client_ids),
+			label_ids: joinIds(parsed.label_ids),
+			team_ids: joinIds(parsed.team_ids),
+			state_ids: joinIds(parsed.state_ids),
+			group_by: parsed.group_by?.join(','),
+			scope: parsed.scope,
+			billed: parsed.billed === undefined ? undefined : String(parsed.billed),
+		},
+		output: Out.reportsFilter,
+	});
 };

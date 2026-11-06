@@ -1,60 +1,82 @@
-import { logEventFromContext } from 'corsair/core';
 import type { TimelyEndpoints } from '..';
-import { makeTimelyRequest } from '../client';
-import type { TimelyEndpointOutputs } from './types';
 import {
-	TimelyEndpointInputSchemas,
-	TimelyEndpointOutputSchemas,
+	bodyFields,
+	idPath,
+	resolveTimelyAccountId,
+	timelyCall,
+} from './shared';
+import {
+	TimelyEndpointInputSchemas as In,
+	TimelyEndpointOutputSchemas as Out,
 } from './types';
 
-function idOf(v: unknown): string {
-	return String(v);
-}
-function accountIdOf(input: {
-	accountId?: unknown;
-	account_id?: unknown;
-}): string {
-	return idOf(input.accountId ?? input.account_id);
-}
-
 export const list: TimelyEndpoints['projectsList'] = async (ctx, input) => {
-	const parsedInput = TimelyEndpointInputSchemas.projectsList.parse(
-		input ?? {},
-	);
-	const accountId = accountIdOf(parsedInput);
-	const query: Record<string, unknown> = {
-		page: parsedInput.page,
-		per_page: parsedInput.perPage ?? parsedInput.per_page,
-	};
-	const response = await makeTimelyRequest<
-		TimelyEndpointOutputs['projectsList']
-	>(`/${accountId}/projects`, ctx.key, { method: 'GET', query });
-	const parsedResponse =
-		TimelyEndpointOutputSchemas.projectsList.parse(response);
-	await logEventFromContext(
-		ctx,
-		'timely.projects.list',
-		{ ...parsedInput },
-		'completed',
-	);
-	return parsedResponse;
+	const parsed = In.projectsList.parse(input ?? {});
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	return timelyCall(ctx, {
+		event: 'timely.projects.list',
+		input: parsed,
+		path: `/${accountId}/projects`,
+		query: {
+			limit: parsed.limit,
+			offset: parsed.offset,
+			order: parsed.order,
+			state: parsed.state,
+			relation: parsed.relation,
+			updated_after: parsed.updated_after,
+			totals: parsed.totals,
+		},
+		output: Out.projectsList,
+	});
 };
 
 export const get: TimelyEndpoints['projectsGet'] = async (ctx, input) => {
-	const parsedInput = TimelyEndpointInputSchemas.projectsGet.parse(input);
-	const accountId = accountIdOf(parsedInput);
-	const response = await makeTimelyRequest<
-		TimelyEndpointOutputs['projectsGet']
-	>(`/${accountId}/projects/${idOf(parsedInput.id)}`, ctx.key, {
-		method: 'GET',
+	const parsed = In.projectsGet.parse(input);
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	return timelyCall(ctx, {
+		event: 'timely.projects.get',
+		input: parsed,
+		path: `/${accountId}/projects/${idPath(parsed.id)}`,
+		output: Out.projectsGet,
 	});
-	const parsedResponse =
-		TimelyEndpointOutputSchemas.projectsGet.parse(response);
-	await logEventFromContext(
-		ctx,
-		'timely.projects.get',
-		{ ...parsedInput },
-		'completed',
-	);
-	return parsedResponse;
+};
+
+export const create: TimelyEndpoints['projectsCreate'] = async (ctx, input) => {
+	const parsed = In.projectsCreate.parse(input);
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	return timelyCall(ctx, {
+		event: 'timely.projects.create',
+		input: parsed,
+		path: `/${accountId}/projects`,
+		method: 'POST',
+		body: { project: bodyFields(parsed) },
+		output: Out.projectsCreate,
+	});
+};
+
+export const update: TimelyEndpoints['projectsUpdate'] = async (ctx, input) => {
+	const parsed = In.projectsUpdate.parse(input);
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	return timelyCall(ctx, {
+		event: 'timely.projects.update',
+		input: parsed,
+		path: `/${accountId}/projects/${idPath(parsed.id)}`,
+		method: 'PUT',
+		body: { project: bodyFields(parsed) },
+		output: Out.projectsUpdate,
+	});
+};
+
+export const remove: TimelyEndpoints['projectsDelete'] = async (ctx, input) => {
+	const parsed = In.projectsDelete.parse(input);
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	const id = idPath(parsed.id);
+	return timelyCall(ctx, {
+		event: 'timely.projects.delete',
+		input: parsed,
+		path: `/${accountId}/projects/${id}`,
+		method: 'DELETE',
+		output: Out.projectsDelete,
+		transform: () => ({ id, deleted: true }),
+	});
 };

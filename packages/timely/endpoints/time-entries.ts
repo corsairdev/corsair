@@ -1,58 +1,145 @@
-import { logEventFromContext } from 'corsair/core';
 import type { TimelyEndpoints } from '..';
-import { makeTimelyRequest } from '../client';
-import type { TimelyEndpointOutputs } from './types';
 import {
-	TimelyEndpointInputSchemas,
-	TimelyEndpointOutputSchemas,
+	bodyFields,
+	idPath,
+	joinIds,
+	resolveTimelyAccountId,
+	timelyCall,
+} from './shared';
+import {
+	TimelyEndpointInputSchemas as In,
+	TimelyEndpointOutputSchemas as Out,
 } from './types';
 
-function idOf(v: unknown): string {
-	return String(v);
-}
-function accountIdOf(input: {
-	accountId?: unknown;
-	account_id?: unknown;
-}): string {
-	return idOf(input.accountId ?? input.account_id);
-}
+// Timely calls time entries "hours" (documented paths) and wraps a single
+// entry in `{ event: {...} }`.
 
 export const list: TimelyEndpoints['timeEntriesList'] = async (ctx, input) => {
-	const parsedInput = TimelyEndpointInputSchemas.timeEntriesList.parse(
-		input ?? {},
-	);
-	const accountId = accountIdOf(parsedInput);
-	const query: Record<string, unknown> = {
-		page: parsedInput.page,
-		per_page: parsedInput.perPage ?? parsedInput.per_page,
-	};
-	const response = await makeTimelyRequest<
-		TimelyEndpointOutputs['timeEntriesList']
-	>(`/${accountId}/events`, ctx.key, { method: 'GET', query });
-	const parsedResponse =
-		TimelyEndpointOutputSchemas.timeEntriesList.parse(response);
-	await logEventFromContext(
-		ctx,
-		'timely.timeEntries.list',
-		{ ...parsedInput },
-		'completed',
-	);
-	return parsedResponse;
+	const parsed = In.timeEntriesList.parse(input ?? {});
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	return timelyCall(ctx, {
+		event: 'timely.timeEntries.list',
+		input: parsed,
+		path: `/${accountId}/hours`,
+		query: {
+			since: parsed.since,
+			upto: parsed.upto,
+			day: parsed.day,
+			project_id: parsed.project_id,
+			user_id: parsed.user_id,
+			hour_ids: joinIds(parsed.hour_ids),
+			sort: parsed.sort,
+			order: parsed.order,
+			page: parsed.page,
+			per_page: parsed.per_page,
+		},
+		output: Out.timeEntriesList,
+	});
 };
 
 export const get: TimelyEndpoints['timeEntriesGet'] = async (ctx, input) => {
-	const parsedInput = TimelyEndpointInputSchemas.timeEntriesGet.parse(input);
-	const accountId = accountIdOf(parsedInput);
-	const response = await makeTimelyRequest<
-		TimelyEndpointOutputs['timeEntriesGet']
-	>(`/${accountId}/events/${idOf(parsedInput.id)}`, ctx.key, { method: 'GET' });
-	const parsedResponse =
-		TimelyEndpointOutputSchemas.timeEntriesGet.parse(response);
-	await logEventFromContext(
-		ctx,
-		'timely.timeEntries.get',
-		{ ...parsedInput },
-		'completed',
-	);
-	return parsedResponse;
+	const parsed = In.timeEntriesGet.parse(input);
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	return timelyCall(ctx, {
+		event: 'timely.timeEntries.get',
+		input: parsed,
+		path: `/${accountId}/hours/${idPath(parsed.id)}`,
+		output: Out.timeEntriesGet,
+	});
+};
+
+export const create: TimelyEndpoints['timeEntriesCreate'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = In.timeEntriesCreate.parse(input);
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	return timelyCall(ctx, {
+		event: 'timely.timeEntries.create',
+		input: parsed,
+		path: `/${accountId}/hours`,
+		method: 'POST',
+		body: { event: bodyFields(parsed) },
+		output: Out.timeEntriesCreate,
+	});
+};
+
+export const update: TimelyEndpoints['timeEntriesUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = In.timeEntriesUpdate.parse(input);
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	return timelyCall(ctx, {
+		event: 'timely.timeEntries.update',
+		input: parsed,
+		path: `/${accountId}/hours/${idPath(parsed.id)}`,
+		method: 'PUT',
+		body: { event: bodyFields(parsed) },
+		output: Out.timeEntriesUpdate,
+	});
+};
+
+export const remove: TimelyEndpoints['timeEntriesDelete'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = In.timeEntriesDelete.parse(input);
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	const id = idPath(parsed.id);
+	return timelyCall(ctx, {
+		event: 'timely.timeEntries.delete',
+		input: parsed,
+		path: `/${accountId}/hours/${id}`,
+		method: 'DELETE',
+		output: Out.timeEntriesDelete,
+		transform: () => ({ id, deleted: true }),
+	});
+};
+
+export const bulk: TimelyEndpoints['timeEntriesBulk'] = async (ctx, input) => {
+	const parsed = In.timeEntriesBulk.parse(input);
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	const body: Record<string, unknown> = {};
+	if (parsed.create?.length) body.create = parsed.create;
+	if (parsed.update?.length) body.update = parsed.update;
+	if (parsed.delete?.length) body.delete = parsed.delete;
+	return timelyCall(ctx, {
+		event: 'timely.timeEntries.bulk',
+		input: parsed,
+		path: `/${accountId}/bulk/hours`,
+		method: 'POST',
+		body,
+		output: Out.timeEntriesBulk,
+	});
+};
+
+export const startTimer: TimelyEndpoints['timeEntriesStartTimer'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = In.timeEntriesStartTimer.parse(input);
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	return timelyCall(ctx, {
+		event: 'timely.timeEntries.startTimer',
+		input: parsed,
+		path: `/${accountId}/hours/${idPath(parsed.id)}/start`,
+		method: 'PUT',
+		output: Out.timeEntriesStartTimer,
+	});
+};
+
+export const stopTimer: TimelyEndpoints['timeEntriesStopTimer'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = In.timeEntriesStopTimer.parse(input);
+	const accountId = await resolveTimelyAccountId(ctx, parsed.accountId);
+	return timelyCall(ctx, {
+		event: 'timely.timeEntries.stopTimer',
+		input: parsed,
+		path: `/${accountId}/hours/${idPath(parsed.id)}/stop`,
+		method: 'PUT',
+		output: Out.timeEntriesStopTimer,
+	});
 };
