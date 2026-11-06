@@ -12,6 +12,14 @@ export const ALLOWED_EXTRA = [
 ];
 export const ASSERTION_WARN_FLOOR = 5;
 
+/**
+ * Label for team PRs that change several existing plugins at once (risk
+ * levels, version bumps, a shared fix). Contributors without write access
+ * cannot label their own PRs, and the author must also be on the team.
+ */
+export const MULTI_PLUGIN_LABEL = 'multi-plugin';
+export const TEAM_ASSOCIATIONS = ['OWNER', 'MEMBER', 'COLLABORATOR'];
+
 /** Mintlify sidebar; `generate:docs` rewrites this with the plugin pages. */
 export const DOCS_NAV_FILE = 'docs/docs.json';
 
@@ -57,6 +65,12 @@ export interface GateInput {
 	testFileCount: number;
 	/** Total expect(/assert( calls across the plugin's *.test.ts files. */
 	assertionCount: number;
+	/** The PR's current labels (read live, so a re-run sees a newly added label). */
+	labels?: string[];
+	/** GitHub's author_association for the PR author (OWNER, MEMBER, …). */
+	authorAssociation?: string;
+	/** Files the PR adds (status "added"), to spot brand-new plugin packages. */
+	addedFiles?: string[];
 }
 
 export interface GateCheck {
@@ -74,6 +88,8 @@ export interface GateFailure {
 export interface GateResult {
 	isPluginPr: boolean;
 	plugin: string | null;
+	/** Set for a team multi-plugin PR: every plugin it touches. */
+	batchPlugins?: string[];
 	checks: GateCheck[];
 	failures: GateFailure[];
 }
@@ -111,6 +127,78 @@ function stripComments(s: string): string {
 	return out;
 }
 
+/** A team PR that is allowed to change several existing plugins at once. */
+export function isTeamMultiPluginPr(input: GateInput): boolean {
+	return (
+		(input.labels ?? []).includes(MULTI_PLUGIN_LABEL) &&
+		TEAM_ASSOCIATIONS.includes(input.authorAssociation ?? '')
+	);
+}
+
+/**
+ * Scope rules for a team multi-plugin PR. Files must still stay inside the
+ * plugins it touches (plus the registry, lockfile and those plugins' docs),
+ * and a brand-new plugin still needs its own PR. Tests, the PR template and
+ * the demo video (R2–R4) are per-plugin contribution rules, so they don't
+ * apply; CI still builds and tests every touched package.
+ */
+function runTeamMultiPluginGate(
+	input: GateInput,
+	plugins: Set<string>,
+): GateResult {
+	const list = [...plugins].sort();
+	const checks: GateCheck[] = [];
+	const outOfScope = input.changedFiles.filter(
+		(f) =>
+			pluginOf(f) === null &&
+			!ALLOWED_EXTRA.includes(f) &&
+			f !== DOCS_NAV_FILE &&
+			!list.some((p) => isSamePluginDocs(f, p)),
+	);
+	const added = new Set(input.addedFiles ?? []);
+	const newPlugins = list.filter((p) =>
+		added.has(`packages/${p}/package.json`),
+	);
+	if (newPlugins.length > 0) {
+		checks.push({
+			rule: 'R1',
+			label: 'Scope: existing plugins only',
+			status: 'fail',
+			detail: `New plugins need their own PR: ${newPlugins.join(', ')}`,
+		});
+	} else if (outOfScope.length > 0) {
+		checks.push({
+			rule: 'R1',
+			label: 'Scope: plugin files only',
+			status: 'fail',
+			detail: `Out of scope: ${outOfScope.join(', ')}`,
+		});
+	} else {
+		checks.push({
+			rule: 'R1',
+			label: `Scope: team multi-plugin PR (${MULTI_PLUGIN_LABEL})`,
+			status: 'pass',
+			detail: list.join(', '),
+		});
+	}
+	checks.push({
+		rule: 'R2–R4',
+		label: 'Tests, template, demo',
+		status: 'pass',
+		detail: `Not required with the ${MULTI_PLUGIN_LABEL} label; CI builds and tests each touched package`,
+	});
+	const failures = checks
+		.filter((c) => c.status === 'fail')
+		.map((c) => ({ rule: c.rule, message: c.detail ?? c.label }));
+	return {
+		isPluginPr: true,
+		plugin: list[0] ?? null,
+		batchPlugins: list,
+		checks,
+		failures,
+	};
+}
+
 export function runGate(input: GateInput): GateResult {
 	const plugins = new Set(
 		input.changedFiles.map(pluginOf).filter((p): p is string => p !== null),
@@ -121,6 +209,10 @@ export function runGate(input: GateInput): GateResult {
 		input.isDraft
 	) {
 		return { isPluginPr: false, plugin: null, checks: [], failures: [] };
+	}
+
+	if (isTeamMultiPluginPr(input)) {
+		return runTeamMultiPluginGate(input, plugins);
 	}
 
 	const checks: GateCheck[] = [];
@@ -239,7 +331,9 @@ const STATUS_ICON = { pass: '✅', warn: '⚠️', fail: '❌' } as const;
 export function renderScorecard(result: GateResult): string {
 	const lines = [
 		'<!-- corsair-pr-gate -->',
-		`### Plugin PR scorecard — \`packages/${result.plugin}\``,
+		result.batchPlugins
+			? `### Plugin PR scorecard — team multi-plugin PR (${result.batchPlugins.length} plugins)`
+			: `### Plugin PR scorecard — \`packages/${result.plugin}\``,
 		'',
 		'| Check | Status | Notes |',
 		'| --- | --- | --- |',

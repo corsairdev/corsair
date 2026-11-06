@@ -97,12 +97,33 @@ const pr = String(event.pull_request.number);
 // event.pull_request.base.sha is wrong: that sha is recorded on the PR
 // object and lags behind the base branch, sweeping unrelated main-side
 // changes into the diff (seen live on #427 after #435 merged).
-const changedFiles = gh([
+const fileRows = gh([
 	'api',
 	`repos/${repo}/pulls/${pr}/files`,
 	'--paginate',
 	'--jq',
-	'.[].filename',
+	'.[] | "\\(.status)\\t\\(.filename)"',
+])
+	.trim()
+	.split('\n')
+	.filter(Boolean)
+	.map((row) => {
+		const tab = row.indexOf('\t');
+		return { status: row.slice(0, tab), filename: row.slice(tab + 1) };
+	});
+const changedFiles = fileRows.map((f) => f.filename);
+const addedFiles = fileRows
+	.filter((f) => f.status === 'added')
+	.map((f) => f.filename);
+
+// Labels are read live, not from the event payload: a label added after the
+// push takes effect when this job is re-run ("Re-run failed jobs").
+const labels = gh([
+	'api',
+	`repos/${repo}/issues/${pr}/labels`,
+	'--paginate',
+	'--jq',
+	'.[].name',
 ])
 	.trim()
 	.split('\n')
@@ -118,6 +139,9 @@ const result = runGate({
 	isDraft: event.pull_request.draft as boolean,
 	testFileCount: tests.testFileCount,
 	assertionCount: tests.assertionCount,
+	labels,
+	authorAssociation: event.pull_request.author_association as string,
+	addedFiles,
 });
 
 if (!result.isPluginPr) {
