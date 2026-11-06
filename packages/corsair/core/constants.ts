@@ -216,6 +216,7 @@ export const BaseProviders = [
 	'emelia',
 	'enigma',
 	'epicgames',
+	'esignatures',
 	'esputnik',
 	'everhour',
 	'exa',
@@ -650,6 +651,7 @@ export const ProviderDisplayNames = {
 	emelia: 'Emelia',
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
+	esignatures: 'eSignatures',
 	esputnik: 'eSputnik',
 	everhour: 'Everhour',
 	exa: 'Exa',
@@ -1088,6 +1090,7 @@ export type AllProviders =
 	| 'emelia'
 	| 'enigma'
 	| 'epicgames'
+	| 'esignatures'
 	| 'esputnik'
 	| 'everhour'
 	| 'exa'

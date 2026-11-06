@@ -1824,6 +1824,14 @@
                 ]
               },
               {
+                "group": "eSignatures",
+                "pages": [
+                  "plugins/esignatures/overview",
+                  "plugins/esignatures/api",
+                  "plugins/esignatures/database"
+                ]
+              },
+              {
                 "group": "eSputnik",
                 "pages": [
                   "plugins/esputnik/overview",
