@@ -24,6 +24,13 @@ const ADYNTEL_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	headerNames: { retryAfter: 'retry-after' },
 };
 
+/**
+ * Marker message that makes a 204 raise an `ApiError` instead of resolving an
+ * empty body, so the caller can tell "the API found nothing" from "the body
+ * could not be read". `catchErrorCodes` only needs the status to be a key.
+ */
+const NO_CONTENT = 'No Content';
+
 // unknown: the body is an untyped error body until asRecord narrows it.
 function readMessage(body: unknown): string | undefined {
 	const record = asRecord(body);
@@ -115,12 +122,42 @@ export type AdyntelRequest = {
 	operation: string;
 };
 
+/**
+ * A 204 is the API's "nothing found" answer, and several endpoints use it. It
+ * is returned as its own kind rather than as an `undefined` body, because
+ * `corsair/http` also yields `undefined` when reading a 200 body throws. Those
+ * two must not be confused: one is an empty result, the other is a failed read
+ * that has to surface.
+ */
+export type AdyntelResponse =
+	| { kind: 'body'; body: unknown }
+	| { kind: 'no-content' };
+
+/**
+ * `ApiError` retains the `ApiRequestOptions` it was built from, and this
+ * plugin's request body carries the API key and the account email. Copying only
+ * the fields a caller can act on keeps both credentials out of the cause, so
+ * logging the error or shipping it to an error tracker cannot leak them.
+ * `ApiError` redacts only URL and query parameters, not the body.
+ */
+function sanitizeApiError(error: ApiError): Error {
+	const sanitized = new Error(error.message);
+	sanitized.name = 'ApiError';
+	Object.assign(sanitized, {
+		status: error.status,
+		statusText: error.statusText,
+		url: error.url,
+		retryAfter: error.retryAfter,
+	});
+	return sanitized;
+}
+
 // unknown: the response body has not been parsed by the output schema yet, and
 // the same openness covers the `request` call inside.
 export async function makeAdyntelRequest(
 	credentials: { apiKey: string; email: string },
 	{ path, body, operation }: AdyntelRequest,
-): Promise<unknown> {
+): Promise<AdyntelResponse> {
 	const config: OpenAPIConfig = {
 		BASE: ADYNTEL_API_BASE,
 		VERSION: '1.0.0',
@@ -140,19 +177,55 @@ export async function makeAdyntelRequest(
 			api_key: credentials.apiKey,
 		},
 		mediaType: 'application/json',
+		// `errors` replaces the whole default map, so it keeps every status this
+		// plugin already handled and adds 204 at the lowest priority: 204 is the
+		// API's "nothing found" and is the only status that may resolve empty.
+		errors: {
+			400: 'Bad Request',
+			401: 'Unauthorized',
+			403: 'Forbidden',
+			404: 'Not Found',
+			429: 'Too Many Requests',
+			500: 'Internal Server Error',
+			502: 'Bad Gateway',
+			503: 'Service Unavailable',
+			204: NO_CONTENT,
+		},
 	};
 
 	try {
-		return await request<unknown>(config, requestOptions, {
+		const result = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: ADYNTEL_RATE_LIMIT_CONFIG,
 		});
-	} catch (error) {
-		if (error instanceof ApiError) {
+		// A real 204 never reaches this line: it is raised through the `errors`
+		// map above and handled in the catch. `corsair/http` returns `undefined`
+		// here when a 2xx body could not be read, which is a failure, not an
+		// empty result, so it must not be reported as no-content.
+		if (result === undefined) {
 			throw new AdyntelAPIError(
-				describeAdyntelError(error.status, error.body, error.message),
-				{ cause: error, operation },
+				`Adyntel ${operation} returned an unreadable body`,
+				{ method: 'POST', operation },
 			);
 		}
+		return { kind: 'body', body: result };
+	} catch (error) {
+		if (error instanceof ApiError) {
+			if (error.status === 204) return { kind: 'no-content' };
+			throw new AdyntelAPIError(
+				describeAdyntelError(error.status, error.body, error.message),
+				{
+					// The sanitized cause is a plain Error, so the status this class
+					// reads is passed explicitly rather than copied from the cause.
+					status: error.status,
+					retryAfter: error.retryAfter,
+					method: 'POST',
+					cause: sanitizeApiError(error),
+					operation,
+				},
+			);
+		}
+		// Re-throw our own unreadable-body error rather than wrapping it again.
+		if (error instanceof AdyntelAPIError) throw error;
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new AdyntelAPIError(error.message, {

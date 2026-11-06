@@ -39,7 +39,7 @@ export const ads: AdyntelEndpoints['tiktokAds'] = (ctx, input) =>
 		(parsed) => ({ path: 'tiktok', operation: 'tiktokAds', body: parsed }),
 		{
 			// A 204 means the company runs no TikTok ads.
-			shape: (raw) => raw ?? {},
+			shape: (raw) => raw,
 			log: (_, result) => ({
 				handle: result.handle ?? undefined,
 				adCount: result.brand_ads?.length,
@@ -72,7 +72,7 @@ export const keywordSearch: AdyntelEndpoints['tiktokKeywordSearch'] = (
 			// both a country filter and none.
 			shape: (raw) => {
 				assertTikTokCode(raw, 'tiktokSearch');
-				return raw ?? {};
+				return raw;
 			},
 			log: (_, result) => ({
 				adCount: result.data?.length,
@@ -99,7 +99,7 @@ export const adDetails: AdyntelEndpoints['tiktokAdDetails'] = (ctx, input) =>
 			// A 204 means the ad is gone, or the id was never a TikTok ad.
 			shape: (raw) => {
 				assertTikTokCode(raw, 'tiktokAdDetails');
-				return raw ?? {};
+				return raw;
 			},
 			log: (_, result) => ({
 				advertiser: result.data?.advertiser?.name ?? undefined,

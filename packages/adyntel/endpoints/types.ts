@@ -273,6 +273,19 @@ const MetaAdsInputSchema = z
 				'Send exactly one of `facebook_url` or `company_domain`, not both and not neither.',
 			path: ['company_domain'],
 		},
+	)
+	.refine(
+		(value) => {
+			if (!value.all_ads && !Array.isArray(value.country_code)) return true;
+			// Adyntel sends each page and each country's results to the webhook, so
+			// there is no synchronous answer to return without one.
+			return Boolean(value.webhook_url);
+		},
+		{
+			message:
+				'`webhook_url` is required with `all_ads: true` and with a `country_code` array.',
+			path: ['webhook_url'],
+		},
 	);
 
 export type MetaAdsInput = z.input<typeof MetaAdsInputSchema>;
@@ -416,39 +429,46 @@ export type MetaAdSearchResponse = z.output<typeof MetaAdSearchResponseSchema>;
 export const GOOGLE_MEDIA_TYPES = ['text', 'image', 'video', 'all'] as const;
 export const GOOGLE_DATA_PROVIDERS = ['rapidapi', 'apify'] as const;
 
-const GoogleAdsInputSchema = z.object({
-	company_domain: z
-		.string()
-		.min(1)
-		.describe('The bare domain, without `https://` or `www.`.'),
-	media_type: z
-		.enum(GOOGLE_MEDIA_TYPES)
-		.describe(
-			'Defaults to `all`. Anything unrecognised is also treated as `all` rather than rejected, so a typo silently widens the result.',
-		)
-		.optional(),
-	country_code: z
-		.string()
-		.trim()
-		.min(2)
-		.describe(
-			'One country per call; a list is rejected. Leave it out, or send `anywhere`, for worldwide results. Send the same code again with every `continuation_token`.',
-		)
-		.optional(),
-	continuation_token: ContinuationTokenSchema.optional(),
-	extract_text: z
-		.boolean()
-		.describe(
-			'Extracts the text inside each creative for one extra credit. The docs table spells it `extract-text`; the OpenAPI spec and this plugin use `extract_text`.',
-		)
-		.optional(),
-	all_ads: z
-		.boolean()
-		.describe('Needs `webhook_url`. One credit per page and cannot be stopped.')
-		.optional(),
-	webhook_url: WebhookUrlSchema.optional(),
-	data_provider: z.enum(GOOGLE_DATA_PROVIDERS).optional(),
-});
+const GoogleAdsInputSchema = z
+	.object({
+		company_domain: z
+			.string()
+			.min(1)
+			.describe('The bare domain, without `https://` or `www.`.'),
+		media_type: z
+			.enum(GOOGLE_MEDIA_TYPES)
+			.describe(
+				'Defaults to `all`. Anything unrecognised is also treated as `all` rather than rejected, so a typo silently widens the result.',
+			)
+			.optional(),
+		country_code: z
+			.string()
+			.trim()
+			.min(2)
+			.describe(
+				'One country per call; a list is rejected. Leave it out, or send `anywhere`, for worldwide results. Send the same code again with every `continuation_token`.',
+			)
+			.optional(),
+		continuation_token: ContinuationTokenSchema.optional(),
+		extract_text: z
+			.boolean()
+			.describe(
+				'Extracts the text inside each creative for one extra credit. The docs table spells it `extract-text`; the OpenAPI spec and this plugin use `extract_text`.',
+			)
+			.optional(),
+		all_ads: z
+			.boolean()
+			.describe(
+				'Needs `webhook_url`. One credit per page and cannot be stopped.',
+			)
+			.optional(),
+		webhook_url: WebhookUrlSchema.optional(),
+		data_provider: z.enum(GOOGLE_DATA_PROVIDERS).optional(),
+	})
+	.refine((value) => !value.all_ads || Boolean(value.webhook_url), {
+		message: '`webhook_url` is required with `all_ads: true`.',
+		path: ['webhook_url'],
+	});
 
 export type GoogleAdsInput = z.input<typeof GoogleAdsInputSchema>;
 
@@ -639,9 +659,19 @@ const LinkedInDateFilterSchema = z
 			.optional(),
 	})
 	.refine(
-		(value) =>
-			Boolean(value.preset) || Boolean(value.startdate && value.enddate),
-		{ message: 'Send `preset`, or both `startdate` and `enddate`.' },
+		(value) => {
+			const hasRange = Boolean(value.startdate || value.enddate);
+			// A preset and a range together are ambiguous: Adyntel takes one or
+			// the other, so a call sending both would have its range silently
+			// discarded. Reject it rather than pick one.
+			if (value.preset && hasRange) return false;
+			if (value.preset) return true;
+			return Boolean(value.startdate && value.enddate);
+		},
+		{
+			message:
+				'Send `preset`, or both `startdate` and `enddate`. Do not send a preset together with a range.',
+		},
 	);
 
 const LinkedInAdsInputSchema = z
@@ -708,7 +738,11 @@ const LinkedInAdsInputSchema = z
 				'Send one of `company_domain`, `linkedin_page_id`, `company_domains` or `linkedin_page_ids`.',
 			path: ['company_domain'],
 		},
-	);
+	)
+	.refine((value) => !value.all_ads || Boolean(value.webhook_url), {
+		message: '`webhook_url` is required with `all_ads: true`.',
+		path: ['webhook_url'],
+	});
 
 export type LinkedInAdsInput = z.input<typeof LinkedInAdsInputSchema>;
 

@@ -71,7 +71,7 @@ describe('makeAdyntelRequest', () => {
 			body: { company_domain: 'zoom.com' },
 		});
 
-		expect(result).toEqual(metaAdsResponse);
+		expect(result).toEqual({ kind: 'body', body: metaAdsResponse });
 		const sent = lastCall();
 		expect(sent.url).toBe('https://api.adyntel.com/facebook');
 		expect(sent.method).toBe('POST');
@@ -115,7 +115,7 @@ describe('makeAdyntelRequest', () => {
 		});
 	});
 
-	it('resolves a 204 as undefined, which is how "no ads found" arrives', async () => {
+	it('reports a 204 as no-content, which is how "no ads found" arrives', async () => {
 		respondEmpty(204);
 
 		await expect(
@@ -124,7 +124,27 @@ describe('makeAdyntelRequest', () => {
 				operation: 'facebookAds',
 				body: {},
 			}),
-		).resolves.toBeUndefined();
+		).resolves.toEqual({ kind: 'no-content' });
+	});
+
+	it('throws when a 200 body cannot be read, instead of reporting no-content', async () => {
+		// The failure the review found: a dropped connection mid-body also yields
+		// an undefined body. Only a real 204 may become an empty result.
+		fetchMock.mockResolvedValueOnce(
+			new Response('{not json', {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+
+		const error = await failure(
+			makeAdyntelRequest(CREDENTIALS, {
+				path: 'tiktok_search',
+				operation: 'tiktokSearch',
+				body: {},
+			}),
+		);
+		expect(error.operation).toBe('tiktokSearch');
 	});
 
 	it('reads the message of a 401', async () => {
@@ -234,18 +254,67 @@ describe('makeAdyntelRequest', () => {
 		expect(JSON.stringify(error)).not.toContain(CREDENTIALS.apiKey);
 	});
 
+	it('keeps both credentials out of the nested cause', async () => {
+		respond(errorBody, 401);
+
+		const error = await failure(
+			makeAdyntelRequest(CREDENTIALS, {
+				path: 'google',
+				operation: 'googleAds',
+				body: {},
+			}),
+		);
+
+		// `ApiError` retains the request options it was built from, and this
+		// plugin's body carries both credentials. The cause must not hold them.
+		const serialized = JSON.stringify(error.cause);
+		expect(serialized).not.toContain(CREDENTIALS.apiKey);
+		expect(serialized).not.toContain(CREDENTIALS.email);
+		expect(error.cause).not.toHaveProperty('request');
+		expect(error.cause).not.toHaveProperty('body');
+	});
+
+	it('still reports the status, URL and retry hint the caller needs', async () => {
+		respond({ message: 'Too many requests' }, 429, { 'Retry-After': '3' });
+
+		const error = await failure(
+			makeAdyntelRequest(CREDENTIALS, {
+				path: 'google',
+				operation: 'googleAds',
+				body: {},
+			}),
+		);
+
+		// Sanitising must not cost the caller what it needs to react.
+		expect(error.status).toBe(429);
+		expect(error.retryAfter).toBe(3000);
+		expect(error.operation).toBe('googleAds');
+		expect(error.message).toContain('Adyntel 429');
+		expect(error.cause).toMatchObject({
+			status: 429,
+			url: 'https://api.adyntel.com/google',
+		});
+	});
+
 	it('gives a scrape the longer timeout its 60 second sync limit needs', async () => {
+		// Spy on the timeout factory rather than only asserting the request
+		// resolved: a passing call proves nothing about the configured value, and
+		// silently reverting to corsair/http's 20 second default would cut valid
+		// scrapes short.
+		const timeoutSpy = jest.spyOn(AbortSignal, 'timeout');
 		respond({}, 200);
 
-		await makeAdyntelRequest(CREDENTIALS, {
-			path: 'google',
-			operation: 'googleAds',
-			body: {},
-		});
+		try {
+			await makeAdyntelRequest(CREDENTIALS, {
+				path: 'google',
+				operation: 'googleAds',
+				body: {},
+			});
 
-		// The signal is the combined timeout signal built inside corsair/http;
-		// reading it back is not possible, so the timeout is asserted through the
-		// request still resolving well past corsair/http's 20 second default.
+			expect(timeoutSpy).toHaveBeenCalledWith(90_000);
+		} finally {
+			timeoutSpy.mockRestore();
+		}
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 		expect(lastCall().method).toBe('POST');
 	});

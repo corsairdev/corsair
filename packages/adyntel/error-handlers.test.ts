@@ -27,7 +27,7 @@ describe('error handlers', () => {
 	it('retries a 429 on a read and honours Retry-After', async () => {
 		const policy = await run(
 			errorHandlers.RATE_LIMIT_ERROR,
-			adyntelError(429, 'googleAds', 3000),
+			adyntelError(429, 'linkedinAds', 3000),
 		);
 
 		expect(policy.maxRetries).toBe(3);
@@ -100,7 +100,7 @@ describe('error handlers', () => {
 
 	it('retries a 5xx on a read only', async () => {
 		expect(
-			(await run(errorHandlers.SERVER_ERROR, adyntelError(503, 'googleAds')))
+			(await run(errorHandlers.SERVER_ERROR, adyntelError(503, 'linkedinAds')))
 				.maxRetries,
 		).toBe(2);
 		expect(
@@ -118,7 +118,7 @@ describe('error handlers', () => {
 			(
 				await run(
 					errorHandlers.NETWORK_ERROR,
-					adyntelError(undefined, 'tiktokAds'),
+					adyntelError(undefined, 'linkedinAds'),
 				)
 			).maxRetries,
 		).toBe(2);
@@ -146,6 +146,38 @@ describe('error handlers', () => {
 		expect(
 			(await run(errorHandlers.PROVIDER_REJECTION_ERROR, rejection)).maxRetries,
 		).toBe(0);
+	});
+
+	it('does not retry a job-starting read, because a repeat can queue a second job', async () => {
+		// `googleAds`, `googleShopping`, `tiktokAds` and `facebookAds` all enqueue
+		// work that spends a credit, so an unknown outcome is never replayed.
+		for (const operation of [
+			'facebookAds',
+			'googleAds',
+			'googleShopping',
+			'tiktokAds',
+		]) {
+			const policy = await run(
+				errorHandlers.NETWORK_ERROR,
+				adyntelError(undefined, operation),
+			);
+			expect(policy.maxRetries).toBe(0);
+		}
+	});
+
+	it('still retries a read that cannot start a job', async () => {
+		for (const operation of [
+			'linkedinAds',
+			'linkedinKeywordSearch',
+			'googleShoppingStatus',
+			'domainKeywords',
+		]) {
+			const policy = await run(
+				errorHandlers.NETWORK_ERROR,
+				adyntelError(undefined, operation),
+			);
+			expect(policy.maxRetries).toBe(2);
+		}
 	});
 
 	it('does not retry a 404', async () => {

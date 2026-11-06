@@ -41,15 +41,16 @@ type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
  * The fake context carries the API key on `key` and the account email through
  * `options`, which is the pair `resolveEmail` reads.
  */
+// The key builder joins the API key and the email with a NUL, so the context's
+// `key` carries both by the time an endpoint runs.
+const CREDENTIAL_KEY = `${API_KEY}\u0000${EMAIL}`;
+
 function invoke(
 	endpoint: AnyEndpoint,
 	// unknown: negative cases pass values no schema accepts.
 	input: unknown,
 ) {
-	return endpoint(
-		{ key: API_KEY, options: { email: EMAIL } } as never,
-		input as never,
-	);
+	return endpoint({ key: CREDENTIAL_KEY } as never, input as never);
 }
 
 let fetchMock: jest.SpyInstance;
@@ -804,51 +805,6 @@ describe('keywords.paidVsOrganic', () => {
 });
 
 // ── shared behaviour ──────────────────────────────────────────────────────
-
-describe('credential handling', () => {
-	it('reads the email from the account when no option is given', async () => {
-		respond(googleAdsResponse);
-		const get_email = jest.fn().mockResolvedValue('stored@example.com');
-
-		await (Google.ads as never as AnyEndpoint)(
-			{ key: API_KEY, options: {}, keys: { get_email } } as never,
-			{ company_domain: 'clay.com' } as never,
-		);
-
-		expect(get_email).toHaveBeenCalled();
-		expect(lastRequest().bodyRecord.email).toBe('stored@example.com');
-	});
-
-	it('prefers the email option over the stored one', async () => {
-		respond(googleAdsResponse);
-		const get_email = jest.fn().mockResolvedValue('stored@example.com');
-
-		await (Google.ads as never as AnyEndpoint)(
-			{ key: API_KEY, options: { email: EMAIL }, keys: { get_email } } as never,
-			{ company_domain: 'clay.com' } as never,
-		);
-
-		expect(get_email).not.toHaveBeenCalled();
-		expect(lastRequest().bodyRecord.email).toBe(EMAIL);
-	});
-
-	it('throws AuthMissingError when no email is available', async () => {
-		// unknown: a rejection can be any value until toBeInstanceOf narrows it.
-		const error = await (Google.ads as never as AnyEndpoint)(
-			{
-				key: API_KEY,
-				options: {},
-				keys: { get_email: jest.fn().mockResolvedValue(null) },
-			} as never,
-			{ company_domain: 'clay.com' } as never,
-		).catch((e: unknown) => e);
-
-		expect(error).toBeInstanceOf(Error);
-		expect((error as Error).name).toBe('AuthMissingError');
-		// Nothing is sent without both halves of the credential pair.
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-});
 
 describe('error propagation', () => {
 	it('surfaces a 401 instead of parsing an empty result', async () => {

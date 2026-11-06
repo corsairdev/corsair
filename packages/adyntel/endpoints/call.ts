@@ -1,4 +1,4 @@
-import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { AdyntelContext } from '..';
 import type { AdyntelRequest } from '../client';
@@ -7,24 +7,13 @@ import { makeAdyntelRequest } from '../client';
 type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
- * Adyntel authenticates with the API key *and* the account email, both as JSON
- * body fields. The key arrives as `ctx.key`; the email is an account field
- * declared in `adyntelAuthConfig`.
- */
-async function resolveEmail(ctx: AdyntelContext): Promise<string> {
-	const fromOptions = ctx.options?.email;
-	if (fromOptions) return fromOptions;
-
-	const stored = await ctx.keys.get_email();
-	if (stored) return stored;
-
-	throw new AuthMissingError('adyntel', 'email');
-}
-
-/**
  * Validates the input, sends the request, shapes and validates the response,
  * then logs the event. Inputs are not logged: they are company domains and
  * keywords, and the log is for accounting, not a search history.
+ *
+ * Credentials are resolved in `keyBuilder` rather than here, so a caller with
+ * a key but no email gets the same `AuthMissingError` treatment, connect link
+ * included, as a caller with no key.
  */
 export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	ctx: AdyntelContext,
@@ -42,11 +31,24 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const email = await resolveEmail(ctx);
-	const raw = await makeAdyntelRequest(
-		{ apiKey: ctx.key, email },
+	// The key is the API key and the email, joined by the key builder, because
+	// Adyntel needs both and a key without its email is a 401.
+	const [apiKey, email] = ctx.key.split('\u0000');
+	if (!apiKey || !email) {
+		throw new Error(
+			'adyntel: key builder returned an incomplete credential pair',
+		);
+	}
+
+	const response = await makeAdyntelRequest(
+		{ apiKey, email },
 		toRequest(parsed),
 	);
+
+	// A 204 is "nothing found", which every output schema accepts as `{}`
+	// because all their fields are nullish. A body read that failed never
+	// reaches here: the client throws for it.
+	const raw = response.kind === 'no-content' ? {} : response.body;
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);

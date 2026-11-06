@@ -310,8 +310,11 @@ describe('live smoke test', () => {
 					shopping: true,
 				});
 
-				// Inline ads, not a task id, when shopping is true.
-				expect(result.id === undefined || typeof result.id === 'string').toBe(
+				// With `shopping: true` the ads come back inline. A task ID here
+				// would mean the synchronous parser silently fell back to the
+				// async one, so it is a failure, not an accepted alternative.
+				expect(result.id).toBeUndefined();
+				expect(result.ads === undefined || Array.isArray(result.ads)).toBe(
 					true,
 				);
 			} finally {

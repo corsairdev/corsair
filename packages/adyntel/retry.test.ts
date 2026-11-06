@@ -1,7 +1,7 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { adyntel } from './index';
-import { googleAdsResponse, googleShoppingQueued } from './test-fixtures';
+import { linkedinAdsResponse } from './test-fixtures';
 
 /**
  * `endpoints.test.ts` calls the HTTP client, which is built with
@@ -52,13 +52,13 @@ describe('rate-limit retries through createCorsair', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({ message: 'Too many requests' }, 429, { 'Retry-After': '1' });
-			respond(googleAdsResponse);
+			respond(linkedinAdsResponse);
 
-			const result = await corsair.adyntel.api.google.ads({
+			const result = await corsair.adyntel.api.linkedin.ads({
 				company_domain: 'clay.com',
 			});
 
-			expect(result.total_ad_count).toBe(200);
+			expect(result.total_ads).toBe(834);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
@@ -74,7 +74,7 @@ describe('rate-limit retries through createCorsair', () => {
 			}
 
 			await expect(
-				corsair.adyntel.api.google.ads({ company_domain: 'clay.com' }),
+				corsair.adyntel.api.linkedin.ads({ company_domain: 'clay.com' }),
 			).rejects.toMatchObject({ status: 429 });
 			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
@@ -91,7 +91,7 @@ describe('rate-limit retries through createCorsair', () => {
 			}
 
 			await expect(
-				corsair.adyntel.api.google.ads({ company_domain: 'clay.com' }),
+				corsair.adyntel.api.linkedin.ads({ company_domain: 'clay.com' }),
 			).rejects.toMatchObject({ status: 500 });
 			expect(fetchMock).toHaveBeenCalledTimes(3);
 		} finally {
@@ -103,13 +103,13 @@ describe('rate-limit retries through createCorsair', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({ message: 'Server error' }, 500);
-			respond(googleShoppingQueued, 202);
+			respond(linkedinAdsResponse);
 
-			const result = await corsair.adyntel.api.google.shopping({
-				company_domain: 'tesla.com',
+			const result = await corsair.adyntel.api.linkedin.ads({
+				company_domain: 'clay.com',
 			});
 
-			expect(result.id).toBe('12172142-7717-0066-0000-f1e50ca3d579');
+			expect(result.total_ads).toBe(834);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();

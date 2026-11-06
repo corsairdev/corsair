@@ -18,7 +18,7 @@ export const ads: AdyntelEndpoints['googleAds'] = (ctx, input) =>
 		{
 			// A 204 means no ads were found, or the scrape passed its 60 second
 			// sync limit. Adyntel does not charge for it.
-			shape: (raw) => raw ?? {},
+			shape: (raw) => raw,
 			log: (_, result) => ({
 				adCount: result.total_ad_count ?? undefined,
 				countryCode: result.country_code ?? undefined,
@@ -44,7 +44,7 @@ export const shopping: AdyntelEndpoints['googleShopping'] = (ctx, input) =>
 		{
 			// Three answers reach the output schema: ads inline, `{ id }` for a
 			// queued DataForSEO scrape, and `{ status, message }` on a 204.
-			shape: (raw) => raw ?? {},
+			shape: (raw) => raw,
 			log: (_, result) => ({
 				adCount: result.ads?.length,
 				taskId: result.id ?? undefined,
@@ -70,7 +70,7 @@ export const shoppingStatus: AdyntelEndpoints['googleShoppingStatus'] = (
 			body: parsed,
 		}),
 		{
-			shape: (raw) => raw ?? {},
+			shape: (raw) => raw,
 			log: (_, result) => ({
 				adCount: result.ads?.length,
 				pending: result.status !== null && result.status !== undefined,

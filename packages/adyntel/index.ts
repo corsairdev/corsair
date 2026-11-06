@@ -208,7 +208,7 @@ const adyntelEndpointMeta = {
 	'tiktok.keywordSearch': {
 		riskLevel: 'read',
 		description:
-			'Search the TikTok ad library for a keyword, limited to European countries or worldwide, with a search ID for the next page',
+			'Search the TikTok ad library for a keyword, limited to European countries or worldwide. Returns the first page only: the API exposes no paging parameter, so `search_id` and `has_more` are informational and a later page cannot be requested',
 	},
 	'tiktok.adDetails': {
 		riskLevel: 'read',
@@ -257,16 +257,27 @@ export function adyntel<const T extends AdyntelPluginOptions>(
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: AdyntelKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source !== 'endpoint') {
+				throw new AuthMissingError('adyntel', ctx.authType ?? 'api_key');
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (res) return res;
+			const apiKey = options.key ?? (await ctx.keys.get_api_key());
+			if (!apiKey) {
+				throw new AuthMissingError('adyntel', 'api_key');
 			}
 
-			throw new AuthMissingError('adyntel', ctx.authType ?? 'api_key');
+			// Adyntel checks the account email next to the key on every call, and a
+			// key without it is a 401. Resolving it here rather than in the
+			// endpoint means a missing email reaches the core's connect-link
+			// handling, the same path a missing key takes.
+			const email = options.email ?? (await ctx.keys.get_email());
+			if (!email) {
+				throw new AuthMissingError('adyntel', 'email');
+			}
+
+			// NUL cannot appear in either field, so this cannot be forged by a
+			// value that contains the separator.
+			return `${apiKey}\u0000${email}`;
 		},
 	} satisfies InternalAdyntelPlugin;
 }

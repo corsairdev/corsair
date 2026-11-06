@@ -23,8 +23,34 @@ const READ_OPERATIONS = new Set([
 	'domainKeywords',
 ]);
 
+/**
+ * Operations that queue work on Adyntel's side and spend a credit when they
+ * start. A retry after an unknown outcome can run a second scrape and bill it
+ * again, so these are never replayed: not on a network failure, and not on a
+ * 5xx that may have arrived after the job was queued.
+ *
+ * `googleShopping` starts a DataForSEO task, `googleAds` and `tiktokAds` accept
+ * `all_ads` / `webhook_url` and enqueue a job per page, and `metaAds` does the
+ * same for its multi-country array form.
+ */
+const JOB_STARTING_OPERATIONS = new Set([
+	'facebookAds',
+	'googleAds',
+	'googleShopping',
+	'tiktokAds',
+]);
+
 function isRead(error: AdyntelAPIError): boolean {
 	return error.operation !== undefined && READ_OPERATIONS.has(error.operation);
+}
+
+/** True for a read whose repeat cannot create a second job or charge twice. */
+function isReplayableRead(error: AdyntelAPIError): boolean {
+	if (!isRead(error)) return false;
+	return (
+		error.operation === undefined ||
+		!JOB_STARTING_OPERATIONS.has(error.operation)
+	);
 }
 
 export const errorHandlers = {
@@ -38,7 +64,8 @@ export const errorHandlers = {
 		handler: async (error: Error) => {
 			const retryAfter =
 				error instanceof AdyntelAPIError ? error.retryAfter : undefined;
-			const retriable = error instanceof AdyntelAPIError && isRead(error);
+			const retriable =
+				error instanceof AdyntelAPIError && isReplayableRead(error);
 			return {
 				maxRetries: retriable ? 3 : 0,
 				headersRetryAfterMs: retryAfter,
@@ -77,7 +104,10 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof AdyntelAPIError && (error.status ?? 0) >= 500,
 		handler: async (error: Error) => {
-			const retriable = error instanceof AdyntelAPIError && isRead(error);
+			// A 5xx can arrive after a job was queued, so a job-starting read is
+			// not replayed even though it reads.
+			const retriable =
+				error instanceof AdyntelAPIError && isReplayableRead(error);
 			return {
 				maxRetries: retriable ? 2 : 0,
 				retryStrategy: 'exponential_backoff' as const,
@@ -95,7 +125,10 @@ export const errorHandlers = {
 			error.status === undefined &&
 			!error.isProviderRejection,
 		handler: async (error: Error) => {
-			const retriable = error instanceof AdyntelAPIError && isRead(error);
+			// The request may have reached Adyntel and started a job before the
+			// connection dropped, so job-starting reads are not replayed.
+			const retriable =
+				error instanceof AdyntelAPIError && isReplayableRead(error);
 			return {
 				maxRetries: retriable ? 2 : 0,
 				retryStrategy: 'exponential_backoff' as const,
@@ -128,11 +161,14 @@ export function mergeErrorHandlers(
 	if (!user) return builtin;
 	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
 	const { DEFAULT: userDefault, ...userRest } = user;
-	const merged: Record<string, unknown> = { ...userRest };
+	// Typed as the real handler map, not Record<string, unknown>: the caller's
+	// keys are already this type, and the loop below only adds builtin entries
+	// that the caller did not already provide.
+	const merged: CorsairErrorHandler = { ...userRest };
 	for (const [name, handler] of Object.entries(builtinRest)) {
 		if (!(name in merged)) merged[name] = handler;
 	}
 	const fallback = userDefault ?? builtinDefault;
 	if (fallback) merged.DEFAULT = fallback;
-	return merged as CorsairErrorHandler;
+	return merged;
 }

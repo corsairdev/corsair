@@ -951,7 +951,7 @@ await corsair.adyntel.api.tiktok.ads({ company_domain: 'gymshark.com', influence
 
 `tiktok.keywordSearch`
 
-Search the TikTok ad library for a keyword, limited to European countries or worldwide, with a search ID for the next page
+Search the TikTok ad library for a keyword, limited to European countries or worldwide. Returns the first page only: the API exposes no paging parameter, so `search_id` and `has_more` are informational and a later page cannot be requested
 
 **Risk:** `read`
 

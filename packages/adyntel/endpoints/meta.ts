@@ -25,6 +25,8 @@ export const ads: AdyntelEndpoints['metaAds'] = (ctx, input) =>
 			//   array per page on the next, for the same domain. Flatten both so
 			//   a caller always reads `results[i].ad_archive_id`.
 			shape: (raw) => {
+				// unknown: the body arrives unparsed; the output schema validates
+				// the shape after this, so only `results` is narrowed here.
 				const body = (raw ?? {}) as { results?: unknown };
 				if (!Array.isArray(body.results)) return body;
 

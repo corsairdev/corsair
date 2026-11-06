@@ -15,13 +15,19 @@ const operations = [
 	'tiktok.keywordSearch',
 ];
 
-// The key builder only reads authType and keys.
-function keyContext(apiKey: string | null) {
+// The key builder reads authType and both account fields.
+function keyContext(
+	apiKey: string | null,
+	email: string | null = 'stored@test.io',
+) {
 	return {
 		authType: 'api_key' as const,
 		options: {},
 		tenantId: 'default',
-		keys: { get_api_key: jest.fn().mockResolvedValue(apiKey) },
+		keys: {
+			get_api_key: jest.fn().mockResolvedValue(apiKey),
+			get_email: jest.fn().mockResolvedValue(email),
+		},
 	};
 }
 
@@ -95,30 +101,56 @@ describe('adyntel plugin definition', () => {
 });
 
 describe('adyntel key builder', () => {
+	it('joins the API key and the account email', async () => {
+		// Adyntel needs both on every call, so the builder hands the endpoint the
+		// pair and `call` splits it.
+		await expect(
+			buildKey(adyntel(), keyContext('stored-key', 'stored@example.com')),
+		).resolves.toBe('stored-key\u0000stored@example.com');
+	});
+
 	it('prefers an explicit key option', async () => {
-		const ctx = keyContext('stored-key');
+		const ctx = keyContext('stored-key', 'stored@example.com');
 
 		await expect(buildKey(adyntel({ key: 'option-key' }), ctx)).resolves.toBe(
-			'option-key',
+			'option-key\u0000stored@example.com',
 		);
 		expect(ctx.keys.get_api_key).not.toHaveBeenCalled();
 	});
 
-	it('reads the stored API key', async () => {
-		await expect(buildKey(adyntel(), keyContext('stored-key'))).resolves.toBe(
-			'stored-key',
-		);
+	it('prefers the email option over the stored one', async () => {
+		const ctx = keyContext('stored-key', 'stored@example.com');
+
+		await expect(
+			buildKey(adyntel({ email: 'option@example.com' }), ctx),
+		).resolves.toBe('stored-key\u0000option@example.com');
+		expect(ctx.keys.get_email).not.toHaveBeenCalled();
 	});
 
 	it('throws AuthMissingError when no API key is stored', async () => {
-		await expect(buildKey(adyntel(), keyContext(null))).rejects.toBeInstanceOf(
-			AuthMissingError,
-		);
+		await expect(
+			buildKey(adyntel(), keyContext(null, 'stored@example.com')),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('throws AuthMissingError for the email, so connect guidance still applies', async () => {
+		// Resolving the email in the builder rather than inside the endpoint is
+		// what puts a missing email on the core's connect-link path, the same one
+		// a missing key takes.
+		const error = await Promise.resolve(
+			buildKey(adyntel(), keyContext('stored-key', null)),
+		).catch((e: unknown) => e);
+
+		expect(error).toBeInstanceOf(AuthMissingError);
+		expect((error as AuthMissingError).authType).toBe('email');
 	});
 
 	it('refuses webhook keys, because the plugin receives no webhooks', async () => {
 		await expect(
-			adyntel().keyBuilder?.(keyContext('stored-key') as never, 'webhook'),
+			adyntel().keyBuilder?.(
+				keyContext('stored-key', 'stored@example.com') as never,
+				'webhook',
+			),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });

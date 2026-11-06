@@ -42,7 +42,7 @@ export const ads: AdyntelEndpoints['linkedinAds'] = (ctx, input) =>
 		},
 		{
 			// A 204 means no ads, or the scrape passed its 60 second sync limit.
-			shape: (raw) => raw ?? {},
+			shape: (raw) => raw,
 			log: (_, result) => ({
 				pageId: result.page_id ?? undefined,
 				adCount: result.total_ads ?? undefined,
