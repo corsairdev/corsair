@@ -30,8 +30,13 @@ describe('AdyntelSchema', () => {
 // documented examples, trimmed to the modelled fields.
 describe('output schemas accept the documented payloads', () => {
 	it('meta.ads', () => {
+		// `metaAdsResponse` is the docs' example, which nests `results`; the
+		// endpoint flattens before parsing, so the schema is fed the flat form.
 		expect(
-			AdyntelEndpointOutputSchemas.metaAds.safeParse(metaAdsResponse).success,
+			AdyntelEndpointOutputSchemas.metaAds.safeParse({
+				...metaAdsResponse,
+				results: metaAdsResponse.results.flat(),
+			}).success,
 		).toBe(true);
 	});
 

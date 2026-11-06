@@ -318,14 +318,16 @@ const MetaAdsResponseSchema = z
 		number_of_ads: z.number().nullish(),
 		count_landing_pages: z.number().nullish(),
 		unique_landing_pages: z.array(z.string()).nullish(),
-		start_min_date: z.number().nullish(),
-		start_max_date: z.number().nullish(),
-		// Adyntel groups ads into pages, so this is an array of arrays; a page
-		// currently carries one ad.
-		results: z
-			.array(z.array(MetaAdSchema))
-			.nullish()
-			.describe('One inner array per result page.'),
+		/** ISO 8601, e.g. `2026-08-20T07:00:00Z`. */
+		start_min_date: z.string().nullish(),
+		start_max_date: z.string().nullish(),
+		/**
+		 * A flat list of ads. `/facebook` itself is inconsistent: the same
+		 * domain came back as flat records on one call and as one array per
+		 * page on the next, so the endpoint flattens both forms before this
+		 * schema sees them.
+		 */
+		results: z.array(MetaAdSchema).nullish(),
 	})
 	.loose();
 
@@ -348,21 +350,38 @@ const MetaAdSearchInputSchema = z.object({
 
 export type MetaAdSearchInput = z.input<typeof MetaAdSearchInputSchema>;
 
+/**
+ * The keyword search returns the same snake_case record as `/facebook`:
+ * `ad_archive_id`, `page_id`, `is_active`. The OpenAPI spec's camelCase
+ * (`adArchiveID`, `pageID`) is stale; the deployed API sends neither. Both
+ * spellings are accepted so an account on an older build keeps working.
+ */
 const MetaAdSearchAdSchema = z
 	.object({
+		ad_archive_id: z.string().nullish(),
 		adArchiveID: z.string().nullish(),
 		adid: z.string().nullish(),
+		ad_id: z.string().nullish(),
+		page_id: z.union([z.string(), z.number()]).nullish(),
 		pageID: z.string().nullish(),
+		page_name: z.string().nullish(),
 		pageName: z.string().nullish(),
+		is_active: z.boolean().nullish(),
 		isActive: z.boolean().nullish(),
+		is_profile_page: z.boolean().nullish(),
 		isProfilePage: z.boolean().nullish(),
 		categories: z.array(z.union([z.string(), z.number()])).nullish(),
+		publisher_platform: z.array(z.string()).nullish(),
 		publisherPlatform: z.array(z.string()).nullish(),
 		currency: z.string().nullish(),
 		/** Unix seconds. */
+		start_date: z.number().nullish(),
 		startDate: z.number().nullish(),
+		end_date: z.number().nullish(),
 		endDate: z.number().nullish(),
+		total_active_time: z.number().nullish(),
 		totalActiveTime: z.number().nullish(),
+		entity_type: z.string().nullish(),
 		entityType: z.string().nullish(),
 		snapshot: MetaSnapshotSchema.nullish(),
 	})
@@ -380,9 +399,13 @@ const MetaAdSearchResponseSchema = z
 		search_type: z.string().nullish(),
 		is_result_complete: z.boolean().nullish(),
 		number_of_ads: z.number().nullish(),
-		start_min_date: z.number().nullish(),
-		start_max_date: z.number().nullish(),
-		results: z.array(z.array(MetaAdSearchAdSchema)).nullish(),
+		/** ISO 8601, e.g. `2023-08-07T07:00:00Z`. */
+		start_min_date: z.string().nullish(),
+		start_max_date: z.string().nullish(),
+		results: z
+			.array(z.array(MetaAdSearchAdSchema))
+			.nullish()
+			.describe('One inner array per result page.'),
 	})
 	.loose();
 

@@ -67,9 +67,12 @@ export const keywordSearch: AdyntelEndpoints['tiktokKeywordSearch'] = (
 			body: parsed,
 		}),
 		{
+			// A 204 means the search found nothing. Verified against the live
+			// API: every keyword tried answered 204 with an empty body, for
+			// both a country filter and none.
 			shape: (raw) => {
 				assertTikTokCode(raw, 'tiktokSearch');
-				return raw;
+				return raw ?? {};
 			},
 			log: (_, result) => ({
 				adCount: result.data?.length,
@@ -93,9 +96,10 @@ export const adDetails: AdyntelEndpoints['tiktokAdDetails'] = (ctx, input) =>
 			body: parsed,
 		}),
 		{
+			// A 204 means the ad is gone, or the id was never a TikTok ad.
 			shape: (raw) => {
 				assertTikTokCode(raw, 'tiktokAdDetails');
-				return raw;
+				return raw ?? {};
 			},
 			log: (_, result) => ({
 				advertiser: result.data?.advertiser?.name ?? undefined,

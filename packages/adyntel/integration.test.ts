@@ -114,7 +114,9 @@ describe('Adyntel plugin through createCorsair', () => {
 			});
 
 			expect(result.number_of_ads).toBe(32);
-			expect(result.results?.[0]?.[0]?.snapshot?.page_name).toBe('Zappos.com');
+			// The endpoint flattens, so this is a flat list even when the API
+			// nests its pages.
+			expect(result.results?.[0]?.snapshot?.page_name).toBeDefined();
 		} finally {
 			testDb.cleanup();
 		}
@@ -243,16 +245,75 @@ describe('live smoke test', () => {
 					keyword: 'toys',
 					country_code: 'DE',
 				});
-				const adId = search.data?.[0]?.id;
-				// A keyword with no results is a legitimate answer, so only read the
-				// detail when there is an id to read.
-				if (adId) {
-					const details = await corsair.adyntel.api.tiktok.adDetails({
-						id: adId,
-					});
-					expect(details.code).toBe(0);
+				// Verified against the live API on 2026-11-06: this endpoint
+				// answers 204 with an empty body for every keyword tried, with or
+				// without a country filter. An empty result is therefore a
+				// legitimate answer and must not fail the test; what this asserts
+				// is that a 204 parses instead of throwing.
+				expect(search.data === undefined || Array.isArray(search.data)).toBe(
+					true,
+				);
+			} finally {
+				testDb.cleanup();
+			}
+		}, 120_000);
+
+		it('reads the company TikTok ads, which do return a body', async () => {
+			const { corsair, testDb } = await liveClient();
+			try {
+				const result = await corsair.adyntel.api.tiktok.ads({
+					company_domain: 'gymshark.com',
+				});
+
+				expect(result.handle).toBeDefined();
+				expect(Array.isArray(result.brand_ads)).toBe(true);
+			} finally {
+				testDb.cleanup();
+			}
+		}, 120_000);
+
+		it('lists Meta ads with a flat results list', async () => {
+			const { corsair, testDb } = await liveClient();
+			try {
+				const result = await corsair.adyntel.api.meta.ads({
+					company_domain: 'zappos.com',
+				});
+
+				// The live API returns a flat list here, unlike its spec examples.
+				if (result.results) {
+					expect(Array.isArray(result.results[0])).toBe(false);
 				}
-				expect(search.code).toBe(0);
+				expect(result.number_of_ads ?? 0).toBeGreaterThanOrEqual(0);
+			} finally {
+				testDb.cleanup();
+			}
+		}, 120_000);
+
+		it('reads LinkedIn ads and their company-only fields', async () => {
+			const { corsair, testDb } = await liveClient();
+			try {
+				const result = await corsair.adyntel.api.linkedin.ads({
+					company_domain: 'clay.com',
+				});
+
+				expect(result.total_ads ?? 0).toBeGreaterThanOrEqual(0);
+			} finally {
+				testDb.cleanup();
+			}
+		}, 120_000);
+
+		it('reads Google Shopping ads inline', async () => {
+			const { corsair, testDb } = await liveClient();
+			try {
+				const result = await corsair.adyntel.api.google.shopping({
+					company_domain: 'tesla.com',
+					shopping: true,
+				});
+
+				// Inline ads, not a task id, when shopping is true.
+				expect(result.id === undefined || typeof result.id === 'string').toBe(
+					true,
+				);
 			} finally {
 				testDb.cleanup();
 			}

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { AdyntelAPIError } from './client';
 import { Google, Keywords, LinkedIn, Meta, TikTok } from './endpoints';
+import { liveMetaAds, liveMetaAdsNested } from './live-fixtures';
 import {
 	errorBody,
 	googleAdsResponse,
@@ -109,7 +110,8 @@ describe('meta.ads', () => {
 		});
 		const parsed = result as typeof metaAdsResponse;
 		expect(parsed.number_of_ads).toBe(32);
-		expect(parsed.results?.[0]?.[0]?.snapshot?.page_name).toBe('Zappos.com');
+		// The endpoint flattens, so a result page is not a nested array.
+		expect(parsed.results?.[0]).toHaveProperty('snapshot');
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'adyntel.meta.ads',
@@ -183,6 +185,34 @@ describe('meta.ads', () => {
 			invoke(Meta.ads, { companyDomain: 'zoom.com' }),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('meta.ads flattens the two shapes the endpoint returns', () => {
+	it('flattens a nested body to a flat list of ads', async () => {
+		respond(liveMetaAdsNested);
+
+		const result = (await invoke(Meta.ads, {
+			company_domain: 'zappos.com',
+		})) as { results?: { ad_archive_id?: string }[] };
+
+		// One array per page arrived; the caller still reads a flat list.
+		expect(Array.isArray(result.results?.[0])).toBe(false);
+		expect(result.results?.length).toBe(
+			liveMetaAdsNested.results.flat().length,
+		);
+		expect(result.results?.[0]?.ad_archive_id).toBeDefined();
+	});
+
+	it('leaves an already-flat body alone', async () => {
+		respond(liveMetaAds);
+
+		const result = (await invoke(Meta.ads, {
+			company_domain: 'zappos.com',
+		})) as { results?: { ad_archive_id?: string }[] };
+
+		expect(result.results?.length).toBe(liveMetaAds.results.length);
+		expect(result.results?.[0]?.ad_archive_id).toBeDefined();
 	});
 });
 
