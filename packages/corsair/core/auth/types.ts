@@ -222,6 +222,10 @@ export type AccountKeyManagerFor<
 				 * Useful for token refresh flows that need access to both account and integration secrets.
 				 */
 				get_integration_credentials: () => Promise<OAuth2IntegrationCredentials>;
+				/** Runs fn under a cross-process lock for this account, handing it a key manager on the lock's connection (Postgres only; otherwise just runs fn). */
+				with_refresh_lock?: <R>(
+					fn: (keys: AccountKeyManagerFor<'oauth_2'>) => Promise<R>,
+				) => Promise<R>;
 			}
 		: {});
 
