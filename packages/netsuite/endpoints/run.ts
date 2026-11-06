@@ -1,8 +1,4 @@
-import {
-	createHmac,
-	createSign,
-	constants as cryptoConstants,
-} from 'node:crypto';
+import { createSign, constants as cryptoConstants } from 'node:crypto';
 import { logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import type { NetSuiteContext } from '..';
@@ -262,35 +258,35 @@ function base64Url(value: string | Buffer): string {
 	return Buffer.from(value).toString('base64url');
 }
 
-type JwtAlgorithm = 'PS256' | 'RS256' | 'ES256' | 'HS256';
+// The only algorithms NetSuite accepts for client-credentials assertions:
+// RSA-PSS (PS*) and ECDSA (ES*). RS256 (PKCS#1 v1.5) and HMAC are rejected.
+const JWT_DIGESTS = {
+	PS256: 'SHA256',
+	PS384: 'SHA384',
+	PS512: 'SHA512',
+	ES256: 'SHA256',
+	ES384: 'SHA384',
+	ES512: 'SHA512',
+} as const;
 
-const JWT_ALGORITHMS = new Set<JwtAlgorithm>([
-	'PS256',
-	'RS256',
-	'ES256',
-	'HS256',
-]);
+type JwtAlgorithm = keyof typeof JWT_DIGESTS;
 
 function isJwtAlgorithm(value: string): value is JwtAlgorithm {
-	return JWT_ALGORITHMS.has(value as JwtAlgorithm);
+	return Object.hasOwn(JWT_DIGESTS, value);
 }
 
 function signJwt(alg: string, privateKey: string, data: string): string {
 	if (!isJwtAlgorithm(alg)) {
 		throw new Error(`[netsuite] unsupported JWT algorithm ${alg}`);
 	}
-	if (alg === 'HS256') {
-		return createHmac('sha256', privateKey).update(data).digest('base64url');
+	const signer = createSign(JWT_DIGESTS[alg]).update(data);
+	if (alg.startsWith('ES')) {
+		return signer.sign(
+			{ key: privateKey, dsaEncoding: 'ieee-p1363' },
+			'base64url',
+		);
 	}
-	if (alg === 'RS256') {
-		return createSign('RSA-SHA256').update(data).sign(privateKey, 'base64url');
-	}
-	if (alg === 'ES256') {
-		return createSign('SHA256')
-			.update(data)
-			.sign({ key: privateKey, dsaEncoding: 'ieee-p1363' }, 'base64url');
-	}
-	return createSign('RSA-SHA256').update(data).sign(
+	return signer.sign(
 		{
 			key: privateKey,
 			padding: cryptoConstants.RSA_PKCS1_PSS_PADDING,
@@ -299,6 +295,9 @@ function signJwt(alg: string, privateKey: string, data: string): string {
 		'base64url',
 	);
 }
+
+// NetSuite rejects assertions whose exp is 60 minutes or more after iat.
+const MAX_ASSERTION_LIFETIME_SECONDS = 3600;
 
 // NetSuite response payloads have heterogeneous structure; accept unknown
 // to recursively search for href links in any response tree safely.
@@ -602,6 +601,16 @@ async function customEndpoint(
 		if (!clientId || !privateKey || !certificateId) {
 			throw new Error(
 				'[netsuite] createJwtClientAssertion requires client_id, certificate_id, and private_key_pem',
+			);
+		}
+		if (
+			!Number.isFinite(iat) ||
+			!Number.isFinite(exp) ||
+			exp <= iat ||
+			exp - iat >= MAX_ASSERTION_LIFETIME_SECONDS
+		) {
+			throw new Error(
+				'[netsuite] createJwtClientAssertion needs exp after iat and less than 60 minutes after it',
 			);
 		}
 		const header = base64Url(

@@ -166,7 +166,10 @@ export const CreateJournalEntryOutputSchema = passthroughResponse;
 
 export const CreateJwtClientAssertionInputSchema = z
 	.object({
-		alg: z.enum(['PS256', 'RS256', 'ES256', 'HS256']).optional(),
+		// NetSuite accepts only RSA-PSS and ECDSA signatures.
+		alg: z
+			.enum(['PS256', 'PS384', 'PS512', 'ES256', 'ES384', 'ES512'])
+			.optional(),
 		aud: z.string().optional(),
 		exp: z.number().optional(),
 		iat: z.number().optional(),

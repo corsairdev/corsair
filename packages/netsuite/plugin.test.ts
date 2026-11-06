@@ -1,4 +1,8 @@
-import { generateKeyPairSync, verify } from 'node:crypto';
+import {
+	constants as cryptoConstants,
+	generateKeyPairSync,
+	verify,
+} from 'node:crypto';
 import { ApiError } from 'corsair/http';
 import {
 	makeNetSuiteRequest,
@@ -148,7 +152,7 @@ function inputFor(key: NetSuiteSpecKey): Record<string, unknown> {
 					client_id: 'client-id',
 					certificate_id: 'cert-id',
 					private_key_pem: privateKey,
-					alg: 'RS256',
+					alg: 'PS256',
 				}
 			: {}),
 	};
@@ -597,11 +601,10 @@ describe('endpoint dispatch', () => {
 		);
 	});
 
-	it('creates a verifiable RS256 JWT assertion', async () => {
+	it('creates a verifiable PS256 JWT assertion', async () => {
 		const result = (await NetSuite.createJwtClientAssertion(
 			mockCtx() as never,
 			{
-				alg: 'RS256',
 				scope: 'rest_webservices',
 			},
 		)) as { client_assertion: string; token_url: string };
@@ -609,7 +612,7 @@ describe('endpoint dispatch', () => {
 		const decoded = JSON.parse(
 			Buffer.from(header!, 'base64url').toString('utf8'),
 		) as { alg: string; kid: string };
-		expect(decoded).toEqual({ alg: 'RS256', typ: 'JWT', kid: 'cert-id' });
+		expect(decoded).toEqual({ alg: 'PS256', typ: 'JWT', kid: 'cert-id' });
 		const claims = JSON.parse(
 			Buffer.from(payload!, 'base64url').toString('utf8'),
 		) as { iss: string; scope: string; aud: string };
@@ -620,10 +623,73 @@ describe('endpoint dispatch', () => {
 			verify(
 				'RSA-SHA256',
 				Buffer.from(`${header}.${payload}`),
-				publicKey,
+				{
+					key: publicKey,
+					padding: cryptoConstants.RSA_PKCS1_PSS_PADDING,
+					saltLength: cryptoConstants.RSA_PSS_SALTLEN_DIGEST,
+				},
 				Buffer.from(signature!, 'base64url'),
 			),
 		).toBe(true);
+	});
+
+	it('signs PS512 with SHA-512 and ES384 with a P-384 key', async () => {
+		const ps512 = (await NetSuite.createJwtClientAssertion(mockCtx() as never, {
+			alg: 'PS512',
+			scope: 'rest_webservices',
+		})) as { client_assertion: string };
+		const [psHeader, psPayload, psSignature] =
+			ps512.client_assertion.split('.');
+		expect(
+			verify(
+				'SHA512',
+				Buffer.from(`${psHeader}.${psPayload}`),
+				{
+					key: publicKey,
+					padding: cryptoConstants.RSA_PKCS1_PSS_PADDING,
+					saltLength: cryptoConstants.RSA_PSS_SALTLEN_DIGEST,
+				},
+				Buffer.from(psSignature!, 'base64url'),
+			),
+		).toBe(true);
+
+		const ec = generateKeyPairSync('ec', {
+			namedCurve: 'P-384',
+			publicKeyEncoding: { type: 'spki', format: 'pem' },
+			privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+		});
+		const es384 = (await NetSuite.createJwtClientAssertion(mockCtx() as never, {
+			alg: 'ES384',
+			scope: 'rest_webservices',
+			private_key_pem: ec.privateKey,
+		})) as { client_assertion: string };
+		const [esHeader, esPayload, esSignature] =
+			es384.client_assertion.split('.');
+		expect(
+			verify(
+				'SHA384',
+				Buffer.from(`${esHeader}.${esPayload}`),
+				{ key: ec.publicKey, dsaEncoding: 'ieee-p1363' },
+				Buffer.from(esSignature!, 'base64url'),
+			),
+		).toBe(true);
+	});
+
+	it('refuses assertion lifetimes NetSuite rejects', async () => {
+		await expect(
+			NetSuite.createJwtClientAssertion(mockCtx() as never, {
+				scope: 'rest_webservices',
+				iat: 1_800_000_000,
+				exp: 1_800_000_000 + 3600,
+			}),
+		).rejects.toThrow('less than 60 minutes');
+		await expect(
+			NetSuite.createJwtClientAssertion(mockCtx() as never, {
+				scope: 'rest_webservices',
+				iat: 1_800_000_000,
+				exp: 1_800_000_000,
+			}),
+		).rejects.toThrow('less than 60 minutes');
 	});
 
 	it('rejects account IDs with URL delimiters and ignores account_id in record input', async () => {
@@ -1050,12 +1116,14 @@ describe('endpoint dispatch', () => {
 		});
 	});
 
-	it('rejects unsupported JWT algorithms', async () => {
-		await expect(
-			NetSuite.createJwtClientAssertion(mockCtx() as never, {
-				alg: 'PS512' as never,
-				scope: 'rest_webservices',
-			}),
-		).rejects.toThrow();
+	it('rejects JWT algorithms NetSuite does not accept', async () => {
+		for (const alg of ['RS256', 'HS256', 'none']) {
+			await expect(
+				NetSuite.createJwtClientAssertion(mockCtx() as never, {
+					alg: alg as never,
+					scope: 'rest_webservices',
+				}),
+			).rejects.toThrow();
+		}
 	});
 });
