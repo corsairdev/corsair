@@ -24,7 +24,7 @@ export default class HttpCommand extends BaseCommand {
 	}
 
 	async action({ args }: CommandActionData): Promise<void> {
-		const raw = args[0] ?? process.env.PORT ?? '';
+		const raw = (args[0] ?? process.env.PORT ?? '').trim();
 		const port = Number(raw);
 		if (!/^\d+$/.test(raw) || port < 1 || port > 65535) {
 			console.error(
