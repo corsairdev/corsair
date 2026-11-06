@@ -60,15 +60,15 @@ await corsair.box.api.files.copy({});
 | `path_collection` | `object` | No | — |
 | `created_at` | `string` | No | — |
 | `modified_at` | `string` | No | — |
-| `trashed_at` | `string` | No | — |
-| `purged_at` | `string` | No | — |
+| `trashed_at` | `string \| null` | No | — |
+| `purged_at` | `string \| null` | No | — |
 | `content_created_at` | `string` | No | — |
 | `content_modified_at` | `string` | No | — |
 | `created_by` | `object` | No | — |
 | `modified_by` | `object` | No | — |
 | `owned_by` | `object` | No | — |
-| `shared_link` | `object` | No | — |
-| `parent` | `object` | No | — |
+| `shared_link` | `object \| null` | No | — |
+| `parent` | `object \| null` | No | — |
 | `item_status` | `string` | No | — |
 | `extension` | `string` | No | — |
 | `is_package` | `boolean` | No | — |
@@ -145,7 +145,7 @@ await corsair.box.api.files.copy({});
   },
   download_count?: number,
   preview_count?: number
-}
+} | null
 ```
 </Accordion>
 
@@ -158,7 +158,7 @@ await corsair.box.api.files.copy({});
   sequence_id?: string | null,
   etag?: string | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -260,15 +260,15 @@ await corsair.box.api.files.get({});
 | `path_collection` | `object` | No | — |
 | `created_at` | `string` | No | — |
 | `modified_at` | `string` | No | — |
-| `trashed_at` | `string` | No | — |
-| `purged_at` | `string` | No | — |
+| `trashed_at` | `string \| null` | No | — |
+| `purged_at` | `string \| null` | No | — |
 | `content_created_at` | `string` | No | — |
 | `content_modified_at` | `string` | No | — |
 | `created_by` | `object` | No | — |
 | `modified_by` | `object` | No | — |
 | `owned_by` | `object` | No | — |
-| `shared_link` | `object` | No | — |
-| `parent` | `object` | No | — |
+| `shared_link` | `object \| null` | No | — |
+| `parent` | `object \| null` | No | — |
 | `item_status` | `string` | No | — |
 | `extension` | `string` | No | — |
 | `is_package` | `boolean` | No | — |
@@ -345,7 +345,7 @@ await corsair.box.api.files.get({});
   },
   download_count?: number,
   preview_count?: number
-}
+} | null
 ```
 </Accordion>
 
@@ -358,7 +358,7 @@ await corsair.box.api.files.get({});
   sequence_id?: string | null,
   etag?: string | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -477,15 +477,15 @@ await corsair.box.api.files.share({});
 | `path_collection` | `object` | No | — |
 | `created_at` | `string` | No | — |
 | `modified_at` | `string` | No | — |
-| `trashed_at` | `string` | No | — |
-| `purged_at` | `string` | No | — |
+| `trashed_at` | `string \| null` | No | — |
+| `purged_at` | `string \| null` | No | — |
 | `content_created_at` | `string` | No | — |
 | `content_modified_at` | `string` | No | — |
 | `created_by` | `object` | No | — |
 | `modified_by` | `object` | No | — |
 | `owned_by` | `object` | No | — |
-| `shared_link` | `object` | No | — |
-| `parent` | `object` | No | — |
+| `shared_link` | `object \| null` | No | — |
+| `parent` | `object \| null` | No | — |
 | `item_status` | `string` | No | — |
 | `extension` | `string` | No | — |
 | `is_package` | `boolean` | No | — |
@@ -562,7 +562,7 @@ await corsair.box.api.files.share({});
   },
   download_count?: number,
   preview_count?: number
-}
+} | null
 ```
 </Accordion>
 
@@ -575,7 +575,7 @@ await corsair.box.api.files.share({});
   sequence_id?: string | null,
   etag?: string | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -730,22 +730,22 @@ await corsair.box.api.folders.create({});
 |------|------|----------|-------------|
 | `type` | `folder` | No | — |
 | `id` | `string` | Yes | — |
-| `sequence_id` | `string` | No | — |
+| `sequence_id` | `string \| null` | No | — |
 | `etag` | `string` | No | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
 | `path_collection` | `object` | No | — |
 | `created_at` | `string` | No | — |
 | `modified_at` | `string` | No | — |
-| `trashed_at` | `string` | No | — |
-| `purged_at` | `string` | No | — |
+| `trashed_at` | `string \| null` | No | — |
+| `purged_at` | `string \| null` | No | — |
 | `content_created_at` | `string` | No | — |
 | `content_modified_at` | `string` | No | — |
 | `created_by` | `object` | No | — |
 | `modified_by` | `object` | No | — |
 | `owned_by` | `object` | No | — |
-| `shared_link` | `object` | No | — |
-| `parent` | `object` | No | — |
+| `shared_link` | `object \| null` | No | — |
+| `parent` | `object \| null` | No | — |
 | `item_status` | `string` | No | — |
 | `is_externally_owned` | `boolean` | No | — |
 | `has_collaborations` | `boolean` | No | — |
@@ -823,7 +823,7 @@ await corsair.box.api.folders.create({});
   },
   download_count?: number,
   preview_count?: number
-}
+} | null
 ```
 </Accordion>
 
@@ -836,7 +836,7 @@ await corsair.box.api.folders.create({});
   sequence_id?: string | null,
   etag?: string | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -845,8 +845,7 @@ await corsair.box.api.folders.create({});
 ```ts
 {
   total_count?: number,
-  entries?: {
-  }[]
+  entries?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -914,22 +913,22 @@ await corsair.box.api.folders.get({});
 |------|------|----------|-------------|
 | `type` | `folder` | No | — |
 | `id` | `string` | Yes | — |
-| `sequence_id` | `string` | No | — |
+| `sequence_id` | `string \| null` | No | — |
 | `etag` | `string` | No | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
 | `path_collection` | `object` | No | — |
 | `created_at` | `string` | No | — |
 | `modified_at` | `string` | No | — |
-| `trashed_at` | `string` | No | — |
-| `purged_at` | `string` | No | — |
+| `trashed_at` | `string \| null` | No | — |
+| `purged_at` | `string \| null` | No | — |
 | `content_created_at` | `string` | No | — |
 | `content_modified_at` | `string` | No | — |
 | `created_by` | `object` | No | — |
 | `modified_by` | `object` | No | — |
 | `owned_by` | `object` | No | — |
-| `shared_link` | `object` | No | — |
-| `parent` | `object` | No | — |
+| `shared_link` | `object \| null` | No | — |
+| `parent` | `object \| null` | No | — |
 | `item_status` | `string` | No | — |
 | `is_externally_owned` | `boolean` | No | — |
 | `has_collaborations` | `boolean` | No | — |
@@ -1007,7 +1006,7 @@ await corsair.box.api.folders.get({});
   },
   download_count?: number,
   preview_count?: number
-}
+} | null
 ```
 </Accordion>
 
@@ -1020,7 +1019,7 @@ await corsair.box.api.folders.get({});
   sequence_id?: string | null,
   etag?: string | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1029,8 +1028,7 @@ await corsair.box.api.folders.get({});
 ```ts
 {
   total_count?: number,
-  entries?: {
-  }[]
+  entries?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -1136,22 +1134,22 @@ await corsair.box.api.folders.share({});
 |------|------|----------|-------------|
 | `type` | `folder` | No | — |
 | `id` | `string` | Yes | — |
-| `sequence_id` | `string` | No | — |
+| `sequence_id` | `string \| null` | No | — |
 | `etag` | `string` | No | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
 | `path_collection` | `object` | No | — |
 | `created_at` | `string` | No | — |
 | `modified_at` | `string` | No | — |
-| `trashed_at` | `string` | No | — |
-| `purged_at` | `string` | No | — |
+| `trashed_at` | `string \| null` | No | — |
+| `purged_at` | `string \| null` | No | — |
 | `content_created_at` | `string` | No | — |
 | `content_modified_at` | `string` | No | — |
 | `created_by` | `object` | No | — |
 | `modified_by` | `object` | No | — |
 | `owned_by` | `object` | No | — |
-| `shared_link` | `object` | No | — |
-| `parent` | `object` | No | — |
+| `shared_link` | `object \| null` | No | — |
+| `parent` | `object \| null` | No | — |
 | `item_status` | `string` | No | — |
 | `is_externally_owned` | `boolean` | No | — |
 | `has_collaborations` | `boolean` | No | — |
@@ -1229,7 +1227,7 @@ await corsair.box.api.folders.share({});
   },
   download_count?: number,
   preview_count?: number
-}
+} | null
 ```
 </Accordion>
 
@@ -1242,7 +1240,7 @@ await corsair.box.api.folders.share({});
   sequence_id?: string | null,
   etag?: string | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1251,8 +1249,7 @@ await corsair.box.api.folders.share({});
 ```ts
 {
   total_count?: number,
-  entries?: {
-  }[]
+  entries?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -1296,22 +1293,22 @@ await corsair.box.api.folders.update({});
 |------|------|----------|-------------|
 | `type` | `folder` | No | — |
 | `id` | `string` | Yes | — |
-| `sequence_id` | `string` | No | — |
+| `sequence_id` | `string \| null` | No | — |
 | `etag` | `string` | No | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
 | `path_collection` | `object` | No | — |
 | `created_at` | `string` | No | — |
 | `modified_at` | `string` | No | — |
-| `trashed_at` | `string` | No | — |
-| `purged_at` | `string` | No | — |
+| `trashed_at` | `string \| null` | No | — |
+| `purged_at` | `string \| null` | No | — |
 | `content_created_at` | `string` | No | — |
 | `content_modified_at` | `string` | No | — |
 | `created_by` | `object` | No | — |
 | `modified_by` | `object` | No | — |
 | `owned_by` | `object` | No | — |
-| `shared_link` | `object` | No | — |
-| `parent` | `object` | No | — |
+| `shared_link` | `object \| null` | No | — |
+| `parent` | `object \| null` | No | — |
 | `item_status` | `string` | No | — |
 | `is_externally_owned` | `boolean` | No | — |
 | `has_collaborations` | `boolean` | No | — |
@@ -1389,7 +1386,7 @@ await corsair.box.api.folders.update({});
   },
   download_count?: number,
   preview_count?: number
-}
+} | null
 ```
 </Accordion>
 
@@ -1402,7 +1399,7 @@ await corsair.box.api.folders.update({});
   sequence_id?: string | null,
   etag?: string | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1411,8 +1408,7 @@ await corsair.box.api.folders.update({});
 ```ts
 {
   total_count?: number,
-  entries?: {
-  }[]
+  entries?: Record<string, any>[]
 }
 ```
 </Accordion>

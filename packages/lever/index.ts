@@ -1206,11 +1206,12 @@ const leverEndpointMeta = {
 		description: 'Add dropdown options to a requisition field',
 	},
 	'requisitionFields.replaceOptions': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Replace the dropdown options of a requisition field',
 	},
 	'requisitionFields.deleteOptions': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Remove dropdown option values from a requisition field',
 	},
 	'requisitions.list': {

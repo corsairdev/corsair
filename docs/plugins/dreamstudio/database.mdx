@@ -77,6 +77,7 @@ const rows = await corsair.dreamstudio.db.engines.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -100,6 +101,7 @@ const rows = await corsair.dreamstudio.db.images.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `base64` | `string` | equals, contains, startsWith, endsWith, in |
+| `finishReason` | `string` | equals, contains, startsWith, endsWith, in |
 | `seed` | `number` | equals, gt, gte, lt, lte, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._

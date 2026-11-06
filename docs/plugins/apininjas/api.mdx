@@ -80,10 +80,10 @@ await corsair.apininjas.api.calendar.isPublicHoliday({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `date` | `string` | No | — |
-| `country` | `string` | No | — |
-| `is_public_holiday` | `boolean` | No | — |
-| `public_holiday_name` | `string` | No | — |
+| `date` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `is_public_holiday` | `boolean \| null` | No | — |
+| `public_holiday_name` | `string \| null` | No | — |
 
 
 
@@ -116,12 +116,12 @@ await corsair.apininjas.api.calendar.isWorkingDay({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `date` | `string` | No | — |
-| `country` | `string` | No | — |
-| `day_of_week` | `string` | No | — |
-| `is_workday` | `boolean` | No | — |
-| `public_holiday_name` | `string` | No | — |
-| `non_working_reason` | `string[]` | No | — |
+| `date` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `day_of_week` | `string \| null` | No | — |
+| `is_workday` | `boolean \| null` | No | — |
+| `public_holiday_name` | `string \| null` | No | — |
+| `non_working_reason` | `string[] \| null` | No | — |
 
 
 
@@ -199,10 +199,10 @@ await corsair.apininjas.api.calendar.timezone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `timezone` | `string` | No | — |
-| `utc_offset` | `number` | No | — |
-| `local_time` | `string` | No | — |
-| `city` | `string` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `utc_offset` | `number \| null` | No | — |
+| `local_time` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
 
 
 
@@ -236,11 +236,11 @@ await corsair.apininjas.api.calendar.workingDays({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `num_working_days` | `number` | No | — |
-| `num_non_working_days` | `number` | No | — |
-| `working_days` | `string[]` | No | — |
-| `non_working_days` | `object[]` | No | — |
-| `year` | `number` | No | — |
+| `num_working_days` | `number \| null` | No | — |
+| `num_non_working_days` | `number \| null` | No | — |
+| `working_days` | `string[] \| null` | No | — |
+| `non_working_days` | `object[] \| null` | No | — |
+| `year` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="non_working_days full type">
@@ -250,7 +250,7 @@ await corsair.apininjas.api.calendar.workingDays({});
   date?: string | null,
   reasons?: string[] | null,
   holiday_name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -288,16 +288,16 @@ await corsair.apininjas.api.calendar.worldTime({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `timezone` | `string` | No | — |
-| `datetime` | `string` | No | — |
-| `date` | `string` | No | — |
-| `year` | `string` | No | — |
-| `month` | `string` | No | — |
-| `day` | `string` | No | — |
-| `hour` | `string` | No | — |
-| `minute` | `string` | No | — |
-| `second` | `string` | No | — |
-| `day_of_week` | `string` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `datetime` | `string \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `year` | `string \| null` | No | — |
+| `month` | `string \| null` | No | — |
+| `day` | `string \| null` | No | — |
+| `hour` | `string \| null` | No | — |
+| `minute` | `string \| null` | No | — |
+| `second` | `string \| null` | No | — |
+| `day_of_week` | `string \| null` | No | — |
 
 
 
@@ -375,12 +375,12 @@ await corsair.apininjas.api.economics.incomeTax({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `country` | `string` | No | — |
-| `year` | `number` | No | — |
-| `fica` | `string` | No | — |
-| `states` | `string` | No | — |
-| `federal` | `object` | No | — |
-| `provinces` | `string` | No | — |
+| `country` | `string \| null` | No | — |
+| `year` | `number \| null` | No | — |
+| `fica` | `string \| null` | No | — |
+| `states` | `string \| null` | No | — |
+| `federal` | `object \| null` | No | — |
+| `provinces` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="federal full type">
@@ -415,7 +415,7 @@ await corsair.apininjas.api.economics.incomeTax({});
       max?: number | string | null
     }[] | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -455,26 +455,26 @@ await corsair.apininjas.api.economics.incomeTaxCalculator({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `country` | `string` | No | — |
-| `region` | `string` | No | — |
-| `income` | `number` | No | — |
-| `taxable_income` | `number` | No | — |
-| `deductions` | `number` | No | — |
-| `credits` | `number` | No | — |
-| `tax_year` | `string` | No | — |
-| `federal_effective_rate` | `number` | No | — |
-| `federal_taxes_owed` | `number` | No | — |
-| `fica_social_security` | `string` | No | — |
-| `fica_social_security_rate` | `number \| string` | No | — |
-| `fica_social_security_cap` | `number \| string` | No | — |
-| `fica_medicare` | `string` | No | — |
-| `fica_medicare_rate` | `number \| string` | No | — |
-| `fica_total` | `number \| string` | No | — |
-| `region_effective_rate` | `number \| string` | No | — |
-| `region_taxes_owed` | `string` | No | — |
-| `total_taxes_owed` | `string` | No | — |
-| `income_after_tax` | `string` | No | — |
-| `total_effective_tax_rate` | `number \| string` | No | — |
+| `country` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `income` | `number \| null` | No | — |
+| `taxable_income` | `number \| null` | No | — |
+| `deductions` | `number \| null` | No | — |
+| `credits` | `number \| null` | No | — |
+| `tax_year` | `string \| null` | No | — |
+| `federal_effective_rate` | `number \| null` | No | — |
+| `federal_taxes_owed` | `number \| null` | No | — |
+| `fica_social_security` | `string \| null` | No | — |
+| `fica_social_security_rate` | `number \| string \| null` | No | — |
+| `fica_social_security_cap` | `number \| string \| null` | No | — |
+| `fica_medicare` | `string \| null` | No | — |
+| `fica_medicare_rate` | `number \| string \| null` | No | — |
+| `fica_total` | `number \| string \| null` | No | — |
+| `region_effective_rate` | `number \| string \| null` | No | — |
+| `region_taxes_owed` | `string \| null` | No | — |
+| `total_taxes_owed` | `string \| null` | No | — |
+| `income_after_tax` | `string \| null` | No | — |
+| `total_effective_tax_rate` | `number \| string \| null` | No | — |
 
 
 
@@ -546,9 +546,9 @@ await corsair.apininjas.api.economics.interestRate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `rate_name` | `string` | No | — |
-| `rate_pct` | `number \| string` | No | — |
-| `last_updated` | `string` | No | — |
+| `rate_name` | `string \| null` | No | — |
+| `rate_pct` | `number \| string \| null` | No | — |
+| `last_updated` | `string \| null` | No | — |
 
 
 
@@ -585,9 +585,9 @@ await corsair.apininjas.api.economics.mortgageCalculator({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `monthly_payment` | `object` | No | — |
-| `annual_payment` | `object` | No | — |
-| `total_interest_paid` | `number` | No | — |
+| `monthly_payment` | `object \| null` | No | — |
+| `annual_payment` | `object \| null` | No | — |
+| `total_interest_paid` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="monthly_payment full type">
@@ -599,7 +599,7 @@ await corsair.apininjas.api.economics.mortgageCalculator({});
   property_tax?: number | null,
   hoa?: number | null,
   annual_home_ins?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -612,7 +612,7 @@ await corsair.apininjas.api.economics.mortgageCalculator({});
   property_tax?: number | null,
   hoa?: number | null,
   home_insurance?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -688,20 +688,20 @@ await corsair.apininjas.api.economics.population({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `historical_population` | `object[]` | No | — |
-| `population_forecast` | `object[]` | No | — |
-| `country_name` | `string` | No | — |
-| `population` | `number \| string` | No | — |
-| `yearly_change_percentage` | `number \| string` | No | — |
-| `yearly_change` | `string` | No | — |
-| `migrants` | `number \| string` | No | — |
-| `median_age` | `string` | No | — |
-| `fertility_rate` | `number \| string` | No | — |
-| `density` | `string` | No | — |
-| `urban_population_pct` | `number \| string` | No | — |
-| `urban_population` | `number \| string` | No | — |
-| `percentage_of_world_population` | `number \| string` | No | — |
-| `rank` | `number \| string` | No | — |
+| `historical_population` | `object[] \| null` | No | — |
+| `population_forecast` | `object[] \| null` | No | — |
+| `country_name` | `string \| null` | No | — |
+| `population` | `number \| string \| null` | No | — |
+| `yearly_change_percentage` | `number \| string \| null` | No | — |
+| `yearly_change` | `string \| null` | No | — |
+| `migrants` | `number \| string \| null` | No | — |
+| `median_age` | `string \| null` | No | — |
+| `fertility_rate` | `number \| string \| null` | No | — |
+| `density` | `string \| null` | No | — |
+| `urban_population_pct` | `number \| string \| null` | No | — |
+| `urban_population` | `number \| string \| null` | No | — |
+| `percentage_of_world_population` | `number \| string \| null` | No | — |
+| `rank` | `number \| string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="historical_population full type">
@@ -720,7 +720,7 @@ await corsair.apininjas.api.economics.population({});
   urban_population?: number | null,
   percentage_of_world_population?: number | null,
   rank?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -740,7 +740,7 @@ await corsair.apininjas.api.economics.population({});
   urban_population?: number | null,
   percentage_of_world_population?: number | null,
   rank?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -997,7 +997,7 @@ await corsair.apininjas.api.entertainment.advice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `advice` | `string` | No | — |
+| `advice` | `string \| null` | No | — |
 
 
 
@@ -1022,7 +1022,7 @@ await corsair.apininjas.api.entertainment.bucketList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `item` | `string` | No | — |
+| `item` | `string \| null` | No | — |
 
 
 
@@ -1047,7 +1047,7 @@ await corsair.apininjas.api.entertainment.chuckNorris({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `joke` | `string` | No | — |
+| `joke` | `string \| null` | No | — |
 
 
 
@@ -1183,8 +1183,8 @@ await corsair.apininjas.api.entertainment.generateSudoku({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `puzzle` | `number \| null[][]` | No | — |
-| `solution` | `number \| null[][]` | No | — |
+| `puzzle` | `(number \| null)[][] \| null` | No | — |
+| `solution` | `(number \| null)[][] \| null` | No | — |
 
 
 
@@ -1214,9 +1214,9 @@ await corsair.apininjas.api.entertainment.hobbies({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `hobby` | `string` | No | — |
-| `link` | `string` | No | — |
-| `category` | `string` | No | — |
+| `hobby` | `string \| null` | No | — |
+| `link` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
 
 
 
@@ -1247,9 +1247,9 @@ await corsair.apininjas.api.entertainment.horoscope({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `date` | `string` | No | — |
-| `sign` | `string` | No | — |
-| `horoscope` | `string` | No | — |
+| `date` | `string \| null` | No | — |
+| `sign` | `string \| null` | No | — |
+| `horoscope` | `string \| null` | No | — |
 
 
 
@@ -1507,8 +1507,8 @@ await corsair.apininjas.api.entertainment.solveSudoku({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | No | — |
-| `solution` | `number \| null[][]` | No | — |
+| `status` | `string \| null` | No | — |
+| `solution` | `(number \| null)[][] \| null` | No | — |
 
 
 
@@ -1905,24 +1905,24 @@ await corsair.apininjas.api.internet.domain({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `domain` | `string` | No | — |
-| `available` | `boolean` | No | — |
-| `creation_date` | `number` | No | — |
-| `expiration_date` | `number` | No | — |
-| `registrar` | `string` | No | — |
-| `age_days` | `number` | No | — |
-| `updated_date` | `number \| string` | No | — |
-| `domain_status` | `string[] \| string` | No | — |
-| `has_mx` | `boolean \| string` | No | — |
-| `is_free_email_provider` | `boolean \| string` | No | — |
-| `risky_tld` | `boolean \| string` | No | — |
-| `is_disposable_email_domain` | `boolean \| string` | No | — |
-| `is_custom_domain` | `boolean \| string` | No | — |
-| `mx_provider` | `string` | No | — |
-| `is_parked` | `boolean \| string` | No | — |
-| `ip` | `string` | No | — |
-| `hosting_provider` | `string` | No | — |
-| `country` | `string` | No | — |
+| `domain` | `string \| null` | No | — |
+| `available` | `boolean \| null` | No | — |
+| `creation_date` | `number \| null` | No | — |
+| `expiration_date` | `number \| null` | No | — |
+| `registrar` | `string \| null` | No | — |
+| `age_days` | `number \| null` | No | — |
+| `updated_date` | `number \| string \| null` | No | — |
+| `domain_status` | `string[] \| string \| null` | No | — |
+| `has_mx` | `boolean \| string \| null` | No | — |
+| `is_free_email_provider` | `boolean \| string \| null` | No | — |
+| `risky_tld` | `boolean \| string \| null` | No | — |
+| `is_disposable_email_domain` | `boolean \| string \| null` | No | — |
+| `is_custom_domain` | `boolean \| string \| null` | No | — |
+| `mx_provider` | `string \| null` | No | — |
+| `is_parked` | `boolean \| string \| null` | No | — |
+| `ip` | `string \| null` | No | — |
+| `hosting_provider` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
 
 
 
@@ -1952,30 +1952,30 @@ await corsair.apininjas.api.internet.ipLookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `is_valid` | `boolean` | No | — |
-| `country` | `string` | No | — |
-| `country_code` | `string` | No | — |
-| `region_code` | `string` | No | — |
-| `region` | `string` | No | — |
-| `city` | `string` | No | — |
-| `zip` | `string` | No | — |
-| `lat` | `number` | No | — |
-| `lon` | `number` | No | — |
-| `timezone` | `string` | No | — |
-| `isp` | `string` | No | — |
-| `address` | `string` | No | — |
-| `is_datacenter` | `boolean \| string` | No | — |
-| `is_hosting` | `boolean \| string` | No | — |
-| `is_tor` | `boolean \| string` | No | — |
-| `is_vpn` | `boolean \| string` | No | — |
-| `is_icloud_relay` | `boolean \| string` | No | — |
-| `is_bogon` | `boolean \| string` | No | — |
-| `is_abuser` | `boolean \| string` | No | — |
-| `threat_level` | `string` | No | — |
-| `asn` | `string` | No | — |
-| `asn_name` | `string` | No | — |
-| `route` | `string` | No | — |
-| `abuse_email` | `string` | No | — |
+| `is_valid` | `boolean \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `region_code` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `lat` | `number \| null` | No | — |
+| `lon` | `number \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `isp` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `is_datacenter` | `boolean \| string \| null` | No | — |
+| `is_hosting` | `boolean \| string \| null` | No | — |
+| `is_tor` | `boolean \| string \| null` | No | — |
+| `is_vpn` | `boolean \| string \| null` | No | — |
+| `is_icloud_relay` | `boolean \| string \| null` | No | — |
+| `is_bogon` | `boolean \| string \| null` | No | — |
+| `is_abuser` | `boolean \| string \| null` | No | — |
+| `threat_level` | `string \| null` | No | — |
+| `asn` | `string \| null` | No | — |
+| `asn_name` | `string \| null` | No | — |
+| `route` | `string \| null` | No | — |
+| `abuse_email` | `string \| null` | No | — |
 
 
 
@@ -2044,7 +2044,7 @@ await corsair.apininjas.api.internet.scrape({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `string` | No | — |
+| `data` | `string \| null` | No | — |
 
 
 
@@ -2074,18 +2074,18 @@ await corsair.apininjas.api.internet.urlLookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `is_valid` | `boolean` | No | — |
-| `country` | `string` | No | — |
-| `country_code` | `string` | No | — |
-| `region_code` | `string` | No | — |
-| `region` | `string` | No | — |
-| `city` | `string` | No | — |
-| `zip` | `string` | No | — |
-| `lat` | `number` | No | — |
-| `lon` | `number` | No | — |
-| `timezone` | `string` | No | — |
-| `isp` | `string` | No | — |
-| `url` | `string` | No | — |
+| `is_valid` | `boolean \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `region_code` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `zip` | `string \| null` | No | — |
+| `lat` | `number \| null` | No | — |
+| `lon` | `number \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `isp` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
 
 
 
@@ -2118,7 +2118,7 @@ await corsair.apininjas.api.internet.userAgent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user_agent` | `string` | No | — |
+| `user_agent` | `string \| null` | No | — |
 
 
 
@@ -2148,30 +2148,22 @@ await corsair.apininjas.api.internet.webpage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | — |
-| `domain` | `string` | No | — |
-| `url_path` | `string` | No | — |
-| `url_parameters` | `object` | No | — |
-| `page_title` | `string` | No | — |
-| `page_description` | `string` | No | — |
-| `meta_tags` | `object` | No | — |
-| `favicon` | `string` | No | — |
+| `url` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `url_path` | `string \| null` | No | — |
+| `url_parameters` | `Record<string, any> \| null` | No | — |
+| `page_title` | `string \| null` | No | — |
+| `page_description` | `string \| null` | No | — |
+| `meta_tags` | `object \| null` | No | — |
+| `favicon` | `string \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="url_parameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="meta_tags full type">
 
 ```ts
 {
   viewport?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2204,16 +2196,16 @@ await corsair.apininjas.api.internet.whois({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `domain_name` | `string` | No | — |
-| `registrar` | `string` | No | — |
-| `registrar_url` | `string` | No | — |
-| `whois_server` | `string` | No | — |
-| `updated_date` | `number \| string` | No | — |
-| `creation_date` | `number \| string` | No | — |
-| `expiration_date` | `number \| string` | No | — |
-| `name_servers` | `string[] \| string` | No | — |
-| `dnssec` | `string` | No | — |
-| `emails` | `string` | No | — |
+| `domain_name` | `string \| null` | No | — |
+| `registrar` | `string \| null` | No | — |
+| `registrar_url` | `string \| null` | No | — |
+| `whois_server` | `string \| null` | No | — |
+| `updated_date` | `number \| string \| null` | No | — |
+| `creation_date` | `number \| string \| null` | No | — |
+| `expiration_date` | `number \| string \| null` | No | — |
+| `name_servers` | `string[] \| string \| null` | No | — |
+| `dnssec` | `string \| null` | No | — |
+| `emails` | `string \| null` | No | — |
 
 
 
@@ -2249,13 +2241,13 @@ await corsair.apininjas.api.location.airQuality({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `CO` | `object` | No | — |
-| `NO2` | `object` | No | — |
-| `O3` | `object` | No | — |
-| `SO2` | `object` | No | — |
-| `PM2.5` | `object` | No | — |
-| `PM10` | `object` | No | — |
-| `overall_aqi` | `number` | No | — |
+| `CO` | `object \| null` | No | — |
+| `NO2` | `object \| null` | No | — |
+| `O3` | `object \| null` | No | — |
+| `SO2` | `object \| null` | No | — |
+| `PM2.5` | `object \| null` | No | — |
+| `PM10` | `object \| null` | No | — |
+| `overall_aqi` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="CO full type">
@@ -2264,7 +2256,7 @@ await corsair.apininjas.api.location.airQuality({});
 {
   concentration?: number | null,
   aqi?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2274,7 +2266,7 @@ await corsair.apininjas.api.location.airQuality({});
 {
   concentration?: number | null,
   aqi?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2284,7 +2276,7 @@ await corsair.apininjas.api.location.airQuality({});
 {
   concentration?: number | null,
   aqi?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2294,7 +2286,7 @@ await corsair.apininjas.api.location.airQuality({});
 {
   concentration?: number | null,
   aqi?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2304,7 +2296,7 @@ await corsair.apininjas.api.location.airQuality({});
 {
   concentration?: number | null,
   aqi?: number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2314,7 +2306,7 @@ await corsair.apininjas.api.location.airQuality({});
 {
   concentration?: number | null,
   aqi?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2863,16 +2855,16 @@ await corsair.apininjas.api.location.weather({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `cloud_pct` | `number` | No | — |
-| `temp` | `number` | No | — |
-| `feels_like` | `number` | No | — |
-| `humidity` | `number` | No | — |
-| `min_temp` | `number` | No | — |
-| `max_temp` | `number` | No | — |
-| `wind_speed` | `number` | No | — |
-| `wind_degrees` | `number` | No | — |
-| `sunrise` | `number` | No | — |
-| `sunset` | `number` | No | — |
+| `cloud_pct` | `number \| null` | No | — |
+| `temp` | `number \| null` | No | — |
+| `feels_like` | `number \| null` | No | — |
+| `humidity` | `number \| null` | No | — |
+| `min_temp` | `number \| null` | No | — |
+| `max_temp` | `number \| null` | No | — |
+| `wind_speed` | `number \| null` | No | — |
+| `wind_degrees` | `number \| null` | No | — |
+| `sunrise` | `number \| null` | No | — |
+| `sunset` | `number \| null` | No | — |
 
 
 
@@ -2996,13 +2988,13 @@ await corsair.apininjas.api.markets.bitcoin({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `price` | `string` | No | — |
-| `timestamp` | `number` | No | — |
-| `24h_price_change` | `string` | No | — |
-| `24h_price_change_percent` | `string` | No | — |
-| `24h_high` | `string` | No | — |
-| `24h_low` | `string` | No | — |
-| `24h_volume` | `string` | No | — |
+| `price` | `string \| null` | No | — |
+| `timestamp` | `number \| null` | No | — |
+| `24h_price_change` | `string \| null` | No | — |
+| `24h_price_change_percent` | `string \| null` | No | — |
+| `24h_high` | `string \| null` | No | — |
+| `24h_low` | `string \| null` | No | — |
+| `24h_volume` | `string \| null` | No | — |
 
 
 
@@ -3035,19 +3027,19 @@ await corsair.apininjas.api.markets.commodityPrice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `exchange` | `string` | No | — |
-| `name` | `string` | No | — |
-| `value` | `string` | No | — |
-| `unit` | `string` | No | — |
-| `currency_unit` | `string` | No | — |
-| `price` | `number` | No | — |
-| `change_24h_percent` | `number` | No | — |
-| `change_24h` | `number` | No | — |
-| `low_24h` | `number` | No | — |
-| `high_24h` | `number` | No | — |
-| `previous_close` | `number` | No | — |
-| `updated` | `number` | No | — |
-| `high_52w` | `string` | No | — |
+| `exchange` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `value` | `string \| null` | No | — |
+| `unit` | `string \| null` | No | — |
+| `currency_unit` | `string \| null` | No | — |
+| `price` | `number \| null` | No | — |
+| `change_24h_percent` | `number \| null` | No | — |
+| `change_24h` | `number \| null` | No | — |
+| `low_24h` | `number \| null` | No | — |
+| `high_24h` | `number \| null` | No | — |
+| `previous_close` | `number \| null` | No | — |
+| `updated` | `number \| null` | No | — |
+| `high_52w` | `string \| null` | No | — |
 
 
 
@@ -3079,11 +3071,11 @@ await corsair.apininjas.api.markets.convertCurrency({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `old_amount` | `number \| string` | No | — |
-| `old_currency` | `string` | No | — |
-| `new_amount` | `number \| string` | No | — |
-| `new_currency` | `string` | No | — |
-| `timestamp` | `number \| string` | No | — |
+| `old_amount` | `number \| string \| null` | No | — |
+| `old_currency` | `string \| null` | No | — |
+| `new_amount` | `number \| string \| null` | No | — |
+| `new_currency` | `string \| null` | No | — |
+| `timestamp` | `number \| string \| null` | No | — |
 
 
 
@@ -3113,9 +3105,9 @@ await corsair.apininjas.api.markets.cryptoPrice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `symbol` | `string` | No | — |
-| `price` | `string` | No | — |
-| `timestamp` | `number` | No | — |
+| `symbol` | `string \| null` | No | — |
+| `price` | `string \| null` | No | — |
+| `timestamp` | `number \| null` | No | — |
 
 
 
@@ -3320,21 +3312,21 @@ await corsair.apininjas.api.markets.earningsTranscript({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `date` | `string` | No | — |
-| `timestamp` | `number \| string` | No | — |
-| `ticker` | `string` | No | — |
-| `cik` | `string` | No | — |
-| `year` | `number \| string` | No | — |
-| `quarter` | `string` | No | — |
-| `earnings_timing` | `string` | No | — |
-| `transcript` | `string` | No | — |
-| `participants` | `string[] \| string` | No | — |
-| `summary` | `string` | No | — |
-| `guidance` | `string` | No | — |
-| `risk_factors` | `string` | No | — |
-| `overall_sentiment` | `string` | No | — |
-| `overall_sentiment_rationale` | `string` | No | — |
-| `transcript_split` | `string` | No | — |
+| `date` | `string \| null` | No | — |
+| `timestamp` | `number \| string \| null` | No | — |
+| `ticker` | `string \| null` | No | — |
+| `cik` | `string \| null` | No | — |
+| `year` | `number \| string \| null` | No | — |
+| `quarter` | `string \| null` | No | — |
+| `earnings_timing` | `string \| null` | No | — |
+| `transcript` | `string \| null` | No | — |
+| `participants` | `string[] \| string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `guidance` | `string \| null` | No | — |
+| `risk_factors` | `string \| null` | No | — |
+| `overall_sentiment` | `string \| null` | No | — |
+| `overall_sentiment_rationale` | `string \| null` | No | — |
+| `transcript_split` | `string \| null` | No | — |
 
 
 
@@ -3364,19 +3356,19 @@ await corsair.apininjas.api.markets.etf({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `etf_ticker` | `string` | No | — |
-| `price` | `number \| string` | No | — |
-| `etf_name` | `string` | No | — |
-| `isin` | `string` | No | — |
-| `cusip` | `string` | No | — |
-| `country` | `string` | No | — |
-| `domicile` | `string` | No | — |
-| `expense_ratio` | `number \| string` | No | — |
-| `aum` | `string` | No | — |
-| `aum_currency` | `string` | No | — |
-| `aum_usd` | `number \| string` | No | — |
-| `holdings` | `string[] \| string` | No | — |
-| `num_holdings` | `number \| string` | No | — |
+| `etf_ticker` | `string \| null` | No | — |
+| `price` | `number \| string \| null` | No | — |
+| `etf_name` | `string \| null` | No | — |
+| `isin` | `string \| null` | No | — |
+| `cusip` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `domicile` | `string \| null` | No | — |
+| `expense_ratio` | `number \| string \| null` | No | — |
+| `aum` | `string \| null` | No | — |
+| `aum_currency` | `string \| null` | No | — |
+| `aum_usd` | `number \| string \| null` | No | — |
+| `holdings` | `string[] \| string \| null` | No | — |
+| `num_holdings` | `number \| string \| null` | No | — |
 
 
 
@@ -3406,9 +3398,9 @@ await corsair.apininjas.api.markets.exchangeRate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `currency_pair` | `string` | No | — |
-| `exchange_rate` | `number \| string` | No | — |
-| `timestamp` | `number \| string` | No | — |
+| `currency_pair` | `string \| null` | No | — |
+| `exchange_rate` | `number \| string \| null` | No | — |
+| `timestamp` | `number \| string \| null` | No | — |
 
 
 
@@ -3505,11 +3497,11 @@ await corsair.apininjas.api.markets.marketCap({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ticker` | `string` | No | — |
-| `name` | `string` | No | — |
-| `market_cap` | `number` | No | — |
-| `currency` | `string` | No | — |
-| `updated` | `number` | No | — |
+| `ticker` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `market_cap` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `updated` | `number \| null` | No | — |
 
 
 
@@ -3539,16 +3531,16 @@ await corsair.apininjas.api.markets.mutualFund({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fund_ticker` | `string` | No | — |
-| `fund_name` | `string` | No | — |
-| `isin` | `string` | No | — |
-| `cusip` | `string` | No | — |
-| `country` | `string` | No | — |
-| `expense_ratio` | `string` | No | — |
-| `aum` | `number \| string` | No | — |
-| `price` | `number \| string` | No | — |
-| `holdings` | `string[] \| string` | No | — |
-| `num_holdings` | `number \| string` | No | — |
+| `fund_ticker` | `string \| null` | No | — |
+| `fund_name` | `string \| null` | No | — |
+| `isin` | `string \| null` | No | — |
+| `cusip` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `expense_ratio` | `string \| null` | No | — |
+| `aum` | `number \| string \| null` | No | — |
+| `price` | `number \| string \| null` | No | — |
+| `holdings` | `string[] \| string \| null` | No | — |
+| `num_holdings` | `number \| string \| null` | No | — |
 
 
 
@@ -3722,13 +3714,13 @@ await corsair.apininjas.api.markets.stockPrice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ticker` | `string` | No | — |
-| `name` | `string` | No | — |
-| `price` | `number` | No | — |
-| `exchange` | `string` | No | — |
-| `updated` | `number` | No | — |
-| `currency` | `string` | No | — |
-| `volume` | `number` | No | — |
+| `ticker` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `price` | `number \| null` | No | — |
+| `exchange` | `string \| null` | No | — |
+| `updated` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `volume` | `number \| null` | No | — |
 
 
 
@@ -3758,25 +3750,25 @@ await corsair.apininjas.api.markets.ticker({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | — |
-| `ticker` | `string` | No | — |
-| `chief_executive_officer` | `string` | No | — |
-| `address` | `object` | No | — |
-| `latest_price` | `number \| string` | No | — |
-| `latest_market_cap` | `number \| string` | No | — |
-| `latest_dividend` | `string` | No | — |
-| `cik` | `string` | No | — |
-| `cusip` | `string` | No | — |
-| `isin` | `string` | No | — |
-| `exchange` | `string` | No | — |
-| `website` | `string` | No | — |
-| `phone_number` | `string` | No | — |
-| `ipo_date` | `string` | No | — |
-| `latest_earnings` | `object` | No | — |
-| `sector` | `string` | No | — |
-| `industry` | `string` | No | — |
-| `sic_code` | `string` | No | — |
-| `sic_description` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `ticker` | `string \| null` | No | — |
+| `chief_executive_officer` | `string \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `latest_price` | `number \| string \| null` | No | — |
+| `latest_market_cap` | `number \| string \| null` | No | — |
+| `latest_dividend` | `string \| null` | No | — |
+| `cik` | `string \| null` | No | — |
+| `cusip` | `string \| null` | No | — |
+| `isin` | `string \| null` | No | — |
+| `exchange` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
+| `ipo_date` | `string \| null` | No | — |
+| `latest_earnings` | `object \| null` | No | — |
+| `sector` | `string \| null` | No | — |
+| `industry` | `string \| null` | No | — |
+| `sic_code` | `string \| null` | No | — |
+| `sic_description` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="address full type">
@@ -3787,7 +3779,7 @@ await corsair.apininjas.api.markets.ticker({});
   city?: string | null,
   state?: string | null,
   zip?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3797,7 +3789,7 @@ await corsair.apininjas.api.markets.ticker({});
 {
   year?: number | null,
   quarter?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4427,9 +4419,9 @@ await corsair.apininjas.api.text.dictionary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `definition` | `string` | No | — |
-| `word` | `string` | No | — |
-| `valid` | `boolean` | No | — |
+| `definition` | `string \| null` | No | — |
+| `word` | `string \| null` | No | — |
+| `valid` | `boolean \| null` | No | — |
 
 
 
@@ -4459,7 +4451,7 @@ await corsair.apininjas.api.text.embeddings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `embeddings` | `number[]` | No | — |
+| `embeddings` | `number[] \| null` | No | — |
 
 
 
@@ -4489,8 +4481,8 @@ await corsair.apininjas.api.text.language({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `iso` | `string` | No | — |
-| `language` | `string` | No | — |
+| `iso` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
 
 
 
@@ -4523,7 +4515,7 @@ await corsair.apininjas.api.text.loremIpsum({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | No | — |
+| `text` | `string \| null` | No | — |
 
 
 
@@ -4553,9 +4545,9 @@ await corsair.apininjas.api.text.profanityFilter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `original` | `string` | No | — |
-| `censored` | `string` | No | — |
-| `has_profanity` | `boolean` | No | — |
+| `original` | `string \| null` | No | — |
+| `censored` | `string \| null` | No | — |
+| `has_profanity` | `boolean \| null` | No | — |
 
 
 
@@ -4636,9 +4628,9 @@ await corsair.apininjas.api.text.sentiment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `score` | `number` | No | — |
-| `text` | `string` | No | — |
-| `sentiment` | `string` | No | — |
+| `score` | `number \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `sentiment` | `string \| null` | No | — |
 
 
 
@@ -4669,7 +4661,7 @@ await corsair.apininjas.api.text.similarity({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `similarity` | `number` | No | — |
+| `similarity` | `number \| null` | No | — |
 
 
 
@@ -4699,12 +4691,12 @@ await corsair.apininjas.api.text.spellCheck({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `original` | `string` | No | — |
-| `corrected` | `string` | No | — |
-| `corrections` | `object[]` | No | — |
-| `index` | `string` | No | — |
-| `correction` | `string` | No | — |
-| `candidates` | `string[] \| string` | No | — |
+| `original` | `string \| null` | No | — |
+| `corrected` | `string \| null` | No | — |
+| `corrections` | `object[] \| null` | No | — |
+| `index` | `string \| null` | No | — |
+| `correction` | `string \| null` | No | — |
+| `candidates` | `string[] \| string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="corrections full type">
@@ -4715,7 +4707,7 @@ await corsair.apininjas.api.text.spellCheck({});
   index?: number | null,
   correction?: string | null,
   candidates?: string[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4748,9 +4740,9 @@ await corsair.apininjas.api.text.thesaurus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `word` | `string` | No | — |
-| `synonyms` | `string[]` | No | — |
-| `antonyms` | `string[]` | No | — |
+| `word` | `string \| null` | No | — |
+| `synonyms` | `string[] \| null` | No | — |
+| `antonyms` | `string[] \| null` | No | — |
 
 
 
@@ -5284,16 +5276,16 @@ await corsair.apininjas.api.transport.vin({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `vin` | `string` | No | — |
-| `country` | `string` | No | — |
-| `manufacturer` | `string` | No | — |
-| `model` | `string` | No | — |
-| `class` | `string` | No | — |
-| `region` | `string` | No | — |
-| `wmi` | `string` | No | — |
-| `vds` | `string` | No | — |
-| `vis` | `string` | No | — |
-| `year` | `number` | No | — |
+| `vin` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `manufacturer` | `string \| null` | No | — |
+| `model` | `string \| null` | No | — |
+| `class` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `wmi` | `string \| null` | No | — |
+| `vds` | `string \| null` | No | — |
+| `vis` | `string \| null` | No | — |
+| `year` | `number \| null` | No | — |
 
 
 
@@ -5361,10 +5353,10 @@ await corsair.apininjas.api.utility.convertUnit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `type` | `string` | No | — |
-| `unit` | `string` | No | — |
-| `amount` | `number` | No | — |
-| `conversions` | `object` | No | — |
+| `type` | `string \| null` | No | — |
+| `unit` | `string \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `conversions` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="conversions full type">
@@ -5385,7 +5377,7 @@ await corsair.apininjas.api.utility.convertUnit({});
   furlong?: number | null,
   light_year?: number | null,
   astronomical_unit?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -5420,8 +5412,8 @@ await corsair.apininjas.api.utility.counter({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `value` | `number` | No | — |
+| `id` | `string \| null` | No | — |
+| `value` | `number \| null` | No | — |
 
 
 
@@ -5451,9 +5443,9 @@ await corsair.apininjas.api.utility.countryFlag({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `country` | `string` | No | — |
-| `square_image_url` | `string` | No | — |
-| `rectangle_image_url` | `string` | No | — |
+| `country` | `string \| null` | No | — |
+| `square_image_url` | `string \| null` | No | — |
+| `rectangle_image_url` | `string \| null` | No | — |
 
 
 
@@ -5569,7 +5561,7 @@ await corsair.apininjas.api.utility.password({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `random_password` | `string` | No | — |
+| `random_password` | `string \| null` | No | — |
 
 
 
@@ -5800,9 +5792,9 @@ await corsair.apininjas.api.validation.disposableEmail({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `email` | `string` | No | — |
-| `domain` | `string` | No | — |
-| `is_disposable` | `boolean` | No | — |
+| `email` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `is_disposable` | `boolean \| null` | No | — |
 
 
 
@@ -5832,14 +5824,14 @@ await corsair.apininjas.api.validation.email({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `is_valid` | `boolean` | No | — |
-| `email` | `string` | No | — |
-| `is_disposable` | `boolean` | No | — |
-| `is_public` | `boolean` | No | — |
-| `main_category` | `string` | No | — |
-| `sub_category` | `string` | No | — |
-| `domain` | `string` | No | — |
-| `local_part` | `string` | No | — |
+| `is_valid` | `boolean \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `is_disposable` | `boolean \| null` | No | — |
+| `is_public` | `boolean \| null` | No | — |
+| `main_category` | `string \| null` | No | — |
+| `sub_category` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `local_part` | `string \| null` | No | — |
 
 
 
@@ -5869,17 +5861,17 @@ await corsair.apininjas.api.validation.iban({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `iban` | `string` | No | — |
-| `bank_name` | `string` | No | — |
-| `bank_address` | `string` | No | — |
-| `account_number` | `string` | No | — |
-| `bank_code` | `string` | No | — |
-| `country` | `string` | No | — |
-| `checksum` | `string` | No | — |
-| `valid` | `boolean \| string` | No | — |
-| `invalid_reason` | `string` | No | — |
-| `bban` | `string` | No | — |
-| `swift_code` | `string` | No | — |
+| `iban` | `string \| null` | No | — |
+| `bank_name` | `string \| null` | No | — |
+| `bank_address` | `string \| null` | No | — |
+| `account_number` | `string \| null` | No | — |
+| `bank_code` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `checksum` | `string \| null` | No | — |
+| `valid` | `boolean \| string \| null` | No | — |
+| `invalid_reason` | `string \| null` | No | — |
+| `bban` | `string \| null` | No | — |
+| `swift_code` | `string \| null` | No | — |
 
 
 
@@ -5910,19 +5902,19 @@ await corsair.apininjas.api.validation.phone({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `is_valid` | `boolean` | No | — |
-| `is_formatted_properly` | `boolean` | No | — |
-| `country` | `string` | No | — |
-| `location` | `string` | No | — |
-| `timezones` | `string[]` | No | — |
-| `format_national` | `string` | No | — |
-| `format_international` | `string` | No | — |
-| `format_e164` | `string` | No | — |
-| `country_code` | `number` | No | — |
-| `line_type` | `string` | No | — |
-| `is_mobile` | `boolean \| string` | No | — |
-| `format_rfc3966` | `string` | No | — |
-| `is_possible` | `boolean \| string` | No | — |
+| `is_valid` | `boolean \| null` | No | — |
+| `is_formatted_properly` | `boolean \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `location` | `string \| null` | No | — |
+| `timezones` | `string[] \| null` | No | — |
+| `format_national` | `string \| null` | No | — |
+| `format_international` | `string \| null` | No | — |
+| `format_e164` | `string \| null` | No | — |
+| `country_code` | `number \| null` | No | — |
+| `line_type` | `string \| null` | No | — |
+| `is_mobile` | `boolean \| string \| null` | No | — |
+| `format_rfc3966` | `string \| null` | No | — |
+| `is_possible` | `boolean \| string \| null` | No | — |
 
 
 

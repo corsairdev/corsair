@@ -1,9 +1,9 @@
 ---
 title: Database
-description: "CampaignCleaner local sync: searchable entities, `.search()` filters, and operators."
+description: "Campaign Cleaner local sync: searchable entities, `.search()` filters, and operators."
 ---
 
-The CampaignCleaner plugin syncs data locally. Use `corsair.campaigncleaner.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+The Campaign Cleaner plugin syncs data locally. Use `corsair.campaigncleaner.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
@@ -28,6 +28,7 @@ const rows = await corsair.campaigncleaner.db.campaigns.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `campaign_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `date_added` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._

@@ -1,0 +1,137 @@
+---
+title: Overview
+description: "Contracts and e-signing with eSignatures - send contracts from templates, track and withdraw them, manage signers, and read back or create templates."
+---
+
+Use **eSignatures** through Corsair: one client, typed API calls.
+
+Copy the Secret Token from the API panel of your Automation/API/AI page in the eSignatures dashboard. The plugin sends it as HTTP Basic auth with an empty password, exactly as the docs' curl examples do. Things to know before you send:
+
+- **Real sends.** `contracts.create` sends the sign request to every signer by email or SMS. Pass `save_as_draft: 'yes'` to create the contract without sending, then `contracts.sendDraft` when it is ready.
+- **Demo contracts.** Pass `test: 'yes'` to mark a contract as a demo; demo contracts are not charged sending credits.
+- **`metadata` is a string.** It is echoed in the contract payload and in webhook events, so a single string is what you get back, not a JSON object.
+- **PDF URLs expire.** `contract_pdf_url` on a signed contract is kept for 3 days after each request that returns it; request the contract again for a fresh URL.
+- **Withdrawing.** `contracts.withdraw` stops a sent contract from being signed. Signed contracts cannot be withdrawn, and a withdrawn contract stays withdrawn.
+- **Signers.** `contracts.addSigner` joins a signer to a contract but sends nothing; `contracts.resendToSigner` sends the sign request. Both need the signer's `id` from the contract's `signers` (add returns no signer object, so re-read the contract).
+- **Rate limits.** eSignatures applies adaptive rate limits and warns that frequent polling of `contracts.get` can lead to blocked requests. The plugin backs off and retries a 429 up to three times, honoring `Retry-After` when present. Prefer webhooks for status changes.
+- **Webhooks.** The plugin does not receive webhooks; eSignatures sends them to the HTTPS endpoint configured on the same API panel.
+
+**What you get:**
+
+- 12 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/esignatures
+```
+```bash yarn
+yarn add corsair @corsair-dev/esignatures
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/esignatures
+```
+```bash bun
+bun add corsair @corsair-dev/esignatures
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { esignatures } from '@corsair-dev/esignatures';
+
+export const corsair = createCorsair({
+	plugins: [
+		esignatures(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+Pass `multiTenancy: true` to get `corsair.withTenant(id)`; without it the client is single-tenant. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup in code. The first call as a tenant with no stored key throws `AuthMissingError`, which may carry a `connectUrl`; mint a connect link to collect the Secret Token from the tenant.
+
+```ts
+esignatures()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'esignatures',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a contract**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.esignatures.api.contracts.get({ contract_id: '1contr11-2222' });
+```
+
+
+**Send a rental agreement from a template**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.esignatures.api.contracts.create({
+	template_id: '4templ44-8888',
+	signers: [{ name: 'Sam Signer', email: 'sam@tenants.com' }],
+	placeholder_fields: [{ placeholder_key: 'tenant_name', replace_with_text: 'Sam Signer' }],
+});
+```
+
+
+See the full list on the [API](/plugins/esignatures/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/esignatures/api">
+    Every `esignatures.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

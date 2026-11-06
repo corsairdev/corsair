@@ -45,7 +45,7 @@ await corsair.everhour.api.clients.createClient({});
 | `phone` | `string` | No | — |
 | `address` | `string` | No | — |
 | `projects` | `string[]` | No | — |
-| `businessDetails` | `string` | No | — |
+| `businessDetails` | `string \| null` | No | — |
 | `status` | `string` | No | — |
 
 
@@ -107,7 +107,7 @@ await corsair.everhour.api.clients.getClient({});
 | `phone` | `string` | No | — |
 | `address` | `string` | No | — |
 | `projects` | `string[]` | No | — |
-| `businessDetails` | `string` | No | — |
+| `businessDetails` | `string \| null` | No | — |
 | `status` | `string` | No | — |
 
 
@@ -130,17 +130,7 @@ await corsair.everhour.api.clients.listClients({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -202,7 +192,7 @@ await corsair.everhour.api.clients.updateClient({});
 | `phone` | `string` | No | — |
 | `address` | `string` | No | — |
 | `projects` | `string[]` | No | — |
-| `businessDetails` | `string` | No | — |
+| `businessDetails` | `string \| null` | No | — |
 | `status` | `string` | No | — |
 
 
@@ -263,17 +253,7 @@ await corsair.everhour.api.expenses.listExpenses({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -320,7 +300,7 @@ await corsair.everhour.api.hooks.createWebhook({});
 |------|------|----------|-------------|
 | `targetUrl` | `string` | Yes | — |
 | `events` | `string[]` | Yes | — |
-| `project` | `string` | No | — |
+| `project` | `string \| null` | No | — |
 
 
 
@@ -331,7 +311,7 @@ await corsair.everhour.api.hooks.createWebhook({});
 | `id` | `string \| number` | Yes | — |
 | `targetUrl` | `string` | Yes | — |
 | `events` | `string[]` | Yes | — |
-| `project` | `string` | No | — |
+| `project` | `string \| null` | No | — |
 | `active` | `boolean` | No | — |
 | `createdAt` | `string` | Yes | — |
 | `lastUsedAt` | `string` | No | — |
@@ -392,7 +372,7 @@ await corsair.everhour.api.hooks.getWebhook({});
 | `id` | `string \| number` | Yes | — |
 | `targetUrl` | `string` | Yes | — |
 | `events` | `string[]` | Yes | — |
-| `project` | `string` | No | — |
+| `project` | `string \| null` | No | — |
 | `active` | `boolean` | No | — |
 | `createdAt` | `string` | Yes | — |
 | `lastUsedAt` | `string` | No | — |
@@ -466,7 +446,7 @@ await corsair.everhour.api.hooks.updateWebhook({});
 | `id` | `string \| number` | Yes | — |
 | `targetUrl` | `string` | Yes | — |
 | `events` | `string[]` | Yes | — |
-| `project` | `string` | No | — |
+| `project` | `string \| null` | No | — |
 | `active` | `boolean` | No | — |
 | `createdAt` | `string` | Yes | — |
 | `lastUsedAt` | `string` | No | — |
@@ -493,17 +473,7 @@ await corsair.everhour.api.invoices.listInvoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -583,7 +553,7 @@ await corsair.everhour.api.projects.createProject({});
 | `name` | `string` | Yes | — |
 | `type` | `board \| list` | Yes | — |
 | `users` | `number[]` | No | — |
-| `client` | `number` | No | — |
+| `client` | `number \| null` | No | — |
 | `privacy` | `boolean` | No | — |
 
 
@@ -595,7 +565,7 @@ await corsair.everhour.api.projects.createProject({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
-| `client` | `string \| number` | No | — |
+| `client` | `string \| number \| null` | No | — |
 | `client_id` | `string` | No | — |
 | `color` | `string` | No | — |
 | `is_archived` | `boolean` | No | — |
@@ -658,7 +628,7 @@ await corsair.everhour.api.projects.getProject({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
-| `client` | `string \| number` | No | — |
+| `client` | `string \| number \| null` | No | — |
 | `client_id` | `string` | No | — |
 | `color` | `string` | No | — |
 | `is_archived` | `boolean` | No | — |
@@ -685,20 +655,10 @@ await corsair.everhour.api.projects.listProjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 | `page` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `platform` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -716,9 +676,7 @@ await corsair.everhour.api.projects.listProjects({});
   client_id?: string,
   color?: string,
   is_archived?: boolean,
-  users?: (
-    string | number
-  )[],
+  users?: (string | number)[],
   type?: string
 }[]
 ```
@@ -748,7 +706,7 @@ await corsair.everhour.api.projects.updateProject({});
 | `name` | `string` | No | — |
 | `type` | `board \| list` | No | — |
 | `users` | `number[]` | No | — |
-| `client` | `number` | No | — |
+| `client` | `number \| null` | No | — |
 | `privacy` | `boolean` | No | — |
 | `color` | `string` | No | — |
 
@@ -761,7 +719,7 @@ await corsair.everhour.api.projects.updateProject({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
-| `client` | `string \| number` | No | — |
+| `client` | `string \| number \| null` | No | — |
 | `client_id` | `string` | No | — |
 | `color` | `string` | No | — |
 | `is_archived` | `boolean` | No | — |
@@ -806,7 +764,7 @@ await corsair.everhour.api.sections.createSection({});
 | `project` | `string` | Yes | — |
 | `position` | `number` | Yes | — |
 | `status` | `string` | No | — |
-| `collapsed` | `boolean` | No | — |
+| `collapsed` | `boolean \| null` | No | — |
 
 
 
@@ -866,7 +824,7 @@ await corsair.everhour.api.sections.getSection({});
 | `project` | `string` | Yes | — |
 | `position` | `number` | Yes | — |
 | `status` | `string` | No | — |
-| `collapsed` | `boolean` | No | — |
+| `collapsed` | `boolean \| null` | No | — |
 
 
 
@@ -983,11 +941,11 @@ await corsair.everhour.api.tasks.createTask({});
 | `name` | `string` | Yes | — |
 | `projects` | `string[]` | No | — |
 | `project_id` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `estimate` | `any` | No | — |
 | `status` | `string` | No | — |
 | `is_archived` | `boolean` | No | — |
-| `section` | `number` | No | — |
+| `section` | `number \| null` | No | — |
 | `labels` | `string[]` | No | — |
 
 
@@ -1022,11 +980,11 @@ await corsair.everhour.api.tasks.getTask({});
 | `name` | `string` | Yes | — |
 | `projects` | `string[]` | No | — |
 | `project_id` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `estimate` | `any` | No | — |
 | `status` | `string` | No | — |
 | `is_archived` | `boolean` | No | — |
-| `section` | `number` | No | — |
+| `section` | `number \| null` | No | — |
 | `labels` | `string[]` | No | — |
 
 
@@ -1222,17 +1180,7 @@ await corsair.everhour.api.time.listUserTime({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1281,17 +1229,7 @@ await corsair.everhour.api.time.listUserTimesheets({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
-| `query` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 
 
 
@@ -1347,7 +1285,7 @@ await corsair.everhour.api.time.logTime({});
 | `task_id` | `string` | No | — |
 | `user_id` | `string` | No | — |
 | `start_date` | `Date` | No | — |
-| `end_date` | `Date` | No | — |
+| `end_date` | `Date \| null` | No | — |
 | `duration` | `number` | No | — |
 | `description` | `string` | No | — |
 | `comment` | `string` | No | — |
@@ -1430,7 +1368,7 @@ await corsair.everhour.api.time.updateTimeEntry({});
 | `task_id` | `string` | No | — |
 | `user_id` | `string` | No | — |
 | `start_date` | `Date` | No | — |
-| `end_date` | `Date` | No | — |
+| `end_date` | `Date \| null` | No | — |
 | `duration` | `number` | No | — |
 | `description` | `string` | No | — |
 | `comment` | `string` | No | — |
@@ -1844,7 +1782,7 @@ await corsair.everhour.api.user.getUser({});
 | `avatar` | `string` | No | — |
 | `role` | `string` | No | — |
 | `status` | `string` | No | — |
-| `headline` | `string` | No | — |
+| `headline` | `string \| null` | No | — |
 | `team` | `any` | No | — |
 
 
@@ -1897,18 +1835,8 @@ await corsair.everhour.api.user.listTeamUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | No | — |
+| `query` | `Record<string, string \| number \| boolean>` | No | — |
 | `limit` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 

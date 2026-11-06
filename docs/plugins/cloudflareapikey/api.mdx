@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for Cloudflare API token: every `cloudflareapikey.api.*` operation with input and output types."
+description: "API reference for Cloudflare API Token: every `cloudflareapikey.api.*` operation with input and output types."
 ---
 
 Every `cloudflareapikey.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -38,7 +38,7 @@ await corsair.cloudflareapikey.api.cache.getRegionalTieredCache({});
 | `id` | `tc_regional \| string` | Yes | — |
 | `editable` | `boolean` | No | — |
 | `value` | `on \| off` | Yes | — |
-| `modified_on` | `string` | No | — |
+| `modified_on` | `string \| null` | No | — |
 
 
 
@@ -558,8 +558,7 @@ await corsair.cloudflareapikey.api.rulesets.create({});
   kind: string,
   phase: string,
   description?: string,
-  rules?: {
-  }[]
+  rules?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -577,17 +576,7 @@ await corsair.cloudflareapikey.api.rulesets.create({});
 | `version` | `string` | No | — |
 | `last_updated` | `string` | No | — |
 | `phase` | `string` | Yes | — |
-| `rules` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `rules` | `Record<string, any>[]` | No | — |
 
 
 
@@ -620,8 +609,7 @@ await corsair.cloudflareapikey.api.rulesets.createRule({});
   expression: string,
   description?: string,
   enabled?: boolean,
-  action_parameters?: {
-  },
+  action_parameters?: Record<string, any>,
   position?: {
     index?: number,
     before?: string,
@@ -644,17 +632,7 @@ await corsair.cloudflareapikey.api.rulesets.createRule({});
 | `version` | `string` | No | — |
 | `last_updated` | `string` | No | — |
 | `phase` | `string` | Yes | — |
-| `rules` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `rules` | `Record<string, any>[]` | No | — |
 
 
 
@@ -735,17 +713,7 @@ await corsair.cloudflareapikey.api.rulesets.deleteRule({});
 | `version` | `string` | No | — |
 | `last_updated` | `string` | No | — |
 | `phase` | `string` | Yes | — |
-| `rules` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `rules` | `Record<string, any>[]` | No | — |
 
 
 
@@ -791,17 +759,7 @@ await corsair.cloudflareapikey.api.rulesets.get({});
 | `version` | `string` | No | — |
 | `last_updated` | `string` | No | — |
 | `phase` | `string` | Yes | — |
-| `rules` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `rules` | `Record<string, any>[]` | No | — |
 
 
 
@@ -848,17 +806,7 @@ await corsair.cloudflareapikey.api.rulesets.getEntrypointVersion({});
 | `version` | `string` | No | — |
 | `last_updated` | `string` | No | — |
 | `phase` | `string` | Yes | — |
-| `rules` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `rules` | `Record<string, any>[]` | No | — |
 
 
 
@@ -889,8 +837,7 @@ await corsair.cloudflareapikey.api.rulesets.update({});
   ruleset_id: string,
   name?: string,
   description?: string,
-  rules: {
-  }[]
+  rules: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -908,17 +855,7 @@ await corsair.cloudflareapikey.api.rulesets.update({});
 | `version` | `string` | No | — |
 | `last_updated` | `string` | No | — |
 | `phase` | `string` | Yes | — |
-| `rules` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `rules` | `Record<string, any>[]` | No | — |
 
 
 
@@ -952,8 +889,7 @@ await corsair.cloudflareapikey.api.rulesets.updateRule({});
   expression?: string,
   description?: string,
   enabled?: boolean,
-  action_parameters?: {
-  },
+  action_parameters?: Record<string, any>,
   position?: {
     index?: number,
     before?: string,
@@ -976,17 +912,7 @@ await corsair.cloudflareapikey.api.rulesets.updateRule({});
 | `version` | `string` | No | — |
 | `last_updated` | `string` | No | — |
 | `phase` | `string` | Yes | — |
-| `rules` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `rules` | `Record<string, any>[]` | No | — |
 
 
 

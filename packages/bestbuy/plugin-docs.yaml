@@ -1,0 +1,17 @@
+displayName: Best Buy
+description: Best Buy Remix API for searching and reading retail products, categories, stores, and customer reviews.
+domain: bestbuy.com
+examples:
+  read:
+    path: products.list
+    title: List products
+  write:
+    path: products.get
+    title: Get a product
+    args:
+      sku: "6428324"
+dbExample:
+  entity: products
+  note: >-
+    These tables exist, but Best Buy calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50

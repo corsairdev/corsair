@@ -38,32 +38,14 @@ await corsair.prisma.api.backups.list({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -133,28 +115,12 @@ await corsair.prisma.api.backups.restore({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="body full type">
 
 ```ts
@@ -167,7 +133,7 @@ await corsair.prisma.api.backups.restore({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -211,28 +177,12 @@ await corsair.prisma.api.connections.create({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="body full type">
 
 ```ts
@@ -330,32 +280,14 @@ await corsair.prisma.api.connections.delete({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -397,32 +329,14 @@ await corsair.prisma.api.connections.list({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -504,28 +418,12 @@ await corsair.prisma.api.databases.create({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="body full type">
 
 ```ts
@@ -684,32 +582,14 @@ await corsair.prisma.api.databases.delete({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -751,28 +631,10 @@ await corsair.prisma.api.databases.get({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -920,32 +782,14 @@ await corsair.prisma.api.databases.getUsage({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1000,8 +844,16 @@ await corsair.prisma.api.databases.getUsage({});
   metrics?: {
     timestamp?: string,
     value?: number
-  }[] | {
-  }
+  }[] | Record<string, number | {
+    reads?: number,
+    writes?: number,
+    total?: number,
+    bytes?: number,
+    history?: {
+      timestamp?: string,
+      value?: number
+    }[]
+  }>
 } | {
   data: {
     databaseId?: string,
@@ -1052,8 +904,16 @@ await corsair.prisma.api.databases.getUsage({});
     metrics?: {
       timestamp?: string,
       value?: number
-    }[] | {
-    }
+    }[] | Record<string, number | {
+      reads?: number,
+      writes?: number,
+      total?: number,
+      bytes?: number,
+      history?: {
+        timestamp?: string,
+        value?: number
+      }[]
+    }>
   }
 } | {
   usage: {
@@ -1105,8 +965,16 @@ await corsair.prisma.api.databases.getUsage({});
     metrics?: {
       timestamp?: string,
       value?: number
-    }[] | {
-    }
+    }[] | Record<string, number | {
+      reads?: number,
+      writes?: number,
+      total?: number,
+      bytes?: number,
+      history?: {
+        timestamp?: string,
+        value?: number
+      }[]
+    }>
   }
 } | {
   timestamp?: string,
@@ -1151,8 +1019,8 @@ await corsair.prisma.api.databases.inspectSchema({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `host` | `string` | Yes | — |
 | `port` | `number` | No | — |
@@ -1160,24 +1028,6 @@ await corsair.prisma.api.databases.inspectSchema({});
 | `password` | `string` | Yes | — |
 | `database` | `string` | Yes | — |
 | `sslRejectUnauthorized` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1198,7 +1048,7 @@ await corsair.prisma.api.databases.inspectSchema({});
     name: string,
     type: string,
     nullable: boolean,
-    default?: string | null
+    default: string | null
   }[],
   foreignKeys: {
     column: string,
@@ -1241,32 +1091,14 @@ await corsair.prisma.api.databases.list({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1408,32 +1240,14 @@ await corsair.prisma.api.integrations.list({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1505,28 +1319,12 @@ await corsair.prisma.api.projects.create({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="body full type">
 
 ```ts
@@ -1731,32 +1529,14 @@ await corsair.prisma.api.projects.delete({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1798,28 +1578,10 @@ await corsair.prisma.api.projects.get({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2012,32 +1774,14 @@ await corsair.prisma.api.projects.list({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2222,28 +1966,12 @@ await corsair.prisma.api.projects.transfer({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="body full type">
 
 ```ts
@@ -2447,32 +2175,14 @@ await corsair.prisma.api.regions.list({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2557,32 +2267,14 @@ await corsair.prisma.api.regions.listAccelerate({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2667,32 +2359,14 @@ await corsair.prisma.api.regions.listPostgres({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2779,8 +2453,8 @@ await corsair.prisma.api.sql.execute({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `host` | `string` | Yes | — |
 | `port` | `number` | No | — |
@@ -2791,43 +2465,15 @@ await corsair.prisma.api.sql.execute({});
 | `sql` | `string` | Yes | — |
 | `params` | `any[]` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `rows` | `object[]` | Yes | — |
-| `rowCount` | `number` | No | — |
+| `rows` | `Record<string, any>[]` | Yes | — |
+| `rowCount` | `number \| null` | Yes | — |
 | `command` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="rows full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2860,8 +2506,8 @@ await corsair.prisma.api.sql.query({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `host` | `string` | Yes | — |
 | `port` | `number` | No | — |
@@ -2872,43 +2518,15 @@ await corsair.prisma.api.sql.query({});
 | `sql` | `string` | Yes | — |
 | `params` | `any[]` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `rows` | `object[]` | Yes | — |
-| `rowCount` | `number` | No | — |
+| `rows` | `Record<string, any>[]` | Yes | — |
+| `rowCount` | `number \| null` | Yes | — |
 | `command` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="rows full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2943,32 +2561,14 @@ await corsair.prisma.api.workspaces.list({});
 | `limit` | `number` | No | — |
 | `startDate` | `string` | No | — |
 | `endDate` | `string` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 | `body` | `undefined` | No | — |
 
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">

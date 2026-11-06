@@ -37,7 +37,7 @@ await corsair.doppler.api.activityLogs.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `logs` | `object[]` | Yes | — |
-| `page` | `number` | No | — |
+| `page` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="logs full type">
@@ -54,10 +54,8 @@ await corsair.doppler.api.activityLogs.list({});
   enclave_project?: string | null,
   enclave_environment?: string | null,
   enclave_config?: string | null,
-  user?: {
-  } | null,
-  diff?: {
-  } | null
+  user?: Record<string, any> | null,
+  diff?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -91,36 +89,18 @@ await corsair.doppler.api.activityLogs.retrieve({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `text` | `string` | No | — |
-| `html` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `config` | `string` | No | — |
-| `environment` | `string` | No | — |
-| `project` | `string` | No | — |
-| `enclave_project` | `string` | No | — |
-| `enclave_environment` | `string` | No | — |
-| `enclave_config` | `string` | No | — |
-| `user` | `object` | No | — |
-| `diff` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="user full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="diff full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `id` | `string \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `html` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `config` | `string \| null` | No | — |
+| `environment` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
+| `enclave_project` | `string \| null` | No | — |
+| `enclave_environment` | `string \| null` | No | — |
+| `enclave_config` | `string \| null` | No | — |
+| `user` | `Record<string, any> \| null` | No | — |
+| `diff` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -147,14 +127,14 @@ await corsair.doppler.api.auth.me({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `slug` | `string` | No | — |
-| `name` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `last_seen_at` | `string` | No | — |
-| `type` | `string` | No | — |
-| `token_preview` | `string` | No | — |
-| `workplace` | `object` | No | — |
-| `principal` | `object` | No | — |
+| `slug` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `last_seen_at` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `token_preview` | `string \| null` | No | — |
+| `workplace` | `object \| null` | No | — |
+| `principal` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="workplace full type">
@@ -163,7 +143,7 @@ await corsair.doppler.api.auth.me({});
 {
   slug?: string | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -173,7 +153,7 @@ await corsair.doppler.api.auth.me({});
 {
   type?: string | null,
   slug?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -207,17 +187,7 @@ await corsair.doppler.api.changeRequests.list({});
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[]`
 
 
 ---
@@ -250,30 +220,12 @@ await corsair.doppler.api.configLogs.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `text` | `string` | No | — |
-| `html` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `user` | `object` | No | — |
-| `diff` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="user full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="diff full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `id` | `string \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `html` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `user` | `Record<string, any> \| null` | No | — |
+| `diff` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -307,7 +259,7 @@ await corsair.doppler.api.configLogs.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `logs` | `object[]` | Yes | — |
-| `page` | `number` | No | — |
+| `page` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="logs full type">
@@ -318,10 +270,8 @@ await corsair.doppler.api.configLogs.list({});
   text?: string | null,
   html?: string | null,
   created_at?: string | null,
-  user?: {
-  } | null,
-  diff?: {
-  } | null
+  user?: Record<string, any> | null,
+  diff?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -357,30 +307,12 @@ await corsair.doppler.api.configLogs.rollback({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `text` | `string` | No | — |
-| `html` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `user` | `object` | No | — |
-| `diff` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="user full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="diff full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `id` | `string \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `html` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `user` | `Record<string, any> \| null` | No | — |
+| `diff` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -415,18 +347,18 @@ await corsair.doppler.api.configs.clone({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `slug` | `string` | No | — |
-| `project` | `string` | No | — |
-| `environment` | `string` | No | — |
-| `root` | `boolean` | No | — |
-| `inheritable` | `boolean` | No | — |
-| `inheriting` | `boolean` | No | — |
-| `inherits` | `any[]` | No | — |
-| `inheritedBy` | `any[]` | No | — |
-| `locked` | `boolean` | No | — |
-| `initial_fetch_at` | `string` | No | — |
-| `last_fetch_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `slug` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
+| `environment` | `string \| null` | No | — |
+| `root` | `boolean \| null` | No | — |
+| `inheritable` | `boolean \| null` | No | — |
+| `inheriting` | `boolean \| null` | No | — |
+| `inherits` | `any[] \| null` | No | — |
+| `inheritedBy` | `any[] \| null` | No | — |
+| `locked` | `boolean \| null` | No | — |
+| `initial_fetch_at` | `string \| null` | No | — |
+| `last_fetch_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -459,18 +391,18 @@ await corsair.doppler.api.configs.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `slug` | `string` | No | — |
-| `project` | `string` | No | — |
-| `environment` | `string` | No | — |
-| `root` | `boolean` | No | — |
-| `inheritable` | `boolean` | No | — |
-| `inheriting` | `boolean` | No | — |
-| `inherits` | `any[]` | No | — |
-| `inheritedBy` | `any[]` | No | — |
-| `locked` | `boolean` | No | — |
-| `initial_fetch_at` | `string` | No | — |
-| `last_fetch_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `slug` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
+| `environment` | `string \| null` | No | — |
+| `root` | `boolean \| null` | No | — |
+| `inheritable` | `boolean \| null` | No | — |
+| `inheriting` | `boolean \| null` | No | — |
+| `inherits` | `any[] \| null` | No | — |
+| `inheritedBy` | `any[] \| null` | No | — |
+| `locked` | `boolean \| null` | No | — |
+| `initial_fetch_at` | `string \| null` | No | — |
+| `last_fetch_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -533,18 +465,18 @@ await corsair.doppler.api.configs.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `slug` | `string` | No | — |
-| `project` | `string` | No | — |
-| `environment` | `string` | No | — |
-| `root` | `boolean` | No | — |
-| `inheritable` | `boolean` | No | — |
-| `inheriting` | `boolean` | No | — |
-| `inherits` | `any[]` | No | — |
-| `inheritedBy` | `any[]` | No | — |
-| `locked` | `boolean` | No | — |
-| `initial_fetch_at` | `string` | No | — |
-| `last_fetch_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `slug` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
+| `environment` | `string \| null` | No | — |
+| `root` | `boolean \| null` | No | — |
+| `inheritable` | `boolean \| null` | No | — |
+| `inheriting` | `boolean \| null` | No | — |
+| `inherits` | `any[] \| null` | No | — |
+| `inheritedBy` | `any[] \| null` | No | — |
+| `locked` | `boolean \| null` | No | — |
+| `initial_fetch_at` | `string \| null` | No | — |
+| `last_fetch_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -578,7 +510,7 @@ await corsair.doppler.api.configs.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `configs` | `object[]` | Yes | — |
-| `page` | `number` | No | — |
+| `page` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="configs full type">
@@ -633,18 +565,18 @@ await corsair.doppler.api.configs.lock({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `slug` | `string` | No | — |
-| `project` | `string` | No | — |
-| `environment` | `string` | No | — |
-| `root` | `boolean` | No | — |
-| `inheritable` | `boolean` | No | — |
-| `inheriting` | `boolean` | No | — |
-| `inherits` | `any[]` | No | — |
-| `inheritedBy` | `any[]` | No | — |
-| `locked` | `boolean` | No | — |
-| `initial_fetch_at` | `string` | No | — |
-| `last_fetch_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `slug` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
+| `environment` | `string \| null` | No | — |
+| `root` | `boolean \| null` | No | — |
+| `inheritable` | `boolean \| null` | No | — |
+| `inheriting` | `boolean \| null` | No | — |
+| `inherits` | `any[] \| null` | No | — |
+| `inheritedBy` | `any[] \| null` | No | — |
+| `locked` | `boolean \| null` | No | — |
+| `initial_fetch_at` | `string \| null` | No | — |
+| `last_fetch_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -676,18 +608,18 @@ await corsair.doppler.api.configs.unlock({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `slug` | `string` | No | — |
-| `project` | `string` | No | — |
-| `environment` | `string` | No | — |
-| `root` | `boolean` | No | — |
-| `inheritable` | `boolean` | No | — |
-| `inheriting` | `boolean` | No | — |
-| `inherits` | `any[]` | No | — |
-| `inheritedBy` | `any[]` | No | — |
-| `locked` | `boolean` | No | — |
-| `initial_fetch_at` | `string` | No | — |
-| `last_fetch_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `slug` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
+| `environment` | `string \| null` | No | — |
+| `root` | `boolean \| null` | No | — |
+| `inheritable` | `boolean \| null` | No | — |
+| `inheriting` | `boolean \| null` | No | — |
+| `inherits` | `any[] \| null` | No | — |
+| `inheritedBy` | `any[] \| null` | No | — |
+| `locked` | `boolean \| null` | No | — |
+| `initial_fetch_at` | `string \| null` | No | — |
+| `last_fetch_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -720,18 +652,18 @@ await corsair.doppler.api.configs.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `slug` | `string` | No | — |
-| `project` | `string` | No | — |
-| `environment` | `string` | No | — |
-| `root` | `boolean` | No | — |
-| `inheritable` | `boolean` | No | — |
-| `inheriting` | `boolean` | No | — |
-| `inherits` | `any[]` | No | — |
-| `inheritedBy` | `any[]` | No | — |
-| `locked` | `boolean` | No | — |
-| `initial_fetch_at` | `string` | No | — |
-| `last_fetch_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `slug` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
+| `environment` | `string \| null` | No | — |
+| `root` | `boolean \| null` | No | — |
+| `inheritable` | `boolean \| null` | No | — |
+| `inheriting` | `boolean \| null` | No | — |
+| `inherits` | `any[] \| null` | No | — |
+| `inheritedBy` | `any[] \| null` | No | — |
+| `locked` | `boolean \| null` | No | — |
+| `initial_fetch_at` | `string \| null` | No | — |
+| `last_fetch_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -802,12 +734,12 @@ await corsair.doppler.api.environments.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `slug` | `string` | No | — |
-| `name` | `string` | No | — |
-| `project` | `string` | No | — |
-| `initial_fetch_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `personal_configs` | `boolean` | No | — |
+| `slug` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
+| `initial_fetch_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `personal_configs` | `boolean \| null` | No | — |
 
 
 
@@ -870,12 +802,12 @@ await corsair.doppler.api.environments.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `slug` | `string` | No | — |
-| `name` | `string` | No | — |
-| `project` | `string` | No | — |
-| `initial_fetch_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `personal_configs` | `boolean` | No | — |
+| `slug` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
+| `initial_fetch_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `personal_configs` | `boolean \| null` | No | — |
 
 
 
@@ -952,12 +884,12 @@ await corsair.doppler.api.environments.rename({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `slug` | `string` | No | — |
-| `name` | `string` | No | — |
-| `project` | `string` | No | — |
-| `initial_fetch_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `personal_configs` | `boolean` | No | — |
+| `slug` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
+| `initial_fetch_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `personal_configs` | `boolean \| null` | No | — |
 
 
 
@@ -1014,17 +946,7 @@ await corsair.doppler.api.integrations.list({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[]`
 
 
 ---
@@ -1056,18 +978,8 @@ await corsair.doppler.api.invites.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `invites` | `object[]` | Yes | — |
-| `page` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="invites full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `invites` | `Record<string, any>[]` | Yes | — |
+| `page` | `number \| null` | No | — |
 
 
 
@@ -1133,20 +1045,10 @@ await corsair.doppler.api.projectMembers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `type` | `string` | No | — |
-| `slug` | `string` | No | — |
-| `role` | `object` | No | — |
-| `environments` | `any[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="role full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `type` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `role` | `Record<string, any> \| null` | No | — |
+| `environments` | `any[] \| null` | No | — |
 
 
 
@@ -1179,7 +1081,7 @@ await corsair.doppler.api.projectMembers.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `members` | `object[]` | Yes | — |
-| `page` | `number` | No | — |
+| `page` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="members full type">
@@ -1188,8 +1090,7 @@ await corsair.doppler.api.projectMembers.list({});
 {
   type?: string | null,
   slug?: string | null,
-  role?: {
-  } | null,
+  role?: Record<string, any> | null,
   environments?: any[] | null
 }[]
 ```
@@ -1226,11 +1127,11 @@ await corsair.doppler.api.projectRoles.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `identifier` | `string` | No | — |
-| `name` | `string` | No | — |
-| `permissions` | `string[]` | No | — |
-| `created_at` | `string` | No | — |
-| `is_custom_role` | `boolean` | No | — |
+| `identifier` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `permissions` | `string[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `is_custom_role` | `boolean \| null` | No | — |
 
 
 
@@ -1319,10 +1220,10 @@ await corsair.doppler.api.projects.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `slug` | `string` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `slug` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -1383,10 +1284,10 @@ await corsair.doppler.api.projects.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `slug` | `string` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `slug` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -1418,7 +1319,7 @@ await corsair.doppler.api.projects.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `projects` | `object[]` | Yes | — |
-| `page` | `number` | No | — |
+| `page` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="projects full type">
@@ -1466,10 +1367,10 @@ await corsair.doppler.api.projects.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `slug` | `string` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `created_at` | `string` | No | — |
+| `slug` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
 
 
 
@@ -1535,17 +1436,7 @@ await corsair.doppler.api.secrets.download({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1576,32 +1467,14 @@ await corsair.doppler.api.secrets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `raw` | `string` | No | — |
-| `computed` | `string` | No | — |
-| `note` | `string` | No | — |
-| `rawVisibility` | `string` | No | — |
-| `computedVisibility` | `string` | No | — |
-| `rawValueType` | `object` | No | — |
-| `computedValueType` | `object` | No | — |
+| `raw` | `string \| null` | No | — |
+| `computed` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `rawVisibility` | `string \| null` | No | — |
+| `computedVisibility` | `string \| null` | No | — |
+| `rawValueType` | `Record<string, any> \| null` | No | — |
+| `computedValueType` | `Record<string, any> \| null` | No | — |
 | `name` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="rawValueType full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="computedValueType full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1636,8 +1509,15 @@ await corsair.doppler.api.secrets.list({});
 <Accordion title="Output full type">
 
 ```ts
-{
-}
+Record<string, {
+  raw?: string | null,
+  computed?: string | null,
+  note?: string | null,
+  rawVisibility?: string | null,
+  computedVisibility?: string | null,
+  rawValueType?: Record<string, any> | null,
+  computedValueType?: Record<string, any> | null
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1691,17 +1571,7 @@ await corsair.doppler.api.secrets.update({});
 |------|------|----------|-------------|
 | `project` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
-| `secrets` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="secrets full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `secrets` | `Record<string, string \| null>` | Yes | — |
 
 
 
@@ -1711,8 +1581,15 @@ await corsair.doppler.api.secrets.update({});
 <Accordion title="Output full type">
 
 ```ts
-{
-}
+Record<string, {
+  raw?: string | null,
+  computed?: string | null,
+  note?: string | null,
+  rawVisibility?: string | null,
+  computedVisibility?: string | null,
+  rawValueType?: Record<string, any> | null,
+  computedValueType?: Record<string, any> | null
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1746,8 +1623,8 @@ await corsair.doppler.api.secrets.updateNote({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `secret` | `string` | No | — |
-| `note` | `string` | No | — |
+| `secret` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
 
 
 
@@ -1780,8 +1657,8 @@ await corsair.doppler.api.secrets.updateNoteViaConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `secret` | `string` | No | — |
-| `note` | `string` | No | — |
+| `secret` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
 
 
 
@@ -1817,17 +1694,17 @@ await corsair.doppler.api.serviceTokens.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | — |
-| `slug` | `string` | No | — |
-| `access` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `key` | `string` | No | — |
-| `project` | `string` | No | — |
-| `environment` | `string` | No | — |
-| `config` | `string` | No | — |
-| `expires_at` | `string` | No | — |
-| `last_seen_at` | `string` | No | — |
-| `token_preview` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `access` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `key` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
+| `environment` | `string \| null` | No | — |
+| `config` | `string \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
+| `last_seen_at` | `string \| null` | No | — |
+| `token_preview` | `string \| null` | No | — |
 
 
 
@@ -1943,9 +1820,9 @@ await corsair.doppler.api.share.createEncrypted({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | — |
-| `authenticated_url` | `string` | No | — |
-| `password` | `string` | No | — |
+| `url` | `string \| null` | No | — |
+| `authenticated_url` | `string \| null` | No | — |
+| `password` | `string \| null` | No | — |
 
 
 
@@ -1977,9 +1854,9 @@ await corsair.doppler.api.share.createPlain({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | — |
-| `authenticated_url` | `string` | No | — |
-| `password` | `string` | No | — |
+| `url` | `string \| null` | No | — |
+| `authenticated_url` | `string \| null` | No | — |
+| `password` | `string \| null` | No | — |
 
 
 
@@ -2032,13 +1909,13 @@ await corsair.doppler.api.webhooks.add({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `url` | `string` | No | — |
-| `enabled` | `boolean` | No | — |
-| `hasSecret` | `boolean` | No | — |
-| `authentication` | `any` | No | — |
-| `enabledConfigs` | `any[]` | No | — |
-| `canManage` | `boolean` | No | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `hasSecret` | `boolean \| null` | No | — |
+| `authentication` | `any \| null` | No | — |
+| `enabledConfigs` | `any[] \| null` | No | — |
+| `canManage` | `boolean \| null` | No | — |
 
 
 
@@ -2101,13 +1978,13 @@ await corsair.doppler.api.webhooks.disable({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `url` | `string` | No | — |
-| `enabled` | `boolean` | No | — |
-| `hasSecret` | `boolean` | No | — |
-| `authentication` | `any` | No | — |
-| `enabledConfigs` | `any[]` | No | — |
-| `canManage` | `boolean` | No | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `hasSecret` | `boolean \| null` | No | — |
+| `authentication` | `any \| null` | No | — |
+| `enabledConfigs` | `any[] \| null` | No | — |
+| `canManage` | `boolean \| null` | No | — |
 
 
 
@@ -2139,13 +2016,13 @@ await corsair.doppler.api.webhooks.enable({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `url` | `string` | No | — |
-| `enabled` | `boolean` | No | — |
-| `hasSecret` | `boolean` | No | — |
-| `authentication` | `any` | No | — |
-| `enabledConfigs` | `any[]` | No | — |
-| `canManage` | `boolean` | No | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `hasSecret` | `boolean \| null` | No | — |
+| `authentication` | `any \| null` | No | — |
+| `enabledConfigs` | `any[] \| null` | No | — |
+| `canManage` | `boolean \| null` | No | — |
 
 
 
@@ -2177,13 +2054,13 @@ await corsair.doppler.api.webhooks.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `url` | `string` | No | — |
-| `enabled` | `boolean` | No | — |
-| `hasSecret` | `boolean` | No | — |
-| `authentication` | `any` | No | — |
-| `enabledConfigs` | `any[]` | No | — |
-| `canManage` | `boolean` | No | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `hasSecret` | `boolean \| null` | No | — |
+| `authentication` | `any \| null` | No | — |
+| `enabledConfigs` | `any[] \| null` | No | — |
+| `canManage` | `boolean \| null` | No | — |
 
 
 
@@ -2279,13 +2156,13 @@ await corsair.doppler.api.webhooks.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `url` | `string` | No | — |
-| `enabled` | `boolean` | No | — |
-| `hasSecret` | `boolean` | No | — |
-| `authentication` | `any` | No | — |
-| `enabledConfigs` | `any[]` | No | — |
-| `canManage` | `boolean` | No | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `hasSecret` | `boolean \| null` | No | — |
+| `authentication` | `any \| null` | No | — |
+| `enabledConfigs` | `any[] \| null` | No | — |
+| `canManage` | `boolean \| null` | No | — |
 
 
 
@@ -2313,9 +2190,9 @@ await corsair.doppler.api.workplace.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `billing_email` | `string` | No | — |
-| `security_email` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `billing_email` | `string \| null` | No | — |
+| `security_email` | `string \| null` | No | — |
 
 
 
@@ -2348,9 +2225,9 @@ await corsair.doppler.api.workplace.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `billing_email` | `string` | No | — |
-| `security_email` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `billing_email` | `string \| null` | No | — |
+| `security_email` | `string \| null` | No | — |
 
 
 
@@ -2382,8 +2259,8 @@ await corsair.doppler.api.workplaceRoles.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | — |
-| `permissions` | `string[]` | No | — |
+| `name` | `string \| null` | No | — |
+| `permissions` | `string[] \| null` | No | — |
 
 
 
@@ -2467,9 +2344,9 @@ await corsair.doppler.api.workplaceUsers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `access` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `user` | `object` | No | — |
+| `access` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -2480,7 +2357,7 @@ await corsair.doppler.api.workplaceUsers.get({});
   email?: string | null,
   name?: string | null,
   username?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2515,7 +2392,7 @@ await corsair.doppler.api.workplaceUsers.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workplace_users` | `object[]` | Yes | — |
-| `page` | `number` | No | — |
+| `page` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="workplace_users full type">

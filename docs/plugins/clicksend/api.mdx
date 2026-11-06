@@ -106,7 +106,7 @@ await corsair.clicksend.api.campaigns.mms.cancel({});
 
 
 
-**Output:** `object`
+**Output:** `object \| never[] \| Record<string, string> \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -128,8 +128,7 @@ await corsair.clicksend.api.campaigns.mms.cancel({});
   _total_count?: number,
   _list_name?: string,
   _media_file_url?: string
-} | never[] | {
-} | boolean | null
+} | never[] | Record<string, string> | boolean | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -362,7 +361,7 @@ await corsair.clicksend.api.campaigns.sms.cancel({});
 
 
 
-**Output:** `object`
+**Output:** `object \| never[] \| Record<string, string> \| boolean \| null`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -383,8 +382,7 @@ await corsair.clicksend.api.campaigns.sms.cancel({});
   url_to_shorten?: string,
   _total_count?: number,
   _list_name?: string
-} | never[] | {
-} | boolean | null
+} | never[] | Record<string, string> | boolean | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -565,20 +563,10 @@ await corsair.clicksend.api.campaigns.sms.send({});
 | `name` | `string` | Yes | — |
 | `body` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
-| `senders` | `object[]` | Yes | — |
+| `senders` | `Record<string, string>[]` | Yes | — |
 | `source` | `string` | No | — |
 | `schedule` | `number` | No | — |
 | `url_to_shorten` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="senders full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -707,17 +695,7 @@ await corsair.clicksend.api.contactLists.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -948,17 +926,7 @@ await corsair.clicksend.api.contacts.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -1773,17 +1741,7 @@ await corsair.clicksend.api.emailAddresses.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -1890,17 +1848,7 @@ await corsair.clicksend.api.emailAddresses.sendToken({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -2274,17 +2222,7 @@ await corsair.clicksend.api.emailReceiptRules.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -2472,17 +2410,7 @@ await corsair.clicksend.api.emailTemplates.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -2666,17 +2594,7 @@ await corsair.clicksend.api.faxInboundRules.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -2872,17 +2790,7 @@ await corsair.clicksend.api.faxReceiptRules.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -3176,17 +3084,7 @@ await corsair.clicksend.api.faxReceipts.markRead({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -3444,17 +3342,7 @@ await corsair.clicksend.api.mms.receiptsMarkRead({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -4152,17 +4040,7 @@ await corsair.clicksend.api.postReturnAddresses.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -4948,17 +4826,7 @@ await corsair.clicksend.api.sms.inboundMarkRead({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -4983,17 +4851,7 @@ await corsair.clicksend.api.sms.inboundMarkReadOne({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -5216,17 +5074,7 @@ await corsair.clicksend.api.sms.receiptsMarkRead({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -5521,17 +5369,7 @@ await corsair.clicksend.api.smsInboundRules.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -5736,17 +5574,7 @@ await corsair.clicksend.api.smsReceiptRules.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -5932,17 +5760,7 @@ await corsair.clicksend.api.smsStrippedStrings.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -6109,17 +5927,7 @@ await corsair.clicksend.api.smsTemplates.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -6302,17 +6110,7 @@ await corsair.clicksend.api.subaccounts.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -6739,17 +6537,7 @@ await corsair.clicksend.api.voice.receiptsMarkRead({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---
@@ -6935,17 +6723,7 @@ await corsair.clicksend.api.voiceReceiptRules.delete({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-never[] | {
-} | boolean | null
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `never[] \| Record<string, string> \| boolean \| null`
 
 
 ---

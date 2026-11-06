@@ -28,20 +28,20 @@ await corsair.tavily.api.crawl.crawl({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
-| `max_depth` | `number` | No | — |
-| `max_breadth` | `number` | No | — |
-| `limit` | `number` | No | — |
-| `instructions` | `string` | No | — |
-| `select_paths` | `string[]` | No | — |
-| `select_domains` | `string[]` | No | — |
-| `exclude_paths` | `string[]` | No | — |
-| `exclude_domains` | `string[]` | No | — |
-| `allow_external` | `boolean` | No | — |
-| `categories` | `Careers \| Blog \| Documentation \| About \| Pricing \| Community \| Developers \| Contact \| Media[]` | No | — |
-| `extract_depth` | `basic \| advanced` | No | — |
-| `format` | `markdown \| text` | No | — |
-| `include_images` | `boolean` | No | — |
-| `include_favicon` | `boolean` | No | — |
+| `max_depth` | `number` | No | Defaults to 1. |
+| `max_breadth` | `number` | No | Defaults to 20. |
+| `limit` | `number` | No | Defaults to 50. |
+| `instructions` | `string \| null` | No | — |
+| `select_paths` | `string[]` | No | Defaults to []. |
+| `select_domains` | `string[]` | No | Defaults to []. |
+| `exclude_paths` | `string[]` | No | Defaults to []. |
+| `exclude_domains` | `string[]` | No | Defaults to []. |
+| `allow_external` | `boolean` | No | Defaults to false. |
+| `categories` | `(Careers \| Blog \| Documentation \| About \| Pricing \| Community \| Developers \| Contact \| Media)[]` | No | Defaults to []. |
+| `extract_depth` | `basic \| advanced` | No | Defaults to "basic". |
+| `format` | `markdown \| text` | No | Defaults to "markdown". |
+| `include_images` | `boolean` | No | Defaults to false. |
+| `include_favicon` | `boolean` | No | Defaults to false. |
 
 
 
@@ -102,10 +102,10 @@ await corsair.tavily.api.extract.extract({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `urls` | `string \| string[]` | Yes | — |
-| `include_images` | `boolean` | No | — |
-| `extract_depth` | `basic \| advanced` | No | — |
-| `format` | `markdown \| text` | No | — |
-| `include_favicon` | `boolean` | No | — |
+| `include_images` | `boolean` | No | Defaults to false. |
+| `extract_depth` | `basic \| advanced` | No | Defaults to "basic". |
+| `format` | `markdown \| text` | No | Defaults to "markdown". |
+| `include_favicon` | `boolean` | No | Defaults to false. |
 
 
 
@@ -165,16 +165,16 @@ await corsair.tavily.api.map.map({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
-| `max_depth` | `number` | No | — |
-| `max_breadth` | `number` | No | — |
-| `limit` | `number` | No | — |
-| `instructions` | `string` | No | — |
-| `select_paths` | `string[]` | No | — |
-| `select_domains` | `string[]` | No | — |
-| `exclude_paths` | `string[]` | No | — |
-| `exclude_domains` | `string[]` | No | — |
-| `allow_external` | `boolean` | No | — |
-| `categories` | `Careers \| Blog \| Documentation \| About \| Pricing \| Community \| Developers \| Contact \| Media[]` | No | — |
+| `max_depth` | `number` | No | Defaults to 1. |
+| `max_breadth` | `number` | No | Defaults to 20. |
+| `limit` | `number` | No | Defaults to 50. |
+| `instructions` | `string \| null` | No | — |
+| `select_paths` | `string[]` | No | Defaults to []. |
+| `select_domains` | `string[]` | No | Defaults to []. |
+| `exclude_paths` | `string[]` | No | Defaults to []. |
+| `exclude_domains` | `string[]` | No | Defaults to []. |
+| `allow_external` | `boolean` | No | Defaults to false. |
+| `categories` | `(Careers \| Blog \| Documentation \| About \| Pricing \| Community \| Developers \| Contact \| Media)[]` | No | Defaults to []. |
 
 
 
@@ -210,23 +210,23 @@ await corsair.tavily.api.search.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | — |
-| `search_depth` | `advanced \| basic \| fast \| ultra-fast` | No | — |
-| `chunks_per_source` | `number` | No | — |
-| `max_results` | `number` | No | — |
-| `topic` | `general \| news \| finance` | No | — |
-| `time_range` | `day \| week \| month \| year \| d \| w \| m \| y` | No | — |
-| `start_date` | `string` | No | — |
-| `end_date` | `string` | No | — |
-| `include_answer` | `boolean \| basic \| advanced` | No | — |
-| `include_raw_content` | `boolean \| markdown \| text` | No | — |
-| `include_images` | `boolean` | No | — |
-| `include_image_descriptions` | `boolean` | No | — |
-| `include_favicon` | `boolean` | No | — |
-| `include_domains` | `string[]` | No | — |
-| `exclude_domains` | `string[]` | No | — |
-| `country` | `string` | No | — |
-| `auto_parameters` | `boolean` | No | — |
-| `include_usage` | `boolean` | No | — |
+| `search_depth` | `advanced \| basic \| fast \| ultra-fast` | No | Defaults to "basic". |
+| `chunks_per_source` | `number` | No | Defaults to 3. |
+| `max_results` | `number` | No | Defaults to 5. |
+| `topic` | `general \| news \| finance` | No | Defaults to "general". |
+| `time_range` | `day \| week \| month \| year \| d \| w \| m \| y \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `include_answer` | `boolean \| basic \| advanced` | No | Defaults to false. |
+| `include_raw_content` | `boolean \| markdown \| text` | No | Defaults to false. |
+| `include_images` | `boolean` | No | Defaults to false. |
+| `include_image_descriptions` | `boolean` | No | Defaults to false. |
+| `include_favicon` | `boolean` | No | Defaults to false. |
+| `include_domains` | `string[]` | No | Defaults to []. |
+| `exclude_domains` | `string[]` | No | Defaults to []. |
+| `country` | `string \| null` | No | — |
+| `auto_parameters` | `boolean` | No | Defaults to false. |
+| `include_usage` | `boolean` | No | Defaults to false. |
 
 
 
@@ -235,13 +235,13 @@ await corsair.tavily.api.search.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | — |
-| `answer` | `string` | No | — |
+| `answer` | `string \| null` | No | — |
 | `images` | `object[]` | Yes | — |
 | `results` | `object[]` | Yes | — |
 | `response_time` | `number` | Yes | — |
 | `usage` | `object` | No | — |
 | `request_id` | `string` | No | — |
-| `auto_parameters` | `object` | No | — |
+| `auto_parameters` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="images full type">
@@ -273,14 +273,6 @@ await corsair.tavily.api.search.search({});
 ```ts
 {
   credits: number
-}
-```
-</Accordion>
-
-<Accordion title="auto_parameters full type">
-
-```ts
-{
 }
 ```
 </Accordion>

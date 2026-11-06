@@ -1,9 +1,9 @@
 ---
 title: Database
-description: "CodeInterpreter local sync: searchable entities, `.search()` filters, and operators."
+description: "Code Interpreter local sync: searchable entities, `.search()` filters, and operators."
 ---
 
-The CodeInterpreter plugin syncs data locally. Use `corsair.codeinterpreter.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+The Code Interpreter plugin syncs data locally. Use `corsair.codeinterpreter.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
@@ -84,6 +84,7 @@ const rows = await corsair.codeinterpreter.db.sessions.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `language` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `date` | equals, before, after, between |
 | `updated_at` | `date` | equals, before, after, between |

@@ -1,0 +1,152 @@
+---
+title: Overview
+description: "Manage Render services and deploys, Postgres and Key Value databases, env groups, environments, custom domains, disks, logs, metrics, webhooks and workflows."
+---
+
+Use **Render** through Corsair: one client, typed API calls, local DB sync.
+
+Create an API key in the Render Dashboard under Account Settings, API Keys. A key can reach every workspace its user belongs to, so most create and list calls take an `ownerId` (the workspace ID, `tea-...` or `usr-...`); `owners.list` returns them. Things to know before you call:
+
+- **`update` on a list replaces it.** `services.envVars.update`, `services.secretFiles.update`, `services.headers.update`, `services.routes.update`, `buildSources.envVars.update` and `buildSources.secretFiles.update` take the full list as `body`, and entries not in the list are removed. To change one entry, use the matching `upsert` (for example `services.envVars.upsert` or `services.envGroups.envVars.upsert`).
+- **Secrets come back in plain text.** Env var and secret file reads return values and file contents.
+- **Paging.** Lists return an array of `{ cursor, <resource> }` entries. Pass the last entry's `cursor` to get the next page; `limit` goes up to 100.
+- **Rate limits.** On a 429 the plugin waits for Render's `Retry-After` (at most 60 seconds) and retries up to five times.
+- **Not covered.** The deprecated `/redis` routes (use the Key Value operations), sandboxes, flows, and the streaming endpoints (log subscribe and task-run events). The plugin does not receive webhooks; `webhooks.create` and friends manage Render's outgoing webhooks.
+
+**What you get:**
+
+- 218 typed API operations
+- 1 synced entity (`renderOwner`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/render
+```
+```bash yarn
+yarn add corsair @corsair-dev/render
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/render
+```
+```bash bun
+bun add corsair @corsair-dev/render
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { render } from '@corsair-dev/render';
+
+export const corsair = createCorsair({
+	plugins: [
+		render(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+render()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'render',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List web services in a region**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.render.api.services.list({
+	type: ['web_service'],
+	region: ['oregon'],
+	limit: 20,
+});
+```
+
+
+**Deploy the latest commit of a service**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.render.api.services.triggerDeploy({ serviceId: 'srv-d0k1q2r3s4t5u6v7w8x9' });
+```
+
+
+See the full list on the [API](/plugins/render/api) page.
+
+## Query synced data
+
+`owners.list` and `owners.retrieve` store each workspace by owner ID (`id`, `name`, `email`, `type`).
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.render.db.renderOwner.search({
+	data: { name: 'Acme' },
+	limit: 50,
+});
+```
+
+Synced entities: `renderOwner`. See [Database](/plugins/render/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/render/api">
+    Every `render.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/render/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

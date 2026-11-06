@@ -63,16 +63,16 @@ await corsair.anyapi.api.apis.get({ sku: 'linkedin.company' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `slug` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `category` | `string` | No | — |
-| `platformId` | `string` | No | — |
-| `execution` | `object` | No | — |
-| `pricing` | `object` | No | — |
-| `failover` | `boolean` | No | — |
-| `inputSchema` | `object` | No | — |
-| `outputSchema` | `object` | No | — |
-| `latency` | `object` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `platformId` | `string \| null` | No | — |
+| `execution` | `object \| null` | No | — |
+| `pricing` | `Record<string, any> \| null` | No | — |
+| `failover` | `boolean \| null` | No | — |
+| `inputSchema` | `Record<string, any> \| null` | No | — |
+| `outputSchema` | `Record<string, any> \| null` | No | — |
+| `latency` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="execution full type">
@@ -80,31 +80,7 @@ await corsair.anyapi.api.apis.get({ sku: 'linkedin.company' });
 ```ts
 {
   mode: string
-}
-```
-</Accordion>
-
-<Accordion title="pricing full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="inputSchema full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="outputSchema full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 
@@ -116,7 +92,7 @@ await corsair.anyapi.api.apis.get({ sku: 'linkedin.company' });
   p95Ms?: number | null,
   p99Ms?: number | null,
   sample?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -164,8 +140,7 @@ await corsair.anyapi.api.apis.list({ category: 'search' });
   execution?: {
     mode: string
   } | null,
-  pricing?: {
-  } | null,
+  pricing?: Record<string, any> | null,
   failover?: boolean | null
 }[]
 ```
@@ -193,17 +168,7 @@ await corsair.anyapi.api.apis.quote({ sku: 'linkedin.company', input: { url: 'ht
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `sku` | `string` | Yes | AnyAPI endpoint id, e.g. linkedin.company or google.search |
-| `input` | `object` | Yes | The endpoint's input, matching its inputSchema from apis.get |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `input` | `Record<string, any>` | No | The endpoint's input, matching its inputSchema from apis.get. Defaults to &#123;&#125;. |
 
 
 
@@ -212,11 +177,11 @@ await corsair.anyapi.api.apis.quote({ sku: 'linkedin.company', input: { url: 'ht
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `maxCostUsd` | `number` | Yes | — |
-| `minCostUsd` | `number` | No | — |
-| `baseUsd` | `number` | No | — |
-| `perItemUsd` | `number` | No | — |
-| `exact` | `boolean` | No | — |
-| `pricing` | `string` | No | — |
+| `minCostUsd` | `number \| null` | No | — |
+| `baseUsd` | `number \| null` | No | — |
+| `perItemUsd` | `number \| null` | No | — |
+| `exact` | `boolean \| null` | No | — |
+| `pricing` | `string \| null` | No | — |
 
 
 
@@ -239,23 +204,13 @@ await corsair.anyapi.api.apis.run({ sku: 'youtube.video_transcript', input: { ur
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `sku` | `string` | Yes | AnyAPI endpoint id, e.g. linkedin.company or google.search |
-| `input` | `object` | Yes | The endpoint's input, matching its inputSchema from apis.get |
+| `input` | `Record<string, any>` | No | The endpoint's input, matching its inputSchema from apis.get. Defaults to &#123;&#125;. |
 | `fields` | `string` | No | Comma-separated keys to keep on each result item, e.g. name,followerCount |
 | `maxItems` | `number` | No | Cap the number of result rows returned |
 | `summary` | `boolean` | No | Return only an outline of the result with per-field sizes |
 | `jq` | `string` | No | jq expression applied to the result; its output replaces `output` |
 | `maxCostUsd` | `number` | No | Most this call may cost in USD. Sources priced above it are skipped; if none fits, the call is refused without charge. |
 | `idempotencyKey` | `string` | No | Reuse the same key to retry a call without paying twice. Scoped to your account for 24 hours. |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -290,10 +245,8 @@ await corsair.anyapi.api.apis.run({ sku: 'youtube.video_transcript', input: { ur
   serviceOutcome?: string | null,
   settlementState?: string | null,
   resultExpired?: boolean | null,
-  result?: {
-  } | null,
-  error?: {
-  } | null
+  result?: Record<string, any> | null,
+  error?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -330,7 +283,7 @@ await corsair.anyapi.api.apis.search({ query: 'linkedin company employees', limi
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `results` | `object[]` | Yes | — |
-| `total` | `number` | No | — |
+| `total` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="results full type">
@@ -345,8 +298,7 @@ await corsair.anyapi.api.apis.search({ query: 'linkedin company employees', limi
   execution?: {
     mode: string
   } | null,
-  pricing?: {
-  } | null,
+  pricing?: Record<string, any> | null,
   failover?: boolean | null
 }[]
 ```
@@ -393,14 +345,14 @@ await corsair.anyapi.api.google.search({ query: 'model context protocol servers'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `output` | `object` | Yes | — |
-| `provider` | `string` | No | — |
+| `provider` | `string \| null` | No | — |
 | `costUsd` | `number` | Yes | USD charged for this call |
-| `items` | `number` | No | — |
-| `replayed` | `boolean` | No | — |
-| `source` | `object` | No | — |
-| `resultId` | `string` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
-| `hint` | `string` | No | — |
-| `jqError` | `string` | No | — |
+| `items` | `number \| null` | No | — |
+| `replayed` | `boolean \| null` | No | — |
+| `source` | `object \| null` | No | — |
+| `resultId` | `string \| null` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
+| `hint` | `string \| null` | No | — |
+| `jqError` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -408,7 +360,7 @@ await corsair.anyapi.api.google.search({ query: 'model context protocol servers'
 ```ts
 {
   found: boolean,
-  data?: {
+  data: {
     query?: string | null,
     results?: {
       position?: number | null,
@@ -429,7 +381,7 @@ await corsair.anyapi.api.google.search({ query: 'model context protocol servers'
   id: string,
   name?: string | null,
   kind?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -467,14 +419,14 @@ await corsair.anyapi.api.instagram.getProfile({ handle: 'nasa' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `output` | `object` | Yes | — |
-| `provider` | `string` | No | — |
+| `provider` | `string \| null` | No | — |
 | `costUsd` | `number` | Yes | USD charged for this call |
-| `items` | `number` | No | — |
-| `replayed` | `boolean` | No | — |
-| `source` | `object` | No | — |
-| `resultId` | `string` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
-| `hint` | `string` | No | — |
-| `jqError` | `string` | No | — |
+| `items` | `number \| null` | No | — |
+| `replayed` | `boolean \| null` | No | — |
+| `source` | `object \| null` | No | — |
+| `resultId` | `string \| null` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
+| `hint` | `string \| null` | No | — |
+| `jqError` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -482,7 +434,7 @@ await corsair.anyapi.api.instagram.getProfile({ handle: 'nasa' });
 ```ts
 {
   found: boolean,
-  data?: {
+  data: {
     userId?: string | null,
     handle?: string | null,
     displayName?: string | null,
@@ -506,7 +458,7 @@ await corsair.anyapi.api.instagram.getProfile({ handle: 'nasa' });
   id: string,
   name?: string | null,
   kind?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -544,14 +496,14 @@ await corsair.anyapi.api.linkedin.getCompany({ url: 'https://www.linkedin.com/co
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `output` | `object` | Yes | — |
-| `provider` | `string` | No | — |
+| `provider` | `string \| null` | No | — |
 | `costUsd` | `number` | Yes | USD charged for this call |
-| `items` | `number` | No | — |
-| `replayed` | `boolean` | No | — |
-| `source` | `object` | No | — |
-| `resultId` | `string` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
-| `hint` | `string` | No | — |
-| `jqError` | `string` | No | — |
+| `items` | `number \| null` | No | — |
+| `replayed` | `boolean \| null` | No | — |
+| `source` | `object \| null` | No | — |
+| `resultId` | `string \| null` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
+| `hint` | `string \| null` | No | — |
+| `jqError` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -559,7 +511,7 @@ await corsair.anyapi.api.linkedin.getCompany({ url: 'https://www.linkedin.com/co
 ```ts
 {
   found: boolean,
-  data?: {
+  data: {
     id?: string | null,
     name?: string | null,
     universalName?: string | null,
@@ -585,7 +537,7 @@ await corsair.anyapi.api.linkedin.getCompany({ url: 'https://www.linkedin.com/co
   id: string,
   name?: string | null,
   kind?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -621,14 +573,14 @@ await corsair.anyapi.api.linkedin.getProfile({ url: 'https://www.linkedin.com/in
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `output` | `object` | Yes | — |
-| `provider` | `string` | No | — |
+| `provider` | `string \| null` | No | — |
 | `costUsd` | `number` | Yes | USD charged for this call |
-| `items` | `number` | No | — |
-| `replayed` | `boolean` | No | — |
-| `source` | `object` | No | — |
-| `resultId` | `string` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
-| `hint` | `string` | No | — |
-| `jqError` | `string` | No | — |
+| `items` | `number \| null` | No | — |
+| `replayed` | `boolean \| null` | No | — |
+| `source` | `object \| null` | No | — |
+| `resultId` | `string \| null` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
+| `hint` | `string \| null` | No | — |
+| `jqError` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -636,7 +588,7 @@ await corsair.anyapi.api.linkedin.getProfile({ url: 'https://www.linkedin.com/in
 ```ts
 {
   found: boolean,
-  data?: {
+  data: {
     id?: string | null,
     publicIdentifier?: string | null,
     url?: string | null,
@@ -666,7 +618,7 @@ await corsair.anyapi.api.linkedin.getProfile({ url: 'https://www.linkedin.com/in
   id: string,
   name?: string | null,
   kind?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -710,14 +662,14 @@ await corsair.anyapi.api.maps.search({ query: 'coffee shop', location: 'Austin, 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `output` | `object` | Yes | — |
-| `provider` | `string` | No | — |
+| `provider` | `string \| null` | No | — |
 | `costUsd` | `number` | Yes | USD charged for this call |
-| `items` | `number` | No | — |
-| `replayed` | `boolean` | No | — |
-| `source` | `object` | No | — |
-| `resultId` | `string` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
-| `hint` | `string` | No | — |
-| `jqError` | `string` | No | — |
+| `items` | `number \| null` | No | — |
+| `replayed` | `boolean \| null` | No | — |
+| `source` | `object \| null` | No | — |
+| `resultId` | `string \| null` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
+| `hint` | `string \| null` | No | — |
+| `jqError` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -725,7 +677,7 @@ await corsair.anyapi.api.maps.search({ query: 'coffee shop', location: 'Austin, 
 ```ts
 {
   found: boolean,
-  data?: {
+  data: {
     items?: {
       placeId?: string | null,
       name?: string | null,
@@ -754,7 +706,7 @@ await corsair.anyapi.api.maps.search({ query: 'coffee shop', location: 'Austin, 
   id: string,
   name?: string | null,
   kind?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -795,14 +747,14 @@ await corsair.anyapi.api.reddit.search({ query: 'model context protocol', sort: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `output` | `object` | Yes | — |
-| `provider` | `string` | No | — |
+| `provider` | `string \| null` | No | — |
 | `costUsd` | `number` | Yes | USD charged for this call |
-| `items` | `number` | No | — |
-| `replayed` | `boolean` | No | — |
-| `source` | `object` | No | — |
-| `resultId` | `string` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
-| `hint` | `string` | No | — |
-| `jqError` | `string` | No | — |
+| `items` | `number \| null` | No | — |
+| `replayed` | `boolean \| null` | No | — |
+| `source` | `object \| null` | No | — |
+| `resultId` | `string \| null` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
+| `hint` | `string \| null` | No | — |
+| `jqError` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -810,7 +762,7 @@ await corsair.anyapi.api.reddit.search({ query: 'model context protocol', sort: 
 ```ts
 {
   found: boolean,
-  data?: {
+  data: {
     posts?: {
       id?: string | null,
       title?: string | null,
@@ -836,7 +788,7 @@ await corsair.anyapi.api.reddit.search({ query: 'model context protocol', sort: 
   id: string,
   name?: string | null,
   kind?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -875,32 +827,14 @@ await corsair.anyapi.api.requests.get({ requestId: '5f0c2d3e-8a51-4c2b-9d0e-1f2a
 | `sku` | `string` | Yes | — |
 | `status` | `queued \| running \| succeeded \| failed \| expired` | Yes | — |
 | `createdAt` | `string` | Yes | — |
-| `completedAt` | `string` | No | — |
-| `expiresAt` | `string` | No | — |
-| `retryAfterSeconds` | `number` | No | — |
-| `serviceOutcome` | `string` | No | — |
-| `settlementState` | `string` | No | — |
-| `resultExpired` | `boolean` | No | — |
-| `result` | `object` | No | — |
-| `error` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="result full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="error full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `completedAt` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `retryAfterSeconds` | `number \| null` | No | — |
+| `serviceOutcome` | `string \| null` | No | — |
+| `settlementState` | `string \| null` | No | — |
+| `resultExpired` | `boolean \| null` | No | — |
+| `result` | `Record<string, any> \| null` | No | — |
+| `error` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -937,14 +871,14 @@ await corsair.anyapi.api.results.get({ resultId: 'd668386e-e52f-4383-8951-8f6b9a
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `output` | `any` | Yes | — |
-| `provider` | `string` | No | — |
+| `provider` | `string \| null` | No | — |
 | `costUsd` | `number` | Yes | USD charged for the original run. The re-read itself is free, so do not add this to a running total. |
-| `items` | `number` | No | — |
-| `replayed` | `boolean` | No | — |
-| `source` | `object` | No | — |
-| `resultId` | `string` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
-| `hint` | `string` | No | — |
-| `jqError` | `string` | No | — |
+| `items` | `number \| null` | No | — |
+| `replayed` | `boolean \| null` | No | — |
+| `source` | `object \| null` | No | — |
+| `resultId` | `string \| null` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
+| `hint` | `string \| null` | No | — |
+| `jqError` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="source full type">
@@ -954,7 +888,7 @@ await corsair.anyapi.api.results.get({ resultId: 'd668386e-e52f-4383-8951-8f6b9a
   id: string,
   name?: string | null,
   kind?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -995,14 +929,14 @@ await corsair.anyapi.api.twitter.search({ query: '"model context protocol" -is:r
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `output` | `object` | Yes | — |
-| `provider` | `string` | No | — |
+| `provider` | `string \| null` | No | — |
 | `costUsd` | `number` | Yes | USD charged for this call |
-| `items` | `number` | No | — |
-| `replayed` | `boolean` | No | — |
-| `source` | `object` | No | — |
-| `resultId` | `string` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
-| `hint` | `string` | No | — |
-| `jqError` | `string` | No | — |
+| `items` | `number \| null` | No | — |
+| `replayed` | `boolean \| null` | No | — |
+| `source` | `object \| null` | No | — |
+| `resultId` | `string \| null` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
+| `hint` | `string \| null` | No | — |
+| `jqError` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -1010,7 +944,7 @@ await corsair.anyapi.api.twitter.search({ query: '"model context protocol" -is:r
 ```ts
 {
   found: boolean,
-  data?: {
+  data: {
     items?: {
       id?: string | null,
       url?: string | null,
@@ -1036,7 +970,7 @@ await corsair.anyapi.api.twitter.search({ query: '"model context protocol" -is:r
   id: string,
   name?: string | null,
   kind?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1064,7 +998,7 @@ await corsair.anyapi.api.web.scrape({ url: 'https://modelcontextprotocol.io', fo
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | Full page URL, including https:// |
-| `formats` | `markdown \| html \| rawHtml[]` | No | Defaults to markdown and html |
+| `formats` | `(markdown \| html \| rawHtml)[]` | No | Defaults to markdown and html |
 | `onlyMainContent` | `boolean` | No | Drop navigation, headers and footers |
 | `includeTags` | `string[]` | No | CSS selectors to keep |
 | `excludeTags` | `string[]` | No | CSS selectors to drop |
@@ -1081,14 +1015,14 @@ await corsair.anyapi.api.web.scrape({ url: 'https://modelcontextprotocol.io', fo
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `output` | `object` | Yes | — |
-| `provider` | `string` | No | — |
+| `provider` | `string \| null` | No | — |
 | `costUsd` | `number` | Yes | USD charged for this call |
-| `items` | `number` | No | — |
-| `replayed` | `boolean` | No | — |
-| `source` | `object` | No | — |
-| `resultId` | `string` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
-| `hint` | `string` | No | — |
-| `jqError` | `string` | No | — |
+| `items` | `number \| null` | No | — |
+| `replayed` | `boolean \| null` | No | — |
+| `source` | `object \| null` | No | — |
+| `resultId` | `string \| null` | No | Re-read and re-shape this result for free with results.get for about 15 minutes |
+| `hint` | `string \| null` | No | — |
+| `jqError` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -1096,7 +1030,7 @@ await corsair.anyapi.api.web.scrape({ url: 'https://modelcontextprotocol.io', fo
 ```ts
 {
   found: boolean,
-  data?: {
+  data: {
     url?: string | null,
     statusCode?: number | null,
     title?: string | null,
@@ -1117,7 +1051,7 @@ await corsair.anyapi.api.web.scrape({ url: 'https://modelcontextprotocol.io', fo
   id: string,
   name?: string | null,
   kind?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

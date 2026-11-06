@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "BenchmarkEmail plugin for Corsair"
+description: "Email marketing platform. Manage contacts, lists, emails, automations, sign-up forms, polls, surveys, webhooks, and reports, plus account settings and the media archive."
 ---
 
-Use **BenchmarkEmail** through Corsair: one client, typed API calls, local DB sync.
+Use **Benchmark Email** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -44,6 +44,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +52,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -89,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.checkIfResponsive`**
+**List contact lists**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.benchmarkemail.api.account.checkIfResponsive({});
+await tenant.benchmarkemail.api.lists.getContactLists({});
 ```
 
 
-**`account.addRemoveInboxTestsFromSubAccount`**
+**Find a contact by email**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.benchmarkemail.api.account.addRemoveInboxTestsFromSubAccount({});
+await tenant.benchmarkemail.api.contacts.searchContactDetailsByEmail({ search: 'you@example.com' });
 ```
 
 
@@ -109,9 +110,17 @@ See the full list on the [API](/plugins/benchmarkemail/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.benchmarkemail.db.<entity>.search()` and `.list()`: `campaigns`, `contactLists`, `contacts`.
+These tables exist, but Benchmark Email calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/benchmarkemail/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.benchmarkemail.db.contacts.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `campaigns`, `contactLists`, `contacts`. See [Database](/plugins/benchmarkemail/database) for filters and operators.
 
 ## What's next
 

@@ -253,18 +253,8 @@ await corsair.cloudflare.api.rulesets.create({});
 | `name` | `string` | Yes | — |
 | `kind` | `string` | Yes | — |
 | `phase` | `string` | Yes | — |
-| `rules` | `object[]` | No | — |
+| `rules` | `Record<string, any>[]` | No | — |
 | `description` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -279,17 +269,7 @@ await corsair.cloudflare.api.rulesets.create({});
 | `version` | `string` | No | — |
 | `last_updated` | `string` | No | — |
 | `phase` | `string` | Yes | — |
-| `rules` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `rules` | `Record<string, any>[]` | No | — |
 
 
 
@@ -353,17 +333,7 @@ await corsair.cloudflare.api.rulesets.get({});
 | `version` | `string` | No | — |
 | `last_updated` | `string` | No | — |
 | `phase` | `string` | Yes | — |
-| `rules` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `rules` | `Record<string, any>[]` | No | — |
 
 
 
@@ -403,8 +373,7 @@ await corsair.cloudflare.api.rulesets.list({});
   version?: string,
   last_updated?: string,
   phase: string,
-  rules?: {
-  }[]
+  rules?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -431,18 +400,8 @@ await corsair.cloudflare.api.rulesets.update({});
 |------|------|----------|-------------|
 | `zone_id` | `string` | Yes | — |
 | `ruleset_id` | `string` | Yes | — |
-| `rules` | `object[]` | Yes | — |
+| `rules` | `Record<string, any>[]` | Yes | — |
 | `description` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -457,17 +416,7 @@ await corsair.cloudflare.api.rulesets.update({});
 | `version` | `string` | No | — |
 | `last_updated` | `string` | No | — |
 | `phase` | `string` | Yes | — |
-| `rules` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `rules` | `Record<string, any>[]` | No | — |
 
 
 
@@ -755,18 +704,8 @@ await corsair.cloudflare.api.workers.scripts.upload({});
 | `account_id` | `string` | Yes | — |
 | `script_name` | `string` | Yes | — |
 | `script_content` | `string` | Yes | — |
-| `bindings` | `object[]` | No | — |
+| `bindings` | `Record<string, any>[]` | No | — |
 | `compatibility_date` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="bindings full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 

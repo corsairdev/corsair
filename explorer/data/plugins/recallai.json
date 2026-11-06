@@ -1,0 +1,5449 @@
+{
+  "id": "recallai",
+  "displayName": "Recall.ai",
+  "description": "Meeting bots, recordings and transcripts with Recall.ai - send bots to Zoom, Google Meet, Teams and Webex calls, control them in the call, read recordings, transcripts and media, schedule bots from calendars, and manage Google logins and Zoom OAuth credentials.",
+  "npmPackageName": "@corsair-dev/recallai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 111,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "tenant_external_id",
+        "region"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "recallai.api.audioMixed.delete",
+      "shortPath": "audioMixed.delete",
+      "description": "Delete a mixed audio artifact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.audioMixed.list",
+      "shortPath": "audioMixed.list",
+      "description": "List mixed audio artifacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recording_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "processing | done | failed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.audioMixed.retrieve",
+      "shortPath": "audioMixed.retrieve",
+      "description": "Retrieve a mixed audio artifact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.audioMixed.update",
+      "shortPath": "audioMixed.update",
+      "description": "Update mixed audio artifact metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.audioSeparate.delete",
+      "shortPath": "audioSeparate.delete",
+      "description": "Delete a separate audio artifact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.audioSeparate.list",
+      "shortPath": "audioSeparate.list",
+      "description": "List separate audio artifacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recording_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "processing | done | failed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.audioSeparate.retrieve",
+      "shortPath": "audioSeparate.retrieve",
+      "description": "Retrieve a separate audio artifact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.audioSeparate.update",
+      "shortPath": "audioSeparate.update",
+      "description": "Update separate audio artifact metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.billing.retrieveUsage",
+      "shortPath": "billing.retrieveUsage",
+      "description": "Retrieve Recall.ai billing usage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bot_total",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.botActions.deleteBotMedia",
+      "shortPath": "botActions.deleteBotMedia",
+      "description": "Delete stored media for a Recall.ai bot",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.botActions.leaveBotCall",
+      "shortPath": "botActions.leaveBotCall",
+      "description": "Remove a Recall.ai bot from its meeting",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.botActions.outputAudio",
+      "shortPath": "botActions.outputAudio",
+      "description": "Output audio from a Recall.ai bot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "mp3"
+          },
+          {
+            "key": "b64_data",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.botActions.outputMedia",
+      "shortPath": "botActions.outputMedia",
+      "description": "Start media output from a Recall.ai bot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "camera",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "screenshare",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.botActions.outputVideo",
+      "shortPath": "botActions.outputVideo",
+      "description": "Output video from a Recall.ai bot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "jpeg"
+          },
+          {
+            "key": "b64_data",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.botActions.pauseRecording",
+      "shortPath": "botActions.pauseRecording",
+      "description": "Pause a Recall.ai bot recording",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.botActions.pinParticipant",
+      "shortPath": "botActions.pinParticipant",
+      "description": "Pin a participant for a Recall.ai bot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bot_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "participant_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.botActions.resumeRecording",
+      "shortPath": "botActions.resumeRecording",
+      "description": "Resume a Recall.ai bot recording",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.botActions.sendChatMessage",
+      "shortPath": "botActions.sendChatMessage",
+      "description": "Send a chat message from a Recall.ai bot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pin",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.botActions.startRecording",
+      "shortPath": "botActions.startRecording",
+      "description": "Start a Recall.ai bot recording",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording_config",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.botActions.startScreenshare",
+      "shortPath": "botActions.startScreenshare",
+      "description": "Start bot screenshare in Recall.ai",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "jpeg"
+          },
+          {
+            "key": "b64_data",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.botActions.stopOutputAudio",
+      "shortPath": "botActions.stopOutputAudio",
+      "description": "Stop bot audio output in Recall.ai",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.botActions.stopOutputMedia",
+      "shortPath": "botActions.stopOutputMedia",
+      "description": "Stop bot media output in Recall.ai",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "camera",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "screenshare",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.botActions.stopOutputVideo",
+      "shortPath": "botActions.stopOutputVideo",
+      "description": "Stop bot video output in Recall.ai",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.botActions.stopRecording",
+      "shortPath": "botActions.stopRecording",
+      "description": "Stop a Recall.ai bot recording",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.botActions.stopScreenshare",
+      "shortPath": "botActions.stopScreenshare",
+      "description": "Stop bot screenshare in Recall.ai",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.bots.create",
+      "shortPath": "bots.create",
+      "description": "Create a Recall.ai meeting bot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meeting_url",
+            "optional": false,
+            "type": "string | Record<string, JsonValue>"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recording_config",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.bots.delete",
+      "shortPath": "bots.delete",
+      "description": "Delete a Recall.ai meeting bot",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.bots.list",
+      "shortPath": "bots.list",
+      "description": "List Recall.ai meeting bots",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "join_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "(chime_sdk | google_meet | google_meet_media_api | goto_meeting | microsoft_teams | microsoft_teams_live | slack_authenticator | slack_huddle_observer | webex | zoom | zoom_rtms)[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "(analysis_done | analysis_failed | call_ended | done | fatal | in_call_not_recording | in_call_recording | in_waiting_room | joining_call | media_expired | ready | recording_done | recording_permission_allowed | recording_permission_denied)[]"
+          },
+          {
+            "key": "use_cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, meeting_url?: string | Record<string, JsonValue> | null, bot_name?: string, join_at?: string | null, status_changes?: Record<string, JsonValue>[], recordings?: Record<string, JsonValue>[], metadata?: Record<string, JsonValue> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.bots.retrieve",
+      "shortPath": "bots.retrieve",
+      "description": "Retrieve a Recall.ai meeting bot",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.bots.update",
+      "shortPath": "bots.update",
+      "description": "Update a Recall.ai meeting bot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "recording_config",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | Record<string, JsonValue> | null"
+          },
+          {
+            "key": "bot_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "join_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_changes",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "recordings",
+            "optional": true,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.calendar.authenticate",
+      "shortPath": "calendar.authenticate",
+      "description": "Create a Recall.ai calendar auth token",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "recallai.api.calendar.deleteUser",
+      "shortPath": "calendar.deleteUser",
+      "description": "Delete a Recall.ai calendar user",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendar_auth_token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.calendar.disconnectPlatform",
+      "shortPath": "calendar.disconnectPlatform",
+      "description": "Disconnect a Recall.ai calendar platform",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendar_auth_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": false,
+            "type": "google | microsoft"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "recallai.api.calendar.listEvents",
+      "shortPath": "calendar.listEvents",
+      "description": "List Recall.ai calendar events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendar_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ical_uid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time__gte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time__lte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_at__gte",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "recallai.api.calendar.listMeetings",
+      "shortPath": "calendar.listMeetings",
+      "description": "List Recall.ai calendar meetings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendar_auth_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ical_uid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_time_before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>[]"
+      }
+    },
+    {
+      "path": "recallai.api.calendar.listUsers",
+      "shortPath": "calendar.listUsers",
+      "description": "List Recall.ai calendar users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paginate",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>[] | { count?: number, next?: string | null, previous?: string | null, results: Record<string, JsonValue>[] }"
+      }
+    },
+    {
+      "path": "recallai.api.calendar.refreshMeetings",
+      "shortPath": "calendar.refreshMeetings",
+      "description": "Refresh Recall.ai calendar meetings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendar_auth_token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>[]"
+      }
+    },
+    {
+      "path": "recallai.api.calendar.retrieveEvent",
+      "shortPath": "calendar.retrieveEvent",
+      "description": "Retrieve a Recall.ai calendar event",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "recallai.api.calendar.retrieveMeeting",
+      "shortPath": "calendar.retrieveMeeting",
+      "description": "Retrieve a Recall.ai calendar meeting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "calendar_auth_token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "recallai.api.calendar.retrieveUser",
+      "shortPath": "calendar.retrieveUser",
+      "description": "Retrieve a Recall.ai calendar user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendar_auth_token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "recallai.api.calendar.scheduleBot",
+      "shortPath": "calendar.scheduleBot",
+      "description": "Schedule a Recall.ai bot for a calendar event",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deduplication_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bot_config",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "recallai.api.calendar.unscheduleBot",
+      "shortPath": "calendar.unscheduleBot",
+      "description": "Remove a scheduled Recall.ai bot from a calendar event",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "recallai.api.calendar.updateMeeting",
+      "shortPath": "calendar.updateMeeting",
+      "description": "Update a Recall.ai calendar meeting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "calendar_auth_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "override_should_record",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "recallai.api.calendar.updateUser",
+      "shortPath": "calendar.updateUser",
+      "description": "Update a Recall.ai calendar user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "calendar_auth_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "preferences",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "recallai.api.calendars.create",
+      "shortPath": "calendars.create",
+      "description": "Create a Recall.ai calendar",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "oauth_client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "oauth_client_secret",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "oauth_client_certificate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "oauth_client_private_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "oauth_refresh_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": false,
+            "type": "google_calendar | microsoft_outlook"
+          },
+          {
+            "key": "oauth_email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "oauth_client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "oauth_client_secret",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "oauth_refresh_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": false,
+            "type": "google_calendar | microsoft_outlook | string"
+          },
+          {
+            "key": "oauth_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform_email",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status_changes",
+            "optional": false,
+            "type": "{ status: connected | connecting | disconnected | string, created_at: string, reason: string }[]"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.calendars.createAccessToken",
+      "shortPath": "calendars.createAccessToken",
+      "description": "Create a Recall.ai calendar access token",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.calendars.delete",
+      "shortPath": "calendars.delete",
+      "description": "Delete a Recall.ai calendar",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.calendars.list",
+      "shortPath": "calendars.list",
+      "description": "List Recall.ai calendars",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created_at__gte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "google_calendar | microsoft_outlook"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "connected | connecting | disconnected"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, metadata?: Record<string, string>, oauth_client_id: string, oauth_client_secret?: string | null, oauth_refresh_token: string, platform: google_calendar | microsoft_outlook | string, oauth_email?: string, platform_email: string | null, status: string, status_changes: { status: connected | connecting | disconnected | string, created_at: string, reason: string }[], created_at: string, updated_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.calendars.retrieve",
+      "shortPath": "calendars.retrieve",
+      "description": "Retrieve a Recall.ai calendar",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "oauth_client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "oauth_client_secret",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "oauth_refresh_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": false,
+            "type": "google_calendar | microsoft_outlook | string"
+          },
+          {
+            "key": "oauth_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform_email",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status_changes",
+            "optional": false,
+            "type": "{ status: connected | connecting | disconnected | string, created_at: string, reason: string }[]"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.calendars.update",
+      "shortPath": "calendars.update",
+      "description": "Update a Recall.ai calendar",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "oauth_client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oauth_client_secret",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "oauth_client_certificate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "oauth_client_private_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "oauth_refresh_token",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "google_calendar | microsoft_outlook"
+          },
+          {
+            "key": "oauth_email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "oauth_client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "oauth_client_secret",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "oauth_refresh_token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": false,
+            "type": "google_calendar | microsoft_outlook | string"
+          },
+          {
+            "key": "oauth_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform_email",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status_changes",
+            "optional": false,
+            "type": "{ status: connected | connecting | disconnected | string, created_at: string, reason: string }[]"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.googleLoginGroups.create",
+      "shortPath": "googleLoginGroups.create",
+      "description": "Create a Recall.ai Google login group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "login_mode",
+            "optional": false,
+            "type": "always | only_if_required"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "login_mode",
+            "optional": false,
+            "type": "always | only_if_required | string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "logins",
+            "optional": false,
+            "type": "{ id: string, email: string, is_active?: boolean, sso_v2_workspace_domain: string, sso_v2_private_key: string, sso_v2_cert: string, group_id: string, created_at: string, updated_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.googleLoginGroups.delete",
+      "shortPath": "googleLoginGroups.delete",
+      "description": "Delete a Recall.ai Google login group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.googleLoginGroups.list",
+      "shortPath": "googleLoginGroups.list",
+      "description": "List Recall.ai Google login groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name__contains",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, login_mode: always | only_if_required | string, created_at: string, updated_at: string, logins: { id: string, email: string, is_active?: boolean, sso_v2_workspace_domain: string, sso_v2_private_key: string, sso_v2_cert: string, group_id: string, created_at: string, updated_at: string }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.googleLoginGroups.partialUpdate",
+      "shortPath": "googleLoginGroups.partialUpdate",
+      "description": "Update fields on a Recall.ai Google login group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "login_mode",
+            "optional": true,
+            "type": "always | only_if_required"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "login_mode",
+            "optional": false,
+            "type": "always | only_if_required | string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "logins",
+            "optional": false,
+            "type": "{ id: string, email: string, is_active?: boolean, sso_v2_workspace_domain: string, sso_v2_private_key: string, sso_v2_cert: string, group_id: string, created_at: string, updated_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.googleLoginGroups.retrieve",
+      "shortPath": "googleLoginGroups.retrieve",
+      "description": "Retrieve a Recall.ai Google login group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "login_mode",
+            "optional": false,
+            "type": "always | only_if_required | string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "logins",
+            "optional": false,
+            "type": "{ id: string, email: string, is_active?: boolean, sso_v2_workspace_domain: string, sso_v2_private_key: string, sso_v2_cert: string, group_id: string, created_at: string, updated_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.googleLoginGroups.update",
+      "shortPath": "googleLoginGroups.update",
+      "description": "Replace a Recall.ai Google login group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "login_mode",
+            "optional": false,
+            "type": "always | only_if_required"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "login_mode",
+            "optional": false,
+            "type": "always | only_if_required | string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "logins",
+            "optional": false,
+            "type": "{ id: string, email: string, is_active?: boolean, sso_v2_workspace_domain: string, sso_v2_private_key: string, sso_v2_cert: string, group_id: string, created_at: string, updated_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.googleLogins.create",
+      "shortPath": "googleLogins.create",
+      "description": "Create a Recall.ai Google login",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sso_v2_workspace_domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_private_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_cert",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sso_v2_workspace_domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_private_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_cert",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.googleLogins.delete",
+      "shortPath": "googleLogins.delete",
+      "description": "Delete a Recall.ai Google login",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.googleLogins.list",
+      "shortPath": "googleLogins.list",
+      "description": "List Recall.ai Google logins",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_workspace_domain",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, email: string, is_active?: boolean, sso_v2_workspace_domain: string, sso_v2_private_key: string, sso_v2_cert: string, group_id: string, created_at: string, updated_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.googleLogins.partialUpdate",
+      "shortPath": "googleLogins.partialUpdate",
+      "description": "Update fields on a Recall.ai Google login",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sso_v2_workspace_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_private_key",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_cert",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sso_v2_workspace_domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_private_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_cert",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.googleLogins.retrieve",
+      "shortPath": "googleLogins.retrieve",
+      "description": "Retrieve a Recall.ai Google login",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sso_v2_workspace_domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_private_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_cert",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.googleLogins.update",
+      "shortPath": "googleLogins.update",
+      "description": "Replace a Recall.ai Google login",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sso_v2_workspace_domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_private_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_cert",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "is_active",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sso_v2_workspace_domain",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_private_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sso_v2_cert",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "updated_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.meetingDirectConnects.create",
+      "shortPath": "meetingDirectConnects.create",
+      "description": "Create a Recall.ai direct connection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zoom_rtms",
+            "optional": true,
+            "type": "{ meeting_uuid: string, rtms_stream_id: string, server_urls: string, signature: string } | null"
+          },
+          {
+            "key": "google_meet_media_api",
+            "optional": true,
+            "type": "{ space_name: string, access_token: string } | null"
+          },
+          {
+            "key": "recording_config",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ code: pending | connecting | processing | complete | failed | string, sub_code: string | null, updated_at: string }"
+          },
+          {
+            "key": "zoom_rtms",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "google_meet_media_api",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "recording_config",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "recordings",
+            "optional": false,
+            "type": "{ id: string, created_at: string, started_at?: string | null, completed_at?: string | null, expires_at?: string | null, status: Record<string, JsonValue> | null, media_shortcuts: Record<string, JsonValue> | null, metadata?: Record<string, string> }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.meetingDirectConnects.list",
+      "shortPath": "meetingDirectConnects.list",
+      "description": "List Recall.ai direct connections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, status: { code: pending | connecting | processing | complete | failed | string, sub_code: string | null, updated_at: string }, zoom_rtms?: Record<string, JsonValue> | null, google_meet_media_api?: Record<string, JsonValue> | null, recording_config?: Record<string, JsonValue> | null, recordings: { id: string, created_at: string, started_at?: string | null, completed_at?: string | null, expires_at?: string | null, status: Record<string, JsonValue> | null, media_shortcuts: Record<string, JsonValue> | null, metadata?: Record<string, string> }[], metadata?: Record<string, string>, created_at: string }[]"
+      }
+    },
+    {
+      "path": "recallai.api.meetingDirectConnects.retrieve",
+      "shortPath": "meetingDirectConnects.retrieve",
+      "description": "Retrieve a Recall.ai direct connection",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "{ code: pending | connecting | processing | complete | failed | string, sub_code: string | null, updated_at: string }"
+          },
+          {
+            "key": "zoom_rtms",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "google_meet_media_api",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "recording_config",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          },
+          {
+            "key": "recordings",
+            "optional": false,
+            "type": "{ id: string, created_at: string, started_at?: string | null, completed_at?: string | null, expires_at?: string | null, status: Record<string, JsonValue> | null, media_shortcuts: Record<string, JsonValue> | null, metadata?: Record<string, string> }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.meetingMetadata.delete",
+      "shortPath": "meetingMetadata.delete",
+      "description": "Delete a Recall.ai meeting metadata artifact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.meetingMetadata.list",
+      "shortPath": "meetingMetadata.list",
+      "description": "List Recall.ai meeting metadata artifacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recording_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "processing | done | failed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, recording?: Record<string, JsonValue>, created_at?: string, status?: { code: string, sub_code?: string | null, updated_at?: string }, metadata?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.meetingMetadata.retrieve",
+      "shortPath": "meetingMetadata.retrieve",
+      "description": "Retrieve a Recall.ai meeting metadata artifact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ code: string, sub_code?: string | null, updated_at?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.meetingMetadata.update",
+      "shortPath": "meetingMetadata.update",
+      "description": "Update Recall.ai meeting metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ code: string, sub_code?: string | null, updated_at?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.participantEvents.delete",
+      "shortPath": "participantEvents.delete",
+      "description": "Delete a Recall.ai participant event artifact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.participantEvents.list",
+      "shortPath": "participantEvents.list",
+      "description": "List Recall.ai participant event artifacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recording_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "processing | done | failed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, recording?: Record<string, JsonValue>, created_at?: string, status?: { code: string, sub_code?: string | null, updated_at?: string }, metadata?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.participantEvents.retrieve",
+      "shortPath": "participantEvents.retrieve",
+      "description": "Retrieve a Recall.ai participant event artifact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ code: string, sub_code?: string | null, updated_at?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.participantEvents.update",
+      "shortPath": "participantEvents.update",
+      "description": "Update Recall.ai participant event metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ code: string, sub_code?: string | null, updated_at?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.realtimeEndpoints.list",
+      "shortPath": "realtimeEndpoints.list",
+      "description": "List Recall.ai real-time endpoints",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recording_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "running | done | failed"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "desktop_sdk_callback | rtmp | webhook | websocket"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.realtimeEndpoints.retrieve",
+      "shortPath": "realtimeEndpoints.retrieve",
+      "description": "Retrieve a Recall.ai real-time endpoint",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.realtimeEndpoints.update",
+      "shortPath": "realtimeEndpoints.update",
+      "description": "Update a Recall.ai real-time endpoint",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.recordings.createTranscript",
+      "shortPath": "recordings.createTranscript",
+      "description": "Create an asynchronous Recall.ai transcript",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": false,
+            "type": "{ assembly_ai_async?: Record<string, JsonValue>, deepgram_async?: Record<string, JsonValue>, gladia_v2_async?: Record<string, JsonValue>, recallai_async?: Record<string, JsonValue>, rev_async?: Record<string, JsonValue>, speechmatics_async?: Record<string, JsonValue>, google_speech_v2_async?: Record<string, JsonValue>, aws_transcribe_async?: Record<string, JsonValue>, soniox_async?: Record<string, JsonValue>, elevenlabs_async?: Record<string, JsonValue> }"
+          },
+          {
+            "key": "diarization",
+            "optional": true,
+            "type": "{ use_separate_streams_when_available?: boolean }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.recordings.delete",
+      "shortPath": "recordings.delete",
+      "description": "Delete a Recall.ai recording artifact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.recordings.list",
+      "shortPath": "recordings.list",
+      "description": "List Recall.ai recording artifacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bot_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "desktop_sdk_upload_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "processing | paused | done | failed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.recordings.retrieve",
+      "shortPath": "recordings.retrieve",
+      "description": "Retrieve a Recall.ai recording artifact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.recordings.update",
+      "shortPath": "recordings.update",
+      "description": "Update Recall.ai recording metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.sdkUploads.create",
+      "shortPath": "sdkUploads.create",
+      "description": "Create a Recall.ai Desktop SDK upload",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recording_config",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "_1080p",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.sdkUploads.list",
+      "shortPath": "sdkUploads.list",
+      "description": "List Recall.ai Desktop SDK uploads",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.sdkUploads.retrieve",
+      "shortPath": "sdkUploads.retrieve",
+      "description": "Retrieve a Recall.ai Desktop SDK upload",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.transcripts.delete",
+      "shortPath": "transcripts.delete",
+      "description": "Delete a Recall.ai transcript artifact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.transcripts.list",
+      "shortPath": "transcripts.list",
+      "description": "List Recall.ai transcript artifacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recording_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "processing | done | failed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, recording?: Record<string, JsonValue>, created_at?: string, status?: { code: string, sub_code?: string | null, updated_at?: string }, metadata?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.transcripts.retrieve",
+      "shortPath": "transcripts.retrieve",
+      "description": "Retrieve a Recall.ai transcript artifact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ code: string, sub_code?: string | null, updated_at?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.transcripts.update",
+      "shortPath": "transcripts.update",
+      "description": "Update Recall.ai transcript metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ code: string, sub_code?: string | null, updated_at?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.videoMixed.delete",
+      "shortPath": "videoMixed.delete",
+      "description": "Delete a mixed video artifact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.videoMixed.list",
+      "shortPath": "videoMixed.list",
+      "description": "List mixed video artifacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recording_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "processing | done | failed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.videoMixed.retrieve",
+      "shortPath": "videoMixed.retrieve",
+      "description": "Retrieve a mixed video artifact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.videoMixed.update",
+      "shortPath": "videoMixed.update",
+      "description": "Update mixed video artifact metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.videoSeparate.delete",
+      "shortPath": "videoSeparate.delete",
+      "description": "Delete a separate video artifact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.videoSeparate.list",
+      "shortPath": "videoSeparate.list",
+      "description": "List separate video artifacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recording_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "processing | done | failed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, recording?: Record<string, JsonValue>, metadata?: Record<string, JsonValue>, status?: Record<string, JsonValue>, data?: Record<string, JsonValue> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.videoSeparate.retrieve",
+      "shortPath": "videoSeparate.retrieve",
+      "description": "Retrieve a separate video artifact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.videoSeparate.update",
+      "shortPath": "videoSeparate.update",
+      "description": "Update separate video artifact metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.zoomMeetingsToCredentials.list",
+      "shortPath": "zoomMeetingsToCredentials.list",
+      "description": "List Zoom meeting credential mappings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credential",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meeting_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "synced_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "synced_at_before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ meeting_id: number, credential: string, synced_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthAppLogs.list",
+      "shortPath": "zoomOAuthAppLogs.list",
+      "description": "List Recall.ai Zoom OAuth app logs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "oauth_app",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ oauth_app: string, message: string, created_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthApps.create",
+      "shortPath": "zoomOAuthApps.create",
+      "description": "Create a Recall.ai Zoom OAuth app",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "user_level | account_level"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_secret",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "user_level | account_level | string"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_last_validation",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthApps.delete",
+      "shortPath": "zoomOAuthApps.delete",
+      "description": "Delete a Recall.ai Zoom OAuth app",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthApps.list",
+      "shortPath": "zoomOAuthApps.list",
+      "description": "List Recall.ai Zoom OAuth apps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "user_level | account_level"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_last_validation_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webhook_last_validation_before",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, kind: user_level | account_level | string, client_id: string, client_secret: string, webhook_secret: string, webhook_last_validation: string | null, created_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthApps.retrieve",
+      "shortPath": "zoomOAuthApps.retrieve",
+      "description": "Retrieve a Recall.ai Zoom OAuth app",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "user_level | account_level | string"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_last_validation",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthApps.update",
+      "shortPath": "zoomOAuthApps.update",
+      "description": "Update a Recall.ai Zoom OAuth app",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_secret",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "client_secret",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "user_level | account_level | string"
+          },
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "client_secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_last_validation",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthCredentialLogs.list",
+      "shortPath": "zoomOAuthCredentialLogs.list",
+      "description": "List Recall.ai Zoom OAuth credential logs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "credential",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ credential: string, message: string, created_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthCredentials.create",
+      "shortPath": "zoomOAuthCredentials.create",
+      "description": "Create a Recall.ai Zoom OAuth credential",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "oauth_app",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "authorization_code",
+            "optional": true,
+            "type": "{ code: string, redirect_uri: string, code_verifier?: string }"
+          },
+          {
+            "key": "access_token_callback_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "oauth_app",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "healthy | unhealthy | string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "access_token_callback_url",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_sync_status",
+            "optional": false,
+            "type": "not_started | in_progress | completed | failed | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthCredentials.delete",
+      "shortPath": "zoomOAuthCredentials.delete",
+      "description": "Delete a Recall.ai Zoom OAuth credential",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthCredentials.list",
+      "shortPath": "zoomOAuthCredentials.list",
+      "description": "List Recall.ai Zoom OAuth credentials",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "meeting_sync_status",
+            "optional": true,
+            "type": "not_started | in_progress | completed | failed"
+          },
+          {
+            "key": "oauth_app",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ordering",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "healthy | unhealthy"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, oauth_app: string, status: healthy | unhealthy | string, user_id: string | null, account_id: string | null, access_token_callback_url: string | null, created_at: string, meeting_sync_status: not_started | in_progress | completed | failed | string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthCredentials.retrieve",
+      "shortPath": "zoomOAuthCredentials.retrieve",
+      "description": "Retrieve a Recall.ai Zoom OAuth credential",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "oauth_app",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "healthy | unhealthy | string"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "access_token_callback_url",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_sync_status",
+            "optional": false,
+            "type": "not_started | in_progress | completed | failed | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthCredentials.retrieveAccessToken",
+      "shortPath": "zoomOAuthCredentials.retrieveAccessToken",
+      "description": "Retrieve a Zoom OAuth access token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthCredentials.syncMeetings",
+      "shortPath": "zoomOAuthCredentials.syncMeetings",
+      "description": "Synchronize Zoom OAuth credential meetings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    },
+    {
+      "path": "recallai.api.zoomOAuthCredentials.validate",
+      "shortPath": "zoomOAuthCredentials.validate",
+      "description": "Validate a Recall.ai Zoom OAuth credential",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "undefined"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

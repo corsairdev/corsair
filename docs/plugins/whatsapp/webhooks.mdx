@@ -73,8 +73,7 @@ Incoming WhatsApp messages from customers
   context?: {
     from?: string,
     id?: string,
-    referred_product?: {
-    }
+    referred_product?: Record<string, any>
   },
   text?: {
     body: string
@@ -82,20 +81,16 @@ Incoming WhatsApp messages from customers
   image?: {
     caption?: string
   },
-  audio?: {
-  },
+  audio?: Record<string, any>,
   document?: {
     caption?: string
   },
   video?: {
     caption?: string
   },
-  sticker?: {
-  },
-  location?: {
-  },
-  contacts?: {
-  }[],
+  sticker?: Record<string, any>,
+  location?: Record<string, any>,
+  contacts?: Record<string, any>[],
   interactive?: {
     button_reply?: {
       title?: string
@@ -107,12 +102,9 @@ Incoming WhatsApp messages from customers
   button?: {
     text?: string
   },
-  order?: {
-  },
-  referral?: {
-  },
-  errors?: {
-  }[]
+  order?: Record<string, any>,
+  referral?: Record<string, any>,
+  errors?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -142,8 +134,7 @@ Incoming WhatsApp messages from customers
     context?: {
       from?: string,
       id?: string,
-      referred_product?: {
-      }
+      referred_product?: Record<string, any>
     },
     text?: {
       body: string
@@ -151,20 +142,16 @@ Incoming WhatsApp messages from customers
     image?: {
       caption?: string
     },
-    audio?: {
-    },
+    audio?: Record<string, any>,
     document?: {
       caption?: string
     },
     video?: {
       caption?: string
     },
-    sticker?: {
-    },
-    location?: {
-    },
-    contacts?: {
-    }[],
+    sticker?: Record<string, any>,
+    location?: Record<string, any>,
+    contacts?: Record<string, any>[],
     interactive?: {
       button_reply?: {
         title?: string
@@ -176,12 +163,9 @@ Incoming WhatsApp messages from customers
     button?: {
       text?: string
     },
-    order?: {
-    },
-    referral?: {
-    },
-    errors?: {
-    }[]
+    order?: Record<string, any>,
+    referral?: Record<string, any>,
+    errors?: Record<string, any>[]
   }[]
 }
 ```
@@ -222,7 +206,7 @@ WhatsApp sent, delivered, read, failed, deleted, or error updates
 | `phoneNumberId` | `string` | Yes | — |
 | `displayPhoneNumber` | `string` | Yes | — |
 | `statuses` | `object[]` | Yes | — |
-| `errors` | `object[]` | Yes | — |
+| `errors` | `Record<string, any>[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="statuses full type">
@@ -233,10 +217,8 @@ WhatsApp sent, delivered, read, failed, deleted, or error updates
   status: sent | delivered | read | failed | deleted,
   timestamp: string,
   recipient_id?: string,
-  conversation?: {
-  },
-  pricing?: {
-  },
+  conversation?: Record<string, any>,
+  pricing?: Record<string, any>,
   errors?: {
     code?: number,
     title?: string,
@@ -245,14 +227,6 @@ WhatsApp sent, delivered, read, failed, deleted, or error updates
       details?: string
     }
   }[]
-}[]
-```
-</Accordion>
-
-<Accordion title="errors full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -273,10 +247,8 @@ WhatsApp sent, delivered, read, failed, deleted, or error updates
     status: sent | delivered | read | failed | deleted,
     timestamp: string,
     recipient_id?: string,
-    conversation?: {
-    },
-    pricing?: {
-    },
+    conversation?: Record<string, any>,
+    pricing?: Record<string, any>,
     errors?: {
       code?: number,
       title?: string,
@@ -286,8 +258,7 @@ WhatsApp sent, delivered, read, failed, deleted, or error updates
       }
     }[]
   }[],
-  errors: {
-  }[]
+  errors: Record<string, any>[]
 }
 ```
 </Accordion>

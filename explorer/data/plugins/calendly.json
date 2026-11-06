@@ -74,7 +74,7 @@
           {
             "key": "collection",
             "optional": false,
-            "type": "{ uri?: string, action: string, actor: {}, details: {}, organization: string, occurred_at: string, namespace?: string }[]"
+            "type": "{ uri?: string, action: string, actor: Record<string, any>, details: Record<string, any>, organization: string, occurred_at: string, namespace?: string }[]"
           },
           {
             "key": "pagination",
@@ -498,7 +498,7 @@
           {
             "key": "resource",
             "optional": false,
-            "type": "{ uri: string, user: string, timezone: string, rules?: {}[] }"
+            "type": "{ uri: string, user: string, timezone: string, rules?: Record<string, any>[] }"
           }
         ]
       }
@@ -1215,7 +1215,7 @@
           {
             "key": "body",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1241,7 +1241,7 @@
           {
             "key": "resource",
             "optional": false,
-            "type": "{ uri: string, routing_form: string, questions_and_answers?: {}[], tracking?: {}, created_at?: string, updated_at?: string, result?: {} }"
+            "type": "{ uri: string, routing_form: string, questions_and_answers?: Record<string, any>[], tracking?: Record<string, any>, created_at?: string, updated_at?: string, result?: Record<string, any> }"
           }
         ]
       }
@@ -1590,7 +1590,7 @@
           {
             "key": "resource",
             "optional": false,
-            "type": "{ uri: string, default?: boolean, name: string, user: string, timezone: string, rules?: {}[], created_at?: string, updated_at?: string }"
+            "type": "{ uri: string, default?: boolean, name: string, user: string, timezone: string, rules?: Record<string, any>[], created_at?: string, updated_at?: string }"
           }
         ]
       }
@@ -1636,7 +1636,7 @@
           {
             "key": "collection",
             "optional": false,
-            "type": "{ uri: string, default?: boolean, name: string, user: string, timezone: string, rules?: {}[], created_at?: string, updated_at?: string }[]"
+            "type": "{ uri: string, default?: boolean, name: string, user: string, timezone: string, rules?: Record<string, any>[], created_at?: string, updated_at?: string }[]"
           }
         ]
       }
@@ -1672,7 +1672,7 @@
           {
             "key": "collection",
             "optional": false,
-            "type": "{ type: string, start_time: string, end_time: string, buffered_start_time?: string, buffered_end_time?: string, event?: string | {} | null }[]"
+            "type": "{ type: string, start_time: string, end_time: string, buffered_start_time?: string, buffered_end_time?: string, event?: string | Record<string, any> | null }[]"
           }
         ]
       }
@@ -1951,11 +1951,11 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{ uri: string, email: string, name: string, status?: active | canceled, event: string, timezone?: string, created_at: string, updated_at: string, cancel_url?: string, reschedule_url?: string, tracking?: {}, questions_and_answers?: {}[], payment?: {} | null, no_show?: { uri: string } | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, routing_form_submission?: string | null, scheduled_event?: { uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: {}[], event_guests?: {}[] }, invitee_scheduled_by?: string | null, first_name?: string | null, last_name?: string | null, reconfirmation?: {} | null, scheduling_method?: string | null, text_reminder_number?: string | null, cancellation?: { canceled_by: string, reason?: string, canceler_type: string } | null }"
+            "type": "{ uri: string, email: string, name: string, status?: active | canceled, event: string, timezone?: string, created_at: string, updated_at: string, cancel_url?: string, reschedule_url?: string, tracking?: Record<string, any>, questions_and_answers?: Record<string, any>[], payment?: Record<string, any> | null, no_show?: { uri: string } | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, routing_form_submission?: string | null, scheduled_event?: { uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: Record<string, any>[], event_guests?: Record<string, any>[] }, invitee_scheduled_by?: string | null, first_name?: string | null, last_name?: string | null, reconfirmation?: Record<string, any> | null, scheduling_method?: string | null, text_reminder_number?: string | null, cancellation?: { canceled_by: string, reason?: string, canceler_type: string } | null }"
           }
         ]
       },
-      "responseType": "{ event: invitee.canceled, time: string, payload: { uri: string, email: string, name: string, status?: active | canceled, event: string, timezone?: string, created_at: string, updated_at: string, cancel_url?: string, reschedule_url?: string, tracking?: {}, questions_and_answers?: {}[], payment?: {} | null, no_show?: { uri: string } | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, routing_form_submission?: string | null, scheduled_event?: { uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: {}[], event_guests?: {}[] }, invitee_scheduled_by?: string | null, first_name?: string | null, last_name?: string | null, reconfirmation?: {} | null, scheduling_method?: string | null, text_reminder_number?: string | null, cancellation?: { canceled_by: string, reason?: string, canceler_type: string } | null } }",
+      "responseType": "{ event: invitee.canceled, time: string, payload: { uri: string, email: string, name: string, status?: active | canceled, event: string, timezone?: string, created_at: string, updated_at: string, cancel_url?: string, reschedule_url?: string, tracking?: Record<string, any>, questions_and_answers?: Record<string, any>[], payment?: Record<string, any> | null, no_show?: { uri: string } | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, routing_form_submission?: string | null, scheduled_event?: { uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: Record<string, any>[], event_guests?: Record<string, any>[] }, invitee_scheduled_by?: string | null, first_name?: string | null, last_name?: string | null, reconfirmation?: Record<string, any> | null, scheduling_method?: string | null, text_reminder_number?: string | null, cancellation?: { canceled_by: string, reason?: string, canceler_type: string } | null } }",
       "usageExample": "calendly({\n    webhookHooks: {\n        invitees: {\n            canceled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -1978,11 +1978,11 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{ uri: string, email: string, name: string, status?: active | canceled, event: string, timezone?: string, created_at: string, updated_at: string, cancel_url?: string, reschedule_url?: string, tracking?: {}, questions_and_answers?: {}[], payment?: {} | null, no_show?: { uri: string } | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, routing_form_submission?: string | null, scheduled_event?: { uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: {}[], event_guests?: {}[] }, invitee_scheduled_by?: string | null, first_name?: string | null, last_name?: string | null, reconfirmation?: {} | null, scheduling_method?: string | null, text_reminder_number?: string | null }"
+            "type": "{ uri: string, email: string, name: string, status?: active | canceled, event: string, timezone?: string, created_at: string, updated_at: string, cancel_url?: string, reschedule_url?: string, tracking?: Record<string, any>, questions_and_answers?: Record<string, any>[], payment?: Record<string, any> | null, no_show?: { uri: string } | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, routing_form_submission?: string | null, scheduled_event?: { uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: Record<string, any>[], event_guests?: Record<string, any>[] }, invitee_scheduled_by?: string | null, first_name?: string | null, last_name?: string | null, reconfirmation?: Record<string, any> | null, scheduling_method?: string | null, text_reminder_number?: string | null }"
           }
         ]
       },
-      "responseType": "{ event: invitee.created, time: string, payload: { uri: string, email: string, name: string, status?: active | canceled, event: string, timezone?: string, created_at: string, updated_at: string, cancel_url?: string, reschedule_url?: string, tracking?: {}, questions_and_answers?: {}[], payment?: {} | null, no_show?: { uri: string } | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, routing_form_submission?: string | null, scheduled_event?: { uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: {}[], event_guests?: {}[] }, invitee_scheduled_by?: string | null, first_name?: string | null, last_name?: string | null, reconfirmation?: {} | null, scheduling_method?: string | null, text_reminder_number?: string | null } }",
+      "responseType": "{ event: invitee.created, time: string, payload: { uri: string, email: string, name: string, status?: active | canceled, event: string, timezone?: string, created_at: string, updated_at: string, cancel_url?: string, reschedule_url?: string, tracking?: Record<string, any>, questions_and_answers?: Record<string, any>[], payment?: Record<string, any> | null, no_show?: { uri: string } | null, rescheduled?: boolean, old_invitee?: string | null, new_invitee?: string | null, routing_form_submission?: string | null, scheduled_event?: { uri: string, name?: string, status?: active | canceled, start_time: string, end_time: string, event_type: string, location?: { type: string, location?: string, join_url?: string }, invitees_counter?: { total: number, active: number, limit: number }, created_at?: string, updated_at?: string, event_memberships?: Record<string, any>[], event_guests?: Record<string, any>[] }, invitee_scheduled_by?: string | null, first_name?: string | null, last_name?: string | null, reconfirmation?: Record<string, any> | null, scheduling_method?: string | null, text_reminder_number?: string | null } }",
       "usageExample": "calendly({\n    webhookHooks: {\n        invitees: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2032,11 +2032,11 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{ uri: string, routing_form: string, questions_and_answers?: {}[], tracking?: {}, result?: {}, created_at?: string, updated_at?: string }"
+            "type": "{ uri: string, routing_form: string, questions_and_answers?: Record<string, any>[], tracking?: Record<string, any>, result?: Record<string, any>, created_at?: string, updated_at?: string }"
           }
         ]
       },
-      "responseType": "{ event: routing_form_submission.created, time: string, payload: { uri: string, routing_form: string, questions_and_answers?: {}[], tracking?: {}, result?: {}, created_at?: string, updated_at?: string } }",
+      "responseType": "{ event: routing_form_submission.created, time: string, payload: { uri: string, routing_form: string, questions_and_answers?: Record<string, any>[], tracking?: Record<string, any>, result?: Record<string, any>, created_at?: string, updated_at?: string } }",
       "usageExample": "calendly({\n    webhookHooks: {\n        routingForms: {\n            submission: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -2262,6 +2262,11 @@
         },
         {
           "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -2511,6 +2516,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "start_time",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -2619,6 +2629,11 @@
         },
         {
           "field": "callback_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "state",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

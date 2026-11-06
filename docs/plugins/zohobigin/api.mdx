@@ -45,8 +45,7 @@ await corsair.zohobigin.api.attachments.delete({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -113,26 +112,8 @@ await corsair.zohobigin.api.attachments.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `info` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="info full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
+| `info` | `Record<string, any>` | No | — |
 
 
 
@@ -174,8 +155,7 @@ await corsair.zohobigin.api.attachments.upload({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -201,17 +181,7 @@ Create bulk read job
 await corsair.zohobigin.api.bulk.createReadJob({});
 ```
 
-**Input:** `object`
-
-<AccordionGroup>
-<Accordion title="Input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Input:** `Record<string, any>`
 
 
 **Output**
@@ -226,8 +196,7 @@ await corsair.zohobigin.api.bulk.createReadJob({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -296,8 +265,7 @@ await corsair.zohobigin.api.bulk.getReadJobStatus({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -336,17 +304,7 @@ await corsair.zohobigin.api.metadata.getCustomView({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `custom_views` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="custom_views full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `custom_views` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -376,17 +334,7 @@ await corsair.zohobigin.api.metadata.getCustomViews({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `custom_views` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="custom_views full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `custom_views` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -416,17 +364,7 @@ await corsair.zohobigin.api.metadata.getFields({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fields` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -457,17 +395,7 @@ await corsair.zohobigin.api.metadata.getLayout({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `layouts` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="layouts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `layouts` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -497,17 +425,7 @@ await corsair.zohobigin.api.metadata.getLayouts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `layouts` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="layouts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `layouts` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -537,17 +455,7 @@ await corsair.zohobigin.api.metadata.getModule({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `modules` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="modules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `modules` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -572,17 +480,7 @@ await corsair.zohobigin.api.metadata.getModules({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `modules` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="modules full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `modules` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -612,17 +510,7 @@ await corsair.zohobigin.api.metadata.getRelatedLists({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `related_lists` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="related_lists full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `related_lists` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -676,8 +564,7 @@ await corsair.zohobigin.api.notes.create({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -735,8 +622,7 @@ await corsair.zohobigin.api.notes.createRecordNotes({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -780,8 +666,7 @@ await corsair.zohobigin.api.notes.delete({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -827,8 +712,7 @@ await corsair.zohobigin.api.notes.deleteRecordNote({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -866,26 +750,8 @@ await corsair.zohobigin.api.notes.getAll({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `info` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="info full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
+| `info` | `Record<string, any>` | No | — |
 
 
 
@@ -919,26 +785,8 @@ await corsair.zohobigin.api.notes.getRecordNotes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `info` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="info full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
+| `info` | `Record<string, any>` | No | — |
 
 
 
@@ -991,8 +839,7 @@ await corsair.zohobigin.api.notes.update({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -1038,8 +885,7 @@ await corsair.zohobigin.api.notifications.disable({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -1098,8 +944,7 @@ await corsair.zohobigin.api.notifications.enable({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -1138,26 +983,8 @@ await corsair.zohobigin.api.notifications.getDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `watch` | `object[]` | Yes | — |
-| `info` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="watch full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="info full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `watch` | `Record<string, any>[]` | Yes | — |
+| `info` | `Record<string, any>` | No | — |
 
 
 
@@ -1210,8 +1037,7 @@ await corsair.zohobigin.api.notifications.updateDetails({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -1270,8 +1096,7 @@ await corsair.zohobigin.api.notifications.updateInfo({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -1302,18 +1127,8 @@ await corsair.zohobigin.api.records.add({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `module` | `string` | Yes | Target module API name e.g. Contacts, Pipelines, Accounts |
-| `data` | `object[]` | Yes | Array of record objects to insert |
+| `data` | `Record<string, any>[]` | Yes | Array of record objects to insert |
 | `trigger` | `string[]` | No | Triggers such as approval, workflow, blueprint |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1329,8 +1144,7 @@ await corsair.zohobigin.api.records.add({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -1406,8 +1220,7 @@ await corsair.zohobigin.api.records.delete({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -1485,8 +1298,7 @@ await corsair.zohobigin.api.records.deleteRecord({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -1553,18 +1365,10 @@ await corsair.zohobigin.api.records.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `info` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="info full type">
 
 ```ts
@@ -1609,26 +1413,8 @@ await corsair.zohobigin.api.records.getDeleted({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `info` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="info full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
+| `info` | `Record<string, any>` | No | — |
 
 
 
@@ -1660,18 +1446,10 @@ await corsair.zohobigin.api.records.getPipelines({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `info` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="info full type">
 
 ```ts
@@ -1714,17 +1492,7 @@ await corsair.zohobigin.api.records.getRecord({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1759,18 +1527,10 @@ await corsair.zohobigin.api.records.getRelated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `info` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="info full type">
 
 ```ts
@@ -1818,18 +1578,10 @@ await corsair.zohobigin.api.records.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `info` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="info full type">
 
 ```ts
@@ -1870,10 +1622,9 @@ await corsair.zohobigin.api.records.update({});
 <Accordion title="data full type">
 
 ```ts
-{
-}& {
+(Record<string, any>& {
   id: string
-}[]
+})[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1892,8 +1643,7 @@ await corsair.zohobigin.api.records.update({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -1923,17 +1673,7 @@ await corsair.zohobigin.api.records.updateRecord({});
 |------|------|----------|-------------|
 | `module` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1949,8 +1689,7 @@ await corsair.zohobigin.api.records.updateRecord({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -1981,17 +1720,7 @@ await corsair.zohobigin.api.records.updateRelated({});
 | `module` | `string` | Yes | — |
 | `recordId` | `string` | Yes | — |
 | `relatedList` | `string` | Yes | — |
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2007,8 +1736,7 @@ await corsair.zohobigin.api.records.updateRelated({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -2071,18 +1799,8 @@ await corsair.zohobigin.api.records.upsert({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `module` | `string` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `duplicate_check_fields` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2098,8 +1816,7 @@ await corsair.zohobigin.api.records.upsert({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -2159,8 +1876,7 @@ await corsair.zohobigin.api.tags.addToRecords({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -2216,8 +1932,7 @@ await corsair.zohobigin.api.tags.create({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -2264,8 +1979,7 @@ await corsair.zohobigin.api.tags.delinkRelated({});
 ```ts
 {
   code: string,
-  details: {
-  },
+  details: Record<string, any>,
   message: string,
   status: string
 }[]
@@ -2298,17 +2012,7 @@ await corsair.zohobigin.api.users.getOrganization({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `org` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="org full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `org` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2333,17 +2037,7 @@ await corsair.zohobigin.api.users.getProfiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `profiles` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="profiles full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `profiles` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2368,17 +2062,7 @@ await corsair.zohobigin.api.users.getRoles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `roles` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="roles full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `roles` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2408,17 +2092,7 @@ await corsair.zohobigin.api.users.getUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `users` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="users full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `users` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2450,26 +2124,8 @@ await corsair.zohobigin.api.users.getUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `users` | `object[]` | Yes | — |
-| `info` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="users full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="info full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `users` | `Record<string, any>[]` | Yes | — |
+| `info` | `Record<string, any>` | No | — |
 
 
 
@@ -2492,17 +2148,7 @@ await corsair.zohobigin.api.users.updateUser({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | Yes | — |
 
 
 
@@ -2510,17 +2156,7 @@ await corsair.zohobigin.api.users.updateUser({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `users` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="users full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `users` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2548,10 +2184,9 @@ await corsair.zohobigin.api.users.updateUsers({});
 <Accordion title="users full type">
 
 ```ts
-{
-}& {
+(Record<string, any>& {
   id: string
-}[]
+})[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -2562,17 +2197,7 @@ await corsair.zohobigin.api.users.updateUsers({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `users` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="users full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `users` | `Record<string, any>[]` | Yes | — |
 
 
 

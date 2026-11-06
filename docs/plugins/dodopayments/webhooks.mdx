@@ -63,8 +63,7 @@ A Dodo payment failed
   status: string,
   customer_id?: string | null,
   subscription_id?: string | null,
-  billing?: {
-  } | null,
+  billing?: Record<string, any> | null,
   payment_link?: string | null,
   created_at?: string
 }
@@ -88,8 +87,7 @@ A Dodo payment failed
     status: string,
     customer_id?: string | null,
     subscription_id?: string | null,
-    billing?: {
-    } | null,
+    billing?: Record<string, any> | null,
     payment_link?: string | null,
     created_at?: string
   }
@@ -143,8 +141,7 @@ A Dodo payment succeeded
   status: string,
   customer_id?: string | null,
   subscription_id?: string | null,
-  billing?: {
-  } | null,
+  billing?: Record<string, any> | null,
   payment_link?: string | null,
   created_at?: string
 }
@@ -168,8 +165,7 @@ A Dodo payment succeeded
     status: string,
     customer_id?: string | null,
     subscription_id?: string | null,
-    billing?: {
-    } | null,
+    billing?: Record<string, any> | null,
     payment_link?: string | null,
     created_at?: string
   }
@@ -297,8 +293,7 @@ A Dodo subscription became active
   customer_id: string,
   plan_id?: string | null,
   status: string,
-  billing_cycle?: {
-  } | null,
+  billing_cycle?: Record<string, any> | null,
   created_at?: string
 }
 ```
@@ -319,8 +314,7 @@ A Dodo subscription became active
     customer_id: string,
     plan_id?: string | null,
     status: string,
-    billing_cycle?: {
-    } | null,
+    billing_cycle?: Record<string, any> | null,
     created_at?: string
   }
 }
@@ -371,8 +365,7 @@ A Dodo subscription was cancelled
   customer_id: string,
   plan_id?: string | null,
   status: string,
-  billing_cycle?: {
-  } | null,
+  billing_cycle?: Record<string, any> | null,
   created_at?: string
 }
 ```
@@ -393,8 +386,7 @@ A Dodo subscription was cancelled
     customer_id: string,
     plan_id?: string | null,
     status: string,
-    billing_cycle?: {
-    } | null,
+    billing_cycle?: Record<string, any> | null,
     created_at?: string
   }
 }

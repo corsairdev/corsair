@@ -28,7 +28,7 @@ await corsair.zohodesk.api.agents.get({ agentId: '1892000000056096', include: ['
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `agentId` | `string` | Yes | — |
-| `include` | `profile \| role \| associatedDepartments \| associatedChatDepartments \| verifiedEmails[]` | No | — |
+| `include` | `(profile \| role \| associatedDepartments \| associatedChatDepartments \| verifiedEmails)[]` | No | — |
 
 
 
@@ -36,51 +36,43 @@ await corsair.zohodesk.api.agents.get({ agentId: '1892000000056096', include: ['
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| number` | No | — |
-| `zuid` | `string \| number` | No | — |
-| `name` | `string` | No | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `emailId` | `string` | No | — |
-| `status` | `string` | No | — |
-| `isConfirmed` | `boolean \| string` | No | — |
-| `roleId` | `string \| number` | No | — |
-| `profileId` | `string \| number` | No | — |
-| `rolePermissionType` | `string` | No | — |
-| `langCode` | `string` | No | — |
-| `countryCode` | `string` | No | — |
-| `timeZone` | `string` | No | — |
-| `aboutInfo` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `mobile` | `string` | No | — |
-| `extn` | `string` | No | — |
-| `photoURL` | `string` | No | — |
-| `channelExpert` | `string \| null[]` | No | — |
-| `associatedDepartmentIds` | `string \| number \| null[]` | No | — |
-| `associatedChatDepartmentIds` | `string \| number \| null[]` | No | — |
-| `cf` | `object` | No | — |
-| `role` | `object` | No | — |
-| `profile` | `object` | No | — |
-| `associatedDepartments` | `object[]` | No | — |
-| `associatedChatDepartments` | `object[]` | No | — |
-| `verifiedEmails` | `string \| null[]` | No | — |
+| `id` | `string \| number \| null` | No | — |
+| `zuid` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `emailId` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `isConfirmed` | `boolean \| string \| null` | No | — |
+| `roleId` | `string \| number \| null` | No | — |
+| `profileId` | `string \| number \| null` | No | — |
+| `rolePermissionType` | `string \| null` | No | — |
+| `langCode` | `string \| null` | No | — |
+| `countryCode` | `string \| null` | No | — |
+| `timeZone` | `string \| null` | No | — |
+| `aboutInfo` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `mobile` | `string \| null` | No | — |
+| `extn` | `string \| null` | No | — |
+| `photoURL` | `string \| null` | No | — |
+| `channelExpert` | `(string \| null)[] \| null` | No | — |
+| `associatedDepartmentIds` | `(string \| number \| null)[] \| null` | No | — |
+| `associatedChatDepartmentIds` | `(string \| number \| null)[] \| null` | No | — |
+| `cf` | `Record<string, any> \| null` | No | — |
+| `role` | `object \| null` | No | — |
+| `profile` | `object \| null` | No | — |
+| `associatedDepartments` | `object[] \| null` | No | — |
+| `associatedChatDepartments` | `object[] \| null` | No | — |
+| `verifiedEmails` | `(string \| null)[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="cf full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="role full type">
 
 ```ts
 {
   id?: string | number | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -90,7 +82,7 @@ await corsair.zohodesk.api.agents.get({ agentId: '1892000000056096', include: ['
 {
   id?: string | number | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -98,7 +90,7 @@ await corsair.zohodesk.api.agents.get({ agentId: '1892000000056096', include: ['
 
 ```ts
 {
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -106,7 +98,7 @@ await corsair.zohodesk.api.agents.get({ agentId: '1892000000056096', include: ['
 
 ```ts
 {
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -141,7 +133,7 @@ await corsair.zohodesk.api.agents.getCount({ status: 'ACTIVE', isConfirmed: true
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `count` | `number \| string` | No | — |
+| `count` | `number \| string \| null` | No | — |
 
 
 
@@ -166,7 +158,7 @@ await corsair.zohodesk.api.contacts.get({ contactId: '1892000000042032', include
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contactId` | `string` | Yes | — |
-| `include` | `accounts \| owner[]` | No | — |
+| `include` | `(accounts \| owner)[]` | No | — |
 
 
 
@@ -174,61 +166,45 @@ await corsair.zohodesk.api.contacts.get({ contactId: '1892000000042032', include
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| number` | No | — |
-| `firstName` | `string` | No | — |
-| `lastName` | `string` | No | — |
-| `email` | `string` | No | — |
-| `secondaryEmail` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `mobile` | `string` | No | — |
-| `type` | `string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `street` | `string` | No | — |
-| `city` | `string` | No | — |
-| `state` | `string` | No | — |
-| `country` | `string` | No | — |
-| `zip` | `number \| string` | No | — |
-| `facebook` | `string` | No | — |
-| `twitter` | `string` | No | — |
-| `photoURL` | `string` | No | — |
-| `webUrl` | `string` | No | — |
-| `accountId` | `string \| number` | No | — |
-| `ownerId` | `string \| number` | No | — |
-| `layoutId` | `string \| number` | No | — |
-| `accountCount` | `number \| string` | No | — |
-| `createdTime` | `string` | No | — |
-| `modifiedTime` | `string` | No | — |
-| `isSpam` | `boolean \| string` | No | — |
-| `isAnonymous` | `boolean \| string` | No | — |
-| `isEndUser` | `boolean \| string` | No | — |
-| `isFollowing` | `boolean \| string` | No | — |
-| `isDeleted` | `boolean \| string` | No | — |
-| `isTrashed` | `boolean \| string` | No | — |
-| `cf` | `object` | No | — |
-| `customFields` | `object` | No | — |
-| `customerHappiness` | `object` | No | — |
-| `zohoCRMContact` | `object` | No | — |
-| `owner` | `object` | No | — |
-| `account` | `object` | No | — |
+| `id` | `string \| number \| null` | No | — |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `secondaryEmail` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `mobile` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `street` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `zip` | `number \| string \| null` | No | — |
+| `facebook` | `string \| null` | No | — |
+| `twitter` | `string \| null` | No | — |
+| `photoURL` | `string \| null` | No | — |
+| `webUrl` | `string \| null` | No | — |
+| `accountId` | `string \| number \| null` | No | — |
+| `ownerId` | `string \| number \| null` | No | — |
+| `layoutId` | `string \| number \| null` | No | — |
+| `accountCount` | `number \| string \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `modifiedTime` | `string \| null` | No | — |
+| `isSpam` | `boolean \| string \| null` | No | — |
+| `isAnonymous` | `boolean \| string \| null` | No | — |
+| `isEndUser` | `boolean \| string \| null` | No | — |
+| `isFollowing` | `boolean \| string \| null` | No | — |
+| `isDeleted` | `boolean \| string \| null` | No | — |
+| `isTrashed` | `boolean \| string \| null` | No | — |
+| `cf` | `Record<string, any> \| null` | No | — |
+| `customFields` | `Record<string, any> \| null` | No | — |
+| `customerHappiness` | `object \| null` | No | — |
+| `zohoCRMContact` | `object \| null` | No | — |
+| `owner` | `object \| null` | No | — |
+| `account` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="cf full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="customFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="customerHappiness full type">
 
 ```ts
@@ -236,7 +212,7 @@ await corsair.zohodesk.api.contacts.get({ contactId: '1892000000042032', include
   badPercentage?: number | string | null,
   okPercentage?: number | string | null,
   goodPercentage?: number | string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -246,7 +222,7 @@ await corsair.zohodesk.api.contacts.get({ contactId: '1892000000042032', include
 {
   id?: string | number | null,
   type?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -261,7 +237,7 @@ await corsair.zohodesk.api.contacts.get({ contactId: '1892000000042032', include
   email?: string | null,
   photoURL?: string | null,
   type?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -272,7 +248,7 @@ await corsair.zohodesk.api.contacts.get({ contactId: '1892000000042032', include
   id?: string | number | null,
   accountName?: string | null,
   website?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -343,10 +319,8 @@ await corsair.zohodesk.api.contacts.getByIds({ ids: ['1892000000042032', '189200
   isFollowing?: boolean | string | null,
   isDeleted?: boolean | string | null,
   isTrashed?: boolean | string | null,
-  cf?: {
-  } | null,
-  customFields?: {
-  } | null,
+  cf?: Record<string, any> | null,
+  customFields?: Record<string, any> | null,
   customerHappiness?: {
     badPercentage?: number | string | null,
     okPercentage?: number | string | null,
@@ -447,10 +421,8 @@ await corsair.zohodesk.api.contacts.list({ limit: 50, sortBy: '-createdTime', fi
   isFollowing?: boolean | string | null,
   isDeleted?: boolean | string | null,
   isTrashed?: boolean | string | null,
-  cf?: {
-  } | null,
-  customFields?: {
-  } | null,
+  cf?: Record<string, any> | null,
+  customFields?: Record<string, any> | null,
   customerHappiness?: {
     badPercentage?: number | string | null,
     okPercentage?: number | string | null,
@@ -574,20 +546,20 @@ await corsair.zohodesk.api.departments.get({ departmentId: '1892000000082069' })
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| number` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `nameInCustomerPortal` | `string` | No | — |
-| `sanitizedName` | `string` | No | — |
-| `chatStatus` | `string` | No | — |
-| `creatorId` | `string \| number` | No | — |
-| `createdTime` | `string` | No | — |
-| `isDefault` | `boolean \| string` | No | — |
-| `isEnabled` | `boolean \| string` | No | — |
-| `hasLogo` | `boolean \| string` | No | — |
-| `isAssignToTeamEnabled` | `boolean \| string` | No | — |
-| `isVisibleInCustomerPortal` | `boolean \| string` | No | — |
-| `associatedAgentIds` | `string \| number \| null[]` | No | — |
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `nameInCustomerPortal` | `string \| null` | No | — |
+| `sanitizedName` | `string \| null` | No | — |
+| `chatStatus` | `string \| null` | No | — |
+| `creatorId` | `string \| number \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `isDefault` | `boolean \| string \| null` | No | — |
+| `isEnabled` | `boolean \| string \| null` | No | — |
+| `hasLogo` | `boolean \| string \| null` | No | — |
+| `isAssignToTeamEnabled` | `boolean \| string \| null` | No | — |
+| `isVisibleInCustomerPortal` | `boolean \| string \| null` | No | — |
+| `associatedAgentIds` | `(string \| number \| null)[] \| null` | No | — |
 
 
 
@@ -617,7 +589,7 @@ await corsair.zohodesk.api.departments.getCount({ isEnabled: true });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `count` | `number \| string` | No | — |
+| `count` | `number \| string \| null` | No | — |
 
 
 
@@ -676,7 +648,7 @@ await corsair.zohodesk.api.departments.list({ isEnabled: true, limit: 50 });
 | `limit` | `number` | No | Number of records to return, up to 200 |
 | `isEnabled` | `boolean` | No | — |
 | `searchStr` | `string` | No | Use term* for starts with, *term* for contains, term for exact |
-| `chatStatus` | `object` | No | $&#123;UNAVAILABLE&#125; means departments not available for chat |
+| `chatStatus` | `AVAILABLE \| DISABLED \| NOT_CREATED \| object` | No | $&#123;UNAVAILABLE&#125; means departments not available for chat |
 
 <AccordionGroup>
 <Accordion title="chatStatus full type">
@@ -715,7 +687,7 @@ AVAILABLE | DISABLED | NOT_CREATED | ${
   hasLogo?: boolean | string | null,
   isAssignToTeamEnabled?: boolean | string | null,
   isVisibleInCustomerPortal?: boolean | string | null,
-  associatedAgentIds?: string | number | null[] | null
+  associatedAgentIds?: (string | number | null)[] | null
 }[]
 ```
 </Accordion>
@@ -764,11 +736,11 @@ await corsair.zohodesk.api.departments.listTeams({ departmentId: '18920000000820
   description?: string | null,
   departmentId?: string | number | null,
   logoUrl?: string | null,
-  agents?: string | number | null[] | null,
-  derivedAgents?: string | number | null[] | null,
-  roles?: string | number | null[] | null,
-  rolesWithSubordinates?: string | number | null[] | null,
-  subTeams?: string | number | null[] | null
+  agents?: (string | number | null)[] | null,
+  derivedAgents?: (string | number | null)[] | null,
+  roles?: (string | number | null)[] | null,
+  rolesWithSubordinates?: (string | number | null)[] | null,
+  subTeams?: (string | number | null)[] | null
 }[]
 ```
 </Accordion>
@@ -922,7 +894,7 @@ await corsair.zohodesk.api.roles.list({ isVisible: true, limit: 50 });
   isDefault?: boolean | string | null,
   isVisible?: boolean | string | null,
   shareDataWithPeers?: boolean | string | null,
-  immediateSubRoles?: string | number | null[] | null
+  immediateSubRoles?: (string | number | null)[] | null
 }[]
 ```
 </Accordion>
@@ -970,7 +942,7 @@ await corsair.zohodesk.api.roles.listByIds({ roleIds: ['4000000012423', '4000000
   isDefault?: boolean | string | null,
   isVisible?: boolean | string | null,
   shareDataWithPeers?: boolean | string | null,
-  immediateSubRoles?: string | number | null[] | null
+  immediateSubRoles?: (string | number | null)[] | null
 }[]
 ```
 </Accordion>
@@ -1051,7 +1023,7 @@ await corsair.zohodesk.api.tickets.get({ ticketId: '1892000000042034', include: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `ticketId` | `string` | Yes | — |
-| `include` | `contacts \| products \| assignee \| departments \| team \| contract \| isRead \| skills[]` | No | — |
+| `include` | `(contacts \| products \| assignee \| departments \| team \| contract \| isRead \| skills)[]` | No | — |
 
 
 
@@ -1059,63 +1031,63 @@ await corsair.zohodesk.api.tickets.get({ ticketId: '1892000000042034', include: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| number` | No | — |
-| `ticketNumber` | `number \| string` | No | — |
-| `subject` | `string` | No | — |
-| `description` | `string` | No | — |
-| `status` | `string` | No | — |
-| `statusType` | `string` | No | — |
-| `priority` | `string` | No | — |
-| `channel` | `string` | No | — |
-| `channelCode` | `string` | No | — |
-| `category` | `string` | No | — |
-| `subCategory` | `string` | No | — |
-| `classification` | `string` | No | — |
-| `language` | `string` | No | — |
-| `sentiment` | `string` | No | — |
-| `resolution` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `departmentId` | `string \| number` | No | — |
-| `contactId` | `string \| number` | No | — |
-| `accountId` | `string \| number` | No | — |
-| `assigneeId` | `string \| number` | No | — |
-| `teamId` | `string \| number` | No | — |
-| `productId` | `string \| number` | No | — |
-| `createdBy` | `string \| number` | No | — |
-| `modifiedBy` | `string \| number` | No | — |
-| `layoutId` | `string \| number` | No | — |
-| `slaId` | `string \| number` | No | — |
-| `dueDate` | `string` | No | — |
-| `responseDueDate` | `string` | No | — |
-| `customerResponseTime` | `string` | No | — |
-| `createdTime` | `string` | No | — |
-| `modifiedTime` | `string` | No | — |
-| `closedTime` | `string` | No | — |
-| `onholdTime` | `string` | No | — |
-| `lockedTime` | `string` | No | — |
-| `threadCount` | `number \| string` | No | — |
-| `commentCount` | `number \| string` | No | — |
-| `attachmentCount` | `number \| string` | No | — |
-| `taskCount` | `number \| string` | No | — |
-| `tagCount` | `number \| string` | No | — |
-| `followerCount` | `number \| string` | No | — |
-| `isSpam` | `boolean \| string` | No | — |
-| `isOverDue` | `boolean \| string` | No | — |
-| `isEscalated` | `boolean \| string` | No | — |
-| `isRead` | `boolean \| string` | No | — |
-| `isArchived` | `boolean \| string` | No | — |
-| `isDeleted` | `boolean \| string` | No | — |
-| `isTrashed` | `boolean \| string` | No | — |
-| `webUrl` | `string` | No | — |
-| `source` | `object` | No | — |
-| `cf` | `object` | No | — |
-| `customFields` | `object` | No | — |
-| `contact` | `object` | No | — |
-| `assignee` | `object` | No | — |
-| `department` | `object` | No | — |
-| `team` | `object` | No | — |
-| `product` | `object` | No | — |
+| `id` | `string \| number \| null` | No | — |
+| `ticketNumber` | `number \| string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `statusType` | `string \| null` | No | — |
+| `priority` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `channelCode` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `subCategory` | `string \| null` | No | — |
+| `classification` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `sentiment` | `string \| null` | No | — |
+| `resolution` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `departmentId` | `string \| number \| null` | No | — |
+| `contactId` | `string \| number \| null` | No | — |
+| `accountId` | `string \| number \| null` | No | — |
+| `assigneeId` | `string \| number \| null` | No | — |
+| `teamId` | `string \| number \| null` | No | — |
+| `productId` | `string \| number \| null` | No | — |
+| `createdBy` | `string \| number \| null` | No | — |
+| `modifiedBy` | `string \| number \| null` | No | — |
+| `layoutId` | `string \| number \| null` | No | — |
+| `slaId` | `string \| number \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `responseDueDate` | `string \| null` | No | — |
+| `customerResponseTime` | `string \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `modifiedTime` | `string \| null` | No | — |
+| `closedTime` | `string \| null` | No | — |
+| `onholdTime` | `string \| null` | No | — |
+| `lockedTime` | `string \| null` | No | — |
+| `threadCount` | `number \| string \| null` | No | — |
+| `commentCount` | `number \| string \| null` | No | — |
+| `attachmentCount` | `number \| string \| null` | No | — |
+| `taskCount` | `number \| string \| null` | No | — |
+| `tagCount` | `number \| string \| null` | No | — |
+| `followerCount` | `number \| string \| null` | No | — |
+| `isSpam` | `boolean \| string \| null` | No | — |
+| `isOverDue` | `boolean \| string \| null` | No | — |
+| `isEscalated` | `boolean \| string \| null` | No | — |
+| `isRead` | `boolean \| string \| null` | No | — |
+| `isArchived` | `boolean \| string \| null` | No | — |
+| `isDeleted` | `boolean \| string \| null` | No | — |
+| `isTrashed` | `boolean \| string \| null` | No | — |
+| `webUrl` | `string \| null` | No | — |
+| `source` | `object \| null` | No | — |
+| `cf` | `Record<string, any> \| null` | No | — |
+| `customFields` | `Record<string, any> \| null` | No | — |
+| `contact` | `object \| null` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `department` | `object \| null` | No | — |
+| `team` | `object \| null` | No | — |
+| `product` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="source full type">
@@ -1127,23 +1099,7 @@ await corsair.zohodesk.api.tickets.get({ ticketId: '1892000000042034', include: 
   permalink?: string | null,
   type?: string | null,
   appPhotoURL?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="cf full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="customFields full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 
@@ -1158,7 +1114,7 @@ await corsair.zohodesk.api.tickets.get({ ticketId: '1892000000042034', include: 
   email?: string | null,
   photoURL?: string | null,
   type?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1173,7 +1129,7 @@ await corsair.zohodesk.api.tickets.get({ ticketId: '1892000000042034', include: 
   email?: string | null,
   photoURL?: string | null,
   type?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1183,7 +1139,7 @@ await corsair.zohodesk.api.tickets.get({ ticketId: '1892000000042034', include: 
 {
   id?: string | number | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1193,7 +1149,7 @@ await corsair.zohodesk.api.tickets.get({ ticketId: '1892000000042034', include: 
 {
   id?: string | number | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1203,7 +1159,7 @@ await corsair.zohodesk.api.tickets.get({ ticketId: '1892000000042034', include: 
 {
   id?: string | number | null,
   productName?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1231,7 +1187,7 @@ await corsair.zohodesk.api.tickets.getLatestThread({ ticketId: '1892000000042034
 | `ticketId` | `string` | Yes | — |
 | `needPublic` | `boolean` | No | Only a public thread |
 | `needIncomingThread` | `boolean` | No | Only an incoming thread |
-| `include` | `plainText \| source[]` | No | Extra data to include. plainText adds the plain text content |
+| `include` | `(plainText \| source)[]` | No | Extra data to include. plainText adds the plain text content |
 | `threadStatus` | `success \| failed` | No | Delivery status of the thread |
 
 
@@ -1240,39 +1196,39 @@ await corsair.zohodesk.api.tickets.getLatestThread({ ticketId: '1892000000042034
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| number` | No | — |
-| `summary` | `string` | No | — |
-| `content` | `string` | No | — |
-| `plainText` | `string` | No | — |
-| `contentType` | `string` | No | — |
-| `status` | `string` | No | — |
-| `direction` | `string` | No | — |
-| `visibility` | `string` | No | — |
-| `channel` | `string` | No | — |
-| `sentiment` | `string` | No | — |
-| `createdTime` | `string` | No | — |
-| `canReply` | `boolean \| string` | No | — |
-| `hasAttach` | `boolean \| string` | No | — |
-| `isForward` | `boolean \| string` | No | — |
-| `isDescriptionThread` | `boolean \| string` | No | — |
-| `isContentTruncated` | `boolean \| string` | No | — |
-| `fullContentURL` | `string` | No | — |
-| `fromEmailAddress` | `string` | No | — |
-| `to` | `string` | No | — |
-| `cc` | `string` | No | — |
-| `bcc` | `string` | No | — |
-| `replyTo` | `string` | No | — |
-| `facebookProfile` | `string` | No | — |
-| `twitterProfile` | `string` | No | — |
-| `attachmentCount` | `number \| string` | No | — |
-| `attachments` | `object[]` | No | — |
-| `readReceipts` | `object[]` | No | — |
-| `actions` | `object[]` | No | — |
-| `keyWords` | `string \| null[]` | No | — |
-| `aspects` | `string \| null[]` | No | — |
-| `author` | `object` | No | — |
-| `impersonatedUser` | `object` | No | — |
-| `source` | `object` | No | — |
+| `id` | `string \| number \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `plainText` | `string \| null` | No | — |
+| `contentType` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `direction` | `string \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `sentiment` | `string \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `canReply` | `boolean \| string \| null` | No | — |
+| `hasAttach` | `boolean \| string \| null` | No | — |
+| `isForward` | `boolean \| string \| null` | No | — |
+| `isDescriptionThread` | `boolean \| string \| null` | No | — |
+| `isContentTruncated` | `boolean \| string \| null` | No | — |
+| `fullContentURL` | `string \| null` | No | — |
+| `fromEmailAddress` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+| `cc` | `string \| null` | No | — |
+| `bcc` | `string \| null` | No | — |
+| `replyTo` | `string \| null` | No | — |
+| `facebookProfile` | `string \| null` | No | — |
+| `twitterProfile` | `string \| null` | No | — |
+| `attachmentCount` | `number \| string \| null` | No | — |
+| `attachments` | `object[] \| null` | No | — |
+| `readReceipts` | `object[] \| null` | No | — |
+| `actions` | `object[] \| null` | No | — |
+| `keyWords` | `(string \| null)[] \| null` | No | — |
+| `aspects` | `(string \| null)[] \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `impersonatedUser` | `object \| null` | No | — |
+| `source` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="attachments full type">
@@ -1285,7 +1241,7 @@ await corsair.zohodesk.api.tickets.getLatestThread({ ticketId: '1892000000042034
   status?: string | null,
   href?: string | null,
   previewurl?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1296,7 +1252,7 @@ await corsair.zohodesk.api.tickets.getLatestThread({ ticketId: '1892000000042034
   senderName?: string | null,
   recipientType?: string | null,
   from?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1307,7 +1263,7 @@ await corsair.zohodesk.api.tickets.getLatestThread({ ticketId: '1892000000042034
   method?: string | null,
   rel?: string | null,
   href?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1322,7 +1278,7 @@ await corsair.zohodesk.api.tickets.getLatestThread({ ticketId: '1892000000042034
   email?: string | null,
   photoURL?: string | null,
   type?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1337,7 +1293,7 @@ await corsair.zohodesk.api.tickets.getLatestThread({ ticketId: '1892000000042034
   email?: string | null,
   photoURL?: string | null,
   type?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1350,7 +1306,7 @@ await corsair.zohodesk.api.tickets.getLatestThread({ ticketId: '1892000000042034
   permalink?: string | null,
   type?: string | null,
   appPhotoURL?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1383,9 +1339,9 @@ await corsair.zohodesk.api.tickets.getResolution({ ticketId: '1892000000042034' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `content` | `string` | No | — |
-| `modifiedTime` | `string` | No | — |
-| `author` | `object` | No | — |
+| `content` | `string \| null` | No | — |
+| `modifiedTime` | `string \| null` | No | — |
+| `author` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="author full type">
@@ -1399,7 +1355,7 @@ await corsair.zohodesk.api.tickets.getResolution({ ticketId: '1892000000042034' 
   email?: string | null,
   photoURL?: string | null,
   type?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1426,7 +1382,7 @@ await corsair.zohodesk.api.tickets.getThread({ ticketId: '1892000000042034', thr
 |------|------|----------|-------------|
 | `ticketId` | `string` | Yes | — |
 | `threadId` | `string` | Yes | — |
-| `include` | `plainText \| source[]` | No | Extra data to include. plainText adds the plain text content |
+| `include` | `(plainText \| source)[]` | No | Extra data to include. plainText adds the plain text content |
 
 
 
@@ -1434,39 +1390,39 @@ await corsair.zohodesk.api.tickets.getThread({ ticketId: '1892000000042034', thr
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| number` | No | — |
-| `summary` | `string` | No | — |
-| `content` | `string` | No | — |
-| `plainText` | `string` | No | — |
-| `contentType` | `string` | No | — |
-| `status` | `string` | No | — |
-| `direction` | `string` | No | — |
-| `visibility` | `string` | No | — |
-| `channel` | `string` | No | — |
-| `sentiment` | `string` | No | — |
-| `createdTime` | `string` | No | — |
-| `canReply` | `boolean \| string` | No | — |
-| `hasAttach` | `boolean \| string` | No | — |
-| `isForward` | `boolean \| string` | No | — |
-| `isDescriptionThread` | `boolean \| string` | No | — |
-| `isContentTruncated` | `boolean \| string` | No | — |
-| `fullContentURL` | `string` | No | — |
-| `fromEmailAddress` | `string` | No | — |
-| `to` | `string` | No | — |
-| `cc` | `string` | No | — |
-| `bcc` | `string` | No | — |
-| `replyTo` | `string` | No | — |
-| `facebookProfile` | `string` | No | — |
-| `twitterProfile` | `string` | No | — |
-| `attachmentCount` | `number \| string` | No | — |
-| `attachments` | `object[]` | No | — |
-| `readReceipts` | `object[]` | No | — |
-| `actions` | `object[]` | No | — |
-| `keyWords` | `string \| null[]` | No | — |
-| `aspects` | `string \| null[]` | No | — |
-| `author` | `object` | No | — |
-| `impersonatedUser` | `object` | No | — |
-| `source` | `object` | No | — |
+| `id` | `string \| number \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `plainText` | `string \| null` | No | — |
+| `contentType` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `direction` | `string \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `sentiment` | `string \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `canReply` | `boolean \| string \| null` | No | — |
+| `hasAttach` | `boolean \| string \| null` | No | — |
+| `isForward` | `boolean \| string \| null` | No | — |
+| `isDescriptionThread` | `boolean \| string \| null` | No | — |
+| `isContentTruncated` | `boolean \| string \| null` | No | — |
+| `fullContentURL` | `string \| null` | No | — |
+| `fromEmailAddress` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+| `cc` | `string \| null` | No | — |
+| `bcc` | `string \| null` | No | — |
+| `replyTo` | `string \| null` | No | — |
+| `facebookProfile` | `string \| null` | No | — |
+| `twitterProfile` | `string \| null` | No | — |
+| `attachmentCount` | `number \| string \| null` | No | — |
+| `attachments` | `object[] \| null` | No | — |
+| `readReceipts` | `object[] \| null` | No | — |
+| `actions` | `object[] \| null` | No | — |
+| `keyWords` | `(string \| null)[] \| null` | No | — |
+| `aspects` | `(string \| null)[] \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `impersonatedUser` | `object \| null` | No | — |
+| `source` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="attachments full type">
@@ -1479,7 +1435,7 @@ await corsair.zohodesk.api.tickets.getThread({ ticketId: '1892000000042034', thr
   status?: string | null,
   href?: string | null,
   previewurl?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1490,7 +1446,7 @@ await corsair.zohodesk.api.tickets.getThread({ ticketId: '1892000000042034', thr
   senderName?: string | null,
   recipientType?: string | null,
   from?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1501,7 +1457,7 @@ await corsair.zohodesk.api.tickets.getThread({ ticketId: '1892000000042034', thr
   method?: string | null,
   rel?: string | null,
   href?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1516,7 +1472,7 @@ await corsair.zohodesk.api.tickets.getThread({ ticketId: '1892000000042034', thr
   email?: string | null,
   photoURL?: string | null,
   type?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1531,7 +1487,7 @@ await corsair.zohodesk.api.tickets.getThread({ ticketId: '1892000000042034', thr
   email?: string | null,
   photoURL?: string | null,
   type?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1544,7 +1500,7 @@ await corsair.zohodesk.api.tickets.getThread({ ticketId: '1892000000042034', thr
   permalink?: string | null,
   type?: string | null,
   appPhotoURL?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1580,7 +1536,7 @@ await corsair.zohodesk.api.tickets.list({ status: ['Open'], sortBy: '-createdTim
 | `priority` | `string[]` | No | Priorities such as High, Medium, Low, or custom values |
 | `sortBy` | `string` | No | responseDueDate, customerResponseTime or createdTime. Prefix with - for descending |
 | `receivedInDays` | `15 \| 30 \| 90` | No | Only tickets with a customerResponseTime in this many days |
-| `include` | `contacts \| products \| assignee \| departments \| team \| isRead[]` | No | — |
+| `include` | `(contacts \| products \| assignee \| departments \| team \| isRead)[]` | No | — |
 | `fields` | `string[]` | No | Fields to return, up to 30. Multi-line text fields are excluded |
 
 
@@ -1652,10 +1608,8 @@ await corsair.zohodesk.api.tickets.list({ status: ['Open'], sortBy: '-createdTim
     type?: string | null,
     appPhotoURL?: string | null
   } | null,
-  cf?: {
-  } | null,
-  customFields?: {
-  } | null,
+  cf?: Record<string, any> | null,
+  customFields?: Record<string, any> | null,
   contact?: {
     id?: string | number | null,
     name?: string | null,
@@ -1771,8 +1725,8 @@ await corsair.zohodesk.api.tickets.listConversations({ ticketId: '18920000000420
     rel?: string | null,
     href?: string | null
   }[] | null,
-  keyWords?: string | null[] | null,
-  aspects?: string | null[] | null,
+  keyWords?: (string | null)[] | null,
+  aspects?: (string | null)[] | null,
   author?: {
     id?: string | number | null,
     name?: string | null,
@@ -1815,7 +1769,7 @@ await corsair.zohodesk.api.tickets.listConversations({ ticketId: '18920000000420
   responderId?: string | number | null,
   respondedIn?: string | null,
   lastRatingIconURL?: string | null,
-  attachmentIds?: string | number | null[] | null
+  attachmentIds?: (string | number | null)[] | null
 }[]
 ```
 </Accordion>

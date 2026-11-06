@@ -336,7 +336,7 @@
           {
             "key": "identification",
             "optional": false,
-            "type": "{ user_id?: string, device_id?: string, user_properties: {} }[]"
+            "type": "{ user_id?: string, device_id?: string, user_properties: Record<string, any> }[]"
           }
         ]
       },
@@ -372,7 +372,7 @@
           {
             "key": "events",
             "optional": false,
-            "type": "{ event_type: string, user_id?: string, device_id?: string, time?: number, event_properties?: {}, user_properties?: {}, app_version?: string, platform?: string, os_name?: string, os_version?: string, device_brand?: string, device_manufacturer?: string, device_model?: string, carrier?: string, country?: string, region?: string, city?: string, language?: string, ip?: string, insert_id?: string, session_id?: number }[]"
+            "type": "{ event_type: string, user_id?: string, device_id?: string, time?: number, event_properties?: Record<string, any>, user_properties?: Record<string, any>, app_version?: string, platform?: string, os_name?: string, os_version?: string, device_brand?: string, device_manufacturer?: string, device_model?: string, carrier?: string, country?: string, region?: string, city?: string, language?: string, ip?: string, insert_id?: string, session_id?: number }[]"
           },
           {
             "key": "options",
@@ -423,7 +423,7 @@
           {
             "key": "events",
             "optional": false,
-            "type": "{ event_type: string, user_id?: string, device_id?: string, time?: number, event_properties?: {}, user_properties?: {}, app_version?: string, platform?: string, os_name?: string, os_version?: string, device_brand?: string, device_manufacturer?: string, device_model?: string, carrier?: string, country?: string, region?: string, city?: string, language?: string, ip?: string, insert_id?: string, session_id?: number }[]"
+            "type": "{ event_type: string, user_id?: string, device_id?: string, time?: number, event_properties?: Record<string, any>, user_properties?: Record<string, any>, app_version?: string, platform?: string, os_name?: string, os_version?: string, device_brand?: string, device_manufacturer?: string, device_model?: string, carrier?: string, country?: string, region?: string, city?: string, language?: string, ip?: string, insert_id?: string, session_id?: number }[]"
           },
           {
             "key": "options",
@@ -525,7 +525,7 @@
           {
             "key": "events",
             "optional": true,
-            "type": "{ event_type?: string, event_time?: string, event_properties?: {}, session_id?: number, amplitude_id?: number }[]"
+            "type": "{ event_type?: string, event_time?: string, event_properties?: Record<string, any>, session_id?: number, amplitude_id?: number }[]"
           },
           {
             "key": "userData",
@@ -561,7 +561,7 @@
           {
             "key": "userData",
             "optional": true,
-            "type": "{ user_id?: string, amplitude_id?: number, canonical_amplitude_id?: number, merged_amplitude_ids?: number[], is_identified?: boolean, user_properties?: {}, country?: string, region?: string, city?: string, language?: string, platform?: string, os?: string, device?: string, last_seen?: number }"
+            "type": "{ user_id?: string, amplitude_id?: number, canonical_amplitude_id?: number, merged_amplitude_ids?: number[], is_identified?: boolean, user_properties?: Record<string, any>, country?: string, region?: string, city?: string, language?: string, platform?: string, os?: string, device?: string, last_seen?: number }"
           }
         ]
       }
@@ -790,7 +790,7 @@
           {
             "key": "user_properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "app_version",
@@ -809,7 +809,7 @@
           }
         ]
       },
-      "responseType": "{ type: event.identify, user_id?: string, device_id?: string, time: number, user_properties?: {}, app_version?: string, platform?: string, insert_id?: string }",
+      "responseType": "{ type: event.identify, user_id?: string, device_id?: string, time: number, user_properties?: Record<string, any>, app_version?: string, platform?: string, insert_id?: string }",
       "usageExample": "amplitude({\n    webhookHooks: {\n        events: {\n            identify: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -852,12 +852,12 @@
           {
             "key": "event_properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "user_properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "app_version",
@@ -881,7 +881,7 @@
           }
         ]
       },
-      "responseType": "{ type: event.track, event_id: string, event_type: string, user_id?: string, device_id?: string, time: number, event_properties?: {}, user_properties?: {}, app_version?: string, platform?: string, session_id?: number, insert_id?: string }",
+      "responseType": "{ type: event.track, event_id: string, event_type: string, user_id?: string, device_id?: string, time: number, event_properties?: Record<string, any>, user_properties?: Record<string, any>, app_version?: string, platform?: string, session_id?: number, insert_id?: string }",
       "usageExample": "amplitude({\n    webhookHooks: {\n        events: {\n            track: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -909,7 +909,7 @@
           {
             "key": "user",
             "optional": false,
-            "type": "{ user_id?: string, device_id?: string, user_properties?: {}, country?: string, city?: string, region?: string, language?: string, platform?: string, os?: string }"
+            "type": "{ user_id?: string, device_id?: string, user_properties?: Record<string, any>, country?: string, city?: string, region?: string, language?: string, platform?: string, os?: string }"
           },
           {
             "key": "time",
@@ -928,7 +928,7 @@
           }
         ]
       },
-      "responseType": "{ type: experiment.exposure, flag_key: string, variant: string, user: { user_id?: string, device_id?: string, user_properties?: {}, country?: string, city?: string, region?: string, language?: string, platform?: string, os?: string }, time: number, experiment_key?: string, metadata?: { deployment_name?: string, flag_version?: number } }",
+      "responseType": "{ type: experiment.exposure, flag_key: string, variant: string, user: { user_id?: string, device_id?: string, user_properties?: Record<string, any>, country?: string, city?: string, region?: string, language?: string, platform?: string, os?: string }, time: number, experiment_key?: string, metadata?: { deployment_name?: string, flag_version?: number } }",
       "usageExample": "amplitude({\n    webhookHooks: {\n        experiments: {\n            exposure: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {

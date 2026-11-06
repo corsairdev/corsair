@@ -1,0 +1,139 @@
+---
+title: Overview
+description: "Live event discovery with Ticketmaster - search events, attractions, venues and the classification tree, read any of them by ID, fetch event images, and suggest collections for a partial search term."
+---
+
+Use **Ticketmaster** through Corsair: one client, typed API calls.
+
+Create a key in the Ticketmaster Developer Portal: sign in at https://developer-account.ticketmaster.com/user/login, open your application, and copy its Consumer Key. That is the API key. Every new account gets a working Discovery key immediately; no approval step. Things to know:
+
+- **Read-only.** The Discovery API has no writes. Every operation in this plugin is a `read`; nothing here can change an event, a venue or a ticket.
+- **The key travels in the query string.** Ticketmaster takes it as `?apikey=...`, not as an `Authorization` header. A missing or wrong key answers 401 `oauth.v2.InvalidApiKey`.
+- **Paging is 0-based.** `page: 0` is the first page, and `size` defaults to 20. Each search returns `next_page`, which is `null` past the deep-paging limit.
+- **Deep paging stops at 1,000 items.** Ticketmaster rejects a request whose `size * page` reaches 1,000 with `DIS1035`. The input schemas reject such a page before it is sent; narrow the search instead of paging further.
+- **An empty page has no `_embedded` key.** Ticketmaster answers 200 and simply omits `_embedded` when a page has no results, including the last page of a set whose `totalPages` counts one too many. The searches read that as an empty list.
+- **`totalElements` can exceed what is reachable.** Past 1,000 items the count keeps climbing while paging does not, so `next_page` is the honest signal.
+- **The `unit` and `source` parameters are strings.** `includeTBA`, `includeTBD`, `includeTest` and `includeFamily` take `'yes' | 'no' | 'only'`, not booleans, and the plugin keeps that spelling.
+- **Rate limits.** 5 requests a second and 5,000 a day for a default key. The plugin retries a 429 up to three times, honouring `Retry-After`.
+- **`suggest.get` returns collections, not a string.** Its docs say "schema (string)", but the live endpoint answers the same `_embedded` envelope as the searches, so `suggest.get` returns `attractions`, `events`, `venues` and `products` lists. Any of them may be empty.
+- **Webhooks.** Ticketmaster does not send any; this plugin registers none.
+
+**What you get:**
+
+- 10 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair better-sqlite3 @corsair-dev/ticketmaster
+```
+```bash yarn
+yarn add corsair better-sqlite3 @corsair-dev/ticketmaster
+```
+```bash pnpm
+pnpm install corsair better-sqlite3 @corsair-dev/ticketmaster
+```
+```bash bun
+bun add corsair better-sqlite3 @corsair-dev/ticketmaster
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { ticketmaster } from '@corsair-dev/ticketmaster';
+
+export const corsair = createCorsair({
+	plugins: [
+		ticketmaster(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. A call with no saved key throws `AuthMissingError`; the error may carry a `connectUrl` where the tenant enters their key.
+
+```ts
+ticketmaster()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'ticketmaster',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Find music events in the US**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ticketmaster.api.events.search({
+	classificationName: ['music'],
+	countryCode: 'US',
+	size: 10,
+});
+```
+
+
+**Read a venue by ID**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ticketmaster.api.venues.get({ id: 'KovZpZA7AAEA' });
+```
+
+
+See the full list on the [API](/plugins/ticketmaster/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/ticketmaster/api">
+    Every `ticketmaster.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

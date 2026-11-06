@@ -1,0 +1,17 @@
+displayName: Xero
+description: Cloud accounting API for invoices, contacts, payments, bank transactions, credit notes, quotes, purchase orders, journals, reports, and files.
+domain: xero.com
+examples:
+  read:
+    path: contacts.list
+    title: List contacts
+  write:
+    path: contacts.create
+    title: Create a contact
+    args:
+      Name: Acme Ltd
+      EmailAddress: billing@example.com
+dbExample:
+  entity: contacts
+  note: Search synced contacts without hitting Xero.
+  limit: 50

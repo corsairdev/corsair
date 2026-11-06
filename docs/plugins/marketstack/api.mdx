@@ -187,11 +187,11 @@ await corsair.marketstack.api.eod.get({});
 
 ```ts
 {
-  open?: number | null,
-  high?: number | null,
-  low?: number | null,
-  close?: number | null,
-  volume?: number | null,
+  open: number | null,
+  high: number | null,
+  low: number | null,
+  close: number | null,
+  volume: number | null,
   adj_high?: number | null,
   adj_low?: number | null,
   adj_close?: number | null,
@@ -242,23 +242,23 @@ await corsair.marketstack.api.exchanges.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `acronym` | `string` | No | — |
+| `acronym` | `string \| null` | No | — |
 | `mic` | `string` | Yes | — |
-| `country` | `string` | No | — |
-| `country_code` | `string` | No | — |
-| `city` | `string` | No | — |
-| `website` | `string` | No | — |
+| `country` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
 | `operating_mic` | `string` | No | — |
 | `oprt_sgmt` | `string` | No | — |
 | `legal_entity_name` | `string` | No | — |
 | `exchange_lei` | `string` | No | — |
 | `market_category_code` | `string` | No | — |
 | `exchange_status` | `string` | No | — |
-| `date_creation` | `object` | No | — |
-| `date_last_update` | `object` | No | — |
-| `date_last_validation` | `object` | No | — |
-| `date_expiry` | `object` | No | — |
-| `comments` | `string` | No | — |
+| `date_creation` | `string \| object \| null` | No | — |
+| `date_last_update` | `string \| object \| null` | No | — |
+| `date_last_validation` | `string \| object \| null` | No | — |
+| `date_expiry` | `string \| object \| null` | No | — |
+| `comments` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="date_creation full type">
@@ -268,7 +268,7 @@ string | {
   date?: string,
   timezone_type?: number,
   timezone?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -279,7 +279,7 @@ string | {
   date?: string,
   timezone_type?: number,
   timezone?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -290,7 +290,7 @@ string | {
   date?: string,
   timezone_type?: number,
   timezone?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -301,7 +301,7 @@ string | {
   date?: string,
   timezone_type?: number,
   timezone?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -492,7 +492,7 @@ await corsair.marketstack.api.tickers.get({});
 | `symbol` | `string` | Yes | — |
 | `has_intraday` | `boolean` | No | — |
 | `has_eod` | `boolean` | No | — |
-| `country` | `string` | No | — |
+| `country` | `string \| null` | No | — |
 | `cik` | `string` | No | — |
 | `isin` | `string` | No | — |
 | `cusip` | `string` | No | — |
@@ -603,11 +603,11 @@ await corsair.marketstack.api.tickers.getEod({});
 
 ```ts
 {
-  open?: number | null,
-  high?: number | null,
-  low?: number | null,
-  close?: number | null,
-  volume?: number | null,
+  open: number | null,
+  high: number | null,
+  low: number | null,
+  close: number | null,
+  volume: number | null,
   adj_high?: number | null,
   adj_low?: number | null,
   adj_close?: number | null,
@@ -655,18 +655,18 @@ await corsair.marketstack.api.tickers.getEodLatest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `open` | `number` | No | — |
-| `high` | `number` | No | — |
-| `low` | `number` | No | — |
-| `close` | `number` | No | — |
-| `volume` | `number` | No | — |
-| `adj_high` | `number` | No | — |
-| `adj_low` | `number` | No | — |
-| `adj_close` | `number` | No | — |
-| `adj_open` | `number` | No | — |
-| `adj_volume` | `number` | No | — |
-| `split_factor` | `number` | No | — |
-| `dividend` | `number` | No | — |
+| `open` | `number \| null` | Yes | — |
+| `high` | `number \| null` | Yes | — |
+| `low` | `number \| null` | Yes | — |
+| `close` | `number \| null` | Yes | — |
+| `volume` | `number \| null` | Yes | — |
+| `adj_high` | `number \| null` | No | — |
+| `adj_low` | `number \| null` | No | — |
+| `adj_close` | `number \| null` | No | — |
+| `adj_open` | `number \| null` | No | — |
+| `adj_volume` | `number \| null` | No | — |
+| `split_factor` | `number \| null` | No | — |
+| `dividend` | `number \| null` | No | — |
 | `name` | `string` | No | — |
 | `exchange_code` | `string` | No | — |
 | `asset_type` | `string` | No | — |

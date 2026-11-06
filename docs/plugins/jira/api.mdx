@@ -52,8 +52,7 @@ await corsair.jira.api.comments.add({});
   displayName?: string,
   emailAddress?: string,
   active?: boolean,
-  avatarUrls?: {
-  }
+  avatarUrls?: Record<string, string>
 }
 ```
 </Accordion>
@@ -136,8 +135,7 @@ await corsair.jira.api.comments.get({});
   displayName?: string,
   emailAddress?: string,
   active?: boolean,
-  avatarUrls?: {
-  }
+  avatarUrls?: Record<string, string>
 }
 ```
 </Accordion>
@@ -191,8 +189,7 @@ await corsair.jira.api.comments.list({});
     displayName?: string,
     emailAddress?: string,
     active?: boolean,
-    avatarUrls?: {
-    }
+    avatarUrls?: Record<string, string>
   },
   body?: any,
   renderedBody?: string,
@@ -250,8 +247,7 @@ await corsair.jira.api.comments.update({});
   displayName?: string,
   emailAddress?: string,
   active?: boolean,
-  avatarUrls?: {
-  }
+  avatarUrls?: Record<string, string>
 }
 ```
 </Accordion>
@@ -437,7 +433,7 @@ await corsair.jira.api.issues.assign({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `issue_id_or_key` | `string` | Yes | — |
-| `account_id` | `string` | No | — |
+| `account_id` | `string \| null` | No | — |
 
 
 
@@ -565,16 +561,14 @@ await corsair.jira.api.issues.bulkFetch({});
       displayName?: string,
       emailAddress?: string,
       active?: boolean,
-      avatarUrls?: {
-      }
+      avatarUrls?: Record<string, string>
     } | null,
     reporter?: {
       accountId?: string,
       displayName?: string,
       emailAddress?: string,
       active?: boolean,
-      avatarUrls?: {
-      }
+      avatarUrls?: Record<string, string>
     },
     priority?: {
       id?: string,
@@ -771,16 +765,14 @@ await corsair.jira.api.issues.get({});
     displayName?: string,
     emailAddress?: string,
     active?: boolean,
-    avatarUrls?: {
-    }
+    avatarUrls?: Record<string, string>
   } | null,
   reporter?: {
     accountId?: string,
     displayName?: string,
     emailAddress?: string,
     active?: boolean,
-    avatarUrls?: {
-    }
+    avatarUrls?: Record<string, string>
   },
   priority?: {
     id?: string,
@@ -989,16 +981,14 @@ await corsair.jira.api.issues.search({});
       displayName?: string,
       emailAddress?: string,
       active?: boolean,
-      avatarUrls?: {
-      }
+      avatarUrls?: Record<string, string>
     } | null,
     reporter?: {
       accountId?: string,
       displayName?: string,
       emailAddress?: string,
       active?: boolean,
-      avatarUrls?: {
-      }
+      avatarUrls?: Record<string, string>
     },
     priority?: {
       id?: string,
@@ -1146,8 +1136,7 @@ await corsair.jira.api.projects.get({});
   displayName?: string,
   emailAddress?: string,
   active?: boolean,
-  avatarUrls?: {
-  }
+  avatarUrls?: Record<string, string>
 }
 ```
 </Accordion>
@@ -1177,17 +1166,7 @@ await corsair.jira.api.projects.getRoles({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, string>`
 
 
 ---
@@ -1241,8 +1220,7 @@ await corsair.jira.api.projects.list({});
     displayName?: string,
     emailAddress?: string,
     active?: boolean,
-    avatarUrls?: {
-    }
+    avatarUrls?: Record<string, string>
   },
   self?: string
 }[]
@@ -1479,8 +1457,7 @@ await corsair.jira.api.users.find({});
   displayName?: string,
   emailAddress?: string,
   active?: boolean,
-  avatarUrls?: {
-  }
+  avatarUrls?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -1521,8 +1498,7 @@ await corsair.jira.api.users.getAll({});
   displayName?: string,
   emailAddress?: string,
   active?: boolean,
-  avatarUrls?: {
-  }
+  avatarUrls?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -1554,19 +1530,9 @@ await corsair.jira.api.users.getCurrent({});
 | `displayName` | `string` | No | — |
 | `emailAddress` | `string` | No | — |
 | `active` | `boolean` | No | — |
-| `avatarUrls` | `object` | No | — |
+| `avatarUrls` | `Record<string, string>` | No | — |
 | `timeZone` | `string` | No | — |
 | `locale` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="avatarUrls full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 

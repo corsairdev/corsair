@@ -27,18 +27,10 @@ await corsair.hubspot.api.companies.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `properties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
 | `associations` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
@@ -62,26 +54,22 @@ await corsair.hubspot.api.companies.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `archived` | `boolean` | No | — |
 | `associations` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -145,26 +133,22 @@ await corsair.hubspot.api.companies.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `archived` | `boolean` | No | — |
 | `associations` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -212,13 +196,16 @@ await corsair.hubspot.api.companies.getMany({});
 ```ts
 {
   id: string,
-  properties?: {
-  },
+  properties?: Record<string, string>,
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archived?: boolean,
-  associations?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>
 }[]
 ```
 </Accordion>
@@ -278,13 +265,16 @@ await corsair.hubspot.api.companies.getRecentlyCreated({});
 ```ts
 {
   id: string,
-  properties?: {
-  },
+  properties?: Record<string, string>,
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archived?: boolean,
-  associations?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>
 }[]
 ```
 </Accordion>
@@ -344,13 +334,16 @@ await corsair.hubspot.api.companies.getRecentlyUpdated({});
 ```ts
 {
   id: string,
-  properties?: {
-  },
+  properties?: Record<string, string>,
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archived?: boolean,
-  associations?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>
 }[]
 ```
 </Accordion>
@@ -409,13 +402,16 @@ await corsair.hubspot.api.companies.searchByDomain({});
 ```ts
 {
   id: string,
-  properties?: {
-  },
+  properties?: Record<string, string>,
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archived?: boolean,
-  associations?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>
 }[]
 ```
 </Accordion>
@@ -456,17 +452,7 @@ await corsair.hubspot.api.companies.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `companyId` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, string>` | No | — |
 
 
 
@@ -475,26 +461,22 @@ await corsair.hubspot.api.companies.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `archived` | `boolean` | No | — |
 | `associations` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -593,18 +575,10 @@ await corsair.hubspot.api.contacts.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `properties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
 | `associations` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
@@ -628,26 +602,22 @@ await corsair.hubspot.api.contacts.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `archived` | `boolean` | No | — |
 | `associations` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -711,26 +681,22 @@ await corsair.hubspot.api.contacts.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `archived` | `boolean` | No | — |
 | `associations` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -778,13 +744,16 @@ await corsair.hubspot.api.contacts.getMany({});
 ```ts
 {
   id: string,
-  properties?: {
-  },
+  properties?: Record<string, string>,
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archived?: boolean,
-  associations?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>
 }[]
 ```
 </Accordion>
@@ -844,13 +813,16 @@ await corsair.hubspot.api.contacts.getRecentlyCreated({});
 ```ts
 {
   id: string,
-  properties?: {
-  },
+  properties?: Record<string, string>,
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archived?: boolean,
-  associations?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>
 }[]
 ```
 </Accordion>
@@ -910,13 +882,16 @@ await corsair.hubspot.api.contacts.getRecentlyUpdated({});
 ```ts
 {
   id: string,
-  properties?: {
-  },
+  properties?: Record<string, string>,
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archived?: boolean,
-  associations?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>
 }[]
 ```
 </Accordion>
@@ -1006,13 +981,16 @@ await corsair.hubspot.api.contacts.search({});
 ```ts
 {
   id: string,
-  properties?: {
-  },
+  properties?: Record<string, string>,
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archived?: boolean,
-  associations?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>
 }[]
 ```
 </Accordion>
@@ -1053,17 +1031,7 @@ await corsair.hubspot.api.contacts.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contactId` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, string>` | No | — |
 
 
 
@@ -1072,26 +1040,22 @@ await corsair.hubspot.api.contacts.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `archived` | `boolean` | No | — |
 | `associations` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1118,18 +1082,10 @@ await corsair.hubspot.api.deals.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `properties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
 | `associations` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
@@ -1153,26 +1109,22 @@ await corsair.hubspot.api.deals.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `archived` | `boolean` | No | — |
 | `associations` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1236,26 +1188,22 @@ await corsair.hubspot.api.deals.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `archived` | `boolean` | No | — |
 | `associations` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1303,13 +1251,16 @@ await corsair.hubspot.api.deals.getMany({});
 ```ts
 {
   id: string,
-  properties?: {
-  },
+  properties?: Record<string, string>,
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archived?: boolean,
-  associations?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>
 }[]
 ```
 </Accordion>
@@ -1369,13 +1320,16 @@ await corsair.hubspot.api.deals.getRecentlyCreated({});
 ```ts
 {
   id: string,
-  properties?: {
-  },
+  properties?: Record<string, string>,
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archived?: boolean,
-  associations?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>
 }[]
 ```
 </Accordion>
@@ -1435,13 +1389,16 @@ await corsair.hubspot.api.deals.getRecentlyUpdated({});
 ```ts
 {
   id: string,
-  properties?: {
-  },
+  properties?: Record<string, string>,
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archived?: boolean,
-  associations?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>
 }[]
 ```
 </Accordion>
@@ -1531,13 +1488,16 @@ await corsair.hubspot.api.deals.search({});
 ```ts
 {
   id: string,
-  properties?: {
-  },
+  properties?: Record<string, string>,
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archived?: boolean,
-  associations?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>
 }[]
 ```
 </Accordion>
@@ -1578,17 +1538,7 @@ await corsair.hubspot.api.deals.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `dealId` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, string>` | No | — |
 
 
 
@@ -1597,26 +1547,22 @@ await corsair.hubspot.api.deals.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `archived` | `boolean` | No | — |
 | `associations` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1645,7 +1591,7 @@ await corsair.hubspot.api.engagements.create({});
 |------|------|----------|-------------|
 | `engagement` | `object` | Yes | — |
 | `associations` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="engagement full type">
@@ -1670,14 +1616,6 @@ await corsair.hubspot.api.engagements.create({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -1689,7 +1627,7 @@ await corsair.hubspot.api.engagements.create({});
 | `id` | `string` | Yes | — |
 | `engagement` | `object` | No | — |
 | `associations` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="engagement full type">
@@ -1713,16 +1651,12 @@ await corsair.hubspot.api.engagements.create({});
 <Accordion title="associations full type">
 
 ```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1783,7 +1717,7 @@ await corsair.hubspot.api.engagements.get({});
 | `id` | `string` | Yes | — |
 | `engagement` | `object` | No | — |
 | `associations` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="engagement full type">
@@ -1807,16 +1741,12 @@ await corsair.hubspot.api.engagements.get({});
 <Accordion title="associations full type">
 
 ```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1871,10 +1801,13 @@ await corsair.hubspot.api.engagements.getMany({});
     type?: string,
     timestamp?: number
   },
-  associations?: {
-  },
-  metadata?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>,
+  metadata?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1916,18 +1849,10 @@ await corsair.hubspot.api.tickets.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `properties` | `object` | No | — |
+| `properties` | `Record<string, string>` | No | — |
 | `associations` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
@@ -1951,26 +1876,22 @@ await corsair.hubspot.api.tickets.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `archived` | `boolean` | No | — |
 | `associations` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -2034,26 +1955,22 @@ await corsair.hubspot.api.tickets.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `archived` | `boolean` | No | — |
 | `associations` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -2100,13 +2017,16 @@ await corsair.hubspot.api.tickets.getMany({});
 ```ts
 {
   id: string,
-  properties?: {
-  },
+  properties?: Record<string, string>,
   createdAt?: Date | null,
   updatedAt?: Date | null,
   archived?: boolean,
-  associations?: {
-  }
+  associations?: Record<string, {
+    results: {
+      id: string,
+      type?: string
+    }[]
+  } | string[]>
 }[]
 ```
 </Accordion>
@@ -2147,17 +2067,7 @@ await corsair.hubspot.api.tickets.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `ticketId` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, string>` | No | — |
 
 
 
@@ -2166,26 +2076,22 @@ await corsair.hubspot.api.tickets.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `properties` | `Record<string, string>` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `archived` | `boolean` | No | — |
 | `associations` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="associations full type">
 
 ```ts
-{
-}
+Record<string, {
+  results: {
+    id: string,
+    type?: string
+  }[]
+} | string[]>
 ```
 </Accordion>
 </AccordionGroup>

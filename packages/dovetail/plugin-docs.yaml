@@ -1,0 +1,18 @@
+displayName: Dovetail
+description: Customer research platform for managing projects, notes, highlights, insights, data, docs, folders, tags, contacts, channels, and files.
+domain: dovetail.com
+examples:
+  read:
+    path: projects.list
+    title: List projects
+  write:
+    path: notes.create
+    title: Create a note
+    args:
+      project_id: proj_123
+      title: Customer interview
+      content: Notes from the call.
+dbExample:
+  entity: projects
+  note: These tables exist, but Dovetail calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50

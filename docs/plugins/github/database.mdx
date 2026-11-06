@@ -193,6 +193,7 @@ const rows = await corsair.github.db.issues.search({
 | `htmlUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `number` | `number` | equals, gt, gte, lt, lte, in |
 | `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `stateReason` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
 | `body` | `string` | equals, contains, startsWith, endsWith, in |
 | `locked` | `boolean` | equals |
@@ -231,6 +232,7 @@ const rows = await corsair.github.db.pullRequests.search({
 | `patchUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `issueUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `number` | `number` | equals, gt, gte, lt, lte, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
 | `locked` | `boolean` | equals |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
 | `body` | `string` | equals, contains, startsWith, endsWith, in |
@@ -378,6 +380,7 @@ const rows = await corsair.github.db.workflows.search({
 | `nodeId` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `path` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |
 | `htmlUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `badgeUrl` | `string` | equals, contains, startsWith, endsWith, in |

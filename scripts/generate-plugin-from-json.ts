@@ -2,6 +2,10 @@ import { execSync } from 'child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
 import {
+	PLUGIN_DOCS_FILE,
+	starterPluginDocsYaml,
+} from './plugin-docs-requirements.ts';
+import {
 	buildAuthConfigTs,
 	buildOAuthTenantLinkTs,
 	buildTenantMatcherTs,
@@ -1054,6 +1058,11 @@ function generatePluginFromJson(input: string) {
 	writeFileSync(
 		join(pluginDir, 'package.json'),
 		JSON.stringify(packageJson, null, 2) + '\n',
+	);
+	// Fails validate:plugins until its TODO description is replaced.
+	writeFileSync(
+		join(pluginDir, PLUGIN_DOCS_FILE),
+		starterPluginDocsYaml(def.name),
 	);
 
 	// ── tsconfig.json ──

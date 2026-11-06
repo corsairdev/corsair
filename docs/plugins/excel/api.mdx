@@ -1,0 +1,1809 @@
+---
+title: API
+description: "API reference for Excel: every `excel.api.*` operation with input and output types."
+---
+
+Every `excel.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Charts
+
+### add
+
+`charts.add`
+
+Add a chart from a cell range
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.charts.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `sourceData` | `string` | Yes | — |
+| `seriesBy` | `Auto \| Columns \| Rows` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `height` | `number` | No | — |
+| `left` | `number` | No | — |
+| `top` | `number` | No | — |
+| `width` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`charts.delete`
+
+Delete a chart
+
+**Risk:** `destructive`
+
+```ts
+await corsair.excel.api.charts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | Yes | — |
+| `chart` | `string` | Yes | — |
+
+
+
+**Output:** `undefined \| null \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`charts.get`
+
+Get one chart by name or id
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.charts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | Yes | — |
+| `chart` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `height` | `number` | No | — |
+| `left` | `number` | No | — |
+| `top` | `number` | No | — |
+| `width` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`charts.list`
+
+List charts on a worksheet
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.charts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `worksheet` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  height?: number,
+  left?: number,
+  top?: number,
+  width?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setData
+
+`charts.setData`
+
+Point a chart at a different cell range
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.charts.setData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | Yes | — |
+| `chart` | `string` | Yes | — |
+| `sourceData` | `string` | Yes | — |
+| `seriesBy` | `Auto \| Columns \| Rows` | No | — |
+
+
+
+**Output:** `undefined \| null \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`charts.update`
+
+Rename a chart or move and resize it
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.charts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | Yes | — |
+| `chart` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `height` | `number` | No | — |
+| `width` | `number` | No | — |
+| `left` | `number` | No | — |
+| `top` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `height` | `number` | No | — |
+| `left` | `number` | No | — |
+| `top` | `number` | No | — |
+| `width` | `number` | No | — |
+
+
+
+---
+
+## Comments
+
+### get
+
+`comments.get`
+
+Get one comment
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.comments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `comment` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `contentType` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List comments in a workbook
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  content?: string,
+  contentType?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listReplies
+
+`comments.listReplies`
+
+List replies on a comment
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.comments.listReplies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `comment` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  content?: string,
+  contentType?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reply
+
+`comments.reply`
+
+Reply to a comment
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.comments.reply({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `comment` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `contentType` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `contentType` | `string` | No | — |
+
+
+
+---
+
+## Files
+
+### create
+
+`files.create`
+
+Upload a blank .xlsx workbook to OneDrive or SharePoint
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.files.create({ path: 'Reports/Book.xlsx' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `path` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `size` | `number` | No | — |
+| `webUrl` | `string` | No | — |
+
+
+
+---
+
+### find
+
+`files.find`
+
+Search OneDrive or SharePoint for .xlsx files
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.files.find({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `query` | `string` | No | — |
+| `top` | `number` | No | — |
+| `nextLink` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  size?: number,
+  webUrl?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Functions
+
+### calculate
+
+`functions.calculate`
+
+Run an Excel worksheet function such as SUM or VLOOKUP
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.functions.calculate({ itemId: 'item-id', name: 'SUM', args: { number1: 1, number2: 2 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `args` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="args full type">
+
+```ts
+Record<string, string | number | boolean | null | {
+  address: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `error` | `string \| null` | No | — |
+| `value` | `string \| number \| boolean \| null \| (string \| number \| boolean \| null)[] \| (string \| number \| boolean \| null)[][]` | No | — |
+
+
+
+---
+
+## Names
+
+### add
+
+`names.add`
+
+Define a named range
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.names.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `reference` | `string` | Yes | — |
+| `comment` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `comment` | `string` | No | — |
+| `scope` | `string` | No | — |
+| `type` | `string` | No | — |
+| `value` | `string \| number \| boolean \| null \| object` | No | — |
+| `visible` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+string | number | boolean | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`names.get`
+
+Get one named range
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.names.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | No | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `comment` | `string` | No | — |
+| `scope` | `string` | No | — |
+| `type` | `string` | No | — |
+| `value` | `string \| number \| boolean \| null \| object` | No | — |
+| `visible` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+string | number | boolean | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`names.list`
+
+List named ranges in a workbook or worksheet
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.names.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `worksheet` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  name: string,
+  comment?: string,
+  scope?: string,
+  type?: string,
+  value?: string | number | boolean | null | {
+  },
+  visible?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### range
+
+`names.range`
+
+Read the cells a named range points at
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.names.range({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | No | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `addressLocal` | `string` | No | — |
+| `cellCount` | `number` | No | — |
+| `columnCount` | `number` | No | — |
+| `columnIndex` | `number` | No | — |
+| `rowCount` | `number` | No | — |
+| `rowIndex` | `number` | No | — |
+| `values` | `(string \| number \| boolean \| null)[][]` | Yes | — |
+| `formulas` | `(string \| null)[][]` | No | — |
+| `text` | `(string \| null)[][]` | No | — |
+| `numberFormat` | `string[][]` | No | — |
+| `valueTypes` | `string[][]` | No | — |
+
+
+
+---
+
+### update
+
+`names.update`
+
+Change a named range comment or visibility
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.names.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `comment` | `string` | No | — |
+| `visible` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `comment` | `string` | No | — |
+| `scope` | `string` | No | — |
+| `type` | `string` | No | — |
+| `value` | `string \| number \| boolean \| null \| object` | No | — |
+| `visible` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+string | number | boolean | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ranges
+
+### clear
+
+`ranges.clear`
+
+Clear values or formatting in a range
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.ranges.clear({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | Yes | — |
+| `address` | `string` | Yes | — |
+| `applyTo` | `All \| Formats \| Contents` | No | — |
+
+
+
+**Output:** `undefined \| null \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`ranges.get`
+
+Read a cell range
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.ranges.get({ itemId: 'item-id', worksheet: 'Sheet1', address: 'A1:C4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | Yes | — |
+| `address` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `addressLocal` | `string` | No | — |
+| `cellCount` | `number` | No | — |
+| `columnCount` | `number` | No | — |
+| `columnIndex` | `number` | No | — |
+| `rowCount` | `number` | No | — |
+| `rowIndex` | `number` | No | — |
+| `values` | `(string \| number \| boolean \| null)[][]` | Yes | — |
+| `formulas` | `(string \| null)[][]` | No | — |
+| `text` | `(string \| null)[][]` | No | — |
+| `numberFormat` | `string[][]` | No | — |
+| `valueTypes` | `string[][]` | No | — |
+
+
+
+---
+
+### update
+
+`ranges.update`
+
+Write values, formulas, or number formats into a range
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.ranges.update({ itemId: 'item-id', worksheet: 'Sheet1', address: 'A1', values: [['Hello']] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | Yes | — |
+| `address` | `string` | Yes | — |
+| `values` | `string \| number \| boolean \| null \| (string \| number \| boolean \| null)[][]` | No | — |
+| `formulas` | `string \| (string \| null)[][]` | No | — |
+| `numberFormat` | `string \| (string \| null)[][]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `addressLocal` | `string` | No | — |
+| `cellCount` | `number` | No | — |
+| `columnCount` | `number` | No | — |
+| `columnIndex` | `number` | No | — |
+| `rowCount` | `number` | No | — |
+| `rowIndex` | `number` | No | — |
+| `values` | `(string \| number \| boolean \| null)[][]` | Yes | — |
+| `formulas` | `(string \| null)[][]` | No | — |
+| `text` | `(string \| null)[][]` | No | — |
+| `numberFormat` | `string[][]` | No | — |
+| `valueTypes` | `string[][]` | No | — |
+
+
+
+---
+
+### usedRange
+
+`ranges.usedRange`
+
+Read the used range of a worksheet
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.ranges.usedRange({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | Yes | — |
+| `valuesOnly` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `addressLocal` | `string` | No | — |
+| `cellCount` | `number` | No | — |
+| `columnCount` | `number` | No | — |
+| `columnIndex` | `number` | No | — |
+| `rowCount` | `number` | No | — |
+| `rowIndex` | `number` | No | — |
+| `values` | `(string \| number \| boolean \| null)[][]` | Yes | — |
+| `formulas` | `(string \| null)[][]` | No | — |
+| `text` | `(string \| null)[][]` | No | — |
+| `numberFormat` | `string[][]` | No | — |
+| `valueTypes` | `string[][]` | No | — |
+
+
+
+---
+
+## Sessions
+
+### close
+
+`sessions.close`
+
+Close an Excel workbook session
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.sessions.close({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+
+
+
+**Output:** `undefined \| null \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`sessions.create`
+
+Open a persistent or temporary Excel workbook session
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.sessions.create({ itemId: 'item-id', persistChanges: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `persistChanges` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `persistChanges` | `boolean` | No | — |
+
+
+
+---
+
+### refresh
+
+`sessions.refresh`
+
+Keep an Excel workbook session alive
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.sessions.refresh({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+
+
+
+**Output:** `undefined \| null \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Tables
+
+### add
+
+`tables.add`
+
+Create a table from a range
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.tables.add({ itemId: 'item-id', address: 'Sheet1!A1:C4', hasHeaders: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | No | — |
+| `address` | `string` | Yes | — |
+| `hasHeaders` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `showHeaders` | `boolean` | No | — |
+| `showTotals` | `boolean` | No | — |
+| `style` | `string` | No | — |
+
+
+
+---
+
+### addColumn
+
+`tables.addColumn`
+
+Insert a column into a table
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.tables.addColumn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `table` | `string` | Yes | — |
+| `values` | `(string \| number \| boolean \| null)[][]` | Yes | — |
+| `index` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `index` | `number` | No | — |
+| `values` | `(string \| number \| boolean \| null)[][]` | No | — |
+
+
+
+---
+
+### addRows
+
+`tables.addRows`
+
+Insert one or more rows into a table
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.tables.addRows({ itemId: 'item-id', table: 'Table1', values: [[1, 2, 3]] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `table` | `string` | Yes | — |
+| `values` | `(string \| number \| boolean \| null)[][]` | Yes | — |
+| `index` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `index` | `number` | No | — |
+| `values` | `(string \| number \| boolean \| null)[][]` | No | — |
+
+
+
+---
+
+### delete
+
+`tables.delete`
+
+Delete a table
+
+**Risk:** `destructive`
+
+```ts
+await corsair.excel.api.tables.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `table` | `string` | Yes | — |
+
+
+
+**Output:** `undefined \| null \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteColumn
+
+`tables.deleteColumn`
+
+Delete a table column
+
+**Risk:** `destructive`
+
+```ts
+await corsair.excel.api.tables.deleteColumn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `table` | `string` | Yes | — |
+| `column` | `string` | Yes | — |
+
+
+
+**Output:** `undefined \| null \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteRow
+
+`tables.deleteRow`
+
+Delete a table row by index
+
+**Risk:** `destructive`
+
+```ts
+await corsair.excel.api.tables.deleteRow({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `table` | `string` | Yes | — |
+| `index` | `number` | Yes | — |
+
+
+
+**Output:** `undefined \| null \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`tables.get`
+
+Get one table by name or id
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.tables.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `table` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `showHeaders` | `boolean` | No | — |
+| `showTotals` | `boolean` | No | — |
+| `style` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`tables.list`
+
+List tables in a workbook or worksheet
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.tables.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `worksheet` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  showHeaders?: boolean,
+  showTotals?: boolean,
+  style?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listColumns
+
+`tables.listColumns`
+
+List columns in a table
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.tables.listColumns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `table` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  index?: number,
+  values?: (string | number | boolean | null)[][]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRows
+
+`tables.listRows`
+
+List rows in a table
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.tables.listRows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+| `table` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  index?: number,
+  values?: (string | number | boolean | null)[][]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tables.update`
+
+Rename a table or change its header, total, or style
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.tables.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `table` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `showHeaders` | `boolean` | No | — |
+| `showTotals` | `boolean` | No | — |
+| `style` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `showHeaders` | `boolean` | No | — |
+| `showTotals` | `boolean` | No | — |
+| `style` | `string` | No | — |
+
+
+
+---
+
+## Worksheets
+
+### add
+
+`worksheets.add`
+
+Add a worksheet
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.worksheets.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `position` | `number` | No | — |
+| `visibility` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`worksheets.delete`
+
+Delete a worksheet
+
+**Risk:** `destructive`
+
+```ts
+await corsair.excel.api.worksheets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | Yes | — |
+
+
+
+**Output:** `undefined \| null \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | null | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`worksheets.get`
+
+Get one worksheet by name or id
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.worksheets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `position` | `number` | No | — |
+| `visibility` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`worksheets.list`
+
+List worksheets in a workbook
+
+**Risk:** `read`
+
+```ts
+await corsair.excel.api.worksheets.list({ itemId: 'item-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `top` | `number` | No | — |
+| `skip` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.nextLink` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  position?: number,
+  visibility?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`worksheets.update`
+
+Rename a worksheet or change its position
+
+**Risk:** `write`
+
+```ts
+await corsair.excel.api.worksheets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `driveId` | `string` | No | — |
+| `itemId` | `string` | No | — |
+| `itemPath` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `worksheet` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `position` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `position` | `number` | No | — |
+| `visibility` | `string` | No | — |
+
+
+
+---
+

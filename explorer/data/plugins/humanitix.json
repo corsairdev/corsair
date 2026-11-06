@@ -1,7 +1,7 @@
 {
   "id": "humanitix",
   "displayName": "Humanitix",
-  "description": "Humanitix plugin for Corsair",
+  "description": "Event ticketing platform, with endpoints for listing and fetching events and listing tags.",
   "npmPackageName": "@corsair-dev/humanitix",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

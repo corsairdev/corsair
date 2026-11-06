@@ -1,0 +1,1235 @@
+{
+  "id": "emailoctopus",
+  "displayName": "EmailOctopus",
+  "description": "EmailOctopus lists, contacts, tags, custom fields, campaigns and automations on API v2.",
+  "npmPackageName": "@corsair-dev/emailoctopus",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 25,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "emailoctopus.api.automations.start",
+      "shortPath": "automations.start",
+      "description": "Queue a contact into an automation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "automation_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "emailoctopus.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Get one campaign, including its subject and HTML content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preview_text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ name?: string | null, email_address?: string | null } | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ html?: string | null } | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sent_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List campaigns, one page at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. EmailOctopus returns at most 100."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from paging.next.starting_after. Pass it back unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, status?: string | null, name?: string | null, subject?: string | null, preview_text?: string | null, to?: string[] | null, from?: { name?: string | null, email_address?: string | null } | null, content?: { html?: string | null } | null, created_at?: string | null, sent_at?: string | null }[] | null"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { url?: string | null, starting_after?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.campaigns.reportContacts",
+      "shortPath": "campaigns.reportContacts",
+      "description": "List contacts for one campaign event, such as opened or bounced",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "bounced | clicked | complained | opened | sent | unsubscribed | not-opened | not-clicked"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. EmailOctopus returns at most 100."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from paging.next.starting_after. Pass it back unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ contact_id?: string | null, contact_email_address?: string | null, occurred_at?: string | null }[] | null"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { url?: string | null, starting_after?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.campaigns.reportLinks",
+      "shortPath": "campaigns.reportLinks",
+      "description": "Get click totals for each link in a campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ url?: string | null, clicked_total?: number | null, clicked_unique?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.campaigns.reportSummary",
+      "shortPath": "campaigns.reportSummary",
+      "description": "Get sent, bounce, open, click, complaint and unsubscribe totals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bounced",
+            "optional": true,
+            "type": "{ hard?: number | null, soft?: number | null } | null"
+          },
+          {
+            "key": "opened",
+            "optional": true,
+            "type": "{ total?: number | null, unique?: number | null } | null"
+          },
+          {
+            "key": "clicked",
+            "optional": true,
+            "type": "{ total?: number | null, unique?: number | null } | null"
+          },
+          {
+            "key": "complained",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unsubscribed",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.contacts.batch",
+      "shortPath": "contacts.batch",
+      "description": "Update many contacts on a list. Each entry is reported under success or errors",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id: string, email_address?: string, fields?: Record<string, string | number | string[] | null>, tags?: Record<string, boolean>, status?: pending | subscribed | unsubscribed }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "{ success?: boolean | null, data?: { id?: string | null, email_address?: string | null, fields?: Record<string, string | number | string[] | null> | null, tags?: string[] | null, status?: string | null, created_at?: string | null, last_updated_at?: string | null } | null }[] | null"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ success?: boolean | null, id?: string | null, type?: string | null, title?: string | null, detail?: string | null, status?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Add a contact to a list. Fails if that email is already on it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email_address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, string | number | string[] | null>"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "pending | subscribed | unsubscribed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, string | number | string[] | null> | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Permanently delete a contact from a list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "emailoctopus.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Get one contact on a list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, string | number | string[] | null> | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts on a list, optionally filtered by status, tag or time, with cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. EmailOctopus returns at most 100."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from paging.next.starting_after. Pass it back unchanged."
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "pending | subscribed | unsubscribed"
+          },
+          {
+            "key": "created_at.lte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_at.gte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_updated_at.lte",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_updated_at.gte",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, email_address?: string | null, fields?: Record<string, string | number | string[] | null> | null, tags?: string[] | null, status?: string | null, created_at?: string | null, last_updated_at?: string | null }[] | null"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { url?: string | null, starting_after?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact by id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contact_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, string | number | string[] | null>"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "Record<string, boolean>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "pending | subscribed | unsubscribed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, string | number | string[] | null> | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.contacts.upsert",
+      "shortPath": "contacts.upsert",
+      "description": "Create a contact or update the existing one with the same email address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email_address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, string | number | string[] | null>"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "Record<string, boolean>"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "pending | subscribed | unsubscribed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, string | number | string[] | null> | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.fields.create",
+      "shortPath": "fields.create",
+      "description": "Add a custom field to a list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ list_id: string, label: string, tag: string, type: text | number | date, fallback?: string | null } | { list_id: string, label: string, tag: string, type: choice_single | choice_multiple, choices: string[], fallback?: string | null }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "fallback",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.fields.delete",
+      "shortPath": "fields.delete",
+      "description": "Permanently delete a custom field from a list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "emailoctopus.api.fields.update",
+      "shortPath": "fields.update",
+      "description": "Update a text, number or date field on a list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "text | number | date"
+          },
+          {
+            "key": "fallback",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "choices",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "fallback",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create a list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "double_opt_in",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label?: string | null, tag?: string | null, type?: string | null, choices?: string[] | null, fallback?: string | null }[] | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "counts",
+            "optional": true,
+            "type": "{ pending?: number | null, subscribed?: number | null, unsubscribed?: number | null }[] | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.lists.delete",
+      "shortPath": "lists.delete",
+      "description": "Permanently delete a list and its contacts",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "emailoctopus.api.lists.get",
+      "shortPath": "lists.get",
+      "description": "Get one list, including its fields, tags and contact counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "double_opt_in",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label?: string | null, tag?: string | null, type?: string | null, choices?: string[] | null, fallback?: string | null }[] | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "counts",
+            "optional": true,
+            "type": "{ pending?: number | null, subscribed?: number | null, unsubscribed?: number | null }[] | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "List every list in the account, one page at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. EmailOctopus returns at most 100."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from paging.next.starting_after. Pass it back unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, double_opt_in?: boolean | null, fields?: { label?: string | null, tag?: string | null, type?: string | null, choices?: string[] | null, fallback?: string | null }[] | null, tags?: string[] | null, counts?: { pending?: number | null, subscribed?: number | null, unsubscribed?: number | null }[] | null, created_at?: string | null, last_updated_at?: string | null }[] | null"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { url?: string | null, starting_after?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.lists.update",
+      "shortPath": "lists.update",
+      "description": "Rename a list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "double_opt_in",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ label?: string | null, tag?: string | null, type?: string | null, choices?: string[] | null, fallback?: string | null }[] | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "counts",
+            "optional": true,
+            "type": "{ pending?: number | null, subscribed?: number | null, unsubscribed?: number | null }[] | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create a tag on a list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Permanently delete a tag from a list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "emailoctopus.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List the tags on a list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. EmailOctopus returns at most 100."
+          },
+          {
+            "key": "starting_after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from paging.next.starting_after. Pass it back unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ tag?: string | null }[] | null"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ next?: { url?: string | null, starting_after?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "emailoctopus.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Rename a tag. The current name is the URL; the new name is the body",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string",
+            "description": "Current tag name. Sent in the URL."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Replacement tag name. Sent as body.tag."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -605,7 +605,7 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{ id?: string, action?: { comment?: {}, create?: {}, delete?: {}, edit?: {}, mention?: {}, move?: {}, rename?: {}, restore?: {}, share?: {}, version?: {} }, actor?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, times?: { recordedTime?: string } }[]"
+            "type": "{ id?: string, action?: { comment?: Record<string, any>, create?: Record<string, any>, delete?: Record<string, any>, edit?: Record<string, any>, mention?: Record<string, any>, move?: Record<string, any>, rename?: Record<string, any>, restore?: Record<string, any>, share?: Record<string, any>, version?: Record<string, any> }, actor?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, times?: { recordedTime?: string } }[]"
           },
           {
             "key": "@odata.nextLink",
@@ -2000,7 +2000,7 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{ id?: string, action?: { comment?: {}, create?: {}, delete?: {}, edit?: {}, mention?: {}, move?: {}, rename?: {}, restore?: {}, share?: {}, version?: {} }, actor?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, times?: { recordedTime?: string } }[]"
+            "type": "{ id?: string, action?: { comment?: Record<string, any>, create?: Record<string, any>, delete?: Record<string, any>, edit?: Record<string, any>, mention?: Record<string, any>, move?: Record<string, any>, rename?: Record<string, any>, restore?: Record<string, any>, share?: Record<string, any>, version?: Record<string, any> }, actor?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, times?: { recordedTime?: string } }[]"
           },
           {
             "key": "@odata.nextLink",
@@ -2613,7 +2613,7 @@
           {
             "key": "additional_properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2699,7 +2699,7 @@
           {
             "key": "grantedToV2",
             "optional": false,
-            "type": "{ siteGroup?: {}, application?: {} }"
+            "type": "{ siteGroup?: Record<string, any>, application?: Record<string, any> }"
           }
         ]
       },
@@ -3060,7 +3060,7 @@
           {
             "key": "recipients",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, string>[]"
           }
         ]
       },
@@ -3096,7 +3096,7 @@
           {
             "key": "recipients",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, string>[]"
           },
           {
             "key": "drive_id",
@@ -3349,7 +3349,7 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{ id?: string, eTag?: string, webUrl?: string, createdDateTime?: string, lastModifiedDateTime?: string, contentType?: { id?: string, name?: string }, fields?: {}, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } } }[]"
+            "type": "{ id?: string, eTag?: string, webUrl?: string, createdDateTime?: string, lastModifiedDateTime?: string, contentType?: { id?: string, name?: string }, fields?: Record<string, any>, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } } }[]"
           },
           {
             "key": "@odata.count",
@@ -3552,7 +3552,7 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{ id?: string, eTag?: string, webUrl?: string, createdDateTime?: string, lastModifiedDateTime?: string, contentType?: { id?: string, name?: string }, fields?: {}, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } } }[]"
+            "type": "{ id?: string, eTag?: string, webUrl?: string, createdDateTime?: string, lastModifiedDateTime?: string, contentType?: { id?: string, name?: string }, fields?: Record<string, any>, createdBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } }, lastModifiedBy?: { user?: { id?: string, displayName?: string }, application?: { id?: string, displayName?: string }, device?: { id?: string, displayName?: string } } }[]"
           },
           {
             "key": "@odata.nextLink",
@@ -3873,11 +3873,11 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{ subscriptionId: string, changeType: string, clientState?: string, resource?: string, resourceData?: {}, tenantId?: string, subscriptionExpirationDateTime?: string }[]"
+            "type": "{ subscriptionId: string, changeType: string, clientState?: string, resource?: string, resourceData?: Record<string, any>, tenantId?: string, subscriptionExpirationDateTime?: string }[]"
           }
         ]
       },
-      "responseType": "{ subscriptionId: string, changeType: string, clientState?: string, resource?: string, resourceData?: {}, tenantId?: string, subscriptionExpirationDateTime?: string }",
+      "responseType": "{ subscriptionId: string, changeType: string, clientState?: string, resource?: string, resourceData?: Record<string, any>, tenantId?: string, subscriptionExpirationDateTime?: string }",
       "usageExample": "onedrive({\n    webhookHooks: {\n        drive: {\n            driveNotification: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {

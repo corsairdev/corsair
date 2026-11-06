@@ -1,7 +1,7 @@
 {
   "id": "pdfco",
-  "displayName": "Pdfco",
-  "description": "Pdfco plugin for Corsair",
+  "displayName": "PDF.co",
+  "description": "PDF API for converting, merging, splitting, editing, and parsing PDFs and documents, and uploading files.",
   "npmPackageName": "@corsair-dev/pdfco",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -121,7 +121,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -253,7 +253,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -314,7 +314,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{ objects?: {}[], elapsed?: number, templateName?: string, templateVersion?: string, timestamp?: string }"
+            "type": "{ objects?: Record<string, JsonValue>[], elapsed?: number, templateName?: string, templateVersion?: string, timestamp?: string }"
           }
         ]
       }
@@ -366,7 +366,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -479,7 +479,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -592,7 +592,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -705,7 +705,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -818,7 +818,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -1205,7 +1205,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -1319,7 +1319,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -1427,7 +1427,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -1535,7 +1535,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -1643,7 +1643,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -1728,7 +1728,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -1849,7 +1849,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -1981,7 +1981,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -2089,7 +2089,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -2179,7 +2179,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -2265,7 +2265,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -2373,7 +2373,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -2516,7 +2516,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -2666,7 +2666,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -2774,7 +2774,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -2888,7 +2888,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -3007,7 +3007,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -3126,7 +3126,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -3240,7 +3240,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -3359,7 +3359,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -3472,7 +3472,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -3580,7 +3580,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]
@@ -3694,7 +3694,7 @@
           {
             "key": "profiles",
             "optional": true,
-            "type": "string | {}",
+            "type": "string | Record<string, JsonValue>",
             "description": "Advanced profiles object or serialized JSON string, see https://developer.pdf.co/api/profiles"
           }
         ]

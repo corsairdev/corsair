@@ -1,0 +1,372 @@
+---
+title: API
+description: "API reference for Enigma: every `enigma.api.*` operation with input and output types."
+---
+
+Every `enigma.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Brands
+
+### get
+
+`brands.get`
+
+Get a brand by ID with its operating locations (paged by cursor) and legal entities, each location with its address, operating status and 12-month card revenue
+
+**Risk:** `read`
+
+```ts
+await corsair.enigma.api.brands.get({ id: '5f1147ed-4d0e-4f36-a1d2-c2b3f2b1a9c4', locationsFirst: 10, locationsAfter: 'cursor-from-previous-page' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The brand ID from a brands.match call. |
+| `locationsFirst` | `number` | No | Page size for the operating locations list. Defaults to 10. |
+| `locationsAfter` | `string` | No | Cursor from a previous operating locations page. |
+| `legalEntitiesFirst` | `number` | No | Page size for the legal entities list. Defaults to 5. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brand` | `object \| null` | No | `null` when nothing matched. |
+
+<AccordionGroup>
+<Accordion title="brand full type">
+
+```ts
+{
+  id: string,
+  enigmaId?: string | null,
+  names: string[],
+  websites: string[],
+  industries: {
+    industryCode?: string | null,
+    industryDesc?: string | null,
+    industryType?: string | null
+  }[],
+  cardRevenue12m?: {
+    quantityType?: string | null,
+    period?: string | null,
+    projectedQuantity?: number | null,
+    periodStartDate?: string | null,
+    periodEndDate?: string | null
+  } | null,
+  operatingLocations: {
+    items: {
+      id: string,
+      names: string[],
+      address?: {
+        fullAddress?: string | null,
+        streetAddress1?: string | null,
+        streetAddress2?: string | null,
+        city?: string | null,
+        state?: string | null,
+        zip?: string | null,
+        county?: string | null,
+        country?: string | null,
+        latitude?: number | null,
+        longitude?: number | null
+      } | null,
+      operatingStatus?: string | null,
+      cardRevenue12m?: {
+        quantityType?: string | null,
+        period?: string | null,
+        projectedQuantity?: number | null,
+        periodStartDate?: string | null,
+        periodEndDate?: string | null
+      } | null
+    }[],
+    pageInfo: {
+      hasNextPage?: boolean | null,
+      endCursor?: string | null
+    }
+  },
+  legalEntities: {
+    items: {
+      id: string,
+      enigmaId?: string | null,
+      names: string[],
+      legalEntityType?: string | null,
+      registeredEntities: {
+        name?: string | null,
+        registeredEntityType?: string | null,
+        formationDate?: string | null
+      }[]
+    }[],
+    pageInfo: {
+      hasNextPage?: boolean | null,
+      endCursor?: string | null
+    }
+  }
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### match
+
+`brands.match`
+
+Match a business by name, website, phone number or a natural-language prompt, with an optional address and confidence threshold; returns the best-matching brand with its industries, location count and 12-month card revenue
+
+**Risk:** `read`
+
+```ts
+await corsair.enigma.api.brands.match({ name: 'Starbucks', address: { state: 'WA' }, matchThreshold: 0.5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | Business name to match. |
+| `website` | `string` | No | Website to match, any format. |
+| `phoneNumber` | `string` | No | Phone number to match, 10-digit US number. |
+| `prompt` | `string` | No | Natural-language business description; cannot be combined with name, website, phoneNumber or address. |
+| `address` | `object` | No | Address to narrow the match. |
+| `matchThreshold` | `number` | No | Confidence threshold between 0.0 and 1.0. |
+
+At least one of `name`, `website`, `phoneNumber` or `prompt` is required, and `prompt` cannot be combined with any of them or with `address`.
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  street1?: string,
+  street2?: string,
+  city?: string,
+  state?: string,
+  postalCode?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brand` | `object \| null` | No | `null` when nothing matched. |
+
+<AccordionGroup>
+<Accordion title="brand full type">
+
+```ts
+{
+  id: string,
+  enigmaId?: string | null,
+  names: string[],
+  websites: string[],
+  industries: {
+    industryCode?: string | null,
+    industryDesc?: string | null,
+    industryType?: string | null
+  }[],
+  operatingLocationCount?: number | null,
+  cardRevenue12m?: {
+    quantityType?: string | null,
+    period?: string | null,
+    projectedQuantity?: number | null,
+    periodStartDate?: string | null,
+    periodEndDate?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Legal Entities
+
+### get
+
+`legalEntities.get`
+
+Get a legal entity by ID or name, with its registered entities, formation dates, addresses and brands; each list returns up to three entries with a pageInfo flag when more exist
+
+**Risk:** `read`
+
+```ts
+await corsair.enigma.api.legalEntities.get({ name: 'Starbucks Corporation' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | The legal entity ID. |
+| `name` | `string` | No | Legal entity name to match instead of an ID. |
+
+At least one of `id` or `name` is required. The `registeredEntities`, `addresses` and `brands` lists return their first page of up to three entries; each carries a `pageInfo` with `hasNextPage` when more exist.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `legalEntity` | `object \| null` | No | `null` when nothing matched. |
+
+<AccordionGroup>
+<Accordion title="legalEntity full type">
+
+```ts
+{
+  id: string,
+  enigmaId?: string | null,
+  names: string[],
+  legalEntityType?: string | null,
+  registeredEntities: {
+    items: {
+      name?: string | null,
+      registeredEntityType?: string | null,
+      formationDate?: string | null
+    }[],
+    pageInfo: {
+      hasNextPage?: boolean | null,
+      endCursor?: string | null
+    }
+  },
+  addresses: {
+    items: {
+      fullAddress?: string | null,
+      streetAddress1?: string | null,
+      streetAddress2?: string | null,
+      city?: string | null,
+      state?: string | null,
+      zip?: string | null,
+      county?: string | null,
+      country?: string | null,
+      latitude?: number | null,
+      longitude?: number | null
+    }[],
+    pageInfo: {
+      hasNextPage?: boolean | null,
+      endCursor?: string | null
+    }
+  },
+  brands: {
+    items: {
+      id: string,
+      enigmaId?: string | null,
+      names: string[]
+    }[],
+    pageInfo: {
+      hasNextPage?: boolean | null,
+      endCursor?: string | null
+    }
+  }
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Locations
+
+### match
+
+`locations.match`
+
+Match a business location by name, address, website or phone number; returns the address, phone numbers, operating status and parent brands
+
+**Risk:** `read`
+
+```ts
+await corsair.enigma.api.locations.match({ name: 'Bluestone Lane', address: { city: 'New York', state: 'NY' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | Business name to match. |
+| `website` | `string` | No | Website to match. |
+| `phoneNumber` | `string` | No | Phone number to match, 10-digit US number. |
+| `address` | `object` | No | Address to match. |
+| `matchThreshold` | `number` | No | Confidence threshold between 0.0 and 1.0. |
+
+At least one of `name`, `website`, `phoneNumber` or `address` is required.
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  street1?: string,
+  street2?: string,
+  city?: string,
+  state?: string,
+  postalCode?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `object \| null` | No | `null` when nothing matched. |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  id: string,
+  names: string[],
+  address?: {
+    fullAddress?: string | null,
+    streetAddress1?: string | null,
+    streetAddress2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null,
+    county?: string | null,
+    country?: string | null,
+    latitude?: number | null,
+    longitude?: number | null
+  } | null,
+  phoneNumbers: string[],
+  websites: string[],
+  operatingStatus?: string | null,
+  brands: {
+    id: string,
+    enigmaId?: string | null,
+    names: string[]
+  }[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

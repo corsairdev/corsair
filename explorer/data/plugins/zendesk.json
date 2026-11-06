@@ -59,12 +59,12 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "count",
@@ -238,12 +238,12 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "count",
@@ -448,12 +448,12 @@
           {
             "key": "next_page",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous_page",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "count",

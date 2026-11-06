@@ -43,7 +43,7 @@ Handle a signed Xquik monitor event delivery
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `deliveryId` | `string` | No | — |
 | `eventType` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet \| webhook.test` | Yes | — |
 | `occurredAt` | `string` | No | — |
@@ -53,16 +53,6 @@ Handle a signed Xquik monitor event delivery
 | `timestamp` | `string` | No | — |
 | `username` | `string` | No | — |
 
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 <AccordionGroup>
@@ -70,8 +60,7 @@ Handle a signed Xquik monitor event delivery
 
 ```ts
 {
-  data: {
-  },
+  data: Record<string, any>,
   deliveryId?: string,
   eventType: tweet.new | tweet.quote | tweet.reply | tweet.retweet | webhook.test,
   occurredAt?: string,
@@ -115,7 +104,7 @@ Handle a signed Xquik test webhook delivery
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `deliveryId` | `string` | No | — |
 | `eventType` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet \| webhook.test` | Yes | — |
 | `occurredAt` | `string` | No | — |
@@ -125,16 +114,6 @@ Handle a signed Xquik test webhook delivery
 | `timestamp` | `string` | No | — |
 | `username` | `string` | No | — |
 
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 <AccordionGroup>
@@ -142,8 +121,7 @@ Handle a signed Xquik test webhook delivery
 
 ```ts
 {
-  data: {
-  },
+  data: Record<string, any>,
   deliveryId?: string,
   eventType: tweet.new | tweet.quote | tweet.reply | tweet.retweet | webhook.test,
   occurredAt?: string,

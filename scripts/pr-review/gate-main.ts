@@ -1,7 +1,14 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { detectPlugin, renderScorecard, runGate } from './gate.ts';
+import {
+	detectPlugin,
+	PR_FILES_JQ,
+	parsePrFileRows,
+	renderScorecard,
+	runGate,
+	touchedPlugins,
+} from './gate.ts';
 
 const MARKER = '<!-- corsair-pr-gate -->';
 function gh(args: string[]): string {
@@ -97,18 +104,36 @@ const pr = String(event.pull_request.number);
 // event.pull_request.base.sha is wrong: that sha is recorded on the PR
 // object and lags behind the base branch, sweeping unrelated main-side
 // changes into the diff (seen live on #427 after #435 merged).
-const changedFiles = gh([
+const { changedFiles, addedFiles } = parsePrFileRows(
+	gh([
+		'api',
+		`repos/${repo}/pulls/${pr}/files`,
+		'--paginate',
+		'--jq',
+		PR_FILES_JQ,
+	]),
+);
+
+// Labels are read live, not from the event payload: a label added after the
+// push takes effect when this job is re-run ("Re-run failed jobs").
+const labels = gh([
 	'api',
-	`repos/${repo}/pulls/${pr}/files`,
+	`repos/${repo}/issues/${pr}/labels`,
 	'--paginate',
 	'--jq',
-	'.[].filename',
+	'.[].name',
 ])
 	.trim()
 	.split('\n')
 	.filter(Boolean);
 
 const plugin = detectPlugin(changedFiles);
+const testFileCounts = Object.fromEntries(
+	touchedPlugins(changedFiles).map((p) => [
+		p,
+		countTests(path.join('packages', p)).testFileCount,
+	]),
+);
 const tests = plugin
 	? countTests(path.join('packages', plugin))
 	: { testFileCount: 0, assertionCount: 0 };
@@ -118,6 +143,10 @@ const result = runGate({
 	isDraft: event.pull_request.draft as boolean,
 	testFileCount: tests.testFileCount,
 	assertionCount: tests.assertionCount,
+	labels,
+	authorAssociation: event.pull_request.author_association as string,
+	addedFiles,
+	testFileCounts,
 });
 
 if (!result.isPluginPr) {

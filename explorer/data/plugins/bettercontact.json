@@ -59,7 +59,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ first_name?: string, last_name?: string, company?: string, company_domain?: string, linkedin_url?: string, custom_fields?: {} }[]"
+            "type": "{ first_name?: string, last_name?: string, company?: string, company_domain?: string, linkedin_url?: string, custom_fields?: Record<string, any> }[]"
           },
           {
             "key": "enrich_email_address",
@@ -175,12 +175,12 @@
           {
             "key": "summary",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -216,7 +216,7 @@
           {
             "key": "webhook",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "enrich_email_address",
@@ -297,12 +297,12 @@
           {
             "key": "summary",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "leads",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }

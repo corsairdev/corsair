@@ -1,0 +1,3925 @@
+{
+  "id": "gumroad",
+  "displayName": "Gumroad",
+  "description": "Sell and manage digital products: products, sales, subscribers, licenses, offer codes, variants, emails, workflows, payouts and tax forms.",
+  "npmPackageName": "@corsair-dev/gumroad",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 85,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "gumroad.api.customFields.create",
+      "shortPath": "customFields.create",
+      "description": "Add a custom field to a product's checkout, optionally required",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "true | false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_field",
+            "optional": false,
+            "type": "{ name: string, required?: string | boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.customFields.delete",
+      "shortPath": "customFields.delete",
+      "description": "Permanently delete a product's custom field by name",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the custom field"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.customFields.list",
+      "shortPath": "customFields.list",
+      "description": "List a product's checkout custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_fields",
+            "optional": false,
+            "type": "{ name: string, required?: string | boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.customFields.update",
+      "shortPath": "customFields.update",
+      "description": "Flip whether one of a product's custom fields is required",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the existing custom field"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "true | false"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_field",
+            "optional": false,
+            "type": "{ name: string, required?: string | boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.earnings.get",
+      "shortPath": "earnings.get",
+      "description": "Read the annual earnings breakdown (gross, fees, taxes, affiliate credit, net) for one tax year",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "year",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gross_cents",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "fees_cents",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "taxes_cents",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "affiliate_credit_cents",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "net_cents",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.emails.create",
+      "shortPath": "emails.create",
+      "description": "Create a draft audience email by subject, HTML body and audience, or send it immediately with publish=true",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "HTML email body"
+          },
+          {
+            "key": "audience",
+            "optional": true,
+            "type": "all | audience | customers | seller | followers | follower | product",
+            "description": "Defaults to \"audience\"."
+          },
+          {
+            "key": "product_id",
+            "optional": true,
+            "type": "string",
+            "description": "Required when audience is \"product\""
+          },
+          {
+            "key": "link_id",
+            "optional": true,
+            "type": "string",
+            "description": "Product permalink"
+          },
+          {
+            "key": "publish",
+            "optional": true,
+            "type": "true | false",
+            "description": "\"true\" to send immediately"
+          },
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "true | false",
+            "description": "\"false\" to send immediately"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "{ id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.emails.delete",
+      "shortPath": "emails.delete",
+      "description": "Delete an audience email",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Email id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.emails.get",
+      "shortPath": "emails.get",
+      "description": "Read one audience email by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Email id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "{ id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.emails.list",
+      "shortPath": "emails.list",
+      "description": "List the seller's audience emails, optionally filtered to published, scheduled or draft state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "published | scheduled | draft"
+          },
+          {
+            "key": "page_key",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from next_page_key of the previous response"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "{ id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.emails.preview",
+      "shortPath": "emails.preview",
+      "description": "Send a preview of an audience email to the seller's own address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Email id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "{ id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.emails.schedule",
+      "shortPath": "emails.schedule",
+      "description": "Schedule a draft audience email to publish at a set time in the seller's timezone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Email id"
+          },
+          {
+            "key": "to_be_published_at",
+            "optional": false,
+            "type": "string",
+            "description": "Schedule time in the seller's timezone"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "{ id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.emails.send",
+      "shortPath": "emails.send",
+      "description": "Publish a draft audience email and send it to its audience",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Email id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "{ id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.emails.unschedule",
+      "shortPath": "emails.unschedule",
+      "description": "Cancel a scheduled audience email and turn it back into a draft",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Email id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "{ id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.files.abort",
+      "shortPath": "files.abort",
+      "description": "Cancel a multipart upload started by files.presign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "upload_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "accepted | already_gone"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.files.complete",
+      "shortPath": "files.complete",
+      "description": "Finalize a multipart upload with the S3 upload id, key and part etags, returning the canonical file URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "upload_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parts",
+            "optional": false,
+            "type": "{ part_number: number, etag: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "file_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.files.presign",
+      "shortPath": "files.presign",
+      "description": "Start a multipart file upload and get presigned S3 URLs per 100 MB part (max 20 GB); the binary PUTs to S3 are client-side",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_size",
+            "optional": false,
+            "type": "number",
+            "description": "File size in bytes; max 20 GB"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "upload_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parts",
+            "optional": false,
+            "type": "{ part_number: number, presigned_url: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.licenses.decrementUsesCount",
+      "shortPath": "licenses.decrementUsesCount",
+      "description": "Decrement a license key use counter and read its purchase",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "license_key",
+            "optional": false,
+            "type": "string",
+            "description": "License key provided by the customer"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "uses",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "purchase",
+            "optional": false,
+            "type": "{ id: string, seller_id: string, product_id: string, product_name: string, permalink?: string | null, product_permalink?: string | null, email: string, price?: number | null, gumroad_fee?: number | null, currency?: string | null, quantity?: number | null, discover_fee_charged?: boolean | null, can_contact?: boolean | null, referrer?: string | null, card?: { visual?: string | null, type?: string | null } | null, order_number?: number | null, sale_id: string, sale_timestamp?: string | null, purchaser_id?: string | null, subscription_id?: string | null, variants?: string | null, license_key: string, is_multiseat_license?: boolean | null, ip_country?: string | null, recurrence?: string | null, is_gift_receiver_purchase?: boolean | null, refunded?: boolean | null, disputed?: boolean | null, dispute_won?: boolean | null, created_at?: string | null, custom_fields?: {}[] | null, chargebacked?: boolean | null, subscription_ended_at?: string | null, subscription_cancelled_at?: string | null, subscription_failed_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.licenses.disable",
+      "shortPath": "licenses.disable",
+      "description": "Disable a license key so it fails verification, and read its purchase",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "license_key",
+            "optional": false,
+            "type": "string",
+            "description": "License key provided by the customer"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "uses",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "purchase",
+            "optional": false,
+            "type": "{ id: string, seller_id: string, product_id: string, product_name: string, permalink?: string | null, product_permalink?: string | null, email: string, price?: number | null, gumroad_fee?: number | null, currency?: string | null, quantity?: number | null, discover_fee_charged?: boolean | null, can_contact?: boolean | null, referrer?: string | null, card?: { visual?: string | null, type?: string | null } | null, order_number?: number | null, sale_id: string, sale_timestamp?: string | null, purchaser_id?: string | null, subscription_id?: string | null, variants?: string | null, license_key: string, is_multiseat_license?: boolean | null, ip_country?: string | null, recurrence?: string | null, is_gift_receiver_purchase?: boolean | null, refunded?: boolean | null, disputed?: boolean | null, dispute_won?: boolean | null, created_at?: string | null, custom_fields?: {}[] | null, chargebacked?: boolean | null, subscription_ended_at?: string | null, subscription_cancelled_at?: string | null, subscription_failed_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.licenses.enable",
+      "shortPath": "licenses.enable",
+      "description": "Re-enable a disabled license key and read its purchase",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "license_key",
+            "optional": false,
+            "type": "string",
+            "description": "License key provided by the customer"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "uses",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "purchase",
+            "optional": false,
+            "type": "{ id: string, seller_id: string, product_id: string, product_name: string, permalink?: string | null, product_permalink?: string | null, email: string, price?: number | null, gumroad_fee?: number | null, currency?: string | null, quantity?: number | null, discover_fee_charged?: boolean | null, can_contact?: boolean | null, referrer?: string | null, card?: { visual?: string | null, type?: string | null } | null, order_number?: number | null, sale_id: string, sale_timestamp?: string | null, purchaser_id?: string | null, subscription_id?: string | null, variants?: string | null, license_key: string, is_multiseat_license?: boolean | null, ip_country?: string | null, recurrence?: string | null, is_gift_receiver_purchase?: boolean | null, refunded?: boolean | null, disputed?: boolean | null, dispute_won?: boolean | null, created_at?: string | null, custom_fields?: {}[] | null, chargebacked?: boolean | null, subscription_ended_at?: string | null, subscription_cancelled_at?: string | null, subscription_failed_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.licenses.rotate",
+      "shortPath": "licenses.rotate",
+      "description": "Rotate a license key to a new one; the previous key stops validating immediately",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "license_key",
+            "optional": false,
+            "type": "string",
+            "description": "License key provided by the customer"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "uses",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "purchase",
+            "optional": false,
+            "type": "{ id: string, seller_id: string, product_id: string, product_name: string, permalink?: string | null, product_permalink?: string | null, email: string, price?: number | null, gumroad_fee?: number | null, currency?: string | null, quantity?: number | null, discover_fee_charged?: boolean | null, can_contact?: boolean | null, referrer?: string | null, card?: { visual?: string | null, type?: string | null } | null, order_number?: number | null, sale_id: string, sale_timestamp?: string | null, purchaser_id?: string | null, subscription_id?: string | null, variants?: string | null, license_key: string, is_multiseat_license?: boolean | null, ip_country?: string | null, recurrence?: string | null, is_gift_receiver_purchase?: boolean | null, refunded?: boolean | null, disputed?: boolean | null, dispute_won?: boolean | null, created_at?: string | null, custom_fields?: {}[] | null, chargebacked?: boolean | null, subscription_ended_at?: string | null, subscription_cancelled_at?: string | null, subscription_failed_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.licenses.verify",
+      "shortPath": "licenses.verify",
+      "description": "Verify a license key against a product and read its purchase; increments the license use counter unless increment_uses_count is \"false\"",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "license_key",
+            "optional": false,
+            "type": "string",
+            "description": "License key provided by the customer"
+          },
+          {
+            "key": "increment_uses_count",
+            "optional": true,
+            "type": "true | false",
+            "description": "\"false\" to leave the license use counter unchanged. Defaults to \"true\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "uses",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "purchase",
+            "optional": false,
+            "type": "{ id: string, seller_id: string, product_id: string, product_name: string, permalink?: string | null, product_permalink?: string | null, email: string, price?: number | null, gumroad_fee?: number | null, currency?: string | null, quantity?: number | null, discover_fee_charged?: boolean | null, can_contact?: boolean | null, referrer?: string | null, card?: { visual?: string | null, type?: string | null } | null, order_number?: number | null, sale_id: string, sale_timestamp?: string | null, purchaser_id?: string | null, subscription_id?: string | null, variants?: string | null, license_key: string, is_multiseat_license?: boolean | null, ip_country?: string | null, recurrence?: string | null, is_gift_receiver_purchase?: boolean | null, refunded?: boolean | null, disputed?: boolean | null, dispute_won?: boolean | null, created_at?: string | null, custom_fields?: {}[] | null, chargebacked?: boolean | null, subscription_ended_at?: string | null, subscription_cancelled_at?: string | null, subscription_failed_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.media.create",
+      "shortPath": "media.create",
+      "description": "Add a media library file from a public image URL or a direct-upload signed blob id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "A publicly reachable image URL"
+          },
+          {
+            "key": "signed_blob_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "media",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, extension?: string | null, file_size?: number | null, url?: string | null, status?: { type?: string | null } | null, file_group?: string | null, created_at?: string | null }"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.media.delete",
+      "shortPath": "media.delete",
+      "description": "Delete a media library file by id",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Media file id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.media.list",
+      "shortPath": "media.list",
+      "description": "List the authenticated user's media library files",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "media",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, extension?: string | null, file_size?: number | null, url?: string | null, status?: { type?: string | null } | null, file_group?: string | null, created_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.offerCodes.createForProduct",
+      "shortPath": "offerCodes.createForProduct",
+      "description": "Create a fixed-amount or percentage offer code for a product, optionally universal, automatic and scheduled",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The coupon code used at checkout"
+          },
+          {
+            "key": "amount_off",
+            "optional": false,
+            "type": "number",
+            "description": "Amount in cents or percent"
+          },
+          {
+            "key": "offer_type",
+            "optional": true,
+            "type": "cents | percent",
+            "description": "Defaults to \"cents\"."
+          },
+          {
+            "key": "max_purchase_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minimum_amount_cents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "universal",
+            "optional": true,
+            "type": "true | false",
+            "description": "\"true\" applies the code to all products. Defaults to \"false\"."
+          },
+          {
+            "key": "auto_apply",
+            "optional": true,
+            "type": "true | false"
+          },
+          {
+            "key": "sale_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "valid_at",
+            "optional": true,
+            "type": "string | \"\""
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string | \"\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "offer_code",
+            "optional": false,
+            "type": "{ id: string, name: string, amount_cents?: number | null, percent_off?: number | null, max_purchase_count?: number | null, minimum_amount_cents?: number | null, universal?: boolean | null, currency_type?: string | null, auto_apply?: boolean | null, sale_label?: string | null, valid_at?: string | null, expires_at?: string | null, times_used?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.offerCodes.deleteForProduct",
+      "shortPath": "offerCodes.deleteForProduct",
+      "description": "Permanently delete one of a product's offer codes",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Offer code id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.offerCodes.get",
+      "shortPath": "offerCodes.get",
+      "description": "Read one store-wide offer code by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Store-wide offer code id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "offer_code",
+            "optional": false,
+            "type": "{ id: string, name: string, amount_cents?: number | null, percent_off?: number | null, max_purchase_count?: number | null, minimum_amount_cents?: number | null, universal?: boolean | null, currency_type?: string | null, auto_apply?: boolean | null, sale_label?: string | null, valid_at?: string | null, expires_at?: string | null, times_used?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.offerCodes.getForProduct",
+      "shortPath": "offerCodes.getForProduct",
+      "description": "Read one of a product's offer codes by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Offer code id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "offer_code",
+            "optional": false,
+            "type": "{ id: string, name: string, amount_cents?: number | null, percent_off?: number | null, max_purchase_count?: number | null, minimum_amount_cents?: number | null, universal?: boolean | null, currency_type?: string | null, auto_apply?: boolean | null, sale_label?: string | null, valid_at?: string | null, expires_at?: string | null, times_used?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.offerCodes.list",
+      "shortPath": "offerCodes.list",
+      "description": "List the store's non-deleted offer codes, newest first, optionally filtered to automatic sales",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "auto_apply",
+            "optional": true,
+            "type": "true | false",
+            "description": "Filter by automatic application"
+          },
+          {
+            "key": "page_key",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from next_page_key of the previous response"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "offer_codes",
+            "optional": false,
+            "type": "{ id: string, name: string, amount_cents?: number | null, percent_off?: number | null, max_purchase_count?: number | null, minimum_amount_cents?: number | null, universal?: boolean | null, currency_type?: string | null, auto_apply?: boolean | null, sale_label?: string | null, valid_at?: string | null, expires_at?: string | null, times_used?: number | null }[]"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.offerCodes.listForProduct",
+      "shortPath": "offerCodes.listForProduct",
+      "description": "List all of a product's offer codes with amounts and redemption counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "offer_codes",
+            "optional": false,
+            "type": "{ id: string, name: string, amount_cents?: number | null, percent_off?: number | null, max_purchase_count?: number | null, minimum_amount_cents?: number | null, universal?: boolean | null, currency_type?: string | null, auto_apply?: boolean | null, sale_label?: string | null, valid_at?: string | null, expires_at?: string | null, times_used?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.offerCodes.update",
+      "shortPath": "offerCodes.update",
+      "description": "Update a store-wide offer code schedule, usage cap or minimum; the amount and universality cannot change",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Store-wide offer code id"
+          },
+          {
+            "key": "max_purchase_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minimum_amount_cents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auto_apply",
+            "optional": true,
+            "type": "true | false"
+          },
+          {
+            "key": "sale_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "valid_at",
+            "optional": true,
+            "type": "string | \"\""
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string | \"\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "offer_code",
+            "optional": false,
+            "type": "{ id: string, name: string, amount_cents?: number | null, percent_off?: number | null, max_purchase_count?: number | null, minimum_amount_cents?: number | null, universal?: boolean | null, currency_type?: string | null, auto_apply?: boolean | null, sale_label?: string | null, valid_at?: string | null, expires_at?: string | null, times_used?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.offerCodes.updateForProduct",
+      "shortPath": "offerCodes.updateForProduct",
+      "description": "Update one of a product's offer codes: usage cap, minimum, automatic application and validity window",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Offer code id"
+          },
+          {
+            "key": "max_purchase_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "minimum_amount_cents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auto_apply",
+            "optional": true,
+            "type": "true | false"
+          },
+          {
+            "key": "sale_label",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "valid_at",
+            "optional": true,
+            "type": "string | \"\""
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string | \"\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "offer_code",
+            "optional": false,
+            "type": "{ id: string, name: string, amount_cents?: number | null, percent_off?: number | null, max_purchase_count?: number | null, minimum_amount_cents?: number | null, universal?: boolean | null, currency_type?: string | null, auto_apply?: boolean | null, sale_label?: string | null, valid_at?: string | null, expires_at?: string | null, times_used?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.payouts.get",
+      "shortPath": "payouts.get",
+      "description": "Read one payout with its sale ids and optional per-transaction breakdown lines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Payout id"
+          },
+          {
+            "key": "include_sales",
+            "optional": true,
+            "type": "true | false",
+            "description": "\"false\" to exclude sales, refunded_sales and disputed_sales. Defaults to \"true\"."
+          },
+          {
+            "key": "include_transactions",
+            "optional": true,
+            "type": "true | false",
+            "description": "\"true\" to include the payout CSV transaction lines. Defaults to \"false\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "payout",
+            "optional": false,
+            "type": "{ id?: string | null, amount?: string | null, currency?: string | null, status?: string | null, created_at?: string | null, processed_at?: string | null, payment_processor?: string | null, bank_account_visual?: string | null, paypal_email?: string | null, sales?: string[] | null, refunded_sales?: string[] | null, disputed_sales?: string[] | null, transactions?: {}[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.payouts.list",
+      "shortPath": "payouts.list",
+      "description": "List payouts with amount, currency, status and bank destination, filterable by date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_key",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from next_page_key of the previous response"
+          },
+          {
+            "key": "include_upcoming",
+            "optional": true,
+            "type": "true | false",
+            "description": "\"false\" to exclude the upcoming payout. Defaults to \"true\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "payouts",
+            "optional": false,
+            "type": "{ id?: string | null, amount?: string | null, currency?: string | null, status?: string | null, created_at?: string | null, processed_at?: string | null, payment_processor?: string | null, bank_account_visual?: string | null, paypal_email?: string | null, sales?: string[] | null, refunded_sales?: string[] | null, disputed_sales?: string[] | null, transactions?: {}[] | null }[]"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.payouts.upcoming",
+      "shortPath": "payouts.upcoming",
+      "description": "Read the up to two upcoming payouts with their transaction lines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include_sales",
+            "optional": true,
+            "type": "true | false",
+            "description": "Defaults to \"true\"."
+          },
+          {
+            "key": "include_transactions",
+            "optional": true,
+            "type": "true | false",
+            "description": "Defaults to \"false\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "payouts",
+            "optional": false,
+            "type": "{ id?: string | null, amount?: string | null, currency?: string | null, status?: string | null, created_at?: string | null, processed_at?: string | null, payment_processor?: string | null, bank_account_visual?: string | null, paypal_email?: string | null, sales?: string[] | null, refunded_sales?: string[] | null, disputed_sales?: string[] | null, transactions?: {}[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.products.categoriesList",
+      "shortPath": "products.categoriesList",
+      "description": "List every product category; a category path feeds the category parameter when creating or updating products",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, label?: string | null, path?: string | null, parent_id?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.products.coversAdd",
+      "shortPath": "products.coversAdd",
+      "description": "Attach a cover to a product from a public image/video or YouTube/Vimeo URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "A publicly accessible image/video URL, or a YouTube/Vimeo URL"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "covers",
+            "optional": false,
+            "type": "{ id: string, url?: string | null, original_url?: string | null, thumbnail?: string | null, type?: string | null, filetype?: string | null, width?: number | null, height?: number | null, native_width?: number | null, native_height?: number | null }[]"
+          },
+          {
+            "key": "main_cover_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.products.coversDelete",
+      "shortPath": "products.coversDelete",
+      "description": "Permanently delete one of a product's covers by id",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Cover id from the covers response"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "covers",
+            "optional": false,
+            "type": "{ id: string, url?: string | null, original_url?: string | null, thumbnail?: string | null, type?: string | null, filetype?: string | null, width?: number | null, height?: number | null, native_width?: number | null, native_height?: number | null }[]"
+          },
+          {
+            "key": "main_cover_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.products.create",
+      "shortPath": "products.create",
+      "description": "Create a product with name, price in cents, type, tags, refund policy, rich content pages and attached files",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "draft",
+            "optional": true,
+            "type": "true | false",
+            "description": "\"true\" saves as an unpublished draft instead of publishing"
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "true | false",
+            "description": "\"false\" saves as an unpublished draft, same as draft=\"true\""
+          },
+          {
+            "key": "native_type",
+            "optional": true,
+            "type": "digital | course | ebook | membership | bundle | coffee | call | commission",
+            "description": "Product type; cannot be changed later"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "HTML"
+          },
+          {
+            "key": "custom_permalink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": false,
+            "type": "number",
+            "description": "Price in the smallest currency unit (e.g. cents)"
+          },
+          {
+            "key": "price_currency_type",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to the account's currency"
+          },
+          {
+            "key": "subscription_duration",
+            "optional": true,
+            "type": "monthly | quarterly | biannually | yearly | every_two_years",
+            "description": "Membership products only"
+          },
+          {
+            "key": "customizable_price",
+            "optional": true,
+            "type": "true | false",
+            "description": "\"true\" for pay-what-you-want"
+          },
+          {
+            "key": "suggested_price_cents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_purchase_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "Full category path from categories.list"
+          },
+          {
+            "key": "taxonomy_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "custom_summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refund_period",
+            "optional": true,
+            "type": "7 | 14 | 30 | 183 | inherit | none",
+            "description": "Product-level refund policy"
+          },
+          {
+            "key": "refund_fine_print",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "rich_content",
+            "optional": true,
+            "type": "{ id: string, title: string, description: JsonValue }[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id?: string, external_id?: string, url: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: Record<string, number> | null }"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.products.delete",
+      "shortPath": "products.delete",
+      "description": "Permanently delete a product",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.products.disable",
+      "shortPath": "products.disable",
+      "description": "Unpublish (disable) an existing product",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: Record<string, number> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.products.enable",
+      "shortPath": "products.enable",
+      "description": "Publish (enable) an existing product",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: Record<string, number> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.products.get",
+      "shortPath": "products.get",
+      "description": "Get one product by id, including description, price, tags and purchasing-power-parity prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: Record<string, number> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.products.list",
+      "shortPath": "products.list",
+      "description": "List the authenticated user's Gumroad products with price, publication state and sales counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "products",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: Record<string, number> | null }[]"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.products.reviewsList",
+      "shortPath": "products.reviewsList",
+      "description": "List one product's reviews with rating, message and the seller's public reply",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "page_key",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from next_page_key of the previous response"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "product_reviews",
+            "optional": false,
+            "type": "{ id: string, rating?: number | null, message?: string | null, created_at?: string | null, purchase_id?: string | null, rater_name?: string | null, response?: { message?: string | null, created_at?: string | null } | null }[]"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.products.thumbnailDelete",
+      "shortPath": "products.thumbnailDelete",
+      "description": "Remove a product's thumbnail",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.products.thumbnailSet",
+      "shortPath": "products.thumbnailSet",
+      "description": "Set a product's thumbnail from a public image URL or a direct-upload signed blob id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signed_blob_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "thumbnail",
+            "optional": false,
+            "type": "{ url?: string | null, guid?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.products.update",
+      "shortPath": "products.update",
+      "description": "Update a product; files and tags are full replacements, and custom_html or cover_ids can be rewritten",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "HTML"
+          },
+          {
+            "key": "custom_permalink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "price_currency_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "customizable_price",
+            "optional": true,
+            "type": "true | false"
+          },
+          {
+            "key": "suggested_price_cents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_purchase_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "quantity_enabled",
+            "optional": true,
+            "type": "true | false"
+          },
+          {
+            "key": "is_adult",
+            "optional": true,
+            "type": "true | false"
+          },
+          {
+            "key": "display_product_reviews",
+            "optional": true,
+            "type": "true | false"
+          },
+          {
+            "key": "should_show_sales_count",
+            "optional": true,
+            "type": "true | false"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "taxonomy_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Full replacement"
+          },
+          {
+            "key": "custom_receipt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_summary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "refund_period",
+            "optional": true,
+            "type": "7 | 14 | 30 | 183 | inherit | none"
+          },
+          {
+            "key": "refund_fine_print",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_html",
+            "optional": true,
+            "type": "string",
+            "description": "Custom landing page HTML; an empty string clears it"
+          },
+          {
+            "key": "cover_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Display order"
+          },
+          {
+            "key": "rich_content",
+            "optional": true,
+            "type": "{ id: string, title: string, description: JsonValue }[]",
+            "description": "Full replacement"
+          },
+          {
+            "key": "has_same_rich_content_for_all_variants",
+            "optional": true,
+            "type": "true | false"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ id?: string, external_id?: string, url: string }[]",
+            "description": "Full replacement; omitted files are deleted"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: Record<string, number> | null }"
+          },
+          {
+            "key": "warning",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "file_id_mappings",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.public.product",
+      "shortPath": "public.product",
+      "description": "Read the public product page data for a permalink (price, covers, description, reviews); no authentication required",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "seller",
+            "optional": false,
+            "type": "string",
+            "description": "The seller's profile subdomain"
+          },
+          {
+            "key": "permalink",
+            "optional": false,
+            "type": "string",
+            "description": "The product permalink"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "permalink",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "native_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "seller",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "price_cents",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "currency_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "price_formatted",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_pay_what_you_want",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suggested_price_cents",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_recurring_billing",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_tiered_membership",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "recurrences",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "free_trial",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "description_html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "covers",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "ratings",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "reviews",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "sales_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "quantity_remaining",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "is_quantity_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_sales_limited",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_published",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "is_physical",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "refund_policy",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.public.profile",
+      "shortPath": "public.profile",
+      "description": "Read a creator's public profile with up to 100 visible products; no authentication required",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "api_version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bio",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "avatar_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "profile_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subdomain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "twitter_handle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_verified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "products",
+            "optional": true,
+            "type": "{}[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.resourceSubscriptions.list",
+      "shortPath": "resourceSubscriptions.list",
+      "description": "List active subscriptions for one resource event type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource_name",
+            "optional": false,
+            "type": "sale | refund | dispute | dispute_won | cancellation | subscription_updated | subscription_ended | subscription_restarted"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "resource_subscriptions",
+            "optional": false,
+            "type": "{ id: string, resource_name: string, post_url: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.resourceSubscriptions.subscribe",
+      "shortPath": "resourceSubscriptions.subscribe",
+      "description": "Subscribe a post URL to one of the 8 resource event types (sales, refunds, disputes, subscription changes); receiving deliveries is out of scope",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource_name",
+            "optional": false,
+            "type": "sale | refund | dispute | dispute_won | cancellation | subscription_updated | subscription_ended | subscription_restarted"
+          },
+          {
+            "key": "post_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "resource_subscription",
+            "optional": false,
+            "type": "{ id: string, resource_name: string, post_url: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.resourceSubscriptions.testEvent",
+      "shortPath": "resourceSubscriptions.testEvent",
+      "description": "Queue a sample event for a resource subscription post URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource_subscription_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.resourceSubscriptions.unsubscribe",
+      "shortPath": "resourceSubscriptions.unsubscribe",
+      "description": "Delete a resource subscription by id",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resource_subscription_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.sales.get",
+      "shortPath": "sales.get",
+      "description": "Get one sale by id with price, fees, taxes, refund and chargeback state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Sale id from sales.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "sale",
+            "optional": false,
+            "type": "{ id: string, email: string, seller_id: string, product_id: string, product_name: string, product_permalink?: string | null, product_has_variants?: boolean | null, created_at?: string | null, price?: number | null, gumroad_fee?: number | null, tax_cents?: number | null, shipping_cents?: number | null, tip_cents?: number | null, variants_price_cents?: number | null, currency?: string | null, order_id?: string | null, license_key?: string | null, access_revoked?: boolean | null, partially_refunded?: boolean | null, refunded?: boolean | null, chargedback?: boolean | null, disputed?: boolean | null, sent_abandoned_cart_email?: boolean | null, subscription_duration?: string | null, formatted_display_price?: string | null, formatted_total_price?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.sales.list",
+      "shortPath": "sales.list",
+      "description": "List successful sales, filterable by date range, product, buyer email, order id, name or license key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Only sales after this date"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Only sales before this date"
+          },
+          {
+            "key": "product_id",
+            "optional": true,
+            "type": "string",
+            "description": "Filter sales by product"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Filter sales by buyer email"
+          },
+          {
+            "key": "order_id",
+            "optional": true,
+            "type": "string",
+            "description": "Filter sales by order id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Filter sales by customer name"
+          },
+          {
+            "key": "license_key",
+            "optional": true,
+            "type": "string",
+            "description": "Filter sales by license key"
+          },
+          {
+            "key": "page_key",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from next_page_key of the previous response"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "sales",
+            "optional": false,
+            "type": "{ id: string, email: string, seller_id: string, product_id: string, product_name: string, product_permalink?: string | null, product_has_variants?: boolean | null, created_at?: string | null, price?: number | null, gumroad_fee?: number | null, tax_cents?: number | null, shipping_cents?: number | null, tip_cents?: number | null, variants_price_cents?: number | null, currency?: string | null, order_id?: string | null, license_key?: string | null, access_revoked?: boolean | null, partially_refunded?: boolean | null, refunded?: boolean | null, chargedback?: boolean | null, disputed?: boolean | null, sent_abandoned_cart_email?: boolean | null, subscription_duration?: string | null, formatted_display_price?: string | null, formatted_total_price?: string | null }[]"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.sales.markAsShipped",
+      "shortPath": "sales.markAsShipped",
+      "description": "Mark a physical sale as shipped with an optional tracking URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Sale id from sales.list"
+          },
+          {
+            "key": "tracking_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "sale",
+            "optional": false,
+            "type": "{ id: string, email: string, seller_id: string, product_id: string, product_name: string, product_permalink?: string | null, product_has_variants?: boolean | null, created_at?: string | null, price?: number | null, gumroad_fee?: number | null, tax_cents?: number | null, shipping_cents?: number | null, tip_cents?: number | null, variants_price_cents?: number | null, currency?: string | null, order_id?: string | null, license_key?: string | null, access_revoked?: boolean | null, partially_refunded?: boolean | null, refunded?: boolean | null, chargedback?: boolean | null, disputed?: boolean | null, sent_abandoned_cart_email?: boolean | null, subscription_duration?: string | null, formatted_display_price?: string | null, formatted_total_price?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.sales.refund",
+      "shortPath": "sales.refund",
+      "description": "Refund a sale fully, or partially with amount_cents; returns the updated sale",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Sale id from sales.list"
+          },
+          {
+            "key": "amount_cents",
+            "optional": true,
+            "type": "number",
+            "description": "Partial refund amount; omit for a full refund"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "sale",
+            "optional": false,
+            "type": "{ id: string, email: string, seller_id: string, product_id: string, product_name: string, product_permalink?: string | null, product_has_variants?: boolean | null, created_at?: string | null, price?: number | null, gumroad_fee?: number | null, tax_cents?: number | null, shipping_cents?: number | null, tip_cents?: number | null, variants_price_cents?: number | null, currency?: string | null, order_id?: string | null, license_key?: string | null, access_revoked?: boolean | null, partially_refunded?: boolean | null, refunded?: boolean | null, chargedback?: boolean | null, disputed?: boolean | null, sent_abandoned_cart_email?: boolean | null, subscription_duration?: string | null, formatted_display_price?: string | null, formatted_total_price?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.sales.resendReceipt",
+      "shortPath": "sales.resendReceipt",
+      "description": "Resend the purchase receipt to the customer's email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Sale id from sales.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.sales.revokeAccess",
+      "shortPath": "sales.revokeAccess",
+      "description": "Revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Sale id from sales.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "sale",
+            "optional": false,
+            "type": "{ id: string, email: string, seller_id: string, product_id: string, product_name: string, product_permalink?: string | null, product_has_variants?: boolean | null, created_at?: string | null, price?: number | null, gumroad_fee?: number | null, tax_cents?: number | null, shipping_cents?: number | null, tip_cents?: number | null, variants_price_cents?: number | null, currency?: string | null, order_id?: string | null, license_key?: string | null, access_revoked?: boolean | null, partially_refunded?: boolean | null, refunded?: boolean | null, chargedback?: boolean | null, disputed?: boolean | null, sent_abandoned_cart_email?: boolean | null, subscription_duration?: string | null, formatted_display_price?: string | null, formatted_total_price?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.sales.undoRevokeAccess",
+      "shortPath": "sales.undoRevokeAccess",
+      "description": "Restore a buyer's access to a previously revoked sale",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Sale id from sales.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "sale",
+            "optional": false,
+            "type": "{ id: string, email: string, seller_id: string, product_id: string, product_name: string, product_permalink?: string | null, product_has_variants?: boolean | null, created_at?: string | null, price?: number | null, gumroad_fee?: number | null, tax_cents?: number | null, shipping_cents?: number | null, tip_cents?: number | null, variants_price_cents?: number | null, currency?: string | null, order_id?: string | null, license_key?: string | null, access_revoked?: boolean | null, partially_refunded?: boolean | null, refunded?: boolean | null, chargedback?: boolean | null, disputed?: boolean | null, sent_abandoned_cart_email?: boolean | null, subscription_duration?: string | null, formatted_display_price?: string | null, formatted_total_price?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.subscribers.get",
+      "shortPath": "subscribers.get",
+      "description": "Read one subscriber by id with status, recurrence and license key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Subscriber id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ id: string, email?: string | null, product_id: string, product_name: string, user_id?: string | null, user_email?: string | null, purchase_ids?: string[] | null, created_at?: string | null, user_requested_cancellation_at?: string | null, charge_occurrence_count?: number | null, recurrence?: string | null, cancelled_at?: string | null, ended_at?: string | null, failed_at?: string | null, free_trial_ends_at?: string | null, license_key: string, status?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.subscribers.list",
+      "shortPath": "subscribers.list",
+      "description": "List one product's subscribers with status, recurrence and license key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by subscriber email"
+          },
+          {
+            "key": "paginated",
+            "optional": true,
+            "type": "true | false",
+            "description": "\"true\" to page 100 at a time and get next_page_key (default \"false\")"
+          },
+          {
+            "key": "page_key",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from next_page_key of the previous response"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ id: string, email?: string | null, product_id: string, product_name: string, user_id?: string | null, user_email?: string | null, purchase_ids?: string[] | null, created_at?: string | null, user_requested_cancellation_at?: string | null, charge_occurrence_count?: number | null, recurrence?: string | null, cancelled_at?: string | null, ended_at?: string | null, failed_at?: string | null, free_trial_ends_at?: string | null, license_key: string, status?: string | null }[]"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_page_key",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.taxForms.download",
+      "shortPath": "taxForms.download",
+      "description": "Download a tax form PDF for a year and form type as base64 with filename and content type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tax_form_type",
+            "optional": false,
+            "type": "us_1099_k | us_1099_misc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.taxForms.list",
+      "shortPath": "taxForms.list",
+      "description": "List generated tax forms (1099-K, 1099-MISC) for one tax year or every year",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "year",
+            "optional": true,
+            "type": "string",
+            "description": "Omit to return forms for every year"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "tax_forms",
+            "optional": false,
+            "type": "{ tax_year?: number | null, tax_form_type?: string | null, filed_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.user.customHtmlGet",
+      "shortPath": "user.customHtmlGet",
+      "description": "Read the profile's custom HTML landing page plus a rendered fallback of the current storefront",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rendered_html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "has_landing_page",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "profile_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.user.customHtmlPreview",
+      "shortPath": "user.customHtmlPreview",
+      "description": "Sanitize profile HTML and return the sanitized result without saving anything",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_html",
+            "optional": false,
+            "type": "string",
+            "description": "The HTML to sanitize"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sanitization_report",
+            "optional": false,
+            "type": "{ removed_tags?: string[] | null, removed_attributes?: string[] | null, total_removed?: number | null, truncated?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.user.customHtmlUpdate",
+      "shortPath": "user.customHtmlUpdate",
+      "description": "Publish or clear the profile custom HTML landing page; the response carries a sanitization report and the previous HTML for rollback",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_html",
+            "optional": false,
+            "type": "string | null",
+            "description": "The profile landing page HTML; null clears it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "custom_html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous_custom_html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "profile_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sanitization_report",
+            "optional": false,
+            "type": "{ removed_tags?: string[] | null, removed_attributes?: string[] | null, total_removed?: number | null, truncated?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.user.get",
+      "shortPath": "user.get",
+      "description": "Read the authenticated user's profile: name, bio, links and (with view_sales) email",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ bio?: string | null, name?: string | null, twitter_handle?: string | null, user_id?: string | null, email?: string | null, url?: string | null, profile_picture_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.user.refundPolicyGet",
+      "shortPath": "user.refundPolicyGet",
+      "description": "Read the account-level refund policy",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "refund_policy",
+            "optional": false,
+            "type": "{ refund_period?: string | null, title?: string | null, fine_print?: string | null, in_effect?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.user.refundPolicyUpdate",
+      "shortPath": "user.refundPolicyUpdate",
+      "description": "Update the account-level refund policy period and its fine print (max 3000 characters)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "refund_period",
+            "optional": false,
+            "type": "7 | 14 | 30 | 183 | none"
+          },
+          {
+            "key": "fine_print",
+            "optional": true,
+            "type": "string",
+            "description": "Send an empty value to clear it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "refund_policy",
+            "optional": false,
+            "type": "{ refund_period?: string | null, title?: string | null, fine_print?: string | null, in_effect?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.variantCategories.create",
+      "shortPath": "variantCategories.create",
+      "description": "Create a variant category on a product by title",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "variant_category",
+            "optional": false,
+            "type": "{ id: string, title: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.variantCategories.delete",
+      "shortPath": "variantCategories.delete",
+      "description": "Permanently delete a product's variant category",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Variant category id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.variantCategories.get",
+      "shortPath": "variantCategories.get",
+      "description": "Read one of a product's variant categories by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Variant category id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "variant_category",
+            "optional": false,
+            "type": "{ id: string, title: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.variantCategories.list",
+      "shortPath": "variantCategories.list",
+      "description": "List a product's variant categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "variant_categories",
+            "optional": false,
+            "type": "{ id: string, title: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.variantCategories.update",
+      "shortPath": "variantCategories.update",
+      "description": "Rename one of a product's variant categories",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Variant category id"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "variant_category",
+            "optional": false,
+            "type": "{ id: string, title: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.variantCategories.variantsCreate",
+      "shortPath": "variantCategories.variantsCreate",
+      "description": "Create a variant with a name, price difference in cents and optional purchase cap",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "variant_category_id",
+            "optional": false,
+            "type": "string",
+            "description": "Variant category id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "price_difference_cents",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "max_purchase_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "variant",
+            "optional": false,
+            "type": "{ id: string, name: string, price_difference_cents?: number | null, max_purchase_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.variantCategories.variantsDelete",
+      "shortPath": "variantCategories.variantsDelete",
+      "description": "Permanently delete a variant",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "variant_category_id",
+            "optional": false,
+            "type": "string",
+            "description": "Variant category id"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Variant id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.variantCategories.variantsGet",
+      "shortPath": "variantCategories.variantsGet",
+      "description": "Read one variant by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "variant_category_id",
+            "optional": false,
+            "type": "string",
+            "description": "Variant category id"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Variant id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "variant",
+            "optional": false,
+            "type": "{ id: string, name: string, price_difference_cents?: number | null, max_purchase_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.variantCategories.variantsList",
+      "shortPath": "variantCategories.variantsList",
+      "description": "List the variants in one of a product's variant categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "variant_category_id",
+            "optional": false,
+            "type": "string",
+            "description": "Variant category id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "variants",
+            "optional": false,
+            "type": "{ id: string, name: string, price_difference_cents?: number | null, max_purchase_count?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.variantCategories.variantsUpdate",
+      "shortPath": "variantCategories.variantsUpdate",
+      "description": "Update a variant name, price difference or purchase cap",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product_id",
+            "optional": false,
+            "type": "string",
+            "description": "Product id from products.list"
+          },
+          {
+            "key": "variant_category_id",
+            "optional": false,
+            "type": "string",
+            "description": "Variant category id"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Variant id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "price_difference_cents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_purchase_count",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "variant",
+            "optional": false,
+            "type": "{ id: string, name: string, price_difference_cents?: number | null, max_purchase_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.workflows.emailsAdd",
+      "shortPath": "workflows.emailsAdd",
+      "description": "Append one email step to a workflow with a delay in hours, days, weeks or months",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflow_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "HTML email body"
+          },
+          {
+            "key": "delay_amount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "delay_unit",
+            "optional": false,
+            "type": "hour | day | week | month"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "{ id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null, delay?: { amount?: number | null, unit?: string | null } | null, sent_count?: number | null, open_count?: number | null, open_rate?: number | null, click_count?: number | null, click_rate?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.workflows.emailsUpdate",
+      "shortPath": "workflows.emailsUpdate",
+      "description": "Update one workflow email step subject, body or delay without changing publication state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflow_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "delay_amount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "delay_unit",
+            "optional": true,
+            "type": "hour | day | week | month"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "{ id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null, delay?: { amount?: number | null, unit?: string | null } | null, sent_count?: number | null, open_count?: number | null, open_rate?: number | null, click_count?: number | null, click_rate?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.workflows.get",
+      "shortPath": "workflows.get",
+      "description": "Read one workflow with its email steps and delivery statistics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Workflow id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "workflow",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, audience_type?: string | null, trigger?: string | null, product_id?: string | null, variant_id?: string | null, state?: string | null, published_at?: string | null, first_published_at?: string | null, send_to_past_customers?: boolean | null, emails_count?: number | null, filters?: Record<string, string> | null, created_at?: string | null, updated_at?: string | null, emails?: { id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null, delay?: { amount?: number | null, unit?: string | null } | null, sent_count?: number | null, open_count?: number | null, open_rate?: number | null, click_count?: number | null, click_rate?: number | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "gumroad.api.workflows.list",
+      "shortPath": "workflows.list",
+      "description": "List the seller's active workflows, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "workflows",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, audience_type?: string | null, trigger?: string | null, product_id?: string | null, variant_id?: string | null, state?: string | null, published_at?: string | null, first_published_at?: string | null, send_to_past_customers?: boolean | null, emails_count?: number | null, filters?: Record<string, string> | null, created_at?: string | null, updated_at?: string | null, emails?: { id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null, delay?: { amount?: number | null, unit?: string | null } | null, sent_count?: number | null, open_count?: number | null, open_rate?: number | null, click_count?: number | null, click_rate?: number | null }[] | null }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -139,17 +139,7 @@ await corsair.basin.api.forms.create({});
 | `blocked_domains` | `string[]` | No | — |
 | `smtp_email_validation` | `boolean` | No | — |
 | `contribute_to_spam_training` | `boolean` | No | — |
-| `form` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="form full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `form` | `Record<string, any>` | No | — |
 
 
 
@@ -158,59 +148,59 @@ await corsair.basin.api.forms.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
-| `uuid` | `string` | No | — |
+| `uuid` | `string \| null` | No | — |
 | `name` | `string` | No | — |
 | `timezone` | `string` | No | — |
-| `redirect_url` | `string` | No | — |
+| `redirect_url` | `string \| null` | No | — |
 | `use_ajax` | `boolean` | No | — |
 | `notification_emails` | `string` | No | — |
 | `autoreply` | `boolean` | No | — |
-| `autoreply_body` | `string` | No | — |
-| `whitelist_source_domains` | `string` | No | — |
+| `autoreply_body` | `string \| null` | No | — |
+| `whitelist_source_domains` | `string \| null` | No | — |
 | `force_recaptcha` | `boolean` | No | — |
 | `force_hcaptcha` | `boolean` | No | — |
 | `force_turnstile` | `boolean` | No | — |
-| `turnstile_site_key` | `string` | No | — |
-| `turnstile_secret` | `string` | No | — |
-| `notification_cc_emails` | `string` | No | — |
-| `notification_bcc_emails` | `string` | No | — |
-| `notification_subject` | `string` | No | — |
-| `notification_from_name` | `string` | No | — |
-| `autoreply_subject` | `string` | No | — |
-| `autoreply_from_name` | `string` | No | — |
-| `autoreply_greeting` | `string` | No | — |
-| `autoreply_name` | `string` | No | — |
-| `autoreply_title` | `string` | No | — |
-| `autoreply_email` | `string` | No | — |
-| `logo` | `string` | No | — |
-| `button_background_color` | `string` | No | — |
-| `button_text_color` | `string` | No | — |
+| `turnstile_site_key` | `string \| null` | No | — |
+| `turnstile_secret` | `string \| null` | No | — |
+| `notification_cc_emails` | `string \| null` | No | — |
+| `notification_bcc_emails` | `string \| null` | No | — |
+| `notification_subject` | `string \| null` | No | — |
+| `notification_from_name` | `string \| null` | No | — |
+| `autoreply_subject` | `string \| null` | No | — |
+| `autoreply_from_name` | `string \| null` | No | — |
+| `autoreply_greeting` | `string \| null` | No | — |
+| `autoreply_name` | `string \| null` | No | — |
+| `autoreply_title` | `string \| null` | No | — |
+| `autoreply_email` | `string \| null` | No | — |
+| `logo` | `string \| null` | No | — |
+| `button_background_color` | `string \| null` | No | — |
+| `button_text_color` | `string \| null` | No | — |
 | `data_receipt_email` | `boolean` | No | — |
 | `retention_days` | `number` | No | — |
 | `hide_dashboard_button` | `boolean` | No | — |
 | `exclude_submitter_from_reply` | `boolean` | No | — |
-| `custom_template` | `string` | No | — |
+| `custom_template` | `string \| null` | No | — |
 | `use_custom_template` | `boolean` | No | — |
-| `autoreply_custom_template` | `string` | No | — |
+| `autoreply_custom_template` | `string \| null` | No | — |
 | `autoreply_use_custom_template` | `boolean` | No | — |
-| `notification_mail_template_id` | `number` | No | — |
-| `auto_response_mail_template_id` | `number` | No | — |
-| `confirmation_mail_template_id` | `number` | No | — |
-| `honeypot_field` | `string` | No | — |
-| `recaptcha_failed_url` | `string` | No | — |
-| `domain_id` | `number` | No | — |
-| `domain_email` | `string` | No | — |
+| `notification_mail_template_id` | `number \| null` | No | — |
+| `auto_response_mail_template_id` | `number \| null` | No | — |
+| `confirmation_mail_template_id` | `number \| null` | No | — |
+| `honeypot_field` | `string \| null` | No | — |
+| `recaptcha_failed_url` | `string \| null` | No | — |
+| `domain_id` | `number \| null` | No | — |
+| `domain_email` | `string \| null` | No | — |
 | `duplicate_filter` | `boolean` | No | — |
 | `project_id` | `number` | No | — |
 | `project_name` | `string` | No | — |
-| `redirect_heading` | `string` | No | — |
-| `redirect_message` | `string` | No | — |
-| `redirect_button_background_color` | `string` | No | — |
-| `redirect_button_text` | `string` | No | — |
-| `redirect_button_text_color` | `string` | No | — |
-| `content_blacklist` | `string[]` | No | — |
-| `allowed_domains` | `string[]` | No | — |
-| `blocked_domains` | `string[]` | No | — |
+| `redirect_heading` | `string \| null` | No | — |
+| `redirect_message` | `string \| null` | No | — |
+| `redirect_button_background_color` | `string \| null` | No | — |
+| `redirect_button_text` | `string \| null` | No | — |
+| `redirect_button_text_color` | `string \| null` | No | — |
+| `content_blacklist` | `string[] \| null` | No | — |
+| `allowed_domains` | `string[] \| null` | No | — |
+| `blocked_domains` | `string[] \| null` | No | — |
 | `smtp_email_validation` | `boolean` | No | — |
 | `contribute_to_spam_training` | `boolean` | No | — |
 | `form_webhooks` | `any[]` | No | — |
@@ -244,7 +234,7 @@ await corsair.basin.api.forms.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -328,8 +318,7 @@ await corsair.basin.api.forms.delete({});
   ip?: string | null,
   referrer?: string | null,
   user_agent?: string | null,
-  payload_params?: {
-  },
+  payload_params?: Record<string, any>,
   attachments?: any[] | null,
   form?: {
     name?: string,
@@ -354,8 +343,7 @@ await corsair.basin.api.forms.delete({});
   last_failure_at?: string | null,
   created_at?: string,
   updated_at?: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -388,59 +376,59 @@ await corsair.basin.api.forms.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
-| `uuid` | `string` | No | — |
+| `uuid` | `string \| null` | No | — |
 | `name` | `string` | No | — |
 | `timezone` | `string` | No | — |
-| `redirect_url` | `string` | No | — |
+| `redirect_url` | `string \| null` | No | — |
 | `use_ajax` | `boolean` | No | — |
 | `notification_emails` | `string` | No | — |
 | `autoreply` | `boolean` | No | — |
-| `autoreply_body` | `string` | No | — |
-| `whitelist_source_domains` | `string` | No | — |
+| `autoreply_body` | `string \| null` | No | — |
+| `whitelist_source_domains` | `string \| null` | No | — |
 | `force_recaptcha` | `boolean` | No | — |
 | `force_hcaptcha` | `boolean` | No | — |
 | `force_turnstile` | `boolean` | No | — |
-| `turnstile_site_key` | `string` | No | — |
-| `turnstile_secret` | `string` | No | — |
-| `notification_cc_emails` | `string` | No | — |
-| `notification_bcc_emails` | `string` | No | — |
-| `notification_subject` | `string` | No | — |
-| `notification_from_name` | `string` | No | — |
-| `autoreply_subject` | `string` | No | — |
-| `autoreply_from_name` | `string` | No | — |
-| `autoreply_greeting` | `string` | No | — |
-| `autoreply_name` | `string` | No | — |
-| `autoreply_title` | `string` | No | — |
-| `autoreply_email` | `string` | No | — |
-| `logo` | `string` | No | — |
-| `button_background_color` | `string` | No | — |
-| `button_text_color` | `string` | No | — |
+| `turnstile_site_key` | `string \| null` | No | — |
+| `turnstile_secret` | `string \| null` | No | — |
+| `notification_cc_emails` | `string \| null` | No | — |
+| `notification_bcc_emails` | `string \| null` | No | — |
+| `notification_subject` | `string \| null` | No | — |
+| `notification_from_name` | `string \| null` | No | — |
+| `autoreply_subject` | `string \| null` | No | — |
+| `autoreply_from_name` | `string \| null` | No | — |
+| `autoreply_greeting` | `string \| null` | No | — |
+| `autoreply_name` | `string \| null` | No | — |
+| `autoreply_title` | `string \| null` | No | — |
+| `autoreply_email` | `string \| null` | No | — |
+| `logo` | `string \| null` | No | — |
+| `button_background_color` | `string \| null` | No | — |
+| `button_text_color` | `string \| null` | No | — |
 | `data_receipt_email` | `boolean` | No | — |
 | `retention_days` | `number` | No | — |
 | `hide_dashboard_button` | `boolean` | No | — |
 | `exclude_submitter_from_reply` | `boolean` | No | — |
-| `custom_template` | `string` | No | — |
+| `custom_template` | `string \| null` | No | — |
 | `use_custom_template` | `boolean` | No | — |
-| `autoreply_custom_template` | `string` | No | — |
+| `autoreply_custom_template` | `string \| null` | No | — |
 | `autoreply_use_custom_template` | `boolean` | No | — |
-| `notification_mail_template_id` | `number` | No | — |
-| `auto_response_mail_template_id` | `number` | No | — |
-| `confirmation_mail_template_id` | `number` | No | — |
-| `honeypot_field` | `string` | No | — |
-| `recaptcha_failed_url` | `string` | No | — |
-| `domain_id` | `number` | No | — |
-| `domain_email` | `string` | No | — |
+| `notification_mail_template_id` | `number \| null` | No | — |
+| `auto_response_mail_template_id` | `number \| null` | No | — |
+| `confirmation_mail_template_id` | `number \| null` | No | — |
+| `honeypot_field` | `string \| null` | No | — |
+| `recaptcha_failed_url` | `string \| null` | No | — |
+| `domain_id` | `number \| null` | No | — |
+| `domain_email` | `string \| null` | No | — |
 | `duplicate_filter` | `boolean` | No | — |
 | `project_id` | `number` | No | — |
 | `project_name` | `string` | No | — |
-| `redirect_heading` | `string` | No | — |
-| `redirect_message` | `string` | No | — |
-| `redirect_button_background_color` | `string` | No | — |
-| `redirect_button_text` | `string` | No | — |
-| `redirect_button_text_color` | `string` | No | — |
-| `content_blacklist` | `string[]` | No | — |
-| `allowed_domains` | `string[]` | No | — |
-| `blocked_domains` | `string[]` | No | — |
+| `redirect_heading` | `string \| null` | No | — |
+| `redirect_message` | `string \| null` | No | — |
+| `redirect_button_background_color` | `string \| null` | No | — |
+| `redirect_button_text` | `string \| null` | No | — |
+| `redirect_button_text_color` | `string \| null` | No | — |
+| `content_blacklist` | `string[] \| null` | No | — |
+| `allowed_domains` | `string[] \| null` | No | — |
+| `blocked_domains` | `string[] \| null` | No | — |
 | `smtp_email_validation` | `boolean` | No | — |
 | `contribute_to_spam_training` | `boolean` | No | — |
 | `form_webhooks` | `any[]` | No | — |
@@ -639,17 +627,7 @@ await corsair.basin.api.forms.update({});
 | `blocked_domains` | `string[]` | No | — |
 | `smtp_email_validation` | `boolean` | No | — |
 | `contribute_to_spam_training` | `boolean` | No | — |
-| `form` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="form full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `form` | `Record<string, any>` | No | — |
 
 
 
@@ -658,59 +636,59 @@ await corsair.basin.api.forms.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
-| `uuid` | `string` | No | — |
+| `uuid` | `string \| null` | No | — |
 | `name` | `string` | No | — |
 | `timezone` | `string` | No | — |
-| `redirect_url` | `string` | No | — |
+| `redirect_url` | `string \| null` | No | — |
 | `use_ajax` | `boolean` | No | — |
 | `notification_emails` | `string` | No | — |
 | `autoreply` | `boolean` | No | — |
-| `autoreply_body` | `string` | No | — |
-| `whitelist_source_domains` | `string` | No | — |
+| `autoreply_body` | `string \| null` | No | — |
+| `whitelist_source_domains` | `string \| null` | No | — |
 | `force_recaptcha` | `boolean` | No | — |
 | `force_hcaptcha` | `boolean` | No | — |
 | `force_turnstile` | `boolean` | No | — |
-| `turnstile_site_key` | `string` | No | — |
-| `turnstile_secret` | `string` | No | — |
-| `notification_cc_emails` | `string` | No | — |
-| `notification_bcc_emails` | `string` | No | — |
-| `notification_subject` | `string` | No | — |
-| `notification_from_name` | `string` | No | — |
-| `autoreply_subject` | `string` | No | — |
-| `autoreply_from_name` | `string` | No | — |
-| `autoreply_greeting` | `string` | No | — |
-| `autoreply_name` | `string` | No | — |
-| `autoreply_title` | `string` | No | — |
-| `autoreply_email` | `string` | No | — |
-| `logo` | `string` | No | — |
-| `button_background_color` | `string` | No | — |
-| `button_text_color` | `string` | No | — |
+| `turnstile_site_key` | `string \| null` | No | — |
+| `turnstile_secret` | `string \| null` | No | — |
+| `notification_cc_emails` | `string \| null` | No | — |
+| `notification_bcc_emails` | `string \| null` | No | — |
+| `notification_subject` | `string \| null` | No | — |
+| `notification_from_name` | `string \| null` | No | — |
+| `autoreply_subject` | `string \| null` | No | — |
+| `autoreply_from_name` | `string \| null` | No | — |
+| `autoreply_greeting` | `string \| null` | No | — |
+| `autoreply_name` | `string \| null` | No | — |
+| `autoreply_title` | `string \| null` | No | — |
+| `autoreply_email` | `string \| null` | No | — |
+| `logo` | `string \| null` | No | — |
+| `button_background_color` | `string \| null` | No | — |
+| `button_text_color` | `string \| null` | No | — |
 | `data_receipt_email` | `boolean` | No | — |
 | `retention_days` | `number` | No | — |
 | `hide_dashboard_button` | `boolean` | No | — |
 | `exclude_submitter_from_reply` | `boolean` | No | — |
-| `custom_template` | `string` | No | — |
+| `custom_template` | `string \| null` | No | — |
 | `use_custom_template` | `boolean` | No | — |
-| `autoreply_custom_template` | `string` | No | — |
+| `autoreply_custom_template` | `string \| null` | No | — |
 | `autoreply_use_custom_template` | `boolean` | No | — |
-| `notification_mail_template_id` | `number` | No | — |
-| `auto_response_mail_template_id` | `number` | No | — |
-| `confirmation_mail_template_id` | `number` | No | — |
-| `honeypot_field` | `string` | No | — |
-| `recaptcha_failed_url` | `string` | No | — |
-| `domain_id` | `number` | No | — |
-| `domain_email` | `string` | No | — |
+| `notification_mail_template_id` | `number \| null` | No | — |
+| `auto_response_mail_template_id` | `number \| null` | No | — |
+| `confirmation_mail_template_id` | `number \| null` | No | — |
+| `honeypot_field` | `string \| null` | No | — |
+| `recaptcha_failed_url` | `string \| null` | No | — |
+| `domain_id` | `number \| null` | No | — |
+| `domain_email` | `string \| null` | No | — |
 | `duplicate_filter` | `boolean` | No | — |
 | `project_id` | `number` | No | — |
 | `project_name` | `string` | No | — |
-| `redirect_heading` | `string` | No | — |
-| `redirect_message` | `string` | No | — |
-| `redirect_button_background_color` | `string` | No | — |
-| `redirect_button_text` | `string` | No | — |
-| `redirect_button_text_color` | `string` | No | — |
-| `content_blacklist` | `string[]` | No | — |
-| `allowed_domains` | `string[]` | No | — |
-| `blocked_domains` | `string[]` | No | — |
+| `redirect_heading` | `string \| null` | No | — |
+| `redirect_message` | `string \| null` | No | — |
+| `redirect_button_background_color` | `string \| null` | No | — |
+| `redirect_button_text` | `string \| null` | No | — |
+| `redirect_button_text_color` | `string \| null` | No | — |
+| `content_blacklist` | `string[] \| null` | No | — |
+| `allowed_domains` | `string[] \| null` | No | — |
+| `blocked_domains` | `string[] \| null` | No | — |
 | `smtp_email_validation` | `boolean` | No | — |
 | `contribute_to_spam_training` | `boolean` | No | — |
 | `form_webhooks` | `any[]` | No | — |
@@ -752,22 +730,22 @@ await corsair.basin.api.formViews.get({});
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
 | `form_id` | `number` | No | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `status` | `string` | No | — |
-| `form_schema` | `string` | No | — |
-| `custom_css` | `string` | No | — |
-| `custom_head` | `string` | No | — |
-| `background_color` | `string` | No | — |
-| `text_color` | `string` | No | — |
+| `form_schema` | `string \| null` | No | — |
+| `custom_css` | `string \| null` | No | — |
+| `custom_head` | `string \| null` | No | — |
+| `background_color` | `string \| null` | No | — |
+| `text_color` | `string \| null` | No | — |
 | `inherit_styles` | `boolean` | No | — |
 | `auto_resize` | `boolean` | No | — |
 | `transparent_background` | `boolean` | No | — |
-| `opens_at` | `string` | No | — |
-| `closes_at` | `string` | No | — |
-| `bootstrap_cdn_url` | `string` | No | — |
-| `uuid` | `string` | No | — |
-| `iframe_height` | `number` | No | — |
-| `iframe_width` | `number` | No | — |
+| `opens_at` | `string \| null` | No | — |
+| `closes_at` | `string \| null` | No | — |
+| `bootstrap_cdn_url` | `string \| null` | No | — |
+| `uuid` | `string \| null` | No | — |
+| `iframe_height` | `number \| null` | No | — |
+| `iframe_width` | `number \| null` | No | — |
 | `redirect_iframe_parent` | `boolean` | No | — |
 | `center_iframe` | `boolean` | No | — |
 | `embed_code` | `string` | No | — |
@@ -953,7 +931,7 @@ await corsair.basin.api.projects.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1037,8 +1015,7 @@ await corsair.basin.api.projects.delete({});
   ip?: string | null,
   referrer?: string | null,
   user_agent?: string | null,
-  payload_params?: {
-  },
+  payload_params?: Record<string, any>,
   attachments?: any[] | null,
   form?: {
     name?: string,
@@ -1063,8 +1040,7 @@ await corsair.basin.api.projects.delete({});
   last_failure_at?: string | null,
   created_at?: string,
   updated_at?: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1230,7 +1206,7 @@ await corsair.basin.api.submissions.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1314,8 +1290,7 @@ await corsair.basin.api.submissions.delete({});
   ip?: string | null,
   referrer?: string | null,
   user_agent?: string | null,
-  payload_params?: {
-  },
+  payload_params?: Record<string, any>,
   attachments?: any[] | null,
   form?: {
     name?: string,
@@ -1340,8 +1315,7 @@ await corsair.basin.api.submissions.delete({});
   last_failure_at?: string | null,
   created_at?: string,
   updated_at?: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1374,31 +1348,23 @@ await corsair.basin.api.submissions.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
-| `email` | `string` | No | — |
+| `email` | `string \| null` | No | — |
 | `form_id` | `number` | No | — |
 | `spam` | `boolean` | No | — |
 | `read` | `boolean` | No | — |
 | `trash` | `boolean` | No | — |
-| `spam_reason` | `string` | No | — |
-| `webhook_sent_at` | `string` | No | — |
-| `ip` | `string` | No | — |
-| `referrer` | `string` | No | — |
-| `user_agent` | `string` | No | — |
-| `payload_params` | `object` | No | — |
-| `attachments` | `any[]` | No | — |
+| `spam_reason` | `string \| null` | No | — |
+| `webhook_sent_at` | `string \| null` | No | — |
+| `ip` | `string \| null` | No | — |
+| `referrer` | `string \| null` | No | — |
+| `user_agent` | `string \| null` | No | — |
+| `payload_params` | `Record<string, any>` | No | — |
+| `attachments` | `any[] \| null` | No | — |
 | `form` | `object` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="payload_params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="form full type">
 
 ```ts
@@ -1462,8 +1428,7 @@ await corsair.basin.api.submissions.list({});
   ip?: string | null,
   referrer?: string | null,
   user_agent?: string | null,
-  payload_params?: {
-  },
+  payload_params?: Record<string, any>,
   attachments?: any[] | null,
   form?: {
     name?: string,
@@ -1516,31 +1481,23 @@ await corsair.basin.api.submissions.markHam({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
-| `email` | `string` | No | — |
+| `email` | `string \| null` | No | — |
 | `form_id` | `number` | No | — |
 | `spam` | `boolean` | No | — |
 | `read` | `boolean` | No | — |
 | `trash` | `boolean` | No | — |
-| `spam_reason` | `string` | No | — |
-| `webhook_sent_at` | `string` | No | — |
-| `ip` | `string` | No | — |
-| `referrer` | `string` | No | — |
-| `user_agent` | `string` | No | — |
-| `payload_params` | `object` | No | — |
-| `attachments` | `any[]` | No | — |
+| `spam_reason` | `string \| null` | No | — |
+| `webhook_sent_at` | `string \| null` | No | — |
+| `ip` | `string \| null` | No | — |
+| `referrer` | `string \| null` | No | — |
+| `user_agent` | `string \| null` | No | — |
+| `payload_params` | `Record<string, any>` | No | — |
+| `attachments` | `any[] \| null` | No | — |
 | `form` | `object` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="payload_params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="form full type">
 
 ```ts
@@ -1581,31 +1538,23 @@ await corsair.basin.api.submissions.markSpam({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
-| `email` | `string` | No | — |
+| `email` | `string \| null` | No | — |
 | `form_id` | `number` | No | — |
 | `spam` | `boolean` | No | — |
 | `read` | `boolean` | No | — |
 | `trash` | `boolean` | No | — |
-| `spam_reason` | `string` | No | — |
-| `webhook_sent_at` | `string` | No | — |
-| `ip` | `string` | No | — |
-| `referrer` | `string` | No | — |
-| `user_agent` | `string` | No | — |
-| `payload_params` | `object` | No | — |
-| `attachments` | `any[]` | No | — |
+| `spam_reason` | `string \| null` | No | — |
+| `webhook_sent_at` | `string \| null` | No | — |
+| `ip` | `string \| null` | No | — |
+| `referrer` | `string \| null` | No | — |
+| `user_agent` | `string \| null` | No | — |
+| `payload_params` | `Record<string, any>` | No | — |
+| `attachments` | `any[] \| null` | No | — |
 | `form` | `object` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="payload_params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="form full type">
 
 ```ts
@@ -1725,31 +1674,23 @@ await corsair.basin.api.submissions.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
-| `email` | `string` | No | — |
+| `email` | `string \| null` | No | — |
 | `form_id` | `number` | No | — |
 | `spam` | `boolean` | No | — |
 | `read` | `boolean` | No | — |
 | `trash` | `boolean` | No | — |
-| `spam_reason` | `string` | No | — |
-| `webhook_sent_at` | `string` | No | — |
-| `ip` | `string` | No | — |
-| `referrer` | `string` | No | — |
-| `user_agent` | `string` | No | — |
-| `payload_params` | `object` | No | — |
-| `attachments` | `any[]` | No | — |
+| `spam_reason` | `string \| null` | No | — |
+| `webhook_sent_at` | `string \| null` | No | — |
+| `ip` | `string \| null` | No | — |
+| `referrer` | `string \| null` | No | — |
+| `user_agent` | `string \| null` | No | — |
+| `payload_params` | `Record<string, any>` | No | — |
+| `attachments` | `any[] \| null` | No | — |
 | `form` | `object` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="payload_params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="form full type">
 
 ```ts
@@ -1821,7 +1762,7 @@ await corsair.basin.api.webhooks.create({});
 | `trigger_when_spam` | `boolean` | No | — |
 | `enabled` | `boolean` | No | — |
 | `failure_count` | `number` | No | — |
-| `last_failure_at` | `string` | No | — |
+| `last_failure_at` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -1849,7 +1790,7 @@ await corsair.basin.api.webhooks.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1933,8 +1874,7 @@ await corsair.basin.api.webhooks.delete({});
   ip?: string | null,
   referrer?: string | null,
   user_agent?: string | null,
-  payload_params?: {
-  },
+  payload_params?: Record<string, any>,
   attachments?: any[] | null,
   form?: {
     name?: string,
@@ -1959,8 +1899,7 @@ await corsair.basin.api.webhooks.delete({});
   last_failure_at?: string | null,
   created_at?: string,
   updated_at?: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -2000,7 +1939,7 @@ await corsair.basin.api.webhooks.get({});
 | `trigger_when_spam` | `boolean` | No | — |
 | `enabled` | `boolean` | No | — |
 | `failure_count` | `number` | No | — |
-| `last_failure_at` | `string` | No | — |
+| `last_failure_at` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 
@@ -2127,7 +2066,7 @@ await corsair.basin.api.webhooks.update({});
 | `trigger_when_spam` | `boolean` | No | — |
 | `enabled` | `boolean` | No | — |
 | `failure_count` | `number` | No | — |
-| `last_failure_at` | `string` | No | — |
+| `last_failure_at` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 

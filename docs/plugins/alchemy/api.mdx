@@ -77,17 +77,7 @@ await corsair.alchemy.api.nft.getCollectionMetadata({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -122,19 +112,9 @@ await corsair.alchemy.api.nft.getCollectionsForOwner({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `collections` | `object[]` | No | — |
+| `collections` | `Record<string, any>[]` | No | — |
 | `totalCount` | `number` | No | — |
-| `pageKey` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="collections full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `pageKey` | `string \| null` | No | — |
 
 
 
@@ -228,14 +208,14 @@ await corsair.alchemy.api.nft.getContractMetadataV3({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `address` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `symbol` | `string` | No | — |
-| `totalSupply` | `string` | No | — |
-| `tokenType` | `string` | No | — |
-| `contractDeployer` | `string` | No | — |
-| `deployedBlockNumber` | `number` | No | — |
+| `name` | `string \| null` | No | — |
+| `symbol` | `string \| null` | No | — |
+| `totalSupply` | `string \| null` | No | — |
+| `tokenType` | `string \| null` | No | — |
+| `contractDeployer` | `string \| null` | No | — |
+| `deployedBlockNumber` | `number \| null` | No | — |
 | `openSeaMetadata` | `object` | No | — |
-| `isSpam` | `boolean` | No | — |
+| `isSpam` | `boolean \| null` | No | — |
 | `spamClassifications` | `string[]` | No | — |
 
 <AccordionGroup>
@@ -293,19 +273,9 @@ await corsair.alchemy.api.nft.getContractsForOwnerV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `contracts` | `object[]` | No | — |
+| `contracts` | `Record<string, any>[]` | No | — |
 | `totalCount` | `number` | No | — |
-| `pageKey` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="contracts full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `pageKey` | `string \| null` | No | — |
 
 
 
@@ -333,17 +303,7 @@ await corsair.alchemy.api.nft.getFloorPriceV3({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -380,22 +340,22 @@ await corsair.alchemy.api.nft.getNftMetadata({});
 | `contract` | `object` | No | — |
 | `contractAddress` | `string` | No | — |
 | `tokenId` | `string` | Yes | — |
-| `tokenType` | `string` | No | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `tokenUri` | `string` | No | — |
+| `tokenType` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `tokenUri` | `string \| null` | No | — |
 | `image` | `object` | No | — |
-| `animation` | `object` | No | — |
-| `raw` | `object` | No | — |
-| `collection` | `object` | No | — |
-| `mint` | `object` | No | — |
-| `owners` | `string[]` | No | — |
-| `timeLastUpdated` | `string` | No | — |
-| `balance` | `string` | No | — |
-| `acquiredAt` | `object` | No | — |
+| `animation` | `Record<string, any> \| null` | No | — |
+| `raw` | `Record<string, any>` | No | — |
+| `collection` | `Record<string, any> \| null` | No | — |
+| `mint` | `Record<string, any> \| null` | No | — |
+| `owners` | `string[] \| null` | No | — |
+| `timeLastUpdated` | `string \| null` | No | — |
+| `balance` | `string \| null` | No | — |
+| `acquiredAt` | `Record<string, any> \| null` | No | — |
 | `network` | `string` | No | — |
 | `address` | `string` | No | — |
-| `isSpam` | `boolean` | No | — |
+| `isSpam` | `boolean \| null` | No | — |
 | `spamClassifications` | `string[]` | No | — |
 
 <AccordionGroup>
@@ -438,46 +398,6 @@ await corsair.alchemy.api.nft.getNftMetadata({});
   contentType?: string | null,
   size?: number | null,
   originalUrl?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="animation full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="raw full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="collection full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="mint full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="acquiredAt full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -571,19 +491,14 @@ await corsair.alchemy.api.nft.getNftMetadataBatch({});
     size?: number | null,
     originalUrl?: string | null
   },
-  animation?: {
-  } | null,
-  raw?: {
-  },
-  collection?: {
-  } | null,
-  mint?: {
-  } | null,
+  animation?: Record<string, any> | null,
+  raw?: Record<string, any>,
+  collection?: Record<string, any> | null,
+  mint?: Record<string, any> | null,
   owners?: string[] | null,
   timeLastUpdated?: string | null,
   balance?: string | null,
-  acquiredAt?: {
-  } | null,
+  acquiredAt?: Record<string, any> | null,
   network?: string,
   address?: string,
   isSpam?: boolean | null,
@@ -632,18 +547,8 @@ await corsair.alchemy.api.nft.getNftSalesV3({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `nftSales` | `object[]` | No | — |
-| `pageKey` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="nftSales full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `nftSales` | `Record<string, any>[]` | No | — |
+| `pageKey` | `string \| null` | No | — |
 
 
 
@@ -680,7 +585,7 @@ await corsair.alchemy.api.nft.getNftsForCollectionV3({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `nfts` | `object[]` | No | — |
-| `pageKey` | `string` | No | — |
+| `pageKey` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="nfts full type">
@@ -724,19 +629,14 @@ await corsair.alchemy.api.nft.getNftsForCollectionV3({});
     size?: number | null,
     originalUrl?: string | null
   },
-  animation?: {
-  } | null,
-  raw?: {
-  },
-  collection?: {
-  } | null,
-  mint?: {
-  } | null,
+  animation?: Record<string, any> | null,
+  raw?: Record<string, any>,
+  collection?: Record<string, any> | null,
+  mint?: Record<string, any> | null,
   owners?: string[] | null,
   timeLastUpdated?: string | null,
   balance?: string | null,
-  acquiredAt?: {
-  } | null,
+  acquiredAt?: Record<string, any> | null,
   network?: string,
   address?: string,
   isSpam?: boolean | null,
@@ -780,7 +680,7 @@ await corsair.alchemy.api.nft.getNftsForContract({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `nfts` | `object[]` | No | — |
-| `pageKey` | `string` | No | — |
+| `pageKey` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="nfts full type">
@@ -824,19 +724,14 @@ await corsair.alchemy.api.nft.getNftsForContract({});
     size?: number | null,
     originalUrl?: string | null
   },
-  animation?: {
-  } | null,
-  raw?: {
-  },
-  collection?: {
-  } | null,
-  mint?: {
-  } | null,
+  animation?: Record<string, any> | null,
+  raw?: Record<string, any>,
+  collection?: Record<string, any> | null,
+  mint?: Record<string, any> | null,
   owners?: string[] | null,
   timeLastUpdated?: string | null,
   balance?: string | null,
-  acquiredAt?: {
-  } | null,
+  acquiredAt?: Record<string, any> | null,
   network?: string,
   address?: string,
   isSpam?: boolean | null,
@@ -886,8 +781,8 @@ await corsair.alchemy.api.nft.getNftsForOwner({});
 |------|------|----------|-------------|
 | `ownedNfts` | `object[]` | Yes | — |
 | `totalCount` | `number` | No | — |
-| `validAt` | `object` | No | — |
-| `pageKey` | `string` | No | — |
+| `validAt` | `Record<string, any>` | No | — |
+| `pageKey` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="ownedNfts full type">
@@ -931,32 +826,19 @@ await corsair.alchemy.api.nft.getNftsForOwner({});
     size?: number | null,
     originalUrl?: string | null
   },
-  animation?: {
-  } | null,
-  raw?: {
-  },
-  collection?: {
-  } | null,
-  mint?: {
-  } | null,
+  animation?: Record<string, any> | null,
+  raw?: Record<string, any>,
+  collection?: Record<string, any> | null,
+  mint?: Record<string, any> | null,
   owners?: string[] | null,
   timeLastUpdated?: string | null,
   balance?: string | null,
-  acquiredAt?: {
-  } | null,
+  acquiredAt?: Record<string, any> | null,
   network?: string,
   address?: string,
   isSpam?: boolean | null,
   spamClassifications?: string[]
 }[]
-```
-</Accordion>
-
-<Accordion title="validAt full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -993,20 +875,8 @@ await corsair.alchemy.api.nft.getOwnersForCollection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `owners` | `object[]` | Yes | — |
-| `pageKey` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="owners full type">
-
-```ts
-(
-  string | {
-  }
-)[]
-```
-</Accordion>
-</AccordionGroup>
+| `owners` | `(string \| Record<string, any>)[]` | Yes | — |
+| `pageKey` | `string \| null` | No | — |
 
 
 
@@ -1040,20 +910,8 @@ await corsair.alchemy.api.nft.getOwnersForContract({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `owners` | `object[]` | Yes | — |
-| `pageKey` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="owners full type">
-
-```ts
-(
-  string | {
-  }
-)[]
-```
-</Accordion>
-</AccordionGroup>
+| `owners` | `(string \| Record<string, any>)[]` | Yes | — |
+| `pageKey` | `string \| null` | No | — |
 
 
 
@@ -1087,7 +945,7 @@ await corsair.alchemy.api.nft.getOwnersForNftV3({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `owners` | `string[]` | Yes | — |
-| `pageKey` | `string` | No | — |
+| `pageKey` | `string \| null` | No | — |
 
 
 
@@ -1379,17 +1237,7 @@ await corsair.alchemy.api.nft.summarizeNftAttributes({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1444,8 +1292,7 @@ await corsair.alchemy.api.portfolio.getNftContractsByAddress({});
 
 ```ts
 {
-  contracts?: {
-  }[],
+  contracts?: Record<string, any>[],
   totalCount?: number,
   pageKey?: string | null
 }
@@ -1546,19 +1393,14 @@ await corsair.alchemy.api.portfolio.getPortfolioNftsByAddress({});
       size?: number | null,
       originalUrl?: string | null
     },
-    animation?: {
-    } | null,
-    raw?: {
-    },
-    collection?: {
-    } | null,
-    mint?: {
-    } | null,
+    animation?: Record<string, any> | null,
+    raw?: Record<string, any>,
+    collection?: Record<string, any> | null,
+    mint?: Record<string, any> | null,
     owners?: string[] | null,
     timeLastUpdated?: string | null,
     balance?: string | null,
-    acquiredAt?: {
-    } | null,
+    acquiredAt?: Record<string, any> | null,
     network?: string,
     address?: string,
     isSpam?: boolean | null,
@@ -1690,10 +1532,8 @@ await corsair.alchemy.api.portfolio.getTokensByAddress({});
     address: string,
     tokenAddress?: string | null,
     tokenBalance: string,
-    tokenMetadata?: {
-    },
-    tokenPrices?: {
-    }[],
+    tokenMetadata?: Record<string, any>,
+    tokenPrices?: Record<string, any>[],
     error?: string | null
   }[],
   pageKey?: string | null
@@ -1745,20 +1585,10 @@ await corsair.alchemy.api.portfolio.getTransactionsHistoryByAddress({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `transactions` | `object[]` | No | — |
+| `transactions` | `Record<string, any>[]` | No | — |
 | `before` | `string` | No | — |
 | `after` | `string` | No | — |
 | `totalCount` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="transactions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1857,8 +1687,7 @@ await corsair.alchemy.api.prices.getPricesBySymbol({});
     value: string,
     lastUpdatedAt: string
   }[],
-  error?: {
-  }
+  error?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1918,8 +1747,7 @@ await corsair.alchemy.api.prices.getTokenPricesByAddress({});
     value: string,
     lastUpdatedAt: string
   }[],
-  error?: {
-  }
+  error?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1949,7 +1777,7 @@ await corsair.alchemy.api.rpc.getTransactionCount({});
 |------|------|----------|-------------|
 | `network` | `eth-mainnet \| eth-sepolia \| polygon-mainnet \| polygon-amoy \| arb-mainnet \| arb-sepolia \| opt-mainnet \| opt-sepolia \| base-mainnet \| base-sepolia \| bnb-mainnet \| avax-mainnet \| zksync-mainnet \| worldchain-mainnet \| solana-mainnet \| solana-devnet` | No | — |
 | `address` | `string` | Yes | — |
-| `blockTag` | `string` | Yes | — |
+| `blockTag` | `string` | No | Defaults to "latest". |
 
 
 
@@ -2001,7 +1829,7 @@ await corsair.alchemy.api.token.getTokenBalances({});
 ```ts
 {
   contractAddress: string,
-  tokenBalance?: string | null,
+  tokenBalance: string | null,
   error?: string | null
 }[]
 ```
@@ -2037,10 +1865,10 @@ await corsair.alchemy.api.token.getTokenMetadata({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `decimals` | `number` | No | — |
-| `logo` | `string` | No | — |
-| `name` | `string` | No | — |
-| `symbol` | `string` | No | — |
+| `decimals` | `number \| null` | No | — |
+| `logo` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `symbol` | `string \| null` | No | — |
 
 
 

@@ -1,0 +1,791 @@
+---
+title: API
+description: "API reference for Mem0: every `mem0.api.*` operation with input and output types."
+---
+
+Every `mem0.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Events
+
+### get
+
+`events.get`
+
+Read one queued event by ID to see whether an add or delete finished, failed, or is still running
+
+**Risk:** `read`
+
+```ts
+await corsair.mem0.api.events.get({ event_id: '2c4d1f44-4f7b-4b2f-9f6e-7b5b4f5a1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string` | Yes | The event_id returned by memories.add or memories.deleteAll. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `event_type` | `string \| null` | No | ADD, SEARCH, DELETE_ALL and so on. |
+| `status` | `string \| null` | No | PENDING, RUNNING, FAILED or SUCCEEDED. |
+| `payload` | `Record<string, any> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `results` | `any[] \| Record<string, any> \| null` | No | An array for ADD, SEARCH and GET_ALL, one object for UPDATE, and null for a delete. |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `started_at` | `string \| null` | No | — |
+| `completed_at` | `string \| null` | No | — |
+| `latency` | `number \| null` | No | Processing time in milliseconds. |
+| `graph_status` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`events.list`
+
+List recent events for the organization and project, page by page, for dashboards or for finding failed writes
+
+**Risk:** `read`
+
+```ts
+await corsair.mem0.api.events.list({ page: 1, page_size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page. |
+| `page_size` | `number` | No | Results per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  event_type?: string | null,
+  status?: string | null,
+  payload?: Record<string, any> | null,
+  metadata?: Record<string, any> | null,
+  results?: any[] | Record<string, any> | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  started_at?: string | null,
+  completed_at?: string | null,
+  latency?: number | null,
+  graph_status?: string | null,
+  error?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Memories
+
+### add
+
+`memories.add`
+
+Extract memories from conversation messages and store them for a user, agent, app or run; processing is queued and returns an event_id to poll
+
+**Risk:** `write`
+
+```ts
+await corsair.mem0.api.memories.add({ user_id: 'alice', messages: [{ role: 'user', content: 'I moved to Austin last month.' }], metadata: { source: 'onboarding_form' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | Conversation turns for Mem0 to extract memories from. |
+| `user_id` | `string` | No | Scope memories to this user. |
+| `agent_id` | `string` | No | Scope memories to this agent. |
+| `app_id` | `string` | No | Scope memories to this app. |
+| `run_id` | `string` | No | Scope memories to this run. |
+| `metadata` | `Record<string, any>` | No | Custom key/value metadata attached to each memory. |
+| `infer` | `boolean` | No | Defaults to true, which runs extraction. Set false to store each message verbatim, which also makes the response synchronous. |
+| `expiration_date` | `string` | No | Date through which the memory is visible. Expired memories are hidden unless `show_expired` is passed. |
+| `immutable` | `boolean` | No | Defaults to false. Immutable memories are excluded from later update and consolidation. |
+| `includes` | `string` | No | Free-text hint of what to include during extraction. |
+| `excludes` | `string` | No | Free-text hint of what to exclude during extraction. |
+| `enable_graph` | `boolean` | No | Enable graph memory extraction for this call. |
+| `timestamp` | `number` | No | Unix epoch seconds used as the created_at of stored memories. |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: user | assistant | system,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| null` | No | Poll this with events.get. |
+| `status` | `string \| null` | No | PENDING when extraction is queued, SUCCEEDED when `infer` was false. |
+| `message` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  data?: Record<string, any> | null,
+  event?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### batchDelete
+
+`memories.batchDelete`
+
+Permanently delete up to 1000 memories in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mem0.api.memories.batchDelete({ memory_ids: ['285ed74b-6e05-4043-b16b-3abd5b533496'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memory_ids` | `string[]` | Yes | The memories to delete, up to 1000 per call. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `count` | `number` | Yes | How many memories the request carried. |
+
+
+
+---
+
+### batchUpdate
+
+`memories.batchUpdate`
+
+Update up to 1000 memories in one call
+
+**Risk:** `write`
+
+```ts
+await corsair.mem0.api.memories.batchUpdate({ memories: [{ memory_id: '285ed74b-6e05-4043-b16b-3abd5b533496', text: 'Watches football' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memories` | `object[]` | Yes | The memories to update, up to 1000 per call. Text is applied; use memories.update when metadata also has to change. |
+
+<AccordionGroup>
+<Accordion title="memories full type">
+
+```ts
+{
+  memory_id: string,
+  text: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `count` | `number` | Yes | How many memories the request carried. |
+
+
+
+---
+
+### delete
+
+`memories.delete`
+
+Permanently delete one memory; delete_linked also removes memories linked to it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mem0.api.memories.delete({ memory_id: 'ea925981-272f-40dd-b576-be64e4871429' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memory_id` | `string` | Yes | The memory to delete. |
+| `delete_linked` | `boolean` | No | Defaults to false. Also delete memories linked to this one, and report how many went in `cascade_count`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `memory_id` | `string` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `cascade_count` | `number \| null` | No | Only present when `delete_linked` was true. |
+
+
+
+---
+
+### deleteAll
+
+`memories.deleteAll`
+
+Delete every memory matching a filter, or every memory for an entity when the filter is "*"; Mem0 queues the deletion and answers immediately
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mem0.api.memories.deleteAll({ user_id: 'alice' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | No | Delete this user's memories. Pass "*" for every user. |
+| `agent_id` | `string` | No | Delete this agent's memories. Pass "*" for every agent. |
+| `app_id` | `string` | No | Delete this app's memories. Pass "*" for every app. |
+| `run_id` | `string` | No | Delete this run's memories. Pass "*" for every run. |
+| `org_id` | `string` | No | Only memories in this organization. |
+| `project_id` | `string` | No | Only memories in this project. |
+| `metadata` | `Record<string, any>` | No | Only memories whose metadata matches these keys. Values must be strings, numbers or booleans, because null and undefined reach the wire as no key at all. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `event_id` | `string \| null` | No | Mem0 queues the deletion and answers immediately. |
+
+
+
+---
+
+### get
+
+`memories.get`
+
+Read one memory by its ID
+
+**Risk:** `read`
+
+```ts
+await corsair.mem0.api.memories.get({ memory_id: 'ea925981-272f-40dd-b576-be64e4871429' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memory_id` | `string` | Yes | The memory to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `memory` | `string` | Yes | — |
+| `user_id` | `string \| null` | No | — |
+| `agent_id` | `string \| null` | No | — |
+| `app_id` | `string \| null` | No | — |
+| `session_id` | `string \| null` | No | List returns the run as `session_id`; search returns the same value as `run_id`. |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `categories` | `string[] \| null` | No | — |
+| `structured_attributes` | `Record<string, any> \| null` | No | System-derived breakdown of the creation time. |
+| `replaced_by` | `string \| null` | No | — |
+| `synthesized` | `boolean \| null` | No | — |
+| `lifecycle_state` | `string \| null` | No | — |
+| `expiration_date` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### history
+
+`memories.history`
+
+Read the change history of one memory: each ADD, UPDATE and DELETE with its old and new text
+
+**Risk:** `read`
+
+```ts
+await corsair.mem0.api.memories.history({ memory_id: 'ea925981-272f-40dd-b576-be64e4871429' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memory_id` | `string` | Yes | The memory to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `history` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="history full type">
+
+```ts
+{
+  id: string,
+  memory_id: string,
+  input?: {
+    role?: string | null,
+    content?: string | null
+  }[] | null,
+  old_memory?: string | null,
+  new_memory?: string | null,
+  user_id?: string | null,
+  agent_id?: string | null,
+  app_id?: string | null,
+  session_id?: string | null,
+  categories?: string[] | null,
+  event?: string | null,
+  metadata?: Record<string, any> | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`memories.list`
+
+List stored memories page by page, filtered by entity, date range or category; entity IDs go inside `filters`
+
+**Risk:** `read`
+
+```ts
+await corsair.mem0.api.memories.list({ filters: { user_id: 'alice' }, page: 1, page_size: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filters` | `Record<string, any>` | Yes | Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id, at the top level or inside AND/OR/NOT. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard. |
+| `page` | `number` | No | 1-based page. Defaults to 1. |
+| `page_size` | `number` | No | Results per page. Defaults to 100. |
+| `show_expired` | `boolean` | No | Defaults to false. Include memories past their expiration_date. |
+| `start_date` | `string` | No | Only memories created on or after this date. |
+| `end_date` | `string` | No | Only memories created on or before this date. |
+| `categories` | `string[]` | No | Only memories tagged with any of these categories. |
+| `fields` | `string[]` | No | Only these fields come back per memory. A memory without them is absent from the result, not null. |
+| `keywords` | `string` | No | Free-text keyword filter applied on top of `filters`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | Total number of memories matching the filters. |
+| `next` | `string \| null` | Yes | URL of the next page, or null on the last page. |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  memory?: string,
+  user_id?: string | null,
+  agent_id?: string | null,
+  app_id?: string | null,
+  session_id?: string | null,
+  metadata?: Record<string, any> | null,
+  categories?: string[] | null,
+  structured_attributes?: Record<string, any> | null,
+  replaced_by?: string | null,
+  synthesized?: boolean | null,
+  lifecycle_state?: string | null,
+  expiration_date?: string | null,
+  created_at?: string,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`memories.search`
+
+Rank stored memories by relevance to a query with hybrid semantic, keyword and entity matching; entity IDs go inside `filters`
+
+**Risk:** `read`
+
+```ts
+await corsair.mem0.api.memories.search({ query: 'Where does the user live?', filters: { user_id: 'alice' }, top_k: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | Natural-language search query. |
+| `filters` | `Record<string, any>` | Yes | Entity and metadata filters. Must include at least one of user_id, agent_id, app_id or run_id, at the top level or inside AND/OR/NOT. Supports AND, OR, NOT and the operators in, gte, lte, gt, lt, ne, icontains, and * as a wildcard. |
+| `top_k` | `number` | No | Number of results. Defaults to 10. |
+| `threshold` | `number` | No | Minimum relevance score. Defaults to 0.1. Pass 0 to disable filtering. |
+| `rerank` | `boolean` | No | Defaults to false. Apply the managed reranker, which adds latency. |
+| `show_expired` | `boolean` | No | Defaults to false. Include memories past their expiration_date. |
+| `reference_date` | `number \| string` | No | Date to simulate the search from. Accepts a Unix epoch, YYYY-MM-DD, or an ISO datetime. |
+| `fields` | `string[]` | No | Only these fields come back per memory. A memory without them is absent from the result, not null. |
+| `categories` | `string[]` | No | Only memories tagged with any of these categories. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  memory?: string,
+  score?: number | null,
+  score_breakdown?: {
+    semantic?: number | null,
+    bm25?: number | null,
+    entity?: number | null
+  } | null,
+  user_id?: string | null,
+  agent_id?: string | null,
+  app_id?: string | null,
+  run_id?: string | null,
+  metadata?: Record<string, any> | null,
+  categories?: string[] | null,
+  expiration_date?: string | null,
+  created_at?: string,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`memories.update`
+
+Change one memory's text or metadata, or set its expiration date; pass expiration_date as null to clear one
+
+**Risk:** `write`
+
+```ts
+await corsair.mem0.api.memories.update({ memory_id: 'ea925981-272f-40dd-b576-be64e4871429', text: 'User moved to Lisbon in March 2026' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memory_id` | `string` | Yes | The memory to update. |
+| `text` | `string` | No | The new memory text. |
+| `metadata` | `Record<string, any>` | No | Replacement metadata. |
+| `expiration_date` | `string \| null` | No | New expiration date in YYYY-MM-DD form, or null to clear an existing one. null and an omitted field mean different things, so the key is sent whenever this is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `memory` | `string` | Yes | — |
+| `user_id` | `string \| null` | No | — |
+| `agent_id` | `string \| null` | No | — |
+| `app_id` | `string \| null` | No | — |
+| `session_id` | `string \| null` | No | List returns the run as `session_id`; search returns the same value as `run_id`. |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `categories` | `string[] \| null` | No | — |
+| `structured_attributes` | `Record<string, any> \| null` | No | System-derived breakdown of the creation time. |
+| `replaced_by` | `string \| null` | No | — |
+| `synthesized` | `boolean \| null` | No | — |
+| `lifecycle_state` | `string \| null` | No | — |
+| `expiration_date` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Register a URL to receive Mem0 events for a project, subscribing it to memory add, update, delete or categorize and the ingest job events
+
+**Risk:** `write`
+
+```ts
+await corsair.mem0.api.webhooks.create({ project_id: 'proj_123', name: 'Memory Logger', url: 'https://your-app.com/webhook', event_types: ['memory_add', 'memory_categorize'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project to register the webhook on. |
+| `name` | `string` | Yes | A label for the webhook. |
+| `url` | `string` | Yes | The HTTPS endpoint Mem0 posts events to. |
+| `event_types` | `(memory_add \| memory_update \| memory_delete \| memory_categorize \| ingest_job_completed \| ingest_job_partially_completed \| ingest_job_failed \| ingest_job_cancelled)[]` | Yes | Events to subscribe to. Mem0 requires this: omitting it does not fall back to a default. |
+| `is_active` | `boolean` | No | Defaults to true on Mem0 side. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `event_types` | `string[] \| null` | No | — |
+| `owner` | `string \| null` | No | Username of the account that created the webhook. |
+| `is_active` | `boolean \| null` | No | — |
+| `project` | `string \| null` | No | Name of the project the webhook belongs to. |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Unregister a webhook so Mem0 stops posting events to its URL
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mem0.api.webhooks.delete({ webhook_id: 'wh_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | The webhook to remove. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `webhook_id` | `string` | Yes | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the webhooks registered on a project: each URL, its event subscriptions, and whether it is active
+
+**Risk:** `read`
+
+```ts
+await corsair.mem0.api.webhooks.list({ project_id: 'proj_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | The project whose webhooks to read. Mem0 scopes webhooks to a project. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhooks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  webhook_id: string,
+  name?: string | null,
+  url?: string | null,
+  event_types?: string[] | null,
+  owner?: string | null,
+  is_active?: boolean | null,
+  project?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Change a webhook's label, URL or event subscriptions; the new event list replaces the old one
+
+**Risk:** `write`
+
+```ts
+await corsair.mem0.api.webhooks.update({ webhook_id: 'wh_123', name: 'Updated Logger', event_types: ['memory_update', 'memory_add'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | The webhook to change. |
+| `name` | `string` | No | The new label. |
+| `url` | `string` | No | The new endpoint URL. |
+| `event_types` | `(memory_add \| memory_update \| memory_delete \| memory_categorize \| ingest_job_completed \| ingest_job_partially_completed \| ingest_job_failed \| ingest_job_cancelled)[]` | No | The new event subscription list, replacing the old one. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `webhook_id` | `string` | Yes | — |
+| `message` | `string \| null` | No | — |
+| `webhook` | `object` | No | The webhook as it stands after the change, when Mem0 returns it. |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  webhook_id: string,
+  name?: string | null,
+  url?: string | null,
+  event_types?: string[] | null,
+  owner?: string | null,
+  is_active?: boolean | null,
+  project?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

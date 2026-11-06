@@ -37,14 +37,14 @@ await corsair.anthropicadministrator.api.apiKeys.getApiKey({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `created_at` | `string` | Yes | — |
-| `created_by` | `object` | No | — |
-| `expires_at` | `string` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `partial_key_hint` | `string` | No | — |
-| `principal` | `object` | No | — |
+| `partial_key_hint` | `string \| null` | No | — |
+| `principal` | `object \| null` | No | — |
 | `status` | `active \| archived \| expired \| inactive` | Yes | — |
 | `type` | `api_key` | Yes | — |
-| `workspace_id` | `string` | No | — |
+| `workspace_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="created_by full type">
@@ -53,7 +53,7 @@ await corsair.anthropicadministrator.api.apiKeys.getApiKey({});
 {
   id: string,
   type: string
-}
+} | null
 ```
 </Accordion>
 
@@ -63,7 +63,7 @@ await corsair.anthropicadministrator.api.apiKeys.getApiKey({});
 {
   id: string,
   type: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -102,9 +102,9 @@ await corsair.anthropicadministrator.api.apiKeys.listApiKeys({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `first_id` | `string` | No | — |
+| `first_id` | `string \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `last_id` | `string` | No | — |
+| `last_id` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -153,8 +153,8 @@ await corsair.anthropicadministrator.api.apiKeys.updateApiKey({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `api_key_id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `status` | `active \| archived \| inactive` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `active \| archived \| inactive \| null` | No | — |
 
 
 
@@ -164,14 +164,14 @@ await corsair.anthropicadministrator.api.apiKeys.updateApiKey({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `created_at` | `string` | Yes | — |
-| `created_by` | `object` | No | — |
-| `expires_at` | `string` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `expires_at` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `partial_key_hint` | `string` | No | — |
-| `principal` | `object` | No | — |
+| `partial_key_hint` | `string \| null` | No | — |
+| `principal` | `object \| null` | No | — |
 | `status` | `active \| archived \| expired \| inactive` | Yes | — |
 | `type` | `api_key` | Yes | — |
-| `workspace_id` | `string` | No | — |
+| `workspace_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="created_by full type">
@@ -180,7 +180,7 @@ await corsair.anthropicadministrator.api.apiKeys.updateApiKey({});
 {
   id: string,
   type: string
-}
+} | null
 ```
 </Accordion>
 
@@ -190,7 +190,7 @@ await corsair.anthropicadministrator.api.apiKeys.updateApiKey({});
 {
   id: string,
   type: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -228,7 +228,7 @@ await corsair.anthropicadministrator.api.invites.createInvite({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `accepted_at` | `string` | No | — |
+| `accepted_at` | `string \| null` | Yes | — |
 | `email` | `string` | Yes | — |
 | `expires_at` | `string` | Yes | — |
 | `invited_at` | `string` | Yes | — |
@@ -297,7 +297,7 @@ await corsair.anthropicadministrator.api.invites.getInvite({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `accepted_at` | `string` | No | — |
+| `accepted_at` | `string \| null` | Yes | — |
 | `email` | `string` | Yes | — |
 | `expires_at` | `string` | Yes | — |
 | `invited_at` | `string` | Yes | — |
@@ -330,8 +330,8 @@ await corsair.anthropicadministrator.api.invites.listInvites({});
 | `before_id` | `string` | No | Cursor: return the page immediately before this object ID |
 | `limit` | `number` | No | Items per page (1-1000, default 20) |
 | `email` | `string` | No | — |
-| `roles` | `admin \| billing \| claude_code_user \| developer \| managed \| membership_admin \| owner \| primary_owner \| user[]` | No | — |
-| `statuses` | `accepted \| expired \| pending[]` | No | — |
+| `roles` | `(admin \| billing \| claude_code_user \| developer \| managed \| membership_admin \| owner \| primary_owner \| user)[]` | No | — |
+| `statuses` | `(accepted \| expired \| pending)[]` | No | — |
 
 
 
@@ -340,9 +340,9 @@ await corsair.anthropicadministrator.api.invites.listInvites({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `first_id` | `string` | No | — |
+| `first_id` | `string \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `last_id` | `string` | No | — |
+| `last_id` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -350,7 +350,7 @@ await corsair.anthropicadministrator.api.invites.listInvites({});
 ```ts
 {
   id: string,
-  accepted_at?: string | null,
+  accepted_at: string | null,
   email: string,
   expires_at: string,
   invited_at: string,
@@ -453,7 +453,7 @@ await corsair.anthropicadministrator.api.users.listUsers({});
 | `before_id` | `string` | No | Cursor: return the page immediately before this object ID |
 | `limit` | `number` | No | Items per page (1-1000, default 20) |
 | `email` | `string` | No | Filter by user email |
-| `roles` | `admin \| billing \| claude_code_user \| developer \| managed \| membership_admin \| owner \| primary_owner \| user[]` | No | Filter to users whose role matches any supplied value |
+| `roles` | `(admin \| billing \| claude_code_user \| developer \| managed \| membership_admin \| owner \| primary_owner \| user)[]` | No | Filter to users whose role matches any supplied value |
 
 
 
@@ -462,9 +462,9 @@ await corsair.anthropicadministrator.api.users.listUsers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `first_id` | `string` | No | — |
+| `first_id` | `string \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `last_id` | `string` | No | — |
+| `last_id` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -685,9 +685,9 @@ await corsair.anthropicadministrator.api.workspaceMembers.listWorkspaceMembers({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `first_id` | `string` | No | — |
+| `first_id` | `string \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `last_id` | `string` | No | — |
+| `last_id` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -769,14 +769,14 @@ await corsair.anthropicadministrator.api.workspaces.archiveWorkspace({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `archived_at` | `string` | No | — |
+| `archived_at` | `string \| null` | Yes | — |
 | `compartment_id` | `string` | No | — |
 | `created_at` | `string` | Yes | — |
-| `data_residency` | `object` | No | — |
+| `data_residency` | `object \| null` | No | — |
 | `display_color` | `string` | No | — |
-| `external_key_id` | `string` | No | — |
+| `external_key_id` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 | `type` | `workspace` | Yes | — |
 
 <AccordionGroup>
@@ -784,18 +784,10 @@ await corsair.anthropicadministrator.api.workspaces.archiveWorkspace({});
 
 ```ts
 {
-  allowed_inference_geos: global | us[] | unrestricted,
+  allowed_inference_geos: (global | us)[] | unrestricted,
   default_inference_geo: global | us,
   workspace_geo: us
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -821,27 +813,19 @@ await corsair.anthropicadministrator.api.workspaces.createWorkspace({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | Workspace name |
-| `data_residency` | `object` | No | — |
-| `external_key_id` | `string` | No | — |
-| `tags` | `object` | No | — |
+| `data_residency` | `object \| null` | No | — |
+| `external_key_id` | `string \| null` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data_residency full type">
 
 ```ts
 {
-  allowed_inference_geos?: global | us[] | unrestricted | null,
+  allowed_inference_geos?: (global | us)[] | unrestricted | null,
   default_inference_geo?: global | us | null,
   workspace_geo?: us | null
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -853,14 +837,14 @@ await corsair.anthropicadministrator.api.workspaces.createWorkspace({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `archived_at` | `string` | No | — |
+| `archived_at` | `string \| null` | Yes | — |
 | `compartment_id` | `string` | No | — |
 | `created_at` | `string` | Yes | — |
-| `data_residency` | `object` | No | — |
+| `data_residency` | `object \| null` | No | — |
 | `display_color` | `string` | No | — |
-| `external_key_id` | `string` | No | — |
+| `external_key_id` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 | `type` | `workspace` | Yes | — |
 
 <AccordionGroup>
@@ -868,18 +852,10 @@ await corsair.anthropicadministrator.api.workspaces.createWorkspace({});
 
 ```ts
 {
-  allowed_inference_geos: global | us[] | unrestricted,
+  allowed_inference_geos: (global | us)[] | unrestricted,
   default_inference_geo: global | us,
   workspace_geo: us
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -913,14 +889,14 @@ await corsair.anthropicadministrator.api.workspaces.getWorkspace({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `archived_at` | `string` | No | — |
+| `archived_at` | `string \| null` | Yes | — |
 | `compartment_id` | `string` | No | — |
 | `created_at` | `string` | Yes | — |
-| `data_residency` | `object` | No | — |
+| `data_residency` | `object \| null` | No | — |
 | `display_color` | `string` | No | — |
-| `external_key_id` | `string` | No | — |
+| `external_key_id` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 | `type` | `workspace` | Yes | — |
 
 <AccordionGroup>
@@ -928,18 +904,10 @@ await corsair.anthropicadministrator.api.workspaces.getWorkspace({});
 
 ```ts
 {
-  allowed_inference_geos: global | us[] | unrestricted,
+  allowed_inference_geos: (global | us)[] | unrestricted,
   default_inference_geo: global | us,
   workspace_geo: us
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -976,9 +944,9 @@ await corsair.anthropicadministrator.api.workspaces.listWorkspaces({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `first_id` | `string` | No | — |
+| `first_id` | `string \| null` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
-| `last_id` | `string` | No | — |
+| `last_id` | `string \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -986,19 +954,18 @@ await corsair.anthropicadministrator.api.workspaces.listWorkspaces({});
 ```ts
 {
   id: string,
-  archived_at?: string | null,
+  archived_at: string | null,
   compartment_id?: string,
   created_at: string,
   data_residency?: {
-    allowed_inference_geos: global | us[] | unrestricted,
+    allowed_inference_geos: (global | us)[] | unrestricted,
     default_inference_geo: global | us,
     workspace_geo: us
   } | null,
   display_color?: string,
   external_key_id?: string | null,
   name: string,
-  tags?: {
-  } | null,
+  tags?: Record<string, string> | null,
   type: workspace
 }[]
 ```
@@ -1027,26 +994,18 @@ await corsair.anthropicadministrator.api.workspaces.updateWorkspace({});
 |------|------|----------|-------------|
 | `workspace_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `data_residency` | `object` | No | — |
+| `data_residency` | `object \| null` | No | — |
 | `external_key_id` | `string` | No | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data_residency full type">
 
 ```ts
 {
-  allowed_inference_geos?: global | us[] | unrestricted | null,
+  allowed_inference_geos?: (global | us)[] | unrestricted | null,
   default_inference_geo?: global | us | null
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1058,14 +1017,14 @@ await corsair.anthropicadministrator.api.workspaces.updateWorkspace({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `archived_at` | `string` | No | — |
+| `archived_at` | `string \| null` | Yes | — |
 | `compartment_id` | `string` | No | — |
 | `created_at` | `string` | Yes | — |
-| `data_residency` | `object` | No | — |
+| `data_residency` | `object \| null` | No | — |
 | `display_color` | `string` | No | — |
-| `external_key_id` | `string` | No | — |
+| `external_key_id` | `string \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 | `type` | `workspace` | Yes | — |
 
 <AccordionGroup>
@@ -1073,18 +1032,10 @@ await corsair.anthropicadministrator.api.workspaces.updateWorkspace({});
 
 ```ts
 {
-  allowed_inference_geos: global | us[] | unrestricted,
+  allowed_inference_geos: (global | us)[] | unrestricted,
   default_inference_geo: global | us,
   workspace_geo: us
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

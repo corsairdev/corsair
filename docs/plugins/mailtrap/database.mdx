@@ -29,6 +29,7 @@ const rows = await corsair.mailtrap.db.contactFields.search({
 | `id` | `number` | equals, gt, gte, lt, lte, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `merge_tag` | `string` | equals, contains, startsWith, endsWith, in |
+| `data_type` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -79,6 +80,7 @@ const rows = await corsair.mailtrap.db.contacts.search({
 | `email` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `date` | equals, before, after, between |
 | `updated_at` | `date` | equals, before, after, between |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 

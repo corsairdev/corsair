@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for Cloro: every `cloro.api.*` operation with input and output types."
+description: "API reference for cloro: every `cloro.api.*` operation with input and output types."
 ---
 
 Every `cloro.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -57,7 +57,7 @@ await corsair.cloro.api.monitor.chatgpt({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `true` | Yes | — |
-| `result` | `object[]` | Yes | — |
+| `result` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -195,8 +195,7 @@ await corsair.cloro.api.monitor.chatgpt({});
       },
       product_lookup_data?: {
         request_query?: string,
-        all_ids?: {
-        },
+        all_ids?: Record<string, any>,
         metadata_sources?: string[]
       },
       showcase_metadata?: {
@@ -210,10 +209,8 @@ await corsair.cloro.api.monitor.chatgpt({});
           primary?: string,
           secondary?: string
         },
-        slots?: {
-        },
-        debug?: {
-        }
+        slots?: Record<string, any>,
+        debug?: Record<string, any>
       },
       show_price_disclosure?: boolean,
       analytics_meta?: {
@@ -285,8 +282,7 @@ await corsair.cloro.api.monitor.chatgpt({});
       },
       product_lookup_data?: {
         request_query?: string,
-        all_ids?: {
-        },
+        all_ids?: Record<string, any>,
         metadata_sources?: string[]
       },
       showcase_metadata?: {
@@ -300,10 +296,8 @@ await corsair.cloro.api.monitor.chatgpt({});
           primary?: string,
           secondary?: string
         },
-        slots?: {
-        },
-        debug?: {
-        }
+        slots?: Record<string, any>,
+        debug?: Record<string, any>
       },
       show_price_disclosure?: boolean,
       analytics_meta?: {
@@ -502,8 +496,7 @@ await corsair.cloro.api.monitor.chatgpt({});
       },
       product_lookup_data?: {
         request_query?: string,
-        all_ids?: {
-        },
+        all_ids?: Record<string, any>,
         metadata_sources?: string[]
       },
       showcase_metadata?: {
@@ -517,10 +510,8 @@ await corsair.cloro.api.monitor.chatgpt({});
           primary?: string,
           secondary?: string
         },
-        slots?: {
-        },
-        debug?: {
-        }
+        slots?: Record<string, any>,
+        debug?: Record<string, any>
       },
       show_price_disclosure?: boolean,
       analytics_meta?: {
@@ -592,8 +583,7 @@ await corsair.cloro.api.monitor.chatgpt({});
       },
       product_lookup_data?: {
         request_query?: string,
-        all_ids?: {
-        },
+        all_ids?: Record<string, any>,
         metadata_sources?: string[]
       },
       showcase_metadata?: {
@@ -607,10 +597,8 @@ await corsair.cloro.api.monitor.chatgpt({});
           primary?: string,
           secondary?: string
         },
-        slots?: {
-        },
-        debug?: {
-        }
+        slots?: Record<string, any>,
+        debug?: Record<string, any>
       },
       show_price_disclosure?: boolean,
       analytics_meta?: {
@@ -1612,8 +1600,7 @@ await corsair.cloro.api.monitor.googleSearch({});
       description?: string,
       features?: string[]
     },
-    specifications?: {
-    },
+    specifications?: Record<string, any>,
     images?: {
       mainUrl: string,
       thumbnailUrl?: string,
@@ -1621,12 +1608,9 @@ await corsair.cloro.api.monitor.googleSearch({});
     }[],
     rating?: number,
     reviews?: string,
-    variants?: {
-    }[],
-    userReviews?: {
-    }[],
-    relatedProducts?: {
-    }[],
+    variants?: Record<string, any>[],
+    userReviews?: Record<string, any>[],
+    relatedProducts?: Record<string, any>[],
     productDocid?: string
   }[],
   html?: string[]
@@ -1779,8 +1763,7 @@ await corsair.cloro.api.monitor.perplexity({});
       rating?: number,
       original_price?: string | null,
       description?: string,
-      variants?: {
-      }[]
+      variants?: Record<string, any>[]
     }[]
   }[],
   search_model_queries?: string[],
@@ -1841,8 +1824,8 @@ await corsair.cloro.api.utility.credits({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `remaining` | `number` | Yes | — |
-| `perCycle` | `number` | No | — |
-| `cycleResetsAt` | `string` | No | — |
+| `perCycle` | `number \| null` | Yes | — |
+| `cycleResetsAt` | `string \| null` | Yes | — |
 
 
 

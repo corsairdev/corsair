@@ -443,17 +443,7 @@ await corsair.alphavantage.api.crypto.daily({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -486,17 +476,7 @@ await corsair.alphavantage.api.crypto.intraday({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -527,17 +507,7 @@ await corsair.alphavantage.api.crypto.monthly({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -568,17 +538,7 @@ await corsair.alphavantage.api.crypto.weekly({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -1035,17 +995,7 @@ await corsair.alphavantage.api.forex.daily({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -1128,17 +1078,7 @@ await corsair.alphavantage.api.forex.intraday({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -1169,17 +1109,7 @@ await corsair.alphavantage.api.forex.monthly({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -1210,17 +1140,7 @@ await corsair.alphavantage.api.forex.weekly({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -1361,60 +1281,60 @@ await corsair.alphavantage.api.fundamentals.companyOverview({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Symbol` | `string` | Yes | — |
-| `AssetType` | `string` | No | — |
-| `Name` | `string` | No | — |
-| `Description` | `string` | No | — |
-| `CIK` | `string` | No | — |
-| `Exchange` | `string` | No | — |
-| `Currency` | `string` | No | — |
-| `Country` | `string` | No | — |
-| `Sector` | `string` | No | — |
-| `Industry` | `string` | No | — |
-| `Address` | `string` | No | — |
-| `OfficialSite` | `string` | No | — |
-| `FiscalYearEnd` | `string` | No | — |
-| `LatestQuarter` | `string` | No | — |
-| `MarketCapitalization` | `string` | No | — |
-| `EBITDA` | `string` | No | — |
-| `PERatio` | `string` | No | — |
-| `PEGRatio` | `string` | No | — |
-| `BookValue` | `string` | No | — |
-| `DividendPerShare` | `string` | No | — |
-| `DividendYield` | `string` | No | — |
-| `EPS` | `string` | No | — |
-| `RevenuePerShareTTM` | `string` | No | — |
-| `ProfitMargin` | `string` | No | — |
-| `OperatingMarginTTM` | `string` | No | — |
-| `ReturnOnAssetsTTM` | `string` | No | — |
-| `ReturnOnEquityTTM` | `string` | No | — |
-| `RevenueTTM` | `string` | No | — |
-| `GrossProfitTTM` | `string` | No | — |
-| `DilutedEPSTTM` | `string` | No | — |
-| `QuarterlyEarningsGrowthYOY` | `string` | No | — |
-| `QuarterlyRevenueGrowthYOY` | `string` | No | — |
-| `AnalystTargetPrice` | `string` | No | — |
-| `AnalystRatingStrongBuy` | `string` | No | — |
-| `AnalystRatingBuy` | `string` | No | — |
-| `AnalystRatingHold` | `string` | No | — |
-| `AnalystRatingSell` | `string` | No | — |
-| `AnalystRatingStrongSell` | `string` | No | — |
-| `TrailingPE` | `string` | No | — |
-| `ForwardPE` | `string` | No | — |
-| `PriceToSalesRatioTTM` | `string` | No | — |
-| `PriceToBookRatio` | `string` | No | — |
-| `EVToRevenue` | `string` | No | — |
-| `EVToEBITDA` | `string` | No | — |
-| `Beta` | `string` | No | — |
-| `52WeekHigh` | `string` | No | — |
-| `52WeekLow` | `string` | No | — |
-| `50DayMovingAverage` | `string` | No | — |
-| `200DayMovingAverage` | `string` | No | — |
-| `SharesOutstanding` | `string` | No | — |
-| `SharesFloat` | `string` | No | — |
-| `PercentInsiders` | `string` | No | — |
-| `PercentInstitutions` | `string` | No | — |
-| `DividendDate` | `string` | No | — |
-| `ExDividendDate` | `string` | No | — |
+| `AssetType` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Description` | `string \| null` | No | — |
+| `CIK` | `string \| null` | No | — |
+| `Exchange` | `string \| null` | No | — |
+| `Currency` | `string \| null` | No | — |
+| `Country` | `string \| null` | No | — |
+| `Sector` | `string \| null` | No | — |
+| `Industry` | `string \| null` | No | — |
+| `Address` | `string \| null` | No | — |
+| `OfficialSite` | `string \| null` | No | — |
+| `FiscalYearEnd` | `string \| null` | No | — |
+| `LatestQuarter` | `string \| null` | No | — |
+| `MarketCapitalization` | `string \| null` | No | — |
+| `EBITDA` | `string \| null` | No | — |
+| `PERatio` | `string \| null` | No | — |
+| `PEGRatio` | `string \| null` | No | — |
+| `BookValue` | `string \| null` | No | — |
+| `DividendPerShare` | `string \| null` | No | — |
+| `DividendYield` | `string \| null` | No | — |
+| `EPS` | `string \| null` | No | — |
+| `RevenuePerShareTTM` | `string \| null` | No | — |
+| `ProfitMargin` | `string \| null` | No | — |
+| `OperatingMarginTTM` | `string \| null` | No | — |
+| `ReturnOnAssetsTTM` | `string \| null` | No | — |
+| `ReturnOnEquityTTM` | `string \| null` | No | — |
+| `RevenueTTM` | `string \| null` | No | — |
+| `GrossProfitTTM` | `string \| null` | No | — |
+| `DilutedEPSTTM` | `string \| null` | No | — |
+| `QuarterlyEarningsGrowthYOY` | `string \| null` | No | — |
+| `QuarterlyRevenueGrowthYOY` | `string \| null` | No | — |
+| `AnalystTargetPrice` | `string \| null` | No | — |
+| `AnalystRatingStrongBuy` | `string \| null` | No | — |
+| `AnalystRatingBuy` | `string \| null` | No | — |
+| `AnalystRatingHold` | `string \| null` | No | — |
+| `AnalystRatingSell` | `string \| null` | No | — |
+| `AnalystRatingStrongSell` | `string \| null` | No | — |
+| `TrailingPE` | `string \| null` | No | — |
+| `ForwardPE` | `string \| null` | No | — |
+| `PriceToSalesRatioTTM` | `string \| null` | No | — |
+| `PriceToBookRatio` | `string \| null` | No | — |
+| `EVToRevenue` | `string \| null` | No | — |
+| `EVToEBITDA` | `string \| null` | No | — |
+| `Beta` | `string \| null` | No | — |
+| `52WeekHigh` | `string \| null` | No | — |
+| `52WeekLow` | `string \| null` | No | — |
+| `50DayMovingAverage` | `string \| null` | No | — |
+| `200DayMovingAverage` | `string \| null` | No | — |
+| `SharesOutstanding` | `string \| null` | No | — |
+| `SharesFloat` | `string \| null` | No | — |
+| `PercentInsiders` | `string \| null` | No | — |
+| `PercentInstitutions` | `string \| null` | No | — |
+| `DividendDate` | `string \| null` | No | — |
+| `ExDividendDate` | `string \| null` | No | — |
 
 
 
@@ -1542,17 +1462,7 @@ await corsair.alphavantage.api.fundamentals.earningsCalendar({});
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, string>[]`
 
 
 ---
@@ -1673,17 +1583,7 @@ await corsair.alphavantage.api.fundamentals.ipoCalendar({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, string>[]`
 
 
 ---
@@ -1872,7 +1772,7 @@ await corsair.alphavantage.api.intelligence.slidingWindowAnalytics({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `meta_data` | `object` | Yes | — |
-| `payload` | `object` | Yes | — |
+| `payload` | `Record<string, any>` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="meta_data full type">
@@ -1885,14 +1785,6 @@ await corsair.alphavantage.api.intelligence.slidingWindowAnalytics({});
   max_dt: string,
   ohlc: string,
   interval: string
-}
-```
-</Accordion>
-
-<Accordion title="payload full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1925,17 +1817,7 @@ await corsair.alphavantage.api.market.listingStatus({});
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, string>[]`
 
 
 ---
@@ -1955,17 +1837,7 @@ await corsair.alphavantage.api.market.sector({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2156,17 +2028,7 @@ await corsair.alphavantage.api.technical.indicator({});
 | `time_period` | `number` | No | — |
 | `series_type` | `close \| open \| high \| low` | No | — |
 | `month` | `string` | No | — |
-| `extra_params` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="extra_params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extra_params` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -2174,17 +2036,7 @@ await corsair.alphavantage.api.technical.indicator({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -2217,17 +2069,7 @@ await corsair.alphavantage.api.timeSeries.daily({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -2313,17 +2155,7 @@ await corsair.alphavantage.api.timeSeries.intraday({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -2357,17 +2189,7 @@ await corsair.alphavantage.api.timeSeries.intradayExtended({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -2397,17 +2219,7 @@ await corsair.alphavantage.api.timeSeries.monthly({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -2437,17 +2249,7 @@ await corsair.alphavantage.api.timeSeries.monthlyAdjusted({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -2520,17 +2322,7 @@ await corsair.alphavantage.api.timeSeries.weekly({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 
@@ -2560,17 +2352,7 @@ await corsair.alphavantage.api.timeSeries.weeklyAdjusted({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Meta Data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="Meta Data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `Meta Data` | `Record<string, string \| number>` | No | — |
 
 
 

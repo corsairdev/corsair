@@ -110,7 +110,7 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "stealth",
@@ -171,7 +171,7 @@
           {
             "key": "context",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "stealth",
@@ -550,22 +550,22 @@
           {
             "key": "content",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "cookies",
             "optional": true,
-            "type": "{ name: string, value: string, domain?: string, path?: string, secure?: boolean, httpOnly?: boolean, expires?: number, sameSite?: Strict | Lax | None, url?: string }[]"
+            "type": "{ name: string, value: string, domain?: string, path?: string, secure?: boolean, httpOnly?: boolean, expires?: number, sameSite?: Strict | Lax | None, url?: string }[] | null"
           },
           {
             "key": "screenshot",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "browserWSEndpoint",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -616,6 +616,11 @@
           "field": "expires",
           "type": "number",
           "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "sameSite",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
           "field": "url",

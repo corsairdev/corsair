@@ -30,17 +30,7 @@ await corsair.starton.api.ipfs.uploadFile({});
 | `content` | `string` | Yes | File contents, base64-encoded (standard alphabet, padded). |
 | `filename` | `string` | Yes | File name stored on the pin, e.g. `metadata.json`. |
 | `contentType` | `string` | No | MIME type of the file. Defaults to application/octet-stream. |
-| `metadata` | `object` | No | Arbitrary JSON stored alongside the pin. |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | Arbitrary JSON stored alongside the pin. |
 
 
 
@@ -49,36 +39,18 @@ await corsair.starton.api.ipfs.uploadFile({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `cid` | `string` | No | — |
-| `origins` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
+| `name` | `string \| null` | No | — |
+| `cid` | `string \| null` | No | — |
+| `origins` | `string[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 | `status` | `queued \| pinning \| pinned \| failed \| deleted` | Yes | — |
-| `delegates` | `string[]` | No | — |
-| `size` | `number` | No | — |
-| `type` | `directory \| file` | No | — |
-| `directoryContent` | `object[]` | No | — |
+| `delegates` | `string[] \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `type` | `directory \| file \| null` | No | — |
+| `directoryContent` | `Record<string, any>[] \| null` | No | — |
 | `projectId` | `string` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 | `updatedAt` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="directoryContent full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -105,7 +77,7 @@ await corsair.starton.api.smartContract.call({});
 | `network` | `string` | Yes | Network of the smart contract, e.g. `polygon-mumbai`. List via GET /v3/network. |
 | `address` | `string` | Yes | Address of the deployed smart contract. |
 | `functionName` | `string` | Yes | Name of the contract function to execute. Must be state-changing; use smartContract.read for view functions. |
-| `params` | `object[]` | Yes | Function arguments, in the order the ABI declares them. |
+| `params` | `(string \| number \| boolean \| Record<string, any>)[]` | No | Function arguments, in the order the ABI declares them. Defaults to []. |
 | `signerWallet` | `string` | Yes | Address of the KMS wallet that signs and pays for the transaction. |
 | `speed` | `low \| average \| fast \| fastest \| custom` | No | Gas speed. Defaults to `average`; use `custom` to supply customGas. |
 | `customGas` | `object` | No | Custom gas settings. Only used when speed is set to `custom`. |
@@ -115,16 +87,6 @@ await corsair.starton.api.smartContract.call({});
 | `simulate` | `boolean` | No | Simulate only: estimates gas and does NOT broadcast a transaction. |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-(
-  string | number | boolean | {
-  }
-)[]
-```
-</Accordion>
-
 <Accordion title="customGas full type">
 
 ```ts
@@ -144,54 +106,45 @@ await corsair.starton.api.smartContract.call({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `blockHash` | `string` | No | — |
-| `blockNumber` | `number` | No | — |
+| `blockHash` | `string \| null` | No | — |
+| `blockNumber` | `number \| null` | No | — |
 | `chainId` | `number` | Yes | — |
 | `network` | `string` | Yes | — |
-| `data` | `string` | No | — |
+| `data` | `string \| null` | No | — |
 | `from` | `string` | Yes | — |
-| `gasLimit` | `string` | No | — |
-| `gasPrice` | `string` | No | — |
-| `maxFeePerGas` | `string` | No | — |
-| `maxPriorityFeePerGas` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `nonce` | `number` | No | — |
-| `type` | `number` | No | — |
+| `gasLimit` | `string \| null` | No | — |
+| `gasPrice` | `string \| null` | No | — |
+| `maxFeePerGas` | `string \| null` | No | — |
+| `maxPriorityFeePerGas` | `string \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `nonce` | `number \| null` | No | — |
+| `type` | `number \| null` | No | — |
 | `signerWallet` | `string` | Yes | — |
-| `publishedDate` | `string` | No | — |
-| `minedDate` | `string` | No | — |
-| `signedTransaction` | `string` | No | — |
+| `publishedDate` | `string \| null` | No | — |
+| `minedDate` | `string \| null` | No | — |
+| `signedTransaction` | `string \| null` | No | — |
 | `status` | `UNSIGNED \| ERROR_TX \| ERROR_PUBLISH \| PUBLISHED \| RECEIVED_BY_STARTON \| CREATED_BY_STARTON \| COULD_NOT_ESTIMATE_GAS_PRICE \| COULD_NOT_INCREASE_GAS_PRICE \| GAS_PRICE_ESTIMATED \| INVALID_GAS_PRICE \| REPLACEMENT_GAS_PRICE_UNDERPRICED \| COULD_NOT_ESTIMATE_GAS_LIMIT \| GAS_LIMIT_ESTIMATED \| EXECUTION_WILL_FAIL \| INVALID_ARGUMENT \| INSUFFICIENT_FUNDS \| INSUFFICIENT_FUNDS_AFTER_BROADCAST \| COULD_NOT_ASSIGN_NONCE \| COULD_NOT_UNSTUCK_NONCE \| NONCE_ASSIGNED \| NONCE_EXPIRED \| COULD_NOT_SIGN \| SIGNED \| SENT_TO_MEMPOOL \| COULD_NOT_BROADCAST \| ALREADY_KNOWN \| MINED \| CONFIRMED \| REPLACED \| FAILED \| MONITORING_IN_PROGRESS \| STUCK_BY_PREVIOUS_TRANSACTION \| MAX_GAS_PRICE_REACH \| GAS_PRICE_INCREASED \| NEW_TRANSACTION_HASH \| UNKNOWN \| MONITORING_INTERRUPTED` | Yes | — |
 | `state` | `SUCCESS \| PENDING \| MANUAL_ACTION_REQUIRED \| ERROR` | Yes | — |
-| `speed` | `low \| average \| fast \| fastest \| custom` | No | — |
+| `speed` | `low \| average \| fast \| fastest \| custom \| null` | No | — |
 | `logs` | `object[]` | Yes | — |
-| `to` | `string` | No | — |
-| `transactionHash` | `string` | No | — |
+| `to` | `string \| null` | No | — |
+| `transactionHash` | `string \| null` | No | — |
 | `value` | `string` | Yes | — |
 | `automaticNonce` | `boolean` | Yes | — |
 | `isDeployTransaction` | `boolean` | Yes | — |
 | `projectId` | `string` | Yes | — |
-| `parentTransaction` | `string` | No | — |
+| `parentTransaction` | `string \| null` | No | — |
 | `createdAt` | `string` | Yes | — |
 | `updatedAt` | `string` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="logs full type">
 
 ```ts
 {
   message: string,
   type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
-  context?: {
-  },
+  context?: Record<string, any>,
   createdAt: string
 }[]
 ```
@@ -222,28 +175,18 @@ await corsair.starton.api.smartContract.deployFromTemplate({});
 | `signerWallet` | `string` | Yes | Address of the KMS wallet that signs and pays for the transaction. |
 | `templateId` | `string` | Yes | Starton Library template to deploy, e.g. `ERC20_META_TRANSACTION`. List via GET /v3/smart-contract-template. |
 | `name` | `string` | Yes | Contract name on Starton (off-chain). Max 255 characters. |
-| `params` | `object[]` | Yes | Smart contract constructor parameters, in the order the template declares them. |
+| `params` | `(string \| number \| boolean \| Record<string, any>)[]` | No | Smart contract constructor parameters, in the order the template declares them. Defaults to []. |
 | `description` | `string` | No | Contract description on Starton (off-chain). |
 | `gasLimit` | `string` | No | Optional gas limit. |
 | `speed` | `low \| average \| fast \| fastest \| custom` | No | Gas speed. Defaults to `average`; use `custom` to supply customGas. |
 | `customGas` | `object` | No | Custom gas settings. Only used when speed is set to `custom`. |
 | `nonce` | `number` | No | Manual nonce. If set, the Starton relayer will not assign one automatically. |
 | `value` | `string` | No | Native-currency value sent with the deployment, in wei. For payable constructors. |
-| `metadata` | `object` | No | Arbitrary JSON stored alongside the contract. |
-| `uiData` | `object` | No | Dashboard display metadata Starton stores with the contract. |
+| `metadata` | `Record<string, any>` | No | Arbitrary JSON stored alongside the contract. |
+| `uiData` | `object \| null` | No | Dashboard display metadata Starton stores with the contract. |
 | `simulate` | `boolean` | No | Simulate only: estimates gas and does NOT broadcast a transaction. |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-(
-  string | number | boolean | {
-  }
-)[]
-```
-</Accordion>
-
 <Accordion title="customGas full type">
 
 ```ts
@@ -251,14 +194,6 @@ await corsair.starton.api.smartContract.deployFromTemplate({});
   gasPrice?: string,
   maxFeePerGas?: string,
   maxPriorityFeePerGas?: string
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -272,7 +207,7 @@ await corsair.starton.api.smartContract.deployFromTemplate({});
   imported: boolean,
   deployType?: string,
   chainId?: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -295,12 +230,10 @@ await corsair.starton.api.smartContract.deployFromTemplate({});
   name: string,
   description?: string | null,
   network: string,
-  abi?: {
-  }[],
+  abi?: Record<string, any>[],
   address: string,
   params?: string[] | null,
-  compilationDetails?: {
-  } | null,
+  compilationDetails?: Record<string, any> | null,
   creationHash?: string | null,
   status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
   state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR,
@@ -308,8 +241,7 @@ await corsair.starton.api.smartContract.deployFromTemplate({});
   blockNumber?: number | null,
   templateId?: string | null,
   projectId: string,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   uiData?: {
     version: 1,
     deployMethod: web3 | kms,
@@ -338,8 +270,7 @@ await corsair.starton.api.smartContract.deployFromTemplate({});
   gasPrice?: string | null,
   maxFeePerGas?: string | null,
   maxPriorityFeePerGas?: string | null,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   nonce?: number | null,
   type?: number | null,
   signerWallet: string,
@@ -352,8 +283,7 @@ await corsair.starton.api.smartContract.deployFromTemplate({});
   logs: {
     message: string,
     type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
-    context?: {
-    },
+    context?: Record<string, any>,
     createdAt: string
   }[],
   to?: string | null,
@@ -415,12 +345,10 @@ await corsair.starton.api.smartContract.list({});
   name: string,
   description?: string | null,
   network: string,
-  abi?: {
-  }[],
+  abi?: Record<string, any>[],
   address: string,
   params?: string[] | null,
-  compilationDetails?: {
-  } | null,
+  compilationDetails?: Record<string, any> | null,
   creationHash?: string | null,
   status: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
   state: SUCCESS | PENDING | MANUAL_ACTION_REQUIRED | ERROR,
@@ -428,8 +356,7 @@ await corsair.starton.api.smartContract.list({});
   blockNumber?: number | null,
   templateId?: string | null,
   projectId: string,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   uiData?: {
     version: 1,
     deployMethod: web3 | kms,
@@ -480,19 +407,7 @@ await corsair.starton.api.smartContract.read({});
 | `network` | `string` | Yes | Network of the smart contract, e.g. `polygon-mumbai`. List via GET /v3/network. |
 | `address` | `string` | Yes | Address of the deployed smart contract. |
 | `functionName` | `string` | Yes | Name of the read-only (view) contract function to call. |
-| `params` | `object[]` | Yes | Function arguments, in the order the ABI declares them. |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-(
-  string | number | boolean | {
-  }
-)[]
-```
-</Accordion>
-</AccordionGroup>
+| `params` | `(string \| number \| boolean \| Record<string, any>)[]` | No | Function arguments, in the order the ABI declares them. Defaults to []. |
 
 
 
@@ -500,31 +415,11 @@ await corsair.starton.api.smartContract.read({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `response` | `object[]` | Yes | — |
-| `params` | `object[]` | Yes | — |
+| `response` | `string \| number \| boolean \| Record<string, any> \| any[]` | Yes | — |
+| `params` | `(string \| number \| boolean \| Record<string, any>)[]` | Yes | — |
 | `functionName` | `string` | Yes | — |
 | `address` | `string` | Yes | — |
 | `network` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="response full type">
-
-```ts
-string | number | boolean | {
-} | any[]
-```
-</Accordion>
-
-<Accordion title="params full type">
-
-```ts
-(
-  string | number | boolean | {
-  }
-)[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -581,12 +476,9 @@ await corsair.starton.api.template.list({});
   tags: string[],
   category: NFT | FUNGIBLE | OTHER | DEPRECATED | SALE | TOOL,
   humanReadableAbi: string[],
-  abi: {
-  }[],
-  form?: {
-  } | null,
-  compilationDetails?: {
-  } | null,
+  abi: Record<string, any>[],
+  form?: Record<string, any> | null,
+  compilationDetails?: Record<string, any> | null,
   isAudited: boolean,
   isActivated: boolean,
   order: number,
@@ -641,54 +533,45 @@ await corsair.starton.api.transaction.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `blockHash` | `string` | No | — |
-| `blockNumber` | `number` | No | — |
+| `blockHash` | `string \| null` | No | — |
+| `blockNumber` | `number \| null` | No | — |
 | `chainId` | `number` | Yes | — |
 | `network` | `string` | Yes | — |
-| `data` | `string` | No | — |
+| `data` | `string \| null` | No | — |
 | `from` | `string` | Yes | — |
-| `gasLimit` | `string` | No | — |
-| `gasPrice` | `string` | No | — |
-| `maxFeePerGas` | `string` | No | — |
-| `maxPriorityFeePerGas` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `nonce` | `number` | No | — |
-| `type` | `number` | No | — |
+| `gasLimit` | `string \| null` | No | — |
+| `gasPrice` | `string \| null` | No | — |
+| `maxFeePerGas` | `string \| null` | No | — |
+| `maxPriorityFeePerGas` | `string \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `nonce` | `number \| null` | No | — |
+| `type` | `number \| null` | No | — |
 | `signerWallet` | `string` | Yes | — |
-| `publishedDate` | `string` | No | — |
-| `minedDate` | `string` | No | — |
-| `signedTransaction` | `string` | No | — |
+| `publishedDate` | `string \| null` | No | — |
+| `minedDate` | `string \| null` | No | — |
+| `signedTransaction` | `string \| null` | No | — |
 | `status` | `UNSIGNED \| ERROR_TX \| ERROR_PUBLISH \| PUBLISHED \| RECEIVED_BY_STARTON \| CREATED_BY_STARTON \| COULD_NOT_ESTIMATE_GAS_PRICE \| COULD_NOT_INCREASE_GAS_PRICE \| GAS_PRICE_ESTIMATED \| INVALID_GAS_PRICE \| REPLACEMENT_GAS_PRICE_UNDERPRICED \| COULD_NOT_ESTIMATE_GAS_LIMIT \| GAS_LIMIT_ESTIMATED \| EXECUTION_WILL_FAIL \| INVALID_ARGUMENT \| INSUFFICIENT_FUNDS \| INSUFFICIENT_FUNDS_AFTER_BROADCAST \| COULD_NOT_ASSIGN_NONCE \| COULD_NOT_UNSTUCK_NONCE \| NONCE_ASSIGNED \| NONCE_EXPIRED \| COULD_NOT_SIGN \| SIGNED \| SENT_TO_MEMPOOL \| COULD_NOT_BROADCAST \| ALREADY_KNOWN \| MINED \| CONFIRMED \| REPLACED \| FAILED \| MONITORING_IN_PROGRESS \| STUCK_BY_PREVIOUS_TRANSACTION \| MAX_GAS_PRICE_REACH \| GAS_PRICE_INCREASED \| NEW_TRANSACTION_HASH \| UNKNOWN \| MONITORING_INTERRUPTED` | Yes | — |
 | `state` | `SUCCESS \| PENDING \| MANUAL_ACTION_REQUIRED \| ERROR` | Yes | — |
-| `speed` | `low \| average \| fast \| fastest \| custom` | No | — |
+| `speed` | `low \| average \| fast \| fastest \| custom \| null` | No | — |
 | `logs` | `object[]` | Yes | — |
-| `to` | `string` | No | — |
-| `transactionHash` | `string` | No | — |
+| `to` | `string \| null` | No | — |
+| `transactionHash` | `string \| null` | No | — |
 | `value` | `string` | Yes | — |
 | `automaticNonce` | `boolean` | Yes | — |
 | `isDeployTransaction` | `boolean` | Yes | — |
 | `projectId` | `string` | Yes | — |
-| `parentTransaction` | `string` | No | — |
+| `parentTransaction` | `string \| null` | No | — |
 | `createdAt` | `string` | Yes | — |
 | `updatedAt` | `string` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="logs full type">
 
 ```ts
 {
   message: string,
   type: UNSIGNED | ERROR_TX | ERROR_PUBLISH | PUBLISHED | RECEIVED_BY_STARTON | CREATED_BY_STARTON | COULD_NOT_ESTIMATE_GAS_PRICE | COULD_NOT_INCREASE_GAS_PRICE | GAS_PRICE_ESTIMATED | INVALID_GAS_PRICE | REPLACEMENT_GAS_PRICE_UNDERPRICED | COULD_NOT_ESTIMATE_GAS_LIMIT | GAS_LIMIT_ESTIMATED | EXECUTION_WILL_FAIL | INVALID_ARGUMENT | INSUFFICIENT_FUNDS | INSUFFICIENT_FUNDS_AFTER_BROADCAST | COULD_NOT_ASSIGN_NONCE | COULD_NOT_UNSTUCK_NONCE | NONCE_ASSIGNED | NONCE_EXPIRED | COULD_NOT_SIGN | SIGNED | SENT_TO_MEMPOOL | COULD_NOT_BROADCAST | ALREADY_KNOWN | MINED | CONFIRMED | REPLACED | FAILED | MONITORING_IN_PROGRESS | STUCK_BY_PREVIOUS_TRANSACTION | MAX_GAS_PRICE_REACH | GAS_PRICE_INCREASED | NEW_TRANSACTION_HASH | UNKNOWN | MONITORING_INTERRUPTED,
-  context?: {
-  },
+  context?: Record<string, any>,
   createdAt: string
 }[]
 ```
@@ -720,17 +603,7 @@ await corsair.starton.api.wallet.create({});
 | `kmsId` | `string` | Yes | Id of the Key Management System the wallet key is stored under. Required. List available KMS via GET /v3/kms. |
 | `name` | `string` | No | Wallet name on Starton (off-chain). |
 | `description` | `string` | No | Wallet description on Starton (off-chain). |
-| `metadata` | `object` | No | Arbitrary JSON stored alongside the wallet. |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | Arbitrary JSON stored alongside the wallet. |
 
 
 
@@ -741,22 +614,12 @@ await corsair.starton.api.wallet.create({});
 | `address` | `string` | Yes | — |
 | `providerKeyId` | `string` | Yes | — |
 | `kmsId` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 | `projectId` | `string` | Yes | — |
 | `createdAt` | `string` | Yes | — |
 | `updatedAt` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -802,8 +665,7 @@ await corsair.starton.api.wallet.list({});
   kmsId: string,
   name?: string | null,
   description?: string | null,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   projectId: string,
   createdAt: string,
   updatedAt: string
@@ -881,48 +743,22 @@ await corsair.starton.api.watcher.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `address` | `string` | Yes | — |
 | `network` | `string` | Yes | — |
 | `projectId` | `string` | Yes | — |
 | `type` | `MINED_TRANSACTION \| ADDRESS_ACTIVITY \| ADDRESS_RECEIVED_NATIVE_CURRENCY \| ADDRESS_SENT_NATIVE_CURRENCY \| EVENT_TRANSFER \| ERC721_EVENT_TRANSFER \| ERC1155_EVENT_TRANSFER_SINGLE \| ERC1155_EVENT_TRANSFER_BATCH \| EVENT_MINT \| EVENT_APPROVAL \| EVENT_CUSTOM` | Yes | — |
-| `customEventAbi` | `object[]` | No | — |
+| `customEventAbi` | `Record<string, any>[] \| null` | No | — |
 | `triggerType` | `BLOCK \| TRANSACTION \| EVENT \| GAS_PRICE` | Yes | — |
 | `webhookUrl` | `string` | Yes | — |
 | `confirmationsBlocks` | `number` | Yes | — |
 | `paused` | `boolean` | Yes | — |
-| `pausedReason` | `string` | No | — |
-| `metadata` | `object` | No | — |
-| `customFilters` | `object` | No | — |
+| `pausedReason` | `string \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `customFilters` | `Record<string, any>` | No | — |
 | `createdAt` | `string` | Yes | — |
 | `updatedAt` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="customEventAbi full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="customFilters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -967,13 +803,10 @@ await corsair.starton.api.webhook.list({});
   id: string,
   refId: string,
   status: RETRYING | SUCCESSFUL | FAILED | CANCELED,
-  payload?: {
-  } | null,
+  payload: Record<string, any> | null,
   url: string,
-  headers?: {
-  } | null,
-  attempts: {
-  }[],
+  headers: Record<string, any> | null,
+  attempts: Record<string, any>[],
   projectId: string,
   createdAt: string,
   updatedAt: string

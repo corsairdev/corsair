@@ -28,7 +28,7 @@ await corsair.hashnode.api.comments.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `postId` | `string` | Yes | — |
-| `first` | `number` | Yes | — |
+| `first` | `number` | No | Defaults to 10. |
 | `after` | `string` | No | — |
 
 
@@ -80,7 +80,7 @@ await corsair.hashnode.api.comments.list({});
     }[],
     pageInfo: {
       hasNextPage: boolean,
-      endCursor?: string | null
+      endCursor: string | null
     }
   }
 }
@@ -280,7 +280,7 @@ await corsair.hashnode.api.drafts.delete({});
 
 ```ts
 {
-  draft?: {
+  draft: {
     id: string
   } | null
 }
@@ -316,7 +316,7 @@ await corsair.hashnode.api.drafts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `draft` | `object` | No | — |
+| `draft` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="draft full type">
@@ -374,7 +374,7 @@ await corsair.hashnode.api.drafts.get({});
   scheduledDate?: string | null,
   readTimeInMinutes?: number,
   isSubmittedForReview?: boolean
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -664,7 +664,7 @@ await corsair.hashnode.api.feed.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `first` | `number` | Yes | — |
+| `first` | `number` | No | Defaults to 10. |
 | `after` | `string` | No | — |
 | `filter` | `object` | No | — |
 
@@ -768,7 +768,7 @@ await corsair.hashnode.api.feed.list({});
   }[],
   pageInfo: {
     hasNextPage: boolean,
-    endCursor?: string | null
+    endCursor: string | null
   }
 }
 ```
@@ -814,8 +814,7 @@ await corsair.hashnode.api.images.createUploadURL({});
 {
   presignedPost: {
     url: string,
-    fields: {
-    }
+    fields: Record<string, any>
   }
 }
 ```
@@ -916,7 +915,7 @@ await corsair.hashnode.api.pages.get({});
 
 ```ts
 {
-  staticPage?: {
+  staticPage: {
     id: string,
     title: string,
     slug: string,
@@ -960,7 +959,7 @@ await corsair.hashnode.api.pages.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `host` | `string` | Yes | — |
-| `first` | `number` | Yes | — |
+| `first` | `number` | No | Defaults to 10. |
 | `after` | `string` | No | — |
 
 
@@ -1000,7 +999,7 @@ await corsair.hashnode.api.pages.list({});
     }[],
     pageInfo: {
       hasNextPage: boolean,
-      endCursor?: string | null
+      endCursor: string | null
     }
   }
 }
@@ -1038,7 +1037,7 @@ await corsair.hashnode.api.posts.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `post` | `object` | No | — |
+| `post` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="post full type">
@@ -1111,7 +1110,7 @@ await corsair.hashnode.api.posts.get({});
     slug: string
   } | null,
   featured?: boolean
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1152,7 +1151,7 @@ await corsair.hashnode.api.posts.getBySlug({});
 
 ```ts
 {
-  post?: {
+  post: {
     id: string,
     title: string,
     subtitle?: string | null,
@@ -1246,7 +1245,7 @@ await corsair.hashnode.api.posts.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `host` | `string` | Yes | — |
-| `first` | `number` | Yes | — |
+| `first` | `number` | No | Defaults to 10. |
 | `after` | `string` | No | — |
 | `filter` | `object` | No | — |
 
@@ -1348,7 +1347,7 @@ await corsair.hashnode.api.posts.list({});
     }[],
     pageInfo: {
       hasNextPage: boolean,
-      endCursor?: string | null
+      endCursor: string | null
     },
     totalDocuments?: number
   }
@@ -1514,7 +1513,7 @@ await corsair.hashnode.api.posts.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `first` | `number` | Yes | — |
+| `first` | `number` | No | Defaults to 10. |
 | `after` | `string` | No | — |
 | `sortBy` | `DATE_PUBLISHED_ASC \| DATE_PUBLISHED_DESC` | No | — |
 | `filter` | `object` | Yes | — |
@@ -1620,7 +1619,7 @@ await corsair.hashnode.api.posts.search({});
   }[],
   pageInfo: {
     hasNextPage: boolean,
-    endCursor?: string | null
+    endCursor: string | null
   }
 }
 ```
@@ -1794,7 +1793,7 @@ await corsair.hashnode.api.publications.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `publication` | `object` | No | — |
+| `publication` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="publication full type">
@@ -1846,7 +1845,7 @@ await corsair.hashnode.api.publications.get({});
     website?: string | null
   } | null,
   followersCount?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1871,7 +1870,7 @@ await corsair.hashnode.api.publications.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `first` | `number` | Yes | — |
+| `first` | `number` | No | Defaults to 10. |
 | `after` | `string` | No | — |
 
 
@@ -1940,7 +1939,7 @@ await corsair.hashnode.api.publications.list({});
     }[],
     pageInfo: {
       hasNextPage: boolean,
-      endCursor?: string | null
+      endCursor: string | null
     }
   }
 }
@@ -1978,7 +1977,7 @@ await corsair.hashnode.api.series.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `series` | `object` | No | — |
+| `series` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="series full type">
@@ -2014,7 +2013,7 @@ await corsair.hashnode.api.series.get({});
     location?: string | null,
     dateJoined?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2040,7 +2039,7 @@ await corsair.hashnode.api.series.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `host` | `string` | Yes | — |
-| `first` | `number` | Yes | — |
+| `first` | `number` | No | Defaults to 10. |
 | `after` | `string` | No | — |
 
 
@@ -2093,7 +2092,7 @@ await corsair.hashnode.api.series.list({});
     }[],
     pageInfo: {
       hasNextPage: boolean,
-      endCursor?: string | null
+      endCursor: string | null
     }
   }
 }
@@ -2131,7 +2130,7 @@ await corsair.hashnode.api.tags.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `tag` | `object` | No | — |
+| `tag` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="tag full type">
@@ -2145,7 +2144,7 @@ await corsair.hashnode.api.tags.get({});
   logo?: string | null,
   postsCount?: number,
   followersCount?: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2180,7 +2179,7 @@ await corsair.hashnode.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `object` | No | — |
+| `user` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -2205,7 +2204,7 @@ await corsair.hashnode.api.users.get({});
   } | null,
   location?: string | null,
   dateJoined?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

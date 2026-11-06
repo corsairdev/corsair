@@ -1,0 +1,12 @@
+displayName: Hookdeck
+description: Webhook infrastructure platform, with endpoints for creating and managing connections that route events from sources to destinations.
+domain: hookdeck.com
+examples:
+  read:
+    path: connections.list
+    title: List connections
+  write:
+    path: connections.create
+    title: Create a connection
+    args:
+      name: stripe-to-api

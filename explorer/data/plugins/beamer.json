@@ -1,7 +1,7 @@
 {
   "id": "beamer",
   "displayName": "Beamer",
-  "description": "Beamer plugin for Corsair",
+  "description": "Product update and changelog platform. Read the posts published in a Beamer account.",
   "npmPackageName": "@corsair-dev/beamer",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

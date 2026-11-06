@@ -542,7 +542,7 @@ await corsair.todoist.api.projects.getMany({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -688,17 +688,7 @@ await corsair.todoist.api.reminders.create({});
 | `id` | `string` | Yes | — |
 | `task_id` | `string` | No | — |
 | `notify_uid` | `string` | No | — |
-| `due` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="due full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `due` | `Record<string, any>` | No | — |
 
 
 
@@ -754,8 +744,7 @@ await corsair.todoist.api.reminders.getMany({});
   id: string,
   task_id?: string,
   notify_uid?: string,
-  due?: {
-  }
+  due?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -799,17 +788,7 @@ await corsair.todoist.api.reminders.update({});
 | `id` | `string` | Yes | — |
 | `task_id` | `string` | No | — |
 | `notify_uid` | `string` | No | — |
-| `due` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="due full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `due` | `Record<string, any>` | No | — |
 
 
 
@@ -1007,7 +986,7 @@ await corsair.todoist.api.tasks.close({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1058,32 +1037,22 @@ await corsair.todoist.api.tasks.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `project_id` | `string` | No | — |
-| `section_id` | `string` | No | — |
+| `project_id` | `string \| null` | No | — |
+| `section_id` | `string \| null` | No | — |
 | `content` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `is_completed` | `boolean` | No | — |
 | `labels` | `string[]` | No | — |
-| `parent_id` | `string` | No | — |
+| `parent_id` | `string \| null` | No | — |
 | `order` | `number` | No | — |
 | `priority` | `number` | No | — |
-| `due` | `object` | No | — |
+| `due` | `Record<string, any> \| null` | No | — |
 | `url` | `string` | No | — |
 | `comment_count` | `number` | No | — |
 | `created_at` | `string` | No | — |
 | `creator_id` | `string` | No | — |
 | `assignee_id` | `string` | No | — |
 | `assigner_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="due full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1109,7 +1078,7 @@ await corsair.todoist.api.tasks.delete({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1149,32 +1118,22 @@ await corsair.todoist.api.tasks.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `project_id` | `string` | No | — |
-| `section_id` | `string` | No | — |
+| `project_id` | `string \| null` | No | — |
+| `section_id` | `string \| null` | No | — |
 | `content` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `is_completed` | `boolean` | No | — |
 | `labels` | `string[]` | No | — |
-| `parent_id` | `string` | No | — |
+| `parent_id` | `string \| null` | No | — |
 | `order` | `number` | No | — |
 | `priority` | `number` | No | — |
-| `due` | `object` | No | — |
+| `due` | `Record<string, any> \| null` | No | — |
 | `url` | `string` | No | — |
 | `comment_count` | `number` | No | — |
 | `created_at` | `string` | No | — |
 | `creator_id` | `string` | No | — |
 | `assignee_id` | `string` | No | — |
 | `assigner_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="due full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1204,7 +1163,7 @@ await corsair.todoist.api.tasks.getMany({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1221,8 +1180,7 @@ await corsair.todoist.api.tasks.getMany({});
   parent_id?: string | null,
   order?: number,
   priority?: number,
-  due?: {
-  } | null,
+  due?: Record<string, any> | null,
   url?: string,
   comment_count?: number,
   created_at?: string,
@@ -1241,8 +1199,7 @@ await corsair.todoist.api.tasks.getMany({});
     parent_id?: string | null,
     order?: number,
     priority?: number,
-    due?: {
-    } | null,
+    due?: Record<string, any> | null,
     url?: string,
     comment_count?: number,
     created_at?: string,
@@ -1262,7 +1219,7 @@ await corsair.todoist.api.tasks.getMany({});
 
 `tasks.move`
 
-Move a Todoist task between project or section
+Move a Todoist task to one project, section, or parent
 
 **Risk:** `write`
 
@@ -1270,16 +1227,28 @@ Move a Todoist task between project or section
 await corsair.todoist.api.tasks.move({});
 ```
 
-**Input**
+**Input:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `project_id` | `string` | No | — |
-| `section_id` | `string` | No | — |
-| `parent_id` | `string` | No | — |
-| `order` | `number` | No | — |
+<AccordionGroup>
+<Accordion title="Input full type">
 
+```ts
+{
+  id: string,
+  project_id: string,
+  order?: number
+} | {
+  id: string,
+  section_id: string,
+  order?: number
+} | {
+  id: string,
+  parent_id: string,
+  order?: number
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 **Output**
@@ -1287,32 +1256,22 @@ await corsair.todoist.api.tasks.move({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `project_id` | `string` | No | — |
-| `section_id` | `string` | No | — |
+| `project_id` | `string \| null` | No | — |
+| `section_id` | `string \| null` | No | — |
 | `content` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `is_completed` | `boolean` | No | — |
 | `labels` | `string[]` | No | — |
-| `parent_id` | `string` | No | — |
+| `parent_id` | `string \| null` | No | — |
 | `order` | `number` | No | — |
 | `priority` | `number` | No | — |
-| `due` | `object` | No | — |
+| `due` | `Record<string, any> \| null` | No | — |
 | `url` | `string` | No | — |
 | `comment_count` | `number` | No | — |
 | `created_at` | `string` | No | — |
 | `creator_id` | `string` | No | — |
 | `assignee_id` | `string` | No | — |
 | `assigner_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="due full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1346,32 +1305,22 @@ await corsair.todoist.api.tasks.quickAdd({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `project_id` | `string` | No | — |
-| `section_id` | `string` | No | — |
+| `project_id` | `string \| null` | No | — |
+| `section_id` | `string \| null` | No | — |
 | `content` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `is_completed` | `boolean` | No | — |
 | `labels` | `string[]` | No | — |
-| `parent_id` | `string` | No | — |
+| `parent_id` | `string \| null` | No | — |
 | `order` | `number` | No | — |
 | `priority` | `number` | No | — |
-| `due` | `object` | No | — |
+| `due` | `Record<string, any> \| null` | No | — |
 | `url` | `string` | No | — |
 | `comment_count` | `number` | No | — |
 | `created_at` | `string` | No | — |
 | `creator_id` | `string` | No | — |
 | `assignee_id` | `string` | No | — |
 | `assigner_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="due full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1397,7 +1346,7 @@ await corsair.todoist.api.tasks.reopen({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1449,32 +1398,22 @@ await corsair.todoist.api.tasks.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `project_id` | `string` | No | — |
-| `section_id` | `string` | No | — |
+| `project_id` | `string \| null` | No | — |
+| `section_id` | `string \| null` | No | — |
 | `content` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `is_completed` | `boolean` | No | — |
 | `labels` | `string[]` | No | — |
-| `parent_id` | `string` | No | — |
+| `parent_id` | `string \| null` | No | — |
 | `order` | `number` | No | — |
 | `priority` | `number` | No | — |
-| `due` | `object` | No | — |
+| `due` | `Record<string, any> \| null` | No | — |
 | `url` | `string` | No | — |
 | `comment_count` | `number` | No | — |
 | `created_at` | `string` | No | — |
 | `creator_id` | `string` | No | — |
 | `assignee_id` | `string` | No | — |
 | `assigner_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="due full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 

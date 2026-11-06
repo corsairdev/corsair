@@ -335,7 +335,7 @@ await corsair.coda.api.analytics.listPackFormulas({});
 |------|------|----------|-------------|
 | `packId` | `number` | Yes | ID of a Pack |
 | `packFormulaNames` | `string[]` | No | A list of Pack formula names (case-sensitive) for which to retrieve analytics. |
-| `packFormulaTypes` | `action \| formula \| sync \| metadata[]` | No | A list of Pack formula types corresponding to the `packFormulaNames`. If specified, this must have the same length as `packFormulaNames`. |
+| `packFormulaTypes` | `(action \| formula \| sync \| metadata)[]` | No | A list of Pack formula types corresponding to the `packFormulaNames`. If specified, this must have the same length as `packFormulaNames`. |
 | `sinceDate` | `string` | No | Limit results to activity on or after this date. |
 | `untilDate` | `string` | No | Limit results to activity on or before this date. |
 | `scale` | `daily \| cumulative` | No | Quantization period over which to view analytics. Defaults to daily. |
@@ -568,17 +568,7 @@ await corsair.coda.api.automations.trigger({});
 |------|------|----------|-------------|
 | `docId` | `string` | Yes | ID of the doc. |
 | `ruleId` | `string` | Yes | ID of the automation rule. |
-| `payload` | `object` | No | JSON payload passed to the automation. |
-
-<AccordionGroup>
-<Accordion title="payload full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `payload` | `Record<string, JsonValue>` | No | JSON payload passed to the automation. |
 
 
 
@@ -2346,17 +2336,7 @@ await corsair.coda.api.packAssets.upload({});
 |------|------|----------|-------------|
 | `uploadUrl` | `string` | Yes | — |
 | `packAssetUploadedPathName` | `string` | Yes | — |
-| `headers` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `headers` | `Record<string, string>` | Yes | — |
 
 
 
@@ -3084,8 +3064,8 @@ await corsair.coda.api.packInvitations.listForUser({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `nextPageToken` | `string` | No | — |
-| `nextPageLink` | `string` | No | — |
+| `nextPageToken` | `string \| null` | No | — |
+| `nextPageLink` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -3128,7 +3108,7 @@ await corsair.coda.api.packInvitations.listForUser({});
     certified?: boolean,
     certifiedAgent?: boolean,
     sourceCodeVisibility?: private | shared,
-    packEntrypoints?: go | docs[],
+    packEntrypoints?: (go | docs)[],
     verifiedVersion?: string,
     name: string,
     description: string,
@@ -3379,8 +3359,7 @@ await corsair.coda.api.packListings.get({});
     allowedConfigurations?: {
       configurationId: string,
       name: string,
-      policy?: {
-      },
+      policy?: Record<string, JsonValue>,
       hasSharedConnection?: boolean
     }[],
     allowedPackIds?: number[],
@@ -3427,16 +3406,21 @@ await corsair.coda.api.packListings.get({});
     allowedConfigurations?: {
       configurationId: string,
       name: string,
-      policy?: {
-      },
+      policy?: Record<string, JsonValue>,
       hasSharedConnection?: boolean
     }[],
     allowedPackIds?: number[]
   },
   ingestionLimitSettings?: {
-    tableSettings?: {
-    },
-    maxBytesPerSyncTableDefault?: number | null,
+    tableSettings?: Record<string, {
+      maxBytesPerSyncTableOverride?: number | null,
+      excludeIngestionByDefault?: boolean,
+      parameterLimits?: Record<string, {
+        default: string,
+        allowed: string[]
+      }>
+    }>,
+    maxBytesPerSyncTableDefault: number | null,
     allowedTablesCount: number
   }
 }
@@ -3449,8 +3433,7 @@ await corsair.coda.api.packListings.get({});
 {
   configurationId: string,
   name: string,
-  policy?: {
-  },
+  policy?: Record<string, JsonValue>,
   hasSharedConnection?: boolean
 }
 ```
@@ -3477,14 +3460,14 @@ await corsair.coda.api.packListings.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `packAccessTypes` | `none \| view \| test \| edit \| admin[]` | No | Pack access types. |
+| `packAccessTypes` | `(none \| view \| test \| edit \| admin)[]` | No | Pack access types. |
 | `packIds` | `number[]` | No | Which Pack IDs to fetch. |
 | `onlyWorkspaceId` | `string` | No | Use only this workspace (not all of a user's workspaces) to check for Packs shared via workspace ACL. |
 | `parentWorkspaceIds` | `string[]` | No | Filter to only Packs whose parent workspace is one of the given IDs. |
 | `excludePublicPacks` | `boolean` | No | Only get Packs shared with users/workspaces, not publicly. |
 | `packEntrypoint` | `go \| docs` | No | Entrypoint for which this Pack call is being made. Used to filter non relevant Packs |
 | `certifiedAgentsOnly` | `boolean` | No | Only include Packs that are certified for agent use. Depending on server configuration, may also include Packs that the user is an admin of. |
-| `packCategories` | `connector \| agent \| customAgent[]` | No | Filter Packs by one or more category types. |
+| `packCategories` | `(connector \| agent \| customAgent)[]` | No | Filter Packs by one or more category types. |
 | `sortBy` | `packId \| name \| packVersion \| packVersionModifiedAt \| agentDirectorySort` | No | Specify a sort order for the returned Pack listings returned. |
 | `orderBy` | `packId \| name \| packVersion \| packVersionModifiedAt \| agentDirectorySort` | No | Deprecated: use sortBy instead. |
 | `direction` | `ascending \| descending` | No | Direction to sort results in. |
@@ -3683,7 +3666,7 @@ await corsair.coda.api.packLogs.list({});
 | `docId` | `string` | Yes | ID of the doc. |
 | `limit` | `number` | No | Maximum number of results to return in this query. |
 | `pageToken` | `string` | No | An opaque token used to fetch the next page of results. |
-| `logTypes` | `custom \| fetcher \| invocation \| internal \| auth \| ingestionLifecycle \| ingestionDebug \| agentRuntime \| mcp[]` | No | Only return logs of the given types. |
+| `logTypes` | `(custom \| fetcher \| invocation \| internal \| auth \| ingestionLifecycle \| ingestionDebug \| agentRuntime \| mcp)[]` | No | Only return logs of the given types. |
 | `beforeTimestamp` | `string` | No | Only return logs before the given time (non-inclusive). |
 | `afterTimestamp` | `string` | No | Only return logs after the given time (non-inclusive). |
 | `order` | `asc \| desc` | No | Specifies if the logs will be returned in time desc or asc. Default is desc. |
@@ -5880,7 +5863,7 @@ await corsair.coda.api.packLogs.listIngestion({});
 | `rootIngestionId` | `string` | Yes | ID of the root ingestion. |
 | `limit` | `number` | No | Maximum number of results to return in this query. |
 | `pageToken` | `string` | No | An opaque token used to fetch the next page of results. |
-| `logTypes` | `custom \| fetcher \| invocation \| internal \| auth \| ingestionLifecycle \| ingestionDebug \| agentRuntime \| mcp[]` | No | Only return logs of the given types. |
+| `logTypes` | `(custom \| fetcher \| invocation \| internal \| auth \| ingestionLifecycle \| ingestionDebug \| agentRuntime \| mcp)[]` | No | Only return logs of the given types. |
 | `ingestionExecutionId` | `string` | No | ID of the ingestion execution. |
 | `beforeTimestamp` | `string` | No | Only return logs before the given time (non-inclusive). |
 | `afterTimestamp` | `string` | No | Only return logs after the given time (non-inclusive). |
@@ -6336,8 +6319,7 @@ await corsair.coda.api.packLogs.listIngestionExecutions({});
   ingestionExecutionId: string,
   ingestionId: string,
   ingestionName: string,
-  ingestionStatusCounts?: {
-  },
+  ingestionStatusCounts?: Record<string, number>,
   lastFinishedFullWorkflowExecutionId?: string,
   lastFinishedIncrementalWorkflowExecutionId?: string,
   latestFullWorkflowExecutionId?: string,
@@ -6765,7 +6747,7 @@ await corsair.coda.api.packs.create({});
 | `workspaceId` | `string` | No | The parent workspace for the Pack. If unspecified, the user's default workspace will be used. |
 | `name` | `string` | No | The name for the Pack. |
 | `description` | `string` | No | A brief description of the Pack. |
-| `sourcePackId` | `number` | No | The ID of the new Pack's source, if this new Pack was forked. |
+| `sourcePackId` | `number \| null` | No | The ID of the new Pack's source, if this new Pack was forked. |
 
 
 
@@ -6838,7 +6820,7 @@ await corsair.coda.api.packs.get({});
 | `certified` | `boolean` | No | — |
 | `certifiedAgent` | `boolean` | No | — |
 | `sourceCodeVisibility` | `private \| shared` | No | — |
-| `packEntrypoints` | `go \| docs[]` | No | — |
+| `packEntrypoints` | `(go \| docs)[]` | No | — |
 | `verifiedVersion` | `string` | No | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | Yes | — |
@@ -6948,17 +6930,7 @@ await corsair.coda.api.packs.getConfigurationSchema({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, JsonValue>`
 
 
 ---
@@ -6980,7 +6952,7 @@ await corsair.coda.api.packs.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `accessType` | `none \| view \| test \| edit \| admin` | No | Deprecated, use accessTypes instead. Filter to only return the Packs for which the current user has this access type |
-| `accessTypes` | `none \| view \| test \| edit \| admin[]` | No | Filter to only return the Packs for which the current user has these access types. |
+| `accessTypes` | `(none \| view \| test \| edit \| admin)[]` | No | Filter to only return the Packs for which the current user has these access types. |
 | `sortBy` | `title \| createdAt \| updatedAt` | No | The sort order of the Packs returned. |
 | `limit` | `number` | No | Maximum number of results to return in this query. |
 | `direction` | `ascending \| descending` | No | Direction to sort results in. |
@@ -6989,7 +6961,7 @@ await corsair.coda.api.packs.list({});
 | `parentWorkspaceIds` | `string[]` | No | Filter to only Packs whose parent workspace is one of the given IDs. |
 | `excludePublicPacks` | `boolean` | No | Only get Packs shared with users/workspaces, not publicly. |
 | `packEntrypoint` | `go \| docs` | No | Entrypoint for which this Pack call is being made. Used to filter non relevant Packs |
-| `excludePackCategories` | `connector \| agent \| customAgent[]` | No | Exclude Packs of one or more category types. Categories not listed stay visible. |
+| `excludePackCategories` | `(connector \| agent \| customAgent)[]` | No | Exclude Packs of one or more category types. Categories not listed stay visible. |
 
 
 
@@ -7032,7 +7004,7 @@ await corsair.coda.api.packs.list({});
   certified?: boolean,
   certifiedAgent?: boolean,
   sourceCodeVisibility?: private | shared,
-  packEntrypoints?: go | docs[],
+  packEntrypoints?: (go | docs)[],
   verifiedVersion?: string,
   name: string,
   description: string,
@@ -7068,14 +7040,14 @@ await corsair.coda.api.packs.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `packId` | `number` | Yes | ID of a Pack |
-| `overallRateLimit` | `object` | No | Rate limit in Pack settings. |
-| `perConnectionRateLimit` | `object` | No | Rate limit in Pack settings. |
-| `logo` | `object` | No | Information about an image file for an update Pack request. |
-| `cover` | `object` | No | Information about an image file for an update Pack request. |
-| `exampleImages` | `object[]` | No | The example images for the Pack. |
-| `agentImages` | `object[]` | No | The agent images for the Pack. |
-| `sourceCodeVisibility` | `private \| shared` | No | Visibility of a Pack's source code. |
-| `packEntrypoints` | `go \| docs[]` | No | Pack entrypoints where this Pack is available |
+| `overallRateLimit` | `object \| null` | No | Rate limit in Pack settings. |
+| `perConnectionRateLimit` | `object \| null` | No | Rate limit in Pack settings. |
+| `logo` | `object \| null` | No | Information about an image file for an update Pack request. |
+| `cover` | `object \| null` | No | Information about an image file for an update Pack request. |
+| `exampleImages` | `object[] \| null` | No | The example images for the Pack. |
+| `agentImages` | `object[] \| null` | No | The agent images for the Pack. |
+| `sourceCodeVisibility` | `private \| shared \| null` | No | Visibility of a Pack's source code. |
+| `packEntrypoints` | `(go \| docs)[] \| null` | No | Pack entrypoints where this Pack is available |
 | `name` | `string` | No | The name of the Pack. |
 | `description` | `string` | No | The full description of the Pack. |
 | `shortDescription` | `string` | No | A short version of the description of the Pack. |
@@ -7092,7 +7064,7 @@ await corsair.coda.api.packs.update({});
 {
   intervalSeconds: number,
   operationsPerInterval: number
-}
+} | null
 ```
 </Accordion>
 
@@ -7102,7 +7074,7 @@ await corsair.coda.api.packs.update({});
 {
   intervalSeconds: number,
   operationsPerInterval: number
-}
+} | null
 ```
 </Accordion>
 
@@ -7113,7 +7085,7 @@ await corsair.coda.api.packs.update({});
   assetId: string,
   filename: string,
   mimeType?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -7124,7 +7096,7 @@ await corsair.coda.api.packs.update({});
   assetId: string,
   filename: string,
   mimeType?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -7135,7 +7107,7 @@ await corsair.coda.api.packs.update({});
   assetId: string,
   filename: string,
   mimeType?: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -7146,7 +7118,7 @@ await corsair.coda.api.packs.update({});
   assetId: string,
   filename: string,
   mimeType?: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -7167,7 +7139,7 @@ await corsair.coda.api.packs.update({});
 | `certified` | `boolean` | No | — |
 | `certifiedAgent` | `boolean` | No | — |
 | `sourceCodeVisibility` | `private \| shared` | No | — |
-| `packEntrypoints` | `go \| docs[]` | No | — |
+| `packEntrypoints` | `(go \| docs)[]` | No | — |
 | `verifiedVersion` | `string` | No | — |
 | `name` | `string` | Yes | — |
 | `description` | `string` | Yes | — |
@@ -7485,17 +7457,7 @@ await corsair.coda.api.packVersions.register({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uploadUrl` | `string` | Yes | — |
-| `headers` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `headers` | `Record<string, string>` | Yes | — |
 
 
 
@@ -7609,17 +7571,7 @@ await corsair.coda.api.packVersions.uploadSourceCode({});
 |------|------|----------|-------------|
 | `uploadUrl` | `string` | Yes | — |
 | `uploadedPathName` | `string` | Yes | — |
-| `headers` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `headers` | `Record<string, string>` | Yes | — |
 
 
 
@@ -8590,8 +8542,115 @@ await corsair.coda.api.rows.get({});
 <Accordion title="values full type">
 
 ```ts
-{
-}
+Record<string, string | number | boolean | (string | number | boolean | (string | number | boolean)[])[] | string | number | boolean | {
+  @context: string,
+  @type: MonetaryAmount,
+  additionalType?: string,
+  currency: string,
+  amount: string | number
+} | {
+  @context: string,
+  @type: ImageObject,
+  additionalType?: string,
+  name?: string,
+  url?: string,
+  height?: number,
+  width?: number,
+  status?: live | deleted | failed
+} | {
+  @context: string,
+  @type: Person,
+  additionalType?: string,
+  name: string,
+  email?: string
+} | {
+  @context: string,
+  @type: WebPage,
+  additionalType?: string,
+  name?: string,
+  url: string
+} | {
+  @context: string,
+  @type: StructuredValue,
+  additionalType: row,
+  name: string,
+  url: string,
+  tableId: string,
+  rowId: string,
+  tableUrl: string
+} | (string | number | boolean | {
+  @context: string,
+  @type: MonetaryAmount,
+  additionalType?: string,
+  currency: string,
+  amount: string | number
+} | {
+  @context: string,
+  @type: ImageObject,
+  additionalType?: string,
+  name?: string,
+  url?: string,
+  height?: number,
+  width?: number,
+  status?: live | deleted | failed
+} | {
+  @context: string,
+  @type: Person,
+  additionalType?: string,
+  name: string,
+  email?: string
+} | {
+  @context: string,
+  @type: WebPage,
+  additionalType?: string,
+  name?: string,
+  url: string
+} | {
+  @context: string,
+  @type: StructuredValue,
+  additionalType: row,
+  name: string,
+  url: string,
+  tableId: string,
+  rowId: string,
+  tableUrl: string
+} | (string | number | boolean | {
+  @context: string,
+  @type: MonetaryAmount,
+  additionalType?: string,
+  currency: string,
+  amount: string | number
+} | {
+  @context: string,
+  @type: ImageObject,
+  additionalType?: string,
+  name?: string,
+  url?: string,
+  height?: number,
+  width?: number,
+  status?: live | deleted | failed
+} | {
+  @context: string,
+  @type: Person,
+  additionalType?: string,
+  name: string,
+  email?: string
+} | {
+  @context: string,
+  @type: WebPage,
+  additionalType?: string,
+  name?: string,
+  url: string
+} | {
+  @context: string,
+  @type: StructuredValue,
+  additionalType: row,
+  name: string,
+  url: string,
+  tableId: string,
+  rowId: string,
+  tableUrl: string
+})[])[]>
 ```
 </Accordion>
 
@@ -8673,8 +8732,115 @@ await corsair.coda.api.rows.list({});
   browserLink: string,
   createdAt: string,
   updatedAt: string,
-  values: {
-  }
+  values: Record<string, string | number | boolean | (string | number | boolean | (string | number | boolean)[])[] | string | number | boolean | {
+    @context: string,
+    @type: MonetaryAmount,
+    additionalType?: string,
+    currency: string,
+    amount: string | number
+  } | {
+    @context: string,
+    @type: ImageObject,
+    additionalType?: string,
+    name?: string,
+    url?: string,
+    height?: number,
+    width?: number,
+    status?: live | deleted | failed
+  } | {
+    @context: string,
+    @type: Person,
+    additionalType?: string,
+    name: string,
+    email?: string
+  } | {
+    @context: string,
+    @type: WebPage,
+    additionalType?: string,
+    name?: string,
+    url: string
+  } | {
+    @context: string,
+    @type: StructuredValue,
+    additionalType: row,
+    name: string,
+    url: string,
+    tableId: string,
+    rowId: string,
+    tableUrl: string
+  } | (string | number | boolean | {
+    @context: string,
+    @type: MonetaryAmount,
+    additionalType?: string,
+    currency: string,
+    amount: string | number
+  } | {
+    @context: string,
+    @type: ImageObject,
+    additionalType?: string,
+    name?: string,
+    url?: string,
+    height?: number,
+    width?: number,
+    status?: live | deleted | failed
+  } | {
+    @context: string,
+    @type: Person,
+    additionalType?: string,
+    name: string,
+    email?: string
+  } | {
+    @context: string,
+    @type: WebPage,
+    additionalType?: string,
+    name?: string,
+    url: string
+  } | {
+    @context: string,
+    @type: StructuredValue,
+    additionalType: row,
+    name: string,
+    url: string,
+    tableId: string,
+    rowId: string,
+    tableUrl: string
+  } | (string | number | boolean | {
+    @context: string,
+    @type: MonetaryAmount,
+    additionalType?: string,
+    currency: string,
+    amount: string | number
+  } | {
+    @context: string,
+    @type: ImageObject,
+    additionalType?: string,
+    name?: string,
+    url?: string,
+    height?: number,
+    width?: number,
+    status?: live | deleted | failed
+  } | {
+    @context: string,
+    @type: Person,
+    additionalType?: string,
+    name: string,
+    email?: string
+  } | {
+    @context: string,
+    @type: WebPage,
+    additionalType?: string,
+    name?: string,
+    url: string
+  } | {
+    @context: string,
+    @type: StructuredValue,
+    additionalType: row,
+    name: string,
+    url: string,
+    tableId: string,
+    rowId: string,
+    tableUrl: string
+  })[])[]>
 }[]
 ```
 </Accordion>
@@ -8748,11 +8914,7 @@ await corsair.coda.api.rows.update({});
 {
   cells: {
     column: string,
-    value: string | number | boolean | (
-      string | number | boolean | (
-        string | number | boolean
-      )[]
-    )[]
+    value: string | number | boolean | (string | number | boolean | (string | number | boolean)[])[]
   }[]
 }
 ```
@@ -8801,11 +8963,7 @@ await corsair.coda.api.rows.upsert({});
 {
   cells: {
     column: string,
-    value: string | number | boolean | (
-      string | number | boolean | (
-        string | number | boolean
-      )[]
-    )[]
+    value: string | number | boolean | (string | number | boolean | (string | number | boolean)[])[]
   }[]
 }[]
 ```
@@ -8967,7 +9125,7 @@ await corsair.coda.api.tables.list({});
 | `limit` | `number` | No | Maximum number of results to return in this query. |
 | `pageToken` | `string` | No | An opaque token used to fetch the next page of results. |
 | `sortBy` | `name` | No | Determines how to sort the given objects. |
-| `tableTypes` | `table \| view \| database[]` | No | Comma-separated list of table types to include in results. If omitted, includes tables, views, and databases. |
+| `tableTypes` | `(table \| view \| database)[]` | No | Comma-separated list of table types to include in results. If omitted, includes tables, views, and databases. |
 
 
 
@@ -9105,7 +9263,7 @@ await corsair.coda.api.workspaces.listUsers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workspaceId` | `string` | Yes | ID of the workspace. |
-| `includedRoles` | `Admin \| DocMaker \| Editor[]` | No | Show only the members that match the included roles. Multiple roles can be specified with a comma-delimited list. |
+| `includedRoles` | `(Admin \| DocMaker \| Editor)[]` | No | Show only the members that match the included roles. Multiple roles can be specified with a comma-delimited list. |
 | `pageToken` | `string` | No | An opaque token used to fetch the next page of results. |
 
 

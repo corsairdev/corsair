@@ -1,0 +1,15 @@
+displayName: Writer
+description: Enterprise generative AI API for chat and text completions, knowledge graphs, file management, PDF parsing, translation, AI content detection, and web search.
+domain: writer.com
+examples:
+  read:
+    path: models.list
+    title: List models
+  write:
+    path: chat.create
+    title: Create a chat completion
+    args:
+      model: palmyra-x5
+      messages:
+        - role: user
+          content: Write a one-line product tagline.

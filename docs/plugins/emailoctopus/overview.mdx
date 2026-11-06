@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "EmailOctopus lists, contacts, tags, custom fields, campaigns and automations on API v2."
+---
+
+Use **EmailOctopus** through Corsair: one client, typed API calls.
+
+Create an API key under EmailOctopus account settings, Developer, API keys. A key created before API v2 (labelled legacy) will not authenticate. The key is sent as `Authorization: Bearer`.
+
+- **Deletes are permanent.** `lists.delete`, `contacts.delete`, `fields.delete` and `tags.delete` remove the resource.
+- **Create versus upsert.** `contacts.create` fails when the email is already on the list. `contacts.upsert` updates that contact instead.
+- **Tag updates on a contact.** `contacts.create` takes `tags` as an array of names. `contacts.upsert` and `contacts.update` take `tags` as `{ tagName: true | false }`.
+- **Rate limits.** The account has a bucket of 100 requests, refilled at 10 per second. A 429 includes `X-RateLimit-Retry-After`. The plugin retries that up to three times. Writes are not retried on 5xx.
+- **Paging.** Collection calls return `paging.next.starting_after`. Pass that cursor back as `starting_after`. `limit` is at most 100.
+- **Webhooks.** This plugin does not receive webhooks.
+
+**What you get:**
+
+- 25 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/emailoctopus
+```
+```bash yarn
+yarn add corsair @corsair-dev/emailoctopus
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/emailoctopus
+```
+```bash bun
+bun add corsair @corsair-dev/emailoctopus
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { emailoctopus } from '@corsair-dev/emailoctopus';
+
+export const corsair = createCorsair({
+	plugins: [
+		emailoctopus(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup call is required to register the plugin. A request with no saved key throws `AuthMissingError`. When a connect link can be minted, that error includes `connectUrl`. Redirect the tenant to `connectUrl`, or show `error.message`.
+
+```ts
+emailoctopus()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'emailoctopus',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the first page of lists**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.emailoctopus.api.lists.list({ limit: 10 });
+```
+
+
+**Add a contact to a list**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.emailoctopus.api.contacts.create({ list_id: '00000000-0000-0000-0000-000000000000', email_address: 'otto@example.com' });
+```
+
+
+See the full list on the [API](/plugins/emailoctopus/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/emailoctopus/api">
+    Every `emailoctopus.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

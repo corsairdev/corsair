@@ -344,7 +344,7 @@
           {
             "key": "contacts",
             "optional": false,
-            "type": "{ id?: string, email?: string, phone_number_id?: string, external_id?: string, anonymous_id?: string, first_name?: string, last_name?: string, address_line_1?: string, address_line_2?: string, alternate_emails?: string[], city?: string, country?: string, postal_code?: string, state_province_region?: string, custom_fields?: {} }[]"
+            "type": "{ id?: string, email?: string, phone_number_id?: string, external_id?: string, anonymous_id?: string, first_name?: string, last_name?: string, address_line_1?: string, address_line_2?: string, alternate_emails?: string[], city?: string, country?: string, postal_code?: string, state_province_region?: string, custom_fields?: Record<string, string | number> }[]"
           }
         ]
       },
@@ -489,7 +489,7 @@
           {
             "key": "field_mappings",
             "optional": false,
-            "type": "string | null[]"
+            "type": "(string | null)[]"
           },
           {
             "key": "list_ids",
@@ -723,7 +723,7 @@
           {
             "key": "_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -779,12 +779,12 @@
           {
             "key": "result",
             "optional": false,
-            "type": "{ id: string, name: string, contact_count: number, _metadata?: {} }[]"
+            "type": "{ id: string, name: string, contact_count: number, _metadata?: Record<string, any> }[]"
           },
           {
             "key": "_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -906,7 +906,7 @@
           {
             "key": "_metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1015,7 +1015,7 @@
           {
             "key": "personalizations",
             "optional": false,
-            "type": "{ to: { email: string, name?: string }[], cc?: { email: string, name?: string }[], bcc?: { email: string, name?: string }[], subject?: string, headers?: {}, substitutions?: {}, dynamic_template_data?: {}, custom_args?: {}, send_at?: number }[]"
+            "type": "{ to: { email: string, name?: string }[], cc?: { email: string, name?: string }[], bcc?: { email: string, name?: string }[], subject?: string, headers?: Record<string, string>, substitutions?: Record<string, string>, dynamic_template_data?: Record<string, any>, custom_args?: Record<string, string>, send_at?: number }[]"
           },
           {
             "key": "from",

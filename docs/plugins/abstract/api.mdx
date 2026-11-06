@@ -36,7 +36,7 @@ await corsair.abstract.api.email.reputation({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `email_address` | `string` | Yes | — |
-| `suggested_correction` | `string` | No | — |
+| `suggested_correction` | `string \| null` | No | — |
 | `email_deliverability` | `object` | Yes | — |
 | `email_quality` | `object` | Yes | — |
 | `email_sender` | `object` | Yes | — |
@@ -94,7 +94,7 @@ await corsair.abstract.api.email.reputation({});
 
 ```ts
 {
-  domain?: string | null,
+  domain: string | null,
   domain_age?: number | null,
   is_live_site?: boolean | null,
   registrar?: string | null,
@@ -111,8 +111,8 @@ await corsair.abstract.api.email.reputation({});
 
 ```ts
 {
-  address_risk_status?: string | null,
-  domain_risk_status?: string | null
+  address_risk_status: string | null,
+  domain_risk_status: string | null
 }
 ```
 </Accordion>
@@ -121,7 +121,7 @@ await corsair.abstract.api.email.reputation({});
 
 ```ts
 {
-  total_breaches?: number | null,
+  total_breaches: number | null,
   date_first_breached?: string | null,
   date_last_breached?: string | null,
   breached_domains?: {

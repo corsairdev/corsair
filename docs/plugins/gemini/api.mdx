@@ -27,7 +27,7 @@ await corsair.gemini.api.content.countTokens({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `model` | `string` | Yes | Gemini model to count tokens against, e.g. gemini-2.5-flash, gemini-2.5-pro |
+| `model` | `string` | No | Gemini model to count tokens against, e.g. gemini-2.5-flash, gemini-2.5-pro. Defaults to "gemini-2.5-flash". |
 | `contents` | `object[]` | Yes | The content to count tokens for |
 
 <AccordionGroup>
@@ -78,7 +78,7 @@ await corsair.gemini.api.content.embedContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `model` | `string` | Yes | Gemini embedding model, e.g. gemini-embedding-001 |
+| `model` | `string` | No | Gemini embedding model, e.g. gemini-embedding-001. Defaults to "gemini-embedding-001". |
 | `content` | `object` | Yes | The content to embed |
 | `taskType` | `string` | No | Optional task type hint, e.g. SEMANTIC_SIMILARITY, RETRIEVAL_QUERY, RETRIEVAL_DOCUMENT, CLASSIFICATION, CLUSTERING |
 | `title` | `string` | No | Optional title, used with RETRIEVAL_DOCUMENT taskType |
@@ -141,7 +141,7 @@ await corsair.gemini.api.content.generateContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `model` | `string` | Yes | Gemini model to generate with, e.g. gemini-2.5-flash, gemini-2.5-pro |
+| `model` | `string` | No | Gemini model to generate with, e.g. gemini-2.5-flash, gemini-2.5-pro. Defaults to "gemini-2.5-flash". |
 | `contents` | `object[]` | Yes | Conversation contents to generate a response for |
 | `stripFences` | `boolean` | No | Strip markdown code fences from the convenience text field |
 | `generationConfig` | `object` | No | — |
@@ -176,7 +176,7 @@ await corsair.gemini.api.content.generateContent({});
   candidateCount?: number,
   maxOutputTokens?: number,
   stopSequences?: string[],
-  responseModalities?: TEXT | IMAGE | AUDIO[]
+  responseModalities?: (TEXT | IMAGE | AUDIO)[]
 }
 ```
 </Accordion>
@@ -277,7 +277,7 @@ await corsair.gemini.api.images.generateImage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `model` | `string` | Yes | Nano Banana image model, e.g. gemini-2.5-flash-image, gemini-3-pro-image-preview, gemini-2.0-flash-exp-image-generation |
+| `model` | `string` | No | Nano Banana image model, e.g. gemini-2.5-flash-image, gemini-3-pro-image-preview, gemini-2.0-flash-exp-image-generation. Defaults to "gemini-2.5-flash-image". |
 | `prompt` | `string` | Yes | Text prompt describing the image to generate |
 | `referenceImages` | `object[]` | No | Optional reference/input images for image editing or composition |
 | `generationConfig` | `object` | No | — |
@@ -303,7 +303,7 @@ await corsair.gemini.api.images.generateImage({});
   candidateCount?: number,
   maxOutputTokens?: number,
   stopSequences?: string[],
-  responseModalities?: TEXT | IMAGE | AUDIO[]
+  responseModalities?: (TEXT | IMAGE | AUDIO)[]
 }
 ```
 </Accordion>
@@ -442,7 +442,7 @@ await corsair.gemini.api.videos.generateVideos({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `model` | `string` | Yes | Veo video model, e.g. veo-2.0-generate-001 |
+| `model` | `string` | No | Veo video model, e.g. veo-2.0-generate-001. Defaults to "veo-2.0-generate-001". |
 | `prompt` | `string` | Yes | Text prompt describing the video to generate |
 | `image` | `object` | No | — |
 | `parameters` | `object` | No | — |
@@ -563,8 +563,8 @@ await corsair.gemini.api.videos.waitForVideo({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `operationName` | `string` | Yes | The operation name returned by GEMINI_GENERATE_VIDEOS |
-| `pollIntervalMs` | `number` | Yes | Delay between status checks |
-| `timeoutMs` | `number` | Yes | Give up and return done=false after this long |
+| `pollIntervalMs` | `number` | No | Delay between status checks. Defaults to 10000. |
+| `timeoutMs` | `number` | No | Give up and return done=false after this long. Defaults to 300000. |
 
 
 

@@ -1,19 +1,13 @@
 import fs from 'fs';
 import path from 'path';
+import {
+	listPluginDirs,
+	pluginDocsProblemsIn,
+} from './plugin-docs-requirements.ts';
 
 const PACKAGES_DIR = path.join(process.cwd(), 'packages');
-const IGNORED_PACKAGES = ['corsair', 'cli', 'mcp', 'studio', 'ui', 'app'];
 
-const plugins = fs
-	.readdirSync(PACKAGES_DIR, { withFileTypes: true })
-	.filter(
-		(dirent) =>
-			dirent.isDirectory() &&
-			!IGNORED_PACKAGES.includes(dirent.name) &&
-			// frpc-<platform>-<arch> are prebuilt binary shims, not integrations.
-			!dirent.name.startsWith('frpc-'),
-	)
-	.map((dirent) => dirent.name);
+const plugins = listPluginDirs(PACKAGES_DIR);
 
 let hasErrors = false;
 
@@ -218,6 +212,16 @@ for (const plugin of plugins) {
 		logError(
 			plugin,
 			'test:manual script is forbidden. All tests should be automated and run via the standard "test" script.',
+		);
+	}
+
+	// 6. plugin-docs.yaml names and describes the plugin for the docs, the
+	// catalog and corsair.dev. Without it the generator invents a name.
+	for (const problem of pluginDocsProblemsIn(pluginPath)) {
+		logError(
+			plugin,
+			problem,
+			'Add displayName and description (see packages/slack/plugin-docs.yaml), then run pnpm generate:docs -- --plugin=<id>',
 		);
 	}
 }

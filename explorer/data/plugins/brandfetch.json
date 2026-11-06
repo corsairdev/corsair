@@ -56,8 +56,8 @@
           },
           {
             "key": "name",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "domain",
@@ -71,13 +71,13 @@
           },
           {
             "key": "description",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "longDescription",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "links",
@@ -111,8 +111,8 @@
           },
           {
             "key": "company",
-            "optional": true,
-            "type": "{ employees?: number | null, financialIdentifiers?: { isin?: string[], ticker?: string[] } | null, foundedYear?: number | null, industries?: { id: string, score?: number, slug: string, name: string, emoji?: string, parent?: { id: string, slug: string, name: string, emoji?: string } | { id: string, slug: string, name: string, emoji?: string }[] | null }[], kind?: string | null, location?: { city?: string | null, country?: string | null, countryCode?: string | null, region?: string | null, state?: string | null, subregion?: string | null } }"
+            "optional": false,
+            "type": "{ employees?: number | null, financialIdentifiers?: { isin?: string[], ticker?: string[] } | null, foundedYear?: number | null, industries?: { id: string, score?: number, slug: string, name: string, emoji?: string, parent?: { id: string, slug: string, name: string, emoji?: string } | { id: string, slug: string, name: string, emoji?: string }[] | null }[], kind?: string | null, location?: { city?: string | null, country?: string | null, countryCode?: string | null, region?: string | null, state?: string | null, subregion?: string | null } } | null"
           },
           {
             "key": "isNsfw",
@@ -161,17 +161,17 @@
           {
             "key": "employees",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "financialIdentifiers",
             "optional": true,
-            "type": "{ isin?: string[], ticker?: string[] }"
+            "type": "{ isin?: string[], ticker?: string[] } | null"
           },
           {
             "key": "foundedYear",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "industries",
@@ -181,7 +181,7 @@
           {
             "key": "kind",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "location",
@@ -215,7 +215,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ icon?: string | null, name?: string | null, domain: string, claimed: boolean, brandId: string }[]"
+        "type": "{ icon: string | null, name: string | null, domain: string, claimed: boolean, brandId: string }[]"
       }
     },
     {
@@ -366,8 +366,8 @@
           },
           {
             "key": "name",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "domain",
@@ -381,13 +381,13 @@
           },
           {
             "key": "description",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "longDescription",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "links",
@@ -421,8 +421,8 @@
           },
           {
             "key": "company",
-            "optional": true,
-            "type": "{ employees?: number | null, financialIdentifiers?: { isin?: string[], ticker?: string[] } | null, foundedYear?: number | null, industries?: { id: string, score?: number, slug: string, name: string, emoji?: string, parent?: { id: string, slug: string, name: string, emoji?: string } | { id: string, slug: string, name: string, emoji?: string }[] | null }[], kind?: string | null, location?: { city?: string | null, country?: string | null, countryCode?: string | null, region?: string | null, state?: string | null, subregion?: string | null } }"
+            "optional": false,
+            "type": "{ employees?: number | null, financialIdentifiers?: { isin?: string[], ticker?: string[] } | null, foundedYear?: number | null, industries?: { id: string, score?: number, slug: string, name: string, emoji?: string, parent?: { id: string, slug: string, name: string, emoji?: string } | { id: string, slug: string, name: string, emoji?: string }[] | null }[], kind?: string | null, location?: { city?: string | null, country?: string | null, countryCode?: string | null, region?: string | null, state?: string | null, subregion?: string | null } } | null"
           },
           {
             "key": "isNsfw",

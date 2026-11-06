@@ -36,6 +36,7 @@ const rows = await corsair.gmicloud.db.baremetals.search({
 | `orgId` | `string` | equals, contains, startsWith, endsWith, in |
 | `product` | `string` | equals, contains, startsWith, endsWith, in |
 | `reason` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -65,6 +66,7 @@ const rows = await corsair.gmicloud.db.containers.search({
 | `modifiedAt` | `string` | equals, contains, startsWith, endsWith, in |
 | `orgId` | `string` | equals, contains, startsWith, endsWith, in |
 | `reason` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `idc` | `string` | equals, contains, startsWith, endsWith, in |
 | `product` | `string` | equals, contains, startsWith, endsWith, in |
 | `command` | `string` | equals, contains, startsWith, endsWith, in |
@@ -94,12 +96,15 @@ const rows = await corsair.gmicloud.db.elasticIps.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `orgId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `internetConnectionType` | `string` | equals, contains, startsWith, endsWith, in |
 | `maxBandwidth` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `idc` | `string` | equals, contains, startsWith, endsWith, in |
 | `ipAddress` | `string` | equals, contains, startsWith, endsWith, in |
 | `product` | `string` | equals, contains, startsWith, endsWith, in |
 | `instanceID` | `string` | equals, contains, startsWith, endsWith, in |
+| `instanceType` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -128,6 +133,7 @@ const rows = await corsair.gmicloud.db.firewalls.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `isPreset` | `boolean` | equals |
 | `orgId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -210,6 +216,7 @@ const rows = await corsair.gmicloud.db.sandboxes.search({
 | `sandbox_key` | `string` | equals, contains, startsWith, endsWith, in |
 | `template_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `idc_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
 | `product` | `string` | equals, contains, startsWith, endsWith, in |
 | `product_name` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
@@ -243,9 +250,12 @@ const rows = await corsair.gmicloud.db.sandboxTemplates.search({
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `description` | `string` | equals, contains, startsWith, endsWith, in |
 | `idc_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `source_type` | `string` | equals, contains, startsWith, endsWith, in |
 | `product` | `string` | equals, contains, startsWith, endsWith, in |
+| `product_name` | `string` | equals, contains, startsWith, endsWith, in |
 | `current_build_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `latest_build_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `latest_build_status` | `string` | equals, contains, startsWith, endsWith, in |
 | `rebuildable` | `boolean` | equals |
 | `deleted_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |

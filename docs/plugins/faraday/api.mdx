@@ -53,9 +53,9 @@ await corsair.faraday.api.accounts.create({});
 | `status` | `new \| starting \| running \| ready \| error \| string` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
-| `archived_at` | `string` | No | — |
+| `archived_at` | `string \| null` | No | — |
 | `status_changed_at` | `string` | No | — |
-| `status_error` | `string` | No | — |
+| `status_error` | `string \| null` | No | — |
 | `last_read_input_at` | `string` | No | — |
 | `last_updated_config_at` | `string` | No | — |
 | `last_updated_output_at` | `string` | No | — |
@@ -132,7 +132,7 @@ await corsair.faraday.api.accounts.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -140,8 +140,7 @@ await corsair.faraday.api.accounts.delete({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -199,9 +198,9 @@ await corsair.faraday.api.accounts.get({});
 | `status` | `new \| starting \| running \| ready \| error \| string` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
-| `archived_at` | `string` | No | — |
+| `archived_at` | `string \| null` | No | — |
 | `status_changed_at` | `string` | No | — |
-| `status_error` | `string` | No | — |
+| `status_error` | `string \| null` | No | — |
 | `last_read_input_at` | `string` | No | — |
 | `last_updated_config_at` | `string` | No | — |
 | `last_updated_output_at` | `string` | No | — |
@@ -278,7 +277,7 @@ await corsair.faraday.api.accounts.getBilling({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -292,8 +291,7 @@ await corsair.faraday.api.accounts.getBilling({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -328,9 +326,9 @@ await corsair.faraday.api.accounts.getCurrent({});
 | `status` | `new \| starting \| running \| ready \| error \| string` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
-| `archived_at` | `string` | No | — |
+| `archived_at` | `string \| null` | No | — |
 | `status_changed_at` | `string` | No | — |
-| `status_error` | `string` | No | — |
+| `status_error` | `string \| null` | No | — |
 | `last_read_input_at` | `string` | No | — |
 | `last_updated_config_at` | `string` | No | — |
 | `last_updated_output_at` | `string` | No | — |
@@ -390,7 +388,7 @@ await corsair.faraday.api.accounts.getCurrentBilling({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -404,8 +402,7 @@ await corsair.faraday.api.accounts.getCurrentBilling({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -517,9 +514,9 @@ await corsair.faraday.api.accounts.update({});
 | `status` | `new \| starting \| running \| ready \| error \| string` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
-| `archived_at` | `string` | No | — |
+| `archived_at` | `string \| null` | No | — |
 | `status_changed_at` | `string` | No | — |
-| `status_error` | `string` | No | — |
+| `status_error` | `string \| null` | No | — |
 | `last_read_input_at` | `string` | No | — |
 | `last_updated_config_at` | `string` | No | — |
 | `last_updated_output_at` | `string` | No | — |
@@ -586,7 +583,7 @@ await corsair.faraday.api.attributes.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -600,8 +597,7 @@ await corsair.faraday.api.attributes.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -652,7 +648,7 @@ await corsair.faraday.api.cohorts.archive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -660,8 +656,7 @@ await corsair.faraday.api.cohorts.archive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -697,7 +692,7 @@ await corsair.faraday.api.cohorts.create({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -711,8 +706,7 @@ await corsair.faraday.api.cohorts.create({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -754,7 +748,7 @@ await corsair.faraday.api.cohorts.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -762,8 +756,7 @@ await corsair.faraday.api.cohorts.delete({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -811,7 +804,7 @@ await corsair.faraday.api.cohorts.forceUpdate({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -819,8 +812,7 @@ await corsair.faraday.api.cohorts.forceUpdate({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -868,7 +860,7 @@ await corsair.faraday.api.cohorts.get({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -882,8 +874,7 @@ await corsair.faraday.api.cohorts.get({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -925,7 +916,7 @@ await corsair.faraday.api.cohorts.getMembershipAnalysis({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -939,8 +930,7 @@ await corsair.faraday.api.cohorts.getMembershipAnalysis({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -970,7 +960,7 @@ await corsair.faraday.api.cohorts.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -984,8 +974,7 @@ await corsair.faraday.api.cohorts.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1034,7 +1023,7 @@ await corsair.faraday.api.cohorts.unarchive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1042,8 +1031,7 @@ await corsair.faraday.api.cohorts.unarchive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -1091,7 +1079,7 @@ await corsair.faraday.api.cohorts.update({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1105,8 +1093,7 @@ await corsair.faraday.api.cohorts.update({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -1159,7 +1146,7 @@ await corsair.faraday.api.connections.archive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1167,8 +1154,7 @@ await corsair.faraday.api.connections.archive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -1216,7 +1202,7 @@ await corsair.faraday.api.connections.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1224,8 +1210,7 @@ await corsair.faraday.api.connections.delete({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -1273,7 +1258,7 @@ await corsair.faraday.api.connections.forceUpdate({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1281,8 +1266,7 @@ await corsair.faraday.api.connections.forceUpdate({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -1330,7 +1314,7 @@ await corsair.faraday.api.connections.getDatasets({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1344,8 +1328,7 @@ await corsair.faraday.api.connections.getDatasets({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -1387,7 +1370,7 @@ await corsair.faraday.api.connections.getTargets({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1401,8 +1384,7 @@ await corsair.faraday.api.connections.getTargets({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -1432,7 +1414,7 @@ await corsair.faraday.api.connections.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1446,8 +1428,7 @@ await corsair.faraday.api.connections.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1487,7 +1468,7 @@ await corsair.faraday.api.connections.update({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1501,8 +1482,7 @@ await corsair.faraday.api.connections.update({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -1555,7 +1535,7 @@ await corsair.faraday.api.datasets.archive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1563,8 +1543,7 @@ await corsair.faraday.api.datasets.archive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -1600,7 +1579,7 @@ await corsair.faraday.api.datasets.create({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1614,8 +1593,7 @@ await corsair.faraday.api.datasets.create({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -1657,7 +1635,7 @@ await corsair.faraday.api.datasets.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1665,8 +1643,7 @@ await corsair.faraday.api.datasets.delete({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -1714,7 +1691,7 @@ await corsair.faraday.api.datasets.forceUpdate({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1722,8 +1699,7 @@ await corsair.faraday.api.datasets.forceUpdate({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -1771,7 +1747,7 @@ await corsair.faraday.api.datasets.get({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1785,8 +1761,7 @@ await corsair.faraday.api.datasets.get({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -1828,7 +1803,7 @@ await corsair.faraday.api.datasets.getIngressLogs({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1842,8 +1817,7 @@ await corsair.faraday.api.datasets.getIngressLogs({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -1873,7 +1847,7 @@ await corsair.faraday.api.datasets.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1887,8 +1861,7 @@ await corsair.faraday.api.datasets.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1937,7 +1910,7 @@ await corsair.faraday.api.datasets.unarchive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1945,8 +1918,7 @@ await corsair.faraday.api.datasets.unarchive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -1994,7 +1966,7 @@ await corsair.faraday.api.datasets.update({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2008,8 +1980,7 @@ await corsair.faraday.api.datasets.update({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -2041,7 +2012,7 @@ await corsair.faraday.api.featureStores.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2055,8 +2026,7 @@ await corsair.faraday.api.featureStores.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -2126,7 +2096,7 @@ await corsair.faraday.api.marketOpportunityAnalyses.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2140,8 +2110,7 @@ await corsair.faraday.api.marketOpportunityAnalyses.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -2192,7 +2161,7 @@ await corsair.faraday.api.outcomes.archive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2200,8 +2169,7 @@ await corsair.faraday.api.outcomes.archive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -2237,7 +2205,7 @@ await corsair.faraday.api.outcomes.create({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2251,8 +2219,7 @@ await corsair.faraday.api.outcomes.create({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -2294,7 +2261,7 @@ await corsair.faraday.api.outcomes.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2302,8 +2269,7 @@ await corsair.faraday.api.outcomes.delete({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -2351,7 +2317,7 @@ await corsair.faraday.api.outcomes.forceUpdate({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2359,8 +2325,7 @@ await corsair.faraday.api.outcomes.forceUpdate({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -2408,7 +2373,7 @@ await corsair.faraday.api.outcomes.get({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2422,8 +2387,7 @@ await corsair.faraday.api.outcomes.get({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -2453,7 +2417,7 @@ await corsair.faraday.api.outcomes.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2467,8 +2431,7 @@ await corsair.faraday.api.outcomes.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -2517,7 +2480,7 @@ await corsair.faraday.api.outcomes.unarchive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2525,8 +2488,7 @@ await corsair.faraday.api.outcomes.unarchive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -2574,7 +2536,7 @@ await corsair.faraday.api.outcomes.update({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2588,8 +2550,7 @@ await corsair.faraday.api.outcomes.update({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -2642,7 +2603,7 @@ await corsair.faraday.api.personaSets.archive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2650,8 +2611,7 @@ await corsair.faraday.api.personaSets.archive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -2687,7 +2647,7 @@ await corsair.faraday.api.personaSets.create({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2701,8 +2661,7 @@ await corsair.faraday.api.personaSets.create({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -2744,7 +2703,7 @@ await corsair.faraday.api.personaSets.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2752,8 +2711,7 @@ await corsair.faraday.api.personaSets.delete({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -2801,7 +2759,7 @@ await corsair.faraday.api.personaSets.forceUpdate({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2809,8 +2767,7 @@ await corsair.faraday.api.personaSets.forceUpdate({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -2858,7 +2815,7 @@ await corsair.faraday.api.personaSets.get({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2872,8 +2829,7 @@ await corsair.faraday.api.personaSets.get({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -2915,7 +2871,7 @@ await corsair.faraday.api.personaSets.getAnalysisDimensions({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2929,8 +2885,7 @@ await corsair.faraday.api.personaSets.getAnalysisDimensions({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -2972,7 +2927,7 @@ await corsair.faraday.api.personaSets.getAnalysisFlow({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2986,8 +2941,7 @@ await corsair.faraday.api.personaSets.getAnalysisFlow({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -3017,7 +2971,7 @@ await corsair.faraday.api.personaSets.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3031,8 +2985,7 @@ await corsair.faraday.api.personaSets.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -3081,7 +3034,7 @@ await corsair.faraday.api.personaSets.unarchive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3089,8 +3042,7 @@ await corsair.faraday.api.personaSets.unarchive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -3138,7 +3090,7 @@ await corsair.faraday.api.personaSets.update({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3152,8 +3104,7 @@ await corsair.faraday.api.personaSets.update({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -3206,7 +3157,7 @@ await corsair.faraday.api.places.archive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3214,8 +3165,7 @@ await corsair.faraday.api.places.archive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -3251,7 +3201,7 @@ await corsair.faraday.api.places.create({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3265,8 +3215,7 @@ await corsair.faraday.api.places.create({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -3308,7 +3257,7 @@ await corsair.faraday.api.places.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3316,8 +3265,7 @@ await corsair.faraday.api.places.delete({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -3365,7 +3313,7 @@ await corsair.faraday.api.places.forceUpdate({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3373,8 +3321,7 @@ await corsair.faraday.api.places.forceUpdate({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -3422,7 +3369,7 @@ await corsair.faraday.api.places.get({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3436,8 +3383,7 @@ await corsair.faraday.api.places.get({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -3467,7 +3413,7 @@ await corsair.faraday.api.places.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3481,8 +3427,7 @@ await corsair.faraday.api.places.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -3531,7 +3476,7 @@ await corsair.faraday.api.places.unarchive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3539,8 +3484,7 @@ await corsair.faraday.api.places.unarchive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -3588,7 +3532,7 @@ await corsair.faraday.api.places.update({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3602,8 +3546,7 @@ await corsair.faraday.api.places.update({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -3635,7 +3578,7 @@ await corsair.faraday.api.recommenders.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3649,8 +3592,7 @@ await corsair.faraday.api.recommenders.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -3701,7 +3643,7 @@ await corsair.faraday.api.scopes.archive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3709,8 +3651,7 @@ await corsair.faraday.api.scopes.archive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -3746,7 +3687,7 @@ await corsair.faraday.api.scopes.create({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3760,8 +3701,7 @@ await corsair.faraday.api.scopes.create({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -3803,7 +3743,7 @@ await corsair.faraday.api.scopes.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3811,8 +3751,7 @@ await corsair.faraday.api.scopes.delete({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -3860,7 +3799,7 @@ await corsair.faraday.api.scopes.forceUpdate({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3868,8 +3807,7 @@ await corsair.faraday.api.scopes.forceUpdate({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -3917,7 +3855,7 @@ await corsair.faraday.api.scopes.get({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3931,8 +3869,7 @@ await corsair.faraday.api.scopes.get({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -3974,7 +3911,7 @@ await corsair.faraday.api.scopes.getAnalysis({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3988,8 +3925,7 @@ await corsair.faraday.api.scopes.getAnalysis({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -4031,7 +3967,7 @@ await corsair.faraday.api.scopes.getDatasets({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4045,8 +3981,7 @@ await corsair.faraday.api.scopes.getDatasets({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -4088,7 +4023,7 @@ await corsair.faraday.api.scopes.getEfficacy({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4102,8 +4037,7 @@ await corsair.faraday.api.scopes.getEfficacy({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -4145,7 +4079,7 @@ await corsair.faraday.api.scopes.getPayloadCohorts({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4159,8 +4093,7 @@ await corsair.faraday.api.scopes.getPayloadCohorts({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -4202,7 +4135,7 @@ await corsair.faraday.api.scopes.getPayloadOutcomes({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4216,8 +4149,7 @@ await corsair.faraday.api.scopes.getPayloadOutcomes({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -4259,7 +4191,7 @@ await corsair.faraday.api.scopes.getPayloadPersonaSets({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4273,8 +4205,7 @@ await corsair.faraday.api.scopes.getPayloadPersonaSets({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -4316,7 +4247,7 @@ await corsair.faraday.api.scopes.getPayloadRecommenders({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4330,8 +4261,7 @@ await corsair.faraday.api.scopes.getPayloadRecommenders({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -4373,7 +4303,7 @@ await corsair.faraday.api.scopes.getPopulationCohorts({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4387,8 +4317,7 @@ await corsair.faraday.api.scopes.getPopulationCohorts({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -4430,7 +4359,7 @@ await corsair.faraday.api.scopes.getPopulationExclusionCohorts({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4444,8 +4373,7 @@ await corsair.faraday.api.scopes.getPopulationExclusionCohorts({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -4487,7 +4415,7 @@ await corsair.faraday.api.scopes.getTargets({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4501,8 +4429,7 @@ await corsair.faraday.api.scopes.getTargets({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -4532,7 +4459,7 @@ await corsair.faraday.api.scopes.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4546,8 +4473,7 @@ await corsair.faraday.api.scopes.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -4596,7 +4522,7 @@ await corsair.faraday.api.scopes.unarchive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4604,8 +4530,7 @@ await corsair.faraday.api.scopes.unarchive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -4653,7 +4578,7 @@ await corsair.faraday.api.scopes.update({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4667,8 +4592,7 @@ await corsair.faraday.api.scopes.update({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -4721,7 +4645,7 @@ await corsair.faraday.api.streams.archive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4729,8 +4653,7 @@ await corsair.faraday.api.streams.archive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -4766,7 +4689,7 @@ await corsair.faraday.api.streams.create({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4780,8 +4703,7 @@ await corsair.faraday.api.streams.create({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -4823,7 +4745,7 @@ await corsair.faraday.api.streams.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4831,8 +4753,7 @@ await corsair.faraday.api.streams.delete({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -4880,7 +4801,7 @@ await corsair.faraday.api.streams.forceUpdate({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4888,8 +4809,7 @@ await corsair.faraday.api.streams.forceUpdate({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -4937,7 +4857,7 @@ await corsair.faraday.api.streams.get({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4951,8 +4871,7 @@ await corsair.faraday.api.streams.get({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -4994,7 +4913,7 @@ await corsair.faraday.api.streams.getAnalysis({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5008,8 +4927,7 @@ await corsair.faraday.api.streams.getAnalysis({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -5039,7 +4957,7 @@ await corsair.faraday.api.streams.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5053,8 +4971,7 @@ await corsair.faraday.api.streams.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -5103,7 +5020,7 @@ await corsair.faraday.api.streams.unarchive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5111,8 +5028,7 @@ await corsair.faraday.api.streams.unarchive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -5160,7 +5076,7 @@ await corsair.faraday.api.streams.update({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5174,8 +5090,7 @@ await corsair.faraday.api.streams.update({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -5228,7 +5143,7 @@ await corsair.faraday.api.targets.archive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5236,8 +5151,7 @@ await corsair.faraday.api.targets.archive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -5273,7 +5187,7 @@ await corsair.faraday.api.targets.create({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5287,8 +5201,7 @@ await corsair.faraday.api.targets.create({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -5318,7 +5231,7 @@ await corsair.faraday.api.targets.createPreview({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5326,8 +5239,7 @@ await corsair.faraday.api.targets.createPreview({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -5375,7 +5287,7 @@ await corsair.faraday.api.targets.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5383,8 +5295,7 @@ await corsair.faraday.api.targets.delete({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -5432,7 +5343,7 @@ await corsair.faraday.api.targets.forceUpdate({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5440,8 +5351,7 @@ await corsair.faraday.api.targets.forceUpdate({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -5489,7 +5399,7 @@ await corsair.faraday.api.targets.get({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5503,8 +5413,7 @@ await corsair.faraday.api.targets.get({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -5546,7 +5455,7 @@ await corsair.faraday.api.targets.getAnalysis({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5560,8 +5469,7 @@ await corsair.faraday.api.targets.getAnalysis({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -5591,7 +5499,7 @@ await corsair.faraday.api.targets.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5605,8 +5513,7 @@ await corsair.faraday.api.targets.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -5646,7 +5553,7 @@ await corsair.faraday.api.targets.update({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5660,8 +5567,7 @@ await corsair.faraday.api.targets.update({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -5714,7 +5620,7 @@ await corsair.faraday.api.traits.archive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5722,8 +5628,7 @@ await corsair.faraday.api.traits.archive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -5759,7 +5664,7 @@ await corsair.faraday.api.traits.create({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5773,8 +5678,7 @@ await corsair.faraday.api.traits.create({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -5816,7 +5720,7 @@ await corsair.faraday.api.traits.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5824,8 +5728,7 @@ await corsair.faraday.api.traits.delete({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -5856,7 +5759,7 @@ await corsair.faraday.api.traits.deleteOrphaned({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5864,8 +5767,7 @@ await corsair.faraday.api.traits.deleteOrphaned({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -5913,7 +5815,7 @@ await corsair.faraday.api.traits.forceUpdate({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5921,8 +5823,7 @@ await corsair.faraday.api.traits.forceUpdate({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -5970,7 +5871,7 @@ await corsair.faraday.api.traits.get({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5984,8 +5885,7 @@ await corsair.faraday.api.traits.get({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -6027,7 +5927,7 @@ await corsair.faraday.api.traits.getAnalysisDimensions({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6041,8 +5941,7 @@ await corsair.faraday.api.traits.getAnalysisDimensions({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -6097,7 +5996,7 @@ await corsair.faraday.api.traits.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6111,8 +6010,7 @@ await corsair.faraday.api.traits.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -6161,7 +6059,7 @@ await corsair.faraday.api.traits.unarchive({});
 </AccordionGroup>
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6169,8 +6067,7 @@ await corsair.faraday.api.traits.unarchive({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -6218,7 +6115,7 @@ await corsair.faraday.api.traits.update({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6232,8 +6129,7 @@ await corsair.faraday.api.traits.update({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -6266,7 +6162,7 @@ await corsair.faraday.api.uploads.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6274,8 +6170,7 @@ await corsair.faraday.api.uploads.delete({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -6312,7 +6207,7 @@ await corsair.faraday.api.uploads.get({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6320,8 +6215,7 @@ await corsair.faraday.api.uploads.get({});
 ```ts
 {
   content: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -6344,7 +6238,7 @@ await corsair.faraday.api.uploads.list({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6358,8 +6252,7 @@ await corsair.faraday.api.uploads.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -6384,7 +6277,7 @@ await corsair.faraday.api.usages.get({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6398,8 +6291,7 @@ await corsair.faraday.api.usages.get({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -6428,11 +6320,11 @@ await corsair.faraday.api.webhookEndpoints.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
-| `enabled_events` | `resource.errored \| resource.ready_with_update[]` | Yes | — |
+| `enabled_events` | `(resource.errored \| resource.ready_with_update)[]` | Yes | — |
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6446,8 +6338,7 @@ await corsair.faraday.api.webhookEndpoints.create({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -6489,7 +6380,7 @@ await corsair.faraday.api.webhookEndpoints.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6497,8 +6388,7 @@ await corsair.faraday.api.webhookEndpoints.delete({});
 ```ts
 {
   ok: true
-} | {
-} | {
+} | Record<string, any> | {
   id?: string,
   name?: string,
   resource_type?: string,
@@ -6546,7 +6436,7 @@ await corsair.faraday.api.webhookEndpoints.get({});
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6560,8 +6450,7 @@ await corsair.faraday.api.webhookEndpoints.get({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```
@@ -6591,7 +6480,7 @@ await corsair.faraday.api.webhookEndpoints.list({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6605,8 +6494,7 @@ await corsair.faraday.api.webhookEndpoints.list({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-}[] | {
-}
+}[] | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -6633,11 +6521,11 @@ await corsair.faraday.api.webhookEndpoints.update({});
 | `webhook_endpoint_id` | `string` | Yes | — |
 | `url` | `string` | No | — |
 | `status` | `enabled \| disabled` | No | — |
-| `enabled_events` | `resource.errored \| resource.ready_with_update[]` | No | — |
+| `enabled_events` | `(resource.errored \| resource.ready_with_update)[]` | No | — |
 
 
 
-**Output:** `object`
+**Output:** `object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -6651,8 +6539,7 @@ await corsair.faraday.api.webhookEndpoints.update({});
   created_at?: string,
   updated_at?: string,
   archived_at?: string | null
-} | {
-} | {
+} | Record<string, any> | {
   ok: true
 }
 ```

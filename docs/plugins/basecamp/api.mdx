@@ -40,7 +40,7 @@ await corsair.basecamp.api.automaticCheckIns.getBucketsQuestionAnswers({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -49,7 +49,7 @@ await corsair.basecamp.api.automaticCheckIns.getBucketsQuestionAnswers({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `content_attachments` | `object[]` | Yes | — |
 | `group_on` | `string` | No | — |
 | `parent` | `object` | Yes | — |
@@ -83,7 +83,7 @@ await corsair.basecamp.api.automaticCheckIns.getBucketsQuestionAnswers({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -175,7 +175,7 @@ await corsair.basecamp.api.automaticCheckIns.getBucketsQuestionnaires({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -271,7 +271,7 @@ await corsair.basecamp.api.automaticCheckIns.getBucketsQuestionnairesQuestions({
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -280,14 +280,14 @@ await corsair.basecamp.api.automaticCheckIns.getBucketsQuestionnairesQuestions({
   subscription_url?: string,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -315,7 +315,7 @@ await corsair.basecamp.api.automaticCheckIns.getBucketsQuestionnairesQuestions({
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -374,7 +374,7 @@ await corsair.basecamp.api.automaticCheckIns.getBucketsQuestions({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -395,7 +395,7 @@ await corsair.basecamp.api.automaticCheckIns.getBucketsQuestions({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -508,7 +508,7 @@ await corsair.basecamp.api.automaticCheckIns.listQuestions({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -517,14 +517,14 @@ await corsair.basecamp.api.automaticCheckIns.listQuestions({});
   subscription_url?: string,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -552,7 +552,7 @@ await corsair.basecamp.api.automaticCheckIns.listQuestions({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -603,7 +603,7 @@ await corsair.basecamp.api.campfireAndChatbots.createChatbot({});
 | `bucketId` | `number` | Yes | — |
 | `campfireId` | `number` | Yes | — |
 | `service_name` | `string` | Yes | — |
-| `command_url` | `string` | No | — |
+| `command_url` | `string \| null` | No | — |
 
 
 
@@ -615,7 +615,7 @@ await corsair.basecamp.api.campfireAndChatbots.createChatbot({});
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `service_name` | `string` | Yes | — |
-| `command_url` | `string` | No | — |
+| `command_url` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `app_url` | `string` | No | — |
 | `lines_url` | `string` | No | — |
@@ -644,7 +644,7 @@ await corsair.basecamp.api.campfireAndChatbots.createChatbotLine({});
 | `bucketId` | `number` | Yes | — |
 | `campfireId` | `number` | Yes | — |
 | `content_param` | `string` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 
 
 
@@ -785,7 +785,7 @@ await corsair.basecamp.api.campfireAndChatbots.getBucketsChatsLines({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -802,14 +802,14 @@ await corsair.basecamp.api.campfireAndChatbots.getBucketsChatsLines({});
   }[],
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -837,7 +837,7 @@ await corsair.basecamp.api.campfireAndChatbots.getBucketsChatsLines({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -884,14 +884,14 @@ await corsair.basecamp.api.campfireAndChatbots.getCampfire({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
 | `subscription_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `topic` | `string` | No | — |
@@ -979,13 +979,13 @@ await corsair.basecamp.api.campfireAndChatbots.getCampfireLine({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | No | — |
 | `attachments` | `object[]` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
@@ -1013,7 +1013,7 @@ await corsair.basecamp.api.campfireAndChatbots.getCampfireLine({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -1106,7 +1106,7 @@ await corsair.basecamp.api.campfireAndChatbots.getChatbot({});
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `service_name` | `string` | Yes | — |
-| `command_url` | `string` | No | — |
+| `command_url` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `app_url` | `string` | No | — |
 | `lines_url` | `string` | No | — |
@@ -1147,7 +1147,7 @@ await corsair.basecamp.api.campfireAndChatbots.getChats({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -1180,7 +1180,7 @@ await corsair.basecamp.api.campfireAndChatbots.getChats({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -1234,7 +1234,7 @@ await corsair.basecamp.api.campfireAndChatbots.listCampfireLines({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -1251,14 +1251,14 @@ await corsair.basecamp.api.campfireAndChatbots.listCampfireLines({});
   }[],
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -1286,7 +1286,7 @@ await corsair.basecamp.api.campfireAndChatbots.listCampfireLines({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -1365,7 +1365,7 @@ await corsair.basecamp.api.campfireAndChatbots.postBucketsChatsLines({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campfireId` | `number` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `content_type` | `string` | No | — |
 
 
@@ -1379,13 +1379,13 @@ await corsair.basecamp.api.campfireAndChatbots.postBucketsChatsLines({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | No | — |
 | `attachments` | `object[]` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
@@ -1413,7 +1413,7 @@ await corsair.basecamp.api.campfireAndChatbots.postBucketsChatsLines({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -1496,7 +1496,7 @@ await corsair.basecamp.api.campfireAndChatbots.postIntegrationsChatbotKeyBuckets
 | `bucketId` | `number` | Yes | — |
 | `campfireId` | `number` | Yes | — |
 | `content_param` | `string` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 
 
 
@@ -1525,7 +1525,7 @@ await corsair.basecamp.api.campfireAndChatbots.putBucketsChatsIntegrations({});
 | `campfireId` | `number` | Yes | — |
 | `chatbotId` | `number` | Yes | — |
 | `service_name` | `string` | Yes | — |
-| `command_url` | `string` | No | — |
+| `command_url` | `string \| null` | No | — |
 
 
 
@@ -1537,7 +1537,7 @@ await corsair.basecamp.api.campfireAndChatbots.putBucketsChatsIntegrations({});
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `service_name` | `string` | Yes | — |
-| `command_url` | `string` | No | — |
+| `command_url` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `app_url` | `string` | No | — |
 | `lines_url` | `string` | No | — |
@@ -1566,7 +1566,7 @@ await corsair.basecamp.api.campfireAndChatbots.updateChatbot({});
 | `campfireId` | `number` | Yes | — |
 | `chatbotId` | `number` | Yes | — |
 | `service_name` | `string` | Yes | — |
-| `command_url` | `string` | No | — |
+| `command_url` | `string \| null` | No | — |
 
 
 
@@ -1578,7 +1578,7 @@ await corsair.basecamp.api.campfireAndChatbots.updateChatbot({});
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `service_name` | `string` | Yes | — |
-| `command_url` | `string` | No | — |
+| `command_url` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `app_url` | `string` | No | — |
 | `lines_url` | `string` | No | — |
@@ -1606,9 +1606,9 @@ await corsair.basecamp.api.cardTables.createCard({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `columnId` | `number` | Yes | — |
-| `title` | `string` | No | — |
-| `content` | `string` | No | — |
-| `due_on` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
+| `content` | `string \| null` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `notify` | `boolean` | No | — |
 
 
@@ -1622,18 +1622,18 @@ await corsair.basecamp.api.cardTables.createCard({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
 | `subscription_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `content` | `string` | No | — |
-| `description` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `description_attachments` | `object[]` | Yes | — |
-| `due_on` | `string` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `completed` | `boolean` | No | — |
 | `completed_at` | `string` | No | — |
 | `comments_count` | `number` | No | — |
@@ -1674,7 +1674,7 @@ await corsair.basecamp.api.cardTables.createCard({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -1789,7 +1789,7 @@ await corsair.basecamp.api.cardTables.createCard({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -1823,7 +1823,7 @@ await corsair.basecamp.api.cardTables.createCard({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -1843,7 +1843,7 @@ await corsair.basecamp.api.cardTables.createCard({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -1855,22 +1855,22 @@ await corsair.basecamp.api.cardTables.createCard({});
   completed_at?: string,
   parent: {
     id: string | number,
-    title?: string | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    title: string | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bucket?: {
     } | null
   },
   bucket: {
     id: string | number,
-    name?: string | null,
-    type?: string | null
+    name: string | null,
+    type: string | null
   },
   creator: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -1896,7 +1896,7 @@ await corsair.basecamp.api.cardTables.createCard({});
   completer?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -1947,8 +1947,8 @@ await corsair.basecamp.api.cardTables.createCardStep({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `cardId` | `number` | Yes | — |
-| `title` | `string` | No | — |
-| `due_on` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
+| `due_on` | `string \| null` | No | — |
 | `assignee_ids` | `number[]` | No | — |
 
 
@@ -1962,14 +1962,14 @@ await corsair.basecamp.api.cardTables.createCardStep({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `due_on` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `completed` | `boolean` | No | — |
 | `completed_at` | `string` | No | — |
 | `parent` | `object` | Yes | — |
@@ -1985,7 +1985,7 @@ await corsair.basecamp.api.cardTables.createCardStep({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -2100,7 +2100,7 @@ await corsair.basecamp.api.cardTables.createCardStep({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -2146,15 +2146,15 @@ await corsair.basecamp.api.cardTables.deleteBucketsCardTablesColumnsOnHold({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `color` | `string` | No | — |
-| `description` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `cards_count` | `number` | No | — |
 | `comments_count` | `number` | No | — |
 | `cards_url` | `string` | No | — |
@@ -2170,7 +2170,7 @@ await corsair.basecamp.api.cardTables.deleteBucketsCardTablesColumnsOnHold({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -2251,7 +2251,7 @@ await corsair.basecamp.api.cardTables.deleteBucketsCardTablesColumnsOnHold({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -2269,7 +2269,7 @@ await corsair.basecamp.api.cardTables.deleteBucketsCardTablesColumnsOnHold({});
   id: number,
   status: string,
   inherits_status: boolean,
-  title?: string | null,
+  title: string | null,
   created_at: string,
   updated_at: string,
   cards_count: number,
@@ -2316,7 +2316,7 @@ await corsair.basecamp.api.cardTables.getBucketsCardTablesListsCards({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -2328,16 +2328,16 @@ await corsair.basecamp.api.cardTables.getBucketsCardTablesListsCards({});
   description?: string | null,
   description_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   due_on?: string | null,
   completed?: boolean,
@@ -2347,14 +2347,14 @@ await corsair.basecamp.api.cardTables.getBucketsCardTablesListsCards({});
   completion_url?: string,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -2382,7 +2382,7 @@ await corsair.basecamp.api.cardTables.getBucketsCardTablesListsCards({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -2410,7 +2410,7 @@ await corsair.basecamp.api.cardTables.getBucketsCardTablesListsCards({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -2421,7 +2421,7 @@ await corsair.basecamp.api.cardTables.getBucketsCardTablesListsCards({});
   assignees?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -2447,7 +2447,7 @@ await corsair.basecamp.api.cardTables.getBucketsCardTablesListsCards({});
   completion_subscribers?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -2472,25 +2472,25 @@ await corsair.basecamp.api.cardTables.getBucketsCardTablesListsCards({});
   }[],
   steps?: {
     id: string | number,
-    status?: string | null,
-    visible_to_clients?: boolean | null,
-    created_at?: string | null,
-    updated_at?: string | null,
-    title?: string | null,
-    inherits_status?: boolean | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    status: string | null,
+    visible_to_clients: boolean | null,
+    created_at: string | null,
+    updated_at: string | null,
+    title: string | null,
+    inherits_status: boolean | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bookmark_url?: string | null,
     position?: number | null,
     due_on?: string | null,
     completed?: boolean | null,
     completed_at?: any,
-    parent?: {
+    parent: {
     } | null,
-    bucket?: {
+    bucket: {
     } | null,
-    creator?: {
+    creator: {
     } | null,
     completer?: any,
     assignees?: any,
@@ -2535,18 +2535,18 @@ await corsair.basecamp.api.cardTables.getCard({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
 | `subscription_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `content` | `string` | No | — |
-| `description` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `description_attachments` | `object[]` | Yes | — |
-| `due_on` | `string` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `completed` | `boolean` | No | — |
 | `completed_at` | `string` | No | — |
 | `comments_count` | `number` | No | — |
@@ -2587,7 +2587,7 @@ await corsair.basecamp.api.cardTables.getCard({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -2702,7 +2702,7 @@ await corsair.basecamp.api.cardTables.getCard({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -2736,7 +2736,7 @@ await corsair.basecamp.api.cardTables.getCard({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -2756,7 +2756,7 @@ await corsair.basecamp.api.cardTables.getCard({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -2768,22 +2768,22 @@ await corsair.basecamp.api.cardTables.getCard({});
   completed_at?: string,
   parent: {
     id: string | number,
-    title?: string | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    title: string | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bucket?: {
     } | null
   },
   bucket: {
     id: string | number,
-    name?: string | null,
-    type?: string | null
+    name: string | null,
+    type: string | null
   },
   creator: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -2809,7 +2809,7 @@ await corsair.basecamp.api.cardTables.getCard({});
   completer?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -2872,7 +2872,7 @@ await corsair.basecamp.api.cardTables.getCardTable({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -2954,7 +2954,7 @@ await corsair.basecamp.api.cardTables.getCardTable({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -2974,7 +2974,7 @@ await corsair.basecamp.api.cardTables.getCardTable({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -2988,22 +2988,22 @@ await corsair.basecamp.api.cardTables.getCardTable({});
   cards_url?: string,
   parent: {
     id: string | number,
-    title?: string | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    title: string | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bucket?: {
     } | null
   },
   bucket: {
     id: string | number,
-    name?: string | null,
-    type?: string | null
+    name: string | null,
+    type: string | null
   },
   creator: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -3029,13 +3029,13 @@ await corsair.basecamp.api.cardTables.getCardTable({});
   subscribers?: any[],
   on_hold?: {
     id: string | number,
-    status?: string | null,
-    inherits_status?: boolean | null,
-    title?: string | null,
-    created_at?: string | null,
-    updated_at?: string | null,
-    cards_count?: number | null,
-    cards_url?: string | null
+    status: string | null,
+    inherits_status: boolean | null,
+    title: string | null,
+    created_at: string | null,
+    updated_at: string | null,
+    cards_count: number | null,
+    cards_url: string | null
   }
 }[]
 ```
@@ -3050,7 +3050,7 @@ await corsair.basecamp.api.cardTables.getCardTable({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -3058,22 +3058,22 @@ await corsair.basecamp.api.cardTables.getCardTable({});
   bookmark_url?: string,
   parent: {
     id: string | number,
-    title?: string | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    title: string | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bucket?: {
     } | null
   },
   bucket: {
     id: string | number,
-    name?: string | null,
-    type?: string | null
+    name: string | null,
+    type: string | null
   },
   creator: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -3096,9 +3096,9 @@ await corsair.basecamp.api.cardTables.getCardTable({});
     can_access_timesheet?: boolean | null,
     can_access_hill_charts?: boolean | null
   },
-  color?: string | null,
+  color: string | null,
   linked: boolean,
-  destination_url?: string | null
+  destination_url: string | null
 }[]
 ```
 </Accordion>
@@ -3137,15 +3137,15 @@ await corsair.basecamp.api.cardTables.getCardTableColumn({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `color` | `string` | No | — |
-| `description` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `cards_count` | `number` | No | — |
 | `comments_count` | `number` | No | — |
 | `cards_url` | `string` | No | — |
@@ -3161,7 +3161,7 @@ await corsair.basecamp.api.cardTables.getCardTableColumn({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -3242,7 +3242,7 @@ await corsair.basecamp.api.cardTables.getCardTableColumn({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -3260,7 +3260,7 @@ await corsair.basecamp.api.cardTables.getCardTableColumn({});
   id: number,
   status: string,
   inherits_status: boolean,
-  title?: string | null,
+  title: string | null,
   created_at: string,
   updated_at: string,
   cards_count: number,
@@ -3307,7 +3307,7 @@ await corsair.basecamp.api.cardTables.listCards({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -3319,16 +3319,16 @@ await corsair.basecamp.api.cardTables.listCards({});
   description?: string | null,
   description_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   due_on?: string | null,
   completed?: boolean,
@@ -3338,14 +3338,14 @@ await corsair.basecamp.api.cardTables.listCards({});
   completion_url?: string,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -3373,7 +3373,7 @@ await corsair.basecamp.api.cardTables.listCards({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -3401,7 +3401,7 @@ await corsair.basecamp.api.cardTables.listCards({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -3412,7 +3412,7 @@ await corsair.basecamp.api.cardTables.listCards({});
   assignees?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -3438,7 +3438,7 @@ await corsair.basecamp.api.cardTables.listCards({});
   completion_subscribers?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -3463,25 +3463,25 @@ await corsair.basecamp.api.cardTables.listCards({});
   }[],
   steps?: {
     id: string | number,
-    status?: string | null,
-    visible_to_clients?: boolean | null,
-    created_at?: string | null,
-    updated_at?: string | null,
-    title?: string | null,
-    inherits_status?: boolean | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    status: string | null,
+    visible_to_clients: boolean | null,
+    created_at: string | null,
+    updated_at: string | null,
+    title: string | null,
+    inherits_status: boolean | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bookmark_url?: string | null,
     position?: number | null,
     due_on?: string | null,
     completed?: boolean | null,
     completed_at?: any,
-    parent?: {
+    parent: {
     } | null,
-    bucket?: {
+    bucket: {
     } | null,
-    creator?: {
+    creator: {
     } | null,
     completer?: any,
     assignees?: any,
@@ -3515,7 +3515,7 @@ await corsair.basecamp.api.cardTables.moveCard({});
 |------|------|----------|-------------|
 | `cardId` | `number` | Yes | — |
 | `column_id` | `number` | Yes | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 
 
 
@@ -3543,7 +3543,7 @@ await corsair.basecamp.api.cardTables.moveCardTableColumn({});
 | `cardTableId` | `number` | Yes | — |
 | `source_id` | `number` | Yes | — |
 | `target_id` | `number` | Yes | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 
 
 
@@ -3570,7 +3570,7 @@ await corsair.basecamp.api.cardTables.postBucketsCardTablesCardsMoves({});
 |------|------|----------|-------------|
 | `cardId` | `number` | Yes | — |
 | `column_id` | `number` | Yes | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 
 
 
@@ -3597,7 +3597,7 @@ await corsair.basecamp.api.cardTables.postBucketsCardTablesCardsPositions({});
 |------|------|----------|-------------|
 | `cardId` | `number` | Yes | — |
 | `source_id` | `number` | Yes | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | Yes | — |
 
 
 
@@ -3623,8 +3623,8 @@ await corsair.basecamp.api.cardTables.postBucketsCardTablesColumns({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `cardTableId` | `number` | Yes | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -3637,15 +3637,15 @@ await corsair.basecamp.api.cardTables.postBucketsCardTablesColumns({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `color` | `string` | No | — |
-| `description` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `cards_count` | `number` | No | — |
 | `comments_count` | `number` | No | — |
 | `cards_url` | `string` | No | — |
@@ -3661,7 +3661,7 @@ await corsair.basecamp.api.cardTables.postBucketsCardTablesColumns({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -3742,7 +3742,7 @@ await corsair.basecamp.api.cardTables.postBucketsCardTablesColumns({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -3760,7 +3760,7 @@ await corsair.basecamp.api.cardTables.postBucketsCardTablesColumns({});
   id: number,
   status: string,
   inherits_status: boolean,
-  title?: string | null,
+  title: string | null,
   created_at: string,
   updated_at: string,
   cards_count: number,
@@ -3804,15 +3804,15 @@ await corsair.basecamp.api.cardTables.postBucketsCardTablesColumnsOnHold({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `color` | `string` | No | — |
-| `description` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `cards_count` | `number` | No | — |
 | `comments_count` | `number` | No | — |
 | `cards_url` | `string` | No | — |
@@ -3828,7 +3828,7 @@ await corsair.basecamp.api.cardTables.postBucketsCardTablesColumnsOnHold({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -3909,7 +3909,7 @@ await corsair.basecamp.api.cardTables.postBucketsCardTablesColumnsOnHold({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -3927,7 +3927,7 @@ await corsair.basecamp.api.cardTables.postBucketsCardTablesColumnsOnHold({});
   id: number,
   status: string,
   inherits_status: boolean,
-  title?: string | null,
+  title: string | null,
   created_at: string,
   updated_at: string,
   cards_count: number,
@@ -3960,7 +3960,7 @@ await corsair.basecamp.api.cardTables.postBucketsCardTablesMoves({});
 | `cardTableId` | `number` | Yes | — |
 | `source_id` | `number` | Yes | — |
 | `target_id` | `number` | Yes | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 
 
 
@@ -3986,9 +3986,9 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesCards({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `cardId` | `number` | Yes | — |
-| `title` | `string` | No | — |
-| `content` | `string` | No | — |
-| `due_on` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `assignee_ids` | `number[]` | No | — |
 
 
@@ -4002,18 +4002,18 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesCards({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
 | `subscription_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `content` | `string` | No | — |
-| `description` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `description_attachments` | `object[]` | Yes | — |
-| `due_on` | `string` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `completed` | `boolean` | No | — |
 | `completed_at` | `string` | No | — |
 | `comments_count` | `number` | No | — |
@@ -4054,7 +4054,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesCards({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -4169,7 +4169,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesCards({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -4203,7 +4203,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesCards({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -4223,7 +4223,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesCards({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -4235,22 +4235,22 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesCards({});
   completed_at?: string,
   parent: {
     id: string | number,
-    title?: string | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    title: string | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bucket?: {
     } | null
   },
   bucket: {
     id: string | number,
-    name?: string | null,
-    type?: string | null
+    name: string | null,
+    type: string | null
   },
   creator: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -4276,7 +4276,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesCards({});
   completer?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -4327,8 +4327,8 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesColumns({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `columnId` | `number` | Yes | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -4341,15 +4341,15 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesColumns({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `color` | `string` | No | — |
-| `description` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `cards_count` | `number` | No | — |
 | `comments_count` | `number` | No | — |
 | `cards_url` | `string` | No | — |
@@ -4365,7 +4365,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesColumns({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -4446,7 +4446,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesColumns({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -4464,7 +4464,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesColumns({});
   id: number,
   status: string,
   inherits_status: boolean,
-  title?: string | null,
+  title: string | null,
   created_at: string,
   updated_at: string,
   cards_count: number,
@@ -4496,7 +4496,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesColumnsColor({});
 |------|------|----------|-------------|
 | `bucketId` | `number` | Yes | — |
 | `columnId` | `number` | Yes | — |
-| `color` | `string` | No | — |
+| `color` | `string \| null` | Yes | — |
 
 
 
@@ -4509,15 +4509,15 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesColumnsColor({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `color` | `string` | No | — |
-| `description` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `cards_count` | `number` | No | — |
 | `comments_count` | `number` | No | — |
 | `cards_url` | `string` | No | — |
@@ -4533,7 +4533,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesColumnsColor({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -4614,7 +4614,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesColumnsColor({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -4632,7 +4632,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesColumnsColor({});
   id: number,
   status: string,
   inherits_status: boolean,
-  title?: string | null,
+  title: string | null,
   created_at: string,
   updated_at: string,
   cards_count: number,
@@ -4663,8 +4663,8 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesSteps({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `stepId` | `number` | Yes | — |
-| `title` | `string` | No | — |
-| `due_on` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `assignee_ids` | `number[]` | No | — |
 
 
@@ -4678,14 +4678,14 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesSteps({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `due_on` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `completed` | `boolean` | No | — |
 | `completed_at` | `string` | No | — |
 | `parent` | `object` | Yes | — |
@@ -4701,7 +4701,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesSteps({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -4816,7 +4816,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesSteps({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -4862,14 +4862,14 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesStepsCompletions({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `due_on` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `completed` | `boolean` | No | — |
 | `completed_at` | `string` | No | — |
 | `parent` | `object` | Yes | — |
@@ -4885,7 +4885,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesStepsCompletions({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -5000,7 +5000,7 @@ await corsair.basecamp.api.cardTables.putBucketsCardTablesStepsCompletions({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -5034,7 +5034,7 @@ await corsair.basecamp.api.cardTables.repositionCardStep({});
 |------|------|----------|-------------|
 | `cardId` | `number` | Yes | — |
 | `source_id` | `number` | Yes | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | Yes | — |
 
 
 
@@ -5085,9 +5085,9 @@ await corsair.basecamp.api.cardTables.updateCard({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `cardId` | `number` | Yes | — |
-| `title` | `string` | No | — |
-| `content` | `string` | No | — |
-| `due_on` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `assignee_ids` | `number[]` | No | — |
 
 
@@ -5101,18 +5101,18 @@ await corsair.basecamp.api.cardTables.updateCard({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
 | `subscription_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `content` | `string` | No | — |
-| `description` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `description_attachments` | `object[]` | Yes | — |
-| `due_on` | `string` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `completed` | `boolean` | No | — |
 | `completed_at` | `string` | No | — |
 | `comments_count` | `number` | No | — |
@@ -5153,7 +5153,7 @@ await corsair.basecamp.api.cardTables.updateCard({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -5268,7 +5268,7 @@ await corsair.basecamp.api.cardTables.updateCard({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -5302,7 +5302,7 @@ await corsair.basecamp.api.cardTables.updateCard({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -5322,7 +5322,7 @@ await corsair.basecamp.api.cardTables.updateCard({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -5334,22 +5334,22 @@ await corsair.basecamp.api.cardTables.updateCard({});
   completed_at?: string,
   parent: {
     id: string | number,
-    title?: string | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    title: string | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bucket?: {
     } | null
   },
   bucket: {
     id: string | number,
-    name?: string | null,
-    type?: string | null
+    name: string | null,
+    type: string | null
   },
   creator: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -5375,7 +5375,7 @@ await corsair.basecamp.api.cardTables.updateCard({});
   completer?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -5426,8 +5426,8 @@ await corsair.basecamp.api.cardTables.updateCardTableColumn({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `columnId` | `number` | Yes | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -5440,15 +5440,15 @@ await corsair.basecamp.api.cardTables.updateCardTableColumn({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `color` | `string` | No | — |
-| `description` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `cards_count` | `number` | No | — |
 | `comments_count` | `number` | No | — |
 | `cards_url` | `string` | No | — |
@@ -5464,7 +5464,7 @@ await corsair.basecamp.api.cardTables.updateCardTableColumn({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -5545,7 +5545,7 @@ await corsair.basecamp.api.cardTables.updateCardTableColumn({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -5563,7 +5563,7 @@ await corsair.basecamp.api.cardTables.updateCardTableColumn({});
   id: number,
   status: string,
   inherits_status: boolean,
-  title?: string | null,
+  title: string | null,
   created_at: string,
   updated_at: string,
   cards_count: number,
@@ -5621,8 +5621,8 @@ await corsair.basecamp.api.documentsAndFiles.createDocument({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `vaultId` | `number` | Yes | — |
-| `title` | `string` | No | — |
-| `content` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
+| `content` | `string \| null` | No | — |
 | `status` | `string` | No | — |
 | `subscriptions` | `number[]` | No | — |
 | `visible_to_clients` | `boolean` | No | — |
@@ -5638,7 +5638,7 @@ await corsair.basecamp.api.documentsAndFiles.createDocument({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -5647,11 +5647,11 @@ await corsair.basecamp.api.documentsAndFiles.createDocument({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | No | — |
 | `content_attachments` | `object[]` | Yes | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -5662,7 +5662,7 @@ await corsair.basecamp.api.documentsAndFiles.createDocument({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -5762,7 +5762,7 @@ await corsair.basecamp.api.documentsAndFiles.createUpload({});
 |------|------|----------|-------------|
 | `vaultId` | `number` | Yes | — |
 | `attachable_sgid` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `base_name` | `string` | No | — |
 | `subscriptions` | `number[]` | No | — |
 | `visible_to_clients` | `boolean` | No | — |
@@ -5778,7 +5778,7 @@ await corsair.basecamp.api.documentsAndFiles.createUpload({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -5787,11 +5787,11 @@ await corsair.basecamp.api.documentsAndFiles.createUpload({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `description_attachments` | `object[]` | Yes | — |
 | `content_type` | `string` | No | — |
 | `byte_size` | `number` | No | — |
@@ -5808,7 +5808,7 @@ await corsair.basecamp.api.documentsAndFiles.createUpload({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -5907,7 +5907,7 @@ await corsair.basecamp.api.documentsAndFiles.createVault({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `vaultId` | `number` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 
 
 
@@ -5920,13 +5920,13 @@ await corsair.basecamp.api.documentsAndFiles.createVault({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | No | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
@@ -5943,7 +5943,7 @@ await corsair.basecamp.api.documentsAndFiles.createVault({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -6035,7 +6035,7 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsUploads({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -6044,11 +6044,11 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsUploads({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `description_attachments` | `object[]` | Yes | — |
 | `content_type` | `string` | No | — |
 | `byte_size` | `number` | No | — |
@@ -6065,7 +6065,7 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsUploads({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -6176,13 +6176,13 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsVaults({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | No | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
@@ -6199,7 +6199,7 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsVaults({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -6295,7 +6295,7 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsDocuments({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -6307,14 +6307,14 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsDocuments({});
   position?: number | null,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -6342,7 +6342,7 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsDocuments({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -6353,16 +6353,16 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsDocuments({});
   content?: string | null,
   content_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   boosts_count?: number,
   boosts_url?: string
@@ -6407,7 +6407,7 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsUploads({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -6419,14 +6419,14 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsUploads({});
   position?: number | null,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -6454,7 +6454,7 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsUploads({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -6465,16 +6465,16 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsUploads({});
   description?: string | null,
   description_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   content_type?: string,
   byte_size?: number,
@@ -6525,7 +6525,7 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsVaults({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -6534,14 +6534,14 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsVaults({});
   position?: number | null,
   parent?: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -6569,7 +6569,7 @@ await corsair.basecamp.api.documentsAndFiles.getBucketsVaultsVaults({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -6620,7 +6620,7 @@ await corsair.basecamp.api.documentsAndFiles.getDocument({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -6629,11 +6629,11 @@ await corsair.basecamp.api.documentsAndFiles.getDocument({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | No | — |
 | `content_attachments` | `object[]` | Yes | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -6644,7 +6644,7 @@ await corsair.basecamp.api.documentsAndFiles.getDocument({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -6755,7 +6755,7 @@ await corsair.basecamp.api.documentsAndFiles.getUpload({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -6764,11 +6764,11 @@ await corsair.basecamp.api.documentsAndFiles.getUpload({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `description_attachments` | `object[]` | Yes | — |
 | `content_type` | `string` | No | — |
 | `byte_size` | `number` | No | — |
@@ -6785,7 +6785,7 @@ await corsair.basecamp.api.documentsAndFiles.getUpload({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -6896,13 +6896,13 @@ await corsair.basecamp.api.documentsAndFiles.getVault({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | No | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
@@ -6919,7 +6919,7 @@ await corsair.basecamp.api.documentsAndFiles.getVault({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -7015,7 +7015,7 @@ await corsair.basecamp.api.documentsAndFiles.listUploads({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -7027,14 +7027,14 @@ await corsair.basecamp.api.documentsAndFiles.listUploads({});
   position?: number | null,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -7062,7 +7062,7 @@ await corsair.basecamp.api.documentsAndFiles.listUploads({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -7073,16 +7073,16 @@ await corsair.basecamp.api.documentsAndFiles.listUploads({});
   description?: string | null,
   description_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   content_type?: string,
   byte_size?: number,
@@ -7133,7 +7133,7 @@ await corsair.basecamp.api.documentsAndFiles.listVaults({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -7142,14 +7142,14 @@ await corsair.basecamp.api.documentsAndFiles.listVaults({});
   position?: number | null,
   parent?: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -7177,7 +7177,7 @@ await corsair.basecamp.api.documentsAndFiles.listVaults({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -7247,8 +7247,8 @@ await corsair.basecamp.api.documentsAndFiles.putBucketsDocuments({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `number` | Yes | — |
-| `title` | `string` | No | — |
-| `content` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
 
 
 
@@ -7261,7 +7261,7 @@ await corsair.basecamp.api.documentsAndFiles.putBucketsDocuments({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -7270,11 +7270,11 @@ await corsair.basecamp.api.documentsAndFiles.putBucketsDocuments({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | No | — |
 | `content_attachments` | `object[]` | Yes | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -7285,7 +7285,7 @@ await corsair.basecamp.api.documentsAndFiles.putBucketsDocuments({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -7384,7 +7384,7 @@ await corsair.basecamp.api.documentsAndFiles.putBucketsUploads({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uploadId` | `number` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `base_name` | `string` | No | — |
 
 
@@ -7398,7 +7398,7 @@ await corsair.basecamp.api.documentsAndFiles.putBucketsUploads({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -7407,11 +7407,11 @@ await corsair.basecamp.api.documentsAndFiles.putBucketsUploads({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `description_attachments` | `object[]` | Yes | — |
 | `content_type` | `string` | No | — |
 | `byte_size` | `number` | No | — |
@@ -7428,7 +7428,7 @@ await corsair.basecamp.api.documentsAndFiles.putBucketsUploads({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -7527,7 +7527,7 @@ await corsair.basecamp.api.documentsAndFiles.putBucketsVaults({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `vaultId` | `number` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | No | — |
 
 
 
@@ -7540,13 +7540,13 @@ await corsair.basecamp.api.documentsAndFiles.putBucketsVaults({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | No | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
@@ -7563,7 +7563,7 @@ await corsair.basecamp.api.documentsAndFiles.putBucketsVaults({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -7643,8 +7643,8 @@ await corsair.basecamp.api.documentsAndFiles.updateDocument({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `documentId` | `number` | Yes | — |
-| `title` | `string` | No | — |
-| `content` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
 
 
 
@@ -7657,7 +7657,7 @@ await corsair.basecamp.api.documentsAndFiles.updateDocument({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -7666,11 +7666,11 @@ await corsair.basecamp.api.documentsAndFiles.updateDocument({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | No | — |
 | `content_attachments` | `object[]` | Yes | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -7681,7 +7681,7 @@ await corsair.basecamp.api.documentsAndFiles.updateDocument({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -7780,7 +7780,7 @@ await corsair.basecamp.api.documentsAndFiles.updateUpload({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uploadId` | `number` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `base_name` | `string` | No | — |
 
 
@@ -7794,7 +7794,7 @@ await corsair.basecamp.api.documentsAndFiles.updateUpload({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -7803,11 +7803,11 @@ await corsair.basecamp.api.documentsAndFiles.updateUpload({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `description_attachments` | `object[]` | Yes | — |
 | `content_type` | `string` | No | — |
 | `byte_size` | `number` | No | — |
@@ -7824,7 +7824,7 @@ await corsair.basecamp.api.documentsAndFiles.updateUpload({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -7923,7 +7923,7 @@ await corsair.basecamp.api.documentsAndFiles.updateVault({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `vaultId` | `number` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | No | — |
 
 
 
@@ -7936,13 +7936,13 @@ await corsair.basecamp.api.documentsAndFiles.updateVault({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | No | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
@@ -7959,7 +7959,7 @@ await corsair.basecamp.api.documentsAndFiles.updateVault({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -8059,7 +8059,7 @@ await corsair.basecamp.api.inboxesAndForwards.getBucketsInboxesForwards({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -8068,14 +8068,14 @@ await corsair.basecamp.api.inboxesAndForwards.getBucketsInboxesForwards({});
   subscription_url?: string,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -8103,7 +8103,7 @@ await corsair.basecamp.api.inboxesAndForwards.getBucketsInboxesForwards({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -8114,16 +8114,16 @@ await corsair.basecamp.api.inboxesAndForwards.getBucketsInboxesForwards({});
   content?: string | null,
   content_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   subject: string,
   from?: string | null,
@@ -8166,13 +8166,13 @@ await corsair.basecamp.api.inboxesAndForwards.getInbox({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `forwards_count` | `number` | No | — |
@@ -8264,7 +8264,7 @@ await corsair.basecamp.api.inboxesAndForwards.listForwards({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -8273,14 +8273,14 @@ await corsair.basecamp.api.inboxesAndForwards.listForwards({});
   subscription_url?: string,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -8308,7 +8308,7 @@ await corsair.basecamp.api.inboxesAndForwards.listForwards({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -8319,16 +8319,16 @@ await corsair.basecamp.api.inboxesAndForwards.listForwards({});
   content?: string | null,
   content_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   subject: string,
   from?: string | null,
@@ -8445,7 +8445,7 @@ await corsair.basecamp.api.messages.getBucketsMessageBoardsMessages({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -8456,14 +8456,14 @@ await corsair.basecamp.api.messages.getBucketsMessageBoardsMessages({});
   comments_url?: string,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -8491,7 +8491,7 @@ await corsair.basecamp.api.messages.getBucketsMessageBoardsMessages({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -8500,19 +8500,19 @@ await corsair.basecamp.api.messages.getBucketsMessageBoardsMessages({});
     can_access_hill_charts?: boolean
   },
   subject: string,
-  content?: string | null,
+  content: string | null,
   content_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   category?: {
     id: number,
@@ -8560,7 +8560,7 @@ await corsair.basecamp.api.messages.getMessage({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -8573,7 +8573,7 @@ await corsair.basecamp.api.messages.getMessage({});
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `subject` | `string` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `content_attachments` | `object[]` | Yes | — |
 | `category` | `object` | No | — |
 | `boosts_count` | `number` | No | — |
@@ -8585,7 +8585,7 @@ await corsair.basecamp.api.messages.getMessage({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -8709,13 +8709,13 @@ await corsair.basecamp.api.messages.getMessageBoard({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `messages_count` | `number` | No | — |
@@ -8927,7 +8927,7 @@ await corsair.basecamp.api.messages.postBucketsMessageBoardsMessages({});
 |------|------|----------|-------------|
 | `boardId` | `number` | Yes | — |
 | `subject` | `string` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | No | — |
 | `status` | `string` | No | — |
 | `category_id` | `number` | No | — |
 | `subscriptions` | `number[]` | No | — |
@@ -8944,7 +8944,7 @@ await corsair.basecamp.api.messages.postBucketsMessageBoardsMessages({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -8957,7 +8957,7 @@ await corsair.basecamp.api.messages.postBucketsMessageBoardsMessages({});
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `subject` | `string` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `content_attachments` | `object[]` | Yes | — |
 | `category` | `object` | No | — |
 | `boosts_count` | `number` | No | — |
@@ -8969,7 +8969,7 @@ await corsair.basecamp.api.messages.postBucketsMessageBoardsMessages({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -9119,7 +9119,7 @@ await corsair.basecamp.api.messages.putBucketsMessages({});
 |------|------|----------|-------------|
 | `messageId` | `number` | Yes | — |
 | `subject` | `string` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | No | — |
 | `status` | `string` | No | — |
 | `category_id` | `number` | No | — |
 
@@ -9134,7 +9134,7 @@ await corsair.basecamp.api.messages.putBucketsMessages({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -9147,7 +9147,7 @@ await corsair.basecamp.api.messages.putBucketsMessages({});
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `subject` | `string` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `content_attachments` | `object[]` | Yes | — |
 | `category` | `object` | No | — |
 | `boosts_count` | `number` | No | — |
@@ -9159,7 +9159,7 @@ await corsair.basecamp.api.messages.putBucketsMessages({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -9396,12 +9396,12 @@ await corsair.basecamp.api.peopleAndAccess.getMyProfile({});
 | `id` | `number` | Yes | — |
 | `attachable_sgid` | `string` | No | — |
 | `name` | `string` | Yes | — |
-| `email_address` | `string` | No | — |
+| `email_address` | `string \| null` | No | — |
 | `personable_type` | `string` | No | — |
-| `title` | `string` | No | — |
-| `bio` | `string` | No | — |
-| `tagline` | `string` | No | — |
-| `location` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `bio` | `string \| null` | No | — |
+| `tagline` | `string \| null` | No | — |
+| `location` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 | `admin` | `boolean` | No | — |
@@ -9521,12 +9521,12 @@ await corsair.basecamp.api.peopleAndAccess.getPeopleByPersonId({});
 | `id` | `number` | Yes | — |
 | `attachable_sgid` | `string` | No | — |
 | `name` | `string` | Yes | — |
-| `email_address` | `string` | No | — |
+| `email_address` | `string \| null` | No | — |
 | `personable_type` | `string` | No | — |
-| `title` | `string` | No | — |
-| `bio` | `string` | No | — |
-| `tagline` | `string` | No | — |
-| `location` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `bio` | `string \| null` | No | — |
+| `tagline` | `string \| null` | No | — |
+| `location` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 | `admin` | `boolean` | No | — |
@@ -9585,12 +9585,12 @@ await corsair.basecamp.api.peopleAndAccess.getPerson({});
 | `id` | `number` | Yes | — |
 | `attachable_sgid` | `string` | No | — |
 | `name` | `string` | Yes | — |
-| `email_address` | `string` | No | — |
+| `email_address` | `string \| null` | No | — |
 | `personable_type` | `string` | No | — |
-| `title` | `string` | No | — |
-| `bio` | `string` | No | — |
-| `tagline` | `string` | No | — |
-| `location` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `bio` | `string \| null` | No | — |
+| `tagline` | `string \| null` | No | — |
+| `location` | `string \| null` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 | `admin` | `boolean` | No | — |
@@ -9773,7 +9773,7 @@ await corsair.basecamp.api.peopleAndAccess.putProjectsPeopleUsers({});
 ```ts
 {
   name: string,
-  email_address?: string | null,
+  email_address: string | null,
   title?: string | null,
   company_name?: string
 }[]
@@ -9814,7 +9814,7 @@ await corsair.basecamp.api.peopleAndAccess.putProjectsPeopleUsers({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -9848,7 +9848,7 @@ await corsair.basecamp.api.peopleAndAccess.putProjectsPeopleUsers({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -9928,12 +9928,12 @@ await corsair.basecamp.api.projectsAndTemplates.createProjectConstruction({});
   app_url: string,
   dock?: {
     id: string | number,
-    title?: string | null,
-    name?: string | null,
-    enabled?: boolean | null,
+    title: string | null,
+    name: string | null,
+    enabled: boolean | null,
     position?: number | null,
-    url?: string | null,
-    app_url?: string | null
+    url: string | null,
+    app_url: string | null
   }[],
   bookmarked?: boolean,
   client_company?: {
@@ -9982,10 +9982,10 @@ await corsair.basecamp.api.projectsAndTemplates.getProject({});
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `purpose` | `string` | No | — |
 | `start_date` | `string` | No | — |
-| `end_date` | `string` | No | — |
+| `end_date` | `string \| null` | No | — |
 | `clients_enabled` | `boolean` | No | — |
 | `bookmark_url` | `string` | No | — |
 | `url` | `string` | Yes | — |
@@ -10001,7 +10001,7 @@ await corsair.basecamp.api.projectsAndTemplates.getProject({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   name: string,
   enabled: boolean,
   position?: number | null,
@@ -10079,12 +10079,12 @@ await corsair.basecamp.api.projectsAndTemplates.getProjects({});
   app_url: string,
   dock?: {
     id: string | number,
-    title?: string | null,
-    name?: string | null,
-    enabled?: boolean | null,
+    title: string | null,
+    name: string | null,
+    enabled: boolean | null,
     position?: number | null,
-    url?: string | null,
-    app_url?: string | null
+    url: string | null,
+    app_url: string | null
   }[],
   bookmarked?: boolean,
   client_company?: {
@@ -10132,10 +10132,10 @@ await corsair.basecamp.api.projectsAndTemplates.getProjectsByProjectId({});
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `purpose` | `string` | No | — |
 | `start_date` | `string` | No | — |
-| `end_date` | `string` | No | — |
+| `end_date` | `string \| null` | No | — |
 | `clients_enabled` | `boolean` | No | — |
 | `bookmark_url` | `string` | No | — |
 | `url` | `string` | Yes | — |
@@ -10151,7 +10151,7 @@ await corsair.basecamp.api.projectsAndTemplates.getProjectsByProjectId({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   name: string,
   enabled: boolean,
   position?: number | null,
@@ -10224,12 +10224,12 @@ await corsair.basecamp.api.projectsAndTemplates.getTemplates({});
   app_url?: string,
   dock?: {
     id: string | number,
-    title?: string | null,
-    name?: string | null,
-    enabled?: boolean | null,
+    title: string | null,
+    name: string | null,
+    enabled: boolean | null,
     position?: number | null,
-    url?: string | null,
-    app_url?: string | null
+    url: string | null,
+    app_url: string | null
   }[]
 }[]
 ```
@@ -10268,7 +10268,7 @@ await corsair.basecamp.api.projectsAndTemplates.getTemplatesByTemplateId({});
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `app_url` | `string` | No | — |
 | `dock` | `object[]` | No | — |
@@ -10279,7 +10279,7 @@ await corsair.basecamp.api.projectsAndTemplates.getTemplatesByTemplateId({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   name: string,
   enabled: boolean,
   position?: number | null,
@@ -10344,12 +10344,12 @@ await corsair.basecamp.api.projectsAndTemplates.getTemplatesProjectConstructions
   app_url: string,
   dock?: {
     id: string | number,
-    title?: string | null,
-    name?: string | null,
-    enabled?: boolean | null,
+    title: string | null,
+    name: string | null,
+    enabled: boolean | null,
     position?: number | null,
-    url?: string | null,
-    app_url?: string | null
+    url: string | null,
+    app_url: string | null
   }[],
   bookmarked?: boolean,
   client_company?: {
@@ -10412,7 +10412,7 @@ await corsair.basecamp.api.projectsAndTemplates.postProjects({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -10425,10 +10425,10 @@ await corsair.basecamp.api.projectsAndTemplates.postProjects({});
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `purpose` | `string` | No | — |
 | `start_date` | `string` | No | — |
-| `end_date` | `string` | No | — |
+| `end_date` | `string \| null` | No | — |
 | `clients_enabled` | `boolean` | No | — |
 | `bookmark_url` | `string` | No | — |
 | `url` | `string` | Yes | — |
@@ -10444,7 +10444,7 @@ await corsair.basecamp.api.projectsAndTemplates.postProjects({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   name: string,
   enabled: boolean,
   position?: number | null,
@@ -10496,7 +10496,7 @@ await corsair.basecamp.api.projectsAndTemplates.postTemplates({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -10509,7 +10509,7 @@ await corsair.basecamp.api.projectsAndTemplates.postTemplates({});
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `app_url` | `string` | No | — |
 | `dock` | `object[]` | No | — |
@@ -10520,7 +10520,7 @@ await corsair.basecamp.api.projectsAndTemplates.postTemplates({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   name: string,
   enabled: boolean,
   position?: number | null,
@@ -10553,7 +10553,7 @@ await corsair.basecamp.api.projectsAndTemplates.putProjects({});
 |------|------|----------|-------------|
 | `projectId` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `admissions` | `string` | No | — |
 | `schedule_attributes` | `object` | No | — |
 
@@ -10580,10 +10580,10 @@ await corsair.basecamp.api.projectsAndTemplates.putProjects({});
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `purpose` | `string` | No | — |
 | `start_date` | `string` | No | — |
-| `end_date` | `string` | No | — |
+| `end_date` | `string \| null` | No | — |
 | `clients_enabled` | `boolean` | No | — |
 | `bookmark_url` | `string` | No | — |
 | `url` | `string` | Yes | — |
@@ -10599,7 +10599,7 @@ await corsair.basecamp.api.projectsAndTemplates.putProjects({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   name: string,
   enabled: boolean,
   position?: number | null,
@@ -10652,7 +10652,7 @@ await corsair.basecamp.api.projectsAndTemplates.putTemplates({});
 |------|------|----------|-------------|
 | `templateId` | `number` | Yes | — |
 | `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -10665,7 +10665,7 @@ await corsair.basecamp.api.projectsAndTemplates.putTemplates({});
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `app_url` | `string` | No | — |
 | `dock` | `object[]` | No | — |
@@ -10676,7 +10676,7 @@ await corsair.basecamp.api.projectsAndTemplates.putTemplates({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   name: string,
   enabled: boolean,
   position?: number | null,
@@ -10801,7 +10801,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.getBucketsRecordingsCommen
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -10809,14 +10809,14 @@ await corsair.basecamp.api.recordingsAndSubscriptions.getBucketsRecordingsCommen
   bookmark_url?: string,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -10844,7 +10844,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.getBucketsRecordingsCommen
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -10852,19 +10852,19 @@ await corsair.basecamp.api.recordingsAndSubscriptions.getBucketsRecordingsCommen
     can_access_timesheet?: boolean,
     can_access_hill_charts?: boolean
   },
-  content?: string | null,
+  content: string | null,
   content_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   boosts_count?: number,
   boosts_url?: string
@@ -10933,7 +10933,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.getBucketsRecordingsEvents
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -10980,7 +10980,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.getComment({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -10989,7 +10989,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.getComment({});
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `content_attachments` | `object[]` | Yes | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -11000,7 +11000,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.getComment({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -11119,7 +11119,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.getProjectsRecordings({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -11129,29 +11129,29 @@ await corsair.basecamp.api.recordingsAndSubscriptions.getProjectsRecordings({});
   content?: string | null,
   content_attachments?: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   description_attachments?: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   comments_count?: number,
   comments_url?: string,
@@ -11179,14 +11179,14 @@ await corsair.basecamp.api.recordingsAndSubscriptions.getProjectsRecordings({});
   },
   parent?: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -11214,7 +11214,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.getProjectsRecordings({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -11283,7 +11283,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.getSubscription({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -11332,7 +11332,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.listComments({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -11340,14 +11340,14 @@ await corsair.basecamp.api.recordingsAndSubscriptions.listComments({});
   bookmark_url?: string,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -11375,7 +11375,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.listComments({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -11383,19 +11383,19 @@ await corsair.basecamp.api.recordingsAndSubscriptions.listComments({});
     can_access_timesheet?: boolean,
     can_access_hill_charts?: boolean
   },
-  content?: string | null,
+  content: string | null,
   content_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   boosts_count?: number,
   boosts_url?: string
@@ -11464,7 +11464,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.listEvents({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -11499,7 +11499,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.postBucketsRecordingsComme
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `recordingId` | `number` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 
 
 
@@ -11512,7 +11512,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.postBucketsRecordingsComme
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -11521,7 +11521,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.postBucketsRecordingsComme
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `content_attachments` | `object[]` | Yes | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -11532,7 +11532,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.postBucketsRecordingsComme
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -11692,7 +11692,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.postBucketsRecordingsSubsc
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -11725,7 +11725,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsComments({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `commentId` | `number` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 
 
 
@@ -11738,7 +11738,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsComments({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -11747,7 +11747,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsComments({});
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `content_attachments` | `object[]` | Yes | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -11758,7 +11758,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsComments({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -11870,14 +11870,14 @@ await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsClient
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
 | `bubble_up_url` | `string` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | No | — |
 | `content_attachments` | `object[]` | No | — |
 | `description_attachments` | `object[]` | No | — |
 | `comments_count` | `number` | No | — |
@@ -11888,11 +11888,11 @@ await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsClient
 | `subject` | `string` | No | — |
 | `category` | `object` | No | — |
 | `group_on` | `string` | No | — |
-| `from` | `string` | No | — |
+| `from` | `string \| null` | No | — |
 | `replies_count` | `number` | No | — |
 | `replies_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `description` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `service` | `object` | No | — |
 | `parent` | `object` | No | — |
 | `bucket` | `object` | Yes | — |
@@ -11966,7 +11966,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsClient
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -12159,7 +12159,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.putBucketsRecordingsSubscr
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -12228,7 +12228,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.subscribeCurrentUser({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -12274,14 +12274,14 @@ await corsair.basecamp.api.recordingsAndSubscriptions.toggleClientVisibility({})
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
 | `bubble_up_url` | `string` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | No | — |
 | `content_attachments` | `object[]` | No | — |
 | `description_attachments` | `object[]` | No | — |
 | `comments_count` | `number` | No | — |
@@ -12292,11 +12292,11 @@ await corsair.basecamp.api.recordingsAndSubscriptions.toggleClientVisibility({})
 | `subject` | `string` | No | — |
 | `category` | `object` | No | — |
 | `group_on` | `string` | No | — |
-| `from` | `string` | No | — |
+| `from` | `string \| null` | No | — |
 | `replies_count` | `number` | No | — |
 | `replies_url` | `string` | No | — |
-| `position` | `number` | No | — |
-| `description` | `string` | No | — |
+| `position` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `service` | `object` | No | — |
 | `parent` | `object` | No | — |
 | `bucket` | `object` | Yes | — |
@@ -12370,7 +12370,7 @@ await corsair.basecamp.api.recordingsAndSubscriptions.toggleClientVisibility({})
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -12494,7 +12494,7 @@ await corsair.basecamp.api.schedulesAndReports.getBucketsSchedulesEntries({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -12505,14 +12505,14 @@ await corsair.basecamp.api.schedulesAndReports.getBucketsSchedulesEntries({});
   comments_url?: string,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -12540,7 +12540,7 @@ await corsair.basecamp.api.schedulesAndReports.getBucketsSchedulesEntries({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -12552,16 +12552,16 @@ await corsair.basecamp.api.schedulesAndReports.getBucketsSchedulesEntries({});
   description?: string | null,
   description_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   all_day: boolean,
   starts_at: string,
@@ -12569,7 +12569,7 @@ await corsair.basecamp.api.schedulesAndReports.getBucketsSchedulesEntries({});
   participants?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -12620,7 +12620,7 @@ await corsair.basecamp.api.schedulesAndReports.getReportsTimesheet({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `from` | `string` | No | — |
+| `from` | `string \| null` | No | — |
 | `to` | `string` | No | — |
 | `person_id` | `number` | No | — |
 
@@ -12638,7 +12638,7 @@ await corsair.basecamp.api.schedulesAndReports.getReportsTimesheet({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -12646,14 +12646,14 @@ await corsair.basecamp.api.schedulesAndReports.getReportsTimesheet({});
   bookmark_url?: string,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string,
     bucket?: {
       id: string | number,
-      name?: string | null,
-      type?: string | null
+      name: string | null,
+      type: string | null
     }
   },
   bucket: {
@@ -12681,7 +12681,7 @@ await corsair.basecamp.api.schedulesAndReports.getReportsTimesheet({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -12712,7 +12712,7 @@ await corsair.basecamp.api.schedulesAndReports.getReportsTimesheet({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -12757,13 +12757,13 @@ await corsair.basecamp.api.schedulesAndReports.getSchedule({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `include_due_assignments` | `boolean` | No | — |
@@ -12850,7 +12850,7 @@ await corsair.basecamp.api.schedulesAndReports.getScheduleEntry({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -12863,13 +12863,13 @@ await corsair.basecamp.api.schedulesAndReports.getScheduleEntry({});
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `summary` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `description_attachments` | `object[]` | Yes | — |
 | `all_day` | `boolean` | Yes | — |
 | `starts_at` | `string` | Yes | — |
 | `ends_at` | `string` | Yes | — |
 | `participants` | `object[]` | No | — |
-| `join_url` | `string` | No | — |
+| `join_url` | `string \| null` | No | — |
 | `highlighted` | `boolean` | No | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -12880,7 +12880,7 @@ await corsair.basecamp.api.schedulesAndReports.getScheduleEntry({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -12980,7 +12980,7 @@ await corsair.basecamp.api.schedulesAndReports.getScheduleEntry({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -13016,7 +13016,7 @@ await corsair.basecamp.api.schedulesAndReports.postBucketsSchedulesEntries({});
 | `summary` | `string` | Yes | — |
 | `starts_at` | `string` | Yes | — |
 | `ends_at` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `participant_ids` | `number[]` | No | — |
 | `all_day` | `boolean` | No | — |
 | `notify` | `boolean` | No | — |
@@ -13037,7 +13037,7 @@ await corsair.basecamp.api.schedulesAndReports.postBucketsSchedulesEntries({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -13050,13 +13050,13 @@ await corsair.basecamp.api.schedulesAndReports.postBucketsSchedulesEntries({});
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `summary` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `description_attachments` | `object[]` | Yes | — |
 | `all_day` | `boolean` | Yes | — |
 | `starts_at` | `string` | Yes | — |
 | `ends_at` | `string` | Yes | — |
 | `participants` | `object[]` | No | — |
-| `join_url` | `string` | No | — |
+| `join_url` | `string \| null` | No | — |
 | `highlighted` | `boolean` | No | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -13067,7 +13067,7 @@ await corsair.basecamp.api.schedulesAndReports.postBucketsSchedulesEntries({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -13167,7 +13167,7 @@ await corsair.basecamp.api.schedulesAndReports.postBucketsSchedulesEntries({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -13203,7 +13203,7 @@ await corsair.basecamp.api.schedulesAndReports.putBucketsScheduleEntries({});
 | `summary` | `string` | No | — |
 | `starts_at` | `string` | Yes | — |
 | `ends_at` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `participant_ids` | `number[]` | No | — |
 | `all_day` | `boolean` | No | — |
 | `notify` | `boolean` | No | — |
@@ -13221,7 +13221,7 @@ await corsair.basecamp.api.schedulesAndReports.putBucketsScheduleEntries({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -13234,13 +13234,13 @@ await corsair.basecamp.api.schedulesAndReports.putBucketsScheduleEntries({});
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `summary` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `description_attachments` | `object[]` | Yes | — |
 | `all_day` | `boolean` | Yes | — |
 | `starts_at` | `string` | Yes | — |
 | `ends_at` | `string` | Yes | — |
 | `participants` | `object[]` | No | — |
-| `join_url` | `string` | No | — |
+| `join_url` | `string \| null` | No | — |
 | `highlighted` | `boolean` | No | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -13251,7 +13251,7 @@ await corsair.basecamp.api.schedulesAndReports.putBucketsScheduleEntries({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -13351,7 +13351,7 @@ await corsair.basecamp.api.schedulesAndReports.putBucketsScheduleEntries({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -13397,13 +13397,13 @@ await corsair.basecamp.api.schedulesAndReports.putBucketsSchedules({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `include_due_assignments` | `boolean` | No | — |
@@ -13481,7 +13481,7 @@ await corsair.basecamp.api.schedulesAndReports.updateScheduleEntry({});
 | `summary` | `string` | No | — |
 | `starts_at` | `string` | Yes | — |
 | `ends_at` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `participant_ids` | `number[]` | No | — |
 | `all_day` | `boolean` | No | — |
 | `notify` | `boolean` | No | — |
@@ -13499,7 +13499,7 @@ await corsair.basecamp.api.schedulesAndReports.updateScheduleEntry({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -13512,13 +13512,13 @@ await corsair.basecamp.api.schedulesAndReports.updateScheduleEntry({});
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `summary` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `description_attachments` | `object[]` | Yes | — |
 | `all_day` | `boolean` | Yes | — |
 | `starts_at` | `string` | Yes | — |
 | `ends_at` | `string` | Yes | — |
 | `participants` | `object[]` | No | — |
-| `join_url` | `string` | No | — |
+| `join_url` | `string \| null` | No | — |
 | `highlighted` | `boolean` | No | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -13529,7 +13529,7 @@ await corsair.basecamp.api.schedulesAndReports.updateScheduleEntry({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -13629,7 +13629,7 @@ await corsair.basecamp.api.schedulesAndReports.updateScheduleEntry({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -13689,13 +13689,13 @@ await corsair.basecamp.api.todos.createTodo({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `todolistId` | `number` | Yes | — |
-| `content` | `string` | No | — |
-| `description` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
+| `description` | `string \| null` | No | — |
 | `assignee_ids` | `number[]` | No | — |
 | `completion_subscriber_ids` | `number[]` | No | — |
 | `notify` | `boolean` | No | — |
-| `due_on` | `string` | No | — |
-| `starts_on` | `string` | No | — |
+| `due_on` | `string \| null` | No | — |
+| `starts_on` | `string \| null` | No | — |
 
 
 
@@ -13708,7 +13708,7 @@ await corsair.basecamp.api.todos.createTodo({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -13717,16 +13717,16 @@ await corsair.basecamp.api.todos.createTodo({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `completed` | `boolean` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `description_attachments` | `object[]` | Yes | — |
-| `starts_on` | `string` | No | — |
-| `due_on` | `string` | No | — |
+| `starts_on` | `string \| null` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `assignees` | `object[]` | No | — |
 | `completion_subscribers` | `object[]` | No | — |
 | `completion_url` | `string` | No | — |
@@ -13740,7 +13740,7 @@ await corsair.basecamp.api.todos.createTodo({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string
@@ -13835,7 +13835,7 @@ await corsair.basecamp.api.todos.createTodo({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -13869,7 +13869,7 @@ await corsair.basecamp.api.todos.createTodo({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -13889,7 +13889,7 @@ await corsair.basecamp.api.todos.createTodo({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -13901,22 +13901,22 @@ await corsair.basecamp.api.todos.createTodo({});
   completed_at?: string,
   parent: {
     id: string | number,
-    title?: string | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    title: string | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bucket?: {
     } | null
   },
   bucket: {
     id: string | number,
-    name?: string | null,
-    type?: string | null
+    name: string | null,
+    type: string | null
   },
   creator: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -13942,7 +13942,7 @@ await corsair.basecamp.api.todos.createTodo({});
   completer?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -14006,7 +14006,7 @@ await corsair.basecamp.api.todos.createTodolistGroup({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -14016,11 +14016,11 @@ await corsair.basecamp.api.todos.createTodolistGroup({});
 | `bubble_up_url` | `string` | Yes | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | Yes | — |
 | `description_attachments` | `object[]` | Yes | — |
 | `completed` | `boolean` | No | — |
 | `completed_ratio` | `string` | No | — |
@@ -14029,7 +14029,7 @@ await corsair.basecamp.api.todos.createTodolistGroup({});
 | `groups_url` | `string` | No | — |
 | `group_position_url` | `string` | No | — |
 | `app_todos_url` | `string` | No | — |
-| `color` | `string` | No | — |
+| `color` | `string \| null` | Yes | — |
 | `comments_app_url` | `string` | Yes | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -14040,7 +14040,7 @@ await corsair.basecamp.api.todos.createTodolistGroup({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string
@@ -14146,7 +14146,7 @@ await corsair.basecamp.api.todos.getBucketsTodolists({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -14156,11 +14156,11 @@ await corsair.basecamp.api.todos.getBucketsTodolists({});
 | `bubble_up_url` | `string` | Yes | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | Yes | — |
 | `description_attachments` | `object[]` | Yes | — |
 | `completed` | `boolean` | No | — |
 | `completed_ratio` | `string` | No | — |
@@ -14169,7 +14169,7 @@ await corsair.basecamp.api.todos.getBucketsTodolists({});
 | `groups_url` | `string` | No | — |
 | `group_position_url` | `string` | No | — |
 | `app_todos_url` | `string` | No | — |
-| `color` | `string` | No | — |
+| `color` | `string \| null` | Yes | — |
 | `comments_app_url` | `string` | Yes | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -14180,7 +14180,7 @@ await corsair.basecamp.api.todos.getBucketsTodolists({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string
@@ -14290,7 +14290,7 @@ await corsair.basecamp.api.todos.getBucketsTodolistsGroups({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -14303,7 +14303,7 @@ await corsair.basecamp.api.todos.getBucketsTodolistsGroups({});
   position?: number | null,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string
@@ -14333,7 +14333,7 @@ await corsair.basecamp.api.todos.getBucketsTodolistsGroups({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -14341,19 +14341,19 @@ await corsair.basecamp.api.todos.getBucketsTodolistsGroups({});
     can_access_timesheet?: boolean,
     can_access_hill_charts?: boolean
   },
-  description?: string | null,
+  description: string | null,
   description_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   completed?: boolean,
   completed_ratio?: string,
@@ -14362,7 +14362,7 @@ await corsair.basecamp.api.todos.getBucketsTodolistsGroups({});
   groups_url?: string,
   group_position_url?: string,
   app_todos_url?: string,
-  color?: string | null,
+  color: string | null,
   comments_app_url: string,
   boosts_count?: number,
   boosts_url?: string
@@ -14409,7 +14409,7 @@ await corsair.basecamp.api.todos.getBucketsTodolistsTodos({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -14421,7 +14421,7 @@ await corsair.basecamp.api.todos.getBucketsTodolistsTodos({});
   position?: number | null,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string
@@ -14451,7 +14451,7 @@ await corsair.basecamp.api.todos.getBucketsTodolistsTodos({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -14461,26 +14461,26 @@ await corsair.basecamp.api.todos.getBucketsTodolistsTodos({});
   },
   description?: string | null,
   completed?: boolean,
-  content?: string | null,
+  content: string | null,
   description_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   starts_on?: string | null,
   due_on?: string | null,
   assignees?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -14506,7 +14506,7 @@ await corsair.basecamp.api.todos.getBucketsTodolistsTodos({});
   completion_subscribers?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -14534,25 +14534,25 @@ await corsair.basecamp.api.todos.getBucketsTodolistsTodos({});
   boosts_url?: string,
   steps?: {
     id: string | number,
-    status?: string | null,
-    visible_to_clients?: boolean | null,
-    created_at?: string | null,
-    updated_at?: string | null,
-    title?: string | null,
-    inherits_status?: boolean | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    status: string | null,
+    visible_to_clients: boolean | null,
+    created_at: string | null,
+    updated_at: string | null,
+    title: string | null,
+    inherits_status: boolean | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bookmark_url?: string | null,
     position?: number | null,
     due_on?: string | null,
     completed?: boolean | null,
     completed_at?: any,
-    parent?: {
+    parent: {
     } | null,
-    bucket?: {
+    bucket: {
     } | null,
-    creator?: {
+    creator: {
     } | null,
     completer?: any,
     assignees?: any,
@@ -14595,7 +14595,7 @@ await corsair.basecamp.api.todos.getBucketsTodos({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -14604,16 +14604,16 @@ await corsair.basecamp.api.todos.getBucketsTodos({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `completed` | `boolean` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `description_attachments` | `object[]` | Yes | — |
-| `starts_on` | `string` | No | — |
-| `due_on` | `string` | No | — |
+| `starts_on` | `string \| null` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `assignees` | `object[]` | No | — |
 | `completion_subscribers` | `object[]` | No | — |
 | `completion_url` | `string` | No | — |
@@ -14627,7 +14627,7 @@ await corsair.basecamp.api.todos.getBucketsTodos({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string
@@ -14722,7 +14722,7 @@ await corsair.basecamp.api.todos.getBucketsTodos({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -14756,7 +14756,7 @@ await corsair.basecamp.api.todos.getBucketsTodos({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -14776,7 +14776,7 @@ await corsair.basecamp.api.todos.getBucketsTodos({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -14788,22 +14788,22 @@ await corsair.basecamp.api.todos.getBucketsTodos({});
   completed_at?: string,
   parent: {
     id: string | number,
-    title?: string | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    title: string | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bucket?: {
     } | null
   },
   bucket: {
     id: string | number,
-    name?: string | null,
-    type?: string | null
+    name: string | null,
+    type: string | null
   },
   creator: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -14829,7 +14829,7 @@ await corsair.basecamp.api.todos.getBucketsTodos({});
   completer?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -14892,13 +14892,13 @@ await corsair.basecamp.api.todos.getBucketsTodosets({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -14997,7 +14997,7 @@ await corsair.basecamp.api.todos.getBucketsTodosetsTodolists({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -15010,7 +15010,7 @@ await corsair.basecamp.api.todos.getBucketsTodosetsTodolists({});
   position?: number | null,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string
@@ -15040,7 +15040,7 @@ await corsair.basecamp.api.todos.getBucketsTodosetsTodolists({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -15048,19 +15048,19 @@ await corsair.basecamp.api.todos.getBucketsTodosetsTodolists({});
     can_access_timesheet?: boolean,
     can_access_hill_charts?: boolean
   },
-  description?: string | null,
+  description: string | null,
   description_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   completed?: boolean,
   completed_ratio?: string,
@@ -15069,7 +15069,7 @@ await corsair.basecamp.api.todos.getBucketsTodosetsTodolists({});
   groups_url?: string,
   group_position_url?: string,
   app_todos_url?: string,
-  color?: string | null,
+  color: string | null,
   comments_app_url: string,
   boosts_count?: number,
   boosts_url?: string
@@ -15110,7 +15110,7 @@ await corsair.basecamp.api.todos.getTodo({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -15119,16 +15119,16 @@ await corsair.basecamp.api.todos.getTodo({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `completed` | `boolean` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `description_attachments` | `object[]` | Yes | — |
-| `starts_on` | `string` | No | — |
-| `due_on` | `string` | No | — |
+| `starts_on` | `string \| null` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `assignees` | `object[]` | No | — |
 | `completion_subscribers` | `object[]` | No | — |
 | `completion_url` | `string` | No | — |
@@ -15142,7 +15142,7 @@ await corsair.basecamp.api.todos.getTodo({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string
@@ -15237,7 +15237,7 @@ await corsair.basecamp.api.todos.getTodo({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -15271,7 +15271,7 @@ await corsair.basecamp.api.todos.getTodo({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -15291,7 +15291,7 @@ await corsair.basecamp.api.todos.getTodo({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -15303,22 +15303,22 @@ await corsair.basecamp.api.todos.getTodo({});
   completed_at?: string,
   parent: {
     id: string | number,
-    title?: string | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    title: string | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bucket?: {
     } | null
   },
   bucket: {
     id: string | number,
-    name?: string | null,
-    type?: string | null
+    name: string | null,
+    type: string | null
   },
   creator: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -15344,7 +15344,7 @@ await corsair.basecamp.api.todos.getTodo({});
   completer?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -15407,7 +15407,7 @@ await corsair.basecamp.api.todos.getTodolist({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -15417,11 +15417,11 @@ await corsair.basecamp.api.todos.getTodolist({});
 | `bubble_up_url` | `string` | Yes | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | Yes | — |
 | `description_attachments` | `object[]` | Yes | — |
 | `completed` | `boolean` | No | — |
 | `completed_ratio` | `string` | No | — |
@@ -15430,7 +15430,7 @@ await corsair.basecamp.api.todos.getTodolist({});
 | `groups_url` | `string` | No | — |
 | `group_position_url` | `string` | No | — |
 | `app_todos_url` | `string` | No | — |
-| `color` | `string` | No | — |
+| `color` | `string \| null` | Yes | — |
 | `comments_app_url` | `string` | Yes | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -15441,7 +15441,7 @@ await corsair.basecamp.api.todos.getTodolist({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string
@@ -15551,7 +15551,7 @@ await corsair.basecamp.api.todos.getTodolistGroups({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -15564,7 +15564,7 @@ await corsair.basecamp.api.todos.getTodolistGroups({});
   position?: number | null,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string
@@ -15594,7 +15594,7 @@ await corsair.basecamp.api.todos.getTodolistGroups({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -15602,19 +15602,19 @@ await corsair.basecamp.api.todos.getTodolistGroups({});
     can_access_timesheet?: boolean,
     can_access_hill_charts?: boolean
   },
-  description?: string | null,
+  description: string | null,
   description_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   completed?: boolean,
   completed_ratio?: string,
@@ -15623,7 +15623,7 @@ await corsair.basecamp.api.todos.getTodolistGroups({});
   groups_url?: string,
   group_position_url?: string,
   app_todos_url?: string,
-  color?: string | null,
+  color: string | null,
   comments_app_url: string,
   boosts_count?: number,
   boosts_url?: string
@@ -15664,13 +15664,13 @@ await corsair.basecamp.api.todos.getTodoset({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
 | `app_url` | `string` | Yes | — |
 | `bookmark_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -15769,7 +15769,7 @@ await corsair.basecamp.api.todos.listTodolists({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -15782,7 +15782,7 @@ await corsair.basecamp.api.todos.listTodolists({});
   position?: number | null,
   parent: {
     id: number,
-    title?: string | null,
+    title: string | null,
     type: string,
     url: string,
     app_url: string
@@ -15812,7 +15812,7 @@ await corsair.basecamp.api.todos.listTodolists({});
     avatar_url?: string,
     company?: {
       id: string | number,
-      name?: string | null
+      name: string | null
     },
     can_manage_projects?: boolean,
     can_manage_people?: boolean,
@@ -15820,19 +15820,19 @@ await corsair.basecamp.api.todos.listTodolists({});
     can_access_timesheet?: boolean,
     can_access_hill_charts?: boolean
   },
-  description?: string | null,
+  description: string | null,
   description_attachments: {
     id: string | number,
-    sgid?: string | null,
-    filename?: string | null,
-    content_type?: string | null,
-    byte_size?: number | null,
-    download_url?: string | null,
+    sgid: string | null,
+    filename: string | null,
+    content_type: string | null,
+    byte_size: number | null,
+    download_url: string | null,
     width?: number | null,
     height?: number | null,
-    previewable?: boolean | null,
-    preview_url?: string | null,
-    thumbnail_url?: string | null
+    previewable: boolean | null,
+    preview_url: string | null,
+    thumbnail_url: string | null
   }[],
   completed?: boolean,
   completed_ratio?: string,
@@ -15841,7 +15841,7 @@ await corsair.basecamp.api.todos.listTodolists({});
   groups_url?: string,
   group_position_url?: string,
   app_todos_url?: string,
-  color?: string | null,
+  color: string | null,
   comments_app_url: string,
   boosts_count?: number,
   boosts_url?: string
@@ -15870,7 +15870,7 @@ await corsair.basecamp.api.todos.postBucketsTodolistsComments({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `recordingId` | `number` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 
 
 
@@ -15883,7 +15883,7 @@ await corsair.basecamp.api.todos.postBucketsTodolistsComments({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -15892,7 +15892,7 @@ await corsair.basecamp.api.todos.postBucketsTodolistsComments({});
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `content_attachments` | `object[]` | Yes | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -15903,7 +15903,7 @@ await corsair.basecamp.api.todos.postBucketsTodolistsComments({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -16002,13 +16002,13 @@ await corsair.basecamp.api.todos.postBucketsTodolistsTodos({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `todolistId` | `number` | Yes | — |
-| `content` | `string` | No | — |
-| `description` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
+| `description` | `string \| null` | No | — |
 | `assignee_ids` | `number[]` | No | — |
 | `completion_subscriber_ids` | `number[]` | No | — |
 | `notify` | `boolean` | No | — |
-| `due_on` | `string` | No | — |
-| `starts_on` | `string` | No | — |
+| `due_on` | `string \| null` | No | — |
+| `starts_on` | `string \| null` | No | — |
 
 
 
@@ -16021,7 +16021,7 @@ await corsair.basecamp.api.todos.postBucketsTodolistsTodos({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -16030,16 +16030,16 @@ await corsair.basecamp.api.todos.postBucketsTodolistsTodos({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `completed` | `boolean` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `description_attachments` | `object[]` | Yes | — |
-| `starts_on` | `string` | No | — |
-| `due_on` | `string` | No | — |
+| `starts_on` | `string \| null` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `assignees` | `object[]` | No | — |
 | `completion_subscribers` | `object[]` | No | — |
 | `completion_url` | `string` | No | — |
@@ -16053,7 +16053,7 @@ await corsair.basecamp.api.todos.postBucketsTodolistsTodos({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string
@@ -16148,7 +16148,7 @@ await corsair.basecamp.api.todos.postBucketsTodolistsTodos({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -16182,7 +16182,7 @@ await corsair.basecamp.api.todos.postBucketsTodolistsTodos({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -16202,7 +16202,7 @@ await corsair.basecamp.api.todos.postBucketsTodolistsTodos({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -16214,22 +16214,22 @@ await corsair.basecamp.api.todos.postBucketsTodolistsTodos({});
   completed_at?: string,
   parent: {
     id: string | number,
-    title?: string | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    title: string | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bucket?: {
     } | null
   },
   bucket: {
     id: string | number,
-    name?: string | null,
-    type?: string | null
+    name: string | null,
+    type: string | null
   },
   creator: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -16255,7 +16255,7 @@ await corsair.basecamp.api.todos.postBucketsTodolistsTodos({});
   completer?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -16306,7 +16306,7 @@ await corsair.basecamp.api.todos.postBucketsTodosComments({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `recordingId` | `number` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 
 
 
@@ -16319,7 +16319,7 @@ await corsair.basecamp.api.todos.postBucketsTodosComments({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -16328,7 +16328,7 @@ await corsair.basecamp.api.todos.postBucketsTodosComments({});
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `content_attachments` | `object[]` | Yes | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -16339,7 +16339,7 @@ await corsair.basecamp.api.todos.postBucketsTodosComments({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string,
@@ -16439,7 +16439,7 @@ await corsair.basecamp.api.todos.postBucketsTodosetsTodolists({});
 |------|------|----------|-------------|
 | `todosetId` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `visible_to_clients` | `boolean` | No | — |
 
 
@@ -16453,7 +16453,7 @@ await corsair.basecamp.api.todos.postBucketsTodosetsTodolists({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -16463,11 +16463,11 @@ await corsair.basecamp.api.todos.postBucketsTodosetsTodolists({});
 | `bubble_up_url` | `string` | Yes | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | Yes | — |
 | `description_attachments` | `object[]` | Yes | — |
 | `completed` | `boolean` | No | — |
 | `completed_ratio` | `string` | No | — |
@@ -16476,7 +16476,7 @@ await corsair.basecamp.api.todos.postBucketsTodosetsTodolists({});
 | `groups_url` | `string` | No | — |
 | `group_position_url` | `string` | No | — |
 | `app_todos_url` | `string` | No | — |
-| `color` | `string` | No | — |
+| `color` | `string \| null` | Yes | — |
 | `comments_app_url` | `string` | Yes | — |
 | `boosts_count` | `number` | No | — |
 | `boosts_url` | `string` | No | — |
@@ -16487,7 +16487,7 @@ await corsair.basecamp.api.todos.postBucketsTodosetsTodolists({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string
@@ -16581,7 +16581,7 @@ await corsair.basecamp.api.todos.putBucketsTodolistsGroupsPosition({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `groupId` | `number` | Yes | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | Yes | — |
 
 
 
@@ -16607,13 +16607,13 @@ await corsair.basecamp.api.todos.putBucketsTodos({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `todoId` | `number` | Yes | — |
-| `content` | `string` | No | — |
-| `description` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
+| `description` | `string \| null` | No | — |
 | `assignee_ids` | `number[]` | No | — |
 | `completion_subscriber_ids` | `number[]` | No | — |
 | `notify` | `boolean` | No | — |
-| `due_on` | `string` | No | — |
-| `starts_on` | `string` | No | — |
+| `due_on` | `string \| null` | No | — |
+| `starts_on` | `string \| null` | No | — |
 
 
 
@@ -16626,7 +16626,7 @@ await corsair.basecamp.api.todos.putBucketsTodos({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -16635,16 +16635,16 @@ await corsair.basecamp.api.todos.putBucketsTodos({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `completed` | `boolean` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `description_attachments` | `object[]` | Yes | — |
-| `starts_on` | `string` | No | — |
-| `due_on` | `string` | No | — |
+| `starts_on` | `string \| null` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `assignees` | `object[]` | No | — |
 | `completion_subscribers` | `object[]` | No | — |
 | `completion_url` | `string` | No | — |
@@ -16658,7 +16658,7 @@ await corsair.basecamp.api.todos.putBucketsTodos({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string
@@ -16753,7 +16753,7 @@ await corsair.basecamp.api.todos.putBucketsTodos({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -16787,7 +16787,7 @@ await corsair.basecamp.api.todos.putBucketsTodos({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -16807,7 +16807,7 @@ await corsair.basecamp.api.todos.putBucketsTodos({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -16819,22 +16819,22 @@ await corsair.basecamp.api.todos.putBucketsTodos({});
   completed_at?: string,
   parent: {
     id: string | number,
-    title?: string | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    title: string | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bucket?: {
     } | null
   },
   bucket: {
     id: string | number,
-    name?: string | null,
-    type?: string | null
+    name: string | null,
+    type: string | null
   },
   creator: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -16860,7 +16860,7 @@ await corsair.basecamp.api.todos.putBucketsTodos({});
   completer?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -16911,7 +16911,7 @@ await corsair.basecamp.api.todos.putBucketsTodosPosition({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `todoId` | `number` | Yes | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | Yes | — |
 | `parent_id` | `number` | No | — |
 
 
@@ -16963,13 +16963,13 @@ await corsair.basecamp.api.todos.updateTodo({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `todoId` | `number` | Yes | — |
-| `content` | `string` | No | — |
-| `description` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
+| `description` | `string \| null` | No | — |
 | `assignee_ids` | `number[]` | No | — |
 | `completion_subscriber_ids` | `number[]` | No | — |
 | `notify` | `boolean` | No | — |
-| `due_on` | `string` | No | — |
-| `starts_on` | `string` | No | — |
+| `due_on` | `string \| null` | No | — |
+| `starts_on` | `string \| null` | No | — |
 
 
 
@@ -16982,7 +16982,7 @@ await corsair.basecamp.api.todos.updateTodo({});
 | `visible_to_clients` | `boolean` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `updated_at` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string \| null` | Yes | — |
 | `inherits_status` | `boolean` | Yes | — |
 | `type` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -16991,16 +16991,16 @@ await corsair.basecamp.api.todos.updateTodo({});
 | `subscription_url` | `string` | No | — |
 | `comments_count` | `number` | No | — |
 | `comments_url` | `string` | No | — |
-| `position` | `number` | No | — |
+| `position` | `number \| null` | No | — |
 | `parent` | `object` | Yes | — |
 | `bucket` | `object` | Yes | — |
 | `creator` | `object` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `completed` | `boolean` | No | — |
-| `content` | `string` | No | — |
+| `content` | `string \| null` | Yes | — |
 | `description_attachments` | `object[]` | Yes | — |
-| `starts_on` | `string` | No | — |
-| `due_on` | `string` | No | — |
+| `starts_on` | `string \| null` | No | — |
+| `due_on` | `string \| null` | No | — |
 | `assignees` | `object[]` | No | — |
 | `completion_subscribers` | `object[]` | No | — |
 | `completion_url` | `string` | No | — |
@@ -17014,7 +17014,7 @@ await corsair.basecamp.api.todos.updateTodo({});
 ```ts
 {
   id: number,
-  title?: string | null,
+  title: string | null,
   type: string,
   url: string,
   app_url: string
@@ -17109,7 +17109,7 @@ await corsair.basecamp.api.todos.updateTodo({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -17143,7 +17143,7 @@ await corsair.basecamp.api.todos.updateTodo({});
   avatar_url?: string,
   company?: {
     id: string | number,
-    name?: string | null
+    name: string | null
   },
   can_manage_projects?: boolean,
   can_manage_people?: boolean,
@@ -17163,7 +17163,7 @@ await corsair.basecamp.api.todos.updateTodo({});
   visible_to_clients: boolean,
   created_at: string,
   updated_at: string,
-  title?: string | null,
+  title: string | null,
   inherits_status: boolean,
   type: string,
   url: string,
@@ -17175,22 +17175,22 @@ await corsair.basecamp.api.todos.updateTodo({});
   completed_at?: string,
   parent: {
     id: string | number,
-    title?: string | null,
-    type?: string | null,
-    url?: string | null,
-    app_url?: string | null,
+    title: string | null,
+    type: string | null,
+    url: string | null,
+    app_url: string | null,
     bucket?: {
     } | null
   },
   bucket: {
     id: string | number,
-    name?: string | null,
-    type?: string | null
+    name: string | null,
+    type: string | null
   },
   creator: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
@@ -17216,7 +17216,7 @@ await corsair.basecamp.api.todos.updateTodo({});
   completer?: {
     id: string | number,
     attachable_sgid?: string | null,
-    name?: string | null,
+    name: string | null,
     email_address?: string | null,
     personable_type?: string | null,
     title?: string | null,
