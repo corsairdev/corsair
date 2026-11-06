@@ -35,7 +35,7 @@ describe('snowflake plugin definition', () => {
 	it('sets a risk level and a description on every endpoint', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(Object.keys(meta).sort()).toEqual([...operations].sort());
-		expect(meta['statements.submit']?.riskLevel).toBe('write');
+		expect(meta['statements.submit']?.riskLevel).toBe('destructive');
 		expect(meta['statements.get']?.riskLevel).toBe('read');
 		expect(meta['statements.cancel']?.riskLevel).toBe('write');
 		for (const entry of Object.values(meta)) {

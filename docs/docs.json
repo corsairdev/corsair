@@ -1497,7 +1497,7 @@
                 ]
               },
               {
-                "group": "ConvoloAi",
+                "group": "Convolo AI",
                 "pages": [
                   "plugins/convoloai/overview",
                   "plugins/convoloai/api",
@@ -1571,7 +1571,7 @@
                 ]
               },
               {
-                "group": "Dadataru",
+                "group": "DaData",
                 "pages": [
                   "plugins/dadataru/overview",
                   "plugins/dadataru/api",
@@ -1952,7 +1952,7 @@
                 ]
               },
               {
-                "group": "Flexisign",
+                "group": "FlexiSign",
                 "pages": [
                   "plugins/flexisign/overview",
                   "plugins/flexisign/api",

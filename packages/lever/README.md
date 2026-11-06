@@ -88,9 +88,9 @@ pnpm add @corsair-dev/lever
 | `requisitionFields.addOptions` | `lever.api.requisitionFields.addOptions` | `write` | Add dropdown options to a requisition field |
 | `requisitionFields.create` | `lever.api.requisitionFields.create` | `write` | Create a requisition field for the workspace |
 | `requisitionFields.delete` | `lever.api.requisitionFields.delete` | `destructive` | Delete a requisition field |
-| `requisitionFields.deleteOptions` | `lever.api.requisitionFields.deleteOptions` | `write` | Remove dropdown option values from a requisition field |
+| `requisitionFields.deleteOptions` | `lever.api.requisitionFields.deleteOptions` | `destructive` | Remove dropdown option values from a requisition field |
 | `requisitionFields.list` | `lever.api.requisitionFields.list` | `read` | List requisition fields configured for the workspace |
-| `requisitionFields.replaceOptions` | `lever.api.requisitionFields.replaceOptions` | `write` | Replace the dropdown options of a requisition field |
+| `requisitionFields.replaceOptions` | `lever.api.requisitionFields.replaceOptions` | `destructive` | Replace the dropdown options of a requisition field |
 | `requisitionFields.retrieve` | `lever.api.requisitionFields.retrieve` | `read` | Retrieve a single requisition field by ID |
 | `requisitionFields.update` | `lever.api.requisitionFields.update` | `write` | Update a requisition field |
 | `requisitions.create` | `lever.api.requisitions.create` | `write` | Create a requisition |

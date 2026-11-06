@@ -1447,7 +1447,7 @@ await corsair.render.api.disks.listSnapshots({});
 
 Restore a snapshot to a Render disk
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.render.api.disks.restoreSnapshot({});
