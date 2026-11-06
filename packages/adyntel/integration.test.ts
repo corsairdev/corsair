@@ -197,6 +197,27 @@ describe('live smoke test', () => {
 	describeIfKey('against the real API', () => {
 		const liveEmail = process.env.ADYNTEL_EMAIL ?? '';
 
+		/**
+		 * A live run needs a funded account. An empty balance answers 402, and
+		 * `/domain-keywords` wraps that in a 500. That is a property of the
+		 * account, not of the plugin, so it is reported rather than counted as a
+		 * code failure: the test still fails, but the message says why.
+		 */
+		async function expectFunded(operation: string, run: () => Promise<void>) {
+			try {
+				await run();
+			} catch (error) {
+				const insufficient =
+					error instanceof AdyntelAPIError && error.isInsufficientCredits;
+				if (insufficient) {
+					throw new Error(
+						`${operation} could not run: the ADYNTEL_API_KEY account has no credits left. Top up the Adyntel account and rerun; the plugin itself is not at fault. Original: ${error.message}`,
+					);
+				}
+				throw error;
+			}
+		}
+
 		async function liveClient() {
 			const testDb = createTestDatabase();
 			await createIntegrationAndAccount(testDb.db, 'adyntel', 'default');
@@ -213,13 +234,15 @@ describe('live smoke test', () => {
 		it('reads a domain known to run Google ads', async () => {
 			const { corsair, testDb } = await liveClient();
 			try {
-				const result = await corsair.adyntel.api.google.ads({
-					company_domain: 'clay.com',
-				});
+				await expectFunded('google.ads', async () => {
+					const result = await corsair.adyntel.api.google.ads({
+						company_domain: 'clay.com',
+					});
 
-				expect(result.ads === undefined || Array.isArray(result.ads)).toBe(
-					true,
-				);
+					expect(result.ads === undefined || Array.isArray(result.ads)).toBe(
+						true,
+					);
+				});
 			} finally {
 				testDb.cleanup();
 			}
@@ -228,11 +251,13 @@ describe('live smoke test', () => {
 		it('reads paid and organic keyword counts for a domain', async () => {
 			const { corsair, testDb } = await liveClient();
 			try {
-				const result = await corsair.adyntel.api.keywords.paidVsOrganic({
-					company_domain: 'lokalise.com',
-				});
+				await expectFunded('keywords.paidVsOrganic', async () => {
+					const result = await corsair.adyntel.api.keywords.paidVsOrganic({
+						company_domain: 'lokalise.com',
+					});
 
-				expect(result.organic?.count ?? result.paid?.count).toBeDefined();
+					expect(result.organic?.count ?? result.paid?.count).toBeDefined();
+				});
 			} finally {
 				testDb.cleanup();
 			}

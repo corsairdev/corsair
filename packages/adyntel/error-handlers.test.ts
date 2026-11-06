@@ -27,7 +27,7 @@ describe('error handlers', () => {
 	it('retries a 429 on a read and honours Retry-After', async () => {
 		const policy = await run(
 			errorHandlers.RATE_LIMIT_ERROR,
-			adyntelError(429, 'linkedinAds', 3000),
+			adyntelError(429, 'googleShoppingStatus', 3000),
 		);
 
 		expect(policy.maxRetries).toBe(3);
@@ -78,6 +78,29 @@ describe('error handlers', () => {
 		).toBe(0);
 	});
 
+	it('treats a 500 that wraps a 402 as out of credits, not a server fault', async () => {
+		// Verified against the live API: `/domain-keywords` answers 500 with this
+		// body when the balance is empty. Reading it as a 5xx would invite a
+		// retry that can never succeed.
+		const wrapped = new AdyntelAPIError(
+			'Adyntel 500: Error processing request: 402: Insufficient tokens. Please top-up',
+			{
+				status: 500,
+				operation: 'domainKeywords',
+				body: {
+					detail:
+						'Error processing request: 402: Insufficient tokens. Please top-up',
+				},
+			},
+		);
+
+		expect(wrapped.isInsufficientCredits).toBe(true);
+		expect(errorHandlers.INSUFFICIENT_CREDITS_ERROR.match(wrapped)).toBe(true);
+		expect(
+			(await run(errorHandlers.INSUFFICIENT_CREDITS_ERROR, wrapped)).maxRetries,
+		).toBe(0);
+	});
+
 	it('does not retry a 422 or a 400, which nothing was charged for', async () => {
 		expect(
 			errorHandlers.VALIDATION_ERROR.match(adyntelError(422, 'facebookAds')),
@@ -100,33 +123,18 @@ describe('error handlers', () => {
 
 	it('retries a 5xx on a read only', async () => {
 		expect(
-			(await run(errorHandlers.SERVER_ERROR, adyntelError(503, 'linkedinAds')))
-				.maxRetries,
+			(
+				await run(
+					errorHandlers.SERVER_ERROR,
+					adyntelError(503, 'googleShoppingStatus'),
+				)
+			).maxRetries,
 		).toBe(2);
 		expect(
 			(
 				await run(
 					errorHandlers.SERVER_ERROR,
 					adyntelError(503, 'someFutureWrite'),
-				)
-			).maxRetries,
-		).toBe(0);
-	});
-
-	it('retries a network failure on a read only', async () => {
-		expect(
-			(
-				await run(
-					errorHandlers.NETWORK_ERROR,
-					adyntelError(undefined, 'linkedinAds'),
-				)
-			).maxRetries,
-		).toBe(2);
-		expect(
-			(
-				await run(
-					errorHandlers.NETWORK_ERROR,
-					adyntelError(undefined, 'someFutureWrite'),
 				)
 			).maxRetries,
 		).toBe(0);
@@ -148,14 +156,21 @@ describe('error handlers', () => {
 		).toBe(0);
 	});
 
-	it('does not retry a job-starting read, because a repeat can queue a second job', async () => {
-		// `googleAds`, `googleShopping`, `tiktokAds` and `facebookAds` all enqueue
-		// work that spends a credit, so an unknown outcome is never replayed.
+	it('does not retry any billed read, because a repeat pays twice', async () => {
+		// Every operation except the free status poll bills one credit per
+		// scrape. `linkedinAds` is included because it accepts `all_ads` and a
+		// webhook, so it can start a job too.
 		for (const operation of [
 			'facebookAds',
+			'facebookAdSearch',
 			'googleAds',
 			'googleShopping',
+			'linkedinAds',
+			'linkedinKeywordSearch',
 			'tiktokAds',
+			'tiktokSearch',
+			'tiktokAdDetails',
+			'domainKeywords',
 		]) {
 			const policy = await run(
 				errorHandlers.NETWORK_ERROR,
@@ -165,19 +180,12 @@ describe('error handlers', () => {
 		}
 	});
 
-	it('still retries a read that cannot start a job', async () => {
-		for (const operation of [
-			'linkedinAds',
-			'linkedinKeywordSearch',
-			'googleShoppingStatus',
-			'domainKeywords',
-		]) {
-			const policy = await run(
-				errorHandlers.NETWORK_ERROR,
-				adyntelError(undefined, operation),
-			);
-			expect(policy.maxRetries).toBe(2);
-		}
+	it('still retries the status poll, which the docs say is free', async () => {
+		const policy = await run(
+			errorHandlers.NETWORK_ERROR,
+			adyntelError(undefined, 'googleShoppingStatus'),
+		);
+		expect(policy.maxRetries).toBe(2);
 	});
 
 	it('does not retry a 404', async () => {

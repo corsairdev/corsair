@@ -47,9 +47,10 @@ function readString(
 
 /**
  * Adyntel answers errors in two shapes. Most endpoints send
- * `{ message }`, the TikTok ones send `{ detail }`.
- *
- * Docs: https://docs.adyntel.com/openapi-docs/existing-endpoints
+ * `{ message }`, the TikTok ones send `{ detail }`. A few wrap an upstream
+ * status in the text, e.g. `Error processing request: 402: Insufficient
+ * tokens. Please top-up`, which is how `/domain-keywords` reports an empty
+ * balance while sending a 500.
  */
 export class AdyntelAPIError extends Error {
 	readonly status?: number;
@@ -98,6 +99,14 @@ export class AdyntelAPIError extends Error {
 		return this.status === 429;
 	}
 
+	/**
+	 * True when the account is out of credits, whether the API said so with a
+	 * 402 or wrapped it in another status.
+	 */
+	get isInsufficientCredits(): boolean {
+		return this.status === 402 || isInsufficientCreditsBody(this.body);
+	}
+
 	/** True when the API answered 200 but reported a failure in its body. */
 	get isProviderRejection(): boolean {
 		return this.providerCode !== undefined;
@@ -112,6 +121,21 @@ export function describeAdyntelError(
 ): string {
 	const text = readMessage(body) ?? fallback;
 	return status === undefined ? text : `Adyntel ${status}: ${text}`;
+}
+
+/**
+ * True when the body reports an upstream 402 even though the HTTP status is
+ * something else. `/domain-keywords` answers 500 with
+ * `{ detail: 'Error processing request: 402: Insufficient tokens. Please
+ * top-up' }`, so without this an empty balance would read as a server fault and
+ * invite a retry that can never succeed.
+ */
+// unknown: the body is an untyped error body until readMessage narrows it.
+export function isInsufficientCreditsBody(body: unknown): boolean {
+	const text = readMessage(body);
+	return (
+		text !== undefined && /\b402\b/.test(text) && /token|credit/i.test(text)
+	);
 }
 
 export type AdyntelRequest = {

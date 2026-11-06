@@ -24,40 +24,33 @@ const READ_OPERATIONS = new Set([
 ]);
 
 /**
- * Operations that queue work on Adyntel's side and spend a credit when they
- * start. A retry after an unknown outcome can run a second scrape and bill it
- * again, so these are never replayed: not on a network failure, and not on a
- * 5xx that may have arrived after the job was queued.
+ * The only calls that are safe to replay.
  *
- * `googleShopping` starts a DataForSEO task, `googleAds` and `tiktokAds` accept
- * `all_ads` / `webhook_url` and enqueue a job per page, and `metaAds` does the
- * same for its multi-country array form.
+ * Adyntel bills one credit per scrape, and every operation except this one
+ * scrapes: they start a job, spend a credit, or do both. A retry after an
+ * unknown outcome therefore pays twice for the same data, so the retry budget
+ * belongs only to calls the provider documents as free. `googleShoppingStatus`
+ * is the one endpoint whose docs state "You will not be charged".
  */
-const JOB_STARTING_OPERATIONS = new Set([
-	'facebookAds',
-	'googleAds',
-	'googleShopping',
-	'tiktokAds',
-]);
+const RETRIABLE_OPERATIONS = new Set(['googleShoppingStatus']);
 
 function isRead(error: AdyntelAPIError): boolean {
 	return error.operation !== undefined && READ_OPERATIONS.has(error.operation);
 }
 
-/** True for a read whose repeat cannot create a second job or charge twice. */
+/** True only for a read the provider never charges for, so a repeat is free. */
 function isReplayableRead(error: AdyntelAPIError): boolean {
-	if (!isRead(error)) return false;
 	return (
-		error.operation === undefined ||
-		!JOB_STARTING_OPERATIONS.has(error.operation)
+		isRead(error) &&
+		error.operation !== undefined &&
+		RETRIABLE_OPERATIONS.has(error.operation)
 	);
 }
 
 export const errorHandlers = {
-	// Adyntel does not publish a rate limit. A 429 with Retry-After is honoured;
-	// without the header it backs off and tries again, which is safe for a read.
-	// A write is not replayed: every Adyntel call that can 429 has already spent
-	// credits by the time it answered, and a second scrape costs another.
+	// Adyntel does not publish a rate limit. A 429 is retried only for a call the
+	// provider never charges for: a billed scrape has already spent its credit
+	// by the time it answers, so a repeat pays twice.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
 			error instanceof AdyntelAPIError && error.isRateLimit,
@@ -79,10 +72,12 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 402: the account is out of credits. Retrying spends nothing because there
-	// is nothing to spend.
+	// 402: the account is out of credits, and `/domain-keywords` reports the same
+	// condition inside a 500. Retrying spends nothing because there is nothing
+	// to spend, and the caller has to top up to make progress.
 	INSUFFICIENT_CREDITS_ERROR: {
-		match: (error: Error) => statusOf(error) === 402,
+		match: (error: Error) =>
+			error instanceof AdyntelAPIError && error.isInsufficientCredits,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 422: an unrecognised country, language or filter combination, rejected
@@ -98,14 +93,13 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 404,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A 5xx may mean the scrape ran and the response was lost. Only reads are
-	// replayed; a write would charge for a second scrape.
+	// A 5xx may mean the scrape ran and the response was lost. Only a free call
+	// is replayed; anything billed would charge for a second scrape.
 	SERVER_ERROR: {
 		match: (error: Error) =>
 			error instanceof AdyntelAPIError && (error.status ?? 0) >= 500,
 		handler: async (error: Error) => {
-			// A 5xx can arrive after a job was queued, so a job-starting read is
-			// not replayed even though it reads.
+			// A 5xx can arrive after the scrape ran and the credit was spent.
 			const retriable =
 				error instanceof AdyntelAPIError && isReplayableRead(error);
 			return {
@@ -114,19 +108,17 @@ export const errorHandlers = {
 			};
 		},
 	},
-	// Network failures and fetch timeouts never reached Adyntel, so nothing was
-	// scraped or charged and a retry is safe for reads. Two things must not
-	// reach the HTTP layer at all: a provider rejection (a non-zero code with a
-	// 200) and a validation error, both of which have no status. Replaying
-	// either would bill for the same scrape twice.
+	// A network failure may have happened after Adyntel received the request, so
+	// a billed call is not replayed here. Two other failures have no HTTP status
+	// and must not reach this handler at all: a provider rejection (a non-zero
+	// code with a 200) and a validation error.
 	NETWORK_ERROR: {
 		match: (error: Error) =>
 			error instanceof AdyntelAPIError &&
 			error.status === undefined &&
 			!error.isProviderRejection,
 		handler: async (error: Error) => {
-			// The request may have reached Adyntel and started a job before the
-			// connection dropped, so job-starting reads are not replayed.
+			// The request may have reached Adyntel before the connection dropped.
 			const retriable =
 				error instanceof AdyntelAPIError && isReplayableRead(error);
 			return {
