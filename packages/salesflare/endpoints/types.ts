@@ -129,6 +129,12 @@ const CreateContactInputSchema = z
 	})
 	.passthrough();
 
+const ListCurrenciesInputSchema = z.object({});
+
+const ListGroupsInputSchema = z.object({});
+
+const RetrieveCurrentUserInputSchema = z.object({});
+
 const ListOpportunitiesInputSchema = z.object({
 	search: z.string().optional(),
 	id: z.number().optional(),
@@ -194,6 +200,27 @@ const CreateOpportunityInputSchema = z
 	})
 	.passthrough();
 
+const ListPersonsInputSchema = z.object({
+	id: z.array(z.number()).optional(),
+	name: z.string().optional(),
+	email: z.string().optional(),
+	search: z.string().optional(),
+});
+
+const ListPipelinesInputSchema = z.object({
+	search: z.string().optional(),
+	order_by: z.array(z.string()).optional(),
+	q: z.string().optional(),
+});
+
+const ListStagesInputSchema = z.object({
+	id: z.number().optional(),
+	name: z.string().optional(),
+	'pipeline.id': z.number().optional(),
+	'pipeline.name': z.string().optional(),
+	order_by: z.string().optional(),
+});
+
 const ListTagsInputSchema = z.object({
 	id: z.array(z.number()).optional(),
 	name: z.string().optional(),
@@ -223,6 +250,17 @@ const ListTasksInputSchema = z.object({
 });
 
 const CreateTaskInputSchema = z.object({}).passthrough();
+
+const ListUsersInputSchema = z.object({
+	id: z.array(z.number()).optional(),
+	name: z.string().optional(),
+	email: z.string().optional(),
+	search: z.string().optional(),
+	limit: z.number().optional(),
+	offset: z.number().optional(),
+	order_by: z.array(z.string()).optional(),
+	onlyEnabled: z.boolean().optional(),
+});
 
 const ListWorkflowsInputSchema = z.object({
 	limit: z.number().optional(),
@@ -381,6 +419,8 @@ const DeleteAccountInputSchema = z.object({
 	accountId: z.string().min(1),
 });
 
+const ListCampaignMergeFieldsInputSchema = z.object({});
+
 const RetrieveContactInputSchema = z.object({
 	contactId: z.string().min(1),
 });
@@ -523,6 +563,48 @@ const CreateCustomFieldSubInputSchema = z
 	})
 	.passthrough();
 
+const ListEmailDataSourcesInputSchema = z.object({
+	includeTeamDataSources: z.boolean().optional(),
+});
+
+const ListFilterFieldsInputSchema = z.object({
+	entity: z.string().min(1),
+	pipeline: z.number().optional(),
+	includePipelineSpecificPredefinedFilterFields: z.boolean().optional(),
+});
+
+const RetrieveGroupInputSchema = z.object({
+	id: z.string().min(1),
+});
+
+const ListMyContactsInputSchema = z.object({
+	id: z.array(z.number()).optional(),
+	name: z.string().optional(),
+	email: z.string().optional(),
+	phone_number: z.string().optional(),
+	domain: z.string().optional(),
+	modification_after: z.string().optional(),
+	modification_before: z.string().optional(),
+	creation_after: z.string().optional(),
+	creation_before: z.string().optional(),
+	account: z.array(z.number()).optional(),
+	tag: z.array(z.number()).optional(),
+	'tag.name': z.array(z.string()).optional(),
+	'position.role': z.array(z.string()).optional(),
+	'address.country': z.array(z.string()).optional(),
+	'address.state_region': z.array(z.string()).optional(),
+	'address.city': z.array(z.string()).optional(),
+	includeArchived: z.boolean().optional(),
+	search: z.string().optional(),
+	type: z.enum(['customer', 'mycontacts']).optional(),
+	limit: z.number().optional(),
+	offset: z.number().optional(),
+	custom: z.string().optional(),
+	order_by: z.array(z.string()).optional(),
+	export: z.string().optional(),
+	q: z.string().optional(),
+});
+
 const RetrieveMeetingInputSchema = z.object({
 	meetingId: z.string().min(1),
 });
@@ -579,6 +661,30 @@ const DeleteOpportunityInputSchema = z.object({
 	id: z.string().min(1),
 });
 
+const RetrieveAiSettingsInputSchema = z.object({});
+
+const UpdateAiSettingsInputSchema = z
+	.object({
+		company: z
+			.object({
+				name: z.string().optional(),
+				summary: z.string().optional(),
+				generated: z.boolean().optional(),
+			})
+			.optional(),
+		user: z
+			.object({
+				name: z.string().optional(),
+				summary: z.string().optional(),
+			})
+			.optional(),
+	})
+	.passthrough();
+
+const RetrieveStageInputSchema = z.object({
+	stageId: z.string().min(1),
+});
+
 const RetrieveTagInputSchema = z.object({
 	tagId: z.string().min(1),
 });
@@ -592,6 +698,10 @@ const UpdateTagInputSchema = z
 
 const DeleteTagInputSchema = z.object({
 	tagId: z.string().min(1),
+});
+
+const RetrieveUserInputSchema = z.object({
+	id: z.string().min(1),
 });
 
 const RetrieveWorkflowInputSchema = z.object({
@@ -743,7 +853,18 @@ const ListCustomFieldOptionsInputSchema = z.object({
 	searchString: z.string().optional(),
 });
 
+const CreateCallInputSchema = z.object({}).passthrough();
+
 const CreateMeetingInputSchema = z.object({}).passthrough();
+
+const CreateMessageInputSchema = z
+	.object({
+		account: z.number(),
+		body: z.string(),
+		mentions: z.array(z.number()).optional(),
+		date: z.string().optional(),
+	})
+	.passthrough();
 
 const AddAccountUsersInputSchema = z
 	.object({
@@ -769,6 +890,38 @@ const UpdateAccountContactsInputSchema = z
 	})
 	.passthrough();
 
+const CreateMessageFeedbackInputSchema = z
+	.object({
+		messageId: z.string().min(1),
+		feedback: z.string(),
+	})
+	.passthrough();
+
+const UpdateCallInputSchema = z
+	.object({
+		meetingId: z.string().min(1),
+		calendar_id: z.string(),
+		external_id: z.string(),
+		minutes: z.string().optional(),
+		notes: z.string(),
+		edited_by: z.number().optional(),
+	})
+	.passthrough();
+
+const UpdateMessageInputSchema = z
+	.object({
+		messageId: z.string().min(1),
+		account: z.number(),
+		body: z.string(),
+		mentions: z.array(z.number()).optional(),
+		date: z.string().optional(),
+	})
+	.passthrough();
+
+const DeleteMessageInputSchema = z.object({
+	messageId: z.string().min(1),
+});
+
 const UpdateTaskInputSchema = z
 	.object({
 		id: z.string().min(1),
@@ -784,6 +937,17 @@ const DeleteTaskInputSchema = z.object({
 	id: z.string().min(1),
 });
 
+const UpdateEmailDataSourceInputSchema = z
+	.object({
+		id: z.string().min(1),
+		email_signature: z.string().optional(),
+		add_signature_to_campaign: z.boolean().optional(),
+		add_signature_to_replies: z.boolean().optional(),
+		max_emails_day: z.number().optional(),
+		max_emails_hour: z.number().optional(),
+	})
+	.passthrough();
+
 const UpdateWorkflowAudienceInputSchema = z
 	.object({
 		id: z.string().min(1),
@@ -798,32 +962,48 @@ export const SalesflareEndpointInputSchemas = {
 	createAccount: CreateAccountInputSchema,
 	listContacts: ListContactsInputSchema,
 	createContact: CreateContactInputSchema,
+	listCurrencies: ListCurrenciesInputSchema,
+	listGroups: ListGroupsInputSchema,
+	retrieveCurrentUser: RetrieveCurrentUserInputSchema,
 	listOpportunities: ListOpportunitiesInputSchema,
 	createOpportunity: CreateOpportunityInputSchema,
+	listPersons: ListPersonsInputSchema,
+	listPipelines: ListPipelinesInputSchema,
+	listStages: ListStagesInputSchema,
 	listTags: ListTagsInputSchema,
 	createTag: CreateTagInputSchema,
 	listTasks: ListTasksInputSchema,
 	createTask: CreateTaskInputSchema,
+	listUsers: ListUsersInputSchema,
 	listWorkflows: ListWorkflowsInputSchema,
 	createWorkflow: CreateWorkflowInputSchema,
 	retrieveAccount: RetrieveAccountInputSchema,
 	updateAccount: UpdateAccountInputSchema,
 	deleteAccount: DeleteAccountInputSchema,
+	listCampaignMergeFields: ListCampaignMergeFieldsInputSchema,
 	retrieveContact: RetrieveContactInputSchema,
 	updateContact: UpdateContactInputSchema,
 	deleteContact: DeleteContactInputSchema,
 	listCustomFieldTypes: ListCustomFieldTypesInputSchema,
 	listCustomFields: ListCustomFieldsInputSchema,
 	createCustomFieldSub: CreateCustomFieldSubInputSchema,
+	listEmailDataSources: ListEmailDataSourcesInputSchema,
+	listFilterFields: ListFilterFieldsInputSchema,
+	retrieveGroup: RetrieveGroupInputSchema,
+	listMyContacts: ListMyContactsInputSchema,
 	retrieveMeeting: RetrieveMeetingInputSchema,
 	updateMeeting: UpdateMeetingInputSchema,
 	deleteMeeting: DeleteMeetingInputSchema,
 	retrieveOpportunity: RetrieveOpportunityInputSchema,
 	updateOpportunity: UpdateOpportunityInputSchema,
 	deleteOpportunity: DeleteOpportunityInputSchema,
+	retrieveAiSettings: RetrieveAiSettingsInputSchema,
+	updateAiSettings: UpdateAiSettingsInputSchema,
+	retrieveStage: RetrieveStageInputSchema,
 	retrieveTag: RetrieveTagInputSchema,
 	updateTag: UpdateTagInputSchema,
 	deleteTag: DeleteTagInputSchema,
+	retrieveUser: RetrieveUserInputSchema,
 	retrieveWorkflow: RetrieveWorkflowInputSchema,
 	updateWorkflow: UpdateWorkflowInputSchema,
 	listAccountMessages: ListAccountMessagesInputSchema,
@@ -833,13 +1013,20 @@ export const SalesflareEndpointInputSchemas = {
 	deleteCustomField: DeleteCustomFieldInputSchema,
 	listTagUsage: ListTagUsageInputSchema,
 	listCustomFieldOptions: ListCustomFieldOptionsInputSchema,
+	createCall: CreateCallInputSchema,
 	createMeeting: CreateMeetingInputSchema,
+	createMessage: CreateMessageInputSchema,
 	addAccountUsers: AddAccountUsersInputSchema,
 	updateAccountUsers: UpdateAccountUsersInputSchema,
 	addAccountContacts: AddAccountContactsInputSchema,
 	updateAccountContacts: UpdateAccountContactsInputSchema,
+	createMessageFeedback: CreateMessageFeedbackInputSchema,
+	updateCall: UpdateCallInputSchema,
+	updateMessage: UpdateMessageInputSchema,
+	deleteMessage: DeleteMessageInputSchema,
 	updateTask: UpdateTaskInputSchema,
 	deleteTask: DeleteTaskInputSchema,
+	updateEmailDataSource: UpdateEmailDataSourceInputSchema,
 	updateWorkflowAudience: UpdateWorkflowAudienceInputSchema,
 } as const;
 
@@ -848,32 +1035,48 @@ export const SalesflareEndpointOutputSchemas = {
 	createAccount: SalesflareResourceOutputSchema,
 	listContacts: SalesflareListOutputSchema,
 	createContact: SalesflareResourceOutputSchema,
+	listCurrencies: SalesflareListOutputSchema,
+	listGroups: SalesflareListOutputSchema,
+	retrieveCurrentUser: SalesflareListOutputSchema,
 	listOpportunities: SalesflareListOutputSchema,
 	createOpportunity: SalesflareResourceOutputSchema,
+	listPersons: SalesflareListOutputSchema,
+	listPipelines: SalesflareListOutputSchema,
+	listStages: SalesflareListOutputSchema,
 	listTags: SalesflareListOutputSchema,
 	createTag: SalesflareResourceOutputSchema,
 	listTasks: SalesflareListOutputSchema,
 	createTask: SalesflareResourceOutputSchema,
+	listUsers: SalesflareListOutputSchema,
 	listWorkflows: SalesflareListOutputSchema,
 	createWorkflow: SalesflareResourceOutputSchema,
 	retrieveAccount: SalesflareResourceOutputSchema,
 	updateAccount: SalesflareResourceOutputSchema,
 	deleteAccount: SalesflareEmptyOutputSchema,
+	listCampaignMergeFields: SalesflareListOutputSchema,
 	retrieveContact: SalesflareResourceOutputSchema,
 	updateContact: SalesflareResourceOutputSchema,
 	deleteContact: SalesflareEmptyOutputSchema,
 	listCustomFieldTypes: SalesflareListOutputSchema,
 	listCustomFields: SalesflareResourceOutputSchema,
 	createCustomFieldSub: SalesflareResourceOutputSchema,
+	listEmailDataSources: SalesflareListOutputSchema,
+	listFilterFields: SalesflareResourceOutputSchema,
+	retrieveGroup: SalesflareResourceOutputSchema,
+	listMyContacts: SalesflareListOutputSchema,
 	retrieveMeeting: SalesflareResourceOutputSchema,
 	updateMeeting: SalesflareResourceOutputSchema,
 	deleteMeeting: SalesflareEmptyOutputSchema,
 	retrieveOpportunity: SalesflareResourceOutputSchema,
 	updateOpportunity: SalesflareResourceOutputSchema,
 	deleteOpportunity: SalesflareEmptyOutputSchema,
+	retrieveAiSettings: SalesflareListOutputSchema,
+	updateAiSettings: SalesflareResourceOutputSchema,
+	retrieveStage: SalesflareResourceOutputSchema,
 	retrieveTag: SalesflareResourceOutputSchema,
 	updateTag: SalesflareResourceOutputSchema,
 	deleteTag: SalesflareEmptyOutputSchema,
+	retrieveUser: SalesflareResourceOutputSchema,
 	retrieveWorkflow: SalesflareResourceOutputSchema,
 	updateWorkflow: SalesflareResourceOutputSchema,
 	listAccountMessages: SalesflareResourceOutputSchema,
@@ -883,13 +1086,20 @@ export const SalesflareEndpointOutputSchemas = {
 	deleteCustomField: SalesflareEmptyOutputSchema,
 	listTagUsage: SalesflareResourceOutputSchema,
 	listCustomFieldOptions: SalesflareResourceOutputSchema,
+	createCall: SalesflareResourceOutputSchema,
 	createMeeting: SalesflareResourceOutputSchema,
+	createMessage: SalesflareResourceOutputSchema,
 	addAccountUsers: SalesflareResourceOutputSchema,
 	updateAccountUsers: SalesflareResourceOutputSchema,
 	addAccountContacts: SalesflareResourceOutputSchema,
 	updateAccountContacts: SalesflareResourceOutputSchema,
+	createMessageFeedback: SalesflareResourceOutputSchema,
+	updateCall: SalesflareResourceOutputSchema,
+	updateMessage: SalesflareResourceOutputSchema,
+	deleteMessage: SalesflareEmptyOutputSchema,
 	updateTask: SalesflareResourceOutputSchema,
 	deleteTask: SalesflareEmptyOutputSchema,
+	updateEmailDataSource: SalesflareResourceOutputSchema,
 	updateWorkflowAudience: SalesflareResourceOutputSchema,
 } as const;
 

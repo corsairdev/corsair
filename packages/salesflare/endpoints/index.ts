@@ -12,12 +12,18 @@ export {
 	updateAccountUsers,
 } from './accounts';
 export {
+	createCall,
+	updateCall,
+} from './calls';
+export { listCampaignMergeFields } from './campaigns';
+export {
 	createContact,
 	deleteContact,
 	listContacts,
 	retrieveContact,
 	updateContact,
 } from './contacts';
+export { listCurrencies } from './currencies';
 export {
 	createCustomFieldSub,
 	deleteCustomField,
@@ -28,11 +34,30 @@ export {
 	updateCustomField,
 } from './customfields';
 export {
+	listEmailDataSources,
+	updateEmailDataSource,
+} from './datasources';
+export { listFilterFields } from './filterfields';
+export {
+	listGroups,
+	retrieveGroup,
+} from './groups';
+export {
+	listMyContacts,
+	retrieveCurrentUser,
+} from './me';
+export {
 	createMeeting,
 	deleteMeeting,
 	retrieveMeeting,
 	updateMeeting,
 } from './meetings';
+export {
+	createMessage,
+	createMessageFeedback,
+	deleteMessage,
+	updateMessage,
+} from './messages';
 export {
 	createOpportunity,
 	deleteOpportunity,
@@ -40,6 +65,16 @@ export {
 	retrieveOpportunity,
 	updateOpportunity,
 } from './opportunities';
+export { listPersons } from './persons';
+export { listPipelines } from './pipelines';
+export {
+	retrieveAiSettings,
+	updateAiSettings,
+} from './settings';
+export {
+	listStages,
+	retrieveStage,
+} from './stages';
 export {
 	createTag,
 	deleteTag,
@@ -55,6 +90,10 @@ export {
 	updateTask,
 } from './tasks';
 export * from './types';
+export {
+	listUsers,
+	retrieveUser,
+} from './users';
 export {
 	createWorkflow,
 	listWorkflows,
