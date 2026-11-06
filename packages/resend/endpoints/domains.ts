@@ -75,7 +75,7 @@ export const get: ResendEndpoints['domainsGet'] = async (ctx, input) => {
 export const list: ResendEndpoints['domainsList'] = async (ctx, input) => {
 	const query: Record<string, string | number | undefined> = {};
 	if (input?.limit) query.limit = input.limit;
-	if (input?.cursor) query.cursor = input.cursor;
+	if (input?.cursor) query.after = input.cursor;
 
 	const response = await makeResendRequest<
 		ResendEndpointOutputs['domainsList']
