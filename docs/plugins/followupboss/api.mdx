@@ -86,6 +86,7 @@ await corsair.followupboss.api.actionPlans.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `sort` | `string` | No | — |
@@ -189,6 +190,7 @@ await corsair.followupboss.api.actionPlansPeople.list({ personId: 123 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `personId` | `number` | No | List action plans applied to this person. |
@@ -246,7 +248,7 @@ Update an action plan enrollment, such as finishing it
 **Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.actionPlansPeople.update({ id: 41, isFinished: true });
+await corsair.followupboss.api.actionPlansPeople.update({ id: 41, status: 'Running' });
 ```
 
 **Input**
@@ -398,6 +400,7 @@ await corsair.followupboss.api.appointmentOutcomes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `sort` | `string` | No | Sorts by `id`, `name` or `orderWeight`; prefix with `-` for descending. |
@@ -666,6 +669,7 @@ await corsair.followupboss.api.appointments.list({ personId: 123, start: '2026-0
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `personId` | `number` | No | — |
@@ -933,6 +937,7 @@ await corsair.followupboss.api.appointmentTypes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `sort` | `string` | No | — |
@@ -1065,6 +1070,7 @@ await corsair.followupboss.api.automations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `status` | `string` | No | `Active`, `Disabled` or `Deleted`. |
@@ -1410,6 +1416,7 @@ await corsair.followupboss.api.calls.list({ personId: 123, limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `personId` | `number` | No | — |
@@ -1650,6 +1657,7 @@ await corsair.followupboss.api.customFields.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `label` | `string` | No | Find custom fields by their label. |
@@ -2054,6 +2062,7 @@ await corsair.followupboss.api.dealCustomFields.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `label` | `string` | No | Find a custom field by label. |
@@ -2114,7 +2123,7 @@ Update a deal custom field's label, choices or visibility
 **Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.dealCustomFields.update({ id: 9, label: 'Expected closing date' });
+await corsair.followupboss.api.dealCustomFields.update({ id: 9, label: 'Expected closing date', type: 'date' });
 ```
 
 **Input**
@@ -2377,6 +2386,7 @@ await corsair.followupboss.api.deals.list({ limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `pipelineId` | `number` | No | — |
@@ -2752,6 +2762,7 @@ await corsair.followupboss.api.emEvents.list({ limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `type` | `string` | No | Event type: `delivered`, `open`, `click`, `bounced`, `soft-bounce`, `hard-bounce`, `unsubscribe`, `spamreport` or `dropped`. |
@@ -2971,9 +2982,9 @@ await corsair.followupboss.api.events.list({ personId: 123, limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
-| `next` | `string` | No | Keyset cursor from `_metadata.next`; FUB enforces it for deep pagination. |
 | `personId` | `number` | No | — |
 | `type` | `string[]` | No | Event types to include, e.g. `Registration`, `Inquiry`, `Viewed Page`; sent comma separated. |
 | `hasProperty` | `boolean` | No | — |
@@ -3041,7 +3052,7 @@ Create a routing group of users with a distribution strategy
 **Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.groups.create({ name: 'Round robin intake', users: [1, 4, 6], distribution: 'round_robin' });
+await corsair.followupboss.api.groups.create({ name: 'Round robin intake', users: [1, 4, 6], distribution: 'round-robin' });
 ```
 
 **Input**
@@ -3349,7 +3360,7 @@ Update a routing group's name, members or distribution
 **Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.groups.update({ id: 2, name: 'Intake group' });
+await corsair.followupboss.api.groups.update({ id: 2, name: 'Intake group', users: [1, 4, 6] });
 ```
 
 **Input**
@@ -3412,10 +3423,10 @@ await corsair.followupboss.api.groups.update({ id: 2, name: 'Intake group' });
 
 Deliver a message from your system into an inbox app conversation
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.inboxApps.addMessage({ inboxAppId: 'app_123', externalConversationId: 'conv_88', externalMessageId: 'msg_910', message: 'Offer accepted!' });
+await corsair.followupboss.api.inboxApps.addMessage({ inboxAppId: 'app_123', externalConversationId: 'conv_88', externalMessageId: 'msg_910', message: 'Offer accepted!', isIncoming: false, sender: { name: 'Jordan Rivera' } });
 ```
 
 **Input**
@@ -3550,10 +3561,10 @@ await corsair.followupboss.api.inboxApps.addMessage({ inboxAppId: 'app_123', ext
 
 Add an internal note to an inbox app conversation
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.inboxApps.addNote({ inboxAppId: 'app_123', externalConversationId: 'conv_88', note: 'Client prefers evening calls' });
+await corsair.followupboss.api.inboxApps.addNote({ inboxAppId: 'app_123', externalConversationId: 'conv_88', body: 'Client prefers evening calls', user: { name: 'Alex' } });
 ```
 
 **Input**
@@ -3607,10 +3618,10 @@ await corsair.followupboss.api.inboxApps.addNote({ inboxAppId: 'app_123', extern
 
 Add a system confirmation message to an inbox app conversation
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.inboxApps.addSystemConfirmationMessage({ inboxAppId: 'app_123', externalConversationId: 'conv_88', message: 'Conversation synced' });
+await corsair.followupboss.api.inboxApps.addSystemConfirmationMessage({ inboxAppId: 'app_123', externalConversationId: 'conv_88', externalMessageId: 'sys_1', type: 'success', message: 'Conversation synced' });
 ```
 
 **Input**
@@ -3711,10 +3722,10 @@ await corsair.followupboss.api.inboxApps.addSystemConfirmationMessage({ inboxApp
 
 Add a participant to an inbox app conversation
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.inboxApps.createParticipant({ inboxAppId: 'app_123', extConversationId: 'conv_88', participant: { externalId: 'part_6', name: 'Sam Rivera' } });
+await corsair.followupboss.api.inboxApps.createParticipant({ inboxAppId: 'app_123', extConversationId: 'conv_88', body: { name: 'Sam Rivera' } });
 ```
 
 **Input**
@@ -3878,7 +3889,7 @@ Install a published inbox app for a user with a subscription URL
 **Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.inboxApps.install({ publishedInboxAppId: 'pub_app_1', userId: 1, subscriptionUrl: 'https://hooks.example.com/inbox' });
+await corsair.followupboss.api.inboxApps.install({ publishedInboxAppId: 1, userId: 1, subscriptionUrl: 'https://hooks.example.com/inbox' });
 ```
 
 **Input**
@@ -3959,7 +3970,7 @@ await corsair.followupboss.api.inboxApps.installedApp({ publishedInboxAppId: 'pu
 
 Update an inbox app conversation's subject or state
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
 await corsair.followupboss.api.inboxApps.updateConversation({ inboxAppId: 'app_123', extConversationId: 'conv_88', name: 'Offer negotiation' });
@@ -4036,7 +4047,7 @@ await corsair.followupboss.api.inboxApps.updateConversation({ inboxAppId: 'app_1
 
 Update a message previously delivered to an inbox app conversation
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
 await corsair.followupboss.api.inboxApps.updateMessage({ inboxAppId: 'app_123', externalMessageId: 'msg_910', message: 'Offer accepted and signed!' });
@@ -4547,6 +4558,9 @@ await corsair.followupboss.api.people.create({ firstName: 'Jordan', lastName: 'R
 | `tags` | `string[]` | No | — |
 | `timeframes` | `object[]` | No | — |
 | `customFields` | `object` | No | — |
+| `emails` | `object[]` | No | — |
+| `phones` | `object[]` | No | — |
+| `addresses` | `object[]` | No | — |
 | `deduplicate` | `boolean` | No | When true, the lead is merged into an existing duplicate instead of creating a new person. |
 
 <AccordionGroup>
@@ -4566,6 +4580,40 @@ await corsair.followupboss.api.people.create({ firstName: 'Jordan', lastName: 'R
 ```ts
 {
 }
+```
+</Accordion>
+
+<Accordion title="emails full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  type?: string | null,
+  street?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postalCode?: string | null,
+  country?: string | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -4862,6 +4910,7 @@ await corsair.followupboss.api.people.list({ limit: 10, stage: 'Lead' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `id` | `number[]` | No | Only these people; sent as the comma-separated `id` filter. |
@@ -4987,6 +5036,7 @@ await corsair.followupboss.api.people.unclaimed({ limit: 25 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 
@@ -5101,12 +5151,49 @@ await corsair.followupboss.api.people.update({ id: 123, stage: 'Working', mergeT
 | `assignedLenderName` | `string` | No | — |
 | `assignedLenderId` | `number` | No | — |
 | `background` | `string` | No | — |
+| `emails` | `object[]` | No | — |
+| `phones` | `object[]` | No | — |
+| `addresses` | `object[]` | No | — |
 | `tags` | `string[]` | No | — |
 | `timeframes` | `object[]` | No | — |
 | `customFields` | `object` | No | — |
 | `mergeTags` | `boolean` | No | When true, sent tags are merged into the existing tags instead of replacing them. |
 
 <AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="phones full type">
+
+```ts
+{
+  value?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  type?: string | null,
+  street?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postalCode?: string | null,
+  country?: string | null
+}[]
+```
+</Accordion>
+
 <Accordion title="timeframes full type">
 
 ```ts
@@ -5471,6 +5558,7 @@ await corsair.followupboss.api.peopleRelationships.list({ personId: 123 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `sort` | `string` | No | — |
@@ -5822,7 +5910,7 @@ Create a deal pipeline with an optional stage list
 **Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.pipelines.create({ name: 'Buyer pipeline', stages: ['New', 'Touring', 'Offer'] });
+await corsair.followupboss.api.pipelines.create({ name: 'Buyer pipeline', stages: [{ name: 'New', closedStage: false }, { name: 'Touring', closedStage: false }, { name: 'Offer', closedStage: true }] });
 ```
 
 **Input**
@@ -5992,6 +6080,7 @@ await corsair.followupboss.api.pipelines.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `name` | `string` | No | The pipeline name to look up (must be an exact match). |
@@ -6165,7 +6254,7 @@ Permanently delete a pond
 **Risk:** `destructive`
 
 ```ts
-await corsair.followupboss.api.ponds.delete({ id: 6 });
+await corsair.followupboss.api.ponds.delete({ id: 6, assignTo: 1 });
 ```
 
 **Input**
@@ -6247,6 +6336,7 @@ await corsair.followupboss.api.ponds.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 
@@ -6440,7 +6530,7 @@ Add a reaction to a note or other reference
 **Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.reactions.create({ refType: 'note', refId: '21', body: '👍' });
+await corsair.followupboss.api.reactions.create({ refType: 'Note', refId: '21', body: '👍' });
 ```
 
 **Input**
@@ -6484,7 +6574,7 @@ Remove a reaction, sending the documented delete body
 **Risk:** `destructive`
 
 ```ts
-await corsair.followupboss.api.reactions.delete({ refType: 'note', refId: '21' });
+await corsair.followupboss.api.reactions.delete({ refType: 'Note', refId: '21' });
 ```
 
 **Input**
@@ -6599,6 +6689,7 @@ await corsair.followupboss.api.smartLists.list({ limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `fub2` | `boolean` | No | Include smart lists created in FUB 2.0. |
@@ -6696,7 +6787,7 @@ Delete a deal stage after reassigning its action plans to another stage
 **Risk:** `destructive`
 
 ```ts
-await corsair.followupboss.api.stages.delete({ id: 7 });
+await corsair.followupboss.api.stages.delete({ id: 7, assignStageId: 8 });
 ```
 
 **Input**
@@ -6782,6 +6873,7 @@ await corsair.followupboss.api.stages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `sort` | `string` | No | Sorts the stages by `orderWeight`, `id` or `name`. |
@@ -7307,6 +7399,7 @@ await corsair.followupboss.api.teams.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 
@@ -7580,6 +7673,7 @@ await corsair.followupboss.api.templates.list({ limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 
@@ -7730,7 +7824,7 @@ Replace an email template's name, subject and body
 **Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.templates.update({ id: 3, subject: 'Great meeting you today' });
+await corsair.followupboss.api.templates.update({ id: 3, name: 'Tour follow-up', subject: 'Great meeting you today', body: 'Hi there' });
 ```
 
 **Input**
@@ -8142,6 +8236,7 @@ await corsair.followupboss.api.textMessageTemplates.list({ limit: 50 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 
@@ -8258,7 +8353,7 @@ Update a text message template's name or message
 **Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.textMessageTemplates.update({ id: 5, message: 'Reminder: tour tomorrow at 5pm.' });
+await corsair.followupboss.api.textMessageTemplates.update({ id: 5, name: 'Tour reminder', message: 'Reminder: tour tomorrow at 5pm.' });
 ```
 
 **Input**
@@ -8425,7 +8520,7 @@ Permanently remove a user from the account
 **Risk:** `destructive`
 
 ```ts
-await corsair.followupboss.api.users.delete({ id: 14 });
+await corsair.followupboss.api.users.delete({ id: 14, assignTo: 1 });
 ```
 
 **Input**
@@ -8539,6 +8634,7 @@ await corsair.followupboss.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `sort` | `string` | No | Sort by `id`, `name` or `created`, optionally prefixed with `-` for descending. |
@@ -8659,7 +8755,7 @@ Subscribe a URL to one Follow Up Boss event
 **Risk:** `write`
 
 ```ts
-await corsair.followupboss.api.webhooks.create({ event: 'people.created', url: 'https://hooks.example.com/fub' });
+await corsair.followupboss.api.webhooks.create({ event: 'peopleCreated', url: 'https://hooks.example.com/fub' });
 ```
 
 **Input**
@@ -8774,6 +8870,7 @@ await corsair.followupboss.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `next` | `string` | No | Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination. |
 | `limit` | `number` | No | Number of results to return, 1-100; FUB defaults to 10. |
 | `offset` | `number` | No | Number of rows to skip before returning results. |
 | `sort` | `string` | No | Sort order: `id`, `created`, `updated`, `status` or `event`; defaults to `created`. |

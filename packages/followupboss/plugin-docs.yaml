@@ -154,7 +154,7 @@ apiExamples:
   pipelines.list:
     call: "{}"
   pipelines.create:
-    call: "{ name: 'Buyer pipeline', stages: ['New', 'Touring', 'Offer'] }"
+    call: "{ name: 'Buyer pipeline', stages: [{ name: 'New', closedStage: false }, { name: 'Touring', closedStage: false }, { name: 'Offer', closedStage: true }] }"
   pipelines.get:
     call: "{ id: 2 }"
   pipelines.update:
@@ -170,7 +170,7 @@ apiExamples:
   stages.update:
     call: "{ id: 7, name: 'Active touring' }"
   stages.delete:
-    call: "{ id: 7 }"
+    call: "{ id: 7, assignStageId: 8 }"
   dealCustomFields.list:
     call: "{}"
   dealCustomFields.create:
@@ -178,7 +178,7 @@ apiExamples:
   dealCustomFields.get:
     call: "{ id: 9 }"
   dealCustomFields.update:
-    call: "{ id: 9, label: 'Expected closing date' }"
+    call: "{ id: 9, label: 'Expected closing date', type: 'date' }"
   dealCustomFields.delete:
     call: "{ id: 9 }"
   dealAttachments.create:
@@ -216,7 +216,7 @@ apiExamples:
   templates.get:
     call: "{ id: 3 }"
   templates.update:
-    call: "{ id: 3, subject: 'Great meeting you today' }"
+    call: "{ id: 3, name: 'Tour follow-up', subject: 'Great meeting you today', body: 'Hi there' }"
   templates.delete:
     call: "{ id: 3 }"
   templates.merge:
@@ -228,7 +228,7 @@ apiExamples:
   textMessageTemplates.get:
     call: "{ id: 5 }"
   textMessageTemplates.update:
-    call: "{ id: 5, message: 'Reminder: tour tomorrow at 5pm.' }"
+    call: "{ id: 5, name: 'Tour reminder', message: 'Reminder: tour tomorrow at 5pm.' }"
   textMessageTemplates.delete:
     call: "{ id: 5 }"
   textMessageTemplates.merge:
@@ -248,7 +248,7 @@ apiExamples:
   users.get:
     call: "{ id: 1 }"
   users.delete:
-    call: "{ id: 14 }"
+    call: "{ id: 14, assignTo: 1 }"
   teams.list:
     call: "{}"
   teams.create:
@@ -262,11 +262,11 @@ apiExamples:
   groups.list:
     call: "{}"
   groups.create:
-    call: "{ name: 'Round robin intake', users: [1, 4, 6], distribution: 'round_robin' }"
+    call: "{ name: 'Round robin intake', users: [1, 4, 6], distribution: 'round-robin' }"
   groups.get:
     call: "{ id: 2 }"
   groups.update:
-    call: "{ id: 2, name: 'Intake group' }"
+    call: "{ id: 2, name: 'Intake group', users: [1, 4, 6] }"
   groups.delete:
     call: "{ id: 2 }"
   groups.roundRobin:
@@ -280,7 +280,7 @@ apiExamples:
   ponds.update:
     call: "{ id: 6, name: 'Buyer pond 2026' }"
   ponds.delete:
-    call: "{ id: 6 }"
+    call: "{ id: 6, assignTo: 1 }"
   rateLimit.limits:
     call: "{}"
   rateLimit.usage:
@@ -304,11 +304,11 @@ apiExamples:
   actionPlansPeople.create:
     call: "{ personId: 123, actionPlanId: 3 }"
   actionPlansPeople.update:
-    call: "{ id: 41, isFinished: true }"
+    call: "{ id: 41, status: 'Running' }"
   webhooks.list:
     call: "{}"
   webhooks.create:
-    call: "{ event: 'people.created', url: 'https://hooks.example.com/fub' }"
+    call: "{ event: 'peopleCreated', url: 'https://hooks.example.com/fub' }"
   webhooks.get:
     call: "{ id: 18 }"
   webhooks.update:
@@ -324,15 +324,15 @@ apiExamples:
   inboxApps.getParticipants:
     call: "{ inboxAppId: 'app_123', extConversationId: 'conv_88' }"
   inboxApps.createParticipant:
-    call: "{ inboxAppId: 'app_123', extConversationId: 'conv_88', participant: { externalId: 'part_6', name: 'Sam Rivera' } }"
+    call: "{ inboxAppId: 'app_123', extConversationId: 'conv_88', body: { name: 'Sam Rivera' } }"
   inboxApps.addMessage:
-    call: "{ inboxAppId: 'app_123', externalConversationId: 'conv_88', externalMessageId: 'msg_910', message: 'Offer accepted!' }"
+    call: "{ inboxAppId: 'app_123', externalConversationId: 'conv_88', externalMessageId: 'msg_910', message: 'Offer accepted!', isIncoming: false, sender: { name: 'Jordan Rivera' } }"
   inboxApps.addNote:
-    call: "{ inboxAppId: 'app_123', externalConversationId: 'conv_88', note: 'Client prefers evening calls' }"
+    call: "{ inboxAppId: 'app_123', externalConversationId: 'conv_88', body: 'Client prefers evening calls', user: { name: 'Alex' } }"
   inboxApps.addSystemConfirmationMessage:
-    call: "{ inboxAppId: 'app_123', externalConversationId: 'conv_88', message: 'Conversation synced' }"
+    call: "{ inboxAppId: 'app_123', externalConversationId: 'conv_88', externalMessageId: 'sys_1', type: 'success', message: 'Conversation synced' }"
   inboxApps.install:
-    call: "{ publishedInboxAppId: 'pub_app_1', userId: 1, subscriptionUrl: 'https://hooks.example.com/inbox' }"
+    call: "{ publishedInboxAppId: 1, userId: 1, subscriptionUrl: 'https://hooks.example.com/inbox' }"
   inboxApps.updateConversation:
     call: "{ inboxAppId: 'app_123', extConversationId: 'conv_88', name: 'Offer negotiation' }"
   inboxApps.updateMessage:
@@ -342,10 +342,10 @@ apiExamples:
   teamInboxes.list:
     call: "{}"
   reactions.create:
-    call: "{ refType: 'note', refId: '21', body: '👍' }"
+    call: "{ refType: 'Note', refId: '21', body: '👍' }"
   reactions.get:
     call: "{ id: 31 }"
   reactions.delete:
-    call: "{ refType: 'note', refId: '21' }"
+    call: "{ refType: 'Note', refId: '21' }"
   threadedReplies.get:
     call: "{ id: 44 }"
