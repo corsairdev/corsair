@@ -75,6 +75,8 @@ describe('starterPluginDocsYaml', () => {
 
 	it('keeps names with YAML punctuation whole', () => {
 		for (const name of ['Acme: Cloud', 'Acme #1', '"Quoted" Inc', 'yes']) {
+			// The parser may turn a bare `yes` into a boolean, which is the bug
+			// this test guards against, so the field is checked, not assumed.
 			const doc = parseYaml(starterPluginDocsYaml(name)) as {
 				displayName: unknown;
 			};
