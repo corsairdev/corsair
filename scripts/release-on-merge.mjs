@@ -168,7 +168,7 @@ export async function planRelease({ cwd, registry, log = () => {} }) {
 	const tags = [];
 	const bumps = [];
 
-	await mapLimit(packages, 16, async (pkg) => {
+	await mapLimit(packages, 8, async (pkg) => {
 		const tag = releaseTag(pkg.name, pkg.version);
 		let base = existingTags.has(tag)
 			? git(cwd, ['rev-list', '-n', '1', tag])
@@ -243,11 +243,14 @@ export function npmRegistry(base = 'https://registry.npmjs.org') {
 					};
 				}
 				// A wrong answer here would tag or bump the wrong version, so
-				// retry briefly and then fail the run instead of guessing.
-				if (attempt >= 3) {
+				// retry rate limits and outages for a while, then fail the run
+				// instead of guessing. Runner IPs are shared, so 429s happen.
+				const retryable = res.status === 429 || res.status >= 500;
+				if (!retryable || attempt >= 6) {
 					throw new Error(`npm registry ${res.status} for ${name}`);
 				}
-				await new Promise((r) => setTimeout(r, 1000 * attempt));
+				const wait = Number(res.headers.get('retry-after')) || 2 ** attempt;
+				await new Promise((r) => setTimeout(r, Math.min(wait, 60) * 1000));
 			}
 		},
 	};
