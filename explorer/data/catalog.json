@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-05T16:30:09.213Z",
+  "generatedAt": "2026-11-06T01:51:56.845Z",
   "corsairVersion": "0.1.157",
   "catalogVersion": 2,
   "plugins": [
@@ -2260,6 +2260,21 @@
       }
     },
     {
+      "id": "codacy",
+      "displayName": "Codacy",
+      "description": "Read Codacy code quality data - your account, organizations, repositories and their language and analysis tool settings, plus the catalog of analysis tools and their code patterns.",
+      "npmPackageName": "@corsair-dev/codacy",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 10,
+        "webhooks": 0,
+        "db": 5
+      }
+    },
+    {
       "id": "codeinterpreter",
       "displayName": "CodeInterpreter",
       "description": "CodeInterpreter plugin for Corsair",
@@ -2969,6 +2984,21 @@
       }
     },
     {
+      "id": "emailoctopus",
+      "displayName": "EmailOctopus",
+      "description": "EmailOctopus lists, contacts, tags, custom fields, campaigns and automations on API v2.",
+      "npmPackageName": "@corsair-dev/emailoctopus",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 25,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "emelia",
       "displayName": "Emelia",
       "description": "Emelia plugin for Corsair",
@@ -2984,6 +3014,36 @@
       }
     },
     {
+      "id": "enginemailer",
+      "displayName": "Enginemailer",
+      "description": "Manage Enginemailer subscribers, categories and custom fields, build and send email campaigns, and read subscriber activity through Enginemailer's N8N API.",
+      "npmPackageName": "@corsair-dev/enginemailer",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 38,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "enigma",
+      "displayName": "Enigma",
+      "description": "Business data from Enigma's small business graph - match brands by name, website, phone or a natural-language prompt, read brand details with paged operating locations and legal entities, match operating locations, and look up legal entities with their registered entities.",
+      "npmPackageName": "@corsair-dev/enigma",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 4,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "epicgames",
       "displayName": "Epic Games",
       "description": "Gaming platform APIs for Epic Online Services, accounts, and game backend features.",
@@ -2996,6 +3056,21 @@
         "api": 28,
         "webhooks": 0,
         "db": 1
+      }
+    },
+    {
+      "id": "esignatures",
+      "displayName": "eSignatures",
+      "description": "Contracts and e-signing with eSignatures - send contracts from templates, track and withdraw them, manage signers, and read back or create templates.",
+      "npmPackageName": "@corsair-dev/esignatures",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 12,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -3591,6 +3666,21 @@
       }
     },
     {
+      "id": "gumroad",
+      "displayName": "Gumroad",
+      "description": "Sell and manage digital products: products, sales, subscribers, licenses, offer codes, variants, emails, workflows, payouts and tax forms.",
+      "npmPackageName": "@corsair-dev/gumroad",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 85,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "habitica",
       "displayName": "Habitica",
       "description": "Gamified habit tracker that turns tasks and goals into a role-playing game experience.",
@@ -4152,6 +4242,21 @@
       }
     },
     {
+      "id": "mem0",
+      "displayName": "Mem0",
+      "description": "Long-term memory for AI agents with Mem0 - add, search, list, update and delete memories, read a memory's change history, and poll the events Mem0 queues for asynchronous work.",
+      "npmPackageName": "@corsair-dev/mem0",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 16,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "merriamwebsterdict",
       "displayName": "Merriam-Webster",
       "description": "Dictionary API for definitions, thesaurus entries, and English language reference data.",
@@ -4666,6 +4771,21 @@
       }
     },
     {
+      "id": "qdrant",
+      "displayName": "Qdrant",
+      "description": "Vector search engine for semantic, hybrid and filtered search over embeddings, self-hosted or on Qdrant Cloud.",
+      "npmPackageName": "@corsair-dev/qdrant",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 29,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "razorpay",
       "displayName": "Razorpay",
       "description": "Payment gateway for accepting online payments, subscriptions, and payouts in India.",
@@ -4678,6 +4798,21 @@
         "api": 25,
         "webhooks": 4,
         "db": 7
+      }
+    },
+    {
+      "id": "recallai",
+      "displayName": "Recall.ai",
+      "description": "Meeting bots, recordings and transcripts with Recall.ai - send bots to Zoom, Google Meet, Teams and Webex calls, control them in the call, read recordings, transcripts and media, schedule bots from calendars, and manage Google logins and Zoom OAuth credentials.",
+      "npmPackageName": "@corsair-dev/recallai",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 111,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -4814,6 +4949,21 @@
         "api": 6,
         "webhooks": 0,
         "db": 1
+      }
+    },
+    {
+      "id": "retellai",
+      "displayName": "Retell AI",
+      "description": "Analyze Retell AI calls and chats with transcripts, recordings, and post-call analysis.",
+      "npmPackageName": "@corsair-dev/retellai",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 4,
+        "webhooks": 0,
+        "db": 2
       }
     },
     {
@@ -5086,6 +5236,21 @@
       "defaultAuthType": "oauth_2",
       "counts": {
         "api": 139,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "snowflake",
+      "displayName": "Snowflake",
+      "description": "Run SQL on a Snowflake account: submit a statement, fetch one result partition, or cancel execution.",
+      "npmPackageName": "@corsair-dev/snowflake",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 3,
         "webhooks": 0,
         "db": 0
       }
@@ -5377,6 +5542,21 @@
         "api": 17,
         "webhooks": 0,
         "db": 5
+      }
+    },
+    {
+      "id": "ticketmaster",
+      "displayName": "Ticketmaster",
+      "description": "Live event discovery with Ticketmaster - search events, attractions, venues and the classification tree, read any of them by ID, fetch event images, and suggest collections for a partial search term.",
+      "npmPackageName": "@corsair-dev/ticketmaster",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 10,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -42923,6 +43103,66 @@
       "haystack": "pages.updated coda.webhooks.pages.updated a page in a doc was edited, renamed or moved"
     },
     {
+      "pluginId": "codacy",
+      "kind": "api",
+      "shortPath": "account.get",
+      "haystack": "account.get codacy.api.account.get get account details read"
+    },
+    {
+      "pluginId": "codacy",
+      "kind": "api",
+      "shortPath": "analysis.getConfig",
+      "haystack": "analysis.getconfig codacy.api.analysis.getconfig get repository analysis configuration read"
+    },
+    {
+      "pluginId": "codacy",
+      "kind": "api",
+      "shortPath": "organizations.get",
+      "haystack": "organizations.get codacy.api.organizations.get get organization read"
+    },
+    {
+      "pluginId": "codacy",
+      "kind": "api",
+      "shortPath": "organizations.list",
+      "haystack": "organizations.list codacy.api.organizations.list list organizations read"
+    },
+    {
+      "pluginId": "codacy",
+      "kind": "api",
+      "shortPath": "patterns.get",
+      "haystack": "patterns.get codacy.api.patterns.get get tool pattern read"
+    },
+    {
+      "pluginId": "codacy",
+      "kind": "api",
+      "shortPath": "patterns.list",
+      "haystack": "patterns.list codacy.api.patterns.list list tool patterns read"
+    },
+    {
+      "pluginId": "codacy",
+      "kind": "api",
+      "shortPath": "repositories.get",
+      "haystack": "repositories.get codacy.api.repositories.get get repository read"
+    },
+    {
+      "pluginId": "codacy",
+      "kind": "api",
+      "shortPath": "repositories.languages",
+      "haystack": "repositories.languages codacy.api.repositories.languages get repository languages read"
+    },
+    {
+      "pluginId": "codacy",
+      "kind": "api",
+      "shortPath": "repositories.list",
+      "haystack": "repositories.list codacy.api.repositories.list list repositories read"
+    },
+    {
+      "pluginId": "codacy",
+      "kind": "api",
+      "shortPath": "tools.list",
+      "haystack": "tools.list codacy.api.tools.list list analysis tools read"
+    },
+    {
       "pluginId": "codeinterpreter",
       "kind": "api",
       "shortPath": "code.execute",
@@ -53483,6 +53723,156 @@
       "haystack": "workspaces.update dynapictures.api.workspaces.update update an existing workspace name by workspace id write"
     },
     {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "automations.start",
+      "haystack": "automations.start emailoctopus.api.automations.start queue a contact into an automation write"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "campaigns.get",
+      "haystack": "campaigns.get emailoctopus.api.campaigns.get get one campaign, including its subject and html content read"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "campaigns.list",
+      "haystack": "campaigns.list emailoctopus.api.campaigns.list list campaigns, one page at a time read"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "campaigns.reportContacts",
+      "haystack": "campaigns.reportcontacts emailoctopus.api.campaigns.reportcontacts list contacts for one campaign event, such as opened or bounced read"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "campaigns.reportLinks",
+      "haystack": "campaigns.reportlinks emailoctopus.api.campaigns.reportlinks get click totals for each link in a campaign read"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "campaigns.reportSummary",
+      "haystack": "campaigns.reportsummary emailoctopus.api.campaigns.reportsummary get sent, bounce, open, click, complaint and unsubscribe totals read"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "contacts.batch",
+      "haystack": "contacts.batch emailoctopus.api.contacts.batch update many contacts on a list. each entry is reported under success or errors write"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create emailoctopus.api.contacts.create add a contact to a list. fails if that email is already on it write"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "contacts.delete",
+      "haystack": "contacts.delete emailoctopus.api.contacts.delete permanently delete a contact from a list destructive"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get emailoctopus.api.contacts.get get one contact on a list read"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list emailoctopus.api.contacts.list list contacts on a list, optionally filtered by status, tag or time, with cursor paging read"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update emailoctopus.api.contacts.update update a contact by id write"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "contacts.upsert",
+      "haystack": "contacts.upsert emailoctopus.api.contacts.upsert create a contact or update the existing one with the same email address write"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "fields.create",
+      "haystack": "fields.create emailoctopus.api.fields.create add a custom field to a list write"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "fields.delete",
+      "haystack": "fields.delete emailoctopus.api.fields.delete permanently delete a custom field from a list destructive"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "fields.update",
+      "haystack": "fields.update emailoctopus.api.fields.update update a text, number or date field on a list write"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "lists.create",
+      "haystack": "lists.create emailoctopus.api.lists.create create a list write"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "lists.delete",
+      "haystack": "lists.delete emailoctopus.api.lists.delete permanently delete a list and its contacts destructive"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "lists.get",
+      "haystack": "lists.get emailoctopus.api.lists.get get one list, including its fields, tags and contact counts read"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "lists.list",
+      "haystack": "lists.list emailoctopus.api.lists.list list every list in the account, one page at a time read"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "lists.update",
+      "haystack": "lists.update emailoctopus.api.lists.update rename a list write"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "tags.create",
+      "haystack": "tags.create emailoctopus.api.tags.create create a tag on a list write"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "tags.delete",
+      "haystack": "tags.delete emailoctopus.api.tags.delete permanently delete a tag from a list destructive"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "tags.list",
+      "haystack": "tags.list emailoctopus.api.tags.list list the tags on a list read"
+    },
+    {
+      "pluginId": "emailoctopus",
+      "kind": "api",
+      "shortPath": "tags.update",
+      "haystack": "tags.update emailoctopus.api.tags.update rename a tag. the current name is the url; the new name is the body write"
+    },
+    {
       "pluginId": "emelia",
       "kind": "api",
       "shortPath": "account.me",
@@ -53651,6 +54041,258 @@
       "haystack": "webhooks.remove emelia.api.webhooks.remove delete a webhook by url destructive"
     },
     {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "campaigns.assignRecipientList",
+      "haystack": "campaigns.assignrecipientlist enginemailer.api.campaigns.assignrecipientlist assign a recipient list to a campaign write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "campaigns.createCampaign",
+      "haystack": "campaigns.createcampaign enginemailer.api.campaigns.createcampaign create an email campaign write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "campaigns.deleteCampaign",
+      "haystack": "campaigns.deletecampaign enginemailer.api.campaigns.deletecampaign delete an email campaign destructive"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "campaigns.deleteRecipientList",
+      "haystack": "campaigns.deleterecipientlist enginemailer.api.campaigns.deleterecipientlist remove a recipient list from a campaign destructive"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "campaigns.listCampaigns",
+      "haystack": "campaigns.listcampaigns enginemailer.api.campaigns.listcampaigns list campaigns read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "campaigns.pauseCampaign",
+      "haystack": "campaigns.pausecampaign enginemailer.api.campaigns.pausecampaign pause an email campaign write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "campaigns.sendCampaign",
+      "haystack": "campaigns.sendcampaign enginemailer.api.campaigns.sendcampaign send an email campaign to its recipient list now destructive"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "campaigns.updateCampaign",
+      "haystack": "campaigns.updatecampaign enginemailer.api.campaigns.updatecampaign update an email campaign write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.addOrUpdateSubscriber",
+      "haystack": "n8n.addorupdatesubscriber enginemailer.api.n8n.addorupdatesubscriber add or update a subscriber through enginemailer n8n write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.autoresponderCompleted",
+      "haystack": "n8n.autorespondercompleted enginemailer.api.n8n.autorespondercompleted list subscribers who completed an autoresponder read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.autoresponderTriggered",
+      "haystack": "n8n.autorespondertriggered enginemailer.api.n8n.autorespondertriggered list subscribers who triggered an autoresponder read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.connect",
+      "haystack": "n8n.connect enginemailer.api.n8n.connect test the enginemailer n8n connection read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.deactivateSubscriber",
+      "haystack": "n8n.deactivatesubscriber enginemailer.api.n8n.deactivatesubscriber unsubscribe a subscriber through enginemailer n8n write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.deletedSubscribers",
+      "haystack": "n8n.deletedsubscribers enginemailer.api.n8n.deletedsubscribers list deleted subscribers through enginemailer n8n read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.deleteN8nSubscriber",
+      "haystack": "n8n.deleten8nsubscriber enginemailer.api.n8n.deleten8nsubscriber delete a subscriber through enginemailer n8n destructive"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.findSubscriber",
+      "haystack": "n8n.findsubscriber enginemailer.api.n8n.findsubscriber find a subscriber through enginemailer n8n read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.listForms",
+      "haystack": "n8n.listforms enginemailer.api.n8n.listforms list enginemailer forms through n8n read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.listPages",
+      "haystack": "n8n.listpages enginemailer.api.n8n.listpages list enginemailer pages through n8n read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.listPopups",
+      "haystack": "n8n.listpopups enginemailer.api.n8n.listpopups list enginemailer popups through n8n read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.modifiedSubscribers",
+      "haystack": "n8n.modifiedsubscribers enginemailer.api.n8n.modifiedsubscribers list modified subscribers through enginemailer n8n read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.newSubscribers",
+      "haystack": "n8n.newsubscribers enginemailer.api.n8n.newsubscribers list new subscribers through enginemailer n8n read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.sendEmail",
+      "haystack": "n8n.sendemail enginemailer.api.n8n.sendemail send an email through enginemailer n8n write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.taggedSubscribers",
+      "haystack": "n8n.taggedsubscribers enginemailer.api.n8n.taggedsubscribers list tagged subscribers through enginemailer n8n read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.tagSubscriber",
+      "haystack": "n8n.tagsubscriber enginemailer.api.n8n.tagsubscriber tag a subscriber through enginemailer n8n write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.unsubscribedSubscribers",
+      "haystack": "n8n.unsubscribedsubscribers enginemailer.api.n8n.unsubscribedsubscribers list unsubscribed subscribers through enginemailer n8n read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.untaggedSubscribers",
+      "haystack": "n8n.untaggedsubscribers enginemailer.api.n8n.untaggedsubscribers list untagged subscribers through enginemailer n8n read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "n8n.untagSubscriber",
+      "haystack": "n8n.untagsubscriber enginemailer.api.n8n.untagsubscriber remove a tag from a subscriber through enginemailer n8n write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "subscribers.activate",
+      "haystack": "subscribers.activate enginemailer.api.subscribers.activate activate a subscriber write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "subscribers.batchUpdateStatus",
+      "haystack": "subscribers.batchupdatestatus enginemailer.api.subscribers.batchupdatestatus update subscriber status in a batch write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "subscribers.batchUpdateSubscribers",
+      "haystack": "subscribers.batchupdatesubscribers enginemailer.api.subscribers.batchupdatesubscribers update subscribers in a batch write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "subscribers.deleteSubscriber",
+      "haystack": "subscribers.deletesubscriber enginemailer.api.subscribers.deletesubscriber delete a subscriber destructive"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "subscribers.get",
+      "haystack": "subscribers.get enginemailer.api.subscribers.get retrieve a subscriber by email address read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "subscribers.getCustomFields",
+      "haystack": "subscribers.getcustomfields enginemailer.api.subscribers.getcustomfields list subscriber custom fields read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "subscribers.getSubcategories",
+      "haystack": "subscribers.getsubcategories enginemailer.api.subscribers.getsubcategories list subscriber subcategories read"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "subscribers.insert",
+      "haystack": "subscribers.insert enginemailer.api.subscribers.insert insert a subscriber into enginemailer write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "subscribers.unsubscribe",
+      "haystack": "subscribers.unsubscribe enginemailer.api.subscribers.unsubscribe unsubscribe a subscriber write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "subscribers.update",
+      "haystack": "subscribers.update enginemailer.api.subscribers.update update a subscriber record write"
+    },
+    {
+      "pluginId": "enginemailer",
+      "kind": "api",
+      "shortPath": "subscribers.updateCategory",
+      "haystack": "subscribers.updatecategory enginemailer.api.subscribers.updatecategory create or update a subscriber category write"
+    },
+    {
+      "pluginId": "enigma",
+      "kind": "api",
+      "shortPath": "brands.get",
+      "haystack": "brands.get enigma.api.brands.get get a brand by id with its operating locations (paged by cursor) and legal entities, each location with its address, operating status and 12-month card revenue read"
+    },
+    {
+      "pluginId": "enigma",
+      "kind": "api",
+      "shortPath": "brands.match",
+      "haystack": "brands.match enigma.api.brands.match match a business by name, website, phone number or a natural-language prompt, with an optional address and confidence threshold; returns the best-matching brand with its industries, location count and 12-month card revenue read"
+    },
+    {
+      "pluginId": "enigma",
+      "kind": "api",
+      "shortPath": "legalEntities.get",
+      "haystack": "legalentities.get enigma.api.legalentities.get get a legal entity by id or name, with its registered entities, formation dates, addresses and brands; each list returns up to three entries with a pageinfo flag when more exist read"
+    },
+    {
+      "pluginId": "enigma",
+      "kind": "api",
+      "shortPath": "locations.match",
+      "haystack": "locations.match enigma.api.locations.match match a business location by name, address, website or phone number; returns the address, phone numbers, operating status and parent brands read"
+    },
+    {
       "pluginId": "epicgames",
       "kind": "api",
       "shortPath": "islands.get",
@@ -53817,6 +54459,78 @@
       "kind": "api",
       "shortPath": "remote.waitForObjectEvent",
       "haystack": "remote.waitforobjectevent epicgames.api.remote.waitforobjectevent wait for a uobject event (experimental; requires enableexperimentalroutes) write"
+    },
+    {
+      "pluginId": "esignatures",
+      "kind": "api",
+      "shortPath": "contracts.addSigner",
+      "haystack": "contracts.addsigner esignatures.api.contracts.addsigner add a signer to a contract without sending a sign request; use contracts.resendtosigner to send one write"
+    },
+    {
+      "pluginId": "esignatures",
+      "kind": "api",
+      "shortPath": "contracts.create",
+      "haystack": "contracts.create esignatures.api.contracts.create create and send a contract from a template, filling placeholder fields; set save_as_draft to create without sending write"
+    },
+    {
+      "pluginId": "esignatures",
+      "kind": "api",
+      "shortPath": "contracts.deleteSigner",
+      "haystack": "contracts.deletesigner esignatures.api.contracts.deletesigner remove a signer from a contract destructive"
+    },
+    {
+      "pluginId": "esignatures",
+      "kind": "api",
+      "shortPath": "contracts.get",
+      "haystack": "contracts.get esignatures.api.contracts.get read a contract's status, signers, labels and, once signed, an expiring pdf url; contracts older than two weeks may return incomplete data read"
+    },
+    {
+      "pluginId": "esignatures",
+      "kind": "api",
+      "shortPath": "contracts.resendToSigner",
+      "haystack": "contracts.resendtosigner esignatures.api.contracts.resendtosigner send or resend the sign request to one signer write"
+    },
+    {
+      "pluginId": "esignatures",
+      "kind": "api",
+      "shortPath": "contracts.sendDraft",
+      "haystack": "contracts.senddraft esignatures.api.contracts.senddraft send a draft contract to its signers write"
+    },
+    {
+      "pluginId": "esignatures",
+      "kind": "api",
+      "shortPath": "contracts.updateSigner",
+      "haystack": "contracts.updatesigner esignatures.api.contracts.updatesigner update a signer's contact details or signing settings write"
+    },
+    {
+      "pluginId": "esignatures",
+      "kind": "api",
+      "shortPath": "contracts.withdraw",
+      "haystack": "contracts.withdraw esignatures.api.contracts.withdraw withdraw a sent contract so it can no longer be signed; signed contracts cannot be withdrawn destructive"
+    },
+    {
+      "pluginId": "esignatures",
+      "kind": "api",
+      "shortPath": "templates.create",
+      "haystack": "templates.create esignatures.api.templates.create create a template from markdown with placeholder fields write"
+    },
+    {
+      "pluginId": "esignatures",
+      "kind": "api",
+      "shortPath": "templates.delete",
+      "haystack": "templates.delete esignatures.api.templates.delete permanently delete a template destructive"
+    },
+    {
+      "pluginId": "esignatures",
+      "kind": "api",
+      "shortPath": "templates.get",
+      "haystack": "templates.get esignatures.api.templates.get read a template's title, creation time, placeholder fields and signer field ids read"
+    },
+    {
+      "pluginId": "esignatures",
+      "kind": "api",
+      "shortPath": "templates.list",
+      "haystack": "templates.list esignatures.api.templates.list list the templates with their ids and titles read"
     },
     {
       "pluginId": "esputnik",
@@ -62985,6 +63699,516 @@
       "kind": "api",
       "shortPath": "models.retrieveModel",
       "haystack": "models.retrievemodel groqcloud.api.models.retrievemodel retrieve detailed metadata for a specific model read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "customFields.create",
+      "haystack": "customfields.create gumroad.api.customfields.create add a custom field to a product's checkout, optionally required write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "customFields.delete",
+      "haystack": "customfields.delete gumroad.api.customfields.delete permanently delete a product's custom field by name destructive"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "customFields.list",
+      "haystack": "customfields.list gumroad.api.customfields.list list a product's checkout custom fields read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "customFields.update",
+      "haystack": "customfields.update gumroad.api.customfields.update flip whether one of a product's custom fields is required write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "earnings.get",
+      "haystack": "earnings.get gumroad.api.earnings.get read the annual earnings breakdown (gross, fees, taxes, affiliate credit, net) for one tax year read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "emails.create",
+      "haystack": "emails.create gumroad.api.emails.create create a draft audience email by subject, html body and audience, or send it immediately with publish=true write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "emails.delete",
+      "haystack": "emails.delete gumroad.api.emails.delete delete an audience email destructive"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "emails.get",
+      "haystack": "emails.get gumroad.api.emails.get read one audience email by id read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "emails.list",
+      "haystack": "emails.list gumroad.api.emails.list list the seller's audience emails, optionally filtered to published, scheduled or draft state read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "emails.preview",
+      "haystack": "emails.preview gumroad.api.emails.preview send a preview of an audience email to the seller's own address write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "emails.schedule",
+      "haystack": "emails.schedule gumroad.api.emails.schedule schedule a draft audience email to publish at a set time in the seller's timezone write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "emails.send",
+      "haystack": "emails.send gumroad.api.emails.send publish a draft audience email and send it to its audience write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "emails.unschedule",
+      "haystack": "emails.unschedule gumroad.api.emails.unschedule cancel a scheduled audience email and turn it back into a draft write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "files.abort",
+      "haystack": "files.abort gumroad.api.files.abort cancel a multipart upload started by files.presign write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "files.complete",
+      "haystack": "files.complete gumroad.api.files.complete finalize a multipart upload with the s3 upload id, key and part etags, returning the canonical file url write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "files.presign",
+      "haystack": "files.presign gumroad.api.files.presign start a multipart file upload and get presigned s3 urls per 100 mb part (max 20 gb); the binary puts to s3 are client-side write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "licenses.decrementUsesCount",
+      "haystack": "licenses.decrementusescount gumroad.api.licenses.decrementusescount decrement a license key use counter and read its purchase write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "licenses.disable",
+      "haystack": "licenses.disable gumroad.api.licenses.disable disable a license key so it fails verification, and read its purchase write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "licenses.enable",
+      "haystack": "licenses.enable gumroad.api.licenses.enable re-enable a disabled license key and read its purchase write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "licenses.rotate",
+      "haystack": "licenses.rotate gumroad.api.licenses.rotate rotate a license key to a new one; the previous key stops validating immediately write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "licenses.verify",
+      "haystack": "licenses.verify gumroad.api.licenses.verify verify a license key against a product and read its purchase; increments the license use counter unless increment_uses_count is \"false\" write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "media.create",
+      "haystack": "media.create gumroad.api.media.create add a media library file from a public image url or a direct-upload signed blob id write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "media.delete",
+      "haystack": "media.delete gumroad.api.media.delete delete a media library file by id destructive"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "media.list",
+      "haystack": "media.list gumroad.api.media.list list the authenticated user's media library files read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "offerCodes.createForProduct",
+      "haystack": "offercodes.createforproduct gumroad.api.offercodes.createforproduct create a fixed-amount or percentage offer code for a product, optionally universal, automatic and scheduled write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "offerCodes.deleteForProduct",
+      "haystack": "offercodes.deleteforproduct gumroad.api.offercodes.deleteforproduct permanently delete one of a product's offer codes destructive"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "offerCodes.get",
+      "haystack": "offercodes.get gumroad.api.offercodes.get read one store-wide offer code by id read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "offerCodes.getForProduct",
+      "haystack": "offercodes.getforproduct gumroad.api.offercodes.getforproduct read one of a product's offer codes by id read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "offerCodes.list",
+      "haystack": "offercodes.list gumroad.api.offercodes.list list the store's non-deleted offer codes, newest first, optionally filtered to automatic sales read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "offerCodes.listForProduct",
+      "haystack": "offercodes.listforproduct gumroad.api.offercodes.listforproduct list all of a product's offer codes with amounts and redemption counts read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "offerCodes.update",
+      "haystack": "offercodes.update gumroad.api.offercodes.update update a store-wide offer code schedule, usage cap or minimum; the amount and universality cannot change write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "offerCodes.updateForProduct",
+      "haystack": "offercodes.updateforproduct gumroad.api.offercodes.updateforproduct update one of a product's offer codes: usage cap, minimum, automatic application and validity window write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "payouts.get",
+      "haystack": "payouts.get gumroad.api.payouts.get read one payout with its sale ids and optional per-transaction breakdown lines read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "payouts.list",
+      "haystack": "payouts.list gumroad.api.payouts.list list payouts with amount, currency, status and bank destination, filterable by date range read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "payouts.upcoming",
+      "haystack": "payouts.upcoming gumroad.api.payouts.upcoming read the up to two upcoming payouts with their transaction lines read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "products.categoriesList",
+      "haystack": "products.categorieslist gumroad.api.products.categorieslist list every product category; a category path feeds the category parameter when creating or updating products read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "products.coversAdd",
+      "haystack": "products.coversadd gumroad.api.products.coversadd attach a cover to a product from a public image/video or youtube/vimeo url write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "products.coversDelete",
+      "haystack": "products.coversdelete gumroad.api.products.coversdelete permanently delete one of a product's covers by id destructive"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "products.create",
+      "haystack": "products.create gumroad.api.products.create create a product with name, price in cents, type, tags, refund policy, rich content pages and attached files write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "products.delete",
+      "haystack": "products.delete gumroad.api.products.delete permanently delete a product destructive"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "products.disable",
+      "haystack": "products.disable gumroad.api.products.disable unpublish (disable) an existing product write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "products.enable",
+      "haystack": "products.enable gumroad.api.products.enable publish (enable) an existing product write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "products.get",
+      "haystack": "products.get gumroad.api.products.get get one product by id, including description, price, tags and purchasing-power-parity prices read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "products.list",
+      "haystack": "products.list gumroad.api.products.list list the authenticated user's gumroad products with price, publication state and sales counts read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "products.reviewsList",
+      "haystack": "products.reviewslist gumroad.api.products.reviewslist list one product's reviews with rating, message and the seller's public reply read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "products.thumbnailDelete",
+      "haystack": "products.thumbnaildelete gumroad.api.products.thumbnaildelete remove a product's thumbnail destructive"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "products.thumbnailSet",
+      "haystack": "products.thumbnailset gumroad.api.products.thumbnailset set a product's thumbnail from a public image url or a direct-upload signed blob id write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "products.update",
+      "haystack": "products.update gumroad.api.products.update update a product; files and tags are full replacements, and custom_html or cover_ids can be rewritten write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "public.product",
+      "haystack": "public.product gumroad.api.public.product read the public product page data for a permalink (price, covers, description, reviews); no authentication required read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "public.profile",
+      "haystack": "public.profile gumroad.api.public.profile read a creator's public profile with up to 100 visible products; no authentication required read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "resourceSubscriptions.list",
+      "haystack": "resourcesubscriptions.list gumroad.api.resourcesubscriptions.list list active subscriptions for one resource event type read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "resourceSubscriptions.subscribe",
+      "haystack": "resourcesubscriptions.subscribe gumroad.api.resourcesubscriptions.subscribe subscribe a post url to one of the 8 resource event types (sales, refunds, disputes, subscription changes); receiving deliveries is out of scope write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "resourceSubscriptions.testEvent",
+      "haystack": "resourcesubscriptions.testevent gumroad.api.resourcesubscriptions.testevent queue a sample event for a resource subscription post url write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "resourceSubscriptions.unsubscribe",
+      "haystack": "resourcesubscriptions.unsubscribe gumroad.api.resourcesubscriptions.unsubscribe delete a resource subscription by id destructive"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "sales.get",
+      "haystack": "sales.get gumroad.api.sales.get get one sale by id with price, fees, taxes, refund and chargeback state read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "sales.list",
+      "haystack": "sales.list gumroad.api.sales.list list successful sales, filterable by date range, product, buyer email, order id, name or license key read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "sales.markAsShipped",
+      "haystack": "sales.markasshipped gumroad.api.sales.markasshipped mark a physical sale as shipped with an optional tracking url write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "sales.refund",
+      "haystack": "sales.refund gumroad.api.sales.refund refund a sale fully, or partially with amount_cents; returns the updated sale write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "sales.resendReceipt",
+      "haystack": "sales.resendreceipt gumroad.api.sales.resendreceipt resend the purchase receipt to the customer's email write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "sales.revokeAccess",
+      "haystack": "sales.revokeaccess gumroad.api.sales.revokeaccess revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales) write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "sales.undoRevokeAccess",
+      "haystack": "sales.undorevokeaccess gumroad.api.sales.undorevokeaccess restore a buyer's access to a previously revoked sale write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "subscribers.get",
+      "haystack": "subscribers.get gumroad.api.subscribers.get read one subscriber by id with status, recurrence and license key read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "subscribers.list",
+      "haystack": "subscribers.list gumroad.api.subscribers.list list one product's subscribers with status, recurrence and license key read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "taxForms.download",
+      "haystack": "taxforms.download gumroad.api.taxforms.download download a tax form pdf for a year and form type as base64 with filename and content type read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "taxForms.list",
+      "haystack": "taxforms.list gumroad.api.taxforms.list list generated tax forms (1099-k, 1099-misc) for one tax year or every year read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "user.customHtmlGet",
+      "haystack": "user.customhtmlget gumroad.api.user.customhtmlget read the profile's custom html landing page plus a rendered fallback of the current storefront read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "user.customHtmlPreview",
+      "haystack": "user.customhtmlpreview gumroad.api.user.customhtmlpreview sanitize profile html and return the sanitized result without saving anything write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "user.customHtmlUpdate",
+      "haystack": "user.customhtmlupdate gumroad.api.user.customhtmlupdate publish or clear the profile custom html landing page; the response carries a sanitization report and the previous html for rollback write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "user.get",
+      "haystack": "user.get gumroad.api.user.get read the authenticated user's profile: name, bio, links and (with view_sales) email read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "user.refundPolicyGet",
+      "haystack": "user.refundpolicyget gumroad.api.user.refundpolicyget read the account-level refund policy read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "user.refundPolicyUpdate",
+      "haystack": "user.refundpolicyupdate gumroad.api.user.refundpolicyupdate update the account-level refund policy period and its fine print (max 3000 characters) write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "variantCategories.create",
+      "haystack": "variantcategories.create gumroad.api.variantcategories.create create a variant category on a product by title write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "variantCategories.delete",
+      "haystack": "variantcategories.delete gumroad.api.variantcategories.delete permanently delete a product's variant category destructive"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "variantCategories.get",
+      "haystack": "variantcategories.get gumroad.api.variantcategories.get read one of a product's variant categories by id read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "variantCategories.list",
+      "haystack": "variantcategories.list gumroad.api.variantcategories.list list a product's variant categories read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "variantCategories.update",
+      "haystack": "variantcategories.update gumroad.api.variantcategories.update rename one of a product's variant categories write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "variantCategories.variantsCreate",
+      "haystack": "variantcategories.variantscreate gumroad.api.variantcategories.variantscreate create a variant with a name, price difference in cents and optional purchase cap write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "variantCategories.variantsDelete",
+      "haystack": "variantcategories.variantsdelete gumroad.api.variantcategories.variantsdelete permanently delete a variant destructive"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "variantCategories.variantsGet",
+      "haystack": "variantcategories.variantsget gumroad.api.variantcategories.variantsget read one variant by id read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "variantCategories.variantsList",
+      "haystack": "variantcategories.variantslist gumroad.api.variantcategories.variantslist list the variants in one of a product's variant categories read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "variantCategories.variantsUpdate",
+      "haystack": "variantcategories.variantsupdate gumroad.api.variantcategories.variantsupdate update a variant name, price difference or purchase cap write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "workflows.emailsAdd",
+      "haystack": "workflows.emailsadd gumroad.api.workflows.emailsadd append one email step to a workflow with a delay in hours, days, weeks or months write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "workflows.emailsUpdate",
+      "haystack": "workflows.emailsupdate gumroad.api.workflows.emailsupdate update one workflow email step subject, body or delay without changing publication state write"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "workflows.get",
+      "haystack": "workflows.get gumroad.api.workflows.get read one workflow with its email steps and delivery statistics read"
+    },
+    {
+      "pluginId": "gumroad",
+      "kind": "api",
+      "shortPath": "workflows.list",
+      "haystack": "workflows.list gumroad.api.workflows.list list the seller's active workflows, newest first read"
     },
     {
       "pluginId": "habitica",
@@ -72773,6 +73997,102 @@
       "haystack": "tickers.list marketstack.api.tickers.list list or search the stock tickers supported by marketstack read"
     },
     {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "events.get",
+      "haystack": "events.get mem0.api.events.get read one queued event by id to see whether an add or delete finished, failed, or is still running read"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "events.list",
+      "haystack": "events.list mem0.api.events.list list recent events for the organization and project, page by page, for dashboards or for finding failed writes read"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "memories.add",
+      "haystack": "memories.add mem0.api.memories.add extract memories from conversation messages and store them for a user, agent, app or run; processing is queued and returns an event_id to poll write"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "memories.batchDelete",
+      "haystack": "memories.batchdelete mem0.api.memories.batchdelete permanently delete up to 1000 memories in one call destructive"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "memories.batchUpdate",
+      "haystack": "memories.batchupdate mem0.api.memories.batchupdate update up to 1000 memories in one call write"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "memories.delete",
+      "haystack": "memories.delete mem0.api.memories.delete permanently delete one memory; delete_linked also removes memories linked to it destructive"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "memories.deleteAll",
+      "haystack": "memories.deleteall mem0.api.memories.deleteall delete every memory matching a filter, or every memory for an entity when the filter is \"*\"; mem0 queues the deletion and answers immediately destructive"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "memories.get",
+      "haystack": "memories.get mem0.api.memories.get read one memory by its id read"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "memories.history",
+      "haystack": "memories.history mem0.api.memories.history read the change history of one memory: each add, update and delete with its old and new text read"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "memories.list",
+      "haystack": "memories.list mem0.api.memories.list list stored memories page by page, filtered by entity, date range or category; entity ids go inside `filters` read"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "memories.search",
+      "haystack": "memories.search mem0.api.memories.search rank stored memories by relevance to a query with hybrid semantic, keyword and entity matching; entity ids go inside `filters` read"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "memories.update",
+      "haystack": "memories.update mem0.api.memories.update change one memory's text or metadata, or set its expiration date; pass expiration_date as null to clear one write"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create mem0.api.webhooks.create register a url to receive mem0 events for a project, subscribing it to memory add, update, delete or categorize and the ingest job events write"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete mem0.api.webhooks.delete unregister a webhook so mem0 stops posting events to its url destructive"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list mem0.api.webhooks.list list the webhooks registered on a project: each url, its event subscriptions, and whether it is active read"
+    },
+    {
+      "pluginId": "mem0",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update mem0.api.webhooks.update change a webhook's label, url or event subscriptions; the new event list replaces the old one write"
+    },
+    {
       "pluginId": "merriamwebsterdict",
       "kind": "api",
       "shortPath": "words.get",
@@ -79133,6 +80453,180 @@
       "haystack": "users.me pushbullet.api.users.me retrieve the account the access token belongs to read"
     },
     {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "aliases.list",
+      "haystack": "aliases.list qdrant.api.aliases.list list every collection alias in the cluster read"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "aliases.listForCollection",
+      "haystack": "aliases.listforcollection qdrant.api.aliases.listforcollection list the aliases that point to one collection read"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "aliases.update",
+      "haystack": "aliases.update qdrant.api.aliases.update atomically create, delete or rename aliases, e.g. to switch traffic to a rebuilt collection write"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "collections.create",
+      "haystack": "collections.create qdrant.api.collections.create create a collection with dense, sparse or named vector configs, sharding and index settings write"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "collections.delete",
+      "haystack": "collections.delete qdrant.api.collections.delete delete a collection and every point stored in it destructive"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "collections.exists",
+      "haystack": "collections.exists qdrant.api.collections.exists check whether a collection with the given name exists read"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "collections.get",
+      "haystack": "collections.get qdrant.api.collections.get get a collection’s status, point counts, vector configuration and payload indexes read"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "collections.list",
+      "haystack": "collections.list qdrant.api.collections.list list the names of all collections in the cluster read"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "collections.update",
+      "haystack": "collections.update qdrant.api.collections.update update a collection’s vector, hnsw, optimizer, quantization or strict-mode parameters write"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "payloadIndexes.create",
+      "haystack": "payloadindexes.create qdrant.api.payloadindexes.create index a payload field (keyword, integer, float, geo, text, bool, datetime, uuid) for filtering write"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "payloadIndexes.delete",
+      "haystack": "payloadindexes.delete qdrant.api.payloadindexes.delete remove the index on a payload field destructive"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "points.clearPayload",
+      "haystack": "points.clearpayload qdrant.api.points.clearpayload remove every payload key from points selected by id list or filter destructive"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "points.count",
+      "haystack": "points.count qdrant.api.points.count count the points that match a filter, exactly or approximately read"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "points.delete",
+      "haystack": "points.delete qdrant.api.points.delete delete points selected by id list or by filter destructive"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "points.deletePayload",
+      "haystack": "points.deletepayload qdrant.api.points.deletepayload remove specific payload keys from points selected by id list or filter destructive"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "points.deleteVectors",
+      "haystack": "points.deletevectors qdrant.api.points.deletevectors remove named vectors from points selected by id list or filter destructive"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "points.get",
+      "haystack": "points.get qdrant.api.points.get retrieve points by id, optionally with their payloads and vectors read"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "points.overwritePayload",
+      "haystack": "points.overwritepayload qdrant.api.points.overwritepayload replace the whole payload of points selected by id list or filter destructive"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "points.scroll",
+      "haystack": "points.scroll qdrant.api.points.scroll page through points matching a filter. pass next_page_offset back as offset to get the next page read"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "points.setPayload",
+      "haystack": "points.setpayload qdrant.api.points.setpayload merge payload keys into points selected by id list or filter, optionally under a nested key write"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "points.updateVectors",
+      "haystack": "points.updatevectors qdrant.api.points.updatevectors replace specific named vectors on existing points, keeping the others write"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "points.upsert",
+      "haystack": "points.upsert qdrant.api.points.upsert insert or replace points with their vectors and payloads, waiting for the write by default write"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "query.batch",
+      "haystack": "query.batch qdrant.api.query.batch run several universal queries against one collection in a single request read"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "query.facet",
+      "haystack": "query.facet qdrant.api.query.facet count points per distinct value of an indexed payload field read"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "query.groups",
+      "haystack": "query.groups qdrant.api.query.groups run a universal query and group hits by a payload field, e.g. one result per document read"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "query.points",
+      "haystack": "query.points qdrant.api.query.points universal query: nearest-neighbour, hybrid fusion with prefetch, recommend, discover, or order-by read"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "snapshots.create",
+      "haystack": "snapshots.create qdrant.api.snapshots.create create a snapshot of a collection on the node and wait for it to finish write"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "snapshots.delete",
+      "haystack": "snapshots.delete qdrant.api.snapshots.delete delete a collection snapshot from the node destructive"
+    },
+    {
+      "pluginId": "qdrant",
+      "kind": "api",
+      "shortPath": "snapshots.list",
+      "haystack": "snapshots.list qdrant.api.snapshots.list list the snapshots stored for a collection read"
+    },
+    {
       "pluginId": "razorpay",
       "kind": "api",
       "shortPath": "customers.create",
@@ -79305,6 +80799,672 @@
       "kind": "webhook",
       "shortPath": "refunds.processed",
       "haystack": "refunds.processed razorpay.webhooks.refunds.processed a razorpay refund was processed"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "audioMixed.delete",
+      "haystack": "audiomixed.delete recallai.api.audiomixed.delete delete a mixed audio artifact destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "audioMixed.list",
+      "haystack": "audiomixed.list recallai.api.audiomixed.list list mixed audio artifacts read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "audioMixed.retrieve",
+      "haystack": "audiomixed.retrieve recallai.api.audiomixed.retrieve retrieve a mixed audio artifact read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "audioMixed.update",
+      "haystack": "audiomixed.update recallai.api.audiomixed.update update mixed audio artifact metadata write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "audioSeparate.delete",
+      "haystack": "audioseparate.delete recallai.api.audioseparate.delete delete a separate audio artifact destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "audioSeparate.list",
+      "haystack": "audioseparate.list recallai.api.audioseparate.list list separate audio artifacts read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "audioSeparate.retrieve",
+      "haystack": "audioseparate.retrieve recallai.api.audioseparate.retrieve retrieve a separate audio artifact read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "audioSeparate.update",
+      "haystack": "audioseparate.update recallai.api.audioseparate.update update separate audio artifact metadata write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "billing.retrieveUsage",
+      "haystack": "billing.retrieveusage recallai.api.billing.retrieveusage retrieve recall.ai billing usage read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.deleteBotMedia",
+      "haystack": "botactions.deletebotmedia recallai.api.botactions.deletebotmedia delete stored media for a recall.ai bot destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.leaveBotCall",
+      "haystack": "botactions.leavebotcall recallai.api.botactions.leavebotcall remove a recall.ai bot from its meeting destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.outputAudio",
+      "haystack": "botactions.outputaudio recallai.api.botactions.outputaudio output audio from a recall.ai bot write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.outputMedia",
+      "haystack": "botactions.outputmedia recallai.api.botactions.outputmedia start media output from a recall.ai bot write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.outputVideo",
+      "haystack": "botactions.outputvideo recallai.api.botactions.outputvideo output video from a recall.ai bot write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.pauseRecording",
+      "haystack": "botactions.pauserecording recallai.api.botactions.pauserecording pause a recall.ai bot recording write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.pinParticipant",
+      "haystack": "botactions.pinparticipant recallai.api.botactions.pinparticipant pin a participant for a recall.ai bot write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.resumeRecording",
+      "haystack": "botactions.resumerecording recallai.api.botactions.resumerecording resume a recall.ai bot recording write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.sendChatMessage",
+      "haystack": "botactions.sendchatmessage recallai.api.botactions.sendchatmessage send a chat message from a recall.ai bot write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.startRecording",
+      "haystack": "botactions.startrecording recallai.api.botactions.startrecording start a recall.ai bot recording write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.startScreenshare",
+      "haystack": "botactions.startscreenshare recallai.api.botactions.startscreenshare start bot screenshare in recall.ai write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.stopOutputAudio",
+      "haystack": "botactions.stopoutputaudio recallai.api.botactions.stopoutputaudio stop bot audio output in recall.ai write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.stopOutputMedia",
+      "haystack": "botactions.stopoutputmedia recallai.api.botactions.stopoutputmedia stop bot media output in recall.ai write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.stopOutputVideo",
+      "haystack": "botactions.stopoutputvideo recallai.api.botactions.stopoutputvideo stop bot video output in recall.ai write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.stopRecording",
+      "haystack": "botactions.stoprecording recallai.api.botactions.stoprecording stop a recall.ai bot recording write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "botActions.stopScreenshare",
+      "haystack": "botactions.stopscreenshare recallai.api.botactions.stopscreenshare stop bot screenshare in recall.ai write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "bots.create",
+      "haystack": "bots.create recallai.api.bots.create create a recall.ai meeting bot write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "bots.delete",
+      "haystack": "bots.delete recallai.api.bots.delete delete a recall.ai meeting bot destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "bots.list",
+      "haystack": "bots.list recallai.api.bots.list list recall.ai meeting bots read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "bots.retrieve",
+      "haystack": "bots.retrieve recallai.api.bots.retrieve retrieve a recall.ai meeting bot read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "bots.update",
+      "haystack": "bots.update recallai.api.bots.update update a recall.ai meeting bot write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.authenticate",
+      "haystack": "calendar.authenticate recallai.api.calendar.authenticate create a recall.ai calendar auth token write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.deleteUser",
+      "haystack": "calendar.deleteuser recallai.api.calendar.deleteuser delete a recall.ai calendar user destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.disconnectPlatform",
+      "haystack": "calendar.disconnectplatform recallai.api.calendar.disconnectplatform disconnect a recall.ai calendar platform destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.listEvents",
+      "haystack": "calendar.listevents recallai.api.calendar.listevents list recall.ai calendar events read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.listMeetings",
+      "haystack": "calendar.listmeetings recallai.api.calendar.listmeetings list recall.ai calendar meetings read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.listUsers",
+      "haystack": "calendar.listusers recallai.api.calendar.listusers list recall.ai calendar users read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.refreshMeetings",
+      "haystack": "calendar.refreshmeetings recallai.api.calendar.refreshmeetings refresh recall.ai calendar meetings write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.retrieveEvent",
+      "haystack": "calendar.retrieveevent recallai.api.calendar.retrieveevent retrieve a recall.ai calendar event read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.retrieveMeeting",
+      "haystack": "calendar.retrievemeeting recallai.api.calendar.retrievemeeting retrieve a recall.ai calendar meeting read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.retrieveUser",
+      "haystack": "calendar.retrieveuser recallai.api.calendar.retrieveuser retrieve a recall.ai calendar user read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.scheduleBot",
+      "haystack": "calendar.schedulebot recallai.api.calendar.schedulebot schedule a recall.ai bot for a calendar event write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.unscheduleBot",
+      "haystack": "calendar.unschedulebot recallai.api.calendar.unschedulebot remove a scheduled recall.ai bot from a calendar event destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.updateMeeting",
+      "haystack": "calendar.updatemeeting recallai.api.calendar.updatemeeting update a recall.ai calendar meeting write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendar.updateUser",
+      "haystack": "calendar.updateuser recallai.api.calendar.updateuser update a recall.ai calendar user write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendars.create",
+      "haystack": "calendars.create recallai.api.calendars.create create a recall.ai calendar write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendars.createAccessToken",
+      "haystack": "calendars.createaccesstoken recallai.api.calendars.createaccesstoken create a recall.ai calendar access token write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendars.delete",
+      "haystack": "calendars.delete recallai.api.calendars.delete delete a recall.ai calendar destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendars.list",
+      "haystack": "calendars.list recallai.api.calendars.list list recall.ai calendars read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendars.retrieve",
+      "haystack": "calendars.retrieve recallai.api.calendars.retrieve retrieve a recall.ai calendar read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "calendars.update",
+      "haystack": "calendars.update recallai.api.calendars.update update a recall.ai calendar write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "googleLoginGroups.create",
+      "haystack": "googlelogingroups.create recallai.api.googlelogingroups.create create a recall.ai google login group write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "googleLoginGroups.delete",
+      "haystack": "googlelogingroups.delete recallai.api.googlelogingroups.delete delete a recall.ai google login group destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "googleLoginGroups.list",
+      "haystack": "googlelogingroups.list recallai.api.googlelogingroups.list list recall.ai google login groups read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "googleLoginGroups.partialUpdate",
+      "haystack": "googlelogingroups.partialupdate recallai.api.googlelogingroups.partialupdate update fields on a recall.ai google login group write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "googleLoginGroups.retrieve",
+      "haystack": "googlelogingroups.retrieve recallai.api.googlelogingroups.retrieve retrieve a recall.ai google login group read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "googleLoginGroups.update",
+      "haystack": "googlelogingroups.update recallai.api.googlelogingroups.update replace a recall.ai google login group write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "googleLogins.create",
+      "haystack": "googlelogins.create recallai.api.googlelogins.create create a recall.ai google login write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "googleLogins.delete",
+      "haystack": "googlelogins.delete recallai.api.googlelogins.delete delete a recall.ai google login destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "googleLogins.list",
+      "haystack": "googlelogins.list recallai.api.googlelogins.list list recall.ai google logins read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "googleLogins.partialUpdate",
+      "haystack": "googlelogins.partialupdate recallai.api.googlelogins.partialupdate update fields on a recall.ai google login write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "googleLogins.retrieve",
+      "haystack": "googlelogins.retrieve recallai.api.googlelogins.retrieve retrieve a recall.ai google login read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "googleLogins.update",
+      "haystack": "googlelogins.update recallai.api.googlelogins.update replace a recall.ai google login write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "meetingDirectConnects.create",
+      "haystack": "meetingdirectconnects.create recallai.api.meetingdirectconnects.create create a recall.ai direct connection write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "meetingDirectConnects.list",
+      "haystack": "meetingdirectconnects.list recallai.api.meetingdirectconnects.list list recall.ai direct connections read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "meetingDirectConnects.retrieve",
+      "haystack": "meetingdirectconnects.retrieve recallai.api.meetingdirectconnects.retrieve retrieve a recall.ai direct connection read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "meetingMetadata.delete",
+      "haystack": "meetingmetadata.delete recallai.api.meetingmetadata.delete delete a recall.ai meeting metadata artifact destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "meetingMetadata.list",
+      "haystack": "meetingmetadata.list recallai.api.meetingmetadata.list list recall.ai meeting metadata artifacts read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "meetingMetadata.retrieve",
+      "haystack": "meetingmetadata.retrieve recallai.api.meetingmetadata.retrieve retrieve a recall.ai meeting metadata artifact read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "meetingMetadata.update",
+      "haystack": "meetingmetadata.update recallai.api.meetingmetadata.update update recall.ai meeting metadata write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "participantEvents.delete",
+      "haystack": "participantevents.delete recallai.api.participantevents.delete delete a recall.ai participant event artifact destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "participantEvents.list",
+      "haystack": "participantevents.list recallai.api.participantevents.list list recall.ai participant event artifacts read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "participantEvents.retrieve",
+      "haystack": "participantevents.retrieve recallai.api.participantevents.retrieve retrieve a recall.ai participant event artifact read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "participantEvents.update",
+      "haystack": "participantevents.update recallai.api.participantevents.update update recall.ai participant event metadata write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "realtimeEndpoints.list",
+      "haystack": "realtimeendpoints.list recallai.api.realtimeendpoints.list list recall.ai real-time endpoints read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "realtimeEndpoints.retrieve",
+      "haystack": "realtimeendpoints.retrieve recallai.api.realtimeendpoints.retrieve retrieve a recall.ai real-time endpoint read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "realtimeEndpoints.update",
+      "haystack": "realtimeendpoints.update recallai.api.realtimeendpoints.update update a recall.ai real-time endpoint write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "recordings.createTranscript",
+      "haystack": "recordings.createtranscript recallai.api.recordings.createtranscript create an asynchronous recall.ai transcript write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "recordings.delete",
+      "haystack": "recordings.delete recallai.api.recordings.delete delete a recall.ai recording artifact destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "recordings.list",
+      "haystack": "recordings.list recallai.api.recordings.list list recall.ai recording artifacts read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "recordings.retrieve",
+      "haystack": "recordings.retrieve recallai.api.recordings.retrieve retrieve a recall.ai recording artifact read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "recordings.update",
+      "haystack": "recordings.update recallai.api.recordings.update update recall.ai recording metadata write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "sdkUploads.create",
+      "haystack": "sdkuploads.create recallai.api.sdkuploads.create create a recall.ai desktop sdk upload write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "sdkUploads.list",
+      "haystack": "sdkuploads.list recallai.api.sdkuploads.list list recall.ai desktop sdk uploads read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "sdkUploads.retrieve",
+      "haystack": "sdkuploads.retrieve recallai.api.sdkuploads.retrieve retrieve a recall.ai desktop sdk upload read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "transcripts.delete",
+      "haystack": "transcripts.delete recallai.api.transcripts.delete delete a recall.ai transcript artifact destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "transcripts.list",
+      "haystack": "transcripts.list recallai.api.transcripts.list list recall.ai transcript artifacts read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "transcripts.retrieve",
+      "haystack": "transcripts.retrieve recallai.api.transcripts.retrieve retrieve a recall.ai transcript artifact read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "transcripts.update",
+      "haystack": "transcripts.update recallai.api.transcripts.update update recall.ai transcript metadata write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "videoMixed.delete",
+      "haystack": "videomixed.delete recallai.api.videomixed.delete delete a mixed video artifact destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "videoMixed.list",
+      "haystack": "videomixed.list recallai.api.videomixed.list list mixed video artifacts read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "videoMixed.retrieve",
+      "haystack": "videomixed.retrieve recallai.api.videomixed.retrieve retrieve a mixed video artifact read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "videoMixed.update",
+      "haystack": "videomixed.update recallai.api.videomixed.update update mixed video artifact metadata write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "videoSeparate.delete",
+      "haystack": "videoseparate.delete recallai.api.videoseparate.delete delete a separate video artifact destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "videoSeparate.list",
+      "haystack": "videoseparate.list recallai.api.videoseparate.list list separate video artifacts read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "videoSeparate.retrieve",
+      "haystack": "videoseparate.retrieve recallai.api.videoseparate.retrieve retrieve a separate video artifact read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "videoSeparate.update",
+      "haystack": "videoseparate.update recallai.api.videoseparate.update update separate video artifact metadata write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomMeetingsToCredentials.list",
+      "haystack": "zoommeetingstocredentials.list recallai.api.zoommeetingstocredentials.list list zoom meeting credential mappings read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthAppLogs.list",
+      "haystack": "zoomoauthapplogs.list recallai.api.zoomoauthapplogs.list list recall.ai zoom oauth app logs read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthApps.create",
+      "haystack": "zoomoauthapps.create recallai.api.zoomoauthapps.create create a recall.ai zoom oauth app write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthApps.delete",
+      "haystack": "zoomoauthapps.delete recallai.api.zoomoauthapps.delete delete a recall.ai zoom oauth app destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthApps.list",
+      "haystack": "zoomoauthapps.list recallai.api.zoomoauthapps.list list recall.ai zoom oauth apps read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthApps.retrieve",
+      "haystack": "zoomoauthapps.retrieve recallai.api.zoomoauthapps.retrieve retrieve a recall.ai zoom oauth app read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthApps.update",
+      "haystack": "zoomoauthapps.update recallai.api.zoomoauthapps.update update a recall.ai zoom oauth app write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthCredentialLogs.list",
+      "haystack": "zoomoauthcredentiallogs.list recallai.api.zoomoauthcredentiallogs.list list recall.ai zoom oauth credential logs read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthCredentials.create",
+      "haystack": "zoomoauthcredentials.create recallai.api.zoomoauthcredentials.create create a recall.ai zoom oauth credential write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthCredentials.delete",
+      "haystack": "zoomoauthcredentials.delete recallai.api.zoomoauthcredentials.delete delete a recall.ai zoom oauth credential destructive"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthCredentials.list",
+      "haystack": "zoomoauthcredentials.list recallai.api.zoomoauthcredentials.list list recall.ai zoom oauth credentials read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthCredentials.retrieve",
+      "haystack": "zoomoauthcredentials.retrieve recallai.api.zoomoauthcredentials.retrieve retrieve a recall.ai zoom oauth credential read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthCredentials.retrieveAccessToken",
+      "haystack": "zoomoauthcredentials.retrieveaccesstoken recallai.api.zoomoauthcredentials.retrieveaccesstoken retrieve a zoom oauth access token read"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthCredentials.syncMeetings",
+      "haystack": "zoomoauthcredentials.syncmeetings recallai.api.zoomoauthcredentials.syncmeetings synchronize zoom oauth credential meetings write"
+    },
+    {
+      "pluginId": "recallai",
+      "kind": "api",
+      "shortPath": "zoomOAuthCredentials.validate",
+      "haystack": "zoomoauthcredentials.validate recallai.api.zoomoauthcredentials.validate validate a recall.ai zoom oauth credential write"
     },
     {
       "pluginId": "reddit",
@@ -81645,6 +83805,30 @@
       "kind": "api",
       "shortPath": "usage.get",
       "haystack": "usage.get retailed.api.usage.get get api usage information read"
+    },
+    {
+      "pluginId": "retellai",
+      "kind": "api",
+      "shortPath": "calls.get",
+      "haystack": "calls.get retellai.api.calls.get retrieve a call with its transcript, recording, and post-call analysis. read"
+    },
+    {
+      "pluginId": "retellai",
+      "kind": "api",
+      "shortPath": "calls.list",
+      "haystack": "calls.list retellai.api.calls.list list retell calls with filters and cursor pagination. read"
+    },
+    {
+      "pluginId": "retellai",
+      "kind": "api",
+      "shortPath": "chats.get",
+      "haystack": "chats.get retellai.api.chats.get retrieve a chat with its transcript and post-chat analysis. read"
+    },
+    {
+      "pluginId": "retellai",
+      "kind": "api",
+      "shortPath": "chats.list",
+      "haystack": "chats.list retellai.api.chats.list list retell chats with filters and cursor pagination. read"
     },
     {
       "pluginId": "revai",
@@ -87851,6 +90035,24 @@
       "haystack": "actions.validateconversionevent snapchat.api.actions.validateconversionevent validate conversion event write"
     },
     {
+      "pluginId": "snowflake",
+      "kind": "api",
+      "shortPath": "statements.cancel",
+      "haystack": "statements.cancel snowflake.api.statements.cancel cancel a running sql statement. write"
+    },
+    {
+      "pluginId": "snowflake",
+      "kind": "api",
+      "shortPath": "statements.get",
+      "haystack": "statements.get snowflake.api.statements.get fetch the status of a statement and one partition of its result. read"
+    },
+    {
+      "pluginId": "snowflake",
+      "kind": "api",
+      "shortPath": "statements.submit",
+      "haystack": "statements.submit snowflake.api.statements.submit submit sql for execution. returns rows, a handle while the statement is still running, or dml stats. write"
+    },
+    {
       "pluginId": "sourcegraph",
       "kind": "api",
       "shortPath": "repository.compareCommits",
@@ -91425,6 +93627,66 @@
       "kind": "api",
       "shortPath": "dictionaries.listEntries",
       "haystack": "dictionaries.listentries textrazor.api.dictionaries.listentries list dictionary entries with limit and offset pagination read"
+    },
+    {
+      "pluginId": "ticketmaster",
+      "kind": "api",
+      "shortPath": "attractions.get",
+      "haystack": "attractions.get ticketmaster.api.attractions.get get one attraction by id, including its images, classifications and aliases read"
+    },
+    {
+      "pluginId": "ticketmaster",
+      "kind": "api",
+      "shortPath": "attractions.search",
+      "haystack": "attractions.search ticketmaster.api.attractions.search search attractions (artists, teams, shows) by keyword, classification or source, with paging and sorting read"
+    },
+    {
+      "pluginId": "ticketmaster",
+      "kind": "api",
+      "shortPath": "classifications.get",
+      "haystack": "classifications.get ticketmaster.api.classifications.get get one segment, genre or sub-genre by id, with the level below it read"
+    },
+    {
+      "pluginId": "ticketmaster",
+      "kind": "api",
+      "shortPath": "classifications.search",
+      "haystack": "classifications.search ticketmaster.api.classifications.search search the segment, genre and sub-genre tree ticketmaster uses to classify events and attractions read"
+    },
+    {
+      "pluginId": "ticketmaster",
+      "kind": "api",
+      "shortPath": "events.get",
+      "haystack": "events.get ticketmaster.api.events.get get one event by id, including its dates, sales window, price ranges, images, venue and attractions read"
+    },
+    {
+      "pluginId": "ticketmaster",
+      "kind": "api",
+      "shortPath": "events.getImages",
+      "haystack": "events.getimages ticketmaster.api.events.getimages get the images for one event by id, with each ratio, size and url read"
+    },
+    {
+      "pluginId": "ticketmaster",
+      "kind": "api",
+      "shortPath": "events.search",
+      "haystack": "events.search ticketmaster.api.events.search search events by keyword, attraction, venue, location, date, classification or onsale window, with paging and sorting read"
+    },
+    {
+      "pluginId": "ticketmaster",
+      "kind": "api",
+      "shortPath": "suggest.get",
+      "haystack": "suggest.get ticketmaster.api.suggest.get suggest attractions, events, venues and products for a partial search term, as a type-ahead would read"
+    },
+    {
+      "pluginId": "ticketmaster",
+      "kind": "api",
+      "shortPath": "venues.get",
+      "haystack": "venues.get ticketmaster.api.venues.get get one venue by id, including its address, location, timezone, markets and images read"
+    },
+    {
+      "pluginId": "ticketmaster",
+      "kind": "api",
+      "shortPath": "venues.search",
+      "haystack": "venues.search ticketmaster.api.venues.search search venues by keyword, country, state or geo point, with paging and sorting read"
     },
     {
       "pluginId": "ticktick",
