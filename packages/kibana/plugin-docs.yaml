@@ -1,0 +1,18 @@
+displayName: Kibana
+description: Elastic's data exploration and management interface, with endpoints for saved objects, data views, dashboards, alerting rules, cases, connectors, security detections, and Fleet.
+domain: elastic.co
+examples:
+  read:
+    path: savedObjects.find
+    title: Find saved objects
+    args:
+      type: dashboard
+  write:
+    path: dashboards.create
+    title: Create a dashboard
+    args:
+      title: Service overview
+dbExample:
+  entity: savedObjects
+  note: These tables exist, but Kibana calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50

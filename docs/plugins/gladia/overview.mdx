@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Gladia plugin for Corsair"
+description: "Speech-to-text API for uploading audio and video, running pre-recorded transcriptions, and managing live transcription sessions."
 ---
 
 Use **Gladia** through Corsair: one client, typed API calls.
@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`live.getTranscriptionResult`**
+**List transcription jobs**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.gladia.api.live.getTranscriptionResult({});
+await tenant.gladia.api.preRecorded.listJobs({});
 ```
 
 
-**`live.deleteSession`**
+**Start a transcription**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.gladia.api.live.deleteSession({});
+await tenant.gladia.api.preRecorded.initiateTranscription({ audio_url: 'https://example.com/call.mp3' });
 ```
 
 

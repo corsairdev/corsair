@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Close plugin for Corsair"
+description: "Sales CRM. Manage leads, contacts, opportunities, tasks, and call, note, and SMS activities, and read email activities and custom fields."
 ---
 
 Use **Close** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -104,19 +104,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`activities.listCalls`**
+**List leads**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.close.api.activities.listCalls({});
+await tenant.close.api.leads.list({});
 ```
 
 
-**`activities.createCall`**
+**Create a lead**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.close.api.activities.createCall({});
+await tenant.close.api.leads.create({ name: 'Acme Inc.' });
 ```
 
 
@@ -124,15 +124,37 @@ See the full list on the [API](/plugins/close/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.close.db.<entity>.search()` and `.list()`: `activityCall`, `activityEmail`, `activityNote`, `activitySms`, `contact`, `customField`, `lead`, `opportunity`, `task`, `user`.
+This table exists, but Close calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/close/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.close.db.lead.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `activityCall`, `activityEmail`, `activityNote`, `activitySms`, `contact`, `customField`, `lead`, `opportunity`, `task`, `user`. See [Database](/plugins/close/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **6** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a lead is created.
 
-See [Webhooks](/plugins/close/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+close({
+    webhookHooks: {
+        lead: {
+            created: {
+                after: async (ctx, result) => {
+                    console.log('Close lead created:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/close/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 

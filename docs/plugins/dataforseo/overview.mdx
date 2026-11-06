@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "DataForSeo plugin for Corsair"
+description: "SEO data API for SERP results, keyword research, backlinks, Amazon and app store data, and AI search results."
 ---
 
-Use **DataForSeo** through Corsair: one client, typed API calls, local DB sync.
+Use **DataForSEO** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -90,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.userData`**
+**List Google SERP locations in a country**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.dataforseo.api.account.userData({});
+await tenant.dataforseo.api.serp.locations({ country: 'us' });
 ```
 
 
-**`ai.chatgptResponse`**
+**Run a Google search**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.dataforseo.api.ai.chatgptResponse({});
+await tenant.dataforseo.api.serp.googleOrganic({ keyword: 'corsair integrations', location_code: 2840, language_code: 'en' });
 ```
 
 
@@ -110,9 +110,17 @@ See the full list on the [API](/plugins/dataforseo/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.dataforseo.db.<entity>.search()` and `.list()`: `amazonProducts`, `backlinkTargets`, `keywords`.
+Search synced keywords without hitting DataForSEO.
 
-See [Database](/plugins/dataforseo/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.dataforseo.db.keywords.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `amazonProducts`, `backlinkTargets`, `keywords`. See [Database](/plugins/dataforseo/database) for filters and operators.
 
 ## What's next
 

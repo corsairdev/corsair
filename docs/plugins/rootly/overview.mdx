@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Rootly plugin for Corsair"
+description: "Incident management platform where this plugin gets, updates, and deletes incidents and manages incident action items."
 ---
 
 Use **Rootly** through Corsair: one client, typed API calls.
@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`actionItems.get`**
+**Get an incident**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.rootly.api.actionItems.get({});
+await tenant.rootly.api.incidents.get({ id: '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d' });
 ```
 
 
-**`actionItems.delete`**
+**Update an incident**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.rootly.api.actionItems.delete({});
+await tenant.rootly.api.incidents.update({ id: '1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d', title: 'Checkout API latency' });
 ```
 
 

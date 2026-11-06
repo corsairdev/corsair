@@ -1,0 +1,18 @@
+displayName: Plain
+description: Customer support platform for managing customers, threads, customer groups, companies, tiers, and users, with a raw GraphQL query endpoint.
+domain: plain.com
+examples:
+  read:
+    path: customers.list
+    title: List customers
+  write:
+    path: threads.create
+    title: Create a thread
+    args:
+      customerIdentifier:
+        customerId: c_01ABCDEF
+      title: Need help with billing
+dbExample:
+  entity: customers
+  note: These tables exist, but Plain calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50

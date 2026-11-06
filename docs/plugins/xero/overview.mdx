@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Xero plugin for Corsair"
+description: "Cloud accounting API for invoices, contacts, payments, bank transactions, credit notes, quotes, purchase orders, journals, reports, and files."
 ---
 
 Use **Xero** through Corsair: one client, typed API calls, local DB sync.
@@ -103,19 +103,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`accounts.get`**
+**List contacts**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.xero.api.accounts.get({});
+await tenant.xero.api.contacts.list({});
 ```
 
 
-**`attachments.upload`**
+**Create a contact**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.xero.api.attachments.upload({});
+await tenant.xero.api.contacts.create({ Name: 'Acme Ltd', EmailAddress: 'billing@example.com' });
 ```
 
 
@@ -123,9 +123,17 @@ See the full list on the [API](/plugins/xero/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.xero.db.<entity>.search()` and `.list()`: `accounts`, `bankTransactions`, `contacts`, `creditNotes`, `invoices`, `items`, `payments`, `purchaseOrders`, `quotes`.
+Search synced contacts without hitting Xero.
 
-See [Database](/plugins/xero/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.xero.db.contacts.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `accounts`, `bankTransactions`, `contacts`, `creditNotes`, `invoices`, `items`, `payments`, `purchaseOrders`, `quotes`. See [Database](/plugins/xero/database) for filters and operators.
 
 ## What's next
 

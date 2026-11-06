@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Castingwords plugin for Corsair"
+description: "Transcription service. Place and upgrade orders, fetch audiofiles, transcripts, and invoices, check prepay balance and SKUs, and manage webhooks."
 ---
 
-Use **Castingwords** through Corsair: one client, typed API calls, local DB sync.
+Use **CastingWords** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -90,19 +90,23 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`audiofile.get`**
+**List SKUs**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.castingwords.api.audiofile.get({});
+await tenant.castingwords.api.skus.list({});
 ```
 
 
-**`order.create`**
+**Place a test order**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.castingwords.api.order.create({});
+await tenant.castingwords.api.order.create({
+	url: 'https://example.com/audio/interview.mp3',
+	sku: ['TRANS14'],
+	test: true,
+});
 ```
 
 
@@ -110,9 +114,17 @@ See the full list on the [API](/plugins/castingwords/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.castingwords.db.<entity>.search()` and `.list()`: `audiofiles`, `balances`, `invoices`, `orders`, `skus`, `webhooks`.
+This table exists, but CastingWords calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/castingwords/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.castingwords.db.skus.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `audiofiles`, `balances`, `invoices`, `orders`, `skus`, `webhooks`. See [Database](/plugins/castingwords/database) for filters and operators.
 
 ## What's next
 

@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "CampaignCleaner plugin for Corsair"
+description: "Email campaign checking tool for listing campaigns, reading status and PDF analysis, deleting campaigns, and checking credits."
 ---
 
-Use **CampaignCleaner** through Corsair: one client, typed API calls, local DB sync.
+Use **Campaign Cleaner** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -90,7 +90,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`campaign.list`**
+**List campaigns**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -98,11 +98,11 @@ await tenant.campaigncleaner.api.campaign.list({});
 ```
 
 
-**`campaign.delete`**
+**Get a campaign PDF analysis**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.campaigncleaner.api.campaign.delete({});
+await tenant.campaigncleaner.api.campaign.pdfAnalysis({ campaignId: '12345' });
 ```
 
 
@@ -110,9 +110,17 @@ See the full list on the [API](/plugins/campaigncleaner/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.campaigncleaner.db.<entity>.search()` and `.list()`: `campaigns`, `credits`.
+These tables exist, but Campaign Cleaner calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/campaigncleaner/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.campaigncleaner.db.campaigns.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `campaigns`, `credits`. See [Database](/plugins/campaigncleaner/database) for filters and operators.
 
 ## What's next
 

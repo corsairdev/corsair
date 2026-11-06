@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Chaser plugin for Corsair"
+description: "Accounts receivable automation software. List customers, invoices, and credit notes, and read organization details."
 ---
 
 Use **Chaser** through Corsair: one client, typed API calls.
@@ -89,17 +89,20 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`creditNotes.list`**
+**List invoices**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.chaser.api.creditNotes.list({});
+await tenant.chaser.api.invoices.list({});
 ```
 
 
-**Write**
+**List customers**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/chaser/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.chaser.api.customers.list({});
+```
 
 
 See the full list on the [API](/plugins/chaser/api) page.

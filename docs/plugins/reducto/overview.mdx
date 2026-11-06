@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Reducto plugin for Corsair"
+description: "Document processing API that parses, extracts fields from, classifies, splits, and edits documents, and runs Studio pipelines, with async jobs and file uploads."
 ---
 
 Use **Reducto** through Corsair: one client, typed API calls, local DB sync.
@@ -90,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.version`**
+**List jobs**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.reducto.api.account.version({});
+await tenant.reducto.api.jobs.list({});
 ```
 
 
-**`account.configureWebhook`**
+**Parse a document**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.reducto.api.account.configureWebhook({});
+await tenant.reducto.api.parse.parse({ input: 'https://example.com/invoice.pdf' });
 ```
 
 
@@ -110,9 +110,17 @@ See the full list on the [API](/plugins/reducto/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.reducto.db.<entity>.search()` and `.list()`: `classifyOutputs`, `editFormFields`, `editOutputs`, `extractCitations`, `extractOutputs`, `extractRecords`, `jobs`, `parseBlocks`, `parseChunks`, `parseOcrItems`, `pipelineOutputs`, `splitSegments`.
+Search synced jobs without hitting Reducto.
 
-See [Database](/plugins/reducto/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.reducto.db.jobs.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `classifyOutputs`, `editFormFields`, `editOutputs`, `extractCitations`, `extractOutputs`, `extractRecords`, `jobs`, `parseBlocks`, `parseChunks`, `parseOcrItems`, `pipelineOutputs`, `splitSegments`. See [Database](/plugins/reducto/database) for filters and operators.
 
 ## What's next
 

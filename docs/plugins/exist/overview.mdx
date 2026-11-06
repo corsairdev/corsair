@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Exist plugin for Corsair"
+description: "Personal analytics service that collects tracked data and returns attributes, averages, correlations, and insights, and lets you write attribute values."
 ---
 
 Use **Exist** through Corsair: one client, typed API calls, local DB sync.
@@ -90,7 +90,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`attributes.list`**
+**List attributes**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -98,11 +98,13 @@ await tenant.exist.api.attributes.list({});
 ```
 
 
-**`attributes.acquire`**
+**Update attribute values**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.exist.api.attributes.acquire({});
+await tenant.exist.api.attributes.update({
+	attributes: [{ name: 'steps', date: '2026-01-15', value: 8500 }],
+});
 ```
 
 
@@ -110,9 +112,17 @@ See the full list on the [API](/plugins/exist/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.exist.db.<entity>.search()` and `.list()`: `attributes`, `attributeValues`, `averages`, `correlations`, `insights`, `profile`.
+Search synced attributes without hitting Exist.
 
-See [Database](/plugins/exist/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.exist.db.attributes.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `attributes`, `attributeValues`, `averages`, `correlations`, `insights`, `profile`. See [Database](/plugins/exist/database) for filters and operators.
 
 ## What's next
 

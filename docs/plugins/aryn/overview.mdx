@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Aryn plugin for Corsair"
+description: "Document intelligence API for partitioning documents with DocParse, managing DocSets and documents, tracking async tasks, and generating query plans."
 ---
 
 Use **Aryn** through Corsair: one client, typed API calls.
@@ -89,7 +89,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`asyncTasks.list`**
+**List async tasks**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -97,11 +97,11 @@ await tenant.aryn.api.asyncTasks.list({});
 ```
 
 
-**`docset.create`**
+**Create a DocSet**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.aryn.api.docset.create({});
+await tenant.aryn.api.docset.create({ name: 'Quarterly reports' });
 ```
 
 

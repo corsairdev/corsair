@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Token Metrics plugin for Corsair"
+description: "Crypto analytics API for token prices, market cap rankings, technical indicators, and AI-generated trading signals."
 ---
 
 Use **Token Metrics** through Corsair: one client, typed API calls.
@@ -89,17 +89,20 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`market.getPrice`**
+**List top tokens by market cap**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.tokenmetrics.api.market.getPrice({});
+await tenant.tokenmetrics.api.market.getTopMarketCap({ top_k: 10 });
 ```
 
 
-**Write**
+**Get trading signals**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/tokenmetrics/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.tokenmetrics.api.trading.getSignals({ symbol: 'BTC' });
+```
 
 
 See the full list on the [API](/plugins/tokenmetrics/api) page.

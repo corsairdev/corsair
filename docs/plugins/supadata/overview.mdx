@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Supadata plugin for Corsair"
+description: "Video data API for transcripts and metadata, YouTube videos, channels, playlists and search, and web page scraping and site mapping."
 ---
 
 Use **Supadata** through Corsair: one client, typed API calls, local DB sync.
@@ -90,7 +90,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.me`**
+**Get account usage**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -98,18 +98,29 @@ await tenant.supadata.api.account.me({});
 ```
 
 
-**Write**
+**Get a video transcript**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/supadata/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.supadata.api.transcript.get({ url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' });
+```
 
 
 See the full list on the [API](/plugins/supadata/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.supadata.db.<entity>.search()` and `.list()`: `accounts`, `mediaMetadata`, `transcriptJobs`, `transcripts`, `webMaps`, `webPages`, `youtubeChannels`, `youtubePlaylists`, `youtubeSearchResults`, `youtubeVideos`.
+This table exists, but Supadata calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/supadata/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.supadata.db.transcripts.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `accounts`, `mediaMetadata`, `transcriptJobs`, `transcripts`, `webMaps`, `webPages`, `youtubeChannels`, `youtubePlaylists`, `youtubeSearchResults`, `youtubeVideos`. See [Database](/plugins/supadata/database) for filters and operators.
 
 ## What's next
 

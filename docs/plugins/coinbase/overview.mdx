@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Coinbase plugin for Corsair"
+description: "Crypto exchange and wallet platform. Read accounts, transactions, payment methods, prices, exchange rates, and currencies."
 ---
 
 Use **Coinbase** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -104,32 +104,57 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`accounts.get`**
+**List accounts**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.coinbase.api.accounts.get({});
+await tenant.coinbase.api.accounts.list({});
 ```
 
 
-**Write**
+**Get a spot price**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/coinbase/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.coinbase.api.prices.getSpot({ currency_pair: 'BTC-USD' });
+```
 
 
 See the full list on the [API](/plugins/coinbase/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.coinbase.db.<entity>.search()` and `.list()`: `accounts`, `currencies`, `paymentMethods`, `prices`, `transactions`, `users`.
+This table exists, but Coinbase calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/coinbase/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.coinbase.db.accounts.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `accounts`, `currencies`, `paymentMethods`, `prices`, `transactions`, `users`. See [Database](/plugins/coinbase/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **2** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a new payment is received.
 
-See [Webhooks](/plugins/coinbase/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+coinbase({
+    webhookHooks: {
+        notifications: {
+            newPayment: {
+                after: async (ctx, result) => {
+                    console.log('Coinbase payment:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/coinbase/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 

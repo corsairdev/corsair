@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Customer.io plugin for Corsair"
+description: "Customer engagement platform for sending targeted email, SMS, and push messages, with endpoints for profiles, segments, broadcasts, transactional messages, newsletters, collections, snippets, and CDP tracking."
 ---
 
 Use **Customer.io** through Corsair: one client, typed API calls.
@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`broadcasts.getTrigger`**
+**List segments**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.customerio.api.broadcasts.getTrigger({});
+await tenant.customerio.api.segments.list({});
 ```
 
 
-**`broadcasts.trigger`**
+**Track an event**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.customerio.api.broadcasts.trigger({});
+await tenant.customerio.api.profiles.trackEvent({ identifier: 'you@example.com', name: 'signed_up' });
 ```
 
 

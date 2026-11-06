@@ -1,0 +1,21 @@
+displayName: Postman
+description: API platform for managing collections, workspaces, environments, mock servers, monitors, specs, APIs, comments, and webhooks.
+domain: postman.com
+examples:
+  read:
+    path: collections.list
+    title: List collections
+  write:
+    path: collections.create
+    title: Create a collection
+    args:
+      workspace: 1f0df51a-8658-4ee8-a2a1-d2567dfa09a9
+      collection:
+        info:
+          name: Corsair API
+          schema: https://schema.postman.com/json/collection/v2.1.0/collection.json
+        item: []
+dbExample:
+  entity: collection
+  note: These tables exist, but Postman calls don't fill them yet. This returns only rows you have written yourself.
+  limit: 50

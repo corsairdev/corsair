@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Writer plugin for Corsair"
+description: "Enterprise generative AI API for chat and text completions, knowledge graphs, file management, PDF parsing, translation, AI content detection, and web search."
 ---
 
 Use **Writer** through Corsair: one client, typed API calls.
@@ -89,19 +89,22 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`applications.list`**
+**List models**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.writer.api.applications.list({});
+await tenant.writer.api.models.list({});
 ```
 
 
-**`chat.create`**
+**Create a chat completion**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.writer.api.chat.create({});
+await tenant.writer.api.chat.create({
+	model: 'palmyra-x5',
+	messages: [{ role: 'user', content: 'Write a one-line product tagline.' }],
+});
 ```
 
 

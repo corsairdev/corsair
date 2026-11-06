@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Whautomate plugin for Corsair"
+description: "Customer engagement and booking platform for managing contacts, broadcasts, segments, services, service categories, staff availability, and webhooks."
 ---
 
 Use **Whautomate** through Corsair: one client, typed API calls.
@@ -89,19 +89,23 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.getAccountInfo`**
+**List contacts**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.whautomate.api.account.getAccountInfo({});
+await tenant.whautomate.api.contacts.getContacts({});
 ```
 
 
-**`contacts.addContact`**
+**Add a contact**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.whautomate.api.contacts.addContact({});
+await tenant.whautomate.api.contacts.addContact({
+	name: 'Jane Doe',
+	phoneNumber: '+14155552671',
+	location: { id: 'loc_01234567' },
+});
 ```
 
 

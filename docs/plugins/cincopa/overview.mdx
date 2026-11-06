@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Cincopa plugin for Corsair"
+description: "Media hosting platform. List galleries, upload assets from a URL and track the upload, and get the upload iframe."
 ---
 
 Use **Cincopa** through Corsair: one client, typed API calls, local DB sync.
@@ -90,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`asset.getUploadFromUrlStatus`**
+**List galleries**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cincopa.api.asset.getUploadFromUrlStatus({});
+await tenant.cincopa.api.gallery.list({});
 ```
 
 
-**`asset.abortUploadFromUrl`**
+**Upload an asset from a URL**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.cincopa.api.asset.abortUploadFromUrl({});
+await tenant.cincopa.api.asset.uploadFromUrl({ input: 'https://example.com/video.mp4' });
 ```
 
 
@@ -110,9 +110,17 @@ See the full list on the [API](/plugins/cincopa/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.cincopa.db.<entity>.search()` and `.list()`: `account`, `assets`, `galleries`, `uploadStatus`.
+This table exists, but Cincopa calls don't fill it yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/cincopa/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.cincopa.db.galleries.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `account`, `assets`, `galleries`, `uploadStatus`. See [Database](/plugins/cincopa/database) for filters and operators.
 
 ## What's next
 

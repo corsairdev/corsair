@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Zenserp plugin for Corsair"
+description: "Search results API for Google, Bing, and Yandex SERP data, reverse image search, Google Shopping products, and Google Trends."
 ---
 
 Use **Zenserp** through Corsair: one client, typed API calls.
@@ -89,7 +89,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.getStatus`**
+**Check account status**
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -97,9 +97,12 @@ await tenant.zenserp.api.account.getStatus({});
 ```
 
 
-**Write**
+**Search Google**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/zenserp/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zenserp.api.search.google({ q: 'open source integrations' });
+```
 
 
 See the full list on the [API](/plugins/zenserp/api) page.

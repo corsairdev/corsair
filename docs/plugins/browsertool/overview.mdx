@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "BrowserTool plugin for Corsair"
+description: "Cloud browser automation tool that runs AI-driven browser tasks, polls and stops them, and returns session live URLs and task output files."
 ---
 
-Use **BrowserTool** through Corsair: one client, typed API calls, local DB sync.
+Use **Browser Tool** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -90,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`files.get`**
+**Get a session**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.browsertool.api.files.get({});
+await tenant.browsertool.api.sessions.get({ sessionId: 'session_123' });
 ```
 
 
-**`tasks.create`**
+**Start a browser task**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.browsertool.api.tasks.create({});
+await tenant.browsertool.api.tasks.create({ task: 'Open example.com and return the page title', startUrl: 'https://example.com' });
 ```
 
 
@@ -110,9 +110,17 @@ See the full list on the [API](/plugins/browsertool/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.browsertool.db.<entity>.search()` and `.list()`: `executions`, `tasks`.
+These tables exist, but Browser Tool calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/browsertool/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.browsertool.db.tasks.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `executions`, `tasks`. See [Database](/plugins/browsertool/database) for filters and operators.
 
 ## What's next
 

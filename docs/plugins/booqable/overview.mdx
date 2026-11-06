@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Booqable plugin for Corsair"
+description: "Rental business software. Manage customers, orders, products, product groups, bundles, stock items, inventory, payments, coupons, documents, and locations."
 ---
 
 Use **Booqable** through Corsair: one client, typed API calls.
@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`barcodes.listBarcodes`**
+**List customers**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.booqable.api.barcodes.listBarcodes({});
+await tenant.booqable.api.customers.getCustomers({});
 ```
 
 
-**`companies.updateCompany`**
+**List orders**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.booqable.api.companies.updateCompany({});
+await tenant.booqable.api.orders.listOrders({ companySlug: 'your-company' });
 ```
 
 

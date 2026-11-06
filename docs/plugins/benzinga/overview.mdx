@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Benzinga plugin for Corsair"
+description: "Financial news and market data API for reading news and channels, and calendar data for earnings, dividends, splits, IPOs, analyst ratings, guidance, and economics."
 ---
 
 Use **Benzinga** through Corsair: one client, typed API calls, local DB sync.
@@ -90,26 +90,37 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`calendar.getConsensusRatings`**
+**List news**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.benzinga.api.calendar.getConsensusRatings({});
+await tenant.benzinga.api.news.get({});
 ```
 
 
-**Write**
+**List earnings**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/benzinga/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.benzinga.api.calendar.listEarnings({ tickers: 'AAPL' });
+```
 
 
 See the full list on the [API](/plugins/benzinga/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.benzinga.db.<entity>.search()` and `.list()`: `conferenceCalls`, `consensusRatings`, `dividends`, `earnings`, `economics`, `guidance`, `ipos`, `newsArticles`, `newsChannels`, `ratings`, `removedCalendarEvents`, `removedNewsItems`, `splits`.
+Search synced news articles without hitting Benzinga.
 
-See [Database](/plugins/benzinga/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.benzinga.db.newsArticles.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `conferenceCalls`, `consensusRatings`, `dividends`, `earnings`, `economics`, `guidance`, `ipos`, `newsArticles`, `newsChannels`, `ratings`, `removedCalendarEvents`, `removedNewsItems`, `splits`. See [Database](/plugins/benzinga/database) for filters and operators.
 
 ## What's next
 

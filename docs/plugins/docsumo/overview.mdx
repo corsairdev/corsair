@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Docsumo plugin for Corsair"
+description: "Document AI platform for extracting data from uploaded documents, with endpoints for documents, document types, folders, tables, analytics, and agents."
 ---
 
 Use **Docsumo** through Corsair: one client, typed API calls.
@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`agents.listCases`**
+**List documents**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.docsumo.api.agents.listCases({});
+await tenant.docsumo.api.documents.listAll({});
 ```
 
 
-**`folders.create`**
+**Create a folder**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.docsumo.api.folders.create({});
+await tenant.docsumo.api.folders.create({ folder_name: 'Invoices', type: 'general' });
 ```
 
 

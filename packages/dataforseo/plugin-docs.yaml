@@ -1,0 +1,20 @@
+displayName: DataForSEO
+description: SEO data API for SERP results, keyword research, backlinks, Amazon and app store data, and AI search results.
+domain: dataforseo.com
+examples:
+  read:
+    path: serp.locations
+    title: List Google SERP locations in a country
+    args:
+      country: us
+  write:
+    path: serp.googleOrganic
+    title: Run a Google search
+    args:
+      keyword: corsair integrations
+      location_code: 2840
+      language_code: en
+dbExample:
+  entity: keywords
+  note: Search synced keywords without hitting DataForSEO.
+  limit: 50

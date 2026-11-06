@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Postman plugin for Corsair"
+description: "API platform for managing collections, workspaces, environments, mock servers, monitors, specs, APIs, comments, and webhooks."
 ---
 
 Use **Postman** through Corsair: one client, typed API calls, local DB sync.
@@ -90,19 +90,25 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`accessKeys.list`**
+**List collections**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.postman.api.accessKeys.list({});
+await tenant.postman.api.collections.list({});
 ```
 
 
-**`apis.create`**
+**Create a collection**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.postman.api.apis.create({});
+await tenant.postman.api.collections.create({
+	workspace: '1f0df51a-8658-4ee8-a2a1-d2567dfa09a9',
+	collection: {
+		info: { name: 'Corsair API', schema: 'https://schema.postman.com/json/collection/v2.1.0/collection.json' },
+		item: [],
+	},
+});
 ```
 
 
@@ -110,9 +116,17 @@ See the full list on the [API](/plugins/postman/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.postman.db.<entity>.search()` and `.list()`: `collection`, `environment`, `mock`, `monitor`, `workspace`.
+These tables exist, but Postman calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/postman/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.postman.db.collection.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `collection`, `environment`, `mock`, `monitor`, `workspace`. See [Database](/plugins/postman/database) for filters and operators.
 
 ## What's next
 

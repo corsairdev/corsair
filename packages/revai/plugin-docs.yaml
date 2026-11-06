@@ -1,0 +1,18 @@
+displayName: Rev AI
+description: Speech-to-text API for submitting transcription jobs and retrieving job status and transcripts.
+domain: rev.ai
+examples:
+  read:
+    path: jobs.getJob
+    title: Get a transcription job
+    args:
+      id: Umx5c6F7pH7r
+  write:
+    path: jobs.submitJob
+    title: Submit a transcription job
+    args:
+      media_url: https://example.com/interview.mp3
+dbExample:
+  entity: job
+  note: Search synced jobs without hitting Rev AI.
+  limit: 50
