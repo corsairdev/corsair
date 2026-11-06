@@ -12,91 +12,91 @@ pnpm add @corsair-dev/netsuite
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `asyncGetJobStatus` | `netsuite.api.asyncGetJobStatus` | `read` | Retrieve the status of an asynchronous NetSuite REST job |
-| `asyncGetJobTask` | `netsuite.api.asyncGetJobTask` | `read` | Retrieve the task reference and status for an asynchronous job |
-| `asyncGetJobTaskResult` | `netsuite.api.asyncGetJobTaskResult` | `read` | Retrieve the result of an asynchronous job task |
-| `createCustomer` | `netsuite.api.createCustomer` | `write` | Create a NetSuite customer record |
-| `createCustomerPayment` | `netsuite.api.createCustomerPayment` | `write` | Create a NetSuite customer payment record |
-| `createEmployee` | `netsuite.api.createEmployee` | `write` | Create a NetSuite employee record |
-| `createInvoice` | `netsuite.api.createInvoice` | `write` | Create a NetSuite invoice record |
-| `createItem` | `netsuite.api.createItem` | `write` | Create a NetSuite item record |
-| `createJournalEntry` | `netsuite.api.createJournalEntry` | `write` | Create a NetSuite journal entry record |
-| `createJwtClientAssertion` | `netsuite.api.createJwtClientAssertion` | `read` | Create a signed JWT client assertion for OAuth 2.0 client credentials |
-| `createPurchaseOrder` | `netsuite.api.createPurchaseOrder` | `write` | Create a NetSuite purchase order |
-| `createRecord` | `netsuite.api.createRecord` | `write` | Create a record of any exposed NetSuite type |
-| `createSalesOrder` | `netsuite.api.createSalesOrder` | `write` | Create a NetSuite sales order |
-| `createVendor` | `netsuite.api.createVendor` | `write` | Create a NetSuite vendor record |
-| `createVendorBill` | `netsuite.api.createVendorBill` | `write` | Create a NetSuite vendor bill record |
-| `deleteCustomer` | `netsuite.api.deleteCustomer` | `destructive` | Delete a NetSuite customer record |
-| `deleteCustomerPayment` | `netsuite.api.deleteCustomerPayment` | `destructive` | Delete a NetSuite customer payment record |
-| `deleteEmployee` | `netsuite.api.deleteEmployee` | `destructive` | Delete a NetSuite employee record |
-| `deleteInvoice` | `netsuite.api.deleteInvoice` | `destructive` | Delete a NetSuite invoice record |
-| `deleteItem` | `netsuite.api.deleteItem` | `destructive` | Delete a NetSuite item record |
-| `deleteItemFulfillment` | `netsuite.api.deleteItemFulfillment` | `destructive` | Delete a NetSuite item fulfillment record |
-| `deleteItemReceipt` | `netsuite.api.deleteItemReceipt` | `destructive` | Delete a NetSuite item receipt record |
-| `deleteJournalEntry` | `netsuite.api.deleteJournalEntry` | `destructive` | Delete a NetSuite journal entry record |
-| `deletePurchaseOrder` | `netsuite.api.deletePurchaseOrder` | `destructive` | Delete a NetSuite purchase order record |
-| `deleteSalesOrder` | `netsuite.api.deleteSalesOrder` | `destructive` | Delete a NetSuite sales order record |
-| `deleteVendorPayment` | `netsuite.api.deleteVendorPayment` | `destructive` | Delete a NetSuite vendor payment record |
-| `executeDataset` | `netsuite.api.executeDataset` | `read` | Execute a SuiteAnalytics Workbook dataset |
-| `getCustomer` | `netsuite.api.getCustomer` | `read` | Get a NetSuite customer record by internal ID |
-| `getCustomerPayment` | `netsuite.api.getCustomerPayment` | `read` | Get a NetSuite customer payment record by ID |
-| `getDatacenterUrls` | `netsuite.api.getDatacenterUrls` | `read` | Discover account-specific NetSuite service domains |
-| `getEmployee` | `netsuite.api.getEmployee` | `read` | Get a NetSuite employee record by internal ID |
-| `getGovernanceLimits` | `netsuite.api.getGovernanceLimits` | `read` | Retrieve NetSuite account and integration concurrency limits |
-| `getInvoice` | `netsuite.api.getInvoice` | `read` | Get a NetSuite invoice record by internal ID |
-| `getItem` | `netsuite.api.getItem` | `read` | Get a NetSuite item record by internal ID |
-| `getItemFulfillment` | `netsuite.api.getItemFulfillment` | `read` | Get a NetSuite item fulfillment record by ID |
-| `getItemReceipt` | `netsuite.api.getItemReceipt` | `read` | Get a NetSuite item receipt record by internal ID |
-| `getJournalEntry` | `netsuite.api.getJournalEntry` | `read` | Get a NetSuite journal entry record by internal ID |
-| `getPurchaseOrder` | `netsuite.api.getPurchaseOrder` | `read` | Get a NetSuite purchase order by internal ID |
-| `getRecordMetadata` | `netsuite.api.getRecordMetadata` | `read` | Retrieve the metadata schema for a NetSuite record type |
-| `getReferenceSelectField` | `netsuite.api.getReferenceSelectField` | `read` | Retrieve the record referenced by a select-type field |
-| `getSalesOrder` | `netsuite.api.getSalesOrder` | `read` | Get a NetSuite sales order record by internal ID |
-| `getServerTime` | `netsuite.api.getServerTime` | `read` | Retrieve the current NetSuite server time in UTC |
-| `getSublistCollection` | `netsuite.api.getSublistCollection` | `read` | Retrieve a sublist collection from a NetSuite record |
-| `getSublistLine` | `netsuite.api.getSublistLine` | `read` | Retrieve a specific line from a NetSuite sublist |
-| `getSubrecord` | `netsuite.api.getSubrecord` | `read` | Retrieve a subrecord from a NetSuite parent record |
-| `getVendor` | `netsuite.api.getVendor` | `read` | Get a single NetSuite vendor record by internal ID |
-| `getVendorBill` | `netsuite.api.getVendorBill` | `read` | Retrieve a NetSuite vendor bill by internal ID |
-| `getVendorPayment` | `netsuite.api.getVendorPayment` | `read` | Retrieve a NetSuite vendor payment by internal ID |
-| `listCustomerPayments` | `netsuite.api.listCustomerPayments` | `read` | List NetSuite customer payment records |
-| `listDatasets` | `netsuite.api.listDatasets` | `read` | List SuiteAnalytics Workbook datasets |
-| `listEmployees` | `netsuite.api.listEmployees` | `read` | List NetSuite employee records |
-| `listIntegrations` | `netsuite.api.listIntegrations` | `read` | List NetSuite integration applications and their client IDs |
-| `listInvoices` | `netsuite.api.listInvoices` | `read` | List NetSuite invoice records |
-| `listItemFulfillments` | `netsuite.api.listItemFulfillments` | `read` | List NetSuite item fulfillment records |
-| `listItemReceipts` | `netsuite.api.listItemReceipts` | `read` | List NetSuite item receipt records |
-| `listJournalEntries` | `netsuite.api.listJournalEntries` | `read` | List NetSuite journal entry records |
-| `listMetadataCatalog` | `netsuite.api.listMetadataCatalog` | `read` | List metadata for all exposed NetSuite record types |
-| `listPurchaseOrders` | `netsuite.api.listPurchaseOrders` | `read` | List NetSuite purchase order records |
-| `listRecords` | `netsuite.api.listRecords` | `read` | List records of any exposed NetSuite type |
-| `listSalesOrders` | `netsuite.api.listSalesOrders` | `read` | List NetSuite sales order records |
-| `listVendorPayments` | `netsuite.api.listVendorPayments` | `read` | List NetSuite vendor payment records |
-| `oauth2AuthorizeAccountDomain` | `netsuite.api.oauth2AuthorizeAccountDomain` | `read` | Build an OAuth 2.0 authorization URL on the account domain |
-| `oauth2AuthorizeSystemDomain` | `netsuite.api.oauth2AuthorizeSystemDomain` | `read` | Build an OAuth 2.0 authorization URL on the system domain |
-| `oauth2GetJwksKeys` | `netsuite.api.oauth2GetJwksKeys` | `read` | Retrieve NetSuite OAuth 2.0 JWKS public keys |
-| `oauth2Logout` | `netsuite.api.oauth2Logout` | `write` | Log out an OAuth 2.0 session using an ID token hint |
-| `oauth2RevokeRefreshToken` | `netsuite.api.oauth2RevokeRefreshToken` | `write` | Revoke a NetSuite OAuth 2.0 refresh token |
-| `oauth2TokenAuthorizationCode` | `netsuite.api.oauth2TokenAuthorizationCode` | `write` | Exchange an OAuth 2.0 authorization code for tokens |
-| `oauth2TokenClientCredentials` | `netsuite.api.oauth2TokenClientCredentials` | `write` | Exchange a JWT client assertion for an OAuth 2.0 access token |
-| `oauth2TokenRefresh` | `netsuite.api.oauth2TokenRefresh` | `write` | Refresh a NetSuite OAuth 2.0 access token |
-| `runSuiteqlQuery` | `netsuite.api.runSuiteqlQuery` | `read` | Run a SuiteQL query against NetSuite data |
-| `transformRecord` | `netsuite.api.transformRecord` | `write` | Transform a NetSuite record into another record type |
-| `updateCustomer` | `netsuite.api.updateCustomer` | `write` | Update a NetSuite customer record |
-| `updateCustomerPayment` | `netsuite.api.updateCustomerPayment` | `write` | Update a NetSuite customer payment record |
-| `updateEmployee` | `netsuite.api.updateEmployee` | `write` | Update a NetSuite employee record |
-| `updateInvoice` | `netsuite.api.updateInvoice` | `write` | Update a NetSuite invoice record |
-| `updateItem` | `netsuite.api.updateItem` | `write` | Update a NetSuite item record |
-| `updateItemFulfillment` | `netsuite.api.updateItemFulfillment` | `write` | Update a NetSuite item fulfillment record |
-| `updateItemReceipt` | `netsuite.api.updateItemReceipt` | `write` | Update a NetSuite item receipt record |
-| `updateJournalEntry` | `netsuite.api.updateJournalEntry` | `write` | Update a NetSuite journal entry record |
-| `updatePurchaseOrder` | `netsuite.api.updatePurchaseOrder` | `write` | Update a NetSuite purchase order record |
-| `updateSalesOrder` | `netsuite.api.updateSalesOrder` | `write` | Update a NetSuite sales order record |
-| `updateVendor` | `netsuite.api.updateVendor` | `write` | Update a NetSuite vendor record |
-| `updateVendorBill` | `netsuite.api.updateVendorBill` | `write` | Update a NetSuite vendor bill record |
-| `updateVendorPayment` | `netsuite.api.updateVendorPayment` | `write` | Update a NetSuite vendor payment record |
-| `upsertRecordByExternalId` | `netsuite.api.upsertRecordByExternalId` | `write` | Upsert a NetSuite record by external ID |
+| `asyncJobs.asyncGetJobStatus` | `netsuite.api.asyncJobs.asyncGetJobStatus` | `read` | Retrieve the status of an asynchronous NetSuite REST job |
+| `asyncJobs.asyncGetJobTask` | `netsuite.api.asyncJobs.asyncGetJobTask` | `read` | Retrieve the task reference and status for an asynchronous job |
+| `asyncJobs.asyncGetJobTaskResult` | `netsuite.api.asyncJobs.asyncGetJobTaskResult` | `read` | Retrieve the result of an asynchronous job task |
+| `customerPayments.createCustomerPayment` | `netsuite.api.customerPayments.createCustomerPayment` | `write` | Create a NetSuite customer payment record |
+| `customerPayments.deleteCustomerPayment` | `netsuite.api.customerPayments.deleteCustomerPayment` | `destructive` | Delete a NetSuite customer payment record |
+| `customerPayments.getCustomerPayment` | `netsuite.api.customerPayments.getCustomerPayment` | `read` | Get a NetSuite customer payment record by ID |
+| `customerPayments.listCustomerPayments` | `netsuite.api.customerPayments.listCustomerPayments` | `read` | List NetSuite customer payment records |
+| `customerPayments.updateCustomerPayment` | `netsuite.api.customerPayments.updateCustomerPayment` | `write` | Update a NetSuite customer payment record |
+| `customers.createCustomer` | `netsuite.api.customers.createCustomer` | `write` | Create a NetSuite customer record |
+| `customers.deleteCustomer` | `netsuite.api.customers.deleteCustomer` | `destructive` | Delete a NetSuite customer record |
+| `customers.getCustomer` | `netsuite.api.customers.getCustomer` | `read` | Get a NetSuite customer record by internal ID |
+| `customers.updateCustomer` | `netsuite.api.customers.updateCustomer` | `write` | Update a NetSuite customer record |
+| `employees.createEmployee` | `netsuite.api.employees.createEmployee` | `write` | Create a NetSuite employee record |
+| `employees.deleteEmployee` | `netsuite.api.employees.deleteEmployee` | `destructive` | Delete a NetSuite employee record |
+| `employees.getEmployee` | `netsuite.api.employees.getEmployee` | `read` | Get a NetSuite employee record by internal ID |
+| `employees.listEmployees` | `netsuite.api.employees.listEmployees` | `read` | List NetSuite employee records |
+| `employees.updateEmployee` | `netsuite.api.employees.updateEmployee` | `write` | Update a NetSuite employee record |
+| `integrations.listIntegrations` | `netsuite.api.integrations.listIntegrations` | `read` | List NetSuite integration applications and their client IDs |
+| `invoices.createInvoice` | `netsuite.api.invoices.createInvoice` | `write` | Create a NetSuite invoice record |
+| `invoices.deleteInvoice` | `netsuite.api.invoices.deleteInvoice` | `destructive` | Delete a NetSuite invoice record |
+| `invoices.getInvoice` | `netsuite.api.invoices.getInvoice` | `read` | Get a NetSuite invoice record by internal ID |
+| `invoices.listInvoices` | `netsuite.api.invoices.listInvoices` | `read` | List NetSuite invoice records |
+| `invoices.updateInvoice` | `netsuite.api.invoices.updateInvoice` | `write` | Update a NetSuite invoice record |
+| `itemFulfillments.deleteItemFulfillment` | `netsuite.api.itemFulfillments.deleteItemFulfillment` | `destructive` | Delete a NetSuite item fulfillment record |
+| `itemFulfillments.getItemFulfillment` | `netsuite.api.itemFulfillments.getItemFulfillment` | `read` | Get a NetSuite item fulfillment record by ID |
+| `itemFulfillments.listItemFulfillments` | `netsuite.api.itemFulfillments.listItemFulfillments` | `read` | List NetSuite item fulfillment records |
+| `itemFulfillments.updateItemFulfillment` | `netsuite.api.itemFulfillments.updateItemFulfillment` | `write` | Update a NetSuite item fulfillment record |
+| `itemReceipts.deleteItemReceipt` | `netsuite.api.itemReceipts.deleteItemReceipt` | `destructive` | Delete a NetSuite item receipt record |
+| `itemReceipts.getItemReceipt` | `netsuite.api.itemReceipts.getItemReceipt` | `read` | Get a NetSuite item receipt record by internal ID |
+| `itemReceipts.listItemReceipts` | `netsuite.api.itemReceipts.listItemReceipts` | `read` | List NetSuite item receipt records |
+| `itemReceipts.updateItemReceipt` | `netsuite.api.itemReceipts.updateItemReceipt` | `write` | Update a NetSuite item receipt record |
+| `items.createItem` | `netsuite.api.items.createItem` | `write` | Create a NetSuite item record |
+| `items.deleteItem` | `netsuite.api.items.deleteItem` | `destructive` | Delete a NetSuite item record |
+| `items.getItem` | `netsuite.api.items.getItem` | `read` | Get a NetSuite item record by internal ID |
+| `items.updateItem` | `netsuite.api.items.updateItem` | `write` | Update a NetSuite item record |
+| `journalEntries.createJournalEntry` | `netsuite.api.journalEntries.createJournalEntry` | `write` | Create a NetSuite journal entry record |
+| `journalEntries.deleteJournalEntry` | `netsuite.api.journalEntries.deleteJournalEntry` | `destructive` | Delete a NetSuite journal entry record |
+| `journalEntries.getJournalEntry` | `netsuite.api.journalEntries.getJournalEntry` | `read` | Get a NetSuite journal entry record by internal ID |
+| `journalEntries.listJournalEntries` | `netsuite.api.journalEntries.listJournalEntries` | `read` | List NetSuite journal entry records |
+| `journalEntries.updateJournalEntry` | `netsuite.api.journalEntries.updateJournalEntry` | `write` | Update a NetSuite journal entry record |
+| `metadata.getRecordMetadata` | `netsuite.api.metadata.getRecordMetadata` | `read` | Retrieve the metadata schema for a NetSuite record type |
+| `metadata.listMetadataCatalog` | `netsuite.api.metadata.listMetadataCatalog` | `read` | List metadata for all exposed NetSuite record types |
+| `oauth.createJwtClientAssertion` | `netsuite.api.oauth.createJwtClientAssertion` | `read` | Create a signed JWT client assertion for OAuth 2.0 client credentials |
+| `oauth.oauth2AuthorizeAccountDomain` | `netsuite.api.oauth.oauth2AuthorizeAccountDomain` | `read` | Build an OAuth 2.0 authorization URL on the account domain |
+| `oauth.oauth2AuthorizeSystemDomain` | `netsuite.api.oauth.oauth2AuthorizeSystemDomain` | `read` | Build an OAuth 2.0 authorization URL on the system domain |
+| `oauth.oauth2GetJwksKeys` | `netsuite.api.oauth.oauth2GetJwksKeys` | `read` | Retrieve NetSuite OAuth 2.0 JWKS public keys |
+| `oauth.oauth2Logout` | `netsuite.api.oauth.oauth2Logout` | `write` | Log out an OAuth 2.0 session using an ID token hint |
+| `oauth.oauth2RevokeRefreshToken` | `netsuite.api.oauth.oauth2RevokeRefreshToken` | `write` | Revoke a NetSuite OAuth 2.0 refresh token |
+| `oauth.oauth2TokenAuthorizationCode` | `netsuite.api.oauth.oauth2TokenAuthorizationCode` | `write` | Exchange an OAuth 2.0 authorization code for tokens |
+| `oauth.oauth2TokenClientCredentials` | `netsuite.api.oauth.oauth2TokenClientCredentials` | `write` | Exchange a JWT client assertion for an OAuth 2.0 access token |
+| `oauth.oauth2TokenRefresh` | `netsuite.api.oauth.oauth2TokenRefresh` | `write` | Refresh a NetSuite OAuth 2.0 access token |
+| `purchaseOrders.createPurchaseOrder` | `netsuite.api.purchaseOrders.createPurchaseOrder` | `write` | Create a NetSuite purchase order |
+| `purchaseOrders.deletePurchaseOrder` | `netsuite.api.purchaseOrders.deletePurchaseOrder` | `destructive` | Delete a NetSuite purchase order record |
+| `purchaseOrders.getPurchaseOrder` | `netsuite.api.purchaseOrders.getPurchaseOrder` | `read` | Get a NetSuite purchase order by internal ID |
+| `purchaseOrders.listPurchaseOrders` | `netsuite.api.purchaseOrders.listPurchaseOrders` | `read` | List NetSuite purchase order records |
+| `purchaseOrders.updatePurchaseOrder` | `netsuite.api.purchaseOrders.updatePurchaseOrder` | `write` | Update a NetSuite purchase order record |
+| `query.executeDataset` | `netsuite.api.query.executeDataset` | `read` | Execute a SuiteAnalytics Workbook dataset |
+| `query.listDatasets` | `netsuite.api.query.listDatasets` | `read` | List SuiteAnalytics Workbook datasets |
+| `query.runSuiteqlQuery` | `netsuite.api.query.runSuiteqlQuery` | `read` | Run a SuiteQL query against NetSuite data |
+| `records.createRecord` | `netsuite.api.records.createRecord` | `write` | Create a record of any exposed NetSuite type |
+| `records.getReferenceSelectField` | `netsuite.api.records.getReferenceSelectField` | `read` | Retrieve the record referenced by a select-type field |
+| `records.getSublistCollection` | `netsuite.api.records.getSublistCollection` | `read` | Retrieve a sublist collection from a NetSuite record |
+| `records.getSublistLine` | `netsuite.api.records.getSublistLine` | `read` | Retrieve a specific line from a NetSuite sublist |
+| `records.getSubrecord` | `netsuite.api.records.getSubrecord` | `read` | Retrieve a subrecord from a NetSuite parent record |
+| `records.listRecords` | `netsuite.api.records.listRecords` | `read` | List records of any exposed NetSuite type |
+| `records.transformRecord` | `netsuite.api.records.transformRecord` | `write` | Transform a NetSuite record into another record type |
+| `records.upsertRecordByExternalId` | `netsuite.api.records.upsertRecordByExternalId` | `write` | Upsert a NetSuite record by external ID |
+| `salesOrders.createSalesOrder` | `netsuite.api.salesOrders.createSalesOrder` | `write` | Create a NetSuite sales order |
+| `salesOrders.deleteSalesOrder` | `netsuite.api.salesOrders.deleteSalesOrder` | `destructive` | Delete a NetSuite sales order record |
+| `salesOrders.getSalesOrder` | `netsuite.api.salesOrders.getSalesOrder` | `read` | Get a NetSuite sales order record by internal ID |
+| `salesOrders.listSalesOrders` | `netsuite.api.salesOrders.listSalesOrders` | `read` | List NetSuite sales order records |
+| `salesOrders.updateSalesOrder` | `netsuite.api.salesOrders.updateSalesOrder` | `write` | Update a NetSuite sales order record |
+| `system.getDatacenterUrls` | `netsuite.api.system.getDatacenterUrls` | `read` | Discover account-specific NetSuite service domains |
+| `system.getGovernanceLimits` | `netsuite.api.system.getGovernanceLimits` | `read` | Retrieve NetSuite account and integration concurrency limits |
+| `system.getServerTime` | `netsuite.api.system.getServerTime` | `read` | Retrieve the current NetSuite server time in UTC |
+| `vendorBills.createVendorBill` | `netsuite.api.vendorBills.createVendorBill` | `write` | Create a NetSuite vendor bill record |
+| `vendorBills.getVendorBill` | `netsuite.api.vendorBills.getVendorBill` | `read` | Retrieve a NetSuite vendor bill by internal ID |
+| `vendorBills.updateVendorBill` | `netsuite.api.vendorBills.updateVendorBill` | `write` | Update a NetSuite vendor bill record |
+| `vendorPayments.deleteVendorPayment` | `netsuite.api.vendorPayments.deleteVendorPayment` | `destructive` | Delete a NetSuite vendor payment record |
+| `vendorPayments.getVendorPayment` | `netsuite.api.vendorPayments.getVendorPayment` | `read` | Retrieve a NetSuite vendor payment by internal ID |
+| `vendorPayments.listVendorPayments` | `netsuite.api.vendorPayments.listVendorPayments` | `read` | List NetSuite vendor payment records |
+| `vendorPayments.updateVendorPayment` | `netsuite.api.vendorPayments.updateVendorPayment` | `write` | Update a NetSuite vendor payment record |
+| `vendors.createVendor` | `netsuite.api.vendors.createVendor` | `write` | Create a NetSuite vendor record |
+| `vendors.getVendor` | `netsuite.api.vendors.getVendor` | `read` | Get a single NetSuite vendor record by internal ID |
+| `vendors.updateVendor` | `netsuite.api.vendors.updateVendor` | `write` | Update a NetSuite vendor record |
 
 ## Auth
 

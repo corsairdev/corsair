@@ -14,6 +14,11 @@ import type {
 import { getOAuthAccessToken } from 'corsair/core';
 import { netSuiteOAuthTokenUrl, normalizeAccountHost } from './client';
 import { NetSuite } from './endpoints';
+import type { NetSuiteOperationGroups } from './endpoints/groups';
+import {
+	netSuiteOperationGroups,
+	netSuiteOperationPaths,
+} from './endpoints/groups';
 import type { RouteSpec } from './endpoints/specs';
 import { netSuiteSpecs } from './endpoints/specs';
 import type {
@@ -38,7 +43,7 @@ export type NetSuitePluginOptions = {
 	privateKeyPem?: string;
 	hooks?: InternalNetSuitePlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
-	permissions?: PluginPermissionsConfig<typeof netSuiteEndpoints>;
+	permissions?: PluginPermissionsConfig<NetSuiteEndpointsNested>;
 };
 
 export type NetSuiteContext = CorsairPluginContext<
@@ -49,7 +54,7 @@ export type NetSuiteContext = CorsairPluginContext<
 export type NetSuiteKeyBuilderContext =
 	KeyBuilderContext<NetSuitePluginOptions>;
 
-export type NetSuiteBoundEndpoints = BindEndpoints<typeof netSuiteEndpoints>;
+export type NetSuiteBoundEndpoints = BindEndpoints<NetSuiteEndpointsNested>;
 
 type NetSuiteEndpoint<K extends keyof NetSuiteEndpointOutputs> =
 	CorsairEndpoint<
@@ -65,23 +70,33 @@ export type NetSuiteEndpoints = {
 // Cast NetSuite to NetSuiteEndpoints to bind typed endpoint signatures to the constructed endpoint object map.
 const netSuiteEndpoints = NetSuite as NetSuiteEndpoints;
 
+/** Operations grouped by resource: `netsuite.<group>.<operation>`. */
+export type NetSuiteEndpointsNested = {
+	[G in keyof NetSuiteOperationGroups]: {
+		[K in NetSuiteOperationGroups[G][number]]: NetSuiteEndpoints[K];
+	};
+};
+
+const netSuiteEndpointsNested = Object.fromEntries(
+	Object.entries(netSuiteOperationGroups).map(([group, keys]) => [
+		group,
+		Object.fromEntries(keys.map((key) => [key, netSuiteEndpoints[key]])),
+	]),
+	// Object.fromEntries loses the per-group key types; the mapped type above
+	// restores them from the same netSuiteOperationGroups constant.
+) as NetSuiteEndpointsNested;
+
 export const netSuiteEndpointSchemas = Object.fromEntries(
-	Object.keys(NetSuiteEndpointInputSchemas).map((key) => [
-		key,
+	netSuiteOperationPaths.map(([path, key]) => [
+		path,
 		{
-			input:
-				NetSuiteEndpointInputSchemas[
-					key as keyof typeof NetSuiteEndpointInputSchemas
-				],
-			output:
-				NetSuiteEndpointOutputSchemas[
-					key as keyof typeof NetSuiteEndpointOutputSchemas
-				],
+			input: NetSuiteEndpointInputSchemas[key],
+			output: NetSuiteEndpointOutputSchemas[key],
 		},
 	]),
 	// Necessity: Cast mapped schema entries through unknown to RequiredPluginEndpointSchemas.
 	// Why stricter typing is not feasible: Object.fromEntries returns Record<string, unknown> and TypeScript cannot statically verify the dynamically reconstructed per-endpoint schema object map.
-) as unknown as RequiredPluginEndpointSchemas<typeof netSuiteEndpoints>;
+) as unknown as RequiredPluginEndpointSchemas<NetSuiteEndpointsNested>;
 
 const defaultAuthType = 'oauth_2' as const;
 
@@ -100,19 +115,20 @@ const tokenFreeOperations = new Set(
 );
 
 const netSuiteEndpointMeta = Object.fromEntries(
-	Object.entries(netSuiteSpecs).map(([key, spec]) => [
-		key,
-		{
-			riskLevel: spec.riskLevel,
-			...(spec.riskLevel === 'destructive' ? { irreversible: true } : {}),
-			description: spec.metaDescription,
-		},
-	]),
+	netSuiteOperationPaths.map(([path, key]) => {
+		const spec: RouteSpec = netSuiteSpecs[key];
+		return [
+			path,
+			{
+				riskLevel: spec.riskLevel,
+				...(spec.riskLevel === 'destructive' ? { irreversible: true } : {}),
+				description: spec.metaDescription,
+			},
+		];
+	}),
 	// Object.fromEntries returns generic key-value pairs; cast to RequiredPluginEndpointMeta
-	// because TypeScript cannot statically correlate the dynamic spec keys with netSuiteEndpoints.
-) as RequiredPluginEndpointMeta<
-	typeof netSuiteEndpoints
-> satisfies RequiredPluginEndpointMeta<typeof netSuiteEndpoints>;
+	// because TypeScript cannot statically correlate the dynamic paths with the nested endpoints.
+) as RequiredPluginEndpointMeta<NetSuiteEndpointsNested>;
 
 export const netSuiteAuthConfig = {
 	oauth_2: {
@@ -123,7 +139,7 @@ export const netSuiteAuthConfig = {
 export type BaseNetSuitePlugin<T extends NetSuitePluginOptions> = CorsairPlugin<
 	'netsuite',
 	typeof NetSuiteSchema,
-	typeof netSuiteEndpoints,
+	NetSuiteEndpointsNested,
 	{},
 	T,
 	typeof defaultAuthType
@@ -171,7 +187,7 @@ export function netsuite<const T extends NetSuitePluginOptions>(
 		},
 		hooks: options.hooks,
 		webhookHooks: undefined,
-		endpoints: netSuiteEndpoints,
+		endpoints: netSuiteEndpointsNested,
 		webhooks: {},
 		endpointMeta: netSuiteEndpointMeta,
 		endpointSchemas: netSuiteEndpointSchemas,

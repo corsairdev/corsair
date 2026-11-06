@@ -179,13 +179,38 @@ describe('NetSuite plugin', () => {
 		expect(plugin.oauthConfig?.scopes).toEqual(['rest_webservices']);
 		expect(plugin.webhooks).toEqual({});
 		expect(keys).toHaveLength(85);
-		expect(Object.keys(plugin.endpoints ?? {})).toHaveLength(85);
 		expect(Object.keys(plugin.endpointMeta ?? {})).toHaveLength(85);
 		expect(Object.keys(plugin.endpointSchemas ?? {})).toHaveLength(85);
-		expect(plugin.endpointMeta?.oauth2RevokeRefreshToken?.riskLevel).toBe(
+		expect(plugin.endpointMeta?.['oauth.oauth2Logout']?.riskLevel).toBe(
 			'write',
 		);
-		expect(plugin.endpointMeta?.deleteCustomer?.riskLevel).toBe('destructive');
+		expect(plugin.endpointMeta?.['customers.deleteCustomer']?.riskLevel).toBe(
+			'destructive',
+		);
+	});
+
+	it('groups every operation under exactly one resource', () => {
+		const plugin = netsuite({ accountId: ACCOUNT });
+		const paths: string[] = [];
+		for (const [group, ops] of Object.entries(plugin.endpoints ?? {})) {
+			for (const [op, fn] of Object.entries(ops as Record<string, unknown>)) {
+				expect(typeof fn).toBe('function');
+				paths.push(`${group}.${op}`);
+			}
+		}
+		expect(paths).toHaveLength(85);
+		expect(new Set(paths.map((path) => path.split('.')[1]))).toEqual(
+			new Set(keys),
+		);
+		expect(new Set(Object.keys(plugin.endpointMeta ?? {}))).toEqual(
+			new Set(paths),
+		);
+		expect(new Set(Object.keys(plugin.endpointSchemas ?? {}))).toEqual(
+			new Set(paths),
+		);
+		expect(paths).toContain('salesOrders.createSalesOrder');
+		expect(paths).toContain('records.transformRecord');
+		expect(paths).toContain('query.runSuiteqlQuery');
 	});
 
 	it('keeps every route placeholder and query backed by its input schema', () => {
@@ -251,7 +276,7 @@ describe('NetSuite plugin', () => {
 			plugin.keyBuilder?.(
 				{
 					authType: 'oauth_2',
-					meteredOperationId: 'netsuite.getCustomer',
+					meteredOperationId: 'netsuite.customers.getCustomer',
 					keys: {},
 				} as never,
 				'endpoint',
@@ -283,7 +308,7 @@ describe('NetSuite plugin', () => {
 			{
 				authType: 'oauth_2',
 				options: { accountId: ACCOUNT },
-				meteredOperationId: 'netsuite.getCustomer',
+				meteredOperationId: 'netsuite.customers.getCustomer',
 				keys: {
 					get_integration_credentials: async () => ({
 						client_id: 'client-id',
@@ -658,7 +683,7 @@ describe('endpoint dispatch', () => {
 		const key = await plugin.keyBuilder?.(
 			{
 				authType: 'oauth_2',
-				meteredOperationId: 'netsuite.oauth2TokenClientCredentials',
+				meteredOperationId: 'netsuite.oauth.oauth2TokenClientCredentials',
 			} as never,
 			'endpoint',
 		);
@@ -667,7 +692,7 @@ describe('endpoint dispatch', () => {
 		const authKey = await plugin.keyBuilder?.(
 			{
 				authType: 'oauth_2',
-				meteredOperationId: 'netsuite.oauth2AuthorizeAccountDomain',
+				meteredOperationId: 'netsuite.oauth.oauth2AuthorizeAccountDomain',
 			} as never,
 			'endpoint',
 		);

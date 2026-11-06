@@ -8,13 +8,13 @@ factory:
     accountId: "TSTDRV123"
 examples:
   read:
-    path: listRecords
+    path: records.listRecords
     title: List customer records
     args:
       recordType: customer
       limit: 10
   write:
-    path: createCustomer
+    path: customers.createCustomer
     title: Create a customer
     args:
       body:
@@ -24,31 +24,31 @@ examples:
         subsidiary:
           id: "1"
 apiExamples:
-  asyncGetJobStatus:
+  asyncJobs.asyncGetJobStatus:
     jobId: "123"
-  asyncGetJobTask:
-    jobId: "123"
-    taskId: "456"
-  asyncGetJobTaskResult:
+  asyncJobs.asyncGetJobTask:
     jobId: "123"
     taskId: "456"
-  createCustomer:
+  asyncJobs.asyncGetJobTaskResult:
+    jobId: "123"
+    taskId: "456"
+  customers.createCustomer:
     body:
       entityId: "ACME"
       companyName: "Acme Inc."
       isPerson: false
       subsidiary:
         id: "1"
-  createCustomerPayment:
+  customerPayments.createCustomerPayment:
     body:
       customer:
         id: "123"
       payment: 100
-  createEmployee:
+  employees.createEmployee:
     body:
       firstName: "Jane"
       lastName: "Doe"
-  createInvoice:
+  invoices.createInvoice:
     body:
       entity:
         id: "123"
@@ -58,12 +58,12 @@ apiExamples:
               id: "1"
             quantity: 1
             amount: 100
-  createItem:
+  items.createItem:
     record_type: inventoryItem
     body:
       itemId: "WIDGET-01"
       displayName: "Acme Widget"
-  createJournalEntry:
+  journalEntries.createJournalEntry:
     body:
       memo: "Opening balance"
       line:
@@ -74,13 +74,13 @@ apiExamples:
           - account:
               id: "14"
             credit: 300
-  createJwtClientAssertion:
+  oauth.createJwtClientAssertion:
     aud: "https://tstdrv123.suitetalk.api.netsuite.com/services/rest/auth/oauth2/v1/token"
     certificate_id: cert-1
     client_id: "client-id"
     scope: "rest_webservices"
     private_key_pem: "<PEM string with escaped newlines>"
-  createPurchaseOrder:
+  purchaseOrders.createPurchaseOrder:
     entity:
       id: "123"
     item:
@@ -88,7 +88,7 @@ apiExamples:
         - item:
             id: "1"
           quantity: 10
-  createRecord:
+  records.createRecord:
     record_type: customer
     body:
       entityId: "CUST-01"
@@ -96,7 +96,7 @@ apiExamples:
       isPerson: false
       subsidiary:
         id: "1"
-  createSalesOrder:
+  salesOrders.createSalesOrder:
     entity:
       id: "123"
     item:
@@ -104,14 +104,14 @@ apiExamples:
         - item:
             id: "1"
           quantity: 5
-  createVendor:
+  vendors.createVendor:
     body:
       entityId: "SUPPLIER-1"
       companyName: "Global Supplier"
       isPerson: false
       subsidiary:
         id: "1"
-  createVendorBill:
+  vendorBills.createVendorBill:
     body:
       entity:
         id: "123"
@@ -120,199 +120,199 @@ apiExamples:
           - account:
               id: "1"
             amount: 100
-  deleteCustomer:
+  customers.deleteCustomer:
     id: "123"
-  deleteCustomerPayment:
+  customerPayments.deleteCustomerPayment:
     id: "123"
-  deleteEmployee:
+  employees.deleteEmployee:
     id: "123"
-  deleteInvoice:
+  invoices.deleteInvoice:
     id: "123"
-  deleteItem:
+  items.deleteItem:
     item_record_type: inventoryItem
     id: "123"
-  deleteItemFulfillment:
+  itemFulfillments.deleteItemFulfillment:
     id: "123"
-  deleteItemReceipt:
+  itemReceipts.deleteItemReceipt:
     id: "123"
-  deleteJournalEntry:
+  journalEntries.deleteJournalEntry:
     id: "123"
-  deletePurchaseOrder:
+  purchaseOrders.deletePurchaseOrder:
     id: "123"
-  deleteSalesOrder:
+  salesOrders.deleteSalesOrder:
     id: "123"
-  deleteVendorPayment:
+  vendorPayments.deleteVendorPayment:
     id: "123"
-  executeDataset:
+  query.executeDataset:
     dataset_id: "custdataset_sales"
-  getCustomer:
+  customers.getCustomer:
     id: "123"
-  getCustomerPayment:
+  customerPayments.getCustomerPayment:
     id: "123"
-  getDatacenterUrls:
+  system.getDatacenterUrls:
     account: "TSTDRV123"
-  getEmployee:
+  employees.getEmployee:
     id: "123"
-  getGovernanceLimits: {}
-  getInvoice:
+  system.getGovernanceLimits: {}
+  invoices.getInvoice:
     id: "123"
-  getItem:
+  items.getItem:
     itemRecordType: inventoryItem
     id: "123"
-  getItemFulfillment:
+  itemFulfillments.getItemFulfillment:
     id: "123"
-  getItemReceipt:
+  itemReceipts.getItemReceipt:
     id: "123"
-  getJournalEntry:
+  journalEntries.getJournalEntry:
     id: "123"
-  getPurchaseOrder:
+  purchaseOrders.getPurchaseOrder:
     id: "123"
-  getRecordMetadata:
+  metadata.getRecordMetadata:
     record_type: customer
-  getReferenceSelectField:
+  records.getReferenceSelectField:
     record_type: customer
     select_field: subsidiary
     id: "123"
-  getSalesOrder:
+  salesOrders.getSalesOrder:
     id: "123"
-  getServerTime: {}
-  getSublistCollection:
+  system.getServerTime: {}
+  records.getSublistCollection:
     record_type: customer
     id: "123"
     sublist_name: addressBook
-  getSublistLine:
+  records.getSublistLine:
     record_type: customer
     id: "123"
     sublist_name: addressBook
     line_id: "1"
-  getSubrecord:
+  records.getSubrecord:
     record_type: salesOrder
     id: "123"
     subrecord_name: billingaddress
-  getVendor:
+  vendors.getVendor:
     id: "123"
-  getVendorBill:
+  vendorBills.getVendorBill:
     id: "123"
-  getVendorPayment:
+  vendorPayments.getVendorPayment:
     id: "123"
-  listCustomerPayments:
+  customerPayments.listCustomerPayments:
     limit: 20
-  listDatasets:
+  query.listDatasets:
     limit: 20
-  listEmployees:
+  employees.listEmployees:
     limit: 20
-  listIntegrations:
+  integrations.listIntegrations:
     limit: 20
-  listInvoices:
+  invoices.listInvoices:
     limit: 20
-  listItemFulfillments:
+  itemFulfillments.listItemFulfillments:
     limit: 20
-  listItemReceipts:
+  itemReceipts.listItemReceipts:
     limit: 20
-  listJournalEntries:
+  journalEntries.listJournalEntries:
     limit: 20
-  listMetadataCatalog: {}
-  listPurchaseOrders:
+  metadata.listMetadataCatalog: {}
+  purchaseOrders.listPurchaseOrders:
     limit: 20
-  listRecords:
+  records.listRecords:
     recordType: customer
     limit: 20
-  listSalesOrders:
+  salesOrders.listSalesOrders:
     limit: 20
-  listVendorPayments:
+  vendorPayments.listVendorPayments:
     limit: 20
-  oauth2AuthorizeAccountDomain:
+  oauth.oauth2AuthorizeAccountDomain:
     client_id: "client-id"
     redirect_uri: "https://example.com/callback"
     scope: "rest_webservices"
     state: "replace-with-at-least-22-random-characters"
     code_challenge: "replace-with-s256-code-challenge"
     code_challenge_method: S256
-  oauth2AuthorizeSystemDomain:
+  oauth.oauth2AuthorizeSystemDomain:
     client_id: "client-id"
     redirect_uri: "https://example.com/callback"
     scope: "rest_webservices"
     state: "replace-with-at-least-22-random-characters"
     code_challenge: "replace-with-s256-code-challenge"
     code_challenge_method: S256
-  oauth2GetJwksKeys: {}
-  oauth2Logout:
+  oauth.oauth2GetJwksKeys: {}
+  oauth.oauth2Logout:
     id_token_hint: "id-token-xxx"
-  oauth2RevokeRefreshToken:
+  oauth.oauth2RevokeRefreshToken:
     token: "refresh-token-xxx"
     client_id: "client-id"
-  oauth2TokenAuthorizationCode:
+  oauth.oauth2TokenAuthorizationCode:
     code: "auth-code"
     client_id: "client-id"
     redirect_uri: "https://example.com/callback"
     code_verifier: "verifier"
-  oauth2TokenClientCredentials:
+  oauth.oauth2TokenClientCredentials:
     client_assertion: "jwt-assertion-string"
     client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
-  oauth2TokenRefresh:
+  oauth.oauth2TokenRefresh:
     refresh_token: "refresh-token-xxx"
     client_id: "client-id"
     client_secret: "client-secret"
-  runSuiteqlQuery:
+  query.runSuiteqlQuery:
     q: "SELECT id, companyName FROM customer WHERE id = 123"
-  transformRecord:
+  records.transformRecord:
     source_record_type: salesOrder
     record_id: "123"
     target_record_type: invoice
-  updateCustomer:
+  customers.updateCustomer:
     id: "123"
     data:
       comments: "VIP customer"
-  updateCustomerPayment:
+  customerPayments.updateCustomerPayment:
     id: "123"
     data:
       memo: "Payment updated"
-  updateEmployee:
+  employees.updateEmployee:
     id: "123"
     data:
       title: "Lead Engineer"
-  updateInvoice:
+  invoices.updateInvoice:
     id: "123"
     data:
       memo: "Invoice updated"
-  updateItem:
+  items.updateItem:
     item_type: inventoryItem
     id: "123"
     data:
       displayName: "Updated Widget"
-  updateItemFulfillment:
+  itemFulfillments.updateItemFulfillment:
     id: "123"
     data:
       memo: "Fulfillment processed"
-  updateItemReceipt:
+  itemReceipts.updateItemReceipt:
     id: "123"
     data:
       memo: "Receipt processed"
-  updateJournalEntry:
+  journalEntries.updateJournalEntry:
     id: "123"
     data:
       memo: "Q3 adjustment"
-  updatePurchaseOrder:
+  purchaseOrders.updatePurchaseOrder:
     id: "123"
     data:
       memo: "Approved by Purchasing"
-  updateSalesOrder:
+  salesOrders.updateSalesOrder:
     id: "123"
     data:
       memo: "Priority shipping"
-  updateVendor:
+  vendors.updateVendor:
     id: "123"
     data:
       comments: "Primary supplier"
-  updateVendorBill:
+  vendorBills.updateVendorBill:
     id: "123"
     data:
       memo: "Approved for payment"
-  updateVendorPayment:
+  vendorPayments.updateVendorPayment:
     id: "123"
     data:
       memo: "Payment processed"
-  upsertRecordByExternalId:
+  records.upsertRecordByExternalId:
     record_type: customer
     external_id: "EXT-CUST-100"
     body:
