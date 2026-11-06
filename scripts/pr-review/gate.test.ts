@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+	countTestFilesByPlugin,
 	MULTI_PLUGIN_LABEL,
 	parsePrFileRows,
 	renderScorecard,
@@ -226,6 +227,7 @@ const batchInput = {
 	labels: [MULTI_PLUGIN_LABEL],
 	authorAssociation: 'MEMBER',
 	addedFiles: [],
+	testFileCounts: { gumroad: 3, snowflake: 2 },
 };
 
 test('team PR with the multi-plugin label may change several plugins', () => {
@@ -233,7 +235,8 @@ test('team PR with the multi-plugin label may change several plugins', () => {
 	assert.equal(r.isPluginPr, true);
 	assert.deepEqual(r.failures, []);
 	assert.deepEqual(r.batchPlugins, ['gumroad', 'snowflake']);
-	assert.ok(r.checks.some((c) => c.rule === 'R2–R4' && c.status === 'pass'));
+	assert.ok(r.checks.some((c) => c.rule === 'R2' && c.status === 'pass'));
+	assert.ok(r.checks.some((c) => c.rule === 'R3–R4' && c.status === 'pass'));
 	assert.match(renderScorecard(r), /team multi-plugin PR \(2 plugins\)/);
 });
 
@@ -284,10 +287,12 @@ test('a brand-new plugin cannot ride along in a team multi-plugin PR', () => {
 		changedFiles: [...batchFiles, 'packages/newthing/package.json'],
 		addedFiles: ['packages/newthing/package.json'],
 	});
-	assert.equal(r.failures.length, 1);
-	assert.match(
-		r.failures[0]?.message ?? '',
-		/New plugins need their own PR: newthing/,
+	assert.ok(
+		r.failures.some(
+			(f) =>
+				f.rule === 'R1' &&
+				/New plugins need their own PR: newthing/.test(f.message),
+		),
 	);
 });
 
@@ -323,5 +328,38 @@ test('a renamed or copied package.json counts as a new plugin', () => {
 	assert.match(
 		r.failures[0]?.message ?? '',
 		/New plugins need their own PR: newthing/,
+	);
+});
+
+test('every plugin in a team multi-plugin PR still needs tests', () => {
+	const r = runGate({
+		...batchInput,
+		testFileCounts: { gumroad: 3, snowflake: 0 },
+	});
+	assert.deepEqual(
+		r.failures.map((f) => f.rule),
+		['R2'],
+	);
+	assert.match(r.failures[0]?.message ?? '', /packages\/snowflake\//);
+});
+
+test('without per-plugin test counts the normal gate applies', () => {
+	const r = runGate({ ...batchInput, testFileCounts: undefined });
+	assert.equal(r.batchPlugins, undefined);
+});
+
+test('test files are counted per plugin from tree paths', () => {
+	assert.deepEqual(
+		countTestFilesByPlugin(
+			[
+				'packages/gumroad/client.test.ts',
+				'packages/gumroad/tests/sales.test.ts',
+				'packages/gumroad/node_modules/x/a.test.ts',
+				'packages/gumroadx/a.test.ts',
+				'packages/snowflake/README.md',
+			],
+			['gumroad', 'snowflake'],
+		),
+		{ gumroad: 2, snowflake: 0 },
 	);
 });

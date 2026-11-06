@@ -69,6 +69,8 @@ export interface GateInput {
 	labels?: string[];
 	/** GitHub's author_association for the PR author (OWNER, MEMBER, …). */
 	authorAssociation?: string;
+	/** *.test.ts files per touched plugin, for team multi-plugin PRs. */
+	testFileCounts?: Record<string, number>;
 	/** Paths new to the base branch (added, renamed or copied), to spot new plugins. */
 	addedFiles?: string[];
 }
@@ -101,6 +103,32 @@ export function pluginOf(file: string): string | null {
 	// not integrations — the plugin rules (tests, demo video) don't apply.
 	if (IGNORED_PACKAGES.includes(name) || name.startsWith('frpc-')) return null;
 	return name;
+}
+
+/** Every plugin package a PR touches, sorted. */
+export function touchedPlugins(changedFiles: string[]): string[] {
+	return [
+		...new Set(
+			changedFiles.map(pluginOf).filter((p): p is string => p !== null),
+		),
+	].sort();
+}
+
+/** Counts *.test.ts paths (e.g. from a git tree) per plugin. */
+export function countTestFilesByPlugin(
+	testPaths: string[],
+	plugins: string[],
+): Record<string, number> {
+	const counts: Record<string, number> = {};
+	for (const p of plugins) {
+		counts[p] = testPaths.filter(
+			(f) =>
+				f.startsWith(`packages/${p}/`) &&
+				f.endsWith('.test.ts') &&
+				!f.includes('/node_modules/'),
+		).length;
+	}
+	return counts;
 }
 
 /** The plugin a PR targets, or null if it touches no plugin packages. */
@@ -160,7 +188,8 @@ export function parsePrFileRows(raw: string): {
 /**
  * A team PR that is allowed to change several existing plugins at once.
  * Needs the label, a team author and the added-file list (without it a new
- * plugin can't be told apart, so the normal gate applies).
+ * plugin can't be told apart, so the normal gate applies). Same for the
+ * per-plugin test counts.
  */
 export function isTeamMultiPluginPr(
 	input: GateInput,
@@ -169,6 +198,7 @@ export function isTeamMultiPluginPr(
 	return (
 		plugins.size > 1 &&
 		input.addedFiles !== undefined &&
+		input.testFileCounts !== undefined &&
 		(input.labels ?? []).includes(MULTI_PLUGIN_LABEL) &&
 		TEAM_ASSOCIATIONS.includes(input.authorAssociation ?? '')
 	);
@@ -177,9 +207,9 @@ export function isTeamMultiPluginPr(
 /**
  * Scope rules for a team multi-plugin PR. Files must still stay inside the
  * plugins it touches (plus the registry, lockfile and those plugins' docs),
- * and a brand-new plugin still needs its own PR. Tests, the PR template and
- * the demo video (R2–R4) are per-plugin contribution rules, so they don't
- * apply; CI still builds and tests every touched package.
+ * and a brand-new plugin still needs its own PR. Every touched plugin must
+ * have tests (R2, as for a one-plugin PR). The PR template and demo video
+ * (R3–R4) are per-plugin contribution rules, so they don't apply.
  */
 function runTeamMultiPluginGate(
 	input: GateInput,
@@ -220,9 +250,25 @@ function runTeamMultiPluginGate(
 			detail: list.join(', '),
 		});
 	}
+	// R2 — same bar as a one-plugin PR: every touched plugin has tests.
+	const untested = list.filter((p) => (input.testFileCounts?.[p] ?? 0) === 0);
+	checks.push(
+		untested.length > 0
+			? {
+					rule: 'R2',
+					label: 'Tests present',
+					status: 'fail',
+					detail: `No *.test.ts in: ${untested.map((p) => `packages/${p}/`).join(', ')}`,
+				}
+			: {
+					rule: 'R2',
+					label: 'Tests present in every touched plugin',
+					status: 'pass',
+				},
+	);
 	checks.push({
-		rule: 'R2–R4',
-		label: 'Tests, template, demo',
+		rule: 'R3–R4',
+		label: 'Template, demo',
 		status: 'pass',
 		detail: `Not required with the ${MULTI_PLUGIN_LABEL} label; CI builds and tests each touched package`,
 	});

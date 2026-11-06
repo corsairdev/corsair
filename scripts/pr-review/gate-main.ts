@@ -7,6 +7,7 @@ import {
 	parsePrFileRows,
 	renderScorecard,
 	runGate,
+	touchedPlugins,
 } from './gate.ts';
 
 const MARKER = '<!-- corsair-pr-gate -->';
@@ -127,6 +128,12 @@ const labels = gh([
 	.filter(Boolean);
 
 const plugin = detectPlugin(changedFiles);
+const testFileCounts = Object.fromEntries(
+	touchedPlugins(changedFiles).map((p) => [
+		p,
+		countTests(path.join('packages', p)).testFileCount,
+	]),
+);
 const tests = plugin
 	? countTests(path.join('packages', plugin))
 	: { testFileCount: 0, assertionCount: 0 };
@@ -139,6 +146,7 @@ const result = runGate({
 	labels,
 	authorAssociation: event.pull_request.author_association as string,
 	addedFiles,
+	testFileCounts,
 });
 
 if (!result.isPluginPr) {
