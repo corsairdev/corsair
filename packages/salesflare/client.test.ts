@@ -36,10 +36,14 @@ describe('Salesflare client', () => {
 			makeSalesflareRequest({ key: 'secret' }, '/tasks', { method: 'GET' }),
 		).rejects.toThrow(SalesflareAPIError);
 		expect(requestMock).toHaveBeenCalledTimes(1);
+		// enabled stays true so the shared transport reads the Retry-After
+		// headers and attaches them to the thrown error; maxRetries 0 keeps
+		// the transport itself single-attempt.
 		expect(requestMock.mock.calls[0]?.[2]).toMatchObject({
 			rateLimitConfig: expect.objectContaining({
-				enabled: false,
+				enabled: true,
 				maxRetries: 0,
+				headerNames: expect.objectContaining({ retryAfter: 'Retry-After' }),
 			}),
 		});
 	});

@@ -20,10 +20,11 @@ export class SalesflareAPIError extends Error {
 const SALESFLARE_API_BASE = 'https://api.salesflare.com';
 
 const RATE_LIMIT_CONFIG: RateLimitConfig = {
-	// Single retry owner: the plugin error handler owns the 429 policy
-	// (Retry-After aware) so a rate-limited call is never retried by both
-	// the transport and the runtime error-handler loop.
-	enabled: false,
+	// Single retry owner: the plugin error handler owns the 429 retry policy,
+	// so the transport stays single-attempt (maxRetries 0). Keeping enabled
+	// true makes the shared transport read the Retry-After/reset headers and
+	// attach them to the thrown error without ever retrying on its own.
+	enabled: true,
 	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
