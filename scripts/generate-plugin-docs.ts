@@ -111,6 +111,13 @@ type PluginDocsFile = {
 		limit?: number;
 	};
 	/**
+	 * Per-endpoint notes on the API reference page, keyed by shortPath
+	 * (`brands.get`). Markdown, shown under the operation's input table: use it
+	 * for rules the schema can't express as a field description, like "at
+	 * least one of `id` or `name` is required" from a `.refine()`.
+	 */
+	apiNotes?: Record<string, string>;
+	/**
 	 * Per-endpoint call snippets on the API reference page.
 	 * Keys are shortPaths (e.g. `contacts.list`). Values are arg objects (shorthand)
 	 * or `{ args?, call? }` where `call` is the raw TS inside `(...)`.
@@ -542,6 +549,8 @@ function findWebhookByShortPath(
 /** Loose check that a yaml example value matches a docs type string (e.g. `string`, `boolean`). */
 function valueMatchesDocType(value: unknown, typeStr: string): boolean {
 	const t = typeStr.trim();
+	// Any JSON value, and `any`, accept every example.
+	if (/\bJsonValue\b/.test(t) || t === 'any') return true;
 	if (value === null) {
 		return /\bnull\b/.test(t) || t.includes('| null') || t.endsWith('null');
 	}
@@ -679,6 +688,19 @@ function validatePluginDocsConfig(
 
 	validateApiExample(docsConfig.examples?.read, 'examples.read');
 	validateApiExample(docsConfig.examples?.write, 'examples.write');
+
+	if (docsConfig.apiNotes) {
+		for (const [shortPath, note] of Object.entries(docsConfig.apiNotes)) {
+			if (!findEndpointByShortPath(data.api, shortPath)) {
+				errors.push(
+					`${prefix}: apiNotes."${shortPath}" not found on ${pluginId}.api`,
+				);
+			}
+			if (typeof note !== 'string' || note.trim() === '') {
+				errors.push(`${prefix}: apiNotes."${shortPath}" must be markdown text`);
+			}
+		}
+	}
 
 	if (docsConfig.apiExamples) {
 		for (const [shortPath, raw] of Object.entries(docsConfig.apiExamples)) {
@@ -1333,10 +1355,35 @@ function isObjectLikeType(type: string): boolean {
 	return type.includes('{');
 }
 
-/** Table "Type" column: primitives stay literal; object shapes become `object` / `object[]`. */
+/** Splits a type on its top-level `|` (not inside `{}`, `()`, `[]` or `<>`). */
+function topLevelUnionMembers(type: string): string[] {
+	const members: string[] = [];
+	let depth = 0;
+	let start = 0;
+	for (let i = 0; i < type.length; i++) {
+		const ch = type[i];
+		if (ch === '{' || ch === '(' || ch === '[' || ch === '<') depth++;
+		else if (ch === '}' || ch === ')' || ch === ']' || ch === '>') depth--;
+		else if (ch === '|' && depth === 0) {
+			members.push(type.slice(start, i).trim());
+			start = i + 1;
+		}
+	}
+	members.push(type.slice(start).trim());
+	return members;
+}
+
+/**
+ * Table "Type" column: primitives stay literal; object shapes become `object` /
+ * `object[]`, member by member, so `{ … } | null` reads `object | null`.
+ */
 function tableTypeDisplay(type: string): string {
 	const t = type.trim();
 	if (!isObjectLikeType(t)) return type;
+	const members = topLevelUnionMembers(t);
+	if (members.length > 1) {
+		return [...new Set(members.map(tableTypeDisplay))].join(' | ');
+	}
 	if (/\[\]\s*$/.test(t)) return 'object[]';
 	return 'object';
 }
@@ -1351,9 +1398,21 @@ function prettifyTypeBlock(type: string): string {
 	let depth = 0;
 	let i = 0;
 	const n = type.length;
+	// Open brackets, innermost last. `broke` = the opener started a new line, so
+	// its closer goes on its own line too. `<…>` (Record<K, V>) and `(…)` around a
+	// scalar union (`(a | b)[]`) stay on one line; `(` before an object breaks.
+	const open: { ch: string; broke: boolean }[] = [];
 
 	const appendIndent = () => {
 		out += unit.repeat(depth);
+	};
+	const skipSpace = () => {
+		while (i < n && /\s/.test(type[i]!)) i += 1;
+	};
+	const nextNonSpace = (from: number): string | undefined => {
+		let j = from;
+		while (j < n && /\s/.test(type[j]!)) j += 1;
+		return type[j];
 	};
 
 	while (i < n) {
@@ -1363,37 +1422,58 @@ function prettifyTypeBlock(type: string): string {
 		if (ch === '[' && type[i + 1] === ']') {
 			out += '[]';
 			i += 2;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
+			skipSpace();
+			continue;
+		}
+
+		if (ch === '<' || (ch === '(' && nextNonSpace(i + 1) !== '{')) {
+			out += ch;
+			open.push({ ch, broke: false });
+			i += 1;
+			skipSpace();
 			continue;
 		}
 
 		if (ch === '{' || ch === '[' || ch === '(') {
 			out += ch;
+			open.push({ ch, broke: true });
 			depth += 1;
 			out += '\n';
 			appendIndent();
 			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
+			skipSpace();
 			continue;
 		}
 
-		if (ch === '}' || ch === ']' || ch === ')') {
+		if (ch === '>' || ch === '}' || ch === ']' || ch === ')') {
+			const opener = open.pop();
+			if (opener && !opener.broke) {
+				out = out.replace(/[ \t]+$/g, '');
+				out += ch;
+				i += 1;
+				skipSpace();
+				continue;
+			}
 			depth = Math.max(0, depth - 1);
 			out = out.replace(/[ \t]+$/g, '');
 			if (!out.endsWith('\n')) out += '\n';
 			appendIndent();
 			out += ch;
 			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
+			skipSpace();
 			continue;
 		}
 
 		if (ch === ',') {
 			out += ',';
-			out += '\n';
-			appendIndent();
+			if (open.at(-1)?.broke === false) {
+				out += ' ';
+			} else {
+				out += '\n';
+				appendIndent();
+			}
 			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
+			skipSpace();
 			continue;
 		}
 
@@ -1401,7 +1481,7 @@ function prettifyTypeBlock(type: string): string {
 			out = out.replace(/[ \t]+$/g, '');
 			out += ' | ';
 			i += 1;
-			while (i < n && /\s/.test(type[i]!)) i += 1;
+			skipSpace();
 			continue;
 		}
 
@@ -1444,22 +1524,24 @@ function resourceTitle(resource: string): string {
 function formatSchemaShape(
 	shape: DocSchemaShape,
 	kind: 'Input' | 'Output' | 'Payload',
+	note?: string,
 ): string {
+	const noteBlock = note ? `${note.trim()}\n\n` : '';
 	if (shape.kind === 'inline') {
 		if (!isObjectLikeType(shape.type)) {
-			return `**${kind}:** \`${escapeCell(shape.type)}\`\n\n`;
+			return `**${kind}:** \`${escapeCell(shape.type)}\`\n\n${noteBlock}`;
 		}
 		const display = tableTypeDisplay(shape.type);
 		return `**${kind}:** \`${escapeCell(display)}\`
 
-<AccordionGroup>
+${noteBlock}<AccordionGroup>
 ${renderTypeAccordionItem(kind, shape.type)}
 </AccordionGroup>
 
 `;
 	}
 	if (shape.fields.length === 0) {
-		return `**${kind}:** _empty object_\n\n`;
+		return `**${kind}:** _empty object_\n\n${noteBlock}`;
 	}
 	const detailBlocks: string[] = [];
 	const rows = shape.fields
@@ -1485,7 +1567,7 @@ ${detailBlocks.join('\n\n')}
 |------|------|----------|-------------|
 ${rows}
 
-${detailsSection}
+${noteBlock}${detailsSection}
 `;
 }
 
@@ -1504,6 +1586,7 @@ function buildApiMdx(
 	title: string,
 	data: PluginDocsIntrospection,
 	apiExamples: PluginDocsFile['apiExamples'],
+	apiNotes?: PluginDocsFile['apiNotes'],
 ): string {
 	const byGroup = new Map<string, typeof data.api>();
 	for (const ep of data.api) {
@@ -1537,7 +1620,9 @@ function buildApiMdx(
 			sections.push(`await ${callExpr}(${callArgs});`);
 			sections.push('```');
 			sections.push('');
-			sections.push(formatSchemaShape(ep.input, 'Input'));
+			sections.push(
+				formatSchemaShape(ep.input, 'Input', apiNotes?.[ep.shortPath]),
+			);
 			sections.push(formatSchemaShape(ep.output, 'Output'));
 			sections.push('---');
 			sections.push('');
@@ -1565,6 +1650,24 @@ function buildDbMdx(
 	title: string,
 	data: PluginDocsIntrospection,
 ): string {
+	// A plugin without schema entities only makes live API calls: say so
+	// instead of pointing readers at `.db.<entity>.search()` paths that do not
+	// exist.
+	if (data.db.length === 0) {
+		const description = `${title} returns live API data and stores no local entities.`;
+		return `---
+title: Database
+description: ${yamlDoubleQuotedScalar(description)}
+---
+
+The ${title} plugin returns live API data and does not sync or store entities locally. No local \`.search()\` operations are available.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+`;
+	}
+
 	const blocks: string[] = [];
 	for (const ent of data.db) {
 		const filterRows = ent.filters
@@ -2030,7 +2133,13 @@ async function generatePluginDocsForEntry(
 
 	writeFileSync(
 		join(outDir, 'api.mdx'),
-		buildApiMdx(pluginId, title, docData, docsConfig.apiExamples),
+		buildApiMdx(
+			pluginId,
+			title,
+			docData,
+			docsConfig.apiExamples,
+			docsConfig.apiNotes,
+		),
 		'utf8',
 	);
 	writeFileSync(
