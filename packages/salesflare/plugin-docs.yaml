@@ -1,0 +1,14 @@
+displayName: Salesflare
+description: CRM for small-to-medium B2B companies with automated data entry, pipeline management, and customer relationships.
+domain: salesflare.com
+recommendedAuth: api_key
+examples:
+  read:
+    path: accounts.listAccounts
+    title: List accounts
+    args: {}
+  write:
+    path: accounts.createAccount
+    title: Create an account
+    args:
+      name: Acme Inc
