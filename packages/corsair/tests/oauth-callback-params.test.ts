@@ -34,10 +34,10 @@ describe('OAuth callback param propagation to tenant-link resolution', () => {
 			'github',
 			providerData,
 		);
-		expect(link).toEqual({ linkType: 'installation_id', externalId: '123' });
+		expect(link).toEqual([{ linkType: 'installation_id', externalId: '123' }]);
 	});
 
-	it('leaves slack (team.id in token body) unchanged', async () => {
+	it('resolves slack team_id alone when the token has no authed_user', async () => {
 		const providerData = mergeProviderData(
 			{},
 			{ access_token: 'xoxb', team: { id: 'T123' } },
@@ -47,7 +47,23 @@ describe('OAuth callback param propagation to tenant-link resolution', () => {
 			'slack',
 			providerData,
 		);
-		expect(link).toEqual({ linkType: 'team_id', externalId: 'T123' });
+		expect(link).toEqual([{ linkType: 'team_id', externalId: 'T123' }]);
+	});
+
+	it('adds a slack user-scoped link from authed_user.id', async () => {
+		const providerData = mergeProviderData(
+			{},
+			{ access_token: 'xoxb', team: { id: 'T123' }, authed_user: { id: 'U9' } },
+		);
+		const link = await resolveOAuthWebhookTenantLink(
+			[slackPlugin],
+			'slack',
+			providerData,
+		);
+		expect(link).toEqual([
+			{ linkType: 'team_id', externalId: 'T123' },
+			{ linkType: 'slack_user', externalId: 'T123:U9' },
+		]);
 	});
 
 	it('token body wins over a colliding callback param', async () => {
@@ -60,9 +76,8 @@ describe('OAuth callback param propagation to tenant-link resolution', () => {
 			'github',
 			providerData,
 		);
-		expect(link).toEqual({
-			linkType: 'installation_id',
-			externalId: 'from-body',
-		});
+		expect(link).toEqual([
+			{ linkType: 'installation_id', externalId: 'from-body' },
+		]);
 	});
 });
