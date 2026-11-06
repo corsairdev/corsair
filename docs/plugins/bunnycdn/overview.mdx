@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Bunnycdn plugin for Corsair"
+description: "Edge platform API for managing pull zones, storage zones, DNS zones, Shield security, and Magic Containers, purging cache, and reading statistics and billing."
 ---
 
-Use **Bunnycdn** through Corsair: one client, typed API calls.
+Use **bunny.net** through Corsair: one client, typed API calls.
 
 **What you get:**
 
@@ -89,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`apiKeys.list`**
+**List pull zones**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.bunnycdn.api.apiKeys.list({});
+await tenant.bunnycdn.api.pullZone.list({});
 ```
 
 
-**`containers.registryDelete`**
+**Purge a URL from the cache**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.bunnycdn.api.containers.registryDelete({});
+await tenant.bunnycdn.api.purge.url({ url: 'https://example.b-cdn.net/image.png' });
 ```
 
 

@@ -1037,7 +1037,7 @@
                 ]
               },
               {
-                "group": "Bunnycdn",
+                "group": "bunny.net",
                 "pages": [
                   "plugins/bunnycdn/overview",
                   "plugins/bunnycdn/api",
