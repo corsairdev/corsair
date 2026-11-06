@@ -512,13 +512,21 @@ async function syncEntityCache(
 		const location = isRecord(response) ? response.location : undefined;
 		const items = cacheItems(response);
 		if (items.length > 0) {
+			// A single-record GET without `fields` is the whole record. NetSuite
+			// leaves empty fields out of it, so it replaces the saved row; merging
+			// would keep values that were cleared in NetSuite. List items (id and
+			// links only) and `fields=` reads are partial and merge instead.
+			const fullRecord =
+				spec.method === 'GET' &&
+				!(isRecord(response) && Array.isArray(response.items)) &&
+				read(input, 'fields') === undefined;
 			for (const item of items) {
 				const id = item.id ?? item.entityId;
 				if (typeof id !== 'string' && typeof id !== 'number') continue;
 				const stringId = String(id);
-				// Partial reads (e.g. fields: 'email') must not erase previously saved fields.
-				// Merge with existing record data if available.
-				const existing = await client.findByEntityId?.(stringId);
+				const existing = fullRecord
+					? undefined
+					: await client.findByEntityId?.(stringId);
 				const existingData =
 					existing && isRecord(existing.data) ? existing.data : {};
 				await client.upsertByEntityId(
@@ -537,7 +545,9 @@ async function syncEntityCache(
 			const existingData =
 				existing && isRecord(existing.data) ? existing.data : {};
 			const merged = mergeCacheRecord(existingData, isRecord(body) ? body : {});
-			await client.upsertByEntityId(id, { ...merged, id, location });
+			// `location` here is the HTTP Location header (a URL). Records have their
+			// own `location` field (a reference), so the URL is not stored.
+			await client.upsertByEntityId(id, { ...merged, id });
 		}
 	} catch (error) {
 		console.warn(`[netsuite] failed to sync ${entity} cache:`, error);

@@ -20,6 +20,7 @@ import {
 	NetSuiteCustomerPaymentEntity,
 	NetSuiteEmployeeEntity,
 	NetSuiteInvoiceEntity,
+	NetSuiteItemEntity,
 	NetSuiteItemFulfillmentEntity,
 } from './schema';
 
@@ -300,6 +301,15 @@ describe('NetSuite plugin', () => {
 		expect(() =>
 			NetSuiteEmployeeEntity.parse({ supervisor: { id: false } }),
 		).toThrow();
+		expect(
+			NetSuiteItemEntity.parse({
+				id: '7',
+				itemType: { id: 'InvtPart', refName: 'Inventory Item' },
+			}).itemType,
+		).toEqual({ id: 'InvtPart', refName: 'Inventory Item' });
+		expect(NetSuiteItemEntity.parse({ itemType: 'InvtPart' }).itemType).toBe(
+			'InvtPart',
+		);
 	});
 
 	it('uses the stored access token when no refresh credentials exist', async () => {
@@ -745,14 +755,114 @@ describe('endpoint dispatch', () => {
 			body: { companyName: 'New Corp' },
 		});
 		expect(result).toEqual({ location: locationUrl });
-		expect(upsertMock).toHaveBeenCalledWith(
-			'789',
-			expect.objectContaining({
-				id: '789',
-				location: locationUrl,
-				companyName: 'New Corp',
+		expect(upsertMock).toHaveBeenCalledWith('789', {
+			id: '789',
+			companyName: 'New Corp',
+		});
+	});
+
+	it('keeps a record location reference when a write returns a Location header', async () => {
+		const upsertMock = jest.fn();
+		const warehouse = { id: '3', refName: 'Main Warehouse' };
+		const ctx = {
+			...mockCtx(),
+			db: {
+				purchaseOrders: {
+					findByEntityId: jest.fn().mockResolvedValue({
+						data: { id: '55', memo: 'old', location: warehouse },
+					}),
+					upsertByEntityId: upsertMock,
+				},
+			},
+		};
+		globalThis.fetch = jest.fn().mockResolvedValue({
+			ok: true,
+			status: 204,
+			statusText: 'No Content',
+			headers: new Headers({
+				Location:
+					'https://tstdrv123.suitetalk.api.netsuite.com/services/rest/record/v1/purchaseOrder/55',
 			}),
-		);
+			text: async () => '',
+			json: async () => ({}),
+			arrayBuffer: async () => Buffer.from(''),
+		}) as unknown as typeof fetch;
+
+		await NetSuite.updatePurchaseOrder(ctx as never, {
+			id: '55',
+			data: { memo: 'new' },
+		});
+		expect(upsertMock).toHaveBeenCalledWith('55', {
+			id: '55',
+			memo: 'new',
+			location: warehouse,
+		});
+	});
+
+	it('replaces the saved row on a full read so fields cleared in NetSuite go away', async () => {
+		const upsertMock = jest.fn();
+		const findMock = jest.fn().mockResolvedValue({
+			data: { id: '789', companyName: 'Acme Corp', phone: '555-0100' },
+		});
+		const ctx = {
+			...mockCtx(),
+			db: {
+				customers: {
+					findByEntityId: findMock,
+					upsertByEntityId: upsertMock,
+				},
+			},
+		};
+		// NetSuite leaves empty fields out of a record response: phone was cleared.
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(
+				jsonResponse({ id: '789', companyName: 'Acme Corp' }),
+			) as unknown as typeof fetch;
+
+		await NetSuite.getCustomer(ctx as never, { id: '789' });
+		expect(findMock).not.toHaveBeenCalled();
+		expect(upsertMock).toHaveBeenCalledWith('789', {
+			id: '789',
+			companyName: 'Acme Corp',
+		});
+	});
+
+	it('merges list items, which carry only id and links, into saved rows', async () => {
+		const upsertMock = jest.fn();
+		const ctx = {
+			...mockCtx(),
+			db: {
+				customers: {
+					findByEntityId: jest.fn().mockResolvedValue({
+						data: { id: '789', companyName: 'Acme Corp' },
+					}),
+					upsertByEntityId: upsertMock,
+				},
+			},
+		};
+		const links = [
+			{
+				rel: 'self',
+				href: 'https://tstdrv123.suitetalk.api.netsuite.com/services/rest/record/v1/customer/789',
+			},
+		];
+		globalThis.fetch = jest.fn().mockResolvedValue(
+			jsonResponse({
+				items: [{ id: '789', links }],
+				count: 1,
+				hasMore: false,
+				offset: 0,
+				totalResults: 1,
+			}),
+		) as unknown as typeof fetch;
+
+		await NetSuite.listRecords(ctx as never, { recordType: 'customer' });
+		expect(upsertMock).toHaveBeenCalledWith('789', {
+			id: '789',
+			companyName: 'Acme Corp',
+			links,
+		});
 	});
 
 	it('resolves refresh credentials from context defaults and rejects when missing', async () => {
@@ -879,8 +989,6 @@ describe('endpoint dispatch', () => {
 		expect(upsertMock).toHaveBeenCalledWith('9', {
 			id: '9',
 			email: 'person@example.com',
-			location:
-				'https://tstdrv123.suitetalk.api.netsuite.com/services/rest/record/v1/employee/9',
 		});
 	});
 

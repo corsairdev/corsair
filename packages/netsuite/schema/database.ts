@@ -23,7 +23,7 @@ const netSuiteReferenceSchema = z.union([
 	z.number(),
 ]);
 
-// NetSuite returns status fields as strings or reference objects depending on simpleEnumFormat.
+// NetSuite returns enum fields (status, itemType) as strings or reference objects depending on simpleEnumFormat.
 const netSuiteStatusSchema = z.union([
 	z.string(),
 	netSuiteReferenceObjectSchema,
@@ -97,7 +97,8 @@ export const NetSuiteItemEntity = z
 		...baseRecord,
 		itemId: z.string().optional(),
 		displayName: z.string().optional(),
-		itemType: z.string().optional(),
+		// An enum field: { id, refName } unless the read used simpleEnumFormat.
+		itemType: netSuiteStatusSchema.optional(),
 		isInactive: z.boolean().optional(),
 		basePrice: z.number().optional(),
 		incomeAccount: netSuiteReferenceSchema.optional(),
