@@ -55,12 +55,12 @@ await corsair.ocrwebservice.api.account.getInformation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ErrorMessage` | `string` | No | — |
-| `AvailablePages` | `number` | No | — |
-| `MaxPages` | `number` | No | — |
-| `LastProcessingTime` | `string` | No | — |
-| `SubcriptionPlan` | `string` | No | — |
-| `ExpirationDate` | `string` | No | — |
+| `ErrorMessage` | `string \| null` | No | — |
+| `AvailablePages` | `number \| null` | No | — |
+| `MaxPages` | `number \| null` | No | — |
+| `LastProcessingTime` | `string \| null` | No | — |
+| `SubcriptionPlan` | `string \| null` | No | — |
+| `ExpirationDate` | `string \| null` | No | — |
 
 
 
@@ -117,7 +117,7 @@ await corsair.ocrwebservice.api.ocr.recognize({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `file` | `custom` | Yes | — |
-| `language` | `string` | Yes | — |
+| `language` | `string` | No | Defaults to "english". |
 | `pagerange` | `string` | No | — |
 | `tobw` | `boolean` | No | — |
 | `zone` | `string` | No | — |
@@ -133,13 +133,13 @@ await corsair.ocrwebservice.api.ocr.recognize({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ErrorMessage` | `string` | No | — |
-| `AvailablePages` | `number` | No | — |
-| `ProcessedPages` | `number` | No | — |
-| `OCRText` | `string[][]` | No | — |
-| `OutputFileUrl` | `string` | No | — |
-| `TaskDescription` | `string` | No | — |
-| `Reserved` | `any[]` | No | — |
+| `ErrorMessage` | `string \| null` | No | — |
+| `AvailablePages` | `number \| null` | No | — |
+| `ProcessedPages` | `number \| null` | No | — |
+| `OCRText` | `string[][] \| null` | No | — |
+| `OutputFileUrl` | `string \| null` | No | — |
+| `TaskDescription` | `string \| null` | No | — |
+| `Reserved` | `any[] \| null` | No | — |
 
 
 

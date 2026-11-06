@@ -83,12 +83,12 @@ await corsair.toggl.api.clients.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `wid` | `number` | No | — |
+| `wid` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `notes` | `string` | No | — |
-| `archived` | `boolean` | No | — |
-| `creator_id` | `number` | No | — |
-| `at` | `string` | No | — |
+| `notes` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `creator_id` | `number \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -152,12 +152,12 @@ await corsair.toggl.api.clients.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `wid` | `number` | No | — |
+| `wid` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `notes` | `string` | No | — |
-| `archived` | `boolean` | No | — |
-| `creator_id` | `number` | No | — |
-| `at` | `string` | No | — |
+| `notes` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `creator_id` | `number \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -235,12 +235,12 @@ await corsair.toggl.api.clients.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `wid` | `number` | No | — |
+| `wid` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `notes` | `string` | No | — |
-| `archived` | `boolean` | No | — |
-| `creator_id` | `number` | No | — |
-| `at` | `string` | No | — |
+| `notes` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `creator_id` | `number \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -334,21 +334,21 @@ await corsair.toggl.api.me.get({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `email` | `string` | Yes | — |
-| `fullname` | `string` | No | — |
-| `timezone` | `string` | No | — |
-| `toggl_accounts_id` | `string` | No | — |
-| `user_account_id` | `number` | No | — |
-| `default_workspace_id` | `number` | No | — |
-| `beginning_of_week` | `number` | No | — |
-| `image_url` | `string` | No | — |
-| `country_id` | `number` | No | — |
-| `has_password` | `boolean` | No | — |
-| `openid_email` | `string` | No | — |
-| `openid_enabled` | `boolean` | No | — |
-| `oauth_providers` | `string[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `at` | `string` | No | — |
+| `fullname` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `toggl_accounts_id` | `string \| null` | No | — |
+| `user_account_id` | `number \| null` | No | — |
+| `default_workspace_id` | `number \| null` | No | — |
+| `beginning_of_week` | `number \| null` | No | — |
+| `image_url` | `string \| null` | No | — |
+| `country_id` | `number \| null` | No | — |
+| `has_password` | `boolean \| null` | No | — |
+| `openid_email` | `string \| null` | No | — |
+| `openid_enabled` | `boolean \| null` | No | — |
+| `oauth_providers` | `string[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -415,11 +415,11 @@ await corsair.toggl.api.me.getLocation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `city` | `string` | No | — |
-| `city_lat_long` | `string` | No | — |
-| `state` | `string` | No | — |
-| `country_code` | `string` | No | — |
-| `country_name` | `string` | No | — |
+| `city` | `string \| null` | No | — |
+| `city_lat_long` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `country_name` | `string \| null` | No | — |
 
 
 
@@ -469,26 +469,16 @@ await corsair.toggl.api.me.getPreferences({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `BeginningOfWeek` | `number` | No | — |
-| `timeofday_format` | `string` | No | — |
-| `date_format` | `string` | No | — |
-| `duration_format` | `string` | No | — |
-| `record_timeline` | `boolean` | No | — |
-| `send_product_emails` | `boolean` | No | — |
-| `send_timer_notifications` | `boolean` | No | — |
-| `send_weekly_report` | `boolean` | No | — |
-| `pg_time_zone_name` | `string` | No | — |
-| `alpha_features` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="alpha_features full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `BeginningOfWeek` | `number \| null` | No | — |
+| `timeofday_format` | `string \| null` | No | — |
+| `date_format` | `string \| null` | No | — |
+| `duration_format` | `string \| null` | No | — |
+| `record_timeline` | `boolean \| null` | No | — |
+| `send_product_emails` | `boolean \| null` | No | — |
+| `send_timer_notifications` | `boolean \| null` | No | — |
+| `send_weekly_report` | `boolean \| null` | No | — |
+| `pg_time_zone_name` | `string \| null` | No | — |
+| `alpha_features` | `Record<string, any>[] \| null` | No | — |
 
 
 
@@ -570,7 +560,7 @@ await corsair.toggl.api.me.getQuota({});
 
 ```ts
 {
-  organization_id?: number | null,
+  organization_id: number | null,
   remaining: number,
   total: number,
   resets_in_secs?: number | null
@@ -697,21 +687,21 @@ await corsair.toggl.api.me.update({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `email` | `string` | Yes | — |
-| `fullname` | `string` | No | — |
-| `timezone` | `string` | No | — |
-| `toggl_accounts_id` | `string` | No | — |
-| `user_account_id` | `number` | No | — |
-| `default_workspace_id` | `number` | No | — |
-| `beginning_of_week` | `number` | No | — |
-| `image_url` | `string` | No | — |
-| `country_id` | `number` | No | — |
-| `has_password` | `boolean` | No | — |
-| `openid_email` | `string` | No | — |
-| `openid_enabled` | `boolean` | No | — |
-| `oauth_providers` | `string[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `at` | `string` | No | — |
+| `fullname` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `toggl_accounts_id` | `string \| null` | No | — |
+| `user_account_id` | `number \| null` | No | — |
+| `default_workspace_id` | `number \| null` | No | — |
+| `beginning_of_week` | `number \| null` | No | — |
+| `image_url` | `string \| null` | No | — |
+| `country_id` | `number \| null` | No | — |
+| `has_password` | `boolean \| null` | No | — |
+| `openid_email` | `string \| null` | No | — |
+| `openid_enabled` | `boolean \| null` | No | — |
+| `oauth_providers` | `string[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -743,26 +733,16 @@ await corsair.toggl.api.me.updatePreferences({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `BeginningOfWeek` | `number` | No | — |
-| `timeofday_format` | `string` | No | — |
-| `date_format` | `string` | No | — |
-| `duration_format` | `string` | No | — |
-| `record_timeline` | `boolean` | No | — |
-| `send_product_emails` | `boolean` | No | — |
-| `send_timer_notifications` | `boolean` | No | — |
-| `send_weekly_report` | `boolean` | No | — |
-| `pg_time_zone_name` | `string` | No | — |
-| `alpha_features` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="alpha_features full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `BeginningOfWeek` | `number \| null` | No | — |
+| `timeofday_format` | `string \| null` | No | — |
+| `date_format` | `string \| null` | No | — |
+| `duration_format` | `string \| null` | No | — |
+| `record_timeline` | `boolean \| null` | No | — |
+| `send_product_emails` | `boolean \| null` | No | — |
+| `send_timer_notifications` | `boolean \| null` | No | — |
+| `send_weekly_report` | `boolean \| null` | No | — |
+| `pg_time_zone_name` | `string \| null` | No | — |
+| `alpha_features` | `Record<string, any>[] \| null` | No | — |
 
 
 
@@ -797,14 +777,14 @@ await corsair.toggl.api.organizations.create({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
-| `pricing_plan_id` | `number` | No | — |
-| `created_at` | `string` | No | — |
-| `is_multi_workspace_enabled` | `boolean` | No | — |
-| `max_workspaces` | `number` | No | — |
-| `admin` | `boolean` | No | — |
-| `owner` | `boolean` | No | — |
-| `trial_info` | `any` | No | — |
-| `at` | `string` | No | — |
+| `pricing_plan_id` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `is_multi_workspace_enabled` | `boolean \| null` | No | — |
+| `max_workspaces` | `number \| null` | No | — |
+| `admin` | `boolean \| null` | No | — |
+| `owner` | `boolean \| null` | No | — |
+| `trial_info` | `any \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -835,31 +815,13 @@ await corsair.toggl.api.organizations.createGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `group_id` | `number` | No | — |
-| `id` | `number` | No | — |
-| `organization_id` | `number` | No | — |
+| `group_id` | `number \| null` | No | — |
+| `id` | `number \| null` | No | — |
+| `organization_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `users` | `object[]` | No | — |
-| `workspaces` | `object[]` | No | — |
-| `at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="users full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="workspaces full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `users` | `Record<string, any>[] \| null` | No | — |
+| `workspaces` | `Record<string, any>[] \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -900,17 +862,7 @@ await corsair.toggl.api.organizations.createInvitation({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -973,14 +925,14 @@ await corsair.toggl.api.organizations.get({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
-| `pricing_plan_id` | `number` | No | — |
-| `created_at` | `string` | No | — |
-| `is_multi_workspace_enabled` | `boolean` | No | — |
-| `max_workspaces` | `number` | No | — |
-| `admin` | `boolean` | No | — |
-| `owner` | `boolean` | No | — |
-| `trial_info` | `any` | No | — |
-| `at` | `string` | No | — |
+| `pricing_plan_id` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `is_multi_workspace_enabled` | `boolean \| null` | No | — |
+| `max_workspaces` | `number \| null` | No | — |
+| `admin` | `boolean \| null` | No | — |
+| `owner` | `boolean \| null` | No | — |
+| `trial_info` | `any \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -1017,10 +969,8 @@ await corsair.toggl.api.organizations.getGroups({});
   id?: number | null,
   organization_id?: number | null,
   name: string,
-  users?: {
-  }[] | null,
-  workspaces?: {
-  }[] | null,
+  users?: Record<string, any>[] | null,
+  workspaces?: Record<string, any>[] | null,
   at?: string | null
 }[]
 ```
@@ -1050,17 +1000,7 @@ await corsair.toggl.api.organizations.getPlans({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1085,17 +1025,7 @@ await corsair.toggl.api.organizations.getSubscriptionPlans({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1142,10 +1072,8 @@ await corsair.toggl.api.organizations.getUsers({});
   owner?: boolean | null,
   joined?: boolean | null,
   inactive?: boolean | null,
-  workspaces?: {
-  }[] | null,
-  groups?: {
-  }[] | null
+  workspaces?: Record<string, any>[] | null,
+  groups?: Record<string, any>[] | null
 }[]
 ```
 </Accordion>
@@ -1234,14 +1162,14 @@ await corsair.toggl.api.organizations.update({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `name` | `string` | Yes | — |
-| `pricing_plan_id` | `number` | No | — |
-| `created_at` | `string` | No | — |
-| `is_multi_workspace_enabled` | `boolean` | No | — |
-| `max_workspaces` | `number` | No | — |
-| `admin` | `boolean` | No | — |
-| `owner` | `boolean` | No | — |
-| `trial_info` | `any` | No | — |
-| `at` | `string` | No | — |
+| `pricing_plan_id` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `is_multi_workspace_enabled` | `boolean \| null` | No | — |
+| `max_workspaces` | `number \| null` | No | — |
+| `admin` | `boolean \| null` | No | — |
+| `owner` | `boolean \| null` | No | — |
+| `trial_info` | `any \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -1279,13 +1207,13 @@ await corsair.toggl.api.projects.addUser({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `project_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
-| `workspace_id` | `number` | No | — |
-| `manager` | `boolean` | No | — |
-| `rate` | `number` | No | — |
-| `labour_cost` | `number` | No | — |
-| `at` | `string` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `workspace_id` | `number \| null` | No | — |
+| `manager` | `boolean \| null` | No | — |
+| `rate` | `number \| null` | No | — |
+| `labour_cost` | `number \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -1325,24 +1253,24 @@ await corsair.toggl.api.projects.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `workspace_id` | `number` | No | — |
-| `client_id` | `number` | No | — |
+| `workspace_id` | `number \| null` | No | — |
+| `client_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `is_private` | `boolean` | No | — |
-| `active` | `boolean` | No | — |
-| `billable` | `boolean` | No | — |
-| `color` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `rate` | `number` | No | — |
-| `estimated_hours` | `number` | No | — |
-| `actual_hours` | `number` | No | — |
-| `start_date` | `string` | No | — |
-| `end_date` | `string` | No | — |
-| `template` | `boolean` | No | — |
-| `recurring` | `boolean` | No | — |
-| `server_deleted_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `at` | `string` | No | — |
+| `is_private` | `boolean \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `rate` | `number \| null` | No | — |
+| `estimated_hours` | `number \| null` | No | — |
+| `actual_hours` | `number \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `template` | `boolean \| null` | No | — |
+| `recurring` | `boolean \| null` | No | — |
+| `server_deleted_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -1438,24 +1366,24 @@ await corsair.toggl.api.projects.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `workspace_id` | `number` | No | — |
-| `client_id` | `number` | No | — |
+| `workspace_id` | `number \| null` | No | — |
+| `client_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `is_private` | `boolean` | No | — |
-| `active` | `boolean` | No | — |
-| `billable` | `boolean` | No | — |
-| `color` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `rate` | `number` | No | — |
-| `estimated_hours` | `number` | No | — |
-| `actual_hours` | `number` | No | — |
-| `start_date` | `string` | No | — |
-| `end_date` | `string` | No | — |
-| `template` | `boolean` | No | — |
-| `recurring` | `boolean` | No | — |
-| `server_deleted_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `at` | `string` | No | — |
+| `is_private` | `boolean \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `rate` | `number \| null` | No | — |
+| `estimated_hours` | `number \| null` | No | — |
+| `actual_hours` | `number \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `template` | `boolean \| null` | No | — |
+| `recurring` | `boolean \| null` | No | — |
+| `server_deleted_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -1538,7 +1466,7 @@ await corsair.toggl.api.projects.update({});
 | `workspace_id` | `number` | Yes | — |
 | `project_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
-| `client_id` | `number` | No | — |
+| `client_id` | `number \| null` | No | — |
 | `active` | `boolean` | No | — |
 | `is_private` | `boolean` | No | — |
 | `billable` | `boolean` | No | — |
@@ -1551,24 +1479,24 @@ await corsair.toggl.api.projects.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `workspace_id` | `number` | No | — |
-| `client_id` | `number` | No | — |
+| `workspace_id` | `number \| null` | No | — |
+| `client_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `is_private` | `boolean` | No | — |
-| `active` | `boolean` | No | — |
-| `billable` | `boolean` | No | — |
-| `color` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `rate` | `number` | No | — |
-| `estimated_hours` | `number` | No | — |
-| `actual_hours` | `number` | No | — |
-| `start_date` | `string` | No | — |
-| `end_date` | `string` | No | — |
-| `template` | `boolean` | No | — |
-| `recurring` | `boolean` | No | — |
-| `server_deleted_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `at` | `string` | No | — |
+| `is_private` | `boolean \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `rate` | `number \| null` | No | — |
+| `estimated_hours` | `number \| null` | No | — |
+| `actual_hours` | `number \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `template` | `boolean \| null` | No | — |
+| `recurring` | `boolean \| null` | No | — |
+| `server_deleted_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -1703,17 +1631,7 @@ await corsair.toggl.api.reference.getKeys({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `keys` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="keys full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `keys` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1898,10 +1816,10 @@ await corsair.toggl.api.tags.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `workspace_id` | `number` | No | — |
+| `workspace_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `creator_id` | `number` | No | — |
-| `at` | `string` | No | — |
+| `creator_id` | `number \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -2009,10 +1927,10 @@ await corsair.toggl.api.tags.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `workspace_id` | `number` | No | — |
+| `workspace_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `creator_id` | `number` | No | — |
-| `at` | `string` | No | — |
+| `creator_id` | `number \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -2050,15 +1968,15 @@ await corsair.toggl.api.tasks.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `workspace_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
+| `workspace_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `active` | `boolean` | No | — |
-| `estimated_seconds` | `number` | No | — |
-| `tracked_seconds` | `number` | No | — |
-| `server_deleted_at` | `string` | No | — |
-| `at` | `string` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `estimated_seconds` | `number \| null` | No | — |
+| `tracked_seconds` | `number \| null` | No | — |
+| `server_deleted_at` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -2124,15 +2042,15 @@ await corsair.toggl.api.tasks.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `workspace_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
+| `workspace_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `active` | `boolean` | No | — |
-| `estimated_seconds` | `number` | No | — |
-| `tracked_seconds` | `number` | No | — |
-| `server_deleted_at` | `string` | No | — |
-| `at` | `string` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `estimated_seconds` | `number \| null` | No | — |
+| `tracked_seconds` | `number \| null` | No | — |
+| `server_deleted_at` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -2217,15 +2135,15 @@ await corsair.toggl.api.tasks.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `workspace_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
+| `workspace_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `active` | `boolean` | No | — |
-| `estimated_seconds` | `number` | No | — |
-| `tracked_seconds` | `number` | No | — |
-| `server_deleted_at` | `string` | No | — |
-| `at` | `string` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `estimated_seconds` | `number \| null` | No | — |
+| `tracked_seconds` | `number \| null` | No | — |
+| `server_deleted_at` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -2272,8 +2190,8 @@ await corsair.toggl.api.timeEntries.bulkEdit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `number[]` | No | — |
-| `failure` | `object[]` | No | — |
+| `success` | `number[] \| null` | No | — |
+| `failure` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="failure full type">
@@ -2282,7 +2200,7 @@ await corsair.toggl.api.timeEntries.bulkEdit({});
 {
   id?: number | null,
   message?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2326,20 +2244,20 @@ await corsair.toggl.api.timeEntries.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `workspace_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `task_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
-| `description` | `string` | No | — |
+| `workspace_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `task_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `start` | `string` | Yes | — |
-| `stop` | `string` | No | — |
+| `stop` | `string \| null` | No | — |
 | `duration` | `number` | Yes | — |
-| `billable` | `boolean` | No | — |
-| `duronly` | `boolean` | No | — |
-| `tags` | `string[]` | No | — |
-| `tag_ids` | `number[]` | No | — |
-| `server_deleted_at` | `string` | No | — |
-| `at` | `string` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `duronly` | `boolean \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `tag_ids` | `number[] \| null` | No | — |
+| `server_deleted_at` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -2402,20 +2320,20 @@ await corsair.toggl.api.timeEntries.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `workspace_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `task_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
-| `description` | `string` | No | — |
+| `workspace_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `task_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `start` | `string` | Yes | — |
-| `stop` | `string` | No | — |
+| `stop` | `string \| null` | No | — |
 | `duration` | `number` | Yes | — |
-| `billable` | `boolean` | No | — |
-| `duronly` | `boolean` | No | — |
-| `tags` | `string[]` | No | — |
-| `tag_ids` | `number[]` | No | — |
-| `server_deleted_at` | `string` | No | — |
-| `at` | `string` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `duronly` | `boolean \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `tag_ids` | `number[] \| null` | No | — |
+| `server_deleted_at` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -2441,20 +2359,20 @@ await corsair.toggl.api.timeEntries.getCurrent({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `workspace_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `task_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
-| `description` | `string` | No | — |
+| `workspace_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `task_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `start` | `string` | Yes | — |
-| `stop` | `string` | No | — |
+| `stop` | `string \| null` | No | — |
 | `duration` | `number` | Yes | — |
-| `billable` | `boolean` | No | — |
-| `duronly` | `boolean` | No | — |
-| `tags` | `string[]` | No | — |
-| `tag_ids` | `number[]` | No | — |
-| `server_deleted_at` | `string` | No | — |
-| `at` | `string` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `duronly` | `boolean \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `tag_ids` | `number[] \| null` | No | — |
+| `server_deleted_at` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -2540,20 +2458,20 @@ await corsair.toggl.api.timeEntries.stop({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `workspace_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `task_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
-| `description` | `string` | No | — |
+| `workspace_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `task_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `start` | `string` | Yes | — |
-| `stop` | `string` | No | — |
+| `stop` | `string \| null` | No | — |
 | `duration` | `number` | Yes | — |
-| `billable` | `boolean` | No | — |
-| `duronly` | `boolean` | No | — |
-| `tags` | `string[]` | No | — |
-| `tag_ids` | `number[]` | No | — |
-| `server_deleted_at` | `string` | No | — |
-| `at` | `string` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `duronly` | `boolean \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `tag_ids` | `number[] \| null` | No | — |
+| `server_deleted_at` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -2581,8 +2499,8 @@ await corsair.toggl.api.timeEntries.update({});
 | `start` | `string` | No | — |
 | `stop` | `string` | No | — |
 | `duration` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `task_id` | `number` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `task_id` | `number \| null` | No | — |
 | `billable` | `boolean` | No | — |
 | `tags` | `string[]` | No | — |
 | `tag_ids` | `number[]` | No | — |
@@ -2594,20 +2512,20 @@ await corsair.toggl.api.timeEntries.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `workspace_id` | `number` | No | — |
-| `project_id` | `number` | No | — |
-| `task_id` | `number` | No | — |
-| `user_id` | `number` | No | — |
-| `description` | `string` | No | — |
+| `workspace_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `task_id` | `number \| null` | No | — |
+| `user_id` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `start` | `string` | Yes | — |
-| `stop` | `string` | No | — |
+| `stop` | `string \| null` | No | — |
 | `duration` | `number` | Yes | — |
-| `billable` | `boolean` | No | — |
-| `duronly` | `boolean` | No | — |
-| `tags` | `string[]` | No | — |
-| `tag_ids` | `number[]` | No | — |
-| `server_deleted_at` | `string` | No | — |
-| `at` | `string` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `duronly` | `boolean \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `tag_ids` | `number[] \| null` | No | — |
+| `server_deleted_at` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -2662,17 +2580,7 @@ await corsair.toggl.api.webhooks.getEventFilters({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, string[]>`
 
 
 ---
@@ -2735,8 +2643,7 @@ await corsair.toggl.api.webhooks.listSubscriptions({});
   url_callback?: string | null,
   enabled?: boolean | null,
   description?: string | null,
-  event_filters?: {
-  }[] | null,
+  event_filters?: Record<string, any>[] | null,
   created_at?: string | null
 }[]
 ```
@@ -2773,23 +2680,23 @@ await corsair.toggl.api.workspaces.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `organization_id` | `number` | No | — |
+| `organization_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `premium` | `boolean` | No | — |
-| `business_ws` | `boolean` | No | — |
-| `admin` | `boolean` | No | — |
-| `role` | `string` | No | — |
-| `default_currency` | `string` | No | — |
-| `default_hourly_rate` | `number` | No | — |
-| `only_admins_may_create_projects` | `boolean` | No | — |
-| `only_admins_may_create_tags` | `boolean` | No | — |
-| `only_admins_see_billable_rates` | `boolean` | No | — |
-| `rounding` | `number` | No | — |
-| `rounding_minutes` | `number` | No | — |
-| `suspended_at` | `string` | No | — |
-| `server_deleted_at` | `string` | No | — |
-| `logo_url` | `string` | No | — |
-| `at` | `string` | No | — |
+| `premium` | `boolean \| null` | No | — |
+| `business_ws` | `boolean \| null` | No | — |
+| `admin` | `boolean \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `default_currency` | `string \| null` | No | — |
+| `default_hourly_rate` | `number \| null` | No | — |
+| `only_admins_may_create_projects` | `boolean \| null` | No | — |
+| `only_admins_may_create_tags` | `boolean \| null` | No | — |
+| `only_admins_see_billable_rates` | `boolean \| null` | No | — |
+| `rounding` | `number \| null` | No | — |
+| `rounding_minutes` | `number \| null` | No | — |
+| `suspended_at` | `string \| null` | No | — |
+| `server_deleted_at` | `string \| null` | No | — |
+| `logo_url` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 
@@ -2819,7 +2726,7 @@ await corsair.toggl.api.workspaces.getLogo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `logo` | `string` | No | — |
+| `logo` | `string \| null` | No | — |
 
 
 
@@ -2849,8 +2756,8 @@ await corsair.toggl.api.workspaces.getPreferences({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `initial_pricing_plan` | `number` | No | — |
-| `hide_start_end_times` | `boolean` | No | — |
+| `initial_pricing_plan` | `number \| null` | No | — |
+| `hide_start_end_times` | `boolean \| null` | No | — |
 
 
 
@@ -2983,23 +2890,23 @@ await corsair.toggl.api.workspaces.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `organization_id` | `number` | No | — |
+| `organization_id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `premium` | `boolean` | No | — |
-| `business_ws` | `boolean` | No | — |
-| `admin` | `boolean` | No | — |
-| `role` | `string` | No | — |
-| `default_currency` | `string` | No | — |
-| `default_hourly_rate` | `number` | No | — |
-| `only_admins_may_create_projects` | `boolean` | No | — |
-| `only_admins_may_create_tags` | `boolean` | No | — |
-| `only_admins_see_billable_rates` | `boolean` | No | — |
-| `rounding` | `number` | No | — |
-| `rounding_minutes` | `number` | No | — |
-| `suspended_at` | `string` | No | — |
-| `server_deleted_at` | `string` | No | — |
-| `logo_url` | `string` | No | — |
-| `at` | `string` | No | — |
+| `premium` | `boolean \| null` | No | — |
+| `business_ws` | `boolean \| null` | No | — |
+| `admin` | `boolean \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `default_currency` | `string \| null` | No | — |
+| `default_hourly_rate` | `number \| null` | No | — |
+| `only_admins_may_create_projects` | `boolean \| null` | No | — |
+| `only_admins_may_create_tags` | `boolean \| null` | No | — |
+| `only_admins_see_billable_rates` | `boolean \| null` | No | — |
+| `rounding` | `number \| null` | No | — |
+| `rounding_minutes` | `number \| null` | No | — |
+| `suspended_at` | `string \| null` | No | — |
+| `server_deleted_at` | `string \| null` | No | — |
+| `logo_url` | `string \| null` | No | — |
+| `at` | `string \| null` | No | — |
 
 
 

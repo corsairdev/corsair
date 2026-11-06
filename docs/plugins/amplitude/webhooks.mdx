@@ -235,20 +235,10 @@ A user identify call was received by Amplitude
 | `user_id` | `string` | No | — |
 | `device_id` | `string` | No | — |
 | `time` | `number` | Yes | — |
-| `user_properties` | `object` | No | — |
+| `user_properties` | `Record<string, any>` | No | — |
 | `app_version` | `string` | No | — |
 | `platform` | `string` | No | — |
 | `insert_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="user_properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -261,8 +251,7 @@ A user identify call was received by Amplitude
   user_id?: string,
   device_id?: string,
   time: number,
-  user_properties?: {
-  },
+  user_properties?: Record<string, any>,
   app_version?: string,
   platform?: string,
   insert_id?: string
@@ -307,30 +296,12 @@ An event was tracked by Amplitude
 | `user_id` | `string` | No | — |
 | `device_id` | `string` | No | — |
 | `time` | `number` | Yes | — |
-| `event_properties` | `object` | No | — |
-| `user_properties` | `object` | No | — |
+| `event_properties` | `Record<string, any>` | No | — |
+| `user_properties` | `Record<string, any>` | No | — |
 | `app_version` | `string` | No | — |
 | `platform` | `string` | No | — |
 | `session_id` | `number` | No | — |
 | `insert_id` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="event_properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="user_properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -345,10 +316,8 @@ An event was tracked by Amplitude
   user_id?: string,
   device_id?: string,
   time: number,
-  event_properties?: {
-  },
-  user_properties?: {
-  },
+  event_properties?: Record<string, any>,
+  user_properties?: Record<string, any>,
   app_version?: string,
   platform?: string,
   session_id?: number,
@@ -405,8 +374,7 @@ An experiment exposure was tracked for a user
 {
   user_id?: string,
   device_id?: string,
-  user_properties?: {
-  },
+  user_properties?: Record<string, any>,
   country?: string,
   city?: string,
   region?: string,
@@ -441,8 +409,7 @@ An experiment exposure was tracked for a user
   user: {
     user_id?: string,
     device_id?: string,
-    user_properties?: {
-    },
+    user_properties?: Record<string, any>,
     country?: string,
     city?: string,
     region?: string,

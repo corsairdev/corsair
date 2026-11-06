@@ -146,14 +146,10 @@ await corsair.confluence.api.pages.search({});
     type: string,
     status?: string,
     title: string,
-    childTypes?: {
-    },
-    macroRenderedOutput?: {
-    },
-    restrictions?: {
-    },
-    _expandable?: {
-    },
+    childTypes?: Record<string, any>,
+    macroRenderedOutput?: Record<string, any>,
+    restrictions?: Record<string, any>,
+    _expandable?: Record<string, string>,
     _links?: {
       webui?: string,
       self?: string,
@@ -228,7 +224,7 @@ await corsair.confluence.api.spaces.list({});
 | `start` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `size` | `number` | No | — |
-| `_links` | `object` | No | — |
+| `_links` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="results full type">
@@ -244,19 +240,9 @@ await corsair.confluence.api.spaces.list({});
   status?: string,
   description?: any,
   homepage?: any,
-  _expandable?: {
-  },
-  _links?: {
-  }
+  _expandable?: Record<string, string>,
+  _links?: Record<string, string>
 }[]
-```
-</Accordion>
-
-<Accordion title="_links full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>

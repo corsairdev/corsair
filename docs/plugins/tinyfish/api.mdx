@@ -37,8 +37,8 @@ await corsair.tinyfish.api.agent.cancelRun({ runId: 'run_...' });
 |------|------|----------|-------------|
 | `run_id` | `string` | Yes | — |
 | `status` | `CANCELLED \| COMPLETED \| FAILED` | Yes | — |
-| `cancelled_at` | `string` | No | — |
-| `message` | `string` | No | — |
+| `cancelled_at` | `string \| null` | Yes | — |
+| `message` | `string \| null` | Yes | — |
 
 
 
@@ -69,7 +69,7 @@ await corsair.tinyfish.api.agent.cancelRuns({ run_ids: ['run_...'] });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `results` | `object[]` | Yes | — |
-| `not_found` | `string[]` | No | — |
+| `not_found` | `string[] \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="results full type">
@@ -78,8 +78,8 @@ await corsair.tinyfish.api.agent.cancelRuns({ run_ids: ['run_...'] });
 {
   run_id: string,
   status: CANCELLED | COMPLETED | FAILED,
-  cancelled_at?: string | null,
-  message?: string | null
+  cancelled_at: string | null,
+  message: string | null
 }[]
 ```
 </Accordion>
@@ -119,37 +119,21 @@ await corsair.tinyfish.api.agent.getRun({ runId: 'run_...', screenshots: 'url' }
 | `status` | `PENDING \| RUNNING \| COMPLETED \| FAILED \| CANCELLED` | Yes | — |
 | `goal` | `string` | Yes | — |
 | `created_at` | `string` | Yes | — |
-| `started_at` | `string` | No | — |
-| `finished_at` | `string` | No | — |
-| `num_of_steps` | `number` | No | — |
-| `result` | `object` | No | — |
-| `output_schema` | `object` | No | — |
+| `started_at` | `string \| null` | Yes | — |
+| `finished_at` | `string \| null` | Yes | — |
+| `num_of_steps` | `number \| null` | Yes | — |
+| `result` | `Record<string, any> \| null` | Yes | — |
+| `output_schema` | `Record<string, any> \| null` | Yes | — |
 | `profile_attached` | `boolean` | Yes | — |
-| `profile_id` | `string` | No | — |
-| `error` | `object` | No | — |
-| `profile_hint` | `object` | No | — |
-| `streaming_url` | `string` | No | — |
-| `browser_config` | `object` | No | — |
-| `video_url` | `string` | No | — |
+| `profile_id` | `string \| null` | Yes | — |
+| `error` | `object \| null` | Yes | — |
+| `profile_hint` | `object \| null` | No | — |
+| `streaming_url` | `string \| null` | Yes | — |
+| `browser_config` | `object \| null` | Yes | — |
+| `video_url` | `string \| null` | Yes | — |
 | `steps` | `object[]` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="result full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="output_schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="error full type">
 
 ```ts
@@ -165,7 +149,7 @@ await corsair.tinyfish.api.agent.getRun({ runId: 'run_...', screenshots: 'url' }
     setup_url: string,
     reason: auth_wall | bot_challenge
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -176,7 +160,7 @@ await corsair.tinyfish.api.agent.getRun({ runId: 'run_...', screenshots: 'url' }
   message: string,
   setup_url: string,
   reason: auth_wall | bot_challenge
-}
+} | null
 ```
 </Accordion>
 
@@ -184,9 +168,9 @@ await corsair.tinyfish.api.agent.getRun({ runId: 'run_...', screenshots: 'url' }
 
 ```ts
 {
-  proxy_enabled?: boolean | null,
-  proxy_country_code?: string | null
-}
+  proxy_enabled: boolean | null,
+  proxy_country_code: string | null
+} | null
 ```
 </Accordion>
 
@@ -235,7 +219,7 @@ await corsair.tinyfish.api.agent.getRuns({ run_ids: ['run_...'] });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `not_found` | `string[]` | No | — |
+| `not_found` | `string[] \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -246,16 +230,14 @@ await corsair.tinyfish.api.agent.getRuns({ run_ids: ['run_...'] });
   status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED,
   goal: string,
   created_at: string,
-  started_at?: string | null,
-  finished_at?: string | null,
-  num_of_steps?: number | null,
-  result?: {
-  } | null,
-  output_schema?: {
-  } | null,
+  started_at: string | null,
+  finished_at: string | null,
+  num_of_steps: number | null,
+  result: Record<string, any> | null,
+  output_schema: Record<string, any> | null,
   profile_attached: boolean,
-  profile_id?: string | null,
-  error?: {
+  profile_id: string | null,
+  error: {
     code?: string | null,
     message: string,
     category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN,
@@ -273,12 +255,12 @@ await corsair.tinyfish.api.agent.getRuns({ run_ids: ['run_...'] });
     setup_url: string,
     reason: auth_wall | bot_challenge
   } | null,
-  streaming_url?: string | null,
-  browser_config?: {
-    proxy_enabled?: boolean | null,
-    proxy_country_code?: string | null
+  streaming_url: string | null,
+  browser_config: {
+    proxy_enabled: boolean | null,
+    proxy_country_code: string | null
   } | null,
-  video_url?: string | null,
+  video_url: string | null,
   steps: {
     id: string,
     timestamp: string,
@@ -404,16 +386,14 @@ await corsair.tinyfish.api.agent.listRuns({ status: 'RUNNING', limit: 20 });
   status: PENDING | RUNNING | COMPLETED | FAILED | CANCELLED,
   goal: string,
   created_at: string,
-  started_at?: string | null,
-  finished_at?: string | null,
-  num_of_steps?: number | null,
-  result?: {
-  } | null,
-  output_schema?: {
-  } | null,
+  started_at: string | null,
+  finished_at: string | null,
+  num_of_steps: number | null,
+  result: Record<string, any> | null,
+  output_schema: Record<string, any> | null,
   profile_attached: boolean,
-  profile_id?: string | null,
-  error?: {
+  profile_id: string | null,
+  error: {
     code?: string | null,
     message: string,
     category: SYSTEM_FAILURE | AGENT_FAILURE | BILLING_FAILURE | UNKNOWN,
@@ -431,10 +411,10 @@ await corsair.tinyfish.api.agent.listRuns({ status: 'RUNNING', limit: 20 });
     setup_url: string,
     reason: auth_wall | bot_challenge
   } | null,
-  streaming_url?: string | null,
-  browser_config?: {
-    proxy_enabled?: boolean | null,
-    proxy_country_code?: string | null
+  streaming_url: string | null,
+  browser_config: {
+    proxy_enabled: boolean | null,
+    proxy_country_code: string | null
   } | null
 }[]
 ```
@@ -445,7 +425,7 @@ await corsair.tinyfish.api.agent.listRuns({ status: 'RUNNING', limit: 20 });
 ```ts
 {
   total: number,
-  next_cursor?: string | null,
+  next_cursor: string | null,
   has_more: boolean
 }
 ```
@@ -484,7 +464,7 @@ await corsair.tinyfish.api.agent.run({ url: 'https://example.com', goal: 'Extrac
 | `profile_id` | `string` | No | — |
 | `credential_item_ids` | `string[]` | No | — |
 | `proxy_config` | `object` | No | — |
-| `output_schema` | `object` | No | — |
+| `output_schema` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="agent_config full type">
@@ -521,14 +501,6 @@ await corsair.tinyfish.api.agent.run({ url: 'https://example.com', goal: 'Extrac
 }
 ```
 </Accordion>
-
-<Accordion title="output_schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -537,24 +509,16 @@ await corsair.tinyfish.api.agent.run({ url: 'https://example.com', goal: 'Extrac
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `run_id` | `string` | No | — |
+| `run_id` | `string \| null` | Yes | — |
 | `status` | `COMPLETED \| FAILED` | Yes | — |
-| `started_at` | `string` | No | — |
-| `finished_at` | `string` | No | — |
-| `num_of_steps` | `number` | No | — |
-| `result` | `object` | No | — |
-| `error` | `object` | No | — |
-| `profile_hint` | `object` | No | — |
+| `started_at` | `string \| null` | Yes | — |
+| `finished_at` | `string \| null` | Yes | — |
+| `num_of_steps` | `number \| null` | Yes | — |
+| `result` | `Record<string, any> \| null` | Yes | — |
+| `error` | `object \| null` | Yes | — |
+| `profile_hint` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="result full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="error full type">
 
 ```ts
@@ -570,7 +534,7 @@ await corsair.tinyfish.api.agent.run({ url: 'https://example.com', goal: 'Extrac
     setup_url: string,
     reason: auth_wall | bot_challenge
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -581,7 +545,7 @@ await corsair.tinyfish.api.agent.run({ url: 'https://example.com', goal: 'Extrac
   message: string,
   setup_url: string,
   reason: auth_wall | bot_challenge
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -618,7 +582,7 @@ await corsair.tinyfish.api.agent.runAsync({ url: 'https://example.com', goal: 'E
 | `profile_id` | `string` | No | — |
 | `credential_item_ids` | `string[]` | No | — |
 | `proxy_config` | `object` | No | — |
-| `output_schema` | `object` | No | — |
+| `output_schema` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="agent_config full type">
@@ -655,14 +619,6 @@ await corsair.tinyfish.api.agent.runAsync({ url: 'https://example.com', goal: 'E
 }
 ```
 </Accordion>
-
-<Accordion title="output_schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -671,8 +627,8 @@ await corsair.tinyfish.api.agent.runAsync({ url: 'https://example.com', goal: 'E
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `run_id` | `string` | No | — |
-| `error` | `object` | No | — |
+| `run_id` | `string \| null` | Yes | — |
+| `error` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="error full type">
@@ -681,7 +637,7 @@ await corsair.tinyfish.api.agent.runAsync({ url: 'https://example.com', goal: 'E
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -708,7 +664,7 @@ await corsair.tinyfish.api.agent.runBatch({ runs: [{ url: 'https://example.com',
 |------|------|----------|-------------|
 | `runs` | `object[]` | Yes | — |
 | `profile_id` | `string` | No | — |
-| `output_schema` | `object` | No | — |
+| `output_schema` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="runs full type">
@@ -739,17 +695,8 @@ await corsair.tinyfish.api.agent.runBatch({ runs: [{ url: 'https://example.com',
     enabled: boolean,
     country_code?: US | GB | CA | DE | FR | JP | AU | null
   },
-  output_schema?: {
-  }
+  output_schema?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="output_schema full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -760,8 +707,8 @@ await corsair.tinyfish.api.agent.runBatch({ runs: [{ url: 'https://example.com',
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `run_ids` | `string[]` | No | — |
-| `error` | `object` | No | — |
+| `run_ids` | `string[] \| null` | Yes | — |
+| `error` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="error full type">
@@ -771,7 +718,7 @@ await corsair.tinyfish.api.agent.runBatch({ runs: [{ url: 'https://example.com',
   code: string,
   message: string,
   details?: any | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -799,7 +746,7 @@ await corsair.tinyfish.api.browser.createSession({ url: 'https://example.com', t
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | No | — |
-| `timeout_seconds` | `number` | No | — |
+| `timeout_seconds` | `number \| null` | No | — |
 | `proxy_config` | `object` | No | — |
 
 <AccordionGroup>
@@ -906,13 +853,13 @@ await corsair.tinyfish.api.browser.usage({ status: 'ended', limit: 50 });
 {
   session_id: string,
   user_id: string,
-  sub_user_id?: string | null,
+  sub_user_id: string | null,
   mode: light | stealth | tf-browser,
   start_time: string,
-  end_time?: string | null,
-  duration_ms?: number | null,
-  proxy_trg_rx_bytes?: number | null,
-  proxy_trg_tx_bytes?: number | null,
+  end_time: string | null,
+  duration_ms: number | null,
+  proxy_trg_rx_bytes: number | null,
+  proxy_trg_tx_bytes: number | null,
   status: running | ended | created,
   created_at: string,
   updated_at: string
@@ -974,21 +921,19 @@ await corsair.tinyfish.api.fetch.fetch({ urls: ['https://example.com'], format: 
 ```ts
 {
   url: string,
-  final_url?: string | null,
-  title?: string | null,
-  description?: string | null,
-  language?: string | null,
+  final_url: string | null,
+  title: string | null,
+  description: string | null,
+  language: string | null,
   format: markdown | html | json,
-  text?: string | {
-  } | null,
-  author?: string | null,
-  published_date?: string | null,
+  text: string | Record<string, any> | null,
+  author: string | null,
+  published_date: string | null,
   links?: string[],
   image_links?: string[],
   iframe_links?: string[],
-  page_metadata?: {
-  },
-  latency_ms?: number | null,
+  page_metadata?: Record<string, any>,
+  latency_ms: number | null,
   not_modified?: boolean,
   etag?: string,
   last_modified?: string,
@@ -1058,24 +1003,24 @@ await corsair.tinyfish.api.fetch.usage({ status: 'completed' });
   id: string,
   url: string,
   final_url: string,
-  title?: string | null,
-  description?: string | null,
-  language?: string | null,
-  author?: string | null,
-  published_date?: string | null,
+  title: string | null,
+  description: string | null,
+  language: string | null,
+  author: string | null,
+  published_date: string | null,
   format: markdown | html | json,
   status: completed | failed,
   request_origin: string,
-  request_id?: string | null,
-  text_length?: number | null,
+  request_id: string | null,
+  text_length: number | null,
   links_count: number,
   image_links_count: number,
-  latency_ms?: number | null,
+  latency_ms: number | null,
   not_modified?: boolean,
   etag?: string,
   last_modified?: string,
   created_at: string,
-  error?: string | null
+  error: string | null
 }[]
 ```
 </Accordion>
@@ -1105,7 +1050,7 @@ await corsair.tinyfish.api.profiles.create({ name: 'Work', set_as_default: true 
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `set_as_default` | `boolean` | No | — |
-| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN` | No | — |
+| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN \| null` | No | — |
 
 
 
@@ -1115,7 +1060,7 @@ await corsair.tinyfish.api.profiles.create({ name: 'Work', set_as_default: true 
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN` | No | — |
+| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN \| null` | No | — |
 | `is_default` | `boolean` | No | — |
 | `fingerprint_seed` | `string` | No | — |
 | `domain_count` | `number` | No | — |
@@ -1182,7 +1127,7 @@ await corsair.tinyfish.api.profiles.get({ profileId: 'p_...' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN` | No | — |
+| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN \| null` | No | — |
 | `is_default` | `boolean` | No | — |
 | `fingerprint_seed` | `string` | No | — |
 | `domain_count` | `number` | No | — |
@@ -1276,7 +1221,7 @@ await corsair.tinyfish.api.profiles.update({ profileId: 'p_...', name: 'Work lap
 | `profileId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `set_as_default` | `boolean` | No | — |
-| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN` | No | — |
+| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN \| null` | No | — |
 
 
 
@@ -1286,7 +1231,7 @@ await corsair.tinyfish.api.profiles.update({ profileId: 'p_...', name: 'Work lap
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN` | No | — |
+| `proxy_country_code` | `US \| GB \| CA \| AU \| DE \| FR \| IT \| ES \| NL \| JP \| SG \| BR \| IN \| null` | No | — |
 | `is_default` | `boolean` | No | — |
 | `fingerprint_seed` | `string` | No | — |
 | `domain_count` | `number` | No | — |
@@ -1375,16 +1320,16 @@ await corsair.tinyfish.api.research.get({ researchRunId: 'rr_...' });
 | `research_run_id` | `string` | Yes | — |
 | `status` | `RUNNING \| COMPLETED \| FAILED \| CANCELLED \| TIMED_OUT \| QUEUED` | Yes | — |
 | `query` | `string` | Yes | — |
-| `quick_result` | `object` | No | — |
-| `quick_result_summary` | `string` | No | — |
-| `deep_result` | `object` | No | — |
+| `quick_result` | `object \| null` | Yes | — |
+| `quick_result_summary` | `string \| null` | Yes | — |
+| `deep_result` | `object \| null` | Yes | — |
 | `run_ids` | `string[]` | Yes | — |
-| `created_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
-| `error` | `object` | No | — |
-| `research_plan` | `object` | No | — |
-| `evidence` | `object[]` | No | — |
-| `iterations` | `number` | No | — |
+| `created_at` | `string \| null` | Yes | — |
+| `completed_at` | `string \| null` | Yes | — |
+| `error` | `object \| null` | Yes | — |
+| `research_plan` | `object \| null` | No | — |
+| `evidence` | `object[] \| null` | No | — |
+| `iterations` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="quick_result full type">
@@ -1414,7 +1359,7 @@ await corsair.tinyfish.api.research.get({ researchRunId: 'rr_...' });
     subquestions_covered: number,
     subquestions_total: number
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -1438,7 +1383,7 @@ await corsair.tinyfish.api.research.get({ researchRunId: 'rr_...' });
     fetched_at_latest?: string
   },
   termination_reason?: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort
-}
+} | null
 ```
 </Accordion>
 
@@ -1449,7 +1394,7 @@ await corsair.tinyfish.api.research.get({ researchRunId: 'rr_...' });
   code: string,
   message: string,
   details?: any | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1472,7 +1417,7 @@ await corsair.tinyfish.api.research.get({ researchRunId: 'rr_...' });
     feedback?: string,
     resolvedAt?: number
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -1502,7 +1447,7 @@ await corsair.tinyfish.api.research.get({ researchRunId: 'rr_...' });
     claim_type?: fact | official_statement | reported_claim | estimate | opinion | user_sentiment | unverified
   }[],
   source_quality: primary | secondary | low
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1552,7 +1497,7 @@ await corsair.tinyfish.api.research.list({ status: 'RUNNING' });
   research_run_id: string,
   status: RUNNING | COMPLETED | FAILED | CANCELLED | TIMED_OUT | QUEUED,
   query: string,
-  quick_result?: {
+  quick_result: {
     answer: string,
     citations: string[],
     actions?: {
@@ -1577,8 +1522,8 @@ await corsair.tinyfish.api.research.list({ status: 'RUNNING' });
       subquestions_total: number
     }
   } | null,
-  quick_result_summary?: string | null,
-  deep_result?: {
+  quick_result_summary: string | null,
+  deep_result: {
     result: string,
     citations: string[],
     freshness_report?: {
@@ -1597,9 +1542,9 @@ await corsair.tinyfish.api.research.list({ status: 'RUNNING' });
     termination_reason?: planner_done | planner_no_queries | max_iterations | deadline | synthesis_failed | abort
   } | null,
   run_ids: string[],
-  created_at?: string | null,
-  completed_at?: string | null,
-  error?: {
+  created_at: string | null,
+  completed_at: string | null,
+  error: {
     code: string,
     message: string,
     details?: any | null
@@ -1655,7 +1600,7 @@ await corsair.tinyfish.api.research.list({ status: 'RUNNING' });
 ```ts
 {
   total: number,
-  next_cursor?: string | null,
+  next_cursor: string | null,
   has_more: boolean
 }
 ```
@@ -1715,7 +1660,7 @@ await corsair.tinyfish.api.research.start({ query: 'state of browser agents in 2
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `research_run_id` | `string` | Yes | — |
-| `error` | `object` | No | — |
+| `error` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="error full type">
@@ -1724,7 +1669,7 @@ await corsair.tinyfish.api.research.start({ query: 'state of browser agents in 2
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1763,7 +1708,7 @@ await corsair.tinyfish.api.search.search({ query: 'open source integration layer
 | `recency_minutes` | `number` | No | — |
 | `pub_year_min` | `number` | No | — |
 | `pub_year_max` | `number` | No | — |
-| `page` | `number` | No | — |
+| `page` | `number \| null` | No | — |
 | `include_thumbnail` | `true \| false` | No | — |
 | `fetch` | `string` | No | — |
 
@@ -1853,7 +1798,7 @@ await corsair.tinyfish.api.search.usage({ status: 'completed', limit: 20 });
   query: string,
   status_code: number,
   result_count: number,
-  results?: {
+  results: {
     position: number,
     site_name: string,
     snippet: string,
@@ -1870,8 +1815,8 @@ await corsair.tinyfish.api.search.usage({ status: 'completed', limit: 20 });
     cited_by_count?: number | null,
     pdf_url?: string | null
   }[] | null,
-  cached?: boolean | null,
-  response_size_bytes?: number | null,
+  cached: boolean | null,
+  response_size_bytes: number | null,
   created_at: string
 }[]
 ```
@@ -1911,7 +1856,7 @@ await corsair.tinyfish.api.vault.list({});
 ```ts
 {
   itemId: string,
-  connectionId?: string | null,
+  connectionId: string | null,
   label: string,
   vaultName: string,
   domains: string[],
@@ -1954,9 +1899,9 @@ await corsair.tinyfish.api.wallet.get({});
 | `available_balance` | `string` | Yes | — |
 | `currency` | `USD` | Yes | — |
 | `as_of` | `string` | Yes | — |
-| `auto_reload` | `any` | No | — |
-| `pending_top_up` | `object` | No | — |
-| `rates` | `object` | No | — |
+| `auto_reload` | `any \| null` | Yes | — |
+| `pending_top_up` | `object \| null` | Yes | — |
+| `rates` | `object \| null` | Yes | — |
 | `agent_top_up_url` | `string` | No | — |
 
 <AccordionGroup>
@@ -1966,7 +1911,7 @@ await corsair.tinyfish.api.wallet.get({});
 {
   amount: string,
   started_at: string
-}
+} | null
 ```
 </Accordion>
 
@@ -1981,7 +1926,7 @@ await corsair.tinyfish.api.wallet.get({});
     per: string
   }[],
   as_of: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

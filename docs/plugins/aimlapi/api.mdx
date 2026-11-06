@@ -32,28 +32,10 @@ await corsair.aimlapi.api.assistants.create({});
 | `description` | `string` | No | — |
 | `instructions` | `string` | No | — |
 | `tools` | `any[]` | No | — |
-| `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `toolResources` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `temperature` | `number` | No | — |
 | `topP` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="toolResources full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -67,17 +49,7 @@ await corsair.aimlapi.api.assistants.create({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -145,17 +117,7 @@ await corsair.aimlapi.api.assistants.get({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -220,28 +182,10 @@ await corsair.aimlapi.api.assistants.update({});
 | `description` | `string` | No | — |
 | `instructions` | `string` | No | — |
 | `tools` | `any[]` | No | — |
-| `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `toolResources` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `temperature` | `number` | No | — |
 | `topP` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="toolResources full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -255,17 +199,7 @@ await corsair.aimlapi.api.assistants.update({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -303,17 +237,7 @@ await corsair.aimlapi.api.batches.list({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -403,7 +327,7 @@ await corsair.aimlapi.api.chat.createCompletion({});
 | `created` | `number` | No | — |
 | `model` | `string` | No | — |
 | `choices` | `object[]` | Yes | — |
-| `usage` | `object` | No | — |
+| `usage` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="choices full type">
@@ -418,14 +342,6 @@ await corsair.aimlapi.api.chat.createCompletion({});
   finish_reason?: string,
   finishReason?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="usage full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -493,17 +409,7 @@ await corsair.aimlapi.api.messages.create({});
 | `role` | `string` | Yes | — |
 | `content` | `string` | Yes | — |
 | `attachments` | `any[]` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -517,17 +423,7 @@ await corsair.aimlapi.api.messages.create({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -597,17 +493,7 @@ await corsair.aimlapi.api.messages.get({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -670,17 +556,7 @@ await corsair.aimlapi.api.messages.update({});
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
 | `messageId` | `string` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -694,17 +570,7 @@ await corsair.aimlapi.api.messages.update({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -727,7 +593,7 @@ await corsair.aimlapi.api.models.list({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -753,8 +619,7 @@ await corsair.aimlapi.api.models.list({});
   endpoints?: string[],
   aliases?: string[],
   tags?: string[],
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }[] | {
   object?: string,
   data: {
@@ -777,8 +642,7 @@ await corsair.aimlapi.api.models.list({});
     endpoints?: string[],
     aliases?: string[],
     tags?: string[],
-    metadata?: {
-    }
+    metadata?: Record<string, any>
   }[],
   has_more?: boolean,
   first_id?: string,
@@ -815,7 +679,7 @@ await corsair.aimlapi.api.models.listWithDetails({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -841,8 +705,7 @@ await corsair.aimlapi.api.models.listWithDetails({});
   endpoints?: string[],
   aliases?: string[],
   tags?: string[],
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }[] | {
   object?: string,
   data: {
@@ -865,8 +728,7 @@ await corsair.aimlapi.api.models.listWithDetails({});
     endpoints?: string[],
     aliases?: string[],
     tags?: string[],
-    metadata?: {
-    }
+    metadata?: Record<string, any>
   }[],
   has_more?: boolean,
   first_id?: string,
@@ -914,17 +776,7 @@ await corsair.aimlapi.api.responses.get({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -963,17 +815,7 @@ await corsair.aimlapi.api.runs.cancel({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1000,17 +842,7 @@ await corsair.aimlapi.api.runs.create({});
 | `instructions` | `string` | No | — |
 | `additionalInstructions` | `string` | No | — |
 | `tools` | `any[]` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1024,17 +856,7 @@ await corsair.aimlapi.api.runs.create({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1071,17 +893,7 @@ await corsair.aimlapi.api.runs.get({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1157,17 +969,7 @@ await corsair.aimlapi.api.runs.submitToolOutputs({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1192,17 +994,7 @@ await corsair.aimlapi.api.runs.update({});
 | `threadId` | `string` | Yes | — |
 | `runId` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1216,17 +1008,7 @@ await corsair.aimlapi.api.runs.update({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1266,17 +1048,7 @@ await corsair.aimlapi.api.runSteps.get({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1340,8 +1112,8 @@ await corsair.aimlapi.api.threads.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `messages` | `object[]` | No | — |
-| `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `toolResources` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="messages full type">
@@ -1351,22 +1123,6 @@ await corsair.aimlapi.api.threads.create({});
   role: string,
   content: string
 }[]
-```
-</Accordion>
-
-<Accordion title="toolResources full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1383,17 +1139,7 @@ await corsair.aimlapi.api.threads.create({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1461,17 +1207,7 @@ await corsair.aimlapi.api.threads.get({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1494,26 +1230,8 @@ await corsair.aimlapi.api.threads.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
-| `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="toolResources full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `toolResources` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1527,17 +1245,7 @@ await corsair.aimlapi.api.threads.update({});
 | `created_at` | `number` | No | — |
 | `status` | `string` | No | — |
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 

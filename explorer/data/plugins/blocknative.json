@@ -63,12 +63,12 @@
           {
             "key": "blobBaseFeePerGas",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "estimatedBaseFees",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, { confidence: number, baseFee: number }[]>[]"
           }
         ]
       }
@@ -144,7 +144,7 @@
           {
             "key": "oracles",
             "optional": false,
-            "type": "{ arch?: string, chainId: number, label: string, icon?: string, system?: string, network?: string, addressByVersion?: {}, rpcUrl?: string, blockExplorerUrl?: string }[]"
+            "type": "{ arch?: string, chainId: number, label: string, icon?: string, system?: string, network?: string, addressByVersion?: Record<string, string>, rpcUrl?: string, blockExplorerUrl?: string }[]"
           }
         ]
       }

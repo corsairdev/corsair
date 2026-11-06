@@ -44,34 +44,24 @@ await corsair.twilio.api.calls.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `sid` | `string` | Yes | — |
-| `date_created` | `string` | No | — |
-| `date_updated` | `string` | No | — |
+| `date_created` | `string \| null` | Yes | — |
+| `date_updated` | `string \| null` | Yes | — |
 | `account_sid` | `string` | Yes | — |
 | `to` | `string` | Yes | — |
 | `to_formatted` | `string` | No | — |
 | `from` | `string` | Yes | — |
 | `from_formatted` | `string` | No | — |
-| `phone_number_sid` | `string` | No | — |
+| `phone_number_sid` | `string \| null` | No | — |
 | `status` | `string` | Yes | — |
-| `start_time` | `string` | No | — |
-| `end_time` | `string` | No | — |
-| `duration` | `string` | No | — |
-| `price` | `string` | No | — |
-| `price_unit` | `string` | No | — |
+| `start_time` | `string \| null` | No | — |
+| `end_time` | `string \| null` | No | — |
+| `duration` | `string \| null` | No | — |
+| `price` | `string \| null` | Yes | — |
+| `price_unit` | `string \| null` | Yes | — |
 | `direction` | `string` | Yes | — |
 | `api_version` | `string` | No | — |
 | `uri` | `string` | Yes | — |
-| `subresource_uris` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="subresource_uris full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `subresource_uris` | `Record<string, string>` | No | — |
 
 
 
@@ -102,34 +92,24 @@ await corsair.twilio.api.calls.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `sid` | `string` | Yes | — |
-| `date_created` | `string` | No | — |
-| `date_updated` | `string` | No | — |
+| `date_created` | `string \| null` | Yes | — |
+| `date_updated` | `string \| null` | Yes | — |
 | `account_sid` | `string` | Yes | — |
 | `to` | `string` | Yes | — |
 | `to_formatted` | `string` | No | — |
 | `from` | `string` | Yes | — |
 | `from_formatted` | `string` | No | — |
-| `phone_number_sid` | `string` | No | — |
+| `phone_number_sid` | `string \| null` | No | — |
 | `status` | `string` | Yes | — |
-| `start_time` | `string` | No | — |
-| `end_time` | `string` | No | — |
-| `duration` | `string` | No | — |
-| `price` | `string` | No | — |
-| `price_unit` | `string` | No | — |
+| `start_time` | `string \| null` | No | — |
+| `end_time` | `string \| null` | No | — |
+| `duration` | `string \| null` | No | — |
+| `price` | `string \| null` | Yes | — |
+| `price_unit` | `string \| null` | Yes | — |
 | `direction` | `string` | Yes | — |
 | `api_version` | `string` | No | — |
 | `uri` | `string` | Yes | — |
-| `subresource_uris` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="subresource_uris full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `subresource_uris` | `Record<string, string>` | No | — |
 
 
 
@@ -166,8 +146,8 @@ await corsair.twilio.api.calls.list({});
 |------|------|----------|-------------|
 | `calls` | `object[]` | Yes | — |
 | `first_page_uri` | `string` | No | — |
-| `next_page_uri` | `string` | No | — |
-| `previous_page_uri` | `string` | No | — |
+| `next_page_uri` | `string \| null` | No | — |
+| `previous_page_uri` | `string \| null` | No | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 | `uri` | `string` | No | — |
@@ -178,8 +158,8 @@ await corsair.twilio.api.calls.list({});
 ```ts
 {
   sid: string,
-  date_created?: string | null,
-  date_updated?: string | null,
+  date_created: string | null,
+  date_updated: string | null,
   account_sid: string,
   to: string,
   to_formatted?: string,
@@ -190,13 +170,12 @@ await corsair.twilio.api.calls.list({});
   start_time?: string | null,
   end_time?: string | null,
   duration?: string | null,
-  price?: string | null,
-  price_unit?: string | null,
+  price: string | null,
+  price_unit: string | null,
   direction: string,
   api_version?: string,
   uri: string,
-  subresource_uris?: {
-  }
+  subresource_uris?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -233,34 +212,24 @@ await corsair.twilio.api.messages.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `sid` | `string` | Yes | — |
-| `date_created` | `string` | No | — |
-| `date_updated` | `string` | No | — |
-| `date_sent` | `string` | No | — |
+| `date_created` | `string \| null` | Yes | — |
+| `date_updated` | `string \| null` | Yes | — |
+| `date_sent` | `string \| null` | Yes | — |
 | `account_sid` | `string` | Yes | — |
 | `to` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
-| `body` | `string` | No | — |
+| `body` | `string \| null` | Yes | — |
 | `status` | `string` | Yes | — |
-| `num_segments` | `string` | No | — |
-| `num_media` | `string` | No | — |
+| `num_segments` | `string \| null` | No | — |
+| `num_media` | `string \| null` | No | — |
 | `direction` | `string` | Yes | — |
 | `api_version` | `string` | No | — |
-| `price` | `string` | No | — |
-| `price_unit` | `string` | No | — |
-| `error_code` | `number` | No | — |
-| `error_message` | `string` | No | — |
+| `price` | `string \| null` | Yes | — |
+| `price_unit` | `string \| null` | Yes | — |
+| `error_code` | `number \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
 | `uri` | `string` | Yes | — |
-| `subresource_uris` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="subresource_uris full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `subresource_uris` | `Record<string, string>` | No | — |
 
 
 
@@ -295,8 +264,8 @@ await corsair.twilio.api.messages.list({});
 |------|------|----------|-------------|
 | `messages` | `object[]` | Yes | — |
 | `first_page_uri` | `string` | No | — |
-| `next_page_uri` | `string` | No | — |
-| `previous_page_uri` | `string` | No | — |
+| `next_page_uri` | `string \| null` | No | — |
+| `previous_page_uri` | `string \| null` | No | — |
 | `page` | `number` | No | — |
 | `page_size` | `number` | No | — |
 | `uri` | `string` | No | — |
@@ -307,25 +276,24 @@ await corsair.twilio.api.messages.list({});
 ```ts
 {
   sid: string,
-  date_created?: string | null,
-  date_updated?: string | null,
-  date_sent?: string | null,
+  date_created: string | null,
+  date_updated: string | null,
+  date_sent: string | null,
   account_sid: string,
   to: string,
   from: string,
-  body?: string | null,
+  body: string | null,
   status: string,
   num_segments?: string | null,
   num_media?: string | null,
   direction: string,
   api_version?: string,
-  price?: string | null,
-  price_unit?: string | null,
+  price: string | null,
+  price_unit: string | null,
   error_code?: number | null,
   error_message?: string | null,
   uri: string,
-  subresource_uris?: {
-  }
+  subresource_uris?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -365,34 +333,24 @@ await corsair.twilio.api.messages.send({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `sid` | `string` | Yes | — |
-| `date_created` | `string` | No | — |
-| `date_updated` | `string` | No | — |
-| `date_sent` | `string` | No | — |
+| `date_created` | `string \| null` | Yes | — |
+| `date_updated` | `string \| null` | Yes | — |
+| `date_sent` | `string \| null` | Yes | — |
 | `account_sid` | `string` | Yes | — |
 | `to` | `string` | Yes | — |
 | `from` | `string` | Yes | — |
-| `body` | `string` | No | — |
+| `body` | `string \| null` | Yes | — |
 | `status` | `string` | Yes | — |
-| `num_segments` | `string` | No | — |
-| `num_media` | `string` | No | — |
+| `num_segments` | `string \| null` | No | — |
+| `num_media` | `string \| null` | No | — |
 | `direction` | `string` | Yes | — |
 | `api_version` | `string` | No | — |
-| `price` | `string` | No | — |
-| `price_unit` | `string` | No | — |
-| `error_code` | `number` | No | — |
-| `error_message` | `string` | No | — |
+| `price` | `string \| null` | Yes | — |
+| `price_unit` | `string \| null` | Yes | — |
+| `error_code` | `number \| null` | No | — |
+| `error_message` | `string \| null` | No | — |
 | `uri` | `string` | Yes | — |
-| `subresource_uris` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="subresource_uris full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `subresource_uris` | `Record<string, string>` | No | — |
 
 
 

@@ -33,7 +33,7 @@ await corsair.runpod.api.account.myself({});
 | `id` | `string` | Yes | — |
 | `email` | `string` | No | — |
 | `multiFactorEnabled` | `boolean` | No | — |
-| `pubKey` | `string` | No | — |
+| `pubKey` | `string \| null` | No | — |
 
 
 
@@ -64,7 +64,7 @@ await corsair.runpod.api.account.updateSettings({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
-| `pubKey` | `string` | No | — |
+| `pubKey` | `string \| null` | No | — |
 | `keys` | `string[]` | No | — |
 
 
@@ -197,7 +197,7 @@ await corsair.runpod.api.clusters.create({});
 | `compute` | `object` | Yes | — |
 | `image` | `string` | No | — |
 | `disk` | `number` | No | — |
-| `env` | `object` | No | — |
+| `env` | `Record<string, string>` | No | — |
 | `ports` | `string[]` | No | — |
 | `args` | `string` | No | — |
 | `dataCenterIds` | `string[]` | No | — |
@@ -212,14 +212,6 @@ await corsair.runpod.api.clusters.create({});
   gpuTypeId: string,
   gpuCountPerPod: number,
   podCount: number
-}
-```
-</Accordion>
-
-<Accordion title="env full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -297,8 +289,8 @@ await corsair.runpod.api.endpoints.save({});
 | `gpuIds` | `string` | No | — |
 | `templateId` | `string` | No | — |
 | `idleTimeout` | `number` | No | — |
-| `locations` | `string` | No | — |
-| `flashBootType` | `string` | No | — |
+| `locations` | `string \| null` | No | — |
+| `flashBootType` | `string \| null` | No | — |
 | `scalerType` | `string` | No | — |
 | `scalerValue` | `number` | No | — |
 | `workersMin` | `number` | No | — |
@@ -556,7 +548,7 @@ await corsair.runpod.api.secrets.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 
 
 
@@ -615,7 +607,7 @@ await corsair.runpod.api.templates.save({});
 | `imageName` | `string` | Yes | — |
 | `containerDiskInGb` | `number` | Yes | — |
 | `volumeInGb` | `number` | Yes | — |
-| `dockerArgs` | `string` | Yes | — |
+| `dockerArgs` | `string` | No | Defaults to "". |
 | `env` | `object[]` | No | — |
 | `ports` | `string` | No | — |
 | `readme` | `string` | No | — |
@@ -647,10 +639,10 @@ await corsair.runpod.api.templates.save({});
 | `containerDiskInGb` | `number` | No | — |
 | `volumeInGb` | `number` | No | — |
 | `isServerless` | `boolean` | No | — |
-| `dockerArgs` | `string` | No | — |
-| `ports` | `string` | No | — |
-| `readme` | `string` | No | — |
-| `volumeMountPath` | `string` | No | — |
+| `dockerArgs` | `string \| null` | No | — |
+| `ports` | `string \| null` | No | — |
+| `readme` | `string \| null` | No | — |
+| `volumeMountPath` | `string \| null` | No | — |
 | `env` | `object[]` | No | — |
 
 <AccordionGroup>

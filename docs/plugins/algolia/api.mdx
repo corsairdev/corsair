@@ -32,8 +32,8 @@ await corsair.algolia.api.abTests.addAbTest({});
 | `region` | `string` | No | — |
 | `variants` | `object[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
 
 <AccordionGroup>
@@ -44,22 +44,6 @@ await corsair.algolia.api.abTests.addAbTest({});
   indexName: string,
   trafficPercentage: number
 }[]
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -90,27 +74,9 @@ await corsair.algolia.api.abTests.deleteAbTest({});
 | `id` | `number` | Yes | — |
 | `region` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -137,28 +103,10 @@ await corsair.algolia.api.abTests.getAbTest({});
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -188,28 +136,10 @@ await corsair.algolia.api.abTests.listAbTests({});
 | `indexPrefix` | `string` | No | — |
 | `indexSuffix` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -237,27 +167,9 @@ await corsair.algolia.api.abTests.stopAbTest({});
 | `id` | `number` | Yes | — |
 | `region` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -289,28 +201,10 @@ await corsair.algolia.api.analytics.getAddToCartRate({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -340,28 +234,10 @@ await corsair.algolia.api.analytics.getAverageClickPosition({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -391,28 +267,10 @@ await corsair.algolia.api.analytics.getClickPositions({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -442,28 +300,10 @@ await corsair.algolia.api.analytics.getClickThroughRate({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -493,28 +333,10 @@ await corsair.algolia.api.analytics.getConversionRate({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -544,28 +366,10 @@ await corsair.algolia.api.analytics.getNoClickRate({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -595,28 +399,10 @@ await corsair.algolia.api.analytics.getNoResultsRate({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -648,28 +434,10 @@ await corsair.algolia.api.analytics.getNoResultsSearches({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -699,28 +467,10 @@ await corsair.algolia.api.analytics.getPurchaseRate({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -750,28 +500,10 @@ await corsair.algolia.api.analytics.getRevenue({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -801,28 +533,10 @@ await corsair.algolia.api.analytics.getSearchesCount({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -854,28 +568,10 @@ await corsair.algolia.api.analytics.getSearchesNoClicks({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -907,28 +603,10 @@ await corsair.algolia.api.analytics.getTopCountries({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -961,28 +639,10 @@ await corsair.algolia.api.analytics.getTopFilterAttributes({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1016,28 +676,10 @@ await corsair.algolia.api.analytics.getTopFilterForAttribute({});
 | `attribute` | `string` | Yes | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1070,28 +712,10 @@ await corsair.algolia.api.analytics.getTopFiltersNoResults({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1126,28 +750,10 @@ await corsair.algolia.api.analytics.getTopHits({});
 | `clickAnalytics` | `boolean` | No | — |
 | `revenueAnalytics` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1183,28 +789,10 @@ await corsair.algolia.api.analytics.getTopSearches({});
 | `clickAnalytics` | `boolean` | No | — |
 | `revenueAnalytics` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1234,28 +822,10 @@ await corsair.algolia.api.analytics.getUsersCount({});
 | `endDate` | `string` | No | — |
 | `startDate` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1291,28 +861,10 @@ await corsair.algolia.api.apiKeys.createApiKey({});
 | `queryParameters` | `string` | No | — |
 | `maxQueriesPerIPPerHour` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1339,28 +891,10 @@ await corsair.algolia.api.apiKeys.deleteApiKey({});
 |------|------|----------|-------------|
 | `key` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1387,28 +921,10 @@ await corsair.algolia.api.apiKeys.getApiKey({});
 |------|------|----------|-------------|
 | `key` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1434,28 +950,10 @@ await corsair.algolia.api.apiKeys.listApiKeys({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1482,28 +980,10 @@ await corsair.algolia.api.apiKeys.restoreApiKey({});
 |------|------|----------|-------------|
 | `key` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1538,28 +1018,10 @@ await corsair.algolia.api.apiKeys.updateApiKey({});
 | `queryParameters` | `string` | No | — |
 | `maxQueriesPerIPPerHour` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1588,39 +1050,13 @@ await corsair.algolia.api.authentications.createAuthentication({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `type` | `string` | No | — |
-| `input` | `object` | Yes | — |
+| `input` | `Record<string, any>` | Yes | — |
 | `platform` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1647,28 +1083,10 @@ await corsair.algolia.api.authentications.deleteAuthentication({});
 |------|------|----------|-------------|
 | `authenticationID` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1696,27 +1114,9 @@ await corsair.algolia.api.authentications.getAuthentication({});
 | `region` | `string` | No | — |
 | `authentication_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1748,28 +1148,10 @@ await corsair.algolia.api.authentications.listAuthentications({});
 | `platform` | `any[]` | No | — |
 | `itemsPerPage` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1796,28 +1178,10 @@ await corsair.algolia.api.authentications.searchAuthentications({});
 |------|------|----------|-------------|
 | `authenticationIDs` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1843,39 +1207,13 @@ await corsair.algolia.api.authentications.updateAuthentication({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `input` | `object` | No | — |
+| `input` | `Record<string, any>` | No | — |
 | `authenticationID` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1904,40 +1242,14 @@ await corsair.algolia.api.destinations.createDestination({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `type` | `string` | No | — |
-| `input` | `object` | Yes | — |
+| `input` | `Record<string, any>` | Yes | — |
 | `authenticationID` | `string` | Yes | — |
 | `transformationIDs` | `any[]` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1964,28 +1276,10 @@ await corsair.algolia.api.destinations.deleteDestination({});
 |------|------|----------|-------------|
 | `destination_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2012,28 +1306,10 @@ await corsair.algolia.api.destinations.getDestination({});
 |------|------|----------|-------------|
 | `destinationID` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2066,28 +1342,10 @@ await corsair.algolia.api.destinations.listDestinations({});
 | `authenticationID` | `any[]` | No | — |
 | `transformationID` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2114,28 +1372,10 @@ await corsair.algolia.api.destinations.searchDestinations({});
 |------|------|----------|-------------|
 | `destinationIDs` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2162,41 +1402,15 @@ await corsair.algolia.api.destinations.updateDestination({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `type` | `string` | No | — |
-| `input` | `object` | No | — |
+| `input` | `Record<string, any>` | No | — |
 | `destinationID` | `string` | Yes | — |
 | `authenticationID` | `string` | No | — |
 | `transformationIDs` | `any[]` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2224,28 +1438,10 @@ await corsair.algolia.api.dictionaries.getDictionaryLanguages({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2271,28 +1467,10 @@ await corsair.algolia.api.dictionaries.getDictionarySettings({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2323,19 +1501,9 @@ await corsair.algolia.api.dictionaries.searchDictionaryEntries({});
 | `hitsPerPage` | `number` | No | — |
 | `dictionary_name` | `string` | No | — |
 | `body` | `any` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2360,38 +1528,12 @@ await corsair.algolia.api.dictionaries.setDictionarySettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `disableStandardEntries` | `object` | Yes | — |
+| `disableStandardEntries` | `Record<string, any>` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="disableStandardEntries full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2420,28 +1562,10 @@ await corsair.algolia.api.dictionaries.updateDictionaryEntries({});
 | `dictionary_name` | `string` | No | — |
 | `clearExistingDictionaryEntries` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2468,40 +1592,14 @@ await corsair.algolia.api.indices.addOrReplaceRecord({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `record` | `object` | Yes | — |
+| `record` | `Record<string, any>` | Yes | — |
 | `object_id` | `string` | Yes | — |
 | `index_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="record full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2526,39 +1624,13 @@ await corsair.algolia.api.indices.addRecord({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `record` | `object` | Yes | — |
+| `record` | `Record<string, any>` | Yes | — |
 | `index_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="record full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2586,29 +1658,11 @@ await corsair.algolia.api.indices.browseIndex({});
 | `query` | `string` | No | — |
 | `cursor` | `string` | No | — |
 | `index_name` | `string` | Yes | — |
-| `browse_parameters` | `object` | No | — |
+| `browse_parameters` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="browse_parameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2634,38 +1688,12 @@ await corsair.algolia.api.indices.clearObjects({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `index_name` | `string` | Yes | — |
-| `request_options` | `object` | No | — |
+| `request_options` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="request_options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2694,28 +1722,10 @@ await corsair.algolia.api.indices.copyIndex({});
 | `index_name` | `string` | Yes | — |
 | `destination` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2742,28 +1752,10 @@ await corsair.algolia.api.indices.deleteIndex({});
 |------|------|----------|-------------|
 | `index_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2790,38 +1782,12 @@ await corsair.algolia.api.indices.deleteObjects({});
 |------|------|----------|-------------|
 | `index_name` | `string` | Yes | — |
 | `object_ids` | `any[]` | Yes | — |
-| `request_options` | `object` | No | — |
+| `request_options` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="request_options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2854,39 +1820,13 @@ await corsair.algolia.api.indices.deleteRecordsByFilter({});
 | `around_lat_lng` | `string` | No | — |
 | `inside_polygon` | `any[]` | No | — |
 | `numeric_filters` | `string` | No | — |
-| `request_options` | `object` | No | — |
+| `request_options` | `Record<string, any>` | No | — |
 | `inside_bounding_box` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="request_options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2913,28 +1853,10 @@ await corsair.algolia.api.indices.executeBatchOnMultipleIndices({});
 |------|------|----------|-------------|
 | `requests` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2963,28 +1885,10 @@ await corsair.algolia.api.indices.getRecommendTaskStatus({});
 | `task_id` | `number` | Yes | — |
 | `index_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3013,28 +1917,10 @@ await corsair.algolia.api.indices.getRecord({});
 | `index_name` | `string` | Yes | — |
 | `attributes_to_retrieve` | `any[]` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3061,28 +1947,10 @@ await corsair.algolia.api.indices.getSettings({});
 |------|------|----------|-------------|
 | `indexName` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3110,28 +1978,10 @@ await corsair.algolia.api.indices.getTaskStatus({});
 | `task_id` | `number` | Yes | — |
 | `index_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3157,28 +2007,10 @@ await corsair.algolia.api.indices.listIndices({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3206,28 +2038,10 @@ await corsair.algolia.api.indices.partialUpdateObjects({});
 | `requests` | `any[]` | Yes | — |
 | `indexName` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3252,40 +2066,14 @@ await corsair.algolia.api.indices.setSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `settings` | `object` | Yes | — |
+| `settings` | `Record<string, any>` | Yes | — |
 | `index_name` | `string` | Yes | — |
 | `forward_to_replicas` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="settings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3311,40 +2099,14 @@ await corsair.algolia.api.indices.updateRecordPartially({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `object_id` | `string` | Yes | — |
-| `attributes` | `object` | Yes | — |
+| `attributes` | `Record<string, any>` | Yes | — |
 | `index_name` | `string` | Yes | — |
 | `create_if_not_exists` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3377,28 +2139,10 @@ await corsair.algolia.api.insights.clickedObjectIds({});
 | `userToken` | `string` | Yes | — |
 | `authenticatedUserToken` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3431,28 +2175,10 @@ await corsair.algolia.api.insights.clickedObjectIdsAfterSearch({});
 | `timestamp` | `number` | No | — |
 | `userToken` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3484,28 +2210,10 @@ await corsair.algolia.api.insights.convertedObjectIds({});
 | `userToken` | `string` | Yes | — |
 | `authenticatedUserToken` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3532,28 +2240,10 @@ await corsair.algolia.api.insights.deleteUserToken({});
 |------|------|----------|-------------|
 | `user_token` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3581,27 +2271,9 @@ await corsair.algolia.api.insights.initInsights({});
 | `region` | `string` | No | — |
 | `store_in_cookie` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3633,28 +2305,10 @@ await corsair.algolia.api.logs.getLogs({});
 | `offset` | `number` | No | — |
 | `indexName` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3683,28 +2337,10 @@ await corsair.algolia.api.personalization.computeRealtimeUser({});
 |------|------|----------|-------------|
 | `user_token` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3731,28 +2367,10 @@ await corsair.algolia.api.personalization.deleteUserProfile({});
 |------|------|----------|-------------|
 | `user_token` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3778,28 +2396,10 @@ await corsair.algolia.api.personalization.getConfig2({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3832,28 +2432,10 @@ await corsair.algolia.api.personalization.getUsers({});
 | `nextPageToken` | `string` | No | — |
 | `previousPageToken` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3883,27 +2465,9 @@ await corsair.algolia.api.personalization.setPersonalizationStrategy({});
 | `facetsScoring` | `any[]` | Yes | — |
 | `personalizationImpact` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3938,27 +2502,9 @@ await corsair.algolia.api.querySuggestions.createQsConfig({});
 | `enablePersonalization` | `boolean` | No | — |
 | `allowSpecialCharacters` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3985,28 +2531,10 @@ await corsair.algolia.api.querySuggestions.deleteConfig({});
 |------|------|----------|-------------|
 | `index_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4034,27 +2562,9 @@ await corsair.algolia.api.querySuggestions.getConfig({});
 | `region` | `string` | No | — |
 | `indexName` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4081,27 +2591,9 @@ await corsair.algolia.api.querySuggestions.listQsConfigs({});
 |------|------|----------|-------------|
 | `region` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4134,27 +2626,9 @@ await corsair.algolia.api.querySuggestions.updateConfig({});
 | `enablePersonalization` | `boolean` | No | — |
 | `allowSpecialCharacters` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4184,28 +2658,10 @@ await corsair.algolia.api.rules.clearRules({});
 | `index_name` | `string` | Yes | — |
 | `forwardToReplicas` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4234,8 +2690,8 @@ await corsair.algolia.api.rules.createOrUpdateRecommendRules({});
 | `rules` | `object[]` | Yes | — |
 | `index_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
 
@@ -4246,22 +2702,6 @@ await corsair.algolia.api.rules.createOrUpdateRecommendRules({});
 {
   objectID: string
 }[]
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4293,28 +2733,10 @@ await corsair.algolia.api.rules.deleteRecommendRule({});
 | `object_id` | `string` | Yes | — |
 | `index_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4343,28 +2765,10 @@ await corsair.algolia.api.rules.deleteRule({});
 | `index_name` | `string` | Yes | — |
 | `forward_to_replicas` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4392,28 +2796,10 @@ await corsair.algolia.api.rules.exportRules({});
 | `cursor` | `string` | No | — |
 | `index_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4442,28 +2828,10 @@ await corsair.algolia.api.rules.getRecommendRule({});
 | `object_id` | `string` | Yes | — |
 | `index_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4491,28 +2859,10 @@ await corsair.algolia.api.rules.getRule({});
 | `object_id` | `string` | Yes | — |
 | `index_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4539,11 +2889,11 @@ await corsair.algolia.api.rules.replaceAllRules({});
 |------|------|----------|-------------|
 | `rules` | `object[]` | Yes | — |
 | `indexName` | `string` | Yes | — |
-| `requestOptions` | `object` | No | — |
+| `requestOptions` | `Record<string, any>` | No | — |
 | `forwardToReplicas` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
 
@@ -4554,30 +2904,6 @@ await corsair.algolia.api.rules.replaceAllRules({});
 {
   objectID: string
 }[]
-```
-</Accordion>
-
-<Accordion title="requestOptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4610,40 +2936,14 @@ await corsair.algolia.api.rules.saveRule({});
 | `object_id` | `string` | Yes | — |
 | `conditions` | `any[]` | No | — |
 | `index_name` | `string` | Yes | — |
-| `consequence` | `object` | Yes | — |
+| `consequence` | `Record<string, any>` | Yes | — |
 | `description` | `string` | No | — |
 | `forward_to_replicas` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="consequence full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4679,19 +2979,9 @@ await corsair.algolia.api.rules.searchRecommendRules({});
 | `hitsPerPage` | `number` | No | — |
 | `maxValuesPerFacet` | `number` | No | — |
 | `body` | `any` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4728,28 +3018,10 @@ await corsair.algolia.api.runs.listRuns({});
 | `startDate` | `string` | No | — |
 | `itemsPerPage` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4777,32 +3049,14 @@ await corsair.algolia.api.search.findObject({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | No | — |
-| `filters` | `object` | No | — |
+| `filters` | `Record<string, any>` | No | — |
 | `paginate` | `boolean` | No | — |
 | `index_name` | `string` | Yes | — |
 | `attributesToRetrieve` | `any[]` | No | — |
 | `body` | `any` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="filters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4827,40 +3081,14 @@ await corsair.algolia.api.search.getObjectPosition({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object` | Yes | — |
+| `results` | `Record<string, any>` | Yes | — |
 | `object_id` | `string` | Yes | — |
 | `indexName` | `string \| number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4887,28 +3115,10 @@ await corsair.algolia.api.search.getObjects({});
 |------|------|----------|-------------|
 | `requests` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4939,28 +3149,10 @@ await corsair.algolia.api.search.searchFacetValues({});
 | `facet_query` | `string` | No | — |
 | `max_facet_hits` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4987,38 +3179,12 @@ await corsair.algolia.api.search.searchIndex({});
 |------|------|----------|-------------|
 | `query` | `string` | Yes | — |
 | `index_name` | `string` | Yes | — |
-| `search_params` | `object` | No | — |
-| `request_options` | `object` | No | — |
+| `search_params` | `Record<string, any>` | No | — |
+| `request_options` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="search_params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="request_options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5046,28 +3212,10 @@ await corsair.algolia.api.search.searchMultipleIndices({});
 | `requests` | `any[]` | Yes | — |
 | `strategy` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5096,39 +3244,13 @@ await corsair.algolia.api.sources.createSource({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `type` | `string` | No | — |
-| `input` | `object` | No | — |
+| `input` | `Record<string, any>` | No | — |
 | `region` | `string` | No | — |
 | `authenticationID` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5155,28 +3277,10 @@ await corsair.algolia.api.sources.deleteSource({});
 |------|------|----------|-------------|
 | `sourceID` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5204,27 +3308,9 @@ await corsair.algolia.api.sources.getSource({});
 | `region` | `string` | No | — |
 | `sourceID` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5257,27 +3343,9 @@ await corsair.algolia.api.sources.listSources({});
 | `itemsPerPage` | `number` | No | — |
 | `authenticationID` | `any[]` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5304,28 +3372,10 @@ await corsair.algolia.api.sources.searchSources({});
 |------|------|----------|-------------|
 | `sourceIDs` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5351,40 +3401,14 @@ await corsair.algolia.api.sources.updateSource({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `input` | `object` | No | — |
+| `input` | `Record<string, any>` | No | — |
 | `region` | `string` | No | — |
 | `sourceID` | `string` | Yes | — |
 | `authenticationID` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5411,39 +3435,13 @@ await corsair.algolia.api.sources.validateSource({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `type` | `string` | No | — |
-| `input` | `object` | No | — |
+| `input` | `Record<string, any>` | No | — |
 | `region` | `string` | No | — |
 | `authenticationID` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5469,40 +3467,14 @@ await corsair.algolia.api.sources.validateSourceBeforeUpdate({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `input` | `object` | No | — |
+| `input` | `Record<string, any>` | No | — |
 | `region` | `string` | No | — |
 | `sourceID` | `string` | Yes | — |
 | `authenticationID` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5532,28 +3504,10 @@ await corsair.algolia.api.synonyms.clearSynonyms({});
 | `index_name` | `string` | Yes | — |
 | `forwardToReplicas` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5582,28 +3536,10 @@ await corsair.algolia.api.synonyms.deleteSynonym({});
 | `index_name` | `string` | Yes | — |
 | `forward_to_replicas` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5631,28 +3567,10 @@ await corsair.algolia.api.synonyms.getSynonym({});
 | `object_id` | `string` | Yes | — |
 | `index_name` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5677,41 +3595,15 @@ await corsair.algolia.api.synonyms.saveSynonym({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `synonym` | `object` | Yes | — |
+| `synonym` | `Record<string, any>` | Yes | — |
 | `objectID` | `string` | Yes | — |
 | `indexName` | `string` | Yes | — |
 | `forwardToReplicas` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="synonym full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5741,28 +3633,10 @@ await corsair.algolia.api.synonyms.saveSynonyms({});
 | `forwardToReplicas` | `boolean` | No | — |
 | `replaceExistingSynonyms` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5793,19 +3667,9 @@ await corsair.algolia.api.synonyms.searchSynonyms({});
 | `index_name` | `string` | Yes | — |
 | `hitsPerPage` | `number` | No | — |
 | `body` | `any` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5833,63 +3697,21 @@ await corsair.algolia.api.tasks.createIngestionTask({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `cron` | `string` | No | — |
-| `input` | `object` | No | — |
+| `input` | `Record<string, any>` | No | — |
 | `action` | `string` | No | — |
 | `cursor` | `string` | No | — |
 | `enabled` | `boolean` | No | — |
-| `policies` | `object` | No | — |
+| `policies` | `Record<string, any>` | No | — |
 | `sourceID` | `string` | Yes | — |
 | `destinationID` | `string` | Yes | — |
-| `notifications` | `object` | No | — |
+| `notifications` | `Record<string, any>` | No | — |
 | `failureThreshold` | `number` | No | — |
 | `subscriptionAction` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="policies full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="notifications full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5917,27 +3739,9 @@ await corsair.algolia.api.tasks.disableTaskV1({});
 | `region` | `string` | No | — |
 | `taskID` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5965,27 +3769,9 @@ await corsair.algolia.api.tasks.enableTaskV1({});
 | `region` | `string` | No | — |
 | `taskID` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6012,28 +3798,10 @@ await corsair.algolia.api.tasks.getAppTask({});
 |------|------|----------|-------------|
 | `taskID` | `number` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6060,28 +3828,10 @@ await corsair.algolia.api.tasks.getTaskV1({});
 |------|------|----------|-------------|
 | `taskID` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6118,28 +3868,10 @@ await corsair.algolia.api.tasks.listIngestionTasks({});
 | `destinationID` | `any[]` | No | — |
 | `withEmailNotifications` | `boolean` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6169,28 +3901,10 @@ await corsair.algolia.api.tasks.pushTask({});
 | `taskID` | `string` | Yes | — |
 | `records` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6216,63 +3930,21 @@ await corsair.algolia.api.tasks.replaceTask({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `cron` | `string` | No | — |
-| `input` | `object` | No | — |
+| `input` | `Record<string, any>` | No | — |
 | `action` | `string` | No | — |
 | `cursor` | `string` | No | — |
 | `taskID` | `string` | Yes | — |
 | `enabled` | `boolean` | No | — |
-| `policies` | `object` | No | — |
+| `policies` | `Record<string, any>` | No | — |
 | `destinationID` | `string` | Yes | — |
-| `notifications` | `object` | No | — |
+| `notifications` | `Record<string, any>` | No | — |
 | `failureThreshold` | `number` | No | — |
 | `subscriptionAction` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="policies full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="notifications full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6298,38 +3970,12 @@ await corsair.algolia.api.tasks.runTaskV1({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `taskID` | `string` | Yes | — |
-| `runMetadata` | `object` | No | — |
+| `runMetadata` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="runMetadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6356,28 +4002,10 @@ await corsair.algolia.api.tasks.searchTasksV1({});
 |------|------|----------|-------------|
 | `taskIDs` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6403,61 +4031,19 @@ await corsair.algolia.api.tasks.updateTask({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `cron` | `string` | No | — |
-| `input` | `object` | No | — |
+| `input` | `Record<string, any>` | No | — |
 | `taskID` | `string` | Yes | — |
 | `enabled` | `boolean` | No | — |
-| `policies` | `object` | No | — |
+| `policies` | `Record<string, any>` | No | — |
 | `destinationID` | `string` | No | — |
-| `notifications` | `object` | No | — |
+| `notifications` | `Record<string, any>` | No | — |
 | `failureThreshold` | `number` | No | — |
 | `subscriptionAction` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="policies full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="notifications full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6486,40 +4072,14 @@ await corsair.algolia.api.transformations.createTransformation({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `type` | `string` | No | — |
-| `input` | `object` | Yes | — |
+| `input` | `Record<string, any>` | Yes | — |
 | `description` | `string` | No | — |
 | `authenticationIDs` | `any[]` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6546,28 +4106,10 @@ await corsair.algolia.api.transformations.deleteTransformation({});
 |------|------|----------|-------------|
 | `transformation_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6595,27 +4137,9 @@ await corsair.algolia.api.transformations.getTransformation({});
 | `region` | `string` | No | — |
 | `transformationID` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6646,28 +4170,10 @@ await corsair.algolia.api.transformations.listTransformations({});
 | `order` | `string` | No | — |
 | `itemsPerPage` | `number` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6694,28 +4200,10 @@ await corsair.algolia.api.transformations.searchTransformations({});
 |------|------|----------|-------------|
 | `transformationIDs` | `any[]` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6743,39 +4231,13 @@ await corsair.algolia.api.transformations.tryTransformation({});
 | `code` | `string` | No | — |
 | `type` | `string` | No | — |
 | `input` | `string` | No | — |
-| `sampleRecord` | `object` | Yes | — |
+| `sampleRecord` | `Record<string, any>` | Yes | — |
 | `authentications` | `any[]` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="sampleRecord full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6803,40 +4265,14 @@ await corsair.algolia.api.transformations.tryTransformationBeforeUpdate({});
 | `code` | `string` | No | — |
 | `type` | `string` | No | — |
 | `input` | `string` | No | — |
-| `sample_record` | `object` | Yes | — |
+| `sample_record` | `Record<string, any>` | Yes | — |
 | `authentications` | `any[]` | No | — |
 | `transformation_id` | `string` | Yes | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="sample_record full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6864,41 +4300,15 @@ await corsair.algolia.api.transformations.updateTransformation({});
 | `code` | `string` | No | — |
 | `name` | `string` | Yes | — |
 | `type` | `string` | No | — |
-| `input` | `object` | No | — |
+| `input` | `Record<string, any>` | No | — |
 | `description` | `string` | No | — |
 | `transformationID` | `string` | Yes | — |
 | `authenticationIDs` | `any[]` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6930,28 +4340,10 @@ await corsair.algolia.api.usage.getUsage({});
 | `statistic` | `string` | Yes | — |
 | `granularity` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6982,28 +4374,10 @@ await corsair.algolia.api.usage.getUsageForIndex({});
 | `statistic` | `string` | Yes | — |
 | `granularity` | `string` | No | — |
 | `body` | `any` | No | — |
-| `query` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `region` | `string` | No | — |
 | `baseUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 

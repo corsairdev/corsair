@@ -137,8 +137,8 @@ await corsair.witai.api.apps.getApp({});
 | `private` | `boolean \| string` | No | — |
 | `timezone` | `string` | No | — |
 | `desc` | `string` | No | — |
-| `will_train_at` | `string` | No | — |
-| `last_trained_at` | `string` | No | — |
+| `will_train_at` | `string \| null` | No | — |
+| `last_trained_at` | `string \| null` | No | — |
 | `last_training_duration_secs` | `number` | No | — |
 | `training_status` | `string` | No | — |
 | `created_at` | `string` | No | — |
@@ -1012,16 +1012,29 @@ await corsair.witai.api.message.getMessage({});
 <Accordion title="entities full type">
 
 ```ts
-{
-}
+Record<string, {
+  id?: string,
+  name?: string,
+  role?: string,
+  start?: number,
+  end?: number,
+  body?: string,
+  confidence?: number,
+  entities?: any[],
+  value?: any,
+  type?: string
+}[]>
 ```
 </Accordion>
 
 <Accordion title="traits full type">
 
 ```ts
-{
-}
+Record<string, {
+  id?: string,
+  value: string,
+  confidence?: number
+}[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1456,8 +1469,17 @@ await corsair.witai.api.voices.listVoices({});
 <Accordion title="Output full type">
 
 ```ts
-{
-}
+Record<string, {
+  name: string,
+  locale?: string,
+  gender?: string,
+  styles?: {
+    name: string,
+    speed?: string[],
+    pitch?: string[]
+  }[],
+  supported_features?: string[]
+}[]>
 ```
 </Accordion>
 </AccordionGroup>

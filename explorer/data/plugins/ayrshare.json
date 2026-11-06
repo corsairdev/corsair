@@ -38,7 +38,7 @@
           {
             "key": "schedules",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { schedule?: string[], daysOfWeek?: number[], lastScheduleDate?: string | null, excludeDates?: string[] }>"
           }
         ]
       }

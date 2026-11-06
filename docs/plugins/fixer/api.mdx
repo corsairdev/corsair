@@ -31,17 +31,7 @@ await corsair.fixer.api.currencies.getAll({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `symbols` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="symbols full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `symbols` | `Record<string, string>` | Yes | — |
 
 
 
@@ -142,17 +132,7 @@ await corsair.fixer.api.rates.historical({
 | `historical` | `boolean` | No | — |
 | `date` | `string` | No | — |
 | `base` | `string` | No | — |
-| `rates` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="rates full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `rates` | `Record<string, number>` | Yes | — |
 
 
 
@@ -190,17 +170,7 @@ await corsair.fixer.api.rates.latest({
 | `timestamp` | `number` | No | — |
 | `base` | `string` | No | — |
 | `date` | `string` | No | — |
-| `rates` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="rates full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `rates` | `Record<string, number>` | Yes | — |
 
 
 

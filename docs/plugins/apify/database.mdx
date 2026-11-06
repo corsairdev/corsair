@@ -169,6 +169,7 @@ const rows = await corsair.apify.db.datasets.search({
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `userId` | `string` | equals, contains, startsWith, endsWith, in |
 | `itemCount` | `number` | equals, gt, gte, lt, lte, in |
+| `access` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 | `modifiedAt` | `date` | equals, before, after, between |
 
@@ -197,6 +198,7 @@ const rows = await corsair.apify.db.keyValueStores.search({
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `userId` | `string` | equals, contains, startsWith, endsWith, in |
 | `recordCount` | `number` | equals, gt, gte, lt, lte, in |
+| `access` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 | `modifiedAt` | `date` | equals, before, after, between |
 
@@ -227,6 +229,7 @@ const rows = await corsair.apify.db.requestQueues.search({
 | `totalRequestCount` | `number` | equals, gt, gte, lt, lte, in |
 | `handledRequestCount` | `number` | equals, gt, gte, lt, lte, in |
 | `pendingRequestCount` | `number` | equals, gt, gte, lt, lte, in |
+| `access` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 | `modifiedAt` | `date` | equals, before, after, between |
 

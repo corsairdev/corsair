@@ -37,29 +37,29 @@ await corsair.revai.api.jobs.getJob({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `status` | `in_progress \| transcribed \| failed` | No | — |
-| `created_on` | `string` | No | — |
-| `completed_on` | `string` | No | — |
-| `name` | `string` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `completed_on` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
 | `type` | `async \| human_tc \| stream` | No | — |
-| `metadata` | `string` | No | — |
-| `media_url` | `string` | No | — |
-| `callback_url` | `string` | No | — |
-| `language` | `string` | No | — |
-| `transcriber` | `string` | No | — |
-| `failure` | `string` | No | — |
-| `failure_detail` | `string` | No | — |
-| `duration_seconds` | `number` | No | — |
-| `stream_duration_seconds` | `number` | No | — |
-| `delete_after_seconds` | `number` | No | — |
-| `skip_diarization` | `boolean` | No | — |
-| `skip_postprocessing` | `boolean` | No | — |
-| `skip_punctuation` | `boolean` | No | — |
-| `remove_disfluencies` | `boolean` | No | — |
-| `remove_atmospherics` | `boolean` | No | — |
-| `filter_profanity` | `boolean` | No | — |
-| `custom_vocabulary_id` | `string` | No | — |
-| `speaker_channels_count` | `number` | No | — |
-| `enable_multilingual` | `boolean` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `media_url` | `string \| null` | No | — |
+| `callback_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `transcriber` | `string \| null` | No | — |
+| `failure` | `string \| null` | No | — |
+| `failure_detail` | `string \| null` | No | — |
+| `duration_seconds` | `number \| null` | No | — |
+| `stream_duration_seconds` | `number \| null` | No | — |
+| `delete_after_seconds` | `number \| null` | No | — |
+| `skip_diarization` | `boolean \| null` | No | — |
+| `skip_postprocessing` | `boolean \| null` | No | — |
+| `skip_punctuation` | `boolean \| null` | No | — |
+| `remove_disfluencies` | `boolean \| null` | No | — |
+| `remove_atmospherics` | `boolean \| null` | No | — |
+| `filter_profanity` | `boolean \| null` | No | — |
+| `custom_vocabulary_id` | `string \| null` | No | — |
+| `speaker_channels_count` | `number \| null` | No | — |
+| `enable_multilingual` | `boolean \| null` | No | — |
 
 
 
@@ -82,11 +82,11 @@ await corsair.revai.api.jobs.getTranscript({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `accept` | `application/vnd.rev.transcript.v1.0+json \| text/plain` | Yes | — |
+| `accept` | `application/vnd.rev.transcript.v1.0+json \| text/plain` | No | — |
 
 
 
-**Output:** `object`
+**Output:** `object \| string`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -154,29 +154,29 @@ await corsair.revai.api.jobs.submitJob({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `status` | `in_progress \| transcribed \| failed` | No | — |
-| `created_on` | `string` | No | — |
-| `completed_on` | `string` | No | — |
-| `name` | `string` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `completed_on` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
 | `type` | `async \| human_tc \| stream` | No | — |
-| `metadata` | `string` | No | — |
-| `media_url` | `string` | No | — |
-| `callback_url` | `string` | No | — |
-| `language` | `string` | No | — |
-| `transcriber` | `string` | No | — |
-| `failure` | `string` | No | — |
-| `failure_detail` | `string` | No | — |
-| `duration_seconds` | `number` | No | — |
-| `stream_duration_seconds` | `number` | No | — |
-| `delete_after_seconds` | `number` | No | — |
-| `skip_diarization` | `boolean` | No | — |
-| `skip_postprocessing` | `boolean` | No | — |
-| `skip_punctuation` | `boolean` | No | — |
-| `remove_disfluencies` | `boolean` | No | — |
-| `remove_atmospherics` | `boolean` | No | — |
-| `filter_profanity` | `boolean` | No | — |
-| `custom_vocabulary_id` | `string` | No | — |
-| `speaker_channels_count` | `number` | No | — |
-| `enable_multilingual` | `boolean` | No | — |
+| `metadata` | `string \| null` | No | — |
+| `media_url` | `string \| null` | No | — |
+| `callback_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `transcriber` | `string \| null` | No | — |
+| `failure` | `string \| null` | No | — |
+| `failure_detail` | `string \| null` | No | — |
+| `duration_seconds` | `number \| null` | No | — |
+| `stream_duration_seconds` | `number \| null` | No | — |
+| `delete_after_seconds` | `number \| null` | No | — |
+| `skip_diarization` | `boolean \| null` | No | — |
+| `skip_postprocessing` | `boolean \| null` | No | — |
+| `skip_punctuation` | `boolean \| null` | No | — |
+| `remove_disfluencies` | `boolean \| null` | No | — |
+| `remove_atmospherics` | `boolean \| null` | No | — |
+| `filter_profanity` | `boolean \| null` | No | — |
+| `custom_vocabulary_id` | `string \| null` | No | — |
+| `speaker_channels_count` | `number \| null` | No | — |
+| `enable_multilingual` | `boolean \| null` | No | — |
 
 
 

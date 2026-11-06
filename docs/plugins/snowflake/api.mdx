@@ -156,13 +156,16 @@ await corsair.snowflake.api.statements.submit({ statement: 'SELECT 1', timeout: 
 | `bindings` | `object` | No | — |
 | `parameters` | `object` | No | — |
 
+`parameters.client_result_chunk_size` is in megabytes, from 16 to 160.
+
 <AccordionGroup>
 <Accordion title="bindings full type">
 
 ```ts
-{
-  [key: string]: { type: string, value: string }
-}
+Record<string, {
+  type: FIXED | REAL | DECFLOAT | TEXT | BINARY | BOOLEAN | DATE | TIME | TIMESTAMP_TZ | TIMESTAMP_LTZ | TIMESTAMP_NTZ,
+  value: string
+}>
 ```
 </Accordion>
 
@@ -180,7 +183,7 @@ await corsair.snowflake.api.statements.submit({ statement: 'SELECT 1', timeout: 
   timestamp_ntz_output_format?: string,
   timestamp_tz_output_format?: string,
   multi_statement_count?: number | string,
-  client_result_chunk_size?: number, // 16 to 160, megabytes
+  client_result_chunk_size?: number,
   rows_per_resultset?: number,
   use_cached_result?: string
 }

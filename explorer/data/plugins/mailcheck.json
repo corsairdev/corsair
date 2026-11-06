@@ -1,7 +1,7 @@
 {
   "id": "mailcheck",
   "displayName": "Mailcheck",
-  "description": "Mailcheck plugin for Corsair",
+  "description": "Email verification API for validating email addresses and email domains.",
   "npmPackageName": "@corsair-dev/mailcheck",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -110,7 +110,7 @@
           {
             "key": "gravatar",
             "optional": true,
-            "type": "{ entries?: { profileUrl?: string, preferredUsername?: string, accounts?: { domain: string }[] }[] }"
+            "type": "{ entries?: { profileUrl?: string, preferredUsername?: string, accounts?: { domain: string }[] }[] } | null"
           }
         ]
       }

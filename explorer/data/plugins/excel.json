@@ -815,7 +815,7 @@
           {
             "key": "args",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string | number | boolean | null | { address: string }>"
           }
         ]
       },
@@ -825,7 +825,7 @@
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "value",

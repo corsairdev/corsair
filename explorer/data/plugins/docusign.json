@@ -36,7 +36,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -61,7 +61,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -86,7 +86,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -111,7 +111,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -141,7 +141,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -166,7 +166,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -186,7 +186,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -211,7 +211,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -236,7 +236,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -261,7 +261,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -291,7 +291,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -316,7 +316,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -351,7 +351,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -381,7 +381,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -406,7 +406,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -431,7 +431,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -461,7 +461,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -486,7 +486,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -541,7 +541,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -566,7 +566,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -591,7 +591,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -611,7 +611,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -631,7 +631,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -651,7 +651,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -676,7 +676,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -701,7 +701,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -721,7 +721,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -751,7 +751,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -776,7 +776,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -826,7 +826,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -856,7 +856,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -885,8 +885,9 @@
           },
           {
             "key": "status",
-            "optional": false,
-            "type": "sent | created"
+            "optional": true,
+            "type": "sent | created",
+            "description": "Defaults to \"sent\"."
           },
           {
             "key": "templateRoles",
@@ -942,7 +943,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -977,7 +978,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1002,7 +1003,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1022,7 +1023,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1047,7 +1048,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1077,7 +1078,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1102,7 +1103,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1132,7 +1133,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1157,7 +1158,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1238,7 +1239,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1258,7 +1259,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1283,7 +1284,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1308,7 +1309,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1333,7 +1334,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1358,7 +1359,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1383,7 +1384,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1408,7 +1409,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1760,7 +1761,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -1959,7 +1960,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -2402,7 +2403,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -2763,7 +2764,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -2788,7 +2789,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -2813,7 +2814,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -4160,7 +4161,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -4504,7 +4505,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -4845,7 +4846,7 @@
           {
             "key": "envelopeTemplates",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, JsonValue>[]"
           }
         ]
       }
@@ -5020,7 +5021,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -5045,7 +5046,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -5065,7 +5066,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -5085,7 +5086,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -5105,7 +5106,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -5125,7 +5126,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -5145,7 +5146,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -5165,7 +5166,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -5230,7 +5231,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -5280,7 +5281,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -5300,7 +5301,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -6986,7 +6987,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7021,7 +7022,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7072,7 +7073,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7106,8 +7107,9 @@
           },
           {
             "key": "contentType",
-            "optional": false,
-            "type": "image/gif | image/png | image/jpeg | image/bmp"
+            "optional": true,
+            "type": "image/gif | image/png | image/jpeg | image/bmp",
+            "description": "Defaults to \"image/png\"."
           }
         ]
       },
@@ -7142,7 +7144,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7176,8 +7178,9 @@
           },
           {
             "key": "contentType",
-            "optional": false,
-            "type": "image/gif | image/png | image/jpeg | image/bmp"
+            "optional": true,
+            "type": "image/gif | image/png | image/jpeg | image/bmp",
+            "description": "Defaults to \"image/png\"."
           }
         ]
       },
@@ -7197,7 +7200,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7217,7 +7220,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7261,8 +7264,9 @@
           },
           {
             "key": "contentType",
-            "optional": false,
-            "type": "image/gif | image/png | image/jpeg | image/bmp"
+            "optional": true,
+            "type": "image/gif | image/png | image/jpeg | image/bmp",
+            "description": "Defaults to \"image/png\"."
           }
         ]
       },
@@ -7292,7 +7296,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7312,7 +7316,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7332,7 +7336,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7362,7 +7366,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7392,7 +7396,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7412,7 +7416,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7432,7 +7436,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7462,7 +7466,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7482,7 +7486,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7502,7 +7506,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7522,7 +7526,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7547,7 +7551,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7572,7 +7576,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7592,7 +7596,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7612,7 +7616,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7642,7 +7646,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7667,7 +7671,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7692,7 +7696,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7712,7 +7716,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7742,7 +7746,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7762,7 +7766,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7792,7 +7796,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7817,7 +7821,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7847,7 +7851,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7877,7 +7881,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7902,7 +7906,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7927,7 +7931,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7952,7 +7956,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -7977,7 +7981,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8007,7 +8011,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8027,7 +8031,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8057,7 +8061,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8082,7 +8086,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8112,7 +8116,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8167,7 +8171,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8187,7 +8191,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8212,7 +8216,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8242,7 +8246,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8272,7 +8276,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8297,7 +8301,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8327,7 +8331,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8352,7 +8356,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8382,7 +8386,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8407,7 +8411,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8432,7 +8436,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8462,7 +8466,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8492,7 +8496,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8522,7 +8526,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8542,7 +8546,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8571,8 +8575,9 @@
           },
           {
             "key": "contentType",
-            "optional": false,
-            "type": "image/gif | image/png | image/jpeg | image/bmp"
+            "optional": true,
+            "type": "image/gif | image/png | image/jpeg | image/bmp",
+            "description": "Defaults to \"image/png\"."
           }
         ]
       },
@@ -8597,7 +8602,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8632,7 +8637,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8662,7 +8667,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8687,7 +8692,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },
@@ -8722,7 +8727,7 @@
           {
             "key": "body",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, JsonValue>"
           }
         ]
       },

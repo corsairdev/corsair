@@ -72,7 +72,7 @@ await corsair.airtable.api.bases.getSchema({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `baseId` | `string` | Yes | — |
-| `include` | `visibleFieldIds \| fieldIdsInSynced[]` | No | — |
+| `include` | `(visibleFieldIds \| fieldIdsInSynced)[]` | No | — |
 
 
 
@@ -96,8 +96,7 @@ await corsair.airtable.api.bases.getSchema({});
     type: string,
     name: string,
     description?: string,
-    options?: {
-    }
+    options?: Record<string, any>
   }[],
   views: {
     id: string,
@@ -134,18 +133,8 @@ await corsair.airtable.api.records.create({});
 |------|------|----------|-------------|
 | `baseId` | `string` | Yes | — |
 | `tableIdOrName` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
+| `fields` | `Record<string, any>` | Yes | — |
 | `typecast` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -162,8 +151,7 @@ await corsair.airtable.api.records.create({});
 {
   id: string,
   createdTime: string,
-  fields: {
-  }
+  fields: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -191,19 +179,9 @@ await corsair.airtable.api.records.createOrUpdate({});
 |------|------|----------|-------------|
 | `baseId` | `string` | Yes | — |
 | `tableIdOrName` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
+| `fields` | `Record<string, any>` | Yes | — |
 | `fieldsToMergeOn` | `string[]` | Yes | — |
 | `typecast` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -220,8 +198,7 @@ await corsair.airtable.api.records.createOrUpdate({});
 {
   id: string,
   createdTime: string,
-  fields: {
-  }
+  fields: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -293,17 +270,7 @@ await corsair.airtable.api.records.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `createdTime` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | Yes | — |
 
 
 
@@ -367,8 +334,7 @@ await corsair.airtable.api.records.search({});
 {
   id: string,
   createdTime: string,
-  fields: {
-  }
+  fields: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -397,18 +363,8 @@ await corsair.airtable.api.records.update({});
 | `baseId` | `string` | Yes | — |
 | `tableIdOrName` | `string` | Yes | — |
 | `recordId` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
+| `fields` | `Record<string, any>` | Yes | — |
 | `typecast` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -425,8 +381,7 @@ await corsair.airtable.api.records.update({});
 {
   id: string,
   createdTime: string,
-  fields: {
-  }
+  fields: Record<string, any>
 }[]
 ```
 </Accordion>

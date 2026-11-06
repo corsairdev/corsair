@@ -67,10 +67,10 @@ await corsair.whautomate.api.broadcasts.getBroadcastById({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `segmentId` | `string` | No | — |
+| `segmentId` | `string \| null` | No | — |
 | `messageTemplate` | `string` | No | — |
-| `scheduledAt` | `string` | No | — |
-| `sentAt` | `string` | No | — |
+| `scheduledAt` | `string \| null` | No | — |
+| `sentAt` | `string \| null` | No | — |
 | `stats` | `object` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
@@ -118,7 +118,7 @@ await corsair.whautomate.api.broadcasts.getBroadcasts({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -201,7 +201,7 @@ await corsair.whautomate.api.contacts.addContact({});
 | `stage` | `string` | No | — |
 | `notes` | `string` | No | — |
 | `tags` | `string[]` | No | — |
-| `customFields` | `object` | No | — |
+| `customFields` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="location full type">
@@ -210,14 +210,6 @@ await corsair.whautomate.api.contacts.addContact({});
 {
   id: string,
   title?: string
-}
-```
-</Accordion>
-
-<Accordion title="customFields full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -231,16 +223,16 @@ await corsair.whautomate.api.contacts.addContact({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `phoneNumber` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `email` | `string` | No | — |
-| `avatar` | `string` | No | — |
-| `segmentId` | `string` | No | — |
+| `phoneNumber` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
+| `segmentId` | `string \| null` | No | — |
 | `location` | `object` | No | — |
-| `stage` | `string` | No | — |
-| `notes` | `string` | No | — |
+| `stage` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
 | `tags` | `string[]` | No | — |
-| `customFields` | `object` | No | — |
+| `customFields` | `Record<string, any> \| null` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 
@@ -251,14 +243,6 @@ await corsair.whautomate.api.contacts.addContact({});
 {
   id: string,
   title?: string
-}
-```
-</Accordion>
-
-<Accordion title="customFields full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -291,7 +275,7 @@ await corsair.whautomate.api.contacts.getContacts({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -312,8 +296,7 @@ await corsair.whautomate.api.contacts.getContacts({});
   stage?: string | null,
   notes?: string | null,
   tags?: string[],
-  customFields?: {
-  } | null,
+  customFields?: Record<string, any> | null,
   createdAt?: string,
   updatedAt?: string
 }[] | {
@@ -332,8 +315,7 @@ await corsair.whautomate.api.contacts.getContacts({});
     stage?: string | null,
     notes?: string | null,
     tags?: string[],
-    customFields?: {
-    } | null,
+    customFields?: Record<string, any> | null,
     createdAt?: string,
     updatedAt?: string
   }[],
@@ -375,7 +357,7 @@ await corsair.whautomate.api.contacts.getMessagesOfContact({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -480,7 +462,7 @@ await corsair.whautomate.api.segments.getSegments({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -568,7 +550,7 @@ await corsair.whautomate.api.serviceCategories.getServiceCategories({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -630,10 +612,10 @@ await corsair.whautomate.api.services.getServiceById({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `price` | `number` | No | — |
 | `duration` | `number` | No | — |
-| `categoryId` | `string` | No | — |
+| `categoryId` | `string \| null` | No | — |
 | `isActive` | `boolean` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
@@ -666,7 +648,7 @@ await corsair.whautomate.api.services.getServices({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -740,10 +722,10 @@ await corsair.whautomate.api.services.updateService({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `price` | `number` | No | — |
 | `duration` | `number` | No | — |
-| `categoryId` | `string` | No | — |
+| `categoryId` | `string \| null` | No | — |
 | `isActive` | `boolean` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
@@ -835,10 +817,10 @@ await corsair.whautomate.api.staff.getStaffById({});
 | `id` | `string` | Yes | — |
 | `firstName` | `string` | Yes | — |
 | `lastName` | `string` | Yes | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `avatar` | `string` | No | — |
-| `role` | `string` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
+| `role` | `string \| null` | No | — |
 | `active` | `boolean` | No | — |
 | `locations` | `string[]` | No | — |
 | `createdAt` | `string` | No | — |
@@ -870,7 +852,7 @@ await corsair.whautomate.api.staff.getStaffs({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">

@@ -64,7 +64,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "timestamp",
@@ -99,7 +99,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -129,7 +129,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "timestamp",
@@ -169,7 +169,7 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "timestamp",
@@ -220,27 +220,27 @@
           {
             "key": "properties",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "person",
             "optional": true,
-            "type": "{ distinct_id: string, properties?: {} }"
+            "type": "{ distinct_id: string, properties?: Record<string, any> }"
           },
           {
             "key": "groups",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "$set",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "$set_once",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "$unset",
@@ -249,7 +249,7 @@
           }
         ]
       },
-      "responseType": "{ event: string, distinct_id: string, timestamp?: string, uuid?: string, properties?: {}, person?: { distinct_id: string, properties?: {} }, groups?: {}, $set?: {}, $set_once?: {}, $unset?: string[] }",
+      "responseType": "{ event: string, distinct_id: string, timestamp?: string, uuid?: string, properties?: Record<string, any>, person?: { distinct_id: string, properties?: Record<string, any> }, groups?: Record<string, any>, $set?: Record<string, any>, $set_once?: Record<string, any>, $unset?: string[] }",
       "usageExample": "posthog({\n    webhookHooks: {\n        events: {\n            captured: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

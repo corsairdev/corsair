@@ -193,8 +193,9 @@
           },
           {
             "key": "response_type",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to \"code\"."
           },
           {
             "key": "state",
@@ -414,7 +415,7 @@
           {
             "key": "signer_list",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -517,7 +518,7 @@
           {
             "key": "signer_list",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "title",
@@ -720,7 +721,7 @@
           {
             "key": "report_type",
             "optional": false,
-            "type": "user_activity | document_status | sms_activity | fax_usage[]"
+            "type": "(user_activity | document_status | sms_activity | fax_usage)[]"
           },
           {
             "key": "start_date",
@@ -821,7 +822,7 @@
           {
             "key": "faxes",
             "optional": false,
-            "type": "{ fax_id?: string, title?: string, original_title?: string, message?: string | null, created_at?: number, sender?: string, files_url?: string, transmissions?: {}[] }[]"
+            "type": "{ fax_id?: string, title?: string, original_title?: string, message?: string | null, created_at?: number, sender?: string, files_url?: string, transmissions?: Record<string, any>[] }[]"
           },
           {
             "key": "list_info",

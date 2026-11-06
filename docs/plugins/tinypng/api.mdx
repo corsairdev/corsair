@@ -63,7 +63,7 @@ await corsair.tinypng.api.images.compressAndStoreInAzure({
 | `resize` | `object` | No | — |
 | `convert` | `object` | No | Several types return the smallest result |
 | `transform` | `object` | No | — |
-| `preserve` | `copyright \| creation \| location[]` | No | — |
+| `preserve` | `(copyright \| creation \| location)[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="source full type">
@@ -92,7 +92,7 @@ await corsair.tinypng.api.images.compressAndStoreInAzure({
 
 ```ts
 {
-  type: image/avif | image/webp | image/jpeg | image/png | image/jxl | */* | image/avif | image/webp | image/jpeg | image/png | image/jxl | */*[]
+  type: image/avif | image/webp | image/jpeg | image/png | image/jxl | */* | (image/avif | image/webp | image/jpeg | image/png | image/jxl | */*)[]
 }
 ```
 </Accordion>
@@ -260,7 +260,7 @@ await corsair.tinypng.api.images.transform({
 | `resize` | `object` | No | — |
 | `convert` | `object` | No | Several types return the smallest result |
 | `transform` | `object` | No | — |
-| `preserve` | `copyright \| creation \| location[]` | No | — |
+| `preserve` | `(copyright \| creation \| location)[]` | No | — |
 | `store` | `object` | No | Upload the result to S3 or GCS instead of returning the bytes |
 
 <AccordionGroup>
@@ -279,7 +279,7 @@ await corsair.tinypng.api.images.transform({
 
 ```ts
 {
-  type: image/avif | image/webp | image/jpeg | image/png | image/jxl | */* | image/avif | image/webp | image/jpeg | image/png | image/jxl | */*[]
+  type: image/avif | image/webp | image/jpeg | image/png | image/jxl | */* | (image/avif | image/webp | image/jpeg | image/png | image/jxl | */*)[]
 }
 ```
 </Accordion>

@@ -338,7 +338,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -384,7 +384,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -430,7 +430,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -550,7 +550,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -596,7 +596,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -642,7 +642,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -688,7 +688,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -746,7 +746,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -803,7 +803,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -1114,7 +1114,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -1280,7 +1280,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -1326,7 +1326,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -1372,7 +1372,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -1418,7 +1418,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -1464,7 +1464,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -1510,7 +1510,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -1636,7 +1636,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -1861,7 +1861,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -1907,7 +1907,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -1985,7 +1985,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -2092,7 +2092,7 @@
           {
             "key": "next_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",

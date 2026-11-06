@@ -57,72 +57,72 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "test",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "locale",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "additionalInfo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "images",
             "optional": true,
-            "type": "{ url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[]"
+            "type": "{ url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null"
           },
           {
             "key": "classifications",
             "optional": true,
-            "type": "{ primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null }[]"
+            "type": "{ primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null"
           },
           {
             "key": "aliases",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "localizedAliases",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "externalLinks",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "upcomingEvents",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "_links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -244,17 +244,17 @@
           {
             "key": "attractions",
             "optional": false,
-            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: {} | null, externalLinks?: {} | null, upcomingEvents?: {} | null, _links?: {} | null }[]"
+            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: Record<string, any> | null, externalLinks?: Record<string, any> | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[]"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "{ size?: number | null, totalElements?: number | null, totalPages?: number | null, number?: number | null }"
+            "type": "{ size?: number | null, totalElements?: number | null, totalPages?: number | null, number?: number | null } | null"
           },
           {
             "key": "next_page",
-            "optional": true,
-            "type": "number",
+            "optional": false,
+            "type": "number | null",
             "description": "The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached."
           }
         ]
@@ -294,47 +294,47 @@
           {
             "key": "primary",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "family",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "segment",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null }[] | null } | null }"
+            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null"
           },
           {
             "key": "genre",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null }"
+            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null"
           },
           {
             "key": "subGenre",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }"
+            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }"
+            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null"
           },
           {
             "key": "subType",
             "optional": true,
-            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }"
+            "type": "{ id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null"
           },
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "_links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -416,17 +416,17 @@
           {
             "key": "classifications",
             "optional": false,
-            "type": "{ primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, id?: string | null, _links?: {} | null }[]"
+            "type": "{ primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, id?: string | null, _links?: Record<string, any> | null }[]"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "{ size?: number | null, totalElements?: number | null, totalPages?: number | null, number?: number | null }"
+            "type": "{ size?: number | null, totalElements?: number | null, totalPages?: number | null, number?: number | null } | null"
           },
           {
             "key": "next_page",
-            "optional": true,
-            "type": "number",
+            "optional": false,
+            "type": "number | null",
             "description": "The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached."
           }
         ]
@@ -471,142 +471,142 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "test",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "locale",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "additionalInfo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "info",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "pleaseNote",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "productType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "images",
             "optional": true,
-            "type": "{ url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[]"
+            "type": "{ url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null"
           },
           {
             "key": "dates",
             "optional": true,
-            "type": "{ start?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, dateTBD?: boolean | null, dateTBA?: boolean | null, timeTBA?: boolean | null, noSpecificTime?: boolean | null } | null, end?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, approximate?: boolean | null, noSpecificTime?: boolean | null } | null, timezone?: string | null, spanMultipleDays?: boolean | null, status?: { code?: string | null } | null }"
+            "type": "{ start?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, dateTBD?: boolean | null, dateTBA?: boolean | null, timeTBA?: boolean | null, noSpecificTime?: boolean | null } | null, end?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, approximate?: boolean | null, noSpecificTime?: boolean | null } | null, timezone?: string | null, spanMultipleDays?: boolean | null, status?: { code?: string | null } | null } | null"
           },
           {
             "key": "sales",
             "optional": true,
-            "type": "{ public?: { startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null } | null, presales?: { name?: string | null, description?: string | null, url?: string | null, startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null }[] | null }"
+            "type": "{ public?: { startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null } | null, presales?: { name?: string | null, description?: string | null, url?: string | null, startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null }[] | null } | null"
           },
           {
             "key": "priceRanges",
             "optional": true,
-            "type": "{ type?: string | null, currency?: string | null, min?: number | null, max?: number | null }[]"
+            "type": "{ type?: string | null, currency?: string | null, min?: number | null, max?: number | null }[] | null"
           },
           {
             "key": "classifications",
             "optional": true,
-            "type": "{ primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null }[]"
+            "type": "{ primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null"
           },
           {
             "key": "promoter",
             "optional": true,
-            "type": "{ id?: string | null }"
+            "type": "{ id?: string | null } | null"
           },
           {
             "key": "promoters",
             "optional": true,
-            "type": "{ id?: string | null }[]"
+            "type": "{ id?: string | null }[] | null"
           },
           {
             "key": "outlets",
             "optional": true,
-            "type": "{ href?: string | null, templated?: boolean | null }[]"
+            "type": "{ href?: string | null, templated?: boolean | null }[] | null"
           },
           {
             "key": "products",
             "optional": true,
-            "type": "{ href?: string | null, templated?: boolean | null }[]"
+            "type": "{ href?: string | null, templated?: boolean | null }[] | null"
           },
           {
             "key": "aliases",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "seatmap",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "accessibility",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "ticketLimit",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "place",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "externalLinks",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "localizedAliases",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "_embedded",
             "optional": true,
-            "type": "{ venues?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: {} | null, generalInfo?: {} | null, social?: {} | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: {} | null, _links?: {} | null }[] | null, attractions?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: {} | null, externalLinks?: {} | null, upcomingEvents?: {} | null, _links?: {} | null }[] | null }"
+            "type": "{ venues?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: Record<string, any> | null, generalInfo?: Record<string, any> | null, social?: Record<string, any> | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[] | null, attractions?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: Record<string, any> | null, externalLinks?: Record<string, any> | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[] | null } | null"
           },
           {
             "key": "_links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -645,12 +645,12 @@
           {
             "key": "id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "images",
@@ -902,17 +902,17 @@
           {
             "key": "events",
             "optional": false,
-            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, info?: string | null, pleaseNote?: string | null, productType?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, dates?: { start?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, dateTBD?: boolean | null, dateTBA?: boolean | null, timeTBA?: boolean | null, noSpecificTime?: boolean | null } | null, end?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, approximate?: boolean | null, noSpecificTime?: boolean | null } | null, timezone?: string | null, spanMultipleDays?: boolean | null, status?: { code?: string | null } | null } | null, sales?: { public?: { startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null } | null, presales?: { name?: string | null, description?: string | null, url?: string | null, startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null }[] | null } | null, priceRanges?: { type?: string | null, currency?: string | null, min?: number | null, max?: number | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null }[] | null, promoter?: { id?: string | null } | null, promoters?: { id?: string | null }[] | null, outlets?: { href?: string | null, templated?: boolean | null }[] | null, products?: { href?: string | null, templated?: boolean | null }[] | null, aliases?: string[] | null, seatmap?: {} | null, accessibility?: {} | null, ticketLimit?: {} | null, place?: {} | null, externalLinks?: {} | null, localizedAliases?: {} | null, _embedded?: { venues?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: {} | null, generalInfo?: {} | null, social?: {} | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: {} | null, _links?: {} | null }[] | null, attractions?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: {} | null, externalLinks?: {} | null, upcomingEvents?: {} | null, _links?: {} | null }[] | null } | null, _links?: {} | null }[]"
+            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, info?: string | null, pleaseNote?: string | null, productType?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, dates?: { start?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, dateTBD?: boolean | null, dateTBA?: boolean | null, timeTBA?: boolean | null, noSpecificTime?: boolean | null } | null, end?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, approximate?: boolean | null, noSpecificTime?: boolean | null } | null, timezone?: string | null, spanMultipleDays?: boolean | null, status?: { code?: string | null } | null } | null, sales?: { public?: { startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null } | null, presales?: { name?: string | null, description?: string | null, url?: string | null, startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null }[] | null } | null, priceRanges?: { type?: string | null, currency?: string | null, min?: number | null, max?: number | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, promoter?: { id?: string | null } | null, promoters?: { id?: string | null }[] | null, outlets?: { href?: string | null, templated?: boolean | null }[] | null, products?: { href?: string | null, templated?: boolean | null }[] | null, aliases?: string[] | null, seatmap?: Record<string, any> | null, accessibility?: Record<string, any> | null, ticketLimit?: Record<string, any> | null, place?: Record<string, any> | null, externalLinks?: Record<string, any> | null, localizedAliases?: Record<string, any> | null, _embedded?: { venues?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: Record<string, any> | null, generalInfo?: Record<string, any> | null, social?: Record<string, any> | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[] | null, attractions?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: Record<string, any> | null, externalLinks?: Record<string, any> | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[] | null } | null, _links?: Record<string, any> | null }[]"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "{ size?: number | null, totalElements?: number | null, totalPages?: number | null, number?: number | null }"
+            "type": "{ size?: number | null, totalElements?: number | null, totalPages?: number | null, number?: number | null } | null"
           },
           {
             "key": "next_page",
-            "optional": true,
-            "type": "number",
+            "optional": false,
+            "type": "number | null",
             "description": "The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached."
           }
         ]
@@ -976,7 +976,7 @@
           {
             "key": "resource",
             "optional": true,
-            "type": "attractions | events | venues | products[]",
+            "type": "(attractions | events | venues | products)[]",
             "description": "Which collections to suggest from. Ticketmaster defaults to all four."
           },
           {
@@ -1034,22 +1034,22 @@
           {
             "key": "attractions",
             "optional": false,
-            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: {} | null, externalLinks?: {} | null, upcomingEvents?: {} | null, _links?: {} | null }[]"
+            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: Record<string, any> | null, externalLinks?: Record<string, any> | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[]"
           },
           {
             "key": "events",
             "optional": false,
-            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, info?: string | null, pleaseNote?: string | null, productType?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, dates?: { start?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, dateTBD?: boolean | null, dateTBA?: boolean | null, timeTBA?: boolean | null, noSpecificTime?: boolean | null } | null, end?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, approximate?: boolean | null, noSpecificTime?: boolean | null } | null, timezone?: string | null, spanMultipleDays?: boolean | null, status?: { code?: string | null } | null } | null, sales?: { public?: { startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null } | null, presales?: { name?: string | null, description?: string | null, url?: string | null, startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null }[] | null } | null, priceRanges?: { type?: string | null, currency?: string | null, min?: number | null, max?: number | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null }[] | null, promoter?: { id?: string | null } | null, promoters?: { id?: string | null }[] | null, outlets?: { href?: string | null, templated?: boolean | null }[] | null, products?: { href?: string | null, templated?: boolean | null }[] | null, aliases?: string[] | null, seatmap?: {} | null, accessibility?: {} | null, ticketLimit?: {} | null, place?: {} | null, externalLinks?: {} | null, localizedAliases?: {} | null, _embedded?: { venues?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: {} | null, generalInfo?: {} | null, social?: {} | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: {} | null, _links?: {} | null }[] | null, attractions?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: {} | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: {} | null, externalLinks?: {} | null, upcomingEvents?: {} | null, _links?: {} | null }[] | null } | null, _links?: {} | null }[]"
+            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, info?: string | null, pleaseNote?: string | null, productType?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, dates?: { start?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, dateTBD?: boolean | null, dateTBA?: boolean | null, timeTBA?: boolean | null, noSpecificTime?: boolean | null } | null, end?: { localDate?: string | null, localTime?: string | null, dateTime?: string | null, approximate?: boolean | null, noSpecificTime?: boolean | null } | null, timezone?: string | null, spanMultipleDays?: boolean | null, status?: { code?: string | null } | null } | null, sales?: { public?: { startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null } | null, presales?: { name?: string | null, description?: string | null, url?: string | null, startDateTime?: string | null, endDateTime?: string | null, startTBD?: boolean | null, startTBA?: boolean | null }[] | null } | null, priceRanges?: { type?: string | null, currency?: string | null, min?: number | null, max?: number | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, promoter?: { id?: string | null } | null, promoters?: { id?: string | null }[] | null, outlets?: { href?: string | null, templated?: boolean | null }[] | null, products?: { href?: string | null, templated?: boolean | null }[] | null, aliases?: string[] | null, seatmap?: Record<string, any> | null, accessibility?: Record<string, any> | null, ticketLimit?: Record<string, any> | null, place?: Record<string, any> | null, externalLinks?: Record<string, any> | null, localizedAliases?: Record<string, any> | null, _embedded?: { venues?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: Record<string, any> | null, generalInfo?: Record<string, any> | null, social?: Record<string, any> | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[] | null, attractions?: { id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, classifications?: { primary?: boolean | null, family?: boolean | null, segment?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { genres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null }[] | null } | null } | null, genre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null, _embedded?: { subgenres?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null }[] | null } | null } | null, subGenre?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, type?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null, subType?: { id?: string | null, name?: string | null, locale?: string | null, href?: string | null, templated?: boolean | null, _links?: Record<string, any> | null } | null }[] | null, aliases?: string[] | null, localizedAliases?: Record<string, any> | null, externalLinks?: Record<string, any> | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[] | null } | null, _links?: Record<string, any> | null }[]"
           },
           {
             "key": "venues",
             "optional": false,
-            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: {} | null, generalInfo?: {} | null, social?: {} | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: {} | null, _links?: {} | null }[]"
+            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: Record<string, any> | null, generalInfo?: Record<string, any> | null, social?: Record<string, any> | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[]"
           },
           {
             "key": "products",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1093,127 +1093,127 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "test",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "locale",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "additionalInfo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "postalCode",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timezone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "{ name?: string | null }"
+            "type": "{ name?: string | null } | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "{ name?: string | null, stateCode?: string | null }"
+            "type": "{ name?: string | null, stateCode?: string | null } | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "{ name?: string | null, countryCode?: string | null }"
+            "type": "{ name?: string | null, countryCode?: string | null } | null"
           },
           {
             "key": "address",
             "optional": true,
-            "type": "{ line1?: string | null }"
+            "type": "{ line1?: string | null } | null"
           },
           {
             "key": "location",
             "optional": true,
-            "type": "{ longitude?: string | number | null, latitude?: string | number | null }"
+            "type": "{ longitude?: string | number | null, latitude?: string | number | null } | null"
           },
           {
             "key": "markets",
             "optional": true,
-            "type": "{ id?: string | number | null }[]"
+            "type": "{ id?: string | number | null }[] | null"
           },
           {
             "key": "dmas",
             "optional": true,
-            "type": "{ id?: number | null }[]"
+            "type": "{ id?: number | null }[] | null"
           },
           {
             "key": "images",
             "optional": true,
-            "type": "{ url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[]"
+            "type": "{ url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null"
           },
           {
             "key": "boxOfficeInfo",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "generalInfo",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "social",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "parkingDetail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "accessibleSeatingDetail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "upcomingEvents",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "_links",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -1326,17 +1326,17 @@
           {
             "key": "venues",
             "optional": false,
-            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: {} | null, generalInfo?: {} | null, social?: {} | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: {} | null, _links?: {} | null }[]"
+            "type": "{ id: string, name?: string | null, type?: string | null, test?: boolean | null, url?: string | null, locale?: string | null, description?: string | null, additionalInfo?: string | null, postalCode?: string | null, timezone?: string | null, currency?: string | null, city?: { name?: string | null } | null, state?: { name?: string | null, stateCode?: string | null } | null, country?: { name?: string | null, countryCode?: string | null } | null, address?: { line1?: string | null } | null, location?: { longitude?: string | number | null, latitude?: string | number | null } | null, markets?: { id?: string | number | null }[] | null, dmas?: { id?: number | null }[] | null, images?: { url?: string | null, ratio?: string | null, width?: number | null, height?: number | null, fallback?: boolean | null }[] | null, boxOfficeInfo?: Record<string, any> | null, generalInfo?: Record<string, any> | null, social?: Record<string, any> | null, parkingDetail?: string | null, accessibleSeatingDetail?: string | null, upcomingEvents?: Record<string, any> | null, _links?: Record<string, any> | null }[]"
           },
           {
             "key": "page",
             "optional": true,
-            "type": "{ size?: number | null, totalElements?: number | null, totalPages?: number | null, number?: number | null }"
+            "type": "{ size?: number | null, totalElements?: number | null, totalPages?: number | null, number?: number | null } | null"
           },
           {
             "key": "next_page",
-            "optional": true,
-            "type": "number",
+            "optional": false,
+            "type": "number | null",
             "description": "The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached."
           }
         ]

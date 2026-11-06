@@ -81,10 +81,8 @@ await corsair.cal.api.bookings.cancel({});
     timeZone?: string
   }[],
   guests?: string[],
-  metadata?: {
-  } | null,
-  bookingFieldsResponses?: {
-  } | null
+  metadata?: Record<string, any> | null,
+  bookingFieldsResponses?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -162,10 +160,8 @@ await corsair.cal.api.bookings.confirm({});
     timeZone?: string
   }[],
   guests?: string[],
-  metadata?: {
-  } | null,
-  bookingFieldsResponses?: {
-  } | null
+  metadata?: Record<string, any> | null,
+  bookingFieldsResponses?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -196,8 +192,8 @@ await corsair.cal.api.bookings.create({});
 | `attendee` | `object` | Yes | — |
 | `meetingUrl` | `string` | No | — |
 | `lengthInMinutes` | `number` | No | — |
-| `bookingFieldsResponses` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `bookingFieldsResponses` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="attendee full type">
@@ -207,22 +203,6 @@ await corsair.cal.api.bookings.create({});
   name: string,
   email: string,
   timeZone: string
-}
-```
-</Accordion>
-
-<Accordion title="bookingFieldsResponses full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -278,10 +258,8 @@ await corsair.cal.api.bookings.create({});
     timeZone?: string
   }[],
   guests?: string[],
-  metadata?: {
-  } | null,
-  bookingFieldsResponses?: {
-  } | null
+  metadata?: Record<string, any> | null,
+  bookingFieldsResponses?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -360,10 +338,8 @@ await corsair.cal.api.bookings.decline({});
     timeZone?: string
   }[],
   guests?: string[],
-  metadata?: {
-  } | null,
-  bookingFieldsResponses?: {
-  } | null
+  metadata?: Record<string, any> | null,
+  bookingFieldsResponses?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -441,10 +417,8 @@ await corsair.cal.api.bookings.get({});
     timeZone?: string
   }[],
   guests?: string[],
-  metadata?: {
-  } | null,
-  bookingFieldsResponses?: {
-  } | null
+  metadata?: Record<string, any> | null,
+  bookingFieldsResponses?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -535,10 +509,8 @@ await corsair.cal.api.bookings.list({});
     timeZone?: string
   }[],
   guests?: string[],
-  metadata?: {
-  } | null,
-  bookingFieldsResponses?: {
-  } | null
+  metadata?: Record<string, any> | null,
+  bookingFieldsResponses?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -618,10 +590,8 @@ await corsair.cal.api.bookings.reschedule({});
     timeZone?: string
   }[],
   guests?: string[],
-  metadata?: {
-  } | null,
-  bookingFieldsResponses?: {
-  } | null
+  metadata?: Record<string, any> | null,
+  bookingFieldsResponses?: Record<string, any> | null
 }
 ```
 </Accordion>

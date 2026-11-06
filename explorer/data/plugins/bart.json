@@ -100,7 +100,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any>"
           }
         ]
       }
@@ -181,7 +181,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string | {}"
+            "type": "string | Record<string, any>"
           }
         ]
       }
@@ -242,7 +242,7 @@
           {
             "key": "trip",
             "optional": true,
-            "type": "{ fare?: string, discount?: {} }"
+            "type": "{ fare?: string, discount?: Record<string, string> }"
           },
           {
             "key": "fares",
@@ -390,12 +390,12 @@
           {
             "key": "schedule",
             "optional": true,
-            "type": "{ date?: string, time?: string, before?: string, after?: string, request?: { trip?: {} }, trip?: { @origin?: string, @destination?: string, @fare?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @tripTime?: string, @clipper?: string, leg?: { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }[] | { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }, fares?: { fare?: { @amount?: string, @class?: string, @name?: string, @type?: string }[] | { @amount?: string, @class?: string, @name?: string, @type?: string } } }[] | { @origin?: string, @destination?: string, @fare?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @tripTime?: string, @clipper?: string, leg?: { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }[] | { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }, fares?: { fare?: { @amount?: string, @class?: string, @name?: string, @type?: string }[] | { @amount?: string, @class?: string, @name?: string, @type?: string } } } }"
+            "type": "{ date?: string, time?: string, before?: string, after?: string, request?: { trip?: Record<string, string> }, trip?: { @origin?: string, @destination?: string, @fare?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @tripTime?: string, @clipper?: string, leg?: { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }[] | { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }, fares?: { fare?: { @amount?: string, @class?: string, @name?: string, @type?: string }[] | { @amount?: string, @class?: string, @name?: string, @type?: string } } }[] | { @origin?: string, @destination?: string, @fare?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @tripTime?: string, @clipper?: string, leg?: { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }[] | { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }, fares?: { fare?: { @amount?: string, @class?: string, @name?: string, @type?: string }[] | { @amount?: string, @class?: string, @name?: string, @type?: string } } } }"
           },
           {
             "key": "schedule_files",
             "optional": true,
-            "type": "{ file?: {}[] | {} }"
+            "type": "{ file?: Record<string, string>[] | Record<string, string> }"
           }
         ]
       }
@@ -461,12 +461,12 @@
           {
             "key": "schedule",
             "optional": true,
-            "type": "{ date?: string, time?: string, before?: string, after?: string, request?: { trip?: {} }, trip?: { @origin?: string, @destination?: string, @fare?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @tripTime?: string, @clipper?: string, leg?: { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }[] | { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }, fares?: { fare?: { @amount?: string, @class?: string, @name?: string, @type?: string }[] | { @amount?: string, @class?: string, @name?: string, @type?: string } } }[] | { @origin?: string, @destination?: string, @fare?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @tripTime?: string, @clipper?: string, leg?: { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }[] | { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }, fares?: { fare?: { @amount?: string, @class?: string, @name?: string, @type?: string }[] | { @amount?: string, @class?: string, @name?: string, @type?: string } } } }"
+            "type": "{ date?: string, time?: string, before?: string, after?: string, request?: { trip?: Record<string, string> }, trip?: { @origin?: string, @destination?: string, @fare?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @tripTime?: string, @clipper?: string, leg?: { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }[] | { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }, fares?: { fare?: { @amount?: string, @class?: string, @name?: string, @type?: string }[] | { @amount?: string, @class?: string, @name?: string, @type?: string } } }[] | { @origin?: string, @destination?: string, @fare?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @tripTime?: string, @clipper?: string, leg?: { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }[] | { @order?: string, @transfercode?: string, @origin?: string, @destination?: string, @origTimeMin?: string, @origTimeDate?: string, @destTimeMin?: string, @destTimeDate?: string, @line?: string, @bikeflag?: string, @trainHeadStation?: string, @trainIdx?: string }, fares?: { fare?: { @amount?: string, @class?: string, @name?: string, @type?: string }[] | { @amount?: string, @class?: string, @name?: string, @type?: string } } } }"
           },
           {
             "key": "schedule_files",
             "optional": true,
-            "type": "{ file?: {}[] | {} }"
+            "type": "{ file?: Record<string, string>[] | Record<string, string> }"
           }
         ]
       }

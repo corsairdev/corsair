@@ -77,32 +77,32 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "membershipType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isFavoriteByDefault",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "createdDateTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -168,32 +168,32 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "membershipType",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isFavoriteByDefault",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "createdDateTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -315,7 +315,7 @@
           {
             "key": "topic",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdDateTime",
@@ -371,7 +371,7 @@
           {
             "key": "topic",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdDateTime",
@@ -483,7 +483,7 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{ id: string, replyToId?: string | null, etag?: string, messageType?: string, createdDateTime?: string, lastModifiedDateTime?: string, deletedDateTime?: string | null, subject?: string | null, summary?: string | null, chatId?: string | null, importance?: string, locale?: string, webUrl?: string | null, from?: { application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null } | null, body?: { contentType?: text | html, content?: string }, channelIdentity?: { teamId?: string, channelId?: string } | null, attachments?: {}[], mentions?: {}[], reactions?: {}[] }[]"
+            "type": "{ id: string, replyToId?: string | null, etag?: string, messageType?: string, createdDateTime?: string, lastModifiedDateTime?: string, deletedDateTime?: string | null, subject?: string | null, summary?: string | null, chatId?: string | null, importance?: string, locale?: string, webUrl?: string | null, from?: { application?: Record<string, any> | null, device?: Record<string, any> | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null } | null, body?: { contentType?: text | html, content?: string }, channelIdentity?: { teamId?: string, channelId?: string } | null, attachments?: Record<string, any>[], mentions?: Record<string, any>[], reactions?: Record<string, any>[] }[]"
           }
         ]
       }
@@ -524,7 +524,7 @@
           {
             "key": "replyToId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "etag",
@@ -549,22 +549,22 @@
           {
             "key": "deletedDateTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chatId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "importance",
@@ -579,12 +579,12 @@
           {
             "key": "webUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from",
             "optional": true,
-            "type": "{ application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null }"
+            "type": "{ application?: Record<string, any> | null, device?: Record<string, any> | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null } | null"
           },
           {
             "key": "body",
@@ -594,22 +594,22 @@
           {
             "key": "channelIdentity",
             "optional": true,
-            "type": "{ teamId?: string, channelId?: string }"
+            "type": "{ teamId?: string, channelId?: string } | null"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "mentions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "reactions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -635,7 +635,7 @@
           {
             "key": "roles",
             "optional": true,
-            "type": "owner | member[]"
+            "type": "(owner | member)[]"
           }
         ]
       },
@@ -650,22 +650,22 @@
           {
             "key": "displayName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tenantId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "roles",
@@ -675,7 +675,7 @@
           {
             "key": "visibleHistoryStartDateTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -711,22 +711,22 @@
           {
             "key": "displayName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "userId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tenantId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "roles",
@@ -736,7 +736,7 @@
           {
             "key": "visibleHistoryStartDateTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -873,7 +873,7 @@
           {
             "key": "replyToId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "etag",
@@ -898,22 +898,22 @@
           {
             "key": "deletedDateTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chatId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "importance",
@@ -928,12 +928,12 @@
           {
             "key": "webUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from",
             "optional": true,
-            "type": "{ application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null }"
+            "type": "{ application?: Record<string, any> | null, device?: Record<string, any> | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null } | null"
           },
           {
             "key": "body",
@@ -943,22 +943,22 @@
           {
             "key": "channelIdentity",
             "optional": true,
-            "type": "{ teamId?: string, channelId?: string }"
+            "type": "{ teamId?: string, channelId?: string } | null"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "mentions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "reactions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1009,7 +1009,7 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{ id: string, replyToId?: string | null, etag?: string, messageType?: string, createdDateTime?: string, lastModifiedDateTime?: string, deletedDateTime?: string | null, subject?: string | null, summary?: string | null, chatId?: string | null, importance?: string, locale?: string, webUrl?: string | null, from?: { application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null } | null, body?: { contentType?: text | html, content?: string }, channelIdentity?: { teamId?: string, channelId?: string } | null, attachments?: {}[], mentions?: {}[], reactions?: {}[] }[]"
+            "type": "{ id: string, replyToId?: string | null, etag?: string, messageType?: string, createdDateTime?: string, lastModifiedDateTime?: string, deletedDateTime?: string | null, subject?: string | null, summary?: string | null, chatId?: string | null, importance?: string, locale?: string, webUrl?: string | null, from?: { application?: Record<string, any> | null, device?: Record<string, any> | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null } | null, body?: { contentType?: text | html, content?: string }, channelIdentity?: { teamId?: string, channelId?: string } | null, attachments?: Record<string, any>[], mentions?: Record<string, any>[], reactions?: Record<string, any>[] }[]"
           }
         ]
       }
@@ -1060,7 +1060,7 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{ id: string, replyToId?: string | null, etag?: string, messageType?: string, createdDateTime?: string, lastModifiedDateTime?: string, deletedDateTime?: string | null, subject?: string | null, summary?: string | null, chatId?: string | null, importance?: string, locale?: string, webUrl?: string | null, from?: { application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null } | null, body?: { contentType?: text | html, content?: string }, channelIdentity?: { teamId?: string, channelId?: string } | null, attachments?: {}[], mentions?: {}[], reactions?: {}[] }[]"
+            "type": "{ id: string, replyToId?: string | null, etag?: string, messageType?: string, createdDateTime?: string, lastModifiedDateTime?: string, deletedDateTime?: string | null, subject?: string | null, summary?: string | null, chatId?: string | null, importance?: string, locale?: string, webUrl?: string | null, from?: { application?: Record<string, any> | null, device?: Record<string, any> | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null } | null, body?: { contentType?: text | html, content?: string }, channelIdentity?: { teamId?: string, channelId?: string } | null, attachments?: Record<string, any>[], mentions?: Record<string, any>[], reactions?: Record<string, any>[] }[]"
           }
         ]
       }
@@ -1111,7 +1111,7 @@
           {
             "key": "replyToId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "etag",
@@ -1136,22 +1136,22 @@
           {
             "key": "deletedDateTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chatId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "importance",
@@ -1166,12 +1166,12 @@
           {
             "key": "webUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from",
             "optional": true,
-            "type": "{ application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null }"
+            "type": "{ application?: Record<string, any> | null, device?: Record<string, any> | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null } | null"
           },
           {
             "key": "body",
@@ -1181,22 +1181,22 @@
           {
             "key": "channelIdentity",
             "optional": true,
-            "type": "{ teamId?: string, channelId?: string }"
+            "type": "{ teamId?: string, channelId?: string } | null"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "mentions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "reactions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1247,7 +1247,7 @@
           {
             "key": "replyToId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "etag",
@@ -1272,22 +1272,22 @@
           {
             "key": "deletedDateTime",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "chatId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "importance",
@@ -1302,12 +1302,12 @@
           {
             "key": "webUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "from",
             "optional": true,
-            "type": "{ application?: {} | null, device?: {} | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null }"
+            "type": "{ application?: Record<string, any> | null, device?: Record<string, any> | null, user?: { id?: string, displayName?: string | null, userIdentityType?: string } | null } | null"
           },
           {
             "key": "body",
@@ -1317,22 +1317,22 @@
           {
             "key": "channelIdentity",
             "optional": true,
-            "type": "{ teamId?: string, channelId?: string }"
+            "type": "{ teamId?: string, channelId?: string } | null"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "mentions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "reactions",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1398,7 +1398,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1454,57 +1454,57 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "internalId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "classification",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "specialization",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "isArchived",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "memberSettings",
             "optional": true,
-            "type": "{ allowCreateUpdateChannels?: boolean, allowDeleteChannels?: boolean, allowAddRemoveApps?: boolean, allowCreateUpdateRemoveTabs?: boolean, allowCreateUpdateRemoveConnectors?: boolean }"
+            "type": "{ allowCreateUpdateChannels?: boolean, allowDeleteChannels?: boolean, allowAddRemoveApps?: boolean, allowCreateUpdateRemoveTabs?: boolean, allowCreateUpdateRemoveConnectors?: boolean } | null"
           },
           {
             "key": "guestSettings",
             "optional": true,
-            "type": "{ allowCreateUpdateChannels?: boolean, allowDeleteChannels?: boolean }"
+            "type": "{ allowCreateUpdateChannels?: boolean, allowDeleteChannels?: boolean } | null"
           },
           {
             "key": "messagingSettings",
             "optional": true,
-            "type": "{ allowUserEditMessages?: boolean, allowUserDeleteMessages?: boolean, allowOwnerDeleteMessages?: boolean, allowTeamMentions?: boolean, allowChannelMentions?: boolean }"
+            "type": "{ allowUserEditMessages?: boolean, allowUserDeleteMessages?: boolean, allowOwnerDeleteMessages?: boolean, allowTeamMentions?: boolean, allowChannelMentions?: boolean } | null"
           },
           {
             "key": "funSettings",
             "optional": true,
-            "type": "{ allowGiphy?: boolean, giphyContentRating?: string, allowStickersAndMemes?: boolean, allowCustomMemes?: boolean }"
+            "type": "{ allowGiphy?: boolean, giphyContentRating?: string, allowStickersAndMemes?: boolean, allowCustomMemes?: boolean } | null"
           }
         ]
       }

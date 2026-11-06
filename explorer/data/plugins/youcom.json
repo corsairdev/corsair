@@ -34,7 +34,8 @@
           {
             "key": "count",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 10."
           },
           {
             "key": "freshness",
@@ -44,7 +45,8 @@
           {
             "key": "offset",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 0."
           },
           {
             "key": "country",
@@ -54,12 +56,14 @@
           {
             "key": "language",
             "optional": true,
-            "type": "AR | EU | BN | BG | CA | ZH-HANS | ZH-HANT | HR | CS | DA | NL | EN | EN-GB | ET | FI | FR | GL | DE | EL | GU | HE | HI | HU | IS | IT | JA | KN | KO | LV | LT | MS | ML | MR | NB | PL | PT-BR | PT-PT | PA | RO | RU | SR | SK | SL | ES | SV | TA | TE | TH | TR | UK | VI"
+            "type": "AR | EU | BN | BG | CA | ZH-HANS | ZH-HANT | HR | CS | DA | NL | EN | EN-GB | ET | FI | FR | GL | DE | EL | GU | HE | HI | HU | IS | IT | JA | KN | KO | LV | LT | MS | ML | MR | NB | PL | PT-BR | PT-PT | PA | RO | RU | SR | SK | SL | ES | SV | TA | TE | TH | TR | UK | VI",
+            "description": "Defaults to \"EN\"."
           },
           {
             "key": "safesearch",
             "optional": true,
-            "type": "off | moderate | strict"
+            "type": "off | moderate | strict",
+            "description": "Defaults to \"moderate\"."
           },
           {
             "key": "livecrawl",
@@ -69,7 +73,8 @@
           {
             "key": "livecrawl_formats",
             "optional": true,
-            "type": "html | markdown[]"
+            "type": "(html | markdown)[]",
+            "description": "Defaults to [\"html\"]."
           },
           {
             "key": "include_domains",
@@ -89,7 +94,8 @@
           {
             "key": "crawl_timeout",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 10."
           }
         ]
       },
@@ -148,6 +154,11 @@
         },
         {
           "field": "favicon_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "resultType",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

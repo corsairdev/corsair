@@ -48,10 +48,10 @@ await corsair.ticketmaster.api.attractions.get({ id: 'K8vZ9171q60' });
 | `images` | `object[] \| null` | No | — |
 | `classifications` | `object[] \| null` | No | — |
 | `aliases` | `string[] \| null` | No | — |
-| `localizedAliases` | `object \| null` | No | — |
-| `externalLinks` | `object \| null` | No | — |
-| `upcomingEvents` | `object \| null` | No | — |
-| `_links` | `object \| null` | No | — |
+| `localizedAliases` | `Record<string, any> \| null` | No | — |
+| `externalLinks` | `Record<string, any> \| null` | No | — |
+| `upcomingEvents` | `Record<string, any> \| null` | No | — |
+| `_links` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="images full type">
@@ -63,7 +63,7 @@ await corsair.ticketmaster.api.attractions.get({ id: 'K8vZ9171q60' });
   width?: number | null,
   height?: number | null,
   fallback?: boolean | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -79,8 +79,7 @@ await corsair.ticketmaster.api.attractions.get({ id: 'K8vZ9171q60' });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null,
+    _links?: Record<string, any> | null,
     _embedded?: {
       genres?: {
         id?: string | null,
@@ -88,8 +87,7 @@ await corsair.ticketmaster.api.attractions.get({ id: 'K8vZ9171q60' });
         locale?: string | null,
         href?: string | null,
         templated?: boolean | null,
-        _links?: {
-        } | null,
+        _links?: Record<string, any> | null,
         _embedded?: {
           subgenres?: {
             id?: string | null,
@@ -97,8 +95,7 @@ await corsair.ticketmaster.api.attractions.get({ id: 'K8vZ9171q60' });
             locale?: string | null,
             href?: string | null,
             templated?: boolean | null,
-            _links?: {
-            } | null
+            _links?: Record<string, any> | null
           }[] | null
         } | null
       }[] | null
@@ -110,8 +107,7 @@ await corsair.ticketmaster.api.attractions.get({ id: 'K8vZ9171q60' });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null,
+    _links?: Record<string, any> | null,
     _embedded?: {
       subgenres?: {
         id?: string | null,
@@ -119,8 +115,7 @@ await corsair.ticketmaster.api.attractions.get({ id: 'K8vZ9171q60' });
         locale?: string | null,
         href?: string | null,
         templated?: boolean | null,
-        _links?: {
-        } | null
+        _links?: Record<string, any> | null
       }[] | null
     } | null
   } | null,
@@ -130,8 +125,7 @@ await corsair.ticketmaster.api.attractions.get({ id: 'K8vZ9171q60' });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null
+    _links?: Record<string, any> | null
   } | null,
   type?: {
     id?: string | null,
@@ -139,8 +133,7 @@ await corsair.ticketmaster.api.attractions.get({ id: 'K8vZ9171q60' });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null
+    _links?: Record<string, any> | null
   } | null,
   subType?: {
     id?: string | null,
@@ -148,38 +141,9 @@ await corsair.ticketmaster.api.attractions.get({ id: 'K8vZ9171q60' });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null
+    _links?: Record<string, any> | null
   } | null
-}[]
-```
-</Accordion>
-
-<Accordion title="localizedAliases full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="externalLinks full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="upcomingEvents full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="_links full type">
-
-```ts
-Record<string, unknown>
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -208,9 +172,9 @@ await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 
 | `keyword` | `string` | No | — |
 | `source` | `string` | No | Publishing source, such as 'ticketmaster', 'universe', 'frontgate' or 'tmr'. |
 | `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
-| `includeTest` | `'yes' \| 'no' \| 'only'` | No | — |
-| `includeFamily` | `'yes' \| 'no' \| 'only'` | No | — |
-| `includeSpellcheck` | `'yes' \| 'no'` | No | — |
+| `includeTest` | `yes \| no \| only` | No | — |
+| `includeFamily` | `yes \| no \| only` | No | — |
+| `includeSpellcheck` | `yes \| no` | No | — |
 | `classificationName` | `string[]` | No | — |
 | `classificationId` | `string[]` | No | — |
 | `segmentId` | `string[]` | No | — |
@@ -219,7 +183,7 @@ await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 
 | `typeId` | `string[]` | No | — |
 | `subTypeId` | `string[]` | No | — |
 | `sort` | `string` | No | Field and direction, such as 'name,asc' or 'relevance,desc'. Ticketmaster defaults to relevance,desc. |
-| `preferredCountry` | `'us' \| 'ca'` | No | — |
+| `preferredCountry` | `us \| ca` | No | — |
 | `size` | `number` | No | Items per page. Ticketmaster defaults to 20. |
 | `page` | `number` | No | 0-based page number. |
 | `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
@@ -232,7 +196,7 @@ await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 
 |------|------|----------|-------------|
 | `attractions` | `object[]` | Yes | — |
 | `page` | `object \| null` | No | — |
-| `next_page` | `number \| null` | No | The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached. |
+| `next_page` | `number \| null` | Yes | The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached. |
 
 <AccordionGroup>
 <Accordion title="attractions full type">
@@ -263,8 +227,7 @@ await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null,
+      _links?: Record<string, any> | null,
       _embedded?: {
         genres?: {
           id?: string | null,
@@ -272,8 +235,7 @@ await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null,
+          _links?: Record<string, any> | null,
           _embedded?: {
             subgenres?: {
               id?: string | null,
@@ -281,8 +243,7 @@ await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 
               locale?: string | null,
               href?: string | null,
               templated?: boolean | null,
-              _links?: {
-              } | null
+              _links?: Record<string, any> | null
             }[] | null
           } | null
         }[] | null
@@ -294,8 +255,7 @@ await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null,
+      _links?: Record<string, any> | null,
       _embedded?: {
         subgenres?: {
           id?: string | null,
@@ -303,8 +263,7 @@ await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null
+          _links?: Record<string, any> | null
         }[] | null
       } | null
     } | null,
@@ -314,8 +273,7 @@ await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null
+      _links?: Record<string, any> | null
     } | null,
     type?: {
       id?: string | null,
@@ -323,8 +281,7 @@ await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null
+      _links?: Record<string, any> | null
     } | null,
     subType?: {
       id?: string | null,
@@ -332,19 +289,14 @@ await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null
+      _links?: Record<string, any> | null
     } | null
   }[] | null,
   aliases?: string[] | null,
-  localizedAliases?: {
-  } | null,
-  externalLinks?: {
-  } | null,
-  upcomingEvents?: {
-  } | null,
-  _links?: {
-  } | null
+  localizedAliases?: Record<string, any> | null,
+  externalLinks?: Record<string, any> | null,
+  upcomingEvents?: Record<string, any> | null,
+  _links?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -357,7 +309,7 @@ await corsair.ticketmaster.api.attractions.search({ keyword: 'coachella', size: 
   totalElements?: number | null,
   totalPages?: number | null,
   number?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -402,7 +354,7 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
 | `type` | `object \| null` | No | — |
 | `subType` | `object \| null` | No | — |
 | `id` | `string \| null` | No | — |
-| `_links` | `object \| null` | No | — |
+| `_links` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="segment full type">
@@ -414,8 +366,7 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
   locale?: string | null,
   href?: string | null,
   templated?: boolean | null,
-  _links?: {
-  } | null,
+  _links?: Record<string, any> | null,
   _embedded?: {
     genres?: {
       id?: string | null,
@@ -423,8 +374,7 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null,
+      _links?: Record<string, any> | null,
       _embedded?: {
         subgenres?: {
           id?: string | null,
@@ -432,13 +382,12 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null
+          _links?: Record<string, any> | null
         }[] | null
       } | null
     }[] | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -451,8 +400,7 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
   locale?: string | null,
   href?: string | null,
   templated?: boolean | null,
-  _links?: {
-  } | null,
+  _links?: Record<string, any> | null,
   _embedded?: {
     subgenres?: {
       id?: string | null,
@@ -460,11 +408,10 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null
+      _links?: Record<string, any> | null
     }[] | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -477,9 +424,8 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
   locale?: string | null,
   href?: string | null,
   templated?: boolean | null,
-  _links?: {
-  } | null
-}
+  _links?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 
@@ -492,9 +438,8 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
   locale?: string | null,
   href?: string | null,
   templated?: boolean | null,
-  _links?: {
-  } | null
-}
+  _links?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 
@@ -507,16 +452,8 @@ await corsair.ticketmaster.api.classifications.get({ id: 'KZFzniwnSyZfZ7v7nE' })
   locale?: string | null,
   href?: string | null,
   templated?: boolean | null,
-  _links?: {
-  } | null
-}
-```
-</Accordion>
-
-<Accordion title="_links full type">
-
-```ts
-Record<string, unknown>
+  _links?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -545,10 +482,10 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
 | `keyword` | `string` | No | — |
 | `source` | `string` | No | Publishing source, such as 'ticketmaster', 'universe', 'frontgate' or 'tmr'. |
 | `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
-| `includeTest` | `'yes' \| 'no' \| 'only'` | No | — |
-| `includeSpellcheck` | `'yes' \| 'no'` | No | — |
+| `includeTest` | `yes \| no \| only` | No | — |
+| `includeSpellcheck` | `yes \| no` | No | — |
 | `sort` | `string` | No | Field and direction. Ticketmaster defaults to name,asc. |
-| `preferredCountry` | `'us' \| 'ca'` | No | — |
+| `preferredCountry` | `us \| ca` | No | — |
 | `size` | `number` | No | Items per page. Ticketmaster defaults to 20. |
 | `page` | `number` | No | 0-based page number. |
 | `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
@@ -561,7 +498,7 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
 |------|------|----------|-------------|
 | `classifications` | `object[]` | Yes | — |
 | `page` | `object \| null` | No | — |
-| `next_page` | `number \| null` | No | The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached. |
+| `next_page` | `number \| null` | Yes | The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached. |
 
 <AccordionGroup>
 <Accordion title="classifications full type">
@@ -576,8 +513,7 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null,
+    _links?: Record<string, any> | null,
     _embedded?: {
       genres?: {
         id?: string | null,
@@ -585,8 +521,7 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
         locale?: string | null,
         href?: string | null,
         templated?: boolean | null,
-        _links?: {
-        } | null,
+        _links?: Record<string, any> | null,
         _embedded?: {
           subgenres?: {
             id?: string | null,
@@ -594,8 +529,7 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
             locale?: string | null,
             href?: string | null,
             templated?: boolean | null,
-            _links?: {
-            } | null
+            _links?: Record<string, any> | null
           }[] | null
         } | null
       }[] | null
@@ -607,8 +541,7 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null,
+    _links?: Record<string, any> | null,
     _embedded?: {
       subgenres?: {
         id?: string | null,
@@ -616,8 +549,7 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
         locale?: string | null,
         href?: string | null,
         templated?: boolean | null,
-        _links?: {
-        } | null
+        _links?: Record<string, any> | null
       }[] | null
     } | null
   } | null,
@@ -627,8 +559,7 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null
+    _links?: Record<string, any> | null
   } | null,
   type?: {
     id?: string | null,
@@ -636,8 +567,7 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null
+    _links?: Record<string, any> | null
   } | null,
   subType?: {
     id?: string | null,
@@ -645,12 +575,10 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null
+    _links?: Record<string, any> | null
   } | null,
   id?: string | null,
-  _links?: {
-  } | null
+  _links?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -663,7 +591,7 @@ await corsair.ticketmaster.api.classifications.search({ size: 10 });
   totalElements?: number | null,
   totalPages?: number | null,
   number?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -721,14 +649,14 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
 | `outlets` | `object[] \| null` | No | — |
 | `products` | `object[] \| null` | No | — |
 | `aliases` | `string[] \| null` | No | — |
-| `seatmap` | `object \| null` | No | — |
-| `accessibility` | `object \| null` | No | — |
-| `ticketLimit` | `object \| null` | No | — |
-| `place` | `object \| null` | No | — |
-| `externalLinks` | `object \| null` | No | — |
-| `localizedAliases` | `object \| null` | No | — |
+| `seatmap` | `Record<string, any> \| null` | No | — |
+| `accessibility` | `Record<string, any> \| null` | No | — |
+| `ticketLimit` | `Record<string, any> \| null` | No | — |
+| `place` | `Record<string, any> \| null` | No | — |
+| `externalLinks` | `Record<string, any> \| null` | No | — |
+| `localizedAliases` | `Record<string, any> \| null` | No | — |
 | `_embedded` | `object \| null` | No | — |
-| `_links` | `object \| null` | No | — |
+| `_links` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="images full type">
@@ -740,7 +668,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
   width?: number | null,
   height?: number | null,
   fallback?: boolean | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -769,7 +697,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
   status?: {
     code?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -792,7 +720,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
     startTBD?: boolean | null,
     startTBA?: boolean | null
   }[] | null
-}
+} | null
 ```
 </Accordion>
 
@@ -804,7 +732,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
   currency?: string | null,
   min?: number | null,
   max?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -820,8 +748,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null,
+    _links?: Record<string, any> | null,
     _embedded?: {
       genres?: {
         id?: string | null,
@@ -829,8 +756,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
         locale?: string | null,
         href?: string | null,
         templated?: boolean | null,
-        _links?: {
-        } | null,
+        _links?: Record<string, any> | null,
         _embedded?: {
           subgenres?: {
             id?: string | null,
@@ -838,8 +764,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
             locale?: string | null,
             href?: string | null,
             templated?: boolean | null,
-            _links?: {
-            } | null
+            _links?: Record<string, any> | null
           }[] | null
         } | null
       }[] | null
@@ -851,8 +776,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null,
+    _links?: Record<string, any> | null,
     _embedded?: {
       subgenres?: {
         id?: string | null,
@@ -860,8 +784,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
         locale?: string | null,
         href?: string | null,
         templated?: boolean | null,
-        _links?: {
-        } | null
+        _links?: Record<string, any> | null
       }[] | null
     } | null
   } | null,
@@ -871,8 +794,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null
+    _links?: Record<string, any> | null
   } | null,
   type?: {
     id?: string | null,
@@ -880,8 +802,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null
+    _links?: Record<string, any> | null
   } | null,
   subType?: {
     id?: string | null,
@@ -889,10 +810,9 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
     locale?: string | null,
     href?: string | null,
     templated?: boolean | null,
-    _links?: {
-    } | null
+    _links?: Record<string, any> | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -901,7 +821,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
 ```ts
 {
   id?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -910,7 +830,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
 ```ts
 {
   id?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -920,7 +840,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
 {
   href?: string | null,
   templated?: boolean | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -930,49 +850,7 @@ await corsair.ticketmaster.api.events.get({ id: 'G5diZfkn0B-bh' });
 {
   href?: string | null,
   templated?: boolean | null
-}[]
-```
-</Accordion>
-
-<Accordion title="seatmap full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="accessibility full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="ticketLimit full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="place full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="externalLinks full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="localizedAliases full type">
-
-```ts
-Record<string, unknown>
+}[] | null
 ```
 </Accordion>
 
@@ -1023,18 +901,13 @@ Record<string, unknown>
       height?: number | null,
       fallback?: boolean | null
     }[] | null,
-    boxOfficeInfo?: {
-    } | null,
-    generalInfo?: {
-    } | null,
-    social?: {
-    } | null,
+    boxOfficeInfo?: Record<string, any> | null,
+    generalInfo?: Record<string, any> | null,
+    social?: Record<string, any> | null,
     parkingDetail?: string | null,
     accessibleSeatingDetail?: string | null,
-    upcomingEvents?: {
-    } | null,
-    _links?: {
-    } | null
+    upcomingEvents?: Record<string, any> | null,
+    _links?: Record<string, any> | null
   }[] | null,
   attractions?: {
     id: string,
@@ -1061,8 +934,7 @@ Record<string, unknown>
         locale?: string | null,
         href?: string | null,
         templated?: boolean | null,
-        _links?: {
-        } | null,
+        _links?: Record<string, any> | null,
         _embedded?: {
           genres?: {
             id?: string | null,
@@ -1070,8 +942,7 @@ Record<string, unknown>
             locale?: string | null,
             href?: string | null,
             templated?: boolean | null,
-            _links?: {
-            } | null,
+            _links?: Record<string, any> | null,
             _embedded?: {
               subgenres?: {
                 id?: string | null,
@@ -1079,8 +950,7 @@ Record<string, unknown>
                 locale?: string | null,
                 href?: string | null,
                 templated?: boolean | null,
-                _links?: {
-                } | null
+                _links?: Record<string, any> | null
               }[] | null
             } | null
           }[] | null
@@ -1092,8 +962,7 @@ Record<string, unknown>
         locale?: string | null,
         href?: string | null,
         templated?: boolean | null,
-        _links?: {
-        } | null,
+        _links?: Record<string, any> | null,
         _embedded?: {
           subgenres?: {
             id?: string | null,
@@ -1101,8 +970,7 @@ Record<string, unknown>
             locale?: string | null,
             href?: string | null,
             templated?: boolean | null,
-            _links?: {
-            } | null
+            _links?: Record<string, any> | null
           }[] | null
         } | null
       } | null,
@@ -1112,8 +980,7 @@ Record<string, unknown>
         locale?: string | null,
         href?: string | null,
         templated?: boolean | null,
-        _links?: {
-        } | null
+        _links?: Record<string, any> | null
       } | null,
       type?: {
         id?: string | null,
@@ -1121,8 +988,7 @@ Record<string, unknown>
         locale?: string | null,
         href?: string | null,
         templated?: boolean | null,
-        _links?: {
-        } | null
+        _links?: Record<string, any> | null
       } | null,
       subType?: {
         id?: string | null,
@@ -1130,28 +996,16 @@ Record<string, unknown>
         locale?: string | null,
         href?: string | null,
         templated?: boolean | null,
-        _links?: {
-        } | null
+        _links?: Record<string, any> | null
       } | null
     }[] | null,
     aliases?: string[] | null,
-    localizedAliases?: {
-    } | null,
-    externalLinks?: {
-    } | null,
-    upcomingEvents?: {
-    } | null,
-    _links?: {
-    } | null
+    localizedAliases?: Record<string, any> | null,
+    externalLinks?: Record<string, any> | null,
+    upcomingEvents?: Record<string, any> | null,
+    _links?: Record<string, any> | null
   }[] | null
-}
-```
-</Accordion>
-
-<Accordion title="_links full type">
-
-```ts
-Record<string, unknown>
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1233,7 +1087,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
 | `latlong` | `string` | No | 'latitude,longitude'. Deprecated by Ticketmaster in favour of geoPoint. |
 | `geoPoint` | `string` | No | Geo hash to search around, with radius and unit. |
 | `radius` | `number` | No | Search radius; the unit is `unit`. |
-| `unit` | `'miles' \| 'km'` | No | — |
+| `unit` | `miles \| km` | No | — |
 | `source` | `string` | No | Publishing source, such as 'ticketmaster', 'universe', 'frontgate' or 'tmr'. Comma-separated values are allowed. |
 | `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
 | `marketId` | `string` | No | — |
@@ -1243,11 +1097,11 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
 | `localStartDateTime` | `string` | No | A local-time range as two comma-separated timestamps. |
 | `onsaleStartDateTime` | `string` | No | — |
 | `onsaleEndDateTime` | `string` | No | — |
-| `includeTBA` | `'yes' \| 'no' \| 'only'` | No | Date to be announced events. |
-| `includeTBD` | `'yes' \| 'no' \| 'only'` | No | Date to be defined events. |
-| `includeTest` | `'yes' \| 'no' \| 'only'` | No | — |
-| `includeFamily` | `'yes' \| 'no' \| 'only'` | No | — |
-| `includeSpellcheck` | `'yes' \| 'no'` | No | — |
+| `includeTBA` | `yes \| no \| only` | No | Date to be announced events. |
+| `includeTBD` | `yes \| no \| only` | No | Date to be defined events. |
+| `includeTest` | `yes \| no \| only` | No | — |
+| `includeFamily` | `yes \| no \| only` | No | — |
+| `includeSpellcheck` | `yes \| no` | No | — |
 | `city` | `string[]` | No | — |
 | `countryCode` | `string` | No | ISO country code, such as US. |
 | `stateCode` | `string` | No | US state code, such as NY. |
@@ -1262,7 +1116,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
 | `collectionId` | `string[]` | No | — |
 | `promoterId` | `string` | No | — |
 | `sort` | `string` | No | Field and direction, such as 'date,asc' or 'relevance,desc'. Ticketmaster defaults to relevance,desc. |
-| `preferredCountry` | `'us' \| 'ca'` | No | — |
+| `preferredCountry` | `us \| ca` | No | — |
 | `size` | `number` | No | Items per page. Ticketmaster defaults to 20. |
 | `page` | `number` | No | 0-based page number. |
 | `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
@@ -1275,7 +1129,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
 |------|------|----------|-------------|
 | `events` | `object[]` | Yes | — |
 | `page` | `object \| null` | No | — |
-| `next_page` | `number \| null` | No | The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached. |
+| `next_page` | `number \| null` | Yes | The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached. |
 
 <AccordionGroup>
 <Accordion title="events full type">
@@ -1355,8 +1209,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null,
+      _links?: Record<string, any> | null,
       _embedded?: {
         genres?: {
           id?: string | null,
@@ -1364,8 +1217,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null,
+          _links?: Record<string, any> | null,
           _embedded?: {
             subgenres?: {
               id?: string | null,
@@ -1373,8 +1225,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
               locale?: string | null,
               href?: string | null,
               templated?: boolean | null,
-              _links?: {
-              } | null
+              _links?: Record<string, any> | null
             }[] | null
           } | null
         }[] | null
@@ -1386,8 +1237,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null,
+      _links?: Record<string, any> | null,
       _embedded?: {
         subgenres?: {
           id?: string | null,
@@ -1395,8 +1245,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null
+          _links?: Record<string, any> | null
         }[] | null
       } | null
     } | null,
@@ -1406,8 +1255,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null
+      _links?: Record<string, any> | null
     } | null,
     type?: {
       id?: string | null,
@@ -1415,8 +1263,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null
+      _links?: Record<string, any> | null
     } | null,
     subType?: {
       id?: string | null,
@@ -1424,8 +1271,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null
+      _links?: Record<string, any> | null
     } | null
   }[] | null,
   promoter?: {
@@ -1443,18 +1289,12 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
     templated?: boolean | null
   }[] | null,
   aliases?: string[] | null,
-  seatmap?: {
-  } | null,
-  accessibility?: {
-  } | null,
-  ticketLimit?: {
-  } | null,
-  place?: {
-  } | null,
-  externalLinks?: {
-  } | null,
-  localizedAliases?: {
-  } | null,
+  seatmap?: Record<string, any> | null,
+  accessibility?: Record<string, any> | null,
+  ticketLimit?: Record<string, any> | null,
+  place?: Record<string, any> | null,
+  externalLinks?: Record<string, any> | null,
+  localizedAliases?: Record<string, any> | null,
   _embedded?: {
     venues?: {
       id: string,
@@ -1499,18 +1339,13 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
         height?: number | null,
         fallback?: boolean | null
       }[] | null,
-      boxOfficeInfo?: {
-      } | null,
-      generalInfo?: {
-      } | null,
-      social?: {
-      } | null,
+      boxOfficeInfo?: Record<string, any> | null,
+      generalInfo?: Record<string, any> | null,
+      social?: Record<string, any> | null,
       parkingDetail?: string | null,
       accessibleSeatingDetail?: string | null,
-      upcomingEvents?: {
-      } | null,
-      _links?: {
-      } | null
+      upcomingEvents?: Record<string, any> | null,
+      _links?: Record<string, any> | null
     }[] | null,
     attractions?: {
       id: string,
@@ -1537,8 +1372,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null,
+          _links?: Record<string, any> | null,
           _embedded?: {
             genres?: {
               id?: string | null,
@@ -1546,8 +1380,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
               locale?: string | null,
               href?: string | null,
               templated?: boolean | null,
-              _links?: {
-              } | null,
+              _links?: Record<string, any> | null,
               _embedded?: {
                 subgenres?: {
                   id?: string | null,
@@ -1555,8 +1388,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
                   locale?: string | null,
                   href?: string | null,
                   templated?: boolean | null,
-                  _links?: {
-                  } | null
+                  _links?: Record<string, any> | null
                 }[] | null
               } | null
             }[] | null
@@ -1568,8 +1400,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null,
+          _links?: Record<string, any> | null,
           _embedded?: {
             subgenres?: {
               id?: string | null,
@@ -1577,8 +1408,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
               locale?: string | null,
               href?: string | null,
               templated?: boolean | null,
-              _links?: {
-              } | null
+              _links?: Record<string, any> | null
             }[] | null
           } | null
         } | null,
@@ -1588,8 +1418,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null
+          _links?: Record<string, any> | null
         } | null,
         type?: {
           id?: string | null,
@@ -1597,8 +1426,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null
+          _links?: Record<string, any> | null
         } | null,
         subType?: {
           id?: string | null,
@@ -1606,23 +1434,17 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null
+          _links?: Record<string, any> | null
         } | null
       }[] | null,
       aliases?: string[] | null,
-      localizedAliases?: {
-      } | null,
-      externalLinks?: {
-      } | null,
-      upcomingEvents?: {
-      } | null,
-      _links?: {
-      } | null
+      localizedAliases?: Record<string, any> | null,
+      externalLinks?: Record<string, any> | null,
+      upcomingEvents?: Record<string, any> | null,
+      _links?: Record<string, any> | null
     }[] | null
   } | null,
-  _links?: {
-  } | null
+  _links?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1635,7 +1457,7 @@ await corsair.ticketmaster.api.events.search({ classificationName: ['music'], co
   totalElements?: number | null,
   totalPages?: number | null,
   number?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1666,19 +1488,19 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
 | `latlong` | `string` | No | — |
 | `geoPoint` | `string` | No | — |
 | `radius` | `number` | No | — |
-| `unit` | `'miles' \| 'km'` | No | — |
+| `unit` | `miles \| km` | No | — |
 | `source` | `string` | No | — |
 | `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
 | `countryCode` | `string` | No | — |
 | `segmentId` | `string[]` | No | — |
-| `resource` | `('attractions' \| 'events' \| 'venues' \| 'products')[]` | No | Which collections to suggest from. Ticketmaster defaults to all four. |
-| `includeTBA` | `'yes' \| 'no' \| 'only'` | No | — |
-| `includeTBD` | `'yes' \| 'no' \| 'only'` | No | — |
-| `includeTest` | `'yes' \| 'no' \| 'only'` | No | — |
-| `includeSpellcheck` | `'yes' \| 'no'` | No | — |
+| `resource` | `(attractions \| events \| venues \| products)[]` | No | Which collections to suggest from. Ticketmaster defaults to all four. |
+| `includeTBA` | `yes \| no \| only` | No | — |
+| `includeTBD` | `yes \| no \| only` | No | — |
+| `includeTest` | `yes \| no \| only` | No | — |
+| `includeSpellcheck` | `yes \| no` | No | — |
 | `startEndDateTime` | `string` | No | — |
 | `localStartEndDateTime` | `string` | No | — |
-| `preferredCountry` | `'us' \| 'ca'` | No | — |
+| `preferredCountry` | `us \| ca` | No | — |
 | `size` | `number` | No | Items per collection. Ticketmaster defaults to 5. |
 | `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
 
@@ -1691,7 +1513,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
 | `attractions` | `object[]` | Yes | — |
 | `events` | `object[]` | Yes | — |
 | `venues` | `object[]` | Yes | — |
-| `products` | `object[]` | Yes | — |
+| `products` | `Record<string, any>[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="attractions full type">
@@ -1722,8 +1544,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null,
+      _links?: Record<string, any> | null,
       _embedded?: {
         genres?: {
           id?: string | null,
@@ -1731,8 +1552,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null,
+          _links?: Record<string, any> | null,
           _embedded?: {
             subgenres?: {
               id?: string | null,
@@ -1740,8 +1560,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
               locale?: string | null,
               href?: string | null,
               templated?: boolean | null,
-              _links?: {
-              } | null
+              _links?: Record<string, any> | null
             }[] | null
           } | null
         }[] | null
@@ -1753,8 +1572,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null,
+      _links?: Record<string, any> | null,
       _embedded?: {
         subgenres?: {
           id?: string | null,
@@ -1762,8 +1580,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null
+          _links?: Record<string, any> | null
         }[] | null
       } | null
     } | null,
@@ -1773,8 +1590,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null
+      _links?: Record<string, any> | null
     } | null,
     type?: {
       id?: string | null,
@@ -1782,8 +1598,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null
+      _links?: Record<string, any> | null
     } | null,
     subType?: {
       id?: string | null,
@@ -1791,19 +1606,14 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null
+      _links?: Record<string, any> | null
     } | null
   }[] | null,
   aliases?: string[] | null,
-  localizedAliases?: {
-  } | null,
-  externalLinks?: {
-  } | null,
-  upcomingEvents?: {
-  } | null,
-  _links?: {
-  } | null
+  localizedAliases?: Record<string, any> | null,
+  externalLinks?: Record<string, any> | null,
+  upcomingEvents?: Record<string, any> | null,
+  _links?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1885,8 +1695,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null,
+      _links?: Record<string, any> | null,
       _embedded?: {
         genres?: {
           id?: string | null,
@@ -1894,8 +1703,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null,
+          _links?: Record<string, any> | null,
           _embedded?: {
             subgenres?: {
               id?: string | null,
@@ -1903,8 +1711,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
               locale?: string | null,
               href?: string | null,
               templated?: boolean | null,
-              _links?: {
-              } | null
+              _links?: Record<string, any> | null
             }[] | null
           } | null
         }[] | null
@@ -1916,8 +1723,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null,
+      _links?: Record<string, any> | null,
       _embedded?: {
         subgenres?: {
           id?: string | null,
@@ -1925,8 +1731,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null
+          _links?: Record<string, any> | null
         }[] | null
       } | null
     } | null,
@@ -1936,8 +1741,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null
+      _links?: Record<string, any> | null
     } | null,
     type?: {
       id?: string | null,
@@ -1945,8 +1749,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null
+      _links?: Record<string, any> | null
     } | null,
     subType?: {
       id?: string | null,
@@ -1954,8 +1757,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
       locale?: string | null,
       href?: string | null,
       templated?: boolean | null,
-      _links?: {
-      } | null
+      _links?: Record<string, any> | null
     } | null
   }[] | null,
   promoter?: {
@@ -1973,18 +1775,12 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
     templated?: boolean | null
   }[] | null,
   aliases?: string[] | null,
-  seatmap?: {
-  } | null,
-  accessibility?: {
-  } | null,
-  ticketLimit?: {
-  } | null,
-  place?: {
-  } | null,
-  externalLinks?: {
-  } | null,
-  localizedAliases?: {
-  } | null,
+  seatmap?: Record<string, any> | null,
+  accessibility?: Record<string, any> | null,
+  ticketLimit?: Record<string, any> | null,
+  place?: Record<string, any> | null,
+  externalLinks?: Record<string, any> | null,
+  localizedAliases?: Record<string, any> | null,
   _embedded?: {
     venues?: {
       id: string,
@@ -2029,18 +1825,13 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
         height?: number | null,
         fallback?: boolean | null
       }[] | null,
-      boxOfficeInfo?: {
-      } | null,
-      generalInfo?: {
-      } | null,
-      social?: {
-      } | null,
+      boxOfficeInfo?: Record<string, any> | null,
+      generalInfo?: Record<string, any> | null,
+      social?: Record<string, any> | null,
       parkingDetail?: string | null,
       accessibleSeatingDetail?: string | null,
-      upcomingEvents?: {
-      } | null,
-      _links?: {
-      } | null
+      upcomingEvents?: Record<string, any> | null,
+      _links?: Record<string, any> | null
     }[] | null,
     attractions?: {
       id: string,
@@ -2067,8 +1858,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null,
+          _links?: Record<string, any> | null,
           _embedded?: {
             genres?: {
               id?: string | null,
@@ -2076,8 +1866,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
               locale?: string | null,
               href?: string | null,
               templated?: boolean | null,
-              _links?: {
-              } | null,
+              _links?: Record<string, any> | null,
               _embedded?: {
                 subgenres?: {
                   id?: string | null,
@@ -2085,8 +1874,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
                   locale?: string | null,
                   href?: string | null,
                   templated?: boolean | null,
-                  _links?: {
-                  } | null
+                  _links?: Record<string, any> | null
                 }[] | null
               } | null
             }[] | null
@@ -2098,8 +1886,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null,
+          _links?: Record<string, any> | null,
           _embedded?: {
             subgenres?: {
               id?: string | null,
@@ -2107,8 +1894,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
               locale?: string | null,
               href?: string | null,
               templated?: boolean | null,
-              _links?: {
-              } | null
+              _links?: Record<string, any> | null
             }[] | null
           } | null
         } | null,
@@ -2118,8 +1904,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null
+          _links?: Record<string, any> | null
         } | null,
         type?: {
           id?: string | null,
@@ -2127,8 +1912,7 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null
+          _links?: Record<string, any> | null
         } | null,
         subType?: {
           id?: string | null,
@@ -2136,23 +1920,17 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
           locale?: string | null,
           href?: string | null,
           templated?: boolean | null,
-          _links?: {
-          } | null
+          _links?: Record<string, any> | null
         } | null
       }[] | null,
       aliases?: string[] | null,
-      localizedAliases?: {
-      } | null,
-      externalLinks?: {
-      } | null,
-      upcomingEvents?: {
-      } | null,
-      _links?: {
-      } | null
+      localizedAliases?: Record<string, any> | null,
+      externalLinks?: Record<string, any> | null,
+      upcomingEvents?: Record<string, any> | null,
+      _links?: Record<string, any> | null
     }[] | null
   } | null,
-  _links?: {
-  } | null
+  _links?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2203,26 +1981,13 @@ await corsair.ticketmaster.api.suggest.get({ keyword: 'coachella', size: 3 });
     height?: number | null,
     fallback?: boolean | null
   }[] | null,
-  boxOfficeInfo?: {
-  } | null,
-  generalInfo?: {
-  } | null,
-  social?: {
-  } | null,
+  boxOfficeInfo?: Record<string, any> | null,
+  generalInfo?: Record<string, any> | null,
+  social?: Record<string, any> | null,
   parkingDetail?: string | null,
   accessibleSeatingDetail?: string | null,
-  upcomingEvents?: {
-  } | null,
-  _links?: {
-  } | null
-}[]
-```
-</Accordion>
-
-<Accordion title="products full type">
-
-```ts
-{
+  upcomingEvents?: Record<string, any> | null,
+  _links?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2279,13 +2044,13 @@ await corsair.ticketmaster.api.venues.get({ id: 'KovZpZA7AAEA' });
 | `markets` | `object[] \| null` | No | — |
 | `dmas` | `object[] \| null` | No | — |
 | `images` | `object[] \| null` | No | — |
-| `boxOfficeInfo` | `object \| null` | No | — |
-| `generalInfo` | `object \| null` | No | — |
-| `social` | `object \| null` | No | — |
+| `boxOfficeInfo` | `Record<string, any> \| null` | No | — |
+| `generalInfo` | `Record<string, any> \| null` | No | — |
+| `social` | `Record<string, any> \| null` | No | — |
 | `parkingDetail` | `string \| null` | No | — |
 | `accessibleSeatingDetail` | `string \| null` | No | — |
-| `upcomingEvents` | `object \| null` | No | — |
-| `_links` | `object \| null` | No | — |
+| `upcomingEvents` | `Record<string, any> \| null` | No | — |
+| `_links` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="city full type">
@@ -2293,7 +2058,7 @@ await corsair.ticketmaster.api.venues.get({ id: 'KovZpZA7AAEA' });
 ```ts
 {
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2303,7 +2068,7 @@ await corsair.ticketmaster.api.venues.get({ id: 'KovZpZA7AAEA' });
 {
   name?: string | null,
   stateCode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2313,7 +2078,7 @@ await corsair.ticketmaster.api.venues.get({ id: 'KovZpZA7AAEA' });
 {
   name?: string | null,
   countryCode?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2322,7 +2087,7 @@ await corsair.ticketmaster.api.venues.get({ id: 'KovZpZA7AAEA' });
 ```ts
 {
   line1?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2332,7 +2097,7 @@ await corsair.ticketmaster.api.venues.get({ id: 'KovZpZA7AAEA' });
 {
   longitude?: string | number | null,
   latitude?: string | number | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2341,7 +2106,7 @@ await corsair.ticketmaster.api.venues.get({ id: 'KovZpZA7AAEA' });
 ```ts
 {
   id?: string | number | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2350,7 +2115,7 @@ await corsair.ticketmaster.api.venues.get({ id: 'KovZpZA7AAEA' });
 ```ts
 {
   id?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2363,42 +2128,7 @@ await corsair.ticketmaster.api.venues.get({ id: 'KovZpZA7AAEA' });
   width?: number | null,
   height?: number | null,
   fallback?: boolean | null
-}[]
-```
-</Accordion>
-
-<Accordion title="boxOfficeInfo full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="generalInfo full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="social full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="upcomingEvents full type">
-
-```ts
-Record<string, unknown>
-```
-</Accordion>
-
-<Accordion title="_links full type">
-
-```ts
-Record<string, unknown>
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2428,15 +2158,15 @@ await corsair.ticketmaster.api.venues.search({ keyword: 'Madison Square Garden',
 | `latlong` | `string` | No | 'latitude,longitude'. Deprecated by Ticketmaster in favour of geoPoint. |
 | `geoPoint` | `string` | No | — |
 | `radius` | `number` | No | — |
-| `unit` | `'miles' \| 'km'` | No | — |
+| `unit` | `miles \| km` | No | — |
 | `source` | `string` | No | Publishing source, such as 'ticketmaster', 'universe', 'frontgate' or 'tmr'. |
 | `locale` | `string` | No | ISO locale, such as 'en-us'. Comma-separated values are allowed; '*' may end the list. |
-| `includeTest` | `'yes' \| 'no' \| 'only'` | No | — |
-| `includeSpellcheck` | `'yes' \| 'no'` | No | — |
+| `includeTest` | `yes \| no \| only` | No | — |
+| `includeSpellcheck` | `yes \| no` | No | — |
 | `countryCode` | `string` | No | — |
 | `stateCode` | `string` | No | — |
 | `sort` | `string` | No | Field and direction, such as 'name,asc' or 'distance,asc'. Ticketmaster defaults to relevance,desc. |
-| `preferredCountry` | `'us' \| 'ca'` | No | — |
+| `preferredCountry` | `us \| ca` | No | — |
 | `size` | `number` | No | Items per page. Ticketmaster defaults to 20. |
 | `page` | `number` | No | 0-based page number. |
 | `domain` | `string[]` | No | Only entities available on these domains, such as ticketmaster.com. |
@@ -2449,7 +2179,7 @@ await corsair.ticketmaster.api.venues.search({ keyword: 'Madison Square Garden',
 |------|------|----------|-------------|
 | `venues` | `object[]` | Yes | — |
 | `page` | `object \| null` | No | — |
-| `next_page` | `number \| null` | No | The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached. |
+| `next_page` | `number \| null` | Yes | The next 0-based page, or null on the last one. Ticketmaster stops at the 1000th item, so this is also null once that limit is reached. |
 
 <AccordionGroup>
 <Accordion title="venues full type">
@@ -2498,18 +2228,13 @@ await corsair.ticketmaster.api.venues.search({ keyword: 'Madison Square Garden',
     height?: number | null,
     fallback?: boolean | null
   }[] | null,
-  boxOfficeInfo?: {
-  } | null,
-  generalInfo?: {
-  } | null,
-  social?: {
-  } | null,
+  boxOfficeInfo?: Record<string, any> | null,
+  generalInfo?: Record<string, any> | null,
+  social?: Record<string, any> | null,
   parkingDetail?: string | null,
   accessibleSeatingDetail?: string | null,
-  upcomingEvents?: {
-  } | null,
-  _links?: {
-  } | null
+  upcomingEvents?: Record<string, any> | null,
+  _links?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2522,7 +2247,7 @@ await corsair.ticketmaster.api.venues.search({ keyword: 'Madison Square Garden',
   totalElements?: number | null,
   totalPages?: number | null,
   number?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

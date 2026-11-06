@@ -182,7 +182,7 @@ await corsair.dripcel.api.contacts.create({});
 | `contacts` | `object[]` | Yes | — |
 | `country` | `ZA \| NA` | No | — |
 | `tag_ids` | `string[]` | No | — |
-| `send` | `object` | No | — |
+| `send` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="contacts full type">
@@ -199,14 +199,6 @@ await corsair.dripcel.api.contacts.create({});
   createdAt?: string,
   updatedAt?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="send full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -345,7 +337,7 @@ await corsair.dripcel.api.contacts.upsert({});
 | `contacts` | `object[]` | Yes | — |
 | `country` | `ZA \| NA` | No | — |
 | `tag_ids` | `string[]` | No | — |
-| `send` | `object` | No | — |
+| `send` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="contacts full type">
@@ -362,14 +354,6 @@ await corsair.dripcel.api.contacts.upsert({});
   createdAt?: string,
   updatedAt?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="send full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -725,7 +709,7 @@ await corsair.dripcel.api.sendLogs.search({});
 |------|------|----------|-------------|
 | `total` | `number` | Yes | — |
 | `send_logs` | `object[]` | Yes | — |
-| `parsed` | `object` | No | — |
+| `parsed` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="send_logs full type">
@@ -739,14 +723,6 @@ await corsair.dripcel.api.sendLogs.search({});
   startDeliveryAt?: string,
   destinations?: number | string[]
 }[]
-```
-</Accordion>
-
-<Accordion title="parsed full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>

@@ -251,8 +251,7 @@ await corsair.youtube.api.channels.getActivities({});
       }
     }
   },
-  contentDetails?: {
-  }
+  contentDetails?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -647,7 +646,7 @@ await corsair.youtube.api.channels.update({});
 | `id` | `string` | Yes | The channel ID to update |
 | `part` | `string` | No | — |
 | `brandingSettings` | `object` | No | — |
-| `localizations` | `object` | No | — |
+| `localizations` | `Record<string, any>` | No | — |
 | `onBehalfOfContentOwner` | `string` | No | — |
 
 <AccordionGroup>
@@ -664,14 +663,6 @@ await corsair.youtube.api.channels.update({});
 }
 ```
 </Accordion>
-
-<Accordion title="localizations full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -685,8 +676,8 @@ await corsair.youtube.api.channels.update({});
 | `kind` | `string` | No | — |
 | `snippet` | `object` | No | — |
 | `statistics` | `object` | No | — |
-| `brandingSettings` | `object` | No | — |
-| `localizations` | `object` | No | — |
+| `brandingSettings` | `Record<string, any>` | No | — |
+| `localizations` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="snippet full type">
@@ -736,22 +727,6 @@ await corsair.youtube.api.channels.update({});
   viewCount?: string,
   subscriberCount?: string,
   videoCount?: string
-}
-```
-</Accordion>
-
-<Accordion title="brandingSettings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="localizations full type">
-
-```ts
-{
 }
 ```
 </Accordion>

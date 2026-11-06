@@ -76,7 +76,8 @@
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 1."
           },
           {
             "key": "sort",
@@ -125,13 +126,13 @@
           },
           {
             "key": "prevPage",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           },
           {
             "key": "nextPage",
-            "optional": true,
-            "type": "number"
+            "optional": false,
+            "type": "number | null"
           }
         ]
       }
@@ -197,7 +198,7 @@
           {
             "key": "price",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }

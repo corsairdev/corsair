@@ -39,22 +39,22 @@
           {
             "key": "count_total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "count_engine1",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "count_engine2",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "count_engine3",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -135,37 +135,37 @@
           {
             "key": "ParsedResults",
             "optional": true,
-            "type": "{ ParsedText?: string | null, TextOrientation?: string | null, FileParseExitCode?: number | null, TextOverlay?: { Lines?: { LineText?: string | null, Words?: { WordText?: string | null, Left?: number | null, Top?: number | null, Height?: number | null, Width?: number | null }[] | null, MaxHeight?: number | null, MinTop?: number | null }[] | null, HasOverlay?: boolean | null, Message?: string | null } | null, ErrorMessage?: string | string[] | null, ErrorDetails?: string | null }[]"
+            "type": "{ ParsedText?: string | null, TextOrientation?: string | null, FileParseExitCode?: number | null, TextOverlay?: { Lines?: { LineText?: string | null, Words?: { WordText?: string | null, Left?: number | null, Top?: number | null, Height?: number | null, Width?: number | null }[] | null, MaxHeight?: number | null, MinTop?: number | null }[] | null, HasOverlay?: boolean | null, Message?: string | null } | null, ErrorMessage?: string | string[] | null, ErrorDetails?: string | null }[] | null"
           },
           {
             "key": "OCRExitCode",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "IsErroredOnProcessing",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "ErrorMessage",
             "optional": true,
-            "type": "string | string[]"
+            "type": "string | string[] | null"
           },
           {
             "key": "ErrorDetails",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "SearchablePDFURL",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ProcessingTimeInMilliseconds",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           }
         ]
       }
@@ -236,37 +236,37 @@
           {
             "key": "ParsedResults",
             "optional": true,
-            "type": "{ ParsedText?: string | null, TextOrientation?: string | null, FileParseExitCode?: number | null, TextOverlay?: { Lines?: { LineText?: string | null, Words?: { WordText?: string | null, Left?: number | null, Top?: number | null, Height?: number | null, Width?: number | null }[] | null, MaxHeight?: number | null, MinTop?: number | null }[] | null, HasOverlay?: boolean | null, Message?: string | null } | null, ErrorMessage?: string | string[] | null, ErrorDetails?: string | null }[]"
+            "type": "{ ParsedText?: string | null, TextOrientation?: string | null, FileParseExitCode?: number | null, TextOverlay?: { Lines?: { LineText?: string | null, Words?: { WordText?: string | null, Left?: number | null, Top?: number | null, Height?: number | null, Width?: number | null }[] | null, MaxHeight?: number | null, MinTop?: number | null }[] | null, HasOverlay?: boolean | null, Message?: string | null } | null, ErrorMessage?: string | string[] | null, ErrorDetails?: string | null }[] | null"
           },
           {
             "key": "OCRExitCode",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "IsErroredOnProcessing",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "ErrorMessage",
             "optional": true,
-            "type": "string | string[]"
+            "type": "string | string[] | null"
           },
           {
             "key": "ErrorDetails",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "SearchablePDFURL",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ProcessingTimeInMilliseconds",
             "optional": true,
-            "type": "string | number"
+            "type": "string | number | null"
           }
         ]
       }

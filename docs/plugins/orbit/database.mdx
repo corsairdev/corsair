@@ -27,6 +27,7 @@ const rows = await corsair.orbit.db.bulkJobs.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `jobId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `requestId` | `string` | equals, contains, startsWith, endsWith, in |
 | `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
 
@@ -53,6 +54,7 @@ const rows = await corsair.orbit.db.enrichments.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `requestId` | `string` | equals, contains, startsWith, endsWith, in |
 | `profileId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
@@ -77,6 +79,7 @@ const rows = await corsair.orbit.db.searches.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `searchId` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `requestId` | `string` | equals, contains, startsWith, endsWith, in |
 | `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
 

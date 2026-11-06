@@ -154,6 +154,7 @@ const rows = await corsair.bookingmood.db.members.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `organization_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `user_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `role` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 
@@ -240,6 +241,8 @@ const rows = await corsair.bookingmood.db.products.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `organization_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `interaction` | `string` | equals, contains, startsWith, endsWith, in |
+| `rent_period` | `string` | equals, contains, startsWith, endsWith, in |
 | `timezone` | `string` | equals, contains, startsWith, endsWith, in |
 | `approximate_address` | `string` | equals, contains, startsWith, endsWith, in |
 | `exact_address` | `string` | equals, contains, startsWith, endsWith, in |

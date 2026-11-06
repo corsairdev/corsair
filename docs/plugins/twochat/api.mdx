@@ -238,8 +238,8 @@ await corsair.twochat.api.contacts.listContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page_number` | `number` | Yes | Zero-based page number for pagination |
-| `results_per_page` | `number` | Yes | Number of contacts per page (1–100) |
+| `page_number` | `number` | No | Zero-based page number for pagination. Defaults to 0. |
+| `results_per_page` | `number` | No | Number of contacts per page (1–100). Defaults to 30. |
 
 
 
@@ -321,8 +321,7 @@ await corsair.twochat.api.webhookSubscriptions.listWebhooks({});
   event_name: string,
   channel_uuid?: string,
   hook_url: string,
-  hook_params?: {
-  },
+  hook_params?: Record<string, string>,
   created_at?: string
 }[]
 ```

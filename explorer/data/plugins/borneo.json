@@ -1,7 +1,7 @@
 {
   "id": "borneo",
   "displayName": "Borneo",
-  "description": "Borneo plugin for Corsair",
+  "description": "Data security and privacy compliance platform. Run and read data scans, processing activities, recipients, resources, breaches, documents, employees, domains, and dashboard figures.",
   "npmPackageName": "@corsair-dev/borneo",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
@@ -52,7 +52,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { cloudAccountId?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { cloudAccountId?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -148,7 +148,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, filter__type?: string, sort__column?: string, filter__search?: string, filter__status?: string, filter__accountId?: string, filter__activeStates?: boolean, filter__cloudAccountId?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, filter__type?: string, sort__column?: string, filter__search?: string, filter__status?: string, filter__accountId?: string, filter__activeStates?: boolean, filter__cloudAccountId?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -190,7 +190,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -262,7 +262,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { type?: string, locationType?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { type?: string, locationType?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -304,7 +304,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -353,7 +353,7 @@
           {
             "key": "filter__type",
             "optional": true,
-            "type": "applications | cloudServices | communications | dataInformation | externalStorage | filingRoom | furniture | hardware | hosting | other | paperDocumentation | printer | server | shredder | videoSurveillance[]",
+            "type": "(applications | cloudServices | communications | dataInformation | externalStorage | filingRoom | furniture | hardware | hosting | other | paperDocumentation | printer | server | shredder | videoSurveillance)[]",
             "description": "Type"
           },
           {
@@ -376,7 +376,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { nextToken?: string, maxResults?: number, filter__type?: string, sort__column?: string, filter__search?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { nextToken?: string, maxResults?: number, filter__type?: string, sort__column?: string, filter__search?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -418,7 +418,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -490,7 +490,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { type?: string, locationType?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { type?: string, locationType?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -604,7 +604,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { sort__column?: string, filter__newInfotypeFound?: boolean, nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { sort__column?: string, filter__newInfotypeFound?: boolean, nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -688,7 +688,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, filter__end?: string, filter__email?: string, filter__start?: string, filter__search?: string, filter__requestId?: string, filter__operationName?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, filter__end?: string, filter__email?: string, filter__start?: string, filter__search?: string, filter__requestId?: string, filter__operationName?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -808,7 +808,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, filter__end?: string, filter__start?: string, filter__scanId?: string, filter__search?: string, filter__category?: string, filter__accountId?: string, filter__connectorId?: string, filter__dataPlaneId?: string, filter__gcpProjectId?: string, filter__gcpConnectionId?: string, filter__azureConnectionId?: string, filter__azureSubscriptionId?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, filter__end?: string, filter__start?: string, filter__scanId?: string, filter__search?: string, filter__category?: string, filter__accountId?: string, filter__connectorId?: string, filter__dataPlaneId?: string, filter__gcpProjectId?: string, filter__gcpConnectionId?: string, filter__azureConnectionId?: string, filter__azureSubscriptionId?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -850,7 +850,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -958,7 +958,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { role?: string, reportLanguage?: string, dataBreachLocation?: string, authoritiesNotified?: boolean, dataBreachController?: string, dataSubjectsNotified?: boolean }, error?: string, successful?: boolean }"
+            "type": "{ data?: { role?: string, reportLanguage?: string, dataBreachLocation?: string, authoritiesNotified?: boolean, dataBreachController?: string, dataSubjectsNotified?: boolean }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1000,7 +1000,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1084,7 +1084,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__authoritiesNotified?: boolean, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__authoritiesNotified?: boolean, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1126,7 +1126,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1294,7 +1294,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { language?: string, authoritiesInformed?: string, numberAffectedPeople?: number, additionalInformation?: string, profilePeopleAffected?: string, compromisedSensitiveData?: string, problemOfSecurityMeasures?: string, securityMeasuresOrProtocols?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { language?: string, authoritiesInformed?: string, numberAffectedPeople?: number, additionalInformation?: string, profilePeopleAffected?: string, compromisedSensitiveData?: string, problemOfSecurityMeasures?: string, securityMeasuresOrProtocols?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1336,7 +1336,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1498,7 +1498,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { authoritiesInformed?: string, numberAffectedPeople?: number, additionalInformation?: string, profilePeopleAffected?: string, compromisedSensitiveData?: string, problemOfSecurityMeasures?: string, securityMeasuresOrProtocols?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { authoritiesInformed?: string, numberAffectedPeople?: number, additionalInformation?: string, profilePeopleAffected?: string, compromisedSensitiveData?: string, problemOfSecurityMeasures?: string, securityMeasuresOrProtocols?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1552,7 +1552,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { infotypes?: string, description?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { infotypes?: string, description?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1594,7 +1594,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1636,7 +1636,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1690,7 +1690,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { infotypes?: string, description?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { infotypes?: string, description?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1804,7 +1804,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__names?: string, filter__search?: string, filter__states?: string, filter__resourceIds?: string, filter__activeStates?: boolean, filter__connectorIds?: string, filter__dataPlaneIds?: string, filter__resourceTypes?: string, filter__connectorTypes?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__names?: string, filter__search?: string, filter__states?: string, filter__resourceIds?: string, filter__activeStates?: boolean, filter__connectorIds?: string, filter__dataPlaneIds?: string, filter__resourceTypes?: string, filter__connectorTypes?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1846,7 +1846,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1889,7 +1889,7 @@
           {
             "key": "roles",
             "optional": true,
-            "type": "borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor[]",
+            "type": "(borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor)[]",
             "description": "Roles"
           },
           {
@@ -1907,7 +1907,7 @@
           {
             "key": "organisations",
             "optional": true,
-            "type": "{ roles: borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor[], departments?: string[], organisationId?: number }[]",
+            "type": "{ roles: (borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor)[], departments?: string[], organisationId?: number }[]",
             "description": "Organisations"
           }
         ]
@@ -1918,7 +1918,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { roles?: string, organisations?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { roles?: string, organisations?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -1960,7 +1960,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2002,7 +2002,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2044,7 +2044,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { reportType?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { reportType?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2086,7 +2086,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2128,7 +2128,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2170,7 +2170,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2212,7 +2212,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2278,7 +2278,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, sort__column?: string, dashboardReportId?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, sort__column?: string, dashboardReportId?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2327,7 +2327,7 @@
           {
             "key": "filter__type",
             "optional": true,
-            "type": "DATA_DISCOVERY_DASHBOARD | PRIVACY_OPS_DASHBOARD | PRIVACY_OPS_DATA_FLOW[]",
+            "type": "(DATA_DISCOVERY_DASHBOARD | PRIVACY_OPS_DASHBOARD | PRIVACY_OPS_DATA_FLOW)[]",
             "description": "Type"
           },
           {
@@ -2345,7 +2345,7 @@
           {
             "key": "filter__frequency",
             "optional": true,
-            "type": "*/30 * * * * | 0 */1 * * * | 0 */12 * * * | 0 */4 * * * | 0 */6 * * * | 0 */8 * * * | 0 0 * * * | 0 0 * * 0 | 0 0 1 * * | 0 0 1 1,4,7,10 * | 0 0 1 1,7 *[]",
+            "type": "(*/30 * * * * | 0 */1 * * * | 0 */12 * * * | 0 */4 * * * | 0 */6 * * * | 0 */8 * * * | 0 0 * * * | 0 0 * * 0 | 0 0 1 * * | 0 0 1 1,4,7,10 * | 0 0 1 1,7 *)[]",
             "description": "Frequency"
           }
         ]
@@ -2356,7 +2356,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, filter__type?: string, sort__column?: string, filter__search?: string, filter__frequency?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, filter__type?: string, sort__column?: string, filter__search?: string, filter__frequency?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2387,7 +2387,7 @@
           {
             "key": "filter__roles",
             "optional": true,
-            "type": "borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor[]",
+            "type": "(borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor)[]",
             "description": "Roles"
           },
           {
@@ -2416,7 +2416,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { filter__roles?: string, filter__departments?: string, filter__organisationId?: number, nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { filter__roles?: string, filter__departments?: string, filter__organisationId?: number, nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2451,7 +2451,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2488,7 +2488,7 @@
           {
             "key": "roles",
             "optional": true,
-            "type": "borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor[]",
+            "type": "(borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor)[]",
             "description": "Roles"
           },
           {
@@ -2512,7 +2512,7 @@
           {
             "key": "reportTypes",
             "optional": false,
-            "type": "DATA_DISCOVERY_DASHBOARD | PRIVACY_OPS_DASHBOARD | PRIVACY_OPS_DATA_FLOW[]",
+            "type": "(DATA_DISCOVERY_DASHBOARD | PRIVACY_OPS_DASHBOARD | PRIVACY_OPS_DATA_FLOW)[]",
             "description": "Reporttypes"
           },
           {
@@ -2541,7 +2541,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { roles?: string, frequency?: string, reportTypes?: string, recipientsEmail?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { roles?: string, frequency?: string, reportTypes?: string, recipientsEmail?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2583,7 +2583,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2625,7 +2625,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2667,7 +2667,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2715,7 +2715,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2752,7 +2752,7 @@
           {
             "key": "organisations",
             "optional": false,
-            "type": "{ roles: borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor[], departments?: string[], organisationId?: number }[]",
+            "type": "{ roles: (borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor)[], departments?: string[], organisationId?: number }[]",
             "description": "Organisations"
           }
         ]
@@ -2763,7 +2763,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { organisations?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { organisations?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2811,7 +2811,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { translations?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { translations?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2853,7 +2853,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2888,7 +2888,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2954,7 +2954,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -2996,7 +2996,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3044,7 +3044,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3122,7 +3122,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { type?: string, fromDiscoveredDocumentId?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { type?: string, fromDiscoveredDocumentId?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3164,7 +3164,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3236,7 +3236,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__status?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__status?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3308,7 +3308,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__status?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__status?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3350,7 +3350,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3392,7 +3392,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3440,7 +3440,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { status?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { status?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3488,7 +3488,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { frequency?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { frequency?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3530,7 +3530,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3572,7 +3572,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3632,7 +3632,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3674,7 +3674,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3728,7 +3728,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { frequency?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { frequency?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3830,7 +3830,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { endDate?: string, manager?: string, position?: string, startDate?: string, department?: string, referenceId?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { endDate?: string, manager?: string, position?: string, startDate?: string, department?: string, referenceId?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3872,7 +3872,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -3944,7 +3944,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4016,7 +4016,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4058,7 +4058,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4154,7 +4154,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { nif?: string, email?: string, endDate?: string, position?: string, startDate?: string, department?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { nif?: string, email?: string, endDate?: string, position?: string, startDate?: string, department?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4226,7 +4226,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4268,7 +4268,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4310,7 +4310,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4370,7 +4370,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4448,7 +4448,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4520,7 +4520,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__status?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__status?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4562,7 +4562,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4610,7 +4610,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { status?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { status?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4664,7 +4664,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { sort__column?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { sort__column?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4784,7 +4784,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { select?: string, include?: boolean, pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__states?: string, filter__resources?: string, filter__severities?: string, filter__resourceTypes?: string, filter__failedControls?: string, filter__cloudAccountIds?: string, filter__cloudAccountTypes?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { select?: string, include?: boolean, pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__states?: string, filter__resources?: string, filter__severities?: string, filter__resourceTypes?: string, filter__failedControls?: string, filter__cloudAccountIds?: string, filter__cloudAccountTypes?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4826,7 +4826,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4868,7 +4868,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -4916,7 +4916,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -5336,7 +5336,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { status?: string, translations?: string, integrity__impacts?: string, integrity__threats?: string, processingActivityId?: string, additionalInformation?: string, availability__impacts?: string, availability__threats?: string, integrity__plannedToms?: string, integrity__riskSources?: string, confidentiality__impacts?: string, confidentiality__threats?: string, availability__plannedToms?: string, availability__riskSources?: string, integrity__impactsComment?: string, integrity__threatsComment?: string, privacyFramework__consent?: string, additionalInformationFiles?: string, integrity__baselineComment?: string, integrity__implementedToms?: string, privacyFramework__accuracy?: string, integrity__baselineSeverity?: string, privacyFramework__retention?: boolean, availability__impactsComment?: string, availability__threatsComment?: string, confidentiality__plannedToms?: string, confidentiality__riskSources?: string, availability__baselineComment?: string, availability__implementedToms?: string, integrity__baselineLikelihood?: string, integrity__plannedTomsComment?: string, integrity__riskSourcesComment?: string, availability__baselineSeverity?: string, integrity__residualRiskComment?: string, privacyFramework__transparency?: string, confidentiality__impactsComment?: string, confidentiality__threatsComment?: string, integrity__residualRiskSeverity?: string, availability__baselineLikelihood?: string, availability__plannedTomsComment?: string, availability__riskSourcesComment?: string, confidentiality__baselineComment?: string, confidentiality__implementedToms?: string, availability__residualRiskComment?: string, confidentiality__baselineSeverity?: string, integrity__implementedTomsComment?: string, integrity__residualRiskLikelihood?: string, availability__residualRiskSeverity?: string, privacyFramework__dataMinimisation?: string, privacyFramework__retentionComment?: string, confidentiality__baselineLikelihood?: string, confidentiality__plannedTomsComment?: string, confidentiality__riskSourcesComment?: string, privacyFramework__additionalComment?: string, privacyFramework__purposeLimitation?: string, availability__implementedTomsComment?: string, availability__residualRiskLikelihood?: string, confidentiality__residualRiskComment?: string, confidentiality__residualRiskSeverity?: string, privacyFramework__dataRightsExercised?: string, confidentiality__implementedTomsComment?: string, confidentiality__residualRiskLikelihood?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { status?: string, translations?: string, integrity__impacts?: string, integrity__threats?: string, processingActivityId?: string, additionalInformation?: string, availability__impacts?: string, availability__threats?: string, integrity__plannedToms?: string, integrity__riskSources?: string, confidentiality__impacts?: string, confidentiality__threats?: string, availability__plannedToms?: string, availability__riskSources?: string, integrity__impactsComment?: string, integrity__threatsComment?: string, privacyFramework__consent?: string, additionalInformationFiles?: string, integrity__baselineComment?: string, integrity__implementedToms?: string, privacyFramework__accuracy?: string, integrity__baselineSeverity?: string, privacyFramework__retention?: boolean, availability__impactsComment?: string, availability__threatsComment?: string, confidentiality__plannedToms?: string, confidentiality__riskSources?: string, availability__baselineComment?: string, availability__implementedToms?: string, integrity__baselineLikelihood?: string, integrity__plannedTomsComment?: string, integrity__riskSourcesComment?: string, availability__baselineSeverity?: string, integrity__residualRiskComment?: string, privacyFramework__transparency?: string, confidentiality__impactsComment?: string, confidentiality__threatsComment?: string, integrity__residualRiskSeverity?: string, availability__baselineLikelihood?: string, availability__plannedTomsComment?: string, availability__riskSourcesComment?: string, confidentiality__baselineComment?: string, confidentiality__implementedToms?: string, availability__residualRiskComment?: string, confidentiality__baselineSeverity?: string, integrity__implementedTomsComment?: string, integrity__residualRiskLikelihood?: string, availability__residualRiskSeverity?: string, privacyFramework__dataMinimisation?: string, privacyFramework__retentionComment?: string, confidentiality__baselineLikelihood?: string, confidentiality__plannedTomsComment?: string, confidentiality__riskSourcesComment?: string, privacyFramework__additionalComment?: string, privacyFramework__purposeLimitation?: string, availability__implementedTomsComment?: string, availability__residualRiskLikelihood?: string, confidentiality__residualRiskComment?: string, confidentiality__residualRiskSeverity?: string, privacyFramework__dataRightsExercised?: string, confidentiality__implementedTomsComment?: string, confidentiality__residualRiskLikelihood?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -5433,13 +5433,13 @@
           {
             "key": "recipients",
             "optional": true,
-            "type": "{ role: controller | independent_controller | joint_controller | processor | sub_processor[], comment?: string, recipientId: string }[]",
+            "type": "{ role: (controller | independent_controller | joint_controller | processor | sub_processor)[], comment?: string, recipientId: string }[]",
             "description": "List of recipients related with the processing activity."
           },
           {
             "key": "companyRole",
             "optional": true,
-            "type": "controller | independent_controller | joint_controller | processor | sub_processor[]",
+            "type": "(controller | independent_controller | joint_controller | processor | sub_processor)[]",
             "description": "Companyrole"
           },
           {
@@ -5576,7 +5576,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { active?: boolean, assets?: string, language?: string, infotypes?: string, recipients?: string, companyRole?: string, departments?: string, lawfulBasis?: string, dataSubjects?: string, isDataStored?: boolean, translations?: string, contactPerson?: string, additionalInfo?: string, infotypeVolume?: string, managementMethods?: string, infotypeCategories?: string, additionalInfoFiles?: string, processingFrequency?: string, dataFlowRelationships?: string, retentionPeriod__unit?: string, retentionPeriodComment?: string, areAccessRequestsManaged?: boolean, processingFrequencyComment?: string, processingActivitiesAsDataSources?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { active?: boolean, assets?: string, language?: string, infotypes?: string, recipients?: string, companyRole?: string, departments?: string, lawfulBasis?: string, dataSubjects?: string, isDataStored?: boolean, translations?: string, contactPerson?: string, additionalInfo?: string, infotypeVolume?: string, managementMethods?: string, infotypeCategories?: string, additionalInfoFiles?: string, processingFrequency?: string, dataFlowRelationships?: string, retentionPeriod__unit?: string, retentionPeriodComment?: string, areAccessRequestsManaged?: boolean, processingFrequencyComment?: string, processingActivitiesAsDataSources?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -5690,7 +5690,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { status?: string, comment?: string, processingActivityId?: string, largeScaleObservation?: boolean, sensitiveOrSpecialData?: boolean, rightsRiskProcessingData?: boolean, freedomRiskProcessingData?: boolean, innovativeTechnologiesUsed?: boolean, processingPersonalDataRisk?: boolean, specialCategoryDataProcessed?: boolean, systematicPersonalAssessment?: boolean, processingVulnerableDataSubject?: boolean }, error?: string, successful?: boolean }"
+            "type": "{ data?: { status?: string, comment?: string, processingActivityId?: string, largeScaleObservation?: boolean, sensitiveOrSpecialData?: boolean, rightsRiskProcessingData?: boolean, freedomRiskProcessingData?: boolean, innovativeTechnologiesUsed?: boolean, processingPersonalDataRisk?: boolean, specialCategoryDataProcessed?: boolean, systematicPersonalAssessment?: boolean, processingVulnerableDataSubject?: boolean }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -5840,7 +5840,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { status?: string, comment?: string, blacklist?: boolean, translations?: string, processingActivityId?: string, classifyingDataSubject?: boolean, automatedDecisionMaking?: boolean, largeScaleDataProcessing?: boolean, innovativeTechnologiesUsed?: boolean, matchingMergingRecordsInvolved?: boolean, processingVulnerableDataSubject?: boolean, systematicMonitoringDataSubject?: boolean, largeScaleProcessingSensitiveData?: boolean, monitoringPubliclyAccessibleAreas?: boolean, processingConfidentialSensitiveData?: boolean, preventDataSubjectsExercisingTheirRights?: boolean, extensiveAutomatedEvaluationCharacteristics?: boolean }, error?: string, successful?: boolean }"
+            "type": "{ data?: { status?: string, comment?: string, blacklist?: boolean, translations?: string, processingActivityId?: string, classifyingDataSubject?: boolean, automatedDecisionMaking?: boolean, largeScaleDataProcessing?: boolean, innovativeTechnologiesUsed?: boolean, matchingMergingRecordsInvolved?: boolean, processingVulnerableDataSubject?: boolean, systematicMonitoringDataSubject?: boolean, largeScaleProcessingSensitiveData?: boolean, monitoringPubliclyAccessibleAreas?: boolean, processingConfidentialSensitiveData?: boolean, preventDataSubjectsExercisingTheirRights?: boolean, extensiveAutomatedEvaluationCharacteristics?: boolean }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -5882,7 +5882,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -5924,7 +5924,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -5966,7 +5966,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { processingActivityId?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { processingActivityId?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -6008,7 +6008,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -6045,7 +6045,7 @@
           {
             "key": "exportTypes",
             "optional": false,
-            "type": "csv | doc | pdf[]",
+            "type": "(csv | doc | pdf)[]",
             "description": "Exporttypes"
           },
           {
@@ -6110,7 +6110,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { language?: string, exportTypes?: string, filter__departments?: string, filter__dataSubjects?: string, filter__processingActivityId?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { language?: string, exportTypes?: string, filter__departments?: string, filter__dataSubjects?: string, filter__processingActivityId?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -6152,7 +6152,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -6302,7 +6302,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__dataSources?: string, filter__departments?: string, filter__companyRoles?: string, filter__dataSubjects?: string, filter__paAsDataSource?: string, filter__infotypeCategories?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__dataSources?: string, filter__departments?: string, filter__companyRoles?: string, filter__dataSubjects?: string, filter__paAsDataSource?: string, filter__infotypeCategories?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -6344,7 +6344,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { filterType?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { filterType?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -6446,7 +6446,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__objectCategory?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__objectCategory?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -6506,7 +6506,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { status?: string, documentFiles?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { status?: string, documentFiles?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -6548,7 +6548,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -6590,7 +6590,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -6632,7 +6632,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { processingActivityId?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { processingActivityId?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -6674,7 +6674,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -7082,7 +7082,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { status?: string, translations?: string, integrity__impacts?: string, integrity__threats?: string, additionalInformation?: string, availability__impacts?: string, availability__threats?: string, integrity__plannedToms?: string, integrity__riskSources?: string, confidentiality__impacts?: string, confidentiality__threats?: string, availability__plannedToms?: string, availability__riskSources?: string, integrity__impactsComment?: string, integrity__threatsComment?: string, privacyFramework__consent?: string, additionalInformationFiles?: string, integrity__baselineComment?: string, integrity__implementedToms?: string, privacyFramework__accuracy?: string, integrity__baselineSeverity?: string, privacyFramework__retention?: boolean, availability__impactsComment?: string, availability__threatsComment?: string, confidentiality__plannedToms?: string, confidentiality__riskSources?: string, availability__baselineComment?: string, availability__implementedToms?: string, integrity__baselineLikelihood?: string, integrity__plannedTomsComment?: string, integrity__riskSourcesComment?: string, availability__baselineSeverity?: string, integrity__residualRiskComment?: string, privacyFramework__transparency?: string, confidentiality__impactsComment?: string, confidentiality__threatsComment?: string, integrity__residualRiskSeverity?: string, availability__baselineLikelihood?: string, availability__plannedTomsComment?: string, availability__riskSourcesComment?: string, confidentiality__baselineComment?: string, confidentiality__implementedToms?: string, availability__residualRiskComment?: string, confidentiality__baselineSeverity?: string, integrity__implementedTomsComment?: string, integrity__residualRiskLikelihood?: string, availability__residualRiskSeverity?: string, privacyFramework__dataMinimisation?: string, privacyFramework__retentionComment?: string, confidentiality__baselineLikelihood?: string, confidentiality__plannedTomsComment?: string, confidentiality__riskSourcesComment?: string, privacyFramework__additionalComment?: string, privacyFramework__purposeLimitation?: string, availability__implementedTomsComment?: string, availability__residualRiskLikelihood?: string, confidentiality__residualRiskComment?: string, confidentiality__residualRiskSeverity?: string, privacyFramework__dataRightsExercised?: string, confidentiality__implementedTomsComment?: string, confidentiality__residualRiskLikelihood?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { status?: string, translations?: string, integrity__impacts?: string, integrity__threats?: string, additionalInformation?: string, availability__impacts?: string, availability__threats?: string, integrity__plannedToms?: string, integrity__riskSources?: string, confidentiality__impacts?: string, confidentiality__threats?: string, availability__plannedToms?: string, availability__riskSources?: string, integrity__impactsComment?: string, integrity__threatsComment?: string, privacyFramework__consent?: string, additionalInformationFiles?: string, integrity__baselineComment?: string, integrity__implementedToms?: string, privacyFramework__accuracy?: string, integrity__baselineSeverity?: string, privacyFramework__retention?: boolean, availability__impactsComment?: string, availability__threatsComment?: string, confidentiality__plannedToms?: string, confidentiality__riskSources?: string, availability__baselineComment?: string, availability__implementedToms?: string, integrity__baselineLikelihood?: string, integrity__plannedTomsComment?: string, integrity__riskSourcesComment?: string, availability__baselineSeverity?: string, integrity__residualRiskComment?: string, privacyFramework__transparency?: string, confidentiality__impactsComment?: string, confidentiality__threatsComment?: string, integrity__residualRiskSeverity?: string, availability__baselineLikelihood?: string, availability__plannedTomsComment?: string, availability__riskSourcesComment?: string, confidentiality__baselineComment?: string, confidentiality__implementedToms?: string, availability__residualRiskComment?: string, confidentiality__baselineSeverity?: string, integrity__implementedTomsComment?: string, integrity__residualRiskLikelihood?: string, availability__residualRiskSeverity?: string, privacyFramework__dataMinimisation?: string, privacyFramework__retentionComment?: string, confidentiality__baselineLikelihood?: string, confidentiality__plannedTomsComment?: string, confidentiality__riskSourcesComment?: string, privacyFramework__additionalComment?: string, privacyFramework__purposeLimitation?: string, availability__implementedTomsComment?: string, availability__residualRiskLikelihood?: string, confidentiality__residualRiskComment?: string, confidentiality__residualRiskSeverity?: string, privacyFramework__dataRightsExercised?: string, confidentiality__implementedTomsComment?: string, confidentiality__residualRiskLikelihood?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -7196,7 +7196,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { status?: string, comment?: string, largeScaleObservation?: boolean, sensitiveOrSpecialData?: boolean, rightsRiskProcessingData?: boolean, freedomRiskProcessingData?: boolean, innovativeTechnologiesUsed?: boolean, processingPersonalDataRisk?: boolean, specialCategoryDataProcessed?: boolean, systematicPersonalAssessment?: boolean, processingVulnerableDataSubject?: boolean }, error?: string, successful?: boolean }"
+            "type": "{ data?: { status?: string, comment?: string, largeScaleObservation?: boolean, sensitiveOrSpecialData?: boolean, rightsRiskProcessingData?: boolean, freedomRiskProcessingData?: boolean, innovativeTechnologiesUsed?: boolean, processingPersonalDataRisk?: boolean, specialCategoryDataProcessed?: boolean, systematicPersonalAssessment?: boolean, processingVulnerableDataSubject?: boolean }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -7275,13 +7275,13 @@
           {
             "key": "recipients",
             "optional": true,
-            "type": "{ role: controller | independent_controller | joint_controller | processor | sub_processor[], comment?: string, recipientId: string }[]",
+            "type": "{ role: (controller | independent_controller | joint_controller | processor | sub_processor)[], comment?: string, recipientId: string }[]",
             "description": "List of recipients related with the processing activity."
           },
           {
             "key": "companyRole",
             "optional": true,
-            "type": "controller | independent_controller | joint_controller | processor | sub_processor[]",
+            "type": "(controller | independent_controller | joint_controller | processor | sub_processor)[]",
             "description": "Companyrole"
           },
           {
@@ -7424,7 +7424,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { active?: boolean, assets?: string, purpose?: string, infotypes?: string, recipients?: string, companyRole?: string, departments?: string, lawfulBasis?: string, dataSubjects?: string, isDataStored?: boolean, translations?: string, contactPerson?: string, additionalInfo?: string, infotypeVolume?: string, managementMethods?: string, infotypeCategories?: string, additionalInfoFiles?: string, processingFrequency?: string, processingActivityId?: string, dataFlowRelationships?: string, retentionPeriod__unit?: string, retentionPeriodComment?: string, areAccessRequestsManaged?: boolean, processingFrequencyComment?: string, processingActivitiesAsDataSources?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { active?: boolean, assets?: string, purpose?: string, infotypes?: string, recipients?: string, companyRole?: string, departments?: string, lawfulBasis?: string, dataSubjects?: string, isDataStored?: boolean, translations?: string, contactPerson?: string, additionalInfo?: string, infotypeVolume?: string, managementMethods?: string, infotypeCategories?: string, additionalInfoFiles?: string, processingFrequency?: string, processingActivityId?: string, dataFlowRelationships?: string, retentionPeriod__unit?: string, retentionPeriodComment?: string, areAccessRequestsManaged?: boolean, processingFrequencyComment?: string, processingActivitiesAsDataSources?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -7562,7 +7562,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { status?: string, comment?: string, blacklist?: boolean, translations?: string, classifyingDataSubject?: boolean, automatedDecisionMaking?: boolean, largeScaleDataProcessing?: boolean, innovativeTechnologiesUsed?: boolean, matchingMergingRecordsInvolved?: boolean, processingVulnerableDataSubject?: boolean, systematicMonitoringDataSubject?: boolean, largeScaleProcessingSensitiveData?: boolean, monitoringPubliclyAccessibleAreas?: boolean, processingConfidentialSensitiveData?: boolean, preventDataSubjectsExercisingTheirRights?: boolean, extensiveAutomatedEvaluationCharacteristics?: boolean }, error?: string, successful?: boolean }"
+            "type": "{ data?: { status?: string, comment?: string, blacklist?: boolean, translations?: string, classifyingDataSubject?: boolean, automatedDecisionMaking?: boolean, largeScaleDataProcessing?: boolean, innovativeTechnologiesUsed?: boolean, matchingMergingRecordsInvolved?: boolean, processingVulnerableDataSubject?: boolean, systematicMonitoringDataSubject?: boolean, largeScaleProcessingSensitiveData?: boolean, monitoringPubliclyAccessibleAreas?: boolean, processingConfidentialSensitiveData?: boolean, preventDataSubjectsExercisingTheirRights?: boolean, extensiveAutomatedEvaluationCharacteristics?: boolean }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -7604,7 +7604,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { discoveredRecipientIds?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { discoveredRecipientIds?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -7646,7 +7646,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { discoveredRecipientId?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { discoveredRecipientId?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -7689,7 +7689,7 @@
           {
             "key": "role",
             "optional": true,
-            "type": "controller | independent_controller | joint_controller | processor | sub_processor[]",
+            "type": "(controller | independent_controller | joint_controller | processor | sub_processor)[]",
             "description": "Role"
           },
           {
@@ -7737,7 +7737,7 @@
           {
             "key": "categories",
             "optional": true,
-            "type": "ITInfrastructure | accountingSoftware | adminDepartment | advertising | airlines | analytics | apps | artificialIntelligenceAi | assetManagement | audit | automotive | b2b | bankCards | bigData | businessDevelopment | businessIntelligence | businessManagement | chat | cloudComputing | cloudDataServices | cloudManagement | cloudSecurity | cloudStorage | communities | compliance | construction | consulting | consumerElectronics | content | coreBankingSystem | crmSoftware | cryptoCurrency | customerServiceProvider | customerSupport | cyberSecurity | dataIntegration | dataManagement | dataStorage | dataVisualization | database | developerTools | devops | digitalMedia | documentManagement | e-learning | eCommerce | edtech | education | electronics | emailMarketing | emailServices | energy | enterprise | enterpriseSoftware | erpSoftware | events | eventsSoftware | fileSharing | financialCrime | financialServices | fintech | fitness | foodAndBeverage | government | healthCare | hospitality | hosting | identityManagement | informationTechnology | insurance | insurtech | internalDepartment | internetOfThings | itDepartment | lawEnforcement | lawServices | legalDepartment | logistics | machineLearning | management | marketResearch | marketingAutomation | marketingDepartment | marketingSoftware | marketingTools | marketplace | medical | messagingServices | mobileApps | mobilityEquipment | networkSecurity | news | nonProfit | officeApplications | officesApps | onlinePortals | orderingSoftware | other | outsourcing | passwordManagement | paymentPlatform | payrollServices | pharmaceuticals | physicalSecurity | physicalStorage | prDepartment | preventionRisks | productionDepartment | productivityTools | professionalServices | projectManagement | propertyAdministration | publicAdministration | publishing | realEstate | regulatoryReporting | retail | riskManagement | rrhhDepartment | rrhhManagement | rrhhSoftware | saas | searchEngine | security | securityServices | sellDepartment | servicesPlatform | smallAndMediumBusinesses | socialMedia | supplyChainManagement | taxManagement | telecommunications | ticServices | tourism | tracking | trading | training | transportation | travel | ventureCapital | video | videoStreaming | voip | webDesign | wellness[]",
+            "type": "(ITInfrastructure | accountingSoftware | adminDepartment | advertising | airlines | analytics | apps | artificialIntelligenceAi | assetManagement | audit | automotive | b2b | bankCards | bigData | businessDevelopment | businessIntelligence | businessManagement | chat | cloudComputing | cloudDataServices | cloudManagement | cloudSecurity | cloudStorage | communities | compliance | construction | consulting | consumerElectronics | content | coreBankingSystem | crmSoftware | cryptoCurrency | customerServiceProvider | customerSupport | cyberSecurity | dataIntegration | dataManagement | dataStorage | dataVisualization | database | developerTools | devops | digitalMedia | documentManagement | e-learning | eCommerce | edtech | education | electronics | emailMarketing | emailServices | energy | enterprise | enterpriseSoftware | erpSoftware | events | eventsSoftware | fileSharing | financialCrime | financialServices | fintech | fitness | foodAndBeverage | government | healthCare | hospitality | hosting | identityManagement | informationTechnology | insurance | insurtech | internalDepartment | internetOfThings | itDepartment | lawEnforcement | lawServices | legalDepartment | logistics | machineLearning | management | marketResearch | marketingAutomation | marketingDepartment | marketingSoftware | marketingTools | marketplace | medical | messagingServices | mobileApps | mobilityEquipment | networkSecurity | news | nonProfit | officeApplications | officesApps | onlinePortals | orderingSoftware | other | outsourcing | passwordManagement | paymentPlatform | payrollServices | pharmaceuticals | physicalSecurity | physicalStorage | prDepartment | preventionRisks | productionDepartment | productivityTools | professionalServices | projectManagement | propertyAdministration | publicAdministration | publishing | realEstate | regulatoryReporting | retail | riskManagement | rrhhDepartment | rrhhManagement | rrhhSoftware | saas | searchEngine | security | securityServices | sellDepartment | servicesPlatform | smallAndMediumBusinesses | socialMedia | supplyChainManagement | taxManagement | telecommunications | ticServices | tourism | tracking | trading | training | transportation | travel | ventureCapital | video | videoStreaming | voip | webDesign | wellness)[]",
             "description": "list of recipient category"
           },
           {
@@ -7790,7 +7790,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { dpa?: string, name?: string, role?: string, state?: string, status?: string, country?: string, dpaFiles?: string, dpaStatus?: string, categories?: string, businessName?: string, recipientState?: string, subProcessorIds?: string, recipientModelId?: string, dataStorageLocation?: string, recipientWarranties?: string, fromDiscoveredRecipientId?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { dpa?: string, name?: string, role?: string, state?: string, status?: string, country?: string, dpaFiles?: string, dpaStatus?: string, categories?: string, businessName?: string, recipientState?: string, subProcessorIds?: string, recipientModelId?: string, dataStorageLocation?: string, recipientWarranties?: string, fromDiscoveredRecipientId?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -7832,7 +7832,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -7863,7 +7863,7 @@
           {
             "key": "exportTypes",
             "optional": false,
-            "type": "csv | doc | pdf[]",
+            "type": "(csv | doc | pdf)[]",
             "description": "Exporttypes"
           },
           {
@@ -7893,7 +7893,7 @@
           {
             "key": "filter__categories",
             "optional": true,
-            "type": "ITInfrastructure | accountingSoftware | adminDepartment | advertising | airlines | analytics | apps | artificialIntelligenceAi | assetManagement | audit | automotive | b2b | bankCards | bigData | businessDevelopment | businessIntelligence | businessManagement | chat | cloudComputing | cloudDataServices | cloudManagement | cloudSecurity | cloudStorage | communities | compliance | construction | consulting | consumerElectronics | content | coreBankingSystem | crmSoftware | cryptoCurrency | customerServiceProvider | customerSupport | cyberSecurity | dataIntegration | dataManagement | dataStorage | dataVisualization | database | developerTools | devops | digitalMedia | documentManagement | e-learning | eCommerce | edtech | education | electronics | emailMarketing | emailServices | energy | enterprise | enterpriseSoftware | erpSoftware | events | eventsSoftware | fileSharing | financialCrime | financialServices | fintech | fitness | foodAndBeverage | government | healthCare | hospitality | hosting | identityManagement | informationTechnology | insurance | insurtech | internalDepartment | internetOfThings | itDepartment | lawEnforcement | lawServices | legalDepartment | logistics | machineLearning | management | marketResearch | marketingAutomation | marketingDepartment | marketingSoftware | marketingTools | marketplace | medical | messagingServices | mobileApps | mobilityEquipment | networkSecurity | news | nonProfit | officeApplications | officesApps | onlinePortals | orderingSoftware | other | outsourcing | passwordManagement | paymentPlatform | payrollServices | pharmaceuticals | physicalSecurity | physicalStorage | prDepartment | preventionRisks | productionDepartment | productivityTools | professionalServices | projectManagement | propertyAdministration | publicAdministration | publishing | realEstate | regulatoryReporting | retail | riskManagement | rrhhDepartment | rrhhManagement | rrhhSoftware | saas | searchEngine | security | securityServices | sellDepartment | servicesPlatform | smallAndMediumBusinesses | socialMedia | supplyChainManagement | taxManagement | telecommunications | ticServices | tourism | tracking | trading | training | transportation | travel | ventureCapital | video | videoStreaming | voip | webDesign | wellness[]",
+            "type": "(ITInfrastructure | accountingSoftware | adminDepartment | advertising | airlines | analytics | apps | artificialIntelligenceAi | assetManagement | audit | automotive | b2b | bankCards | bigData | businessDevelopment | businessIntelligence | businessManagement | chat | cloudComputing | cloudDataServices | cloudManagement | cloudSecurity | cloudStorage | communities | compliance | construction | consulting | consumerElectronics | content | coreBankingSystem | crmSoftware | cryptoCurrency | customerServiceProvider | customerSupport | cyberSecurity | dataIntegration | dataManagement | dataStorage | dataVisualization | database | developerTools | devops | digitalMedia | documentManagement | e-learning | eCommerce | edtech | education | electronics | emailMarketing | emailServices | energy | enterprise | enterpriseSoftware | erpSoftware | events | eventsSoftware | fileSharing | financialCrime | financialServices | fintech | fitness | foodAndBeverage | government | healthCare | hospitality | hosting | identityManagement | informationTechnology | insurance | insurtech | internalDepartment | internetOfThings | itDepartment | lawEnforcement | lawServices | legalDepartment | logistics | machineLearning | management | marketResearch | marketingAutomation | marketingDepartment | marketingSoftware | marketingTools | marketplace | medical | messagingServices | mobileApps | mobilityEquipment | networkSecurity | news | nonProfit | officeApplications | officesApps | onlinePortals | orderingSoftware | other | outsourcing | passwordManagement | paymentPlatform | payrollServices | pharmaceuticals | physicalSecurity | physicalStorage | prDepartment | preventionRisks | productionDepartment | productivityTools | professionalServices | projectManagement | propertyAdministration | publicAdministration | publishing | realEstate | regulatoryReporting | retail | riskManagement | rrhhDepartment | rrhhManagement | rrhhSoftware | saas | searchEngine | security | securityServices | sellDepartment | servicesPlatform | smallAndMediumBusinesses | socialMedia | supplyChainManagement | taxManagement | telecommunications | ticServices | tourism | tracking | trading | training | transportation | travel | ventureCapital | video | videoStreaming | voip | webDesign | wellness)[]",
             "description": "list of recipient category"
           },
           {
@@ -7952,7 +7952,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { exportTypes?: string, filter__search?: string, filter__status?: string, filter__categories?: string, filter__departments?: string, filter__recipientIds?: string, filter__recipientState?: string, filter__discoverySource?: string, filter__subProcessorIds?: string, filter__automationStatus?: string, filter__recipientWarranties?: string, filter__withNoProcessingActivity?: boolean, nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { exportTypes?: string, filter__search?: string, filter__status?: string, filter__categories?: string, filter__departments?: string, filter__recipientIds?: string, filter__recipientState?: string, filter__discoverySource?: string, filter__subProcessorIds?: string, filter__automationStatus?: string, filter__recipientWarranties?: string, filter__withNoProcessingActivity?: boolean, nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -7987,7 +7987,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -8065,7 +8065,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__status?: string, filter__discoverySource?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__status?: string, filter__discoverySource?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -8107,7 +8107,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -8186,7 +8186,7 @@
           {
             "key": "filter__categories",
             "optional": true,
-            "type": "ITInfrastructure | accountingSoftware | adminDepartment | advertising | airlines | analytics | apps | artificialIntelligenceAi | assetManagement | audit | automotive | b2b | bankCards | bigData | businessDevelopment | businessIntelligence | businessManagement | chat | cloudComputing | cloudDataServices | cloudManagement | cloudSecurity | cloudStorage | communities | compliance | construction | consulting | consumerElectronics | content | coreBankingSystem | crmSoftware | cryptoCurrency | customerServiceProvider | customerSupport | cyberSecurity | dataIntegration | dataManagement | dataStorage | dataVisualization | database | developerTools | devops | digitalMedia | documentManagement | e-learning | eCommerce | edtech | education | electronics | emailMarketing | emailServices | energy | enterprise | enterpriseSoftware | erpSoftware | events | eventsSoftware | fileSharing | financialCrime | financialServices | fintech | fitness | foodAndBeverage | government | healthCare | hospitality | hosting | identityManagement | informationTechnology | insurance | insurtech | internalDepartment | internetOfThings | itDepartment | lawEnforcement | lawServices | legalDepartment | logistics | machineLearning | management | marketResearch | marketingAutomation | marketingDepartment | marketingSoftware | marketingTools | marketplace | medical | messagingServices | mobileApps | mobilityEquipment | networkSecurity | news | nonProfit | officeApplications | officesApps | onlinePortals | orderingSoftware | other | outsourcing | passwordManagement | paymentPlatform | payrollServices | pharmaceuticals | physicalSecurity | physicalStorage | prDepartment | preventionRisks | productionDepartment | productivityTools | professionalServices | projectManagement | propertyAdministration | publicAdministration | publishing | realEstate | regulatoryReporting | retail | riskManagement | rrhhDepartment | rrhhManagement | rrhhSoftware | saas | searchEngine | security | securityServices | sellDepartment | servicesPlatform | smallAndMediumBusinesses | socialMedia | supplyChainManagement | taxManagement | telecommunications | ticServices | tourism | tracking | trading | training | transportation | travel | ventureCapital | video | videoStreaming | voip | webDesign | wellness[]",
+            "type": "(ITInfrastructure | accountingSoftware | adminDepartment | advertising | airlines | analytics | apps | artificialIntelligenceAi | assetManagement | audit | automotive | b2b | bankCards | bigData | businessDevelopment | businessIntelligence | businessManagement | chat | cloudComputing | cloudDataServices | cloudManagement | cloudSecurity | cloudStorage | communities | compliance | construction | consulting | consumerElectronics | content | coreBankingSystem | crmSoftware | cryptoCurrency | customerServiceProvider | customerSupport | cyberSecurity | dataIntegration | dataManagement | dataStorage | dataVisualization | database | developerTools | devops | digitalMedia | documentManagement | e-learning | eCommerce | edtech | education | electronics | emailMarketing | emailServices | energy | enterprise | enterpriseSoftware | erpSoftware | events | eventsSoftware | fileSharing | financialCrime | financialServices | fintech | fitness | foodAndBeverage | government | healthCare | hospitality | hosting | identityManagement | informationTechnology | insurance | insurtech | internalDepartment | internetOfThings | itDepartment | lawEnforcement | lawServices | legalDepartment | logistics | machineLearning | management | marketResearch | marketingAutomation | marketingDepartment | marketingSoftware | marketingTools | marketplace | medical | messagingServices | mobileApps | mobilityEquipment | networkSecurity | news | nonProfit | officeApplications | officesApps | onlinePortals | orderingSoftware | other | outsourcing | passwordManagement | paymentPlatform | payrollServices | pharmaceuticals | physicalSecurity | physicalStorage | prDepartment | preventionRisks | productionDepartment | productivityTools | professionalServices | projectManagement | propertyAdministration | publicAdministration | publishing | realEstate | regulatoryReporting | retail | riskManagement | rrhhDepartment | rrhhManagement | rrhhSoftware | saas | searchEngine | security | securityServices | sellDepartment | servicesPlatform | smallAndMediumBusinesses | socialMedia | supplyChainManagement | taxManagement | telecommunications | ticServices | tourism | tracking | trading | training | transportation | travel | ventureCapital | video | videoStreaming | voip | webDesign | wellness)[]",
             "description": "list of recipient category"
           },
           {
@@ -8245,7 +8245,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__status?: string, filter__categories?: string, filter__departments?: string, filter__recipientIds?: string, filter__recipientState?: string, filter__discoverySource?: string, filter__subProcessorIds?: string, filter__automationStatus?: string, filter__recipientWarranties?: string, filter__withNoProcessingActivity?: boolean, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__status?: string, filter__categories?: string, filter__departments?: string, filter__recipientIds?: string, filter__recipientState?: string, filter__discoverySource?: string, filter__subProcessorIds?: string, filter__automationStatus?: string, filter__recipientWarranties?: string, filter__withNoProcessingActivity?: boolean, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -8287,7 +8287,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -8329,7 +8329,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { discoveredRecipientId?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { discoveredRecipientId?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -8371,7 +8371,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -8437,7 +8437,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sort__column?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -8468,7 +8468,7 @@
           {
             "key": "roles",
             "optional": true,
-            "type": "borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor[]",
+            "type": "(borneo_admin | borneo_analyst | borneo_engineer | compliance_engineer | data_engineer | department_coordinator | no_access_role | privacy_supervisor)[]",
             "description": "Roles"
           },
           {
@@ -8503,7 +8503,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { roles?: string, frequency?: string, recipientsEmail?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { roles?: string, frequency?: string, recipientsEmail?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -8546,7 +8546,7 @@
           {
             "key": "role",
             "optional": true,
-            "type": "controller | independent_controller | joint_controller | processor | sub_processor[]",
+            "type": "(controller | independent_controller | joint_controller | processor | sub_processor)[]",
             "description": "Role"
           },
           {
@@ -8582,7 +8582,7 @@
           {
             "key": "categories",
             "optional": true,
-            "type": "ITInfrastructure | accountingSoftware | adminDepartment | advertising | airlines | analytics | apps | artificialIntelligenceAi | assetManagement | audit | automotive | b2b | bankCards | bigData | businessDevelopment | businessIntelligence | businessManagement | chat | cloudComputing | cloudDataServices | cloudManagement | cloudSecurity | cloudStorage | communities | compliance | construction | consulting | consumerElectronics | content | coreBankingSystem | crmSoftware | cryptoCurrency | customerServiceProvider | customerSupport | cyberSecurity | dataIntegration | dataManagement | dataStorage | dataVisualization | database | developerTools | devops | digitalMedia | documentManagement | e-learning | eCommerce | edtech | education | electronics | emailMarketing | emailServices | energy | enterprise | enterpriseSoftware | erpSoftware | events | eventsSoftware | fileSharing | financialCrime | financialServices | fintech | fitness | foodAndBeverage | government | healthCare | hospitality | hosting | identityManagement | informationTechnology | insurance | insurtech | internalDepartment | internetOfThings | itDepartment | lawEnforcement | lawServices | legalDepartment | logistics | machineLearning | management | marketResearch | marketingAutomation | marketingDepartment | marketingSoftware | marketingTools | marketplace | medical | messagingServices | mobileApps | mobilityEquipment | networkSecurity | news | nonProfit | officeApplications | officesApps | onlinePortals | orderingSoftware | other | outsourcing | passwordManagement | paymentPlatform | payrollServices | pharmaceuticals | physicalSecurity | physicalStorage | prDepartment | preventionRisks | productionDepartment | productivityTools | professionalServices | projectManagement | propertyAdministration | publicAdministration | publishing | realEstate | regulatoryReporting | retail | riskManagement | rrhhDepartment | rrhhManagement | rrhhSoftware | saas | searchEngine | security | securityServices | sellDepartment | servicesPlatform | smallAndMediumBusinesses | socialMedia | supplyChainManagement | taxManagement | telecommunications | ticServices | tourism | tracking | trading | training | transportation | travel | ventureCapital | video | videoStreaming | voip | webDesign | wellness[]",
+            "type": "(ITInfrastructure | accountingSoftware | adminDepartment | advertising | airlines | analytics | apps | artificialIntelligenceAi | assetManagement | audit | automotive | b2b | bankCards | bigData | businessDevelopment | businessIntelligence | businessManagement | chat | cloudComputing | cloudDataServices | cloudManagement | cloudSecurity | cloudStorage | communities | compliance | construction | consulting | consumerElectronics | content | coreBankingSystem | crmSoftware | cryptoCurrency | customerServiceProvider | customerSupport | cyberSecurity | dataIntegration | dataManagement | dataStorage | dataVisualization | database | developerTools | devops | digitalMedia | documentManagement | e-learning | eCommerce | edtech | education | electronics | emailMarketing | emailServices | energy | enterprise | enterpriseSoftware | erpSoftware | events | eventsSoftware | fileSharing | financialCrime | financialServices | fintech | fitness | foodAndBeverage | government | healthCare | hospitality | hosting | identityManagement | informationTechnology | insurance | insurtech | internalDepartment | internetOfThings | itDepartment | lawEnforcement | lawServices | legalDepartment | logistics | machineLearning | management | marketResearch | marketingAutomation | marketingDepartment | marketingSoftware | marketingTools | marketplace | medical | messagingServices | mobileApps | mobilityEquipment | networkSecurity | news | nonProfit | officeApplications | officesApps | onlinePortals | orderingSoftware | other | outsourcing | passwordManagement | paymentPlatform | payrollServices | pharmaceuticals | physicalSecurity | physicalStorage | prDepartment | preventionRisks | productionDepartment | productivityTools | professionalServices | projectManagement | propertyAdministration | publicAdministration | publishing | realEstate | regulatoryReporting | retail | riskManagement | rrhhDepartment | rrhhManagement | rrhhSoftware | saas | searchEngine | security | securityServices | sellDepartment | servicesPlatform | smallAndMediumBusinesses | socialMedia | supplyChainManagement | taxManagement | telecommunications | ticServices | tourism | tracking | trading | training | transportation | travel | ventureCapital | video | videoStreaming | voip | webDesign | wellness)[]",
             "description": "list of recipient category"
           },
           {
@@ -8635,7 +8635,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { dpa?: string, name?: string, role?: string, state?: string, status?: string, country?: string, dpaFiles?: string, dpaStatus?: string, categories?: string, businessName?: string, recipientState?: string, subProcessorIds?: string, automationStatus?: string, dataStorageLocation?: string, recipientWarranties?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { dpa?: string, name?: string, role?: string, state?: string, status?: string, country?: string, dpaFiles?: string, dpaStatus?: string, categories?: string, businessName?: string, recipientState?: string, subProcessorIds?: string, automationStatus?: string, dataStorageLocation?: string, recipientWarranties?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -8689,7 +8689,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { status?: string, automationStatus?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { status?: string, automationStatus?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -8743,7 +8743,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -8930,7 +8930,7 @@
           {
             "key": "filter__severityScore",
             "optional": true,
-            "type": "CRITICAL | HIGH | INFORMATIONAL | LOW | MEDIUM[]",
+            "type": "(CRITICAL | HIGH | INFORMATIONAL | LOW | MEDIUM)[]",
             "description": "Filter the resources based on the assigned risk severity score; \"critical\" = 4, \"high\" = 3, \"medium\" = 2, \"low\" = 1."
           },
           {
@@ -8959,7 +8959,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { detailed?: boolean, sourceType?: string, sort__column?: string, filter__region?: string, filter__schema?: string, filter__search?: string, filter__status?: string, filter__account?: string, filter__dataset?: string, filter__driveId?: string, filter__noOwner?: boolean, filter__scanned?: boolean, filter__database?: string, filter__hasOwner?: boolean, filter__instance?: string, filter__parentId?: string, filter__driveType?: string, filter__firstSeen?: number, filter__orgUnitId?: string, filter__spaceType?: string, filter__categories?: string, filter__resourceId?: string, filter__spaceStatus?: string, filter__resourceTags?: string, filter__resourceType?: string, filter__severityScore?: string, filter__classification?: string, filter__infoTypes__infoTypes?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { detailed?: boolean, sourceType?: string, sort__column?: string, filter__region?: string, filter__schema?: string, filter__search?: string, filter__status?: string, filter__account?: string, filter__dataset?: string, filter__driveId?: string, filter__noOwner?: boolean, filter__scanned?: boolean, filter__database?: string, filter__hasOwner?: boolean, filter__instance?: string, filter__parentId?: string, filter__driveType?: string, filter__firstSeen?: number, filter__orgUnitId?: string, filter__spaceType?: string, filter__categories?: string, filter__resourceId?: string, filter__spaceStatus?: string, filter__resourceTags?: string, filter__resourceType?: string, filter__severityScore?: string, filter__classification?: string, filter__infoTypes__infoTypes?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -9122,7 +9122,7 @@
           {
             "key": "filter__dataSourceCategories",
             "optional": true,
-            "type": "AWSDataStores | AzureDataStores | CloudApplications | DiscoveredApplications | GCPDataStores | StandaloneDataStores[]",
+            "type": "(AWSDataStores | AzureDataStores | CloudApplications | DiscoveredApplications | GCPDataStores | StandaloneDataStores)[]",
             "description": "Filter the resources based on the data source category Current supported values: AWS_DATA_STORES, GCP_DATA_STORES, STANDALONE_DATA_STORES, CLOUD_APPLICATIONS, DISCOVERED_APPLICATIONS"
           },
           {
@@ -9157,7 +9157,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { select?: string, pageSize?: number, nextToken?: string, sort__column?: string, filter__hasPii?: boolean, filter__region?: string, filter__search?: string, filter__noOwner?: boolean, filter__regions?: string, filter__hasOwner?: boolean, filter__parentId?: string, filter__accountId?: string, filter__dataRisks?: string, filter__firstSeen?: number, filter__resourceIds?: string, filter__resourceTags?: string, filter__resourceType?: string, filter__severityScore?: number, filter__classification?: string, include__violationMetrics?: boolean, filter__hideBorneoResources?: boolean, filter__dataSourceCategories?: string, filter__scannableResourceTypes?: boolean, include__frameworkExceptionsCount?: boolean, include__childResourceStats__scans?: boolean, include__childResourceStats__dataSize?: boolean, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { select?: string, pageSize?: number, nextToken?: string, sort__column?: string, filter__hasPii?: boolean, filter__region?: string, filter__search?: string, filter__noOwner?: boolean, filter__regions?: string, filter__hasOwner?: boolean, filter__parentId?: string, filter__accountId?: string, filter__dataRisks?: string, filter__firstSeen?: number, filter__resourceIds?: string, filter__resourceTags?: string, filter__resourceType?: string, filter__severityScore?: number, filter__classification?: string, include__violationMetrics?: boolean, filter__hideBorneoResources?: boolean, filter__dataSourceCategories?: string, filter__scannableResourceTypes?: boolean, include__frameworkExceptionsCount?: boolean, include__childResourceStats__scans?: boolean, include__childResourceStats__dataSize?: boolean, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -9199,7 +9199,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -9362,7 +9362,7 @@
           {
             "key": "filter__dataSourceCategories",
             "optional": true,
-            "type": "AWSDataStores | AzureDataStores | CloudApplications | DiscoveredApplications | GCPDataStores | StandaloneDataStores[]",
+            "type": "(AWSDataStores | AzureDataStores | CloudApplications | DiscoveredApplications | GCPDataStores | StandaloneDataStores)[]",
             "description": "Filter the resources based on the data source category Current supported values: AWS_DATA_STORES, GCP_DATA_STORES, STANDALONE_DATA_STORES, CLOUD_APPLICATIONS, DISCOVERED_APPLICATIONS"
           },
           {
@@ -9397,7 +9397,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { select?: string, pageSize?: number, nextToken?: string, sort__column?: string, filter__hasPii?: boolean, filter__region?: string, filter__search?: string, filter__noOwner?: boolean, filter__regions?: string, filter__hasOwner?: boolean, filter__parentId?: string, filter__accountId?: string, filter__dataRisks?: string, filter__firstSeen?: number, filter__resourceIds?: string, filter__resourceTags?: string, filter__resourceType?: string, filter__severityScore?: number, filter__classification?: string, include__violationMetrics?: boolean, filter__hideBorneoResources?: boolean, filter__dataSourceCategories?: string, filter__scannableResourceTypes?: boolean, include__frameworkExceptionsCount?: boolean, include__childResourceStats__scans?: boolean, include__childResourceStats__dataSize?: boolean, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { select?: string, pageSize?: number, nextToken?: string, sort__column?: string, filter__hasPii?: boolean, filter__region?: string, filter__search?: string, filter__noOwner?: boolean, filter__regions?: string, filter__hasOwner?: boolean, filter__parentId?: string, filter__accountId?: string, filter__dataRisks?: string, filter__firstSeen?: number, filter__resourceIds?: string, filter__resourceTags?: string, filter__resourceType?: string, filter__severityScore?: number, filter__classification?: string, include__violationMetrics?: boolean, filter__hideBorneoResources?: boolean, filter__dataSourceCategories?: string, filter__scannableResourceTypes?: boolean, include__frameworkExceptionsCount?: boolean, include__childResourceStats__scans?: boolean, include__childResourceStats__dataSize?: boolean, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -9590,7 +9590,7 @@
           {
             "key": "filter__severityScore",
             "optional": true,
-            "type": "CRITICAL | HIGH | INFORMATIONAL | LOW | MEDIUM[]",
+            "type": "(CRITICAL | HIGH | INFORMATIONAL | LOW | MEDIUM)[]",
             "description": "Filter the resources based on the assigned risk severity score; \"critical\" = 4, \"high\" = 3, \"medium\" = 2, \"low\" = 1."
           },
           {
@@ -9631,7 +9631,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string, sourceType?: string, sort__column?: string, filter__region?: string, filter__schema?: string, filter__search?: string, filter__status?: string, filter__account?: string, filter__dataset?: string, filter__driveId?: string, filter__noOwner?: boolean, filter__scanned?: boolean, filter__database?: string, filter__hasOwner?: boolean, filter__instance?: string, filter__parentId?: string, filter__driveType?: string, filter__firstSeen?: number, filter__orgUnitId?: string, filter__spaceType?: string, filter__categories?: string, filter__resourceId?: string, filter__spaceStatus?: string, filter__resourceTags?: string, filter__resourceType?: string, filter__severityScore?: string, filter__classification?: string, include__violationSummary?: boolean, filter__infoTypes__infoTypes?: string, include__frameworkExceptionsCount?: boolean, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string, sourceType?: string, sort__column?: string, filter__region?: string, filter__schema?: string, filter__search?: string, filter__status?: string, filter__account?: string, filter__dataset?: string, filter__driveId?: string, filter__noOwner?: boolean, filter__scanned?: boolean, filter__database?: string, filter__hasOwner?: boolean, filter__instance?: string, filter__parentId?: string, filter__driveType?: string, filter__firstSeen?: number, filter__orgUnitId?: string, filter__spaceType?: string, filter__categories?: string, filter__resourceId?: string, filter__spaceStatus?: string, filter__resourceTags?: string, filter__resourceType?: string, filter__severityScore?: string, filter__classification?: string, include__violationSummary?: boolean, filter__infoTypes__infoTypes?: string, include__frameworkExceptionsCount?: boolean, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -9673,7 +9673,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -9727,7 +9727,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { filter__upstreamDepth?: number, filter__downstreamDepth?: number, nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { filter__upstreamDepth?: number, filter__downstreamDepth?: number, nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -9769,7 +9769,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { includeDeletedResources?: boolean }, error?: string, successful?: boolean }"
+            "type": "{ data?: { includeDeletedResources?: boolean }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -9811,7 +9811,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -9859,7 +9859,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { includeParentDetails?: boolean }, error?: string, successful?: boolean }"
+            "type": "{ data?: { includeParentDetails?: boolean }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -9925,7 +9925,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -9967,7 +9967,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -10291,7 +10291,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { cron?: string, scanType?: string, scanFilter?: string, connectorId?: string, resourceType?: string, scheduleType?: string, resources__all?: boolean, resources__tags?: string, resources__region?: string, resources__schema?: string, resources__search?: string, resources__teamId?: string, resources__dataset?: string, resources__driveId?: string, resources__regions?: string, resources__teamUrl?: string, schedule__timezone?: string, resources__database?: string, resources__isPublic?: boolean, resources__parentId?: string, resources__teamName?: string, schedule__calendars?: number, resources__accountId?: string, resources__driveType?: string, resources__isPrivate?: boolean, resources__orgUnitId?: string, resources__spaceType?: string, resources__isArchived?: boolean, resources__isExternal?: boolean, resources__resourceIds?: string, resources__spaceStatus?: string, resources__googleGroups?: string, resources__resourceType?: string, resources__isUnencrypted?: boolean, resources__infoTypes__ops?: string, resources__zendeskGroupId?: number, scanLimits__itemsPerBatch?: number, inspectionPolicy__infotypes?: string, inspectionPolicy__compliance?: string, scanLimits__samplePercentage?: number, inspectionPolicy__maskDetails?: boolean, inspectionPolicy__collectTokens?: boolean, resources__infoTypes__infoTypes?: string, resources__isSlackDirectMessages?: boolean, scanLimits__sampleDurationMinutes?: number, scanLimits__maxCumulativeDataSizeMb?: number }, error?: string, successful?: boolean }"
+            "type": "{ data?: { cron?: string, scanType?: string, scanFilter?: string, connectorId?: string, resourceType?: string, scheduleType?: string, resources__all?: boolean, resources__tags?: string, resources__region?: string, resources__schema?: string, resources__search?: string, resources__teamId?: string, resources__dataset?: string, resources__driveId?: string, resources__regions?: string, resources__teamUrl?: string, schedule__timezone?: string, resources__database?: string, resources__isPublic?: boolean, resources__parentId?: string, resources__teamName?: string, schedule__calendars?: number, resources__accountId?: string, resources__driveType?: string, resources__isPrivate?: boolean, resources__orgUnitId?: string, resources__spaceType?: string, resources__isArchived?: boolean, resources__isExternal?: boolean, resources__resourceIds?: string, resources__spaceStatus?: string, resources__googleGroups?: string, resources__resourceType?: string, resources__isUnencrypted?: boolean, resources__infoTypes__ops?: string, resources__zendeskGroupId?: number, scanLimits__itemsPerBatch?: number, inspectionPolicy__infotypes?: string, inspectionPolicy__compliance?: string, scanLimits__samplePercentage?: number, inspectionPolicy__maskDetails?: boolean, inspectionPolicy__collectTokens?: boolean, resources__infoTypes__infoTypes?: string, resources__isSlackDirectMessages?: boolean, scanLimits__sampleDurationMinutes?: number, scanLimits__maxCumulativeDataSizeMb?: number }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -10352,7 +10352,7 @@
           {
             "key": "filter__status",
             "optional": true,
-            "type": "deleted | failed | paused | scanning | success | terminated[]",
+            "type": "(deleted | failed | paused | scanning | success | terminated)[]",
             "description": "Status"
           },
           {
@@ -10400,7 +10400,7 @@
           {
             "key": "filter__infotypeConfidence",
             "optional": true,
-            "type": "certain | likely | potential[]",
+            "type": "(certain | likely | potential)[]",
             "description": "Infotypeconfidence"
           },
           {
@@ -10417,7 +10417,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { detailed?: boolean, filter__pageId?: string, filter__search?: string, filter__status?: string, filter__categories?: string, filter__resourceIds?: string, filter__resourceType?: string, filter__fileExtension?: string, filter__scanIterationId?: string, filter__infotypeConfidence?: string, filter__infoTypes__infoTypes?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { detailed?: boolean, filter__pageId?: string, filter__search?: string, filter__status?: string, filter__categories?: string, filter__resourceIds?: string, filter__resourceType?: string, filter__fileExtension?: string, filter__scanIterationId?: string, filter__infotypeConfidence?: string, filter__infoTypes__infoTypes?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -10496,7 +10496,7 @@
           {
             "key": "filter__status",
             "optional": true,
-            "type": "deleted | failed | paused | scanning | success | terminated[]",
+            "type": "(deleted | failed | paused | scanning | success | terminated)[]",
             "description": "Status"
           },
           {
@@ -10544,7 +10544,7 @@
           {
             "key": "filter__infotypeConfidence",
             "optional": true,
-            "type": "certain | likely | potential[]",
+            "type": "(certain | likely | potential)[]",
             "description": "Infotypeconfidence"
           },
           {
@@ -10561,7 +10561,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { type?: string, pageSize?: number, nextToken?: string, sort__column?: string, filter__pageId?: string, filter__search?: string, filter__status?: string, filter__categories?: string, filter__resourceIds?: string, filter__resourceType?: string, filter__fileExtension?: string, filter__scanIterationId?: string, filter__infotypeConfidence?: string, filter__infoTypes__infoTypes?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { type?: string, pageSize?: number, nextToken?: string, sort__column?: string, filter__pageId?: string, filter__search?: string, filter__status?: string, filter__categories?: string, filter__resourceIds?: string, filter__resourceType?: string, filter__fileExtension?: string, filter__scanIterationId?: string, filter__infotypeConfidence?: string, filter__infoTypes__infoTypes?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -10609,7 +10609,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string, type?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string, type?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -10651,7 +10651,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { scanId?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { scanId?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -10747,7 +10747,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { select?: string, pageSize?: number, nextToken?: string, sort__column?: string, filter__scanExecutionId?: string, filter__scanIterationId?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { select?: string, pageSize?: number, nextToken?: string, sort__column?: string, filter__scanExecutionId?: string, filter__scanIterationId?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -10795,7 +10795,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -10862,7 +10862,7 @@
           {
             "key": "filter__statuses",
             "optional": true,
-            "type": "deleted | failed | paused | scanning | success | terminated[]",
+            "type": "(deleted | failed | paused | scanning | success | terminated)[]",
             "description": "Statuses"
           },
           {
@@ -10886,7 +10886,7 @@
           {
             "key": "filter__infotypeConfidence",
             "optional": true,
-            "type": "certain | likely | potential[]",
+            "type": "(certain | likely | potential)[]",
             "description": "One or more confidence matches for the scan."
           },
           {
@@ -10903,7 +10903,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, sort__column?: string, filter__search?: string, filter__statuses?: string, filter__resourceIds?: string, filter__scanIterationId?: string, filter__infotypeConfidence?: string, filter__infoTypes__infoTypes?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, sort__column?: string, filter__search?: string, filter__statuses?: string, filter__resourceIds?: string, filter__scanIterationId?: string, filter__infotypeConfidence?: string, filter__infoTypes__infoTypes?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -10987,7 +10987,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { select?: string, pageSize?: number, nextToken?: string, sort__column?: string, filter__scanIterationId?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { select?: string, pageSize?: number, nextToken?: string, sort__column?: string, filter__scanIterationId?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -11131,7 +11131,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { select?: string, pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__status?: string, filter__scanType?: string, getNextExecution?: boolean, filter__accountId?: string, filter__resources?: string, filter__connectorId?: string, filter__dataPlaneId?: string, filter__gcpProjectId?: string, filter__resourceType?: string, filter__dataPlaneName?: string, filter__infoTypes__infoTypes?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { select?: string, pageSize?: number, nextToken?: string, sort__column?: string, filter__search?: string, filter__status?: string, filter__scanType?: string, getNextExecution?: boolean, filter__accountId?: string, filter__resources?: string, filter__connectorId?: string, filter__dataPlaneId?: string, filter__gcpProjectId?: string, filter__resourceType?: string, filter__dataPlaneName?: string, filter__infoTypes__infoTypes?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -11179,7 +11179,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -11221,7 +11221,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -11281,7 +11281,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageSize?: number, nextToken?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageSize?: number, nextToken?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -11323,7 +11323,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -11365,7 +11365,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -11407,7 +11407,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -11467,7 +11467,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { pageId?: string, scanId?: string, resourceId?: string, scanIterationId?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { pageId?: string, scanId?: string, resourceId?: string, scanIterationId?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -11515,7 +11515,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -11557,7 +11557,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -11629,7 +11629,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { sort__column?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean }"
+            "type": "{ data?: { sort__column?: string, nextToken?: string, items?: string[] }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",
@@ -11677,7 +11677,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ data?: { id?: string }, error?: string, successful?: boolean }"
+            "type": "{ data?: { id?: string }, error?: string, successful?: boolean } | null"
           },
           {
             "key": "error",

@@ -212,6 +212,7 @@ const rows = await corsair.synthflowai.db.voices.search({
 | `voice_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `workspace` | `string` | equals, contains, startsWith, endsWith, in |
+| `provider` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 

@@ -154,15 +154,15 @@
         "fields": [
           {
             "key": "page_number",
-            "optional": false,
+            "optional": true,
             "type": "number",
-            "description": "Zero-based page number for pagination"
+            "description": "Zero-based page number for pagination. Defaults to 0."
           },
           {
             "key": "results_per_page",
-            "optional": false,
+            "optional": true,
             "type": "number",
-            "description": "Number of contacts per page (1–100)"
+            "description": "Number of contacts per page (1–100). Defaults to 30."
           }
         ]
       },
@@ -212,7 +212,7 @@
           {
             "key": "webhooks",
             "optional": false,
-            "type": "{ uuid: string, event_name: string, channel_uuid?: string, hook_url: string, hook_params?: {}, created_at?: string }[]"
+            "type": "{ uuid: string, event_name: string, channel_uuid?: string, hook_url: string, hook_params?: Record<string, string>, created_at?: string }[]"
           }
         ]
       }

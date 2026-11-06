@@ -93,8 +93,7 @@ await corsair.claidai.api.backgroundGenerate({});
 
 ```ts
 {
-  input?: {
-  },
+  input?: Record<string, JsonValue>,
   output?: {
     ext?: string | null,
     mps?: number | null,
@@ -137,7 +136,7 @@ await corsair.claidai.api.backgroundRemove({});
 |------|------|----------|-------------|
 | `input` | `string` | Yes | Image URL or storage URI of the input image |
 | `color` | `string` | No | Background color, for example "#ffffff" or "transparent" |
-| `output` | `object` | No | Output destination: a storage URI or an output settings object |
+| `output` | `string \| object` | No | Output destination: a storage URI or an output settings object |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -324,7 +323,7 @@ await corsair.claidai.api.deleteStorage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `lazy` | No | Deletion result |
+| `data` | `JsonValue` | No | Deletion result |
 
 
 
@@ -352,7 +351,7 @@ await corsair.claidai.api.generativeResize({});
 | `width` | `number \| string` | Yes | Target width |
 | `height` | `number \| string` | Yes | Target height |
 | `feathering` | `string` | No | Transition smoothness, for example "20%" |
-| `output` | `object` | No | Output destination: a storage URI or an output settings object |
+| `output` | `string \| object` | No | Output destination: a storage URI or an output settings object |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -491,8 +490,7 @@ await corsair.claidai.api.imageAiEdit({});
   status: string,
   result_url?: string,
   created_at?: string,
-  request?: {
-  },
+  request?: Record<string, JsonValue>,
   errors?: {
     error: string,
     created_at?: string | number
@@ -606,9 +604,9 @@ await corsair.claidai.api.imageEditBatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object` | Yes | Storage folder URI, list of image URLs, or a source object |
-| `operations` | `object` | Yes | Image editing operations, for example &#123; resizing: &#123; width: 1000 &#125; &#125; |
-| `output` | `object` | No | Output destination: a storage URI or an output settings object |
+| `input` | `string \| string[] \| object` | Yes | Storage folder URI, list of image URLs, or a source object |
+| `operations` | `Record<string, JsonValue>` | Yes | Image editing operations, for example &#123; resizing: &#123; width: 1000 &#125; &#125; |
+| `output` | `string \| object` | No | Output destination: a storage URI or an output settings object |
 
 <AccordionGroup>
 <Accordion title="input full type">
@@ -617,14 +615,6 @@ await corsair.claidai.api.imageEditBatch({});
 string | string[] | {
   source: string,
   recursive?: boolean
-}
-```
-</Accordion>
-
-<Accordion title="operations full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -657,8 +647,7 @@ string | {
   status: string,
   result_url?: string,
   created_at?: string,
-  request?: {
-  },
+  request?: Record<string, JsonValue>,
   errors?: {
     error: string,
     created_at?: string | number
@@ -801,8 +790,7 @@ await corsair.claidai.api.imageGenerate({});
 
 ```ts
 {
-  input?: {
-  },
+  input?: Record<string, JsonValue>,
   output?: {
     ext?: string | null,
     mps?: number | null,
@@ -844,7 +832,7 @@ await corsair.claidai.api.licensePlateBlur({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `input` | `string` | Yes | Image URL or storage URI of the input image |
-| `output` | `object` | No | Output destination: a storage URI or an output settings object |
+| `output` | `string \| object` | No | Output destination: a storage URI or an output settings object |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -1013,7 +1001,7 @@ await corsair.claidai.api.polishImage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `input` | `string` | Yes | Image URL or storage URI of the input image |
-| `output` | `object` | No | Output destination: a storage URI or an output settings object |
+| `output` | `string \| object` | No | Output destination: a storage URI or an output settings object |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -1110,7 +1098,7 @@ await corsair.claidai.api.smartFrame({});
 | `height` | `number \| string` | Yes | Canvas height |
 | `padding` | `string` | No | Space around the object, for example "10%" or "30px" |
 | `background_color` | `string` | No | Canvas color, for example "#ffffff" |
-| `output` | `object` | No | Output destination: a storage URI or an output settings object |
+| `output` | `string \| object` | No | Output destination: a storage URI or an output settings object |
 
 <AccordionGroup>
 <Accordion title="output full type">
@@ -1310,7 +1298,7 @@ await corsair.claidai.api.storageTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `web_folder \| s3 \| gcs[]` | Yes | — |
+| `data` | `(web_folder \| s3 \| gcs)[]` | Yes | — |
 
 
 

@@ -137,7 +137,6 @@
       "shortPath": "campaigns.deleteRecipientList",
       "description": "Remove a recipient list from a campaign",
       "riskLevel": "destructive",
-      "irreversible": true,
       "input": {
         "kind": "object",
         "fields": [
@@ -406,7 +405,7 @@
       "path": "enginemailer.api.n8n.deactivateSubscriber",
       "shortPath": "n8n.deactivateSubscriber",
       "description": "Unsubscribe a subscriber through Enginemailer N8N",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [
@@ -839,8 +838,8 @@
     {
       "path": "enginemailer.api.subscribers.batchUpdateStatus",
       "shortPath": "subscribers.batchUpdateStatus",
-      "description": "Update subscriber status in a batch",
-      "riskLevel": "write",
+      "description": "Get the status of a batch subscriber update by its job ID",
+      "riskLevel": "read",
       "input": {
         "kind": "object",
         "fields": [
@@ -1046,7 +1045,7 @@
       "path": "enginemailer.api.subscribers.unsubscribe",
       "shortPath": "subscribers.unsubscribe",
       "description": "Unsubscribe a subscriber",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [

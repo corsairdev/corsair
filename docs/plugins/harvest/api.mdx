@@ -39,13 +39,13 @@ await corsair.harvest.api.clients.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `is_active` | `boolean` | No | — |
-| `address` | `string` | No | — |
-| `statement_key` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `statement_key` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -76,7 +76,7 @@ await corsair.harvest.api.clients.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 
 
 
@@ -107,13 +107,13 @@ await corsair.harvest.api.clients.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `is_active` | `boolean` | No | — |
-| `address` | `string` | No | — |
-| `statement_key` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `statement_key` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -147,13 +147,13 @@ await corsair.harvest.api.clients.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `clients` | `object[]` | Yes | — |
-| `per_page` | `number` | No | — |
-| `total_pages` | `number` | No | — |
-| `total_entries` | `number` | No | — |
-| `next_page` | `number` | No | — |
-| `previous_page` | `number` | No | — |
-| `page` | `number` | No | — |
-| `links` | `object` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `total_entries` | `number \| null` | No | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="clients full type">
@@ -180,7 +180,7 @@ await corsair.harvest.api.clients.list({});
   next?: string | null,
   previous?: string | null,
   last?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -218,13 +218,13 @@ await corsair.harvest.api.clients.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `is_active` | `boolean` | No | — |
-| `address` | `string` | No | — |
-| `statement_key` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `statement_key` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -252,29 +252,29 @@ await corsair.harvest.api.company.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `full_domain` | `string` | Yes | — |
-| `base_uri` | `string` | No | — |
-| `name` | `string` | No | — |
-| `is_active` | `boolean` | No | — |
-| `week_start_day` | `string` | No | — |
-| `wants_timestamp_timers` | `boolean` | No | — |
-| `time_format` | `string` | No | — |
-| `date_format` | `string` | No | — |
-| `plan_type` | `string` | No | — |
-| `clock` | `string` | No | — |
-| `currency_code_display` | `string` | No | — |
-| `currency_symbol_display` | `string` | No | — |
-| `decimal_symbol` | `string` | No | — |
-| `thousands_separator` | `string` | No | — |
-| `color_scheme` | `string` | No | — |
-| `weekly_capacity` | `number` | No | — |
-| `expense_feature` | `boolean` | No | — |
-| `invoice_feature` | `boolean` | No | — |
-| `estimate_feature` | `boolean` | No | — |
-| `approval_feature` | `boolean` | No | — |
-| `team_feature` | `boolean` | No | — |
-| `currency` | `string` | No | — |
-| `saml_sign_in_required` | `boolean` | No | — |
-| `day_entry_notes_required` | `boolean` | No | — |
+| `base_uri` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `week_start_day` | `string \| null` | No | — |
+| `wants_timestamp_timers` | `boolean \| null` | No | — |
+| `time_format` | `string \| null` | No | — |
+| `date_format` | `string \| null` | No | — |
+| `plan_type` | `string \| null` | No | — |
+| `clock` | `string \| null` | No | — |
+| `currency_code_display` | `string \| null` | No | — |
+| `currency_symbol_display` | `string \| null` | No | — |
+| `decimal_symbol` | `string \| null` | No | — |
+| `thousands_separator` | `string \| null` | No | — |
+| `color_scheme` | `string \| null` | No | — |
+| `weekly_capacity` | `number \| null` | No | — |
+| `expense_feature` | `boolean \| null` | No | — |
+| `invoice_feature` | `boolean \| null` | No | — |
+| `estimate_feature` | `boolean \| null` | No | — |
+| `approval_feature` | `boolean \| null` | No | — |
+| `team_feature` | `boolean \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `saml_sign_in_required` | `boolean \| null` | No | — |
+| `day_entry_notes_required` | `boolean \| null` | No | — |
 
 
 
@@ -306,29 +306,29 @@ await corsair.harvest.api.company.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `full_domain` | `string` | Yes | — |
-| `base_uri` | `string` | No | — |
-| `name` | `string` | No | — |
-| `is_active` | `boolean` | No | — |
-| `week_start_day` | `string` | No | — |
-| `wants_timestamp_timers` | `boolean` | No | — |
-| `time_format` | `string` | No | — |
-| `date_format` | `string` | No | — |
-| `plan_type` | `string` | No | — |
-| `clock` | `string` | No | — |
-| `currency_code_display` | `string` | No | — |
-| `currency_symbol_display` | `string` | No | — |
-| `decimal_symbol` | `string` | No | — |
-| `thousands_separator` | `string` | No | — |
-| `color_scheme` | `string` | No | — |
-| `weekly_capacity` | `number` | No | — |
-| `expense_feature` | `boolean` | No | — |
-| `invoice_feature` | `boolean` | No | — |
-| `estimate_feature` | `boolean` | No | — |
-| `approval_feature` | `boolean` | No | — |
-| `team_feature` | `boolean` | No | — |
-| `currency` | `string` | No | — |
-| `saml_sign_in_required` | `boolean` | No | — |
-| `day_entry_notes_required` | `boolean` | No | — |
+| `base_uri` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `week_start_day` | `string \| null` | No | — |
+| `wants_timestamp_timers` | `boolean \| null` | No | — |
+| `time_format` | `string \| null` | No | — |
+| `date_format` | `string \| null` | No | — |
+| `plan_type` | `string \| null` | No | — |
+| `clock` | `string \| null` | No | — |
+| `currency_code_display` | `string \| null` | No | — |
+| `currency_symbol_display` | `string \| null` | No | — |
+| `decimal_symbol` | `string \| null` | No | — |
+| `thousands_separator` | `string \| null` | No | — |
+| `color_scheme` | `string \| null` | No | — |
+| `weekly_capacity` | `number \| null` | No | — |
+| `expense_feature` | `boolean \| null` | No | — |
+| `invoice_feature` | `boolean \| null` | No | — |
+| `estimate_feature` | `boolean \| null` | No | — |
+| `approval_feature` | `boolean \| null` | No | — |
+| `team_feature` | `boolean \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `saml_sign_in_required` | `boolean \| null` | No | — |
+| `day_entry_notes_required` | `boolean \| null` | No | — |
 
 
 
@@ -369,17 +369,17 @@ await corsair.harvest.api.contacts.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client` | `object` | No | — |
-| `title` | `string` | No | — |
-| `first_name` | `string` | No | — |
-| `last_name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone_office` | `string` | No | — |
-| `phone_mobile` | `string` | No | — |
-| `fax` | `string` | No | — |
-| `invoice_recipient_status` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `client` | `object \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_office` | `string \| null` | No | — |
+| `phone_mobile` | `string \| null` | No | — |
+| `fax` | `string \| null` | No | — |
+| `invoice_recipient_status` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -390,7 +390,7 @@ await corsair.harvest.api.contacts.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -424,7 +424,7 @@ await corsair.harvest.api.contacts.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 
 
 
@@ -458,13 +458,13 @@ await corsair.harvest.api.contacts.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contacts` | `object[]` | Yes | — |
-| `per_page` | `number` | No | — |
-| `total_pages` | `number` | No | — |
-| `total_entries` | `number` | No | — |
-| `next_page` | `number` | No | — |
-| `previous_page` | `number` | No | — |
-| `page` | `number` | No | — |
-| `links` | `object` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `total_entries` | `number \| null` | No | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="contacts full type">
@@ -500,7 +500,7 @@ await corsair.harvest.api.contacts.list({});
   next?: string | null,
   previous?: string | null,
   last?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -543,17 +543,17 @@ await corsair.harvest.api.contacts.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client` | `object` | No | — |
-| `title` | `string` | No | — |
-| `first_name` | `string` | No | — |
-| `last_name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone_office` | `string` | No | — |
-| `phone_mobile` | `string` | No | — |
-| `fax` | `string` | No | — |
-| `invoice_recipient_status` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `client` | `object \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone_office` | `string \| null` | No | — |
+| `phone_mobile` | `string \| null` | No | — |
+| `fax` | `string \| null` | No | — |
+| `invoice_recipient_status` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -564,7 +564,7 @@ await corsair.harvest.api.contacts.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -628,29 +628,29 @@ await corsair.harvest.api.estimates.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client` | `object` | No | — |
-| `line_items` | `object[]` | No | — |
-| `creator` | `object` | No | — |
-| `client_key` | `string` | No | — |
-| `number` | `string` | No | — |
-| `purchase_order` | `string` | No | — |
-| `amount` | `number` | No | — |
-| `tax` | `number` | No | — |
-| `tax_amount` | `number` | No | — |
-| `tax2` | `number` | No | — |
-| `tax2_amount` | `number` | No | — |
-| `discount` | `number` | No | — |
-| `discount_amount` | `number` | No | — |
-| `subject` | `string` | No | — |
-| `notes` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `state` | `string` | No | — |
-| `issue_date` | `string` | No | — |
-| `sent_at` | `string` | No | — |
-| `accepted_at` | `string` | No | — |
-| `declined_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `client` | `object \| null` | No | — |
+| `line_items` | `object[] \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `client_key` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `purchase_order` | `string \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `tax` | `number \| null` | No | — |
+| `tax_amount` | `number \| null` | No | — |
+| `tax2` | `number \| null` | No | — |
+| `tax2_amount` | `number \| null` | No | — |
+| `discount` | `number \| null` | No | — |
+| `discount_amount` | `number \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `issue_date` | `string \| null` | No | — |
+| `sent_at` | `string \| null` | No | — |
+| `accepted_at` | `string \| null` | No | — |
+| `declined_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -661,7 +661,7 @@ await corsair.harvest.api.estimates.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -683,7 +683,7 @@ await corsair.harvest.api.estimates.create({});
     code?: string | null,
     currency?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -695,7 +695,7 @@ await corsair.harvest.api.estimates.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -729,9 +729,9 @@ await corsair.harvest.api.estimates.createItemCategory({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -778,18 +778,18 @@ await corsair.harvest.api.estimates.createMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `sent_by` | `string` | No | — |
-| `sent_by_email` | `string` | No | — |
-| `sent_from` | `string` | No | — |
-| `sent_from_email` | `string` | No | — |
-| `send_me_a_copy` | `boolean` | No | — |
-| `subject` | `string` | No | — |
-| `body` | `string` | No | — |
-| `event_type` | `string` | No | — |
-| `recipients` | `object[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `id` | `number \| null` | No | — |
+| `sent_by` | `string \| null` | No | — |
+| `sent_by_email` | `string \| null` | No | — |
+| `sent_from` | `string \| null` | No | — |
+| `sent_from_email` | `string \| null` | No | — |
+| `send_me_a_copy` | `boolean \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `event_type` | `string \| null` | No | — |
+| `recipients` | `object[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="recipients full type">
@@ -798,7 +798,7 @@ await corsair.harvest.api.estimates.createMessage({});
 {
   name?: string | null,
   email?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -832,7 +832,7 @@ await corsair.harvest.api.estimates.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 
 
 
@@ -864,7 +864,7 @@ await corsair.harvest.api.estimates.deleteMessage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 
 
 
@@ -895,29 +895,29 @@ await corsair.harvest.api.estimates.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client` | `object` | No | — |
-| `line_items` | `object[]` | No | — |
-| `creator` | `object` | No | — |
-| `client_key` | `string` | No | — |
-| `number` | `string` | No | — |
-| `purchase_order` | `string` | No | — |
-| `amount` | `number` | No | — |
-| `tax` | `number` | No | — |
-| `tax_amount` | `number` | No | — |
-| `tax2` | `number` | No | — |
-| `tax2_amount` | `number` | No | — |
-| `discount` | `number` | No | — |
-| `discount_amount` | `number` | No | — |
-| `subject` | `string` | No | — |
-| `notes` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `state` | `string` | No | — |
-| `issue_date` | `string` | No | — |
-| `sent_at` | `string` | No | — |
-| `accepted_at` | `string` | No | — |
-| `declined_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `client` | `object \| null` | No | — |
+| `line_items` | `object[] \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `client_key` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `purchase_order` | `string \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `tax` | `number \| null` | No | — |
+| `tax_amount` | `number \| null` | No | — |
+| `tax2` | `number \| null` | No | — |
+| `tax2_amount` | `number \| null` | No | — |
+| `discount` | `number \| null` | No | — |
+| `discount_amount` | `number \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `issue_date` | `string \| null` | No | — |
+| `sent_at` | `string \| null` | No | — |
+| `accepted_at` | `string \| null` | No | — |
+| `declined_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -928,7 +928,7 @@ await corsair.harvest.api.estimates.get({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -950,7 +950,7 @@ await corsair.harvest.api.estimates.get({});
     code?: string | null,
     currency?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -962,7 +962,7 @@ await corsair.harvest.api.estimates.get({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -999,13 +999,13 @@ await corsair.harvest.api.estimates.listMessages({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `estimate_messages` | `object[]` | Yes | — |
-| `per_page` | `number` | No | — |
-| `total_pages` | `number` | No | — |
-| `total_entries` | `number` | No | — |
-| `next_page` | `number` | No | — |
-| `previous_page` | `number` | No | — |
-| `page` | `number` | No | — |
-| `links` | `object` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `total_entries` | `number \| null` | No | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="estimate_messages full type">
@@ -1039,7 +1039,7 @@ await corsair.harvest.api.estimates.listMessages({});
   next?: string | null,
   previous?: string | null,
   last?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1102,29 +1102,29 @@ await corsair.harvest.api.estimates.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client` | `object` | No | — |
-| `line_items` | `object[]` | No | — |
-| `creator` | `object` | No | — |
-| `client_key` | `string` | No | — |
-| `number` | `string` | No | — |
-| `purchase_order` | `string` | No | — |
-| `amount` | `number` | No | — |
-| `tax` | `number` | No | — |
-| `tax_amount` | `number` | No | — |
-| `tax2` | `number` | No | — |
-| `tax2_amount` | `number` | No | — |
-| `discount` | `number` | No | — |
-| `discount_amount` | `number` | No | — |
-| `subject` | `string` | No | — |
-| `notes` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `state` | `string` | No | — |
-| `issue_date` | `string` | No | — |
-| `sent_at` | `string` | No | — |
-| `accepted_at` | `string` | No | — |
-| `declined_at` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `client` | `object \| null` | No | — |
+| `line_items` | `object[] \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `client_key` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `purchase_order` | `string \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `tax` | `number \| null` | No | — |
+| `tax_amount` | `number \| null` | No | — |
+| `tax2` | `number \| null` | No | — |
+| `tax2_amount` | `number \| null` | No | — |
+| `discount` | `number \| null` | No | — |
+| `discount_amount` | `number \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `issue_date` | `string \| null` | No | — |
+| `sent_at` | `string \| null` | No | — |
+| `accepted_at` | `string \| null` | No | — |
+| `declined_at` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -1135,7 +1135,7 @@ await corsair.harvest.api.estimates.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1157,7 +1157,7 @@ await corsair.harvest.api.estimates.update({});
     code?: string | null,
     currency?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1169,7 +1169,7 @@ await corsair.harvest.api.estimates.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1204,9 +1204,9 @@ await corsair.harvest.api.estimates.updateItemCategory({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -1246,27 +1246,27 @@ await corsair.harvest.api.expenses.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `spent_date` | `string` | No | — |
-| `notes` | `string` | No | — |
-| `total_cost` | `number` | No | — |
-| `units` | `number` | No | — |
-| `billable` | `boolean` | No | — |
-| `receipt` | `object` | No | — |
-| `approval_status` | `string` | No | — |
-| `is_closed` | `boolean` | No | — |
-| `is_locked` | `boolean` | No | — |
-| `is_explicitly_locked` | `boolean` | No | — |
-| `is_billed` | `boolean` | No | — |
-| `locked_reason` | `string` | No | — |
-| `reimbursement` | `boolean` | No | — |
-| `user` | `object` | No | — |
-| `client` | `object` | No | — |
-| `project` | `object` | No | — |
-| `expense_category` | `object` | No | — |
-| `user_assignment` | `object` | No | — |
-| `invoice` | `object` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `spent_date` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `total_cost` | `number \| null` | No | — |
+| `units` | `number \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `receipt` | `object \| null` | No | — |
+| `approval_status` | `string \| null` | No | — |
+| `is_closed` | `boolean \| null` | No | — |
+| `is_locked` | `boolean \| null` | No | — |
+| `is_explicitly_locked` | `boolean \| null` | No | — |
+| `is_billed` | `boolean \| null` | No | — |
+| `locked_reason` | `string \| null` | No | — |
+| `reimbursement` | `boolean \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `client` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `expense_category` | `object \| null` | No | — |
+| `user_assignment` | `object \| null` | No | — |
+| `invoice` | `object \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="receipt full type">
@@ -1277,7 +1277,7 @@ await corsair.harvest.api.expenses.create({});
   file_name?: string | null,
   file_size?: number | null,
   content_type?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1289,7 +1289,7 @@ await corsair.harvest.api.expenses.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1301,7 +1301,7 @@ await corsair.harvest.api.expenses.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1313,7 +1313,7 @@ await corsair.harvest.api.expenses.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1325,7 +1325,7 @@ await corsair.harvest.api.expenses.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1341,7 +1341,7 @@ await corsair.harvest.api.expenses.create({});
   use_default_rates?: boolean | null,
   created_at?: string | null,
   updated_at?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1353,7 +1353,7 @@ await corsair.harvest.api.expenses.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1390,13 +1390,13 @@ await corsair.harvest.api.expenses.listCategories({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `expense_categories` | `object[]` | Yes | — |
-| `per_page` | `number` | No | — |
-| `total_pages` | `number` | No | — |
-| `total_entries` | `number` | No | — |
-| `next_page` | `number` | No | — |
-| `previous_page` | `number` | No | — |
-| `page` | `number` | No | — |
-| `links` | `object` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `total_entries` | `number \| null` | No | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="expense_categories full type">
@@ -1422,7 +1422,7 @@ await corsair.harvest.api.expenses.listCategories({});
   next?: string | null,
   previous?: string | null,
   last?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1464,27 +1464,27 @@ await corsair.harvest.api.expenses.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `spent_date` | `string` | No | — |
-| `notes` | `string` | No | — |
-| `total_cost` | `number` | No | — |
-| `units` | `number` | No | — |
-| `billable` | `boolean` | No | — |
-| `receipt` | `object` | No | — |
-| `approval_status` | `string` | No | — |
-| `is_closed` | `boolean` | No | — |
-| `is_locked` | `boolean` | No | — |
-| `is_explicitly_locked` | `boolean` | No | — |
-| `is_billed` | `boolean` | No | — |
-| `locked_reason` | `string` | No | — |
-| `reimbursement` | `boolean` | No | — |
-| `user` | `object` | No | — |
-| `client` | `object` | No | — |
-| `project` | `object` | No | — |
-| `expense_category` | `object` | No | — |
-| `user_assignment` | `object` | No | — |
-| `invoice` | `object` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `spent_date` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `total_cost` | `number \| null` | No | — |
+| `units` | `number \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `receipt` | `object \| null` | No | — |
+| `approval_status` | `string \| null` | No | — |
+| `is_closed` | `boolean \| null` | No | — |
+| `is_locked` | `boolean \| null` | No | — |
+| `is_explicitly_locked` | `boolean \| null` | No | — |
+| `is_billed` | `boolean \| null` | No | — |
+| `locked_reason` | `string \| null` | No | — |
+| `reimbursement` | `boolean \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `client` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `expense_category` | `object \| null` | No | — |
+| `user_assignment` | `object \| null` | No | — |
+| `invoice` | `object \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="receipt full type">
@@ -1495,7 +1495,7 @@ await corsair.harvest.api.expenses.update({});
   file_name?: string | null,
   file_size?: number | null,
   content_type?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1507,7 +1507,7 @@ await corsair.harvest.api.expenses.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1519,7 +1519,7 @@ await corsair.harvest.api.expenses.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1531,7 +1531,7 @@ await corsair.harvest.api.expenses.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1543,7 +1543,7 @@ await corsair.harvest.api.expenses.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1559,7 +1559,7 @@ await corsair.harvest.api.expenses.update({});
   use_default_rates?: boolean | null,
   created_at?: string | null,
   updated_at?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1571,7 +1571,7 @@ await corsair.harvest.api.expenses.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1609,7 +1609,7 @@ await corsair.harvest.api.invoices.create({});
 | `issue_date` | `string` | No | — |
 | `due_date` | `string` | No | — |
 | `payment_term` | `string` | No | — |
-| `payment_options` | `ach \| credit_card \| paypal[]` | No | — |
+| `payment_options` | `(ach \| credit_card \| paypal)[]` | No | — |
 | `tax` | `number` | No | — |
 | `tax2` | `number` | No | — |
 | `discount` | `number` | No | — |
@@ -1640,39 +1640,39 @@ await corsair.harvest.api.invoices.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client` | `object` | No | — |
-| `line_items` | `object[]` | No | — |
-| `estimate` | `object` | No | — |
-| `retainer` | `object` | No | — |
-| `creator` | `object` | No | — |
-| `client_key` | `string` | No | — |
-| `number` | `string` | No | — |
-| `purchase_order` | `string` | No | — |
-| `amount` | `number` | No | — |
-| `due_amount` | `number` | No | — |
-| `tax` | `number` | No | — |
-| `tax_amount` | `number` | No | — |
-| `tax2` | `number` | No | — |
-| `tax2_amount` | `number` | No | — |
-| `discount` | `number` | No | — |
-| `discount_amount` | `number` | No | — |
-| `subject` | `string` | No | — |
-| `notes` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `state` | `string` | No | — |
-| `period_start` | `string` | No | — |
-| `period_end` | `string` | No | — |
-| `issue_date` | `string` | No | — |
-| `due_date` | `string` | No | — |
-| `payment_term` | `string` | No | — |
-| `payment_options` | `string[]` | No | — |
-| `sent_at` | `string` | No | — |
-| `paid_at` | `string` | No | — |
-| `paid_date` | `string` | No | — |
-| `closed_at` | `string` | No | — |
-| `recurring_invoice_id` | `number` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `client` | `object \| null` | No | — |
+| `line_items` | `object[] \| null` | No | — |
+| `estimate` | `object \| null` | No | — |
+| `retainer` | `object \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `client_key` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `purchase_order` | `string \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `due_amount` | `number \| null` | No | — |
+| `tax` | `number \| null` | No | — |
+| `tax_amount` | `number \| null` | No | — |
+| `tax2` | `number \| null` | No | — |
+| `tax2_amount` | `number \| null` | No | — |
+| `discount` | `number \| null` | No | — |
+| `discount_amount` | `number \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `period_start` | `string \| null` | No | — |
+| `period_end` | `string \| null` | No | — |
+| `issue_date` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `payment_term` | `string \| null` | No | — |
+| `payment_options` | `string[] \| null` | No | — |
+| `sent_at` | `string \| null` | No | — |
+| `paid_at` | `string \| null` | No | — |
+| `paid_date` | `string \| null` | No | — |
+| `closed_at` | `string \| null` | No | — |
+| `recurring_invoice_id` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -1683,7 +1683,7 @@ await corsair.harvest.api.invoices.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1705,7 +1705,7 @@ await corsair.harvest.api.invoices.create({});
     code?: string | null,
     currency?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -1717,7 +1717,7 @@ await corsair.harvest.api.invoices.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1729,7 +1729,7 @@ await corsair.harvest.api.invoices.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1741,7 +1741,7 @@ await corsair.harvest.api.invoices.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1775,11 +1775,11 @@ await corsair.harvest.api.invoices.createItemCategory({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `use_as_service` | `boolean` | No | — |
-| `use_as_expense` | `boolean` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `use_as_service` | `boolean \| null` | No | — |
+| `use_as_expense` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -1829,23 +1829,23 @@ await corsair.harvest.api.invoices.createMessage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `sent_by` | `string` | No | — |
-| `sent_by_email` | `string` | No | — |
-| `sent_from` | `string` | No | — |
-| `sent_from_email` | `string` | No | — |
-| `include_link_to_client_invoice` | `boolean` | No | — |
-| `send_me_a_copy` | `boolean` | No | — |
-| `thank_you` | `boolean` | No | — |
-| `reminder` | `boolean` | No | — |
-| `send_reminder_on` | `string` | No | — |
-| `attach_pdf` | `boolean` | No | — |
-| `subject` | `string` | No | — |
-| `body` | `string` | No | — |
-| `event_type` | `string` | No | — |
-| `recipients` | `object[]` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `id` | `number \| null` | No | — |
+| `sent_by` | `string \| null` | No | — |
+| `sent_by_email` | `string \| null` | No | — |
+| `sent_from` | `string \| null` | No | — |
+| `sent_from_email` | `string \| null` | No | — |
+| `include_link_to_client_invoice` | `boolean \| null` | No | — |
+| `send_me_a_copy` | `boolean \| null` | No | — |
+| `thank_you` | `boolean \| null` | No | — |
+| `reminder` | `boolean \| null` | No | — |
+| `send_reminder_on` | `string \| null` | No | — |
+| `attach_pdf` | `boolean \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `event_type` | `string \| null` | No | — |
+| `recipients` | `object[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="recipients full type">
@@ -1854,7 +1854,7 @@ await corsair.harvest.api.invoices.createMessage({});
 {
   name?: string | null,
   email?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1892,17 +1892,17 @@ await corsair.harvest.api.invoices.createPayment({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
-| `amount` | `number` | No | — |
-| `paid_at` | `string` | No | — |
-| `paid_date` | `string` | No | — |
-| `recorded_by` | `string` | No | — |
-| `recorded_by_email` | `string` | No | — |
-| `notes` | `string` | No | — |
-| `transaction_id` | `string` | No | — |
-| `payment_gateway` | `object` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `id` | `number \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `paid_at` | `string \| null` | No | — |
+| `paid_date` | `string \| null` | No | — |
+| `recorded_by` | `string \| null` | No | — |
+| `recorded_by_email` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `transaction_id` | `string \| null` | No | — |
+| `payment_gateway` | `object \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="payment_gateway full type">
@@ -1913,7 +1913,7 @@ await corsair.harvest.api.invoices.createPayment({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1947,7 +1947,7 @@ await corsair.harvest.api.invoices.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 
 
 
@@ -1978,7 +1978,7 @@ await corsair.harvest.api.invoices.deleteItemCategory({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 
 
 
@@ -2010,7 +2010,7 @@ await corsair.harvest.api.invoices.deleteMessage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 
 
 
@@ -2042,7 +2042,7 @@ await corsair.harvest.api.invoices.deletePayment({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 
 
 
@@ -2073,39 +2073,39 @@ await corsair.harvest.api.invoices.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client` | `object` | No | — |
-| `line_items` | `object[]` | No | — |
-| `estimate` | `object` | No | — |
-| `retainer` | `object` | No | — |
-| `creator` | `object` | No | — |
-| `client_key` | `string` | No | — |
-| `number` | `string` | No | — |
-| `purchase_order` | `string` | No | — |
-| `amount` | `number` | No | — |
-| `due_amount` | `number` | No | — |
-| `tax` | `number` | No | — |
-| `tax_amount` | `number` | No | — |
-| `tax2` | `number` | No | — |
-| `tax2_amount` | `number` | No | — |
-| `discount` | `number` | No | — |
-| `discount_amount` | `number` | No | — |
-| `subject` | `string` | No | — |
-| `notes` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `state` | `string` | No | — |
-| `period_start` | `string` | No | — |
-| `period_end` | `string` | No | — |
-| `issue_date` | `string` | No | — |
-| `due_date` | `string` | No | — |
-| `payment_term` | `string` | No | — |
-| `payment_options` | `string[]` | No | — |
-| `sent_at` | `string` | No | — |
-| `paid_at` | `string` | No | — |
-| `paid_date` | `string` | No | — |
-| `closed_at` | `string` | No | — |
-| `recurring_invoice_id` | `number` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `client` | `object \| null` | No | — |
+| `line_items` | `object[] \| null` | No | — |
+| `estimate` | `object \| null` | No | — |
+| `retainer` | `object \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `client_key` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `purchase_order` | `string \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `due_amount` | `number \| null` | No | — |
+| `tax` | `number \| null` | No | — |
+| `tax_amount` | `number \| null` | No | — |
+| `tax2` | `number \| null` | No | — |
+| `tax2_amount` | `number \| null` | No | — |
+| `discount` | `number \| null` | No | — |
+| `discount_amount` | `number \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `period_start` | `string \| null` | No | — |
+| `period_end` | `string \| null` | No | — |
+| `issue_date` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `payment_term` | `string \| null` | No | — |
+| `payment_options` | `string[] \| null` | No | — |
+| `sent_at` | `string \| null` | No | — |
+| `paid_at` | `string \| null` | No | — |
+| `paid_date` | `string \| null` | No | — |
+| `closed_at` | `string \| null` | No | — |
+| `recurring_invoice_id` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -2116,7 +2116,7 @@ await corsair.harvest.api.invoices.get({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2138,7 +2138,7 @@ await corsair.harvest.api.invoices.get({});
     code?: string | null,
     currency?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2150,7 +2150,7 @@ await corsair.harvest.api.invoices.get({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2162,7 +2162,7 @@ await corsair.harvest.api.invoices.get({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2174,7 +2174,7 @@ await corsair.harvest.api.invoices.get({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2215,13 +2215,13 @@ await corsair.harvest.api.invoices.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `invoices` | `object[]` | Yes | — |
-| `per_page` | `number` | No | — |
-| `total_pages` | `number` | No | — |
-| `total_entries` | `number` | No | — |
-| `next_page` | `number` | No | — |
-| `previous_page` | `number` | No | — |
-| `page` | `number` | No | — |
-| `links` | `object` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `total_entries` | `number \| null` | No | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="invoices full type">
@@ -2309,7 +2309,7 @@ await corsair.harvest.api.invoices.list({});
   next?: string | null,
   previous?: string | null,
   last?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2345,13 +2345,13 @@ await corsair.harvest.api.invoices.listItemCategories({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `invoice_item_categories` | `object[]` | Yes | — |
-| `per_page` | `number` | No | — |
-| `total_pages` | `number` | No | — |
-| `total_entries` | `number` | No | — |
-| `next_page` | `number` | No | — |
-| `previous_page` | `number` | No | — |
-| `page` | `number` | No | — |
-| `links` | `object` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `total_entries` | `number \| null` | No | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="invoice_item_categories full type">
@@ -2376,7 +2376,7 @@ await corsair.harvest.api.invoices.listItemCategories({});
   next?: string | null,
   previous?: string | null,
   last?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2413,13 +2413,13 @@ await corsair.harvest.api.invoices.listMessages({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `invoice_messages` | `object[]` | Yes | — |
-| `per_page` | `number` | No | — |
-| `total_pages` | `number` | No | — |
-| `total_entries` | `number` | No | — |
-| `next_page` | `number` | No | — |
-| `previous_page` | `number` | No | — |
-| `page` | `number` | No | — |
-| `links` | `object` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `total_entries` | `number \| null` | No | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="invoice_messages full type">
@@ -2458,7 +2458,7 @@ await corsair.harvest.api.invoices.listMessages({});
   next?: string | null,
   previous?: string | null,
   last?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2495,13 +2495,13 @@ await corsair.harvest.api.invoices.listPayments({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `invoice_payments` | `object[]` | Yes | — |
-| `per_page` | `number` | No | — |
-| `total_pages` | `number` | No | — |
-| `total_entries` | `number` | No | — |
-| `next_page` | `number` | No | — |
-| `previous_page` | `number` | No | — |
-| `page` | `number` | No | — |
-| `links` | `object` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `total_entries` | `number \| null` | No | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="invoice_payments full type">
@@ -2536,7 +2536,7 @@ await corsair.harvest.api.invoices.listPayments({});
   next?: string | null,
   previous?: string | null,
   last?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2573,7 +2573,7 @@ await corsair.harvest.api.invoices.update({});
 | `issue_date` | `string` | No | — |
 | `due_date` | `string` | No | — |
 | `payment_term` | `string` | No | — |
-| `payment_options` | `ach \| credit_card \| paypal[]` | No | — |
+| `payment_options` | `(ach \| credit_card \| paypal)[]` | No | — |
 | `tax` | `number` | No | — |
 | `tax2` | `number` | No | — |
 | `discount` | `number` | No | — |
@@ -2604,39 +2604,39 @@ await corsair.harvest.api.invoices.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client` | `object` | No | — |
-| `line_items` | `object[]` | No | — |
-| `estimate` | `object` | No | — |
-| `retainer` | `object` | No | — |
-| `creator` | `object` | No | — |
-| `client_key` | `string` | No | — |
-| `number` | `string` | No | — |
-| `purchase_order` | `string` | No | — |
-| `amount` | `number` | No | — |
-| `due_amount` | `number` | No | — |
-| `tax` | `number` | No | — |
-| `tax_amount` | `number` | No | — |
-| `tax2` | `number` | No | — |
-| `tax2_amount` | `number` | No | — |
-| `discount` | `number` | No | — |
-| `discount_amount` | `number` | No | — |
-| `subject` | `string` | No | — |
-| `notes` | `string` | No | — |
-| `currency` | `string` | No | — |
-| `state` | `string` | No | — |
-| `period_start` | `string` | No | — |
-| `period_end` | `string` | No | — |
-| `issue_date` | `string` | No | — |
-| `due_date` | `string` | No | — |
-| `payment_term` | `string` | No | — |
-| `payment_options` | `string[]` | No | — |
-| `sent_at` | `string` | No | — |
-| `paid_at` | `string` | No | — |
-| `paid_date` | `string` | No | — |
-| `closed_at` | `string` | No | — |
-| `recurring_invoice_id` | `number` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `client` | `object \| null` | No | — |
+| `line_items` | `object[] \| null` | No | — |
+| `estimate` | `object \| null` | No | — |
+| `retainer` | `object \| null` | No | — |
+| `creator` | `object \| null` | No | — |
+| `client_key` | `string \| null` | No | — |
+| `number` | `string \| null` | No | — |
+| `purchase_order` | `string \| null` | No | — |
+| `amount` | `number \| null` | No | — |
+| `due_amount` | `number \| null` | No | — |
+| `tax` | `number \| null` | No | — |
+| `tax_amount` | `number \| null` | No | — |
+| `tax2` | `number \| null` | No | — |
+| `tax2_amount` | `number \| null` | No | — |
+| `discount` | `number \| null` | No | — |
+| `discount_amount` | `number \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `period_start` | `string \| null` | No | — |
+| `period_end` | `string \| null` | No | — |
+| `issue_date` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `payment_term` | `string \| null` | No | — |
+| `payment_options` | `string[] \| null` | No | — |
+| `sent_at` | `string \| null` | No | — |
+| `paid_at` | `string \| null` | No | — |
+| `paid_date` | `string \| null` | No | — |
+| `closed_at` | `string \| null` | No | — |
+| `recurring_invoice_id` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -2647,7 +2647,7 @@ await corsair.harvest.api.invoices.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2669,7 +2669,7 @@ await corsair.harvest.api.invoices.update({});
     code?: string | null,
     currency?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2681,7 +2681,7 @@ await corsair.harvest.api.invoices.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2693,7 +2693,7 @@ await corsair.harvest.api.invoices.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -2705,7 +2705,7 @@ await corsair.harvest.api.invoices.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2760,30 +2760,30 @@ await corsair.harvest.api.projects.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client` | `object` | No | — |
-| `name` | `string` | No | — |
-| `code` | `string` | No | — |
-| `is_active` | `boolean` | No | — |
-| `is_billable` | `boolean` | No | — |
-| `is_fixed_fee` | `boolean` | No | — |
-| `bill_by` | `string` | No | — |
-| `hourly_rate` | `number` | No | — |
-| `budget_by` | `string` | No | — |
-| `budget_is_monthly` | `boolean` | No | — |
-| `budget` | `number` | No | — |
-| `cost_budget` | `number` | No | — |
-| `cost_budget_include_expenses` | `boolean` | No | — |
-| `notify_when_over_budget` | `boolean` | No | — |
-| `over_budget_notification_percentage` | `number` | No | — |
-| `over_budget_notification_date` | `string` | No | — |
-| `show_budget_to_all` | `boolean` | No | — |
-| `fee` | `number` | No | — |
-| `notes` | `string` | No | — |
-| `starts_on` | `string` | No | — |
-| `ends_on` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `currency` | `string` | No | — |
+| `client` | `object \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `code` | `string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `is_billable` | `boolean \| null` | No | — |
+| `is_fixed_fee` | `boolean \| null` | No | — |
+| `bill_by` | `string \| null` | No | — |
+| `hourly_rate` | `number \| null` | No | — |
+| `budget_by` | `string \| null` | No | — |
+| `budget_is_monthly` | `boolean \| null` | No | — |
+| `budget` | `number \| null` | No | — |
+| `cost_budget` | `number \| null` | No | — |
+| `cost_budget_include_expenses` | `boolean \| null` | No | — |
+| `notify_when_over_budget` | `boolean \| null` | No | — |
+| `over_budget_notification_percentage` | `number \| null` | No | — |
+| `over_budget_notification_date` | `string \| null` | No | — |
+| `show_budget_to_all` | `boolean \| null` | No | — |
+| `fee` | `number \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `starts_on` | `string \| null` | No | — |
+| `ends_on` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -2794,7 +2794,7 @@ await corsair.harvest.api.projects.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2828,7 +2828,7 @@ await corsair.harvest.api.projects.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 
 
 
@@ -2859,30 +2859,30 @@ await corsair.harvest.api.projects.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client` | `object` | No | — |
-| `name` | `string` | No | — |
-| `code` | `string` | No | — |
-| `is_active` | `boolean` | No | — |
-| `is_billable` | `boolean` | No | — |
-| `is_fixed_fee` | `boolean` | No | — |
-| `bill_by` | `string` | No | — |
-| `hourly_rate` | `number` | No | — |
-| `budget_by` | `string` | No | — |
-| `budget_is_monthly` | `boolean` | No | — |
-| `budget` | `number` | No | — |
-| `cost_budget` | `number` | No | — |
-| `cost_budget_include_expenses` | `boolean` | No | — |
-| `notify_when_over_budget` | `boolean` | No | — |
-| `over_budget_notification_percentage` | `number` | No | — |
-| `over_budget_notification_date` | `string` | No | — |
-| `show_budget_to_all` | `boolean` | No | — |
-| `fee` | `number` | No | — |
-| `notes` | `string` | No | — |
-| `starts_on` | `string` | No | — |
-| `ends_on` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `currency` | `string` | No | — |
+| `client` | `object \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `code` | `string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `is_billable` | `boolean \| null` | No | — |
+| `is_fixed_fee` | `boolean \| null` | No | — |
+| `bill_by` | `string \| null` | No | — |
+| `hourly_rate` | `number \| null` | No | — |
+| `budget_by` | `string \| null` | No | — |
+| `budget_is_monthly` | `boolean \| null` | No | — |
+| `budget` | `number \| null` | No | — |
+| `cost_budget` | `number \| null` | No | — |
+| `cost_budget_include_expenses` | `boolean \| null` | No | — |
+| `notify_when_over_budget` | `boolean \| null` | No | — |
+| `over_budget_notification_percentage` | `number \| null` | No | — |
+| `over_budget_notification_date` | `string \| null` | No | — |
+| `show_budget_to_all` | `boolean \| null` | No | — |
+| `fee` | `number \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `starts_on` | `string \| null` | No | — |
+| `ends_on` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -2893,7 +2893,7 @@ await corsair.harvest.api.projects.get({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2931,13 +2931,13 @@ await corsair.harvest.api.projects.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `projects` | `object[]` | Yes | — |
-| `per_page` | `number` | No | — |
-| `total_pages` | `number` | No | — |
-| `total_entries` | `number` | No | — |
-| `next_page` | `number` | No | — |
-| `previous_page` | `number` | No | — |
-| `page` | `number` | No | — |
-| `links` | `object` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `total_entries` | `number \| null` | No | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="projects full type">
@@ -2986,7 +2986,7 @@ await corsair.harvest.api.projects.list({});
   next?: string | null,
   previous?: string | null,
   last?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3040,30 +3040,30 @@ await corsair.harvest.api.projects.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `client` | `object` | No | — |
-| `name` | `string` | No | — |
-| `code` | `string` | No | — |
-| `is_active` | `boolean` | No | — |
-| `is_billable` | `boolean` | No | — |
-| `is_fixed_fee` | `boolean` | No | — |
-| `bill_by` | `string` | No | — |
-| `hourly_rate` | `number` | No | — |
-| `budget_by` | `string` | No | — |
-| `budget_is_monthly` | `boolean` | No | — |
-| `budget` | `number` | No | — |
-| `cost_budget` | `number` | No | — |
-| `cost_budget_include_expenses` | `boolean` | No | — |
-| `notify_when_over_budget` | `boolean` | No | — |
-| `over_budget_notification_percentage` | `number` | No | — |
-| `over_budget_notification_date` | `string` | No | — |
-| `show_budget_to_all` | `boolean` | No | — |
-| `fee` | `number` | No | — |
-| `notes` | `string` | No | — |
-| `starts_on` | `string` | No | — |
-| `ends_on` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `currency` | `string` | No | — |
+| `client` | `object \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `code` | `string \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `is_billable` | `boolean \| null` | No | — |
+| `is_fixed_fee` | `boolean \| null` | No | — |
+| `bill_by` | `string \| null` | No | — |
+| `hourly_rate` | `number \| null` | No | — |
+| `budget_by` | `string \| null` | No | — |
+| `budget_is_monthly` | `boolean \| null` | No | — |
+| `budget` | `number \| null` | No | — |
+| `cost_budget` | `number \| null` | No | — |
+| `cost_budget_include_expenses` | `boolean \| null` | No | — |
+| `notify_when_over_budget` | `boolean \| null` | No | — |
+| `over_budget_notification_percentage` | `number \| null` | No | — |
+| `over_budget_notification_date` | `string \| null` | No | — |
+| `show_budget_to_all` | `boolean \| null` | No | — |
+| `fee` | `number \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `starts_on` | `string \| null` | No | — |
+| `ends_on` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="client full type">
@@ -3074,7 +3074,7 @@ await corsair.harvest.api.projects.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3114,13 +3114,13 @@ await corsair.harvest.api.tasks.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `billable_by_default` | `boolean` | No | — |
-| `default_hourly_rate` | `number` | No | — |
-| `is_default` | `boolean` | No | — |
-| `is_active` | `boolean` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `billable_by_default` | `boolean \| null` | No | — |
+| `default_hourly_rate` | `number \| null` | No | — |
+| `is_default` | `boolean \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -3151,7 +3151,7 @@ await corsair.harvest.api.tasks.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 
 
 
@@ -3182,13 +3182,13 @@ await corsair.harvest.api.tasks.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `billable_by_default` | `boolean` | No | — |
-| `default_hourly_rate` | `number` | No | — |
-| `is_default` | `boolean` | No | — |
-| `is_active` | `boolean` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `billable_by_default` | `boolean \| null` | No | — |
+| `default_hourly_rate` | `number \| null` | No | — |
+| `is_default` | `boolean \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -3222,13 +3222,13 @@ await corsair.harvest.api.tasks.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `tasks` | `object[]` | Yes | — |
-| `per_page` | `number` | No | — |
-| `total_pages` | `number` | No | — |
-| `total_entries` | `number` | No | — |
-| `next_page` | `number` | No | — |
-| `previous_page` | `number` | No | — |
-| `page` | `number` | No | — |
-| `links` | `object` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `total_entries` | `number \| null` | No | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="tasks full type">
@@ -3255,7 +3255,7 @@ await corsair.harvest.api.tasks.list({});
   next?: string | null,
   previous?: string | null,
   last?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3294,13 +3294,13 @@ await corsair.harvest.api.tasks.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `billable_by_default` | `boolean` | No | — |
-| `default_hourly_rate` | `number` | No | — |
-| `is_default` | `boolean` | No | — |
-| `is_active` | `boolean` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `billable_by_default` | `boolean \| null` | No | — |
+| `default_hourly_rate` | `number \| null` | No | — |
+| `is_default` | `boolean \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 
 
@@ -3355,35 +3355,35 @@ await corsair.harvest.api.timeEntries.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `spent_date` | `string` | No | — |
-| `hours` | `number` | No | — |
-| `hours_without_timer` | `number` | No | — |
-| `rounded_hours` | `number` | No | — |
-| `notes` | `string` | No | — |
-| `is_locked` | `boolean` | No | — |
-| `is_explicitly_locked` | `boolean` | No | — |
-| `locked_reason` | `string` | No | — |
-| `approval_status` | `string` | No | — |
-| `is_closed` | `boolean` | No | — |
-| `is_billed` | `boolean` | No | — |
-| `timer_started_at` | `string` | No | — |
-| `started_time` | `string` | No | — |
-| `ended_time` | `string` | No | — |
-| `is_running` | `boolean` | No | — |
-| `billable` | `boolean` | No | — |
-| `budgeted` | `boolean` | No | — |
-| `billable_rate` | `number` | No | — |
-| `cost_rate` | `number` | No | — |
-| `user` | `object` | No | — |
-| `client` | `object` | No | — |
-| `project` | `object` | No | — |
-| `task` | `object` | No | — |
-| `user_assignment` | `object` | No | — |
-| `task_assignment` | `object` | No | — |
-| `invoice` | `object` | No | — |
-| `external_reference` | `object` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `spent_date` | `string \| null` | No | — |
+| `hours` | `number \| null` | No | — |
+| `hours_without_timer` | `number \| null` | No | — |
+| `rounded_hours` | `number \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `is_locked` | `boolean \| null` | No | — |
+| `is_explicitly_locked` | `boolean \| null` | No | — |
+| `locked_reason` | `string \| null` | No | — |
+| `approval_status` | `string \| null` | No | — |
+| `is_closed` | `boolean \| null` | No | — |
+| `is_billed` | `boolean \| null` | No | — |
+| `timer_started_at` | `string \| null` | No | — |
+| `started_time` | `string \| null` | No | — |
+| `ended_time` | `string \| null` | No | — |
+| `is_running` | `boolean \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `budgeted` | `boolean \| null` | No | — |
+| `billable_rate` | `number \| null` | No | — |
+| `cost_rate` | `number \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `client` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `task` | `object \| null` | No | — |
+| `user_assignment` | `object \| null` | No | — |
+| `task_assignment` | `object \| null` | No | — |
+| `invoice` | `object \| null` | No | — |
+| `external_reference` | `object \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -3394,7 +3394,7 @@ await corsair.harvest.api.timeEntries.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3406,7 +3406,7 @@ await corsair.harvest.api.timeEntries.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3418,7 +3418,7 @@ await corsair.harvest.api.timeEntries.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3430,7 +3430,7 @@ await corsair.harvest.api.timeEntries.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3446,7 +3446,7 @@ await corsair.harvest.api.timeEntries.create({});
   use_default_rates?: boolean | null,
   created_at?: string | null,
   updated_at?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3461,7 +3461,7 @@ await corsair.harvest.api.timeEntries.create({});
   hourly_rate?: number | null,
   created_at?: string | null,
   updated_at?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3473,7 +3473,7 @@ await corsair.harvest.api.timeEntries.create({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3487,7 +3487,7 @@ await corsair.harvest.api.timeEntries.create({});
   permalink?: string | null,
   service?: string | null,
   service_icon_url?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3521,7 +3521,7 @@ await corsair.harvest.api.timeEntries.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 
 
 
@@ -3552,35 +3552,35 @@ await corsair.harvest.api.timeEntries.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `spent_date` | `string` | No | — |
-| `hours` | `number` | No | — |
-| `hours_without_timer` | `number` | No | — |
-| `rounded_hours` | `number` | No | — |
-| `notes` | `string` | No | — |
-| `is_locked` | `boolean` | No | — |
-| `is_explicitly_locked` | `boolean` | No | — |
-| `locked_reason` | `string` | No | — |
-| `approval_status` | `string` | No | — |
-| `is_closed` | `boolean` | No | — |
-| `is_billed` | `boolean` | No | — |
-| `timer_started_at` | `string` | No | — |
-| `started_time` | `string` | No | — |
-| `ended_time` | `string` | No | — |
-| `is_running` | `boolean` | No | — |
-| `billable` | `boolean` | No | — |
-| `budgeted` | `boolean` | No | — |
-| `billable_rate` | `number` | No | — |
-| `cost_rate` | `number` | No | — |
-| `user` | `object` | No | — |
-| `client` | `object` | No | — |
-| `project` | `object` | No | — |
-| `task` | `object` | No | — |
-| `user_assignment` | `object` | No | — |
-| `task_assignment` | `object` | No | — |
-| `invoice` | `object` | No | — |
-| `external_reference` | `object` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `spent_date` | `string \| null` | No | — |
+| `hours` | `number \| null` | No | — |
+| `hours_without_timer` | `number \| null` | No | — |
+| `rounded_hours` | `number \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `is_locked` | `boolean \| null` | No | — |
+| `is_explicitly_locked` | `boolean \| null` | No | — |
+| `locked_reason` | `string \| null` | No | — |
+| `approval_status` | `string \| null` | No | — |
+| `is_closed` | `boolean \| null` | No | — |
+| `is_billed` | `boolean \| null` | No | — |
+| `timer_started_at` | `string \| null` | No | — |
+| `started_time` | `string \| null` | No | — |
+| `ended_time` | `string \| null` | No | — |
+| `is_running` | `boolean \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `budgeted` | `boolean \| null` | No | — |
+| `billable_rate` | `number \| null` | No | — |
+| `cost_rate` | `number \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `client` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `task` | `object \| null` | No | — |
+| `user_assignment` | `object \| null` | No | — |
+| `task_assignment` | `object \| null` | No | — |
+| `invoice` | `object \| null` | No | — |
+| `external_reference` | `object \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -3591,7 +3591,7 @@ await corsair.harvest.api.timeEntries.get({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3603,7 +3603,7 @@ await corsair.harvest.api.timeEntries.get({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3615,7 +3615,7 @@ await corsair.harvest.api.timeEntries.get({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3627,7 +3627,7 @@ await corsair.harvest.api.timeEntries.get({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3643,7 +3643,7 @@ await corsair.harvest.api.timeEntries.get({});
   use_default_rates?: boolean | null,
   created_at?: string | null,
   updated_at?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3658,7 +3658,7 @@ await corsair.harvest.api.timeEntries.get({});
   hourly_rate?: number | null,
   created_at?: string | null,
   updated_at?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3670,7 +3670,7 @@ await corsair.harvest.api.timeEntries.get({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3684,7 +3684,7 @@ await corsair.harvest.api.timeEntries.get({});
   permalink?: string | null,
   service?: string | null,
   service_icon_url?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3730,13 +3730,13 @@ await corsair.harvest.api.timeEntries.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `time_entries` | `object[]` | Yes | — |
-| `per_page` | `number` | No | — |
-| `total_pages` | `number` | No | — |
-| `total_entries` | `number` | No | — |
-| `next_page` | `number` | No | — |
-| `previous_page` | `number` | No | — |
-| `page` | `number` | No | — |
-| `links` | `object` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `total_entries` | `number \| null` | No | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="time_entries full type">
@@ -3834,7 +3834,7 @@ await corsair.harvest.api.timeEntries.list({});
   next?: string | null,
   previous?: string | null,
   last?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -3890,35 +3890,35 @@ await corsair.harvest.api.timeEntries.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `spent_date` | `string` | No | — |
-| `hours` | `number` | No | — |
-| `hours_without_timer` | `number` | No | — |
-| `rounded_hours` | `number` | No | — |
-| `notes` | `string` | No | — |
-| `is_locked` | `boolean` | No | — |
-| `is_explicitly_locked` | `boolean` | No | — |
-| `locked_reason` | `string` | No | — |
-| `approval_status` | `string` | No | — |
-| `is_closed` | `boolean` | No | — |
-| `is_billed` | `boolean` | No | — |
-| `timer_started_at` | `string` | No | — |
-| `started_time` | `string` | No | — |
-| `ended_time` | `string` | No | — |
-| `is_running` | `boolean` | No | — |
-| `billable` | `boolean` | No | — |
-| `budgeted` | `boolean` | No | — |
-| `billable_rate` | `number` | No | — |
-| `cost_rate` | `number` | No | — |
-| `user` | `object` | No | — |
-| `client` | `object` | No | — |
-| `project` | `object` | No | — |
-| `task` | `object` | No | — |
-| `user_assignment` | `object` | No | — |
-| `task_assignment` | `object` | No | — |
-| `invoice` | `object` | No | — |
-| `external_reference` | `object` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `spent_date` | `string \| null` | No | — |
+| `hours` | `number \| null` | No | — |
+| `hours_without_timer` | `number \| null` | No | — |
+| `rounded_hours` | `number \| null` | No | — |
+| `notes` | `string \| null` | No | — |
+| `is_locked` | `boolean \| null` | No | — |
+| `is_explicitly_locked` | `boolean \| null` | No | — |
+| `locked_reason` | `string \| null` | No | — |
+| `approval_status` | `string \| null` | No | — |
+| `is_closed` | `boolean \| null` | No | — |
+| `is_billed` | `boolean \| null` | No | — |
+| `timer_started_at` | `string \| null` | No | — |
+| `started_time` | `string \| null` | No | — |
+| `ended_time` | `string \| null` | No | — |
+| `is_running` | `boolean \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `budgeted` | `boolean \| null` | No | — |
+| `billable_rate` | `number \| null` | No | — |
+| `cost_rate` | `number \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `client` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `task` | `object \| null` | No | — |
+| `user_assignment` | `object \| null` | No | — |
+| `task_assignment` | `object \| null` | No | — |
+| `invoice` | `object \| null` | No | — |
+| `external_reference` | `object \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -3929,7 +3929,7 @@ await corsair.harvest.api.timeEntries.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3941,7 +3941,7 @@ await corsair.harvest.api.timeEntries.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3953,7 +3953,7 @@ await corsair.harvest.api.timeEntries.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3965,7 +3965,7 @@ await corsair.harvest.api.timeEntries.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3981,7 +3981,7 @@ await corsair.harvest.api.timeEntries.update({});
   use_default_rates?: boolean | null,
   created_at?: string | null,
   updated_at?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3996,7 +3996,7 @@ await corsair.harvest.api.timeEntries.update({});
   hourly_rate?: number | null,
   created_at?: string | null,
   updated_at?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -4008,7 +4008,7 @@ await corsair.harvest.api.timeEntries.update({});
   name?: string | null,
   code?: string | null,
   currency?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -4022,7 +4022,7 @@ await corsair.harvest.api.timeEntries.update({});
   permalink?: string | null,
   service?: string | null,
   service_icon_url?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4070,28 +4070,28 @@ await corsair.harvest.api.users.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `first_name` | `string` | No | — |
-| `last_name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `telephone` | `string` | No | — |
-| `timezone` | `string` | No | — |
-| `has_access_to_all_future_projects` | `boolean` | No | — |
-| `is_contractor` | `boolean` | No | — |
-| `is_active` | `boolean` | No | — |
-| `saml_exempt` | `boolean` | No | — |
-| `weekly_capacity` | `number` | No | — |
-| `default_hourly_rate` | `number` | No | — |
-| `cost_rate` | `number` | No | — |
-| `roles` | `string[]` | No | — |
-| `access_roles` | `string[]` | No | — |
-| `avatar_url` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `employee_id` | `string` | No | — |
-| `calendar_integration_enabled` | `boolean` | No | — |
-| `calendar_integration_source` | `string` | No | — |
-| `can_create_projects` | `boolean` | No | — |
-| `permissions_claims` | `string[]` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `telephone` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `has_access_to_all_future_projects` | `boolean \| null` | No | — |
+| `is_contractor` | `boolean \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `saml_exempt` | `boolean \| null` | No | — |
+| `weekly_capacity` | `number \| null` | No | — |
+| `default_hourly_rate` | `number \| null` | No | — |
+| `cost_rate` | `number \| null` | No | — |
+| `roles` | `string[] \| null` | No | — |
+| `access_roles` | `string[] \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `employee_id` | `string \| null` | No | — |
+| `calendar_integration_enabled` | `boolean \| null` | No | — |
+| `calendar_integration_source` | `string \| null` | No | — |
+| `can_create_projects` | `boolean \| null` | No | — |
+| `permissions_claims` | `string[] \| null` | No | — |
 
 
 
@@ -4122,7 +4122,7 @@ await corsair.harvest.api.users.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 
 
 
@@ -4153,28 +4153,28 @@ await corsair.harvest.api.users.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `first_name` | `string` | No | — |
-| `last_name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `telephone` | `string` | No | — |
-| `timezone` | `string` | No | — |
-| `has_access_to_all_future_projects` | `boolean` | No | — |
-| `is_contractor` | `boolean` | No | — |
-| `is_active` | `boolean` | No | — |
-| `saml_exempt` | `boolean` | No | — |
-| `weekly_capacity` | `number` | No | — |
-| `default_hourly_rate` | `number` | No | — |
-| `cost_rate` | `number` | No | — |
-| `roles` | `string[]` | No | — |
-| `access_roles` | `string[]` | No | — |
-| `avatar_url` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `employee_id` | `string` | No | — |
-| `calendar_integration_enabled` | `boolean` | No | — |
-| `calendar_integration_source` | `string` | No | — |
-| `can_create_projects` | `boolean` | No | — |
-| `permissions_claims` | `string[]` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `telephone` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `has_access_to_all_future_projects` | `boolean \| null` | No | — |
+| `is_contractor` | `boolean \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `saml_exempt` | `boolean \| null` | No | — |
+| `weekly_capacity` | `number \| null` | No | — |
+| `default_hourly_rate` | `number \| null` | No | — |
+| `cost_rate` | `number \| null` | No | — |
+| `roles` | `string[] \| null` | No | — |
+| `access_roles` | `string[] \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `employee_id` | `string \| null` | No | — |
+| `calendar_integration_enabled` | `boolean \| null` | No | — |
+| `calendar_integration_source` | `string \| null` | No | — |
+| `can_create_projects` | `boolean \| null` | No | — |
+| `permissions_claims` | `string[] \| null` | No | — |
 
 
 
@@ -4208,13 +4208,13 @@ await corsair.harvest.api.users.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `users` | `object[]` | Yes | — |
-| `per_page` | `number` | No | — |
-| `total_pages` | `number` | No | — |
-| `total_entries` | `number` | No | — |
-| `next_page` | `number` | No | — |
-| `previous_page` | `number` | No | — |
-| `page` | `number` | No | — |
-| `links` | `object` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `total_entries` | `number \| null` | No | — |
+| `next_page` | `number \| null` | No | — |
+| `previous_page` | `number \| null` | No | — |
+| `page` | `number \| null` | No | — |
+| `links` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="users full type">
@@ -4256,7 +4256,7 @@ await corsair.harvest.api.users.list({});
   next?: string | null,
   previous?: string | null,
   last?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4303,28 +4303,28 @@ await corsair.harvest.api.users.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `first_name` | `string` | No | — |
-| `last_name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `telephone` | `string` | No | — |
-| `timezone` | `string` | No | — |
-| `has_access_to_all_future_projects` | `boolean` | No | — |
-| `is_contractor` | `boolean` | No | — |
-| `is_active` | `boolean` | No | — |
-| `saml_exempt` | `boolean` | No | — |
-| `weekly_capacity` | `number` | No | — |
-| `default_hourly_rate` | `number` | No | — |
-| `cost_rate` | `number` | No | — |
-| `roles` | `string[]` | No | — |
-| `access_roles` | `string[]` | No | — |
-| `avatar_url` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `employee_id` | `string` | No | — |
-| `calendar_integration_enabled` | `boolean` | No | — |
-| `calendar_integration_source` | `string` | No | — |
-| `can_create_projects` | `boolean` | No | — |
-| `permissions_claims` | `string[]` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `telephone` | `string \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `has_access_to_all_future_projects` | `boolean \| null` | No | — |
+| `is_contractor` | `boolean \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `saml_exempt` | `boolean \| null` | No | — |
+| `weekly_capacity` | `number \| null` | No | — |
+| `default_hourly_rate` | `number \| null` | No | — |
+| `cost_rate` | `number \| null` | No | — |
+| `roles` | `string[] \| null` | No | — |
+| `access_roles` | `string[] \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `employee_id` | `string \| null` | No | — |
+| `calendar_integration_enabled` | `boolean \| null` | No | — |
+| `calendar_integration_source` | `string \| null` | No | — |
+| `can_create_projects` | `boolean \| null` | No | — |
+| `permissions_claims` | `string[] \| null` | No | — |
 
 
 

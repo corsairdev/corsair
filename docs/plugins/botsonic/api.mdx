@@ -37,21 +37,13 @@ await corsair.botsonic.api.generateResponse.post({});
 | `user_unique_identifier` | `string` | No | — |
 | `response_type` | `text \| html \| markdown \| mrkdwn` | No | — |
 | `chat_user_id` | `string` | No | — |
-| `extra_metadata` | `object` | No | — |
+| `extra_metadata` | `Record<string, any>` | No | — |
 | `full_history` | `boolean` | No | — |
 | `message_id` | `string` | No | — |
 | `timeout` | `number` | No | — |
 | `chat_history` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="extra_metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="chat_history full type">
 
 ```ts
@@ -73,7 +65,7 @@ await corsair.botsonic.api.generateResponse.post({});
 | `message_id` | `string` | No | — |
 | `sources` | `any[]` | No | — |
 | `chat_history` | `any[]` | No | — |
-| `generated_images` | `string[]` | No | — |
+| `generated_images` | `string[] \| null` | No | — |
 | `follow_up_questions` | `string[]` | No | — |
 | `human_handoff_status` | `boolean` | No | — |
 | `user_options` | `any[]` | No | — |

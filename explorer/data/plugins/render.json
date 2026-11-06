@@ -199,7 +199,7 @@
           {
             "key": "body",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -325,12 +325,12 @@
           {
             "key": "git",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "image",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -525,7 +525,7 @@
           {
             "key": "body",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -715,7 +715,7 @@
           {
             "key": "body",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -740,7 +740,7 @@
           {
             "key": "body",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -965,7 +965,7 @@
           {
             "key": "body",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1148,7 +1148,8 @@
       "path": "render.api.disks.restoreSnapshot",
       "shortPath": "disks.restoreSnapshot",
       "description": "Restore a snapshot to a Render disk",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
+      "irreversible": true,
       "input": {
         "kind": "object",
         "fields": [
@@ -1430,7 +1431,7 @@
           {
             "key": "region",
             "optional": true,
-            "type": "frankfurt | oregon | ohio | singapore | virginia[]"
+            "type": "(frankfurt | oregon | ohio | singapore | virginia)[]"
           },
           {
             "key": "ownerId",
@@ -1521,7 +1522,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "undefined |  | {}"
+        "type": "undefined | \"\" | {}"
       }
     },
     {
@@ -1586,7 +1587,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "undefined |  | {}"
+        "type": "undefined | \"\" | {}"
       }
     },
     {
@@ -1625,7 +1626,7 @@
           {
             "key": "ipAllowList",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -2091,7 +2092,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "undefined |  | {}"
+        "type": "undefined | \"\" | {}"
       }
     },
     {
@@ -2141,7 +2142,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "undefined |  | {}"
+        "type": "undefined | \"\" | {}"
       }
     },
     {
@@ -3846,7 +3847,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "undefined |  | {}"
+        "type": "undefined | \"\" | {}"
       }
     },
     {
@@ -4127,7 +4128,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "undefined |  | {}"
+        "type": "undefined | \"\" | {}"
       }
     },
     {
@@ -4172,7 +4173,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "undefined |  | {}"
+        "type": "undefined | \"\" | {}"
       }
     },
     {
@@ -4313,7 +4314,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "undefined |  | {}"
+        "type": "undefined | \"\" | {}"
       }
     },
     {
@@ -6376,7 +6377,7 @@
           {
             "key": "suspended",
             "optional": true,
-            "type": "suspended | not_suspended[]"
+            "type": "(suspended | not_suspended)[]"
           },
           {
             "key": "ownerId",
@@ -6583,7 +6584,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "undefined |  | {}"
+        "type": "undefined | \"\" | {}"
       }
     },
     {
@@ -6603,7 +6604,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "undefined |  | {}"
+        "type": "undefined | \"\" | {}"
       }
     },
     {
@@ -6623,7 +6624,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "undefined |  | {}"
+        "type": "undefined | \"\" | {}"
       }
     },
     {
@@ -6667,7 +6668,7 @@
           {
             "key": "environmentId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -6854,7 +6855,7 @@
           {
             "key": "type",
             "optional": true,
-            "type": "redirect | rewrite[]"
+            "type": "(redirect | rewrite)[]"
           },
           {
             "key": "source",
@@ -6950,7 +6951,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "undefined |  | {}"
+        "type": "undefined | \"\" | {}"
       }
     },
     {
@@ -7105,7 +7106,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "undefined |  | {}"
+        "type": "undefined | \"\" | {}"
       }
     },
     {
@@ -7150,7 +7151,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, status?: string, buildId?: string, createdAt?: string, updatedAt?: string, finishedAt?: string } | undefined |  | {}"
+        "type": "{ id: string, status?: string, buildId?: string, createdAt?: string, updatedAt?: string, finishedAt?: string } | undefined | \"\" | {}"
       }
     },
     {
@@ -7204,7 +7205,7 @@
           {
             "key": "environmentId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -7815,7 +7816,7 @@
           {
             "key": "input",
             "optional": false,
-            "type": "any[] | {}"
+            "type": "any[] | Record<string, any>"
           },
           {
             "key": "idempotencyKey",
@@ -8050,7 +8051,7 @@
           {
             "key": "body",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },

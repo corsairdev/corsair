@@ -1,7 +1,7 @@
 {
   "id": "slackbot",
-  "displayName": "Slackbot",
-  "description": "Slackbot plugin for Corsair",
+  "displayName": "Slack Bot",
+  "description": "Slack workspace access with a bot token for messages, conversations, files, users, user groups, reminders, calls, canvases, and team info, plus Events API webhooks.",
   "npmPackageName": "@corsair-dev/slackbot",
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
@@ -107,7 +107,7 @@
           {
             "key": "call",
             "optional": true,
-            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: {}[] }"
+            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: Record<string, any>[] }"
           }
         ]
       }
@@ -163,7 +163,7 @@
           {
             "key": "call",
             "optional": true,
-            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: {}[] }"
+            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: Record<string, any>[] }"
           }
         ]
       }
@@ -214,7 +214,7 @@
           {
             "key": "call",
             "optional": true,
-            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: {}[] }"
+            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: Record<string, any>[] }"
           }
         ]
       }
@@ -270,7 +270,7 @@
           {
             "key": "call",
             "optional": true,
-            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: {}[] }"
+            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: Record<string, any>[] }"
           }
         ]
       }
@@ -326,7 +326,7 @@
           {
             "key": "call",
             "optional": true,
-            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: {}[] }"
+            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: Record<string, any>[] }"
           }
         ]
       }
@@ -392,7 +392,7 @@
           {
             "key": "call",
             "optional": true,
-            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: {}[] }"
+            "type": "{ id: string, date_start?: number, external_unique_id?: string, join_url?: string, desktop_app_join_url?: string, title?: string, users?: Record<string, any>[] }"
           }
         ]
       }
@@ -682,7 +682,7 @@
           {
             "key": "paging",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response_metadata",
@@ -708,7 +708,7 @@
           {
             "key": "criteria",
             "optional": false,
-            "type": "{ section_types?: any_header | h1 | h2 | h3[], contains_text?: string }"
+            "type": "{ section_types?: (any_header | h1 | h2 | h3)[], contains_text?: string }"
           }
         ]
       },
@@ -840,7 +840,7 @@
           {
             "key": "channel",
             "optional": true,
-            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: Record<string, any>, purpose?: Record<string, any> }"
           },
           {
             "key": "no_op",
@@ -911,7 +911,7 @@
           {
             "key": "channel",
             "optional": true,
-            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: Record<string, any>, purpose?: Record<string, any> }"
           }
         ]
       }
@@ -937,7 +937,7 @@
           {
             "key": "types",
             "optional": true,
-            "type": "public_channel | private_channel | mpim | im[]"
+            "type": "(public_channel | private_channel | mpim | im)[]"
           },
           {
             "key": "team_id",
@@ -992,7 +992,7 @@
           {
             "key": "channels",
             "optional": false,
-            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }[]"
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: Record<string, any>, purpose?: Record<string, any> }[]"
           },
           {
             "key": "truncated",
@@ -1063,7 +1063,7 @@
           {
             "key": "channel",
             "optional": true,
-            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: Record<string, any>, purpose?: Record<string, any> }"
           }
         ]
       }
@@ -1124,7 +1124,7 @@
           {
             "key": "channel",
             "optional": true,
-            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: Record<string, any>, purpose?: Record<string, any> }"
           }
         ]
       }
@@ -1175,7 +1175,7 @@
           {
             "key": "channel",
             "optional": true,
-            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: Record<string, any>, purpose?: Record<string, any> }"
           }
         ]
       }
@@ -1293,7 +1293,7 @@
           {
             "key": "types",
             "optional": true,
-            "type": "public_channel | private_channel | mpim | im[]"
+            "type": "(public_channel | private_channel | mpim | im)[]"
           },
           {
             "key": "team_id",
@@ -1343,7 +1343,7 @@
           {
             "key": "channels",
             "optional": true,
-            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }[]"
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: Record<string, any>, purpose?: Record<string, any> }[]"
           },
           {
             "key": "response_metadata",
@@ -1374,7 +1374,7 @@
           {
             "key": "types",
             "optional": true,
-            "type": "public_channel | private_channel | mpim | im[]"
+            "type": "(public_channel | private_channel | mpim | im)[]"
           },
           {
             "key": "team_id",
@@ -1424,7 +1424,7 @@
           {
             "key": "channels",
             "optional": true,
-            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }[]"
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: Record<string, any>, purpose?: Record<string, any> }[]"
           },
           {
             "key": "response_metadata",
@@ -1602,7 +1602,7 @@
           {
             "key": "channel",
             "optional": true,
-            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: Record<string, any>, purpose?: Record<string, any> }"
           }
         ]
       }
@@ -1663,7 +1663,7 @@
           {
             "key": "channel",
             "optional": true,
-            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: Record<string, any>, purpose?: Record<string, any> }"
           }
         ]
       }
@@ -1724,7 +1724,7 @@
           {
             "key": "channel",
             "optional": true,
-            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: Record<string, any>, purpose?: Record<string, any> }"
           }
         ]
       }
@@ -2019,7 +2019,7 @@
           {
             "key": "comments",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "response_metadata",
@@ -2120,7 +2120,7 @@
           {
             "key": "paging",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "response_metadata",
@@ -2922,7 +2922,7 @@
           {
             "key": "messages",
             "optional": true,
-            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }[]"
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: Record<string, any>[], attachments?: Record<string, any>[] }[]"
           },
           {
             "key": "has_more",
@@ -3090,7 +3090,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -3116,12 +3116,12 @@
           {
             "key": "blocks",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "thread_ts",
@@ -3156,7 +3156,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "as_user",
@@ -3226,7 +3226,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }"
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: Record<string, any>[], attachments?: Record<string, any>[] }"
           }
         ]
       }
@@ -3257,12 +3257,12 @@
           {
             "key": "blocks",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "thread_ts",
@@ -3297,7 +3297,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "as_user",
@@ -3418,7 +3418,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }"
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: Record<string, any>[], attachments?: Record<string, any>[] }"
           }
         ]
       }
@@ -3611,7 +3611,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }"
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: Record<string, any>[], attachments?: Record<string, any>[] }"
           },
           {
             "key": "file",
@@ -3687,7 +3687,7 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "response_metadata",
@@ -3778,7 +3778,7 @@
           {
             "key": "messages",
             "optional": true,
-            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }[]"
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: Record<string, any>[], attachments?: Record<string, any>[] }[]"
           },
           {
             "key": "has_more",
@@ -3819,12 +3819,12 @@
           {
             "key": "blocks",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "thread_ts",
@@ -3859,7 +3859,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "as_user",
@@ -3919,7 +3919,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }"
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: Record<string, any>[], attachments?: Record<string, any>[] }"
           }
         ]
       }
@@ -3950,12 +3950,12 @@
           {
             "key": "blocks",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "as_user",
@@ -3975,7 +3975,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "reply_broadcast",
@@ -4035,7 +4035,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: {}[], attachments?: {}[] }"
+            "type": "{ type?: string, subtype?: string, ts?: string, text?: string, user?: string, bot_id?: string, app_id?: string, team?: string, username?: string, thread_ts?: string, reply_count?: number, blocks?: Record<string, any>[], attachments?: Record<string, any>[] }"
           }
         ]
       }
@@ -4361,12 +4361,12 @@
           {
             "key": "emoji",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "categories",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -4422,7 +4422,7 @@
           {
             "key": "team",
             "optional": true,
-            "type": "{ id: string, name?: string, domain?: string, email_domain?: string, icon?: {}, enterprise_id?: string, enterprise_name?: string }"
+            "type": "{ id: string, name?: string, domain?: string, email_domain?: string, icon?: Record<string, any>, enterprise_id?: string, enterprise_name?: string }"
           }
         ]
       }
@@ -4488,7 +4488,7 @@
           {
             "key": "channel",
             "optional": true,
-            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: {}, purpose?: {} }"
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, is_archived?: boolean, is_general?: boolean, is_member?: boolean, created?: number, creator?: string, num_members?: number, topic?: Record<string, any>, purpose?: Record<string, any> }"
           },
           {
             "key": "no_op",
@@ -4549,7 +4549,7 @@
           {
             "key": "profile",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -4575,7 +4575,7 @@
           {
             "key": "unfurls",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, Record<string, any>>"
           },
           {
             "key": "user_auth_message",
@@ -5148,7 +5148,7 @@
           {
             "key": "bot",
             "optional": true,
-            "type": "{ id?: string, deleted?: boolean, name?: string, updated?: number, app_id?: string, user_id?: string, icons?: {} }"
+            "type": "{ id?: string, deleted?: boolean, name?: string, updated?: number, app_id?: string, user_id?: string, icons?: Record<string, any> }"
           }
         ]
       }
@@ -5285,7 +5285,7 @@
           {
             "key": "users",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, Record<string, any>>"
           }
         ]
       }
@@ -5361,7 +5361,7 @@
           {
             "key": "members",
             "optional": false,
-            "type": "{ id: string, team_id?: string, name?: string, real_name?: string, deleted?: boolean, is_bot?: boolean, is_admin?: boolean, is_owner?: boolean, is_app_user?: boolean, tz?: string, updated?: number, profile?: {} }[]"
+            "type": "{ id: string, team_id?: string, name?: string, real_name?: string, deleted?: boolean, is_bot?: boolean, is_admin?: boolean, is_owner?: boolean, is_app_user?: boolean, tz?: string, updated?: number, profile?: Record<string, any> }[]"
           },
           {
             "key": "truncated",
@@ -5503,7 +5503,7 @@
           {
             "key": "profile",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -5559,7 +5559,7 @@
           {
             "key": "user",
             "optional": true,
-            "type": "{ id: string, team_id?: string, name?: string, real_name?: string, deleted?: boolean, is_bot?: boolean, is_admin?: boolean, is_owner?: boolean, is_app_user?: boolean, tz?: string, updated?: number, profile?: {} }"
+            "type": "{ id: string, team_id?: string, name?: string, real_name?: string, deleted?: boolean, is_bot?: boolean, is_admin?: boolean, is_owner?: boolean, is_app_user?: boolean, tz?: string, updated?: number, profile?: Record<string, any> }"
           }
         ]
       }
@@ -5625,7 +5625,7 @@
           {
             "key": "members",
             "optional": true,
-            "type": "{ id: string, team_id?: string, name?: string, real_name?: string, deleted?: boolean, is_bot?: boolean, is_admin?: boolean, is_owner?: boolean, is_app_user?: boolean, tz?: string, updated?: number, profile?: {} }[]"
+            "type": "{ id: string, team_id?: string, name?: string, real_name?: string, deleted?: boolean, is_bot?: boolean, is_admin?: boolean, is_owner?: boolean, is_app_user?: boolean, tz?: string, updated?: number, profile?: Record<string, any> }[]"
           },
           {
             "key": "cache_ts",
@@ -5686,7 +5686,7 @@
           {
             "key": "user",
             "optional": true,
-            "type": "{ id: string, team_id?: string, name?: string, real_name?: string, deleted?: boolean, is_bot?: boolean, is_admin?: boolean, is_owner?: boolean, is_app_user?: boolean, tz?: string, updated?: number, profile?: {} }"
+            "type": "{ id: string, team_id?: string, name?: string, real_name?: string, deleted?: boolean, is_bot?: boolean, is_admin?: boolean, is_owner?: boolean, is_app_user?: boolean, tz?: string, updated?: number, profile?: Record<string, any> }"
           }
         ]
       }
@@ -5851,7 +5851,7 @@
           {
             "key": "bot_profile",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "text",
@@ -5886,16 +5886,16 @@
           {
             "key": "blocks",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "files",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
-      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: {}, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: {}[], files?: {}[] }",
+      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: Record<string, any>, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: Record<string, any>[], files?: Record<string, any>[] }",
       "usageExample": "slackbot({\n    webhookHooks: {\n        messages: {\n            botMessage: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -5943,7 +5943,7 @@
           {
             "key": "bot_profile",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "text",
@@ -5978,16 +5978,16 @@
           {
             "key": "blocks",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "files",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
-      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: {}, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: {}[], files?: {}[] }",
+      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: Record<string, any>, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: Record<string, any>[], files?: Record<string, any>[] }",
       "usageExample": "slackbot({\n    webhookHooks: {\n        messages: {\n            directMessage: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -6035,7 +6035,7 @@
           {
             "key": "bot_profile",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "text",
@@ -6070,16 +6070,16 @@
           {
             "key": "blocks",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "files",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
-      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: {}, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: {}[], files?: {}[] }",
+      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: Record<string, any>, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: Record<string, any>[], files?: Record<string, any>[] }",
       "usageExample": "slackbot({\n    webhookHooks: {\n        messages: {\n            groupDirectMessage: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -6127,7 +6127,7 @@
           {
             "key": "bot_profile",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "text",
@@ -6162,16 +6162,16 @@
           {
             "key": "blocks",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "files",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
-      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: {}, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: {}[], files?: {}[] }",
+      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: Record<string, any>, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: Record<string, any>[], files?: Record<string, any>[] }",
       "usageExample": "slackbot({\n    webhookHooks: {\n        messages: {\n            message: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -6219,7 +6219,7 @@
           {
             "key": "bot_profile",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "text",
@@ -6254,16 +6254,16 @@
           {
             "key": "blocks",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "files",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
-      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: {}, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: {}[], files?: {}[] }",
+      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: Record<string, any>, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: Record<string, any>[], files?: Record<string, any>[] }",
       "usageExample": "slackbot({\n    webhookHooks: {\n        messages: {\n            privateChannelMessage: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -6311,7 +6311,7 @@
           {
             "key": "bot_profile",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "text",
@@ -6346,16 +6346,16 @@
           {
             "key": "blocks",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "files",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
-      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: {}, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: {}[], files?: {}[] }",
+      "responseType": "{ type: message, subtype?: string, channel: string, channel_type?: channel | group | im | mpim, user?: string, bot_id?: string, app_id?: string, bot_profile?: Record<string, any>, text?: string, ts: string, thread_ts?: string, parent_user_id?: string, team?: string, event_ts?: string, blocks?: Record<string, any>[], files?: Record<string, any>[] }",
       "usageExample": "slackbot({\n    webhookHooks: {\n        messages: {\n            threadReply: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     },
     {
@@ -6604,6 +6604,11 @@
         },
         {
           "field": "channel",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "channel_type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

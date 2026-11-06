@@ -564,7 +564,7 @@
           {
             "key": "templateSampleData",
             "optional": true,
-            "type": "{} | string"
+            "type": "Record<string, JsonValue> | string"
           },
           {
             "key": "templateDetails",
@@ -625,7 +625,7 @@
           {
             "key": "templateStructure",
             "optional": true,
-            "type": "{ type?: string, text?: string, dataRefs?: string[], fieldIdx?: number, repeatIdx?: number, conditionIdx?: number, contains?: lazy }[] | string"
+            "type": "{ type?: string, text?: string, dataRefs?: string[], fieldIdx?: number, repeatIdx?: number, conditionIdx?: number, contains?: { type?: string, text?: string, dataRefs?: string[], fieldIdx?: number, repeatIdx?: number, conditionIdx?: number, contains?: (recursive) }[] }[] | string"
           }
         ]
       }
@@ -727,7 +727,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "string | {}"
+            "type": "string | Record<string, JsonValue>"
           },
           {
             "key": "outputName",

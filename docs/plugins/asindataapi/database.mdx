@@ -30,7 +30,10 @@ const rows = await corsair.asindataapi.db.collections.search({
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `last_run` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `schedule_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `priority` | `string` | equals, contains, startsWith, endsWith, in |
 | `enabled` | `boolean` | equals |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `request_total_count` | `number` | equals, gt, gte, lt, lte, in |
 | `request_page_count` | `number` | equals, gt, gte, lt, lte, in |
 | `requests_total_count` | `number` | equals, gt, gte, lt, lte, in |
@@ -72,6 +75,7 @@ const rows = await corsair.asindataapi.db.destinations.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `enabled` | `boolean` | equals |
 | `used_by` | `number` | equals, gt, gte, lt, lte, in |
 | `s3_bucket_name` | `string` | equals, contains, startsWith, endsWith, in |
@@ -110,6 +114,7 @@ const rows = await corsair.asindataapi.db.requests.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `custom_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
 | `amazon_domain` | `string` | equals, contains, startsWith, endsWith, in |
 | `asin` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |

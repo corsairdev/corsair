@@ -36,16 +36,16 @@ await corsair.callpage.api.calls.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `to` | `string` | No | — |
-| `to_formatted` | `string` | No | — |
-| `human_status` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `scheduled_at` | `string` | No | — |
-| `cancelled_at` | `string` | No | — |
-| `scheduled_success` | `boolean` | No | — |
-| `leadable_id` | `number` | No | — |
-| `leadable_type` | `string` | No | — |
-| `leadable_description` | `string` | No | — |
+| `to` | `string \| null` | No | — |
+| `to_formatted` | `string \| null` | No | — |
+| `human_status` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `scheduled_at` | `string \| null` | No | — |
+| `cancelled_at` | `string \| null` | No | — |
+| `scheduled_success` | `boolean \| null` | No | — |
+| `leadable_id` | `number \| null` | No | — |
+| `leadable_type` | `string \| null` | No | — |
+| `leadable_description` | `string \| null` | No | — |
 | `utm` | `object` | No | — |
 | `referer` | `object` | No | — |
 | `request` | `object` | No | — |
@@ -227,8 +227,8 @@ await corsair.callpage.api.managers.create({});
 {
   day_of_week: number,
   enabled: boolean,
-  start_time?: string | null,
-  end_time?: string | null
+  start_time: string | null,
+  end_time: string | null
 }[]
 ```
 </Accordion>
@@ -336,8 +336,8 @@ await corsair.callpage.api.managers.get({});
   day_of_week: number,
   enabled: boolean,
   timezone?: string | null,
-  start_time?: string | null,
-  end_time?: string | null
+  start_time: string | null,
+  end_time: string | null
 }[]
 ```
 </Accordion>
@@ -395,8 +395,8 @@ await corsair.callpage.api.managers.list({});
     day_of_week: number,
     enabled: boolean,
     timezone?: string | null,
-    start_time?: string | null,
-    end_time?: string | null
+    start_time: string | null,
+    end_time: string | null
   }[]
 }[]
 ```
@@ -466,8 +466,8 @@ await corsair.callpage.api.managers.update({});
 {
   day_of_week: number,
   enabled: boolean,
-  start_time?: string | null,
-  end_time?: string | null
+  start_time: string | null,
+  end_time: string | null
 }[]
 ```
 </Accordion>
@@ -732,17 +732,17 @@ await corsair.callpage.api.users.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `tel` | `string` | No | — |
-| `tel_formatted` | `string` | No | — |
-| `tel_extension` | `string` | No | — |
-| `last_online` | `string` | No | — |
-| `parent_id` | `number` | No | — |
-| `activated_at` | `string` | No | — |
-| `role` | `object` | No | — |
-| `avatar` | `string` | No | — |
-| `caller_id` | `object` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `tel` | `string \| null` | No | — |
+| `tel_formatted` | `string \| null` | No | — |
+| `tel_extension` | `string \| null` | No | — |
+| `last_online` | `string \| null` | No | — |
+| `parent_id` | `number \| null` | No | — |
+| `activated_at` | `string \| null` | No | — |
+| `role` | `object \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
+| `caller_id` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="role full type">
@@ -750,7 +750,7 @@ await corsair.callpage.api.users.get({});
 ```ts
 {
   slug: string
-}
+} | null
 ```
 </Accordion>
 
@@ -763,7 +763,7 @@ await corsair.callpage.api.users.get({});
   activated_at?: string | null,
   updated_at?: string | null,
   tel_formatted?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1027,13 +1027,13 @@ await corsair.callpage.api.widgets.addUsers({});
 {
   day_of_week: number,
   enabled: boolean,
-  start_time?: string | null,
-  end_time?: string | null
+  start_time: string | null,
+  end_time: string | null
 }[] | {
   day_of_week: number,
   enabled: boolean,
-  start_time?: string | null,
-  end_time?: string | null
+  start_time: string | null,
+  end_time: string | null
 }[][]
 ```
 </Accordion>
@@ -1141,19 +1141,9 @@ await corsair.callpage.api.widgets.create({});
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
 | `description` | `string` | No | — |
-| `settings` | `object` | No | — |
+| `settings` | `Record<string, any>` | No | — |
 | `locale_code` | `string` | No | — |
 | `enabled` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="settings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1219,14 +1209,14 @@ await corsair.callpage.api.widgets.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `description` | `string` | No | — |
-| `url` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
 | `enabled` | `boolean` | No | — |
-| `locale_code` | `string` | No | — |
-| `installation_status` | `number` | No | — |
-| `installed_at` | `string` | No | — |
-| `company_sms_name` | `string` | No | — |
-| `call_requests_count` | `number` | No | — |
+| `locale_code` | `string \| null` | No | — |
+| `installation_status` | `number \| null` | No | — |
+| `installed_at` | `string \| null` | No | — |
+| `company_sms_name` | `string \| null` | No | — |
+| `call_requests_count` | `number \| null` | No | — |
 | `managers` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -1253,8 +1243,8 @@ await corsair.callpage.api.widgets.get({});
     day_of_week: number,
     enabled: boolean,
     timezone?: string | null,
-    start_time?: string | null,
-    end_time?: string | null
+    start_time: string | null,
+    end_time: string | null
   }[]
 }[]
 ```
@@ -1322,8 +1312,8 @@ await corsair.callpage.api.widgets.list({});
       day_of_week: number,
       enabled: boolean,
       timezone?: string | null,
-      start_time?: string | null,
-      end_time?: string | null
+      start_time: string | null,
+      end_time: string | null
     }[]
   }[]
 }[]
@@ -1353,19 +1343,9 @@ await corsair.callpage.api.widgets.update({});
 | `id` | `number` | Yes | — |
 | `url` | `string` | Yes | — |
 | `description` | `string` | No | — |
-| `settings` | `object` | No | — |
+| `settings` | `Record<string, any>` | No | — |
 | `locale_code` | `string` | No | — |
 | `enabled` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="settings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 

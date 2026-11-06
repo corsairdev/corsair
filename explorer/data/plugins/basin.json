@@ -330,7 +330,7 @@
           {
             "key": "form",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -345,7 +345,7 @@
           {
             "key": "uuid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -360,7 +360,7 @@
           {
             "key": "redirect_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "use_ajax",
@@ -380,12 +380,12 @@
           {
             "key": "autoreply_body",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "whitelist_source_domains",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "force_recaptcha",
@@ -405,77 +405,77 @@
           {
             "key": "turnstile_site_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "turnstile_secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_cc_emails",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_bcc_emails",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_from_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_from_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_greeting",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "logo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "button_background_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "button_text_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data_receipt_email",
@@ -500,7 +500,7 @@
           {
             "key": "custom_template",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "use_custom_template",
@@ -510,7 +510,7 @@
           {
             "key": "autoreply_custom_template",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_use_custom_template",
@@ -520,37 +520,37 @@
           {
             "key": "notification_mail_template_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "auto_response_mail_template_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "confirmation_mail_template_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "honeypot_field",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recaptcha_failed_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "domain_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "domain_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duplicate_filter",
@@ -570,42 +570,42 @@
           {
             "key": "redirect_heading",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "redirect_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "redirect_button_background_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "redirect_button_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "redirect_button_text_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content_blacklist",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "allowed_domains",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "blocked_domains",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "smtp_email_validation",
@@ -668,7 +668,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ success?: boolean, message?: string } | { id: number | string, uuid?: string | null, name?: string, timezone?: string, redirect_url?: string | null, use_ajax?: boolean, notification_emails?: string, autoreply?: boolean, autoreply_body?: string | null, whitelist_source_domains?: string | null, force_recaptcha?: boolean, force_hcaptcha?: boolean, force_turnstile?: boolean, turnstile_site_key?: string | null, turnstile_secret?: string | null, notification_cc_emails?: string | null, notification_bcc_emails?: string | null, notification_subject?: string | null, notification_from_name?: string | null, autoreply_subject?: string | null, autoreply_from_name?: string | null, autoreply_greeting?: string | null, autoreply_name?: string | null, autoreply_title?: string | null, autoreply_email?: string | null, logo?: string | null, button_background_color?: string | null, button_text_color?: string | null, data_receipt_email?: boolean, retention_days?: number, hide_dashboard_button?: boolean, exclude_submitter_from_reply?: boolean, custom_template?: string | null, use_custom_template?: boolean, autoreply_custom_template?: string | null, autoreply_use_custom_template?: boolean, notification_mail_template_id?: number | null, auto_response_mail_template_id?: number | null, confirmation_mail_template_id?: number | null, honeypot_field?: string | null, recaptcha_failed_url?: string | null, domain_id?: number | null, domain_email?: string | null, duplicate_filter?: boolean, project_id?: number, project_name?: string, redirect_heading?: string | null, redirect_message?: string | null, redirect_button_background_color?: string | null, redirect_button_text?: string | null, redirect_button_text_color?: string | null, content_blacklist?: string[] | null, allowed_domains?: string[] | null, blocked_domains?: string[] | null, smtp_email_validation?: boolean, contribute_to_spam_training?: boolean, form_webhooks?: any[], inbox_count?: number, spam_count?: number, trash_count?: number, created_at?: string, updated_at?: string } | { id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: {}, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string } | { id: number | string, name?: string, created_at?: string, updated_at?: string } | { id: number | string, form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean, failure_count?: number, last_failure_at?: string | null, created_at?: string, updated_at?: string } | {}"
+        "type": "{ success?: boolean, message?: string } | { id: number | string, uuid?: string | null, name?: string, timezone?: string, redirect_url?: string | null, use_ajax?: boolean, notification_emails?: string, autoreply?: boolean, autoreply_body?: string | null, whitelist_source_domains?: string | null, force_recaptcha?: boolean, force_hcaptcha?: boolean, force_turnstile?: boolean, turnstile_site_key?: string | null, turnstile_secret?: string | null, notification_cc_emails?: string | null, notification_bcc_emails?: string | null, notification_subject?: string | null, notification_from_name?: string | null, autoreply_subject?: string | null, autoreply_from_name?: string | null, autoreply_greeting?: string | null, autoreply_name?: string | null, autoreply_title?: string | null, autoreply_email?: string | null, logo?: string | null, button_background_color?: string | null, button_text_color?: string | null, data_receipt_email?: boolean, retention_days?: number, hide_dashboard_button?: boolean, exclude_submitter_from_reply?: boolean, custom_template?: string | null, use_custom_template?: boolean, autoreply_custom_template?: string | null, autoreply_use_custom_template?: boolean, notification_mail_template_id?: number | null, auto_response_mail_template_id?: number | null, confirmation_mail_template_id?: number | null, honeypot_field?: string | null, recaptcha_failed_url?: string | null, domain_id?: number | null, domain_email?: string | null, duplicate_filter?: boolean, project_id?: number, project_name?: string, redirect_heading?: string | null, redirect_message?: string | null, redirect_button_background_color?: string | null, redirect_button_text?: string | null, redirect_button_text_color?: string | null, content_blacklist?: string[] | null, allowed_domains?: string[] | null, blocked_domains?: string[] | null, smtp_email_validation?: boolean, contribute_to_spam_training?: boolean, form_webhooks?: any[], inbox_count?: number, spam_count?: number, trash_count?: number, created_at?: string, updated_at?: string } | { id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: Record<string, any>, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string } | { id: number | string, name?: string, created_at?: string, updated_at?: string } | { id: number | string, form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean, failure_count?: number, last_failure_at?: string | null, created_at?: string, updated_at?: string } | Record<string, any>"
       }
     },
     {
@@ -697,7 +697,7 @@
           {
             "key": "uuid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -712,7 +712,7 @@
           {
             "key": "redirect_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "use_ajax",
@@ -732,12 +732,12 @@
           {
             "key": "autoreply_body",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "whitelist_source_domains",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "force_recaptcha",
@@ -757,77 +757,77 @@
           {
             "key": "turnstile_site_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "turnstile_secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_cc_emails",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_bcc_emails",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_from_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_from_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_greeting",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "logo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "button_background_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "button_text_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data_receipt_email",
@@ -852,7 +852,7 @@
           {
             "key": "custom_template",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "use_custom_template",
@@ -862,7 +862,7 @@
           {
             "key": "autoreply_custom_template",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_use_custom_template",
@@ -872,37 +872,37 @@
           {
             "key": "notification_mail_template_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "auto_response_mail_template_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "confirmation_mail_template_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "honeypot_field",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recaptcha_failed_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "domain_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "domain_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duplicate_filter",
@@ -922,42 +922,42 @@
           {
             "key": "redirect_heading",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "redirect_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "redirect_button_background_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "redirect_button_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "redirect_button_text_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content_blacklist",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "allowed_domains",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "blocked_domains",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "smtp_email_validation",
@@ -1319,7 +1319,7 @@
           {
             "key": "form",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1334,7 +1334,7 @@
           {
             "key": "uuid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
@@ -1349,7 +1349,7 @@
           {
             "key": "redirect_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "use_ajax",
@@ -1369,12 +1369,12 @@
           {
             "key": "autoreply_body",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "whitelist_source_domains",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "force_recaptcha",
@@ -1394,77 +1394,77 @@
           {
             "key": "turnstile_site_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "turnstile_secret",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_cc_emails",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_bcc_emails",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notification_from_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_subject",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_from_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_greeting",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "logo",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "button_background_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "button_text_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "data_receipt_email",
@@ -1489,7 +1489,7 @@
           {
             "key": "custom_template",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "use_custom_template",
@@ -1499,7 +1499,7 @@
           {
             "key": "autoreply_custom_template",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "autoreply_use_custom_template",
@@ -1509,37 +1509,37 @@
           {
             "key": "notification_mail_template_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "auto_response_mail_template_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "confirmation_mail_template_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "honeypot_field",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "recaptcha_failed_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "domain_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "domain_email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duplicate_filter",
@@ -1559,42 +1559,42 @@
           {
             "key": "redirect_heading",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "redirect_message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "redirect_button_background_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "redirect_button_text",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "redirect_button_text_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "content_blacklist",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "allowed_domains",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "blocked_domains",
             "optional": true,
-            "type": "string[]"
+            "type": "string[] | null"
           },
           {
             "key": "smtp_email_validation",
@@ -1670,7 +1670,7 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1680,27 +1680,27 @@
           {
             "key": "form_schema",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "custom_css",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "custom_head",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "background_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "text_color",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "inherit_styles",
@@ -1720,32 +1720,32 @@
           {
             "key": "opens_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "closes_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bootstrap_cdn_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "uuid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "iframe_height",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "iframe_width",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "redirect_iframe_parent",
@@ -1885,7 +1885,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ success?: boolean, message?: string } | { id: number | string, uuid?: string | null, name?: string, timezone?: string, redirect_url?: string | null, use_ajax?: boolean, notification_emails?: string, autoreply?: boolean, autoreply_body?: string | null, whitelist_source_domains?: string | null, force_recaptcha?: boolean, force_hcaptcha?: boolean, force_turnstile?: boolean, turnstile_site_key?: string | null, turnstile_secret?: string | null, notification_cc_emails?: string | null, notification_bcc_emails?: string | null, notification_subject?: string | null, notification_from_name?: string | null, autoreply_subject?: string | null, autoreply_from_name?: string | null, autoreply_greeting?: string | null, autoreply_name?: string | null, autoreply_title?: string | null, autoreply_email?: string | null, logo?: string | null, button_background_color?: string | null, button_text_color?: string | null, data_receipt_email?: boolean, retention_days?: number, hide_dashboard_button?: boolean, exclude_submitter_from_reply?: boolean, custom_template?: string | null, use_custom_template?: boolean, autoreply_custom_template?: string | null, autoreply_use_custom_template?: boolean, notification_mail_template_id?: number | null, auto_response_mail_template_id?: number | null, confirmation_mail_template_id?: number | null, honeypot_field?: string | null, recaptcha_failed_url?: string | null, domain_id?: number | null, domain_email?: string | null, duplicate_filter?: boolean, project_id?: number, project_name?: string, redirect_heading?: string | null, redirect_message?: string | null, redirect_button_background_color?: string | null, redirect_button_text?: string | null, redirect_button_text_color?: string | null, content_blacklist?: string[] | null, allowed_domains?: string[] | null, blocked_domains?: string[] | null, smtp_email_validation?: boolean, contribute_to_spam_training?: boolean, form_webhooks?: any[], inbox_count?: number, spam_count?: number, trash_count?: number, created_at?: string, updated_at?: string } | { id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: {}, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string } | { id: number | string, name?: string, created_at?: string, updated_at?: string } | { id: number | string, form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean, failure_count?: number, last_failure_at?: string | null, created_at?: string, updated_at?: string } | {}"
+        "type": "{ success?: boolean, message?: string } | { id: number | string, uuid?: string | null, name?: string, timezone?: string, redirect_url?: string | null, use_ajax?: boolean, notification_emails?: string, autoreply?: boolean, autoreply_body?: string | null, whitelist_source_domains?: string | null, force_recaptcha?: boolean, force_hcaptcha?: boolean, force_turnstile?: boolean, turnstile_site_key?: string | null, turnstile_secret?: string | null, notification_cc_emails?: string | null, notification_bcc_emails?: string | null, notification_subject?: string | null, notification_from_name?: string | null, autoreply_subject?: string | null, autoreply_from_name?: string | null, autoreply_greeting?: string | null, autoreply_name?: string | null, autoreply_title?: string | null, autoreply_email?: string | null, logo?: string | null, button_background_color?: string | null, button_text_color?: string | null, data_receipt_email?: boolean, retention_days?: number, hide_dashboard_button?: boolean, exclude_submitter_from_reply?: boolean, custom_template?: string | null, use_custom_template?: boolean, autoreply_custom_template?: string | null, autoreply_use_custom_template?: boolean, notification_mail_template_id?: number | null, auto_response_mail_template_id?: number | null, confirmation_mail_template_id?: number | null, honeypot_field?: string | null, recaptcha_failed_url?: string | null, domain_id?: number | null, domain_email?: string | null, duplicate_filter?: boolean, project_id?: number, project_name?: string, redirect_heading?: string | null, redirect_message?: string | null, redirect_button_background_color?: string | null, redirect_button_text?: string | null, redirect_button_text_color?: string | null, content_blacklist?: string[] | null, allowed_domains?: string[] | null, blocked_domains?: string[] | null, smtp_email_validation?: boolean, contribute_to_spam_training?: boolean, form_webhooks?: any[], inbox_count?: number, spam_count?: number, trash_count?: number, created_at?: string, updated_at?: string } | { id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: Record<string, any>, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string } | { id: number | string, name?: string, created_at?: string, updated_at?: string } | { id: number | string, form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean, failure_count?: number, last_failure_at?: string | null, created_at?: string, updated_at?: string } | Record<string, any>"
       }
     },
     {
@@ -2034,7 +2034,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ success?: boolean, message?: string } | { id: number | string, uuid?: string | null, name?: string, timezone?: string, redirect_url?: string | null, use_ajax?: boolean, notification_emails?: string, autoreply?: boolean, autoreply_body?: string | null, whitelist_source_domains?: string | null, force_recaptcha?: boolean, force_hcaptcha?: boolean, force_turnstile?: boolean, turnstile_site_key?: string | null, turnstile_secret?: string | null, notification_cc_emails?: string | null, notification_bcc_emails?: string | null, notification_subject?: string | null, notification_from_name?: string | null, autoreply_subject?: string | null, autoreply_from_name?: string | null, autoreply_greeting?: string | null, autoreply_name?: string | null, autoreply_title?: string | null, autoreply_email?: string | null, logo?: string | null, button_background_color?: string | null, button_text_color?: string | null, data_receipt_email?: boolean, retention_days?: number, hide_dashboard_button?: boolean, exclude_submitter_from_reply?: boolean, custom_template?: string | null, use_custom_template?: boolean, autoreply_custom_template?: string | null, autoreply_use_custom_template?: boolean, notification_mail_template_id?: number | null, auto_response_mail_template_id?: number | null, confirmation_mail_template_id?: number | null, honeypot_field?: string | null, recaptcha_failed_url?: string | null, domain_id?: number | null, domain_email?: string | null, duplicate_filter?: boolean, project_id?: number, project_name?: string, redirect_heading?: string | null, redirect_message?: string | null, redirect_button_background_color?: string | null, redirect_button_text?: string | null, redirect_button_text_color?: string | null, content_blacklist?: string[] | null, allowed_domains?: string[] | null, blocked_domains?: string[] | null, smtp_email_validation?: boolean, contribute_to_spam_training?: boolean, form_webhooks?: any[], inbox_count?: number, spam_count?: number, trash_count?: number, created_at?: string, updated_at?: string } | { id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: {}, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string } | { id: number | string, name?: string, created_at?: string, updated_at?: string } | { id: number | string, form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean, failure_count?: number, last_failure_at?: string | null, created_at?: string, updated_at?: string } | {}"
+        "type": "{ success?: boolean, message?: string } | { id: number | string, uuid?: string | null, name?: string, timezone?: string, redirect_url?: string | null, use_ajax?: boolean, notification_emails?: string, autoreply?: boolean, autoreply_body?: string | null, whitelist_source_domains?: string | null, force_recaptcha?: boolean, force_hcaptcha?: boolean, force_turnstile?: boolean, turnstile_site_key?: string | null, turnstile_secret?: string | null, notification_cc_emails?: string | null, notification_bcc_emails?: string | null, notification_subject?: string | null, notification_from_name?: string | null, autoreply_subject?: string | null, autoreply_from_name?: string | null, autoreply_greeting?: string | null, autoreply_name?: string | null, autoreply_title?: string | null, autoreply_email?: string | null, logo?: string | null, button_background_color?: string | null, button_text_color?: string | null, data_receipt_email?: boolean, retention_days?: number, hide_dashboard_button?: boolean, exclude_submitter_from_reply?: boolean, custom_template?: string | null, use_custom_template?: boolean, autoreply_custom_template?: string | null, autoreply_use_custom_template?: boolean, notification_mail_template_id?: number | null, auto_response_mail_template_id?: number | null, confirmation_mail_template_id?: number | null, honeypot_field?: string | null, recaptcha_failed_url?: string | null, domain_id?: number | null, domain_email?: string | null, duplicate_filter?: boolean, project_id?: number, project_name?: string, redirect_heading?: string | null, redirect_message?: string | null, redirect_button_background_color?: string | null, redirect_button_text?: string | null, redirect_button_text_color?: string | null, content_blacklist?: string[] | null, allowed_domains?: string[] | null, blocked_domains?: string[] | null, smtp_email_validation?: boolean, contribute_to_spam_training?: boolean, form_webhooks?: any[], inbox_count?: number, spam_count?: number, trash_count?: number, created_at?: string, updated_at?: string } | { id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: Record<string, any>, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string } | { id: number | string, name?: string, created_at?: string, updated_at?: string } | { id: number | string, form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean, failure_count?: number, last_failure_at?: string | null, created_at?: string, updated_at?: string } | Record<string, any>"
       }
     },
     {
@@ -2063,7 +2063,7 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "form_id",
@@ -2088,37 +2088,37 @@
           {
             "key": "spam_reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhook_sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "referrer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_agent",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "payload_params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "form",
@@ -2184,7 +2184,7 @@
           {
             "key": "submissions",
             "optional": false,
-            "type": "{ id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: {}, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string }[]"
+            "type": "{ id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: Record<string, any>, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string }[]"
           },
           {
             "key": "meta",
@@ -2220,7 +2220,7 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "form_id",
@@ -2245,37 +2245,37 @@
           {
             "key": "spam_reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhook_sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "referrer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_agent",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "payload_params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "form",
@@ -2321,7 +2321,7 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "form_id",
@@ -2346,37 +2346,37 @@
           {
             "key": "spam_reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhook_sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "referrer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_agent",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "payload_params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "form",
@@ -2504,7 +2504,7 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "form_id",
@@ -2529,37 +2529,37 @@
           {
             "key": "spam_reason",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "webhook_sent_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ip",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "referrer",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_agent",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "payload_params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "attachments",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "form",
@@ -2670,7 +2670,7 @@
           {
             "key": "last_failure_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -2703,7 +2703,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ success?: boolean, message?: string } | { id: number | string, uuid?: string | null, name?: string, timezone?: string, redirect_url?: string | null, use_ajax?: boolean, notification_emails?: string, autoreply?: boolean, autoreply_body?: string | null, whitelist_source_domains?: string | null, force_recaptcha?: boolean, force_hcaptcha?: boolean, force_turnstile?: boolean, turnstile_site_key?: string | null, turnstile_secret?: string | null, notification_cc_emails?: string | null, notification_bcc_emails?: string | null, notification_subject?: string | null, notification_from_name?: string | null, autoreply_subject?: string | null, autoreply_from_name?: string | null, autoreply_greeting?: string | null, autoreply_name?: string | null, autoreply_title?: string | null, autoreply_email?: string | null, logo?: string | null, button_background_color?: string | null, button_text_color?: string | null, data_receipt_email?: boolean, retention_days?: number, hide_dashboard_button?: boolean, exclude_submitter_from_reply?: boolean, custom_template?: string | null, use_custom_template?: boolean, autoreply_custom_template?: string | null, autoreply_use_custom_template?: boolean, notification_mail_template_id?: number | null, auto_response_mail_template_id?: number | null, confirmation_mail_template_id?: number | null, honeypot_field?: string | null, recaptcha_failed_url?: string | null, domain_id?: number | null, domain_email?: string | null, duplicate_filter?: boolean, project_id?: number, project_name?: string, redirect_heading?: string | null, redirect_message?: string | null, redirect_button_background_color?: string | null, redirect_button_text?: string | null, redirect_button_text_color?: string | null, content_blacklist?: string[] | null, allowed_domains?: string[] | null, blocked_domains?: string[] | null, smtp_email_validation?: boolean, contribute_to_spam_training?: boolean, form_webhooks?: any[], inbox_count?: number, spam_count?: number, trash_count?: number, created_at?: string, updated_at?: string } | { id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: {}, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string } | { id: number | string, name?: string, created_at?: string, updated_at?: string } | { id: number | string, form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean, failure_count?: number, last_failure_at?: string | null, created_at?: string, updated_at?: string } | {}"
+        "type": "{ success?: boolean, message?: string } | { id: number | string, uuid?: string | null, name?: string, timezone?: string, redirect_url?: string | null, use_ajax?: boolean, notification_emails?: string, autoreply?: boolean, autoreply_body?: string | null, whitelist_source_domains?: string | null, force_recaptcha?: boolean, force_hcaptcha?: boolean, force_turnstile?: boolean, turnstile_site_key?: string | null, turnstile_secret?: string | null, notification_cc_emails?: string | null, notification_bcc_emails?: string | null, notification_subject?: string | null, notification_from_name?: string | null, autoreply_subject?: string | null, autoreply_from_name?: string | null, autoreply_greeting?: string | null, autoreply_name?: string | null, autoreply_title?: string | null, autoreply_email?: string | null, logo?: string | null, button_background_color?: string | null, button_text_color?: string | null, data_receipt_email?: boolean, retention_days?: number, hide_dashboard_button?: boolean, exclude_submitter_from_reply?: boolean, custom_template?: string | null, use_custom_template?: boolean, autoreply_custom_template?: string | null, autoreply_use_custom_template?: boolean, notification_mail_template_id?: number | null, auto_response_mail_template_id?: number | null, confirmation_mail_template_id?: number | null, honeypot_field?: string | null, recaptcha_failed_url?: string | null, domain_id?: number | null, domain_email?: string | null, duplicate_filter?: boolean, project_id?: number, project_name?: string, redirect_heading?: string | null, redirect_message?: string | null, redirect_button_background_color?: string | null, redirect_button_text?: string | null, redirect_button_text_color?: string | null, content_blacklist?: string[] | null, allowed_domains?: string[] | null, blocked_domains?: string[] | null, smtp_email_validation?: boolean, contribute_to_spam_training?: boolean, form_webhooks?: any[], inbox_count?: number, spam_count?: number, trash_count?: number, created_at?: string, updated_at?: string } | { id: number | string, email?: string | null, form_id?: number, spam?: boolean, read?: boolean, trash?: boolean, spam_reason?: string | null, webhook_sent_at?: string | null, ip?: string | null, referrer?: string | null, user_agent?: string | null, payload_params?: Record<string, any>, attachments?: any[] | null, form?: { name?: string, uuid?: string }, created_at?: string, updated_at?: string } | { id: number | string, name?: string, created_at?: string, updated_at?: string } | { id: number | string, form_id?: number, name?: string, url?: string, format?: string, trigger_when_spam?: boolean, enabled?: boolean, failure_count?: number, last_failure_at?: string | null, created_at?: string, updated_at?: string } | Record<string, any>"
       }
     },
     {
@@ -2767,7 +2767,7 @@
           {
             "key": "last_failure_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
@@ -2914,7 +2914,7 @@
           {
             "key": "last_failure_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",

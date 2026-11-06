@@ -57,18 +57,8 @@ await corsair.anonyflow.api.core.anonymizePacket({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | The data packet to anonymize |
+| `data` | `Record<string, any>` | Yes | The data packet to anonymize |
 | `keys` | `string[]` | Yes | The keys within the data packet to anonymize |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -77,17 +67,7 @@ await corsair.anonyflow.api.core.anonymizePacket({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `true` | Yes | — |
-| `value` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="value full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `value` | `Record<string, any>` | Yes | — |
 
 
 
@@ -139,18 +119,8 @@ await corsair.anonyflow.api.core.deanonymizePacket({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | The data packet to deanonymize |
+| `data` | `Record<string, any>` | Yes | The data packet to deanonymize |
 | `keys` | `string[]` | Yes | The keys within the data packet to deanonymize |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -159,17 +129,7 @@ await corsair.anonyflow.api.core.deanonymizePacket({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `true` | Yes | — |
-| `value` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="value full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `value` | `Record<string, any>` | Yes | — |
 
 
 

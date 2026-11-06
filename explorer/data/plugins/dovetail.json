@@ -1,7 +1,7 @@
 {
   "id": "dovetail",
   "displayName": "Dovetail",
-  "description": "Dovetail plugin for Corsair",
+  "description": "Customer research platform for managing projects, notes, highlights, insights, data, docs, folders, tags, contacts, channels, and files.",
   "npmPackageName": "@corsair-dev/dovetail",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -90,7 +90,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1817,7 +1817,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },

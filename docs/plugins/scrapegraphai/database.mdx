@@ -105,6 +105,7 @@ const rows = await corsair.scrapegraphai.db.jobs.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `kind` | `string` | equals, contains, startsWith, endsWith, in |
 | `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `websiteUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `updatedAt` | `date` | equals, before, after, between |
@@ -131,6 +132,7 @@ const rows = await corsair.scrapegraphai.db.markdownifies.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `request_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `website_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `result` | `string` | equals, contains, startsWith, endsWith, in |
 | `error` | `string` | equals, contains, startsWith, endsWith, in |
@@ -189,6 +191,7 @@ const rows = await corsair.scrapegraphai.db.searchScrapers.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `request_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `user_prompt` | `string` | equals, contains, startsWith, endsWith, in |
 | `num_results` | `number` | equals, gt, gte, lt, lte, in |
 | `markdown_content` | `string` | equals, contains, startsWith, endsWith, in |
@@ -216,6 +219,7 @@ const rows = await corsair.scrapegraphai.db.smartScrapers.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `request_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `website_url` | `string` | equals, contains, startsWith, endsWith, in |
 | `user_prompt` | `string` | equals, contains, startsWith, endsWith, in |
 | `error` | `string` | equals, contains, startsWith, endsWith, in |

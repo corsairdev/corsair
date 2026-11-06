@@ -678,7 +678,7 @@
           {
             "key": "prompt_guard",
             "optional": true,
-            "type": "defamation | specialized_advice | privacy | intellectual_property | indiscriminate_weapons | hate | sexual_content | elections | code_interpreter_abuse[]"
+            "type": "(defamation | specialized_advice | privacy | intellectual_property | indiscriminate_weapons | hate | sexual_content | elections | code_interpreter_abuse)[]"
           }
         ]
       },
@@ -785,7 +785,7 @@
           {
             "key": "input_values",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "stream",
@@ -1085,7 +1085,7 @@
           {
             "key": "features",
             "optional": true,
-            "type": "object | gui[]"
+            "type": "(object | gui)[]"
           },
           {
             "key": "annotated_image",
@@ -1171,7 +1171,7 @@
           {
             "key": "prompt",
             "optional": true,
-            "type": "string | string[] | {}"
+            "type": "string | string[] | Record<string, string>"
           },
           {
             "key": "page_range",
@@ -1337,7 +1337,7 @@
           {
             "key": "element_prompts",
             "optional": true,
-            "type": "string[] | {}"
+            "type": "string[] | Record<string, string>"
           },
           {
             "key": "selectors",
@@ -1362,7 +1362,7 @@
           {
             "key": "features",
             "optional": true,
-            "type": "meta | link[]"
+            "type": "(meta | link)[]"
           }
         ]
       },
@@ -1412,7 +1412,7 @@
           {
             "key": "selectors",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "context",

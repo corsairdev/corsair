@@ -42,7 +42,7 @@ await corsair.dynapictures.api.media.upload({});
 | `mimeType` | `string` | Yes | MIME type of an image. |
 | `filename` | `string` | Yes | Filename of an image. |
 | `size` | `number` | Yes | Image size in bytes. |
-| `animated` | `boolean` | No | — |
+| `animated` | `boolean \| null` | No | — |
 | `url` | `string` | Yes | Link to an image. |
 | `thumbnailUrl` | `string` | Yes | Link to an image thumbnail. |
 | `dateCreated` | `string` | Yes | Creation date of an asset. |
@@ -161,7 +161,7 @@ await corsair.dynapictures.api.workspaces.create({});
 | `name` | `string` | Yes | The name of a workspace. |
 | `dateCreated` | `string` | Yes | Creation date of a workspace. |
 | `dateUpdated` | `string` | Yes | Last modification date of a workspace. |
-| `memberRole` | `string` | No | — |
+| `memberRole` | `string \| null` | No | — |
 
 
 
@@ -195,7 +195,7 @@ await corsair.dynapictures.api.workspaces.delete({});
 | `name` | `string` | Yes | The name of a workspace. |
 | `dateCreated` | `string` | Yes | Creation date of a workspace. |
 | `dateUpdated` | `string` | Yes | Last modification date of a workspace. |
-| `memberRole` | `string` | No | — |
+| `memberRole` | `string \| null` | No | — |
 
 
 
@@ -265,7 +265,7 @@ await corsair.dynapictures.api.workspaces.update({});
 | `name` | `string` | Yes | The name of a workspace. |
 | `dateCreated` | `string` | Yes | Creation date of a workspace. |
 | `dateUpdated` | `string` | Yes | Last modification date of a workspace. |
-| `memberRole` | `string` | No | — |
+| `memberRole` | `string \| null` | No | — |
 
 
 

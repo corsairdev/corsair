@@ -67,22 +67,22 @@ A sending account hit a connection or sending error
 | `event_type` | `account_error` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -150,22 +150,22 @@ A campaign finished every lead
 | `event_type` | `campaign_completed` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -233,22 +233,22 @@ An auto-reply (such as out of office) arrived. Only all_events webhooks get it: 
 | `event_type` | `auto_reply_received` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -314,22 +314,22 @@ An email bounced
 | `event_type` | `email_bounced` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -395,22 +395,22 @@ A lead clicked a tracked link
 | `event_type` | `email_link_clicked \| link_clicked` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -476,22 +476,22 @@ A lead opened an email
 | `event_type` | `email_opened` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -557,22 +557,22 @@ A lead replied; carries reply_text, reply_html and email_id (pass it to emails.r
 | `event_type` | `reply_received` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -638,22 +638,22 @@ A campaign email was sent
 | `event_type` | `email_sent` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -721,22 +721,22 @@ An event with no dedicated handler: a custom lead label (event_type is the label
 | `event_type` | `string` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -804,22 +804,22 @@ A lead moved to Closed
 | `event_type` | `lead_closed` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -885,22 +885,22 @@ A lead was marked Interested
 | `event_type` | `lead_interested` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -966,22 +966,22 @@ A lead moved to Meeting booked
 | `event_type` | `lead_meeting_booked` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -1047,22 +1047,22 @@ A lead moved to Meeting completed
 | `event_type` | `lead_meeting_completed` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -1128,22 +1128,22 @@ A lead was marked Neutral
 | `event_type` | `lead_neutral` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -1209,22 +1209,22 @@ A lead moved to No show
 | `event_type` | `lead_no_show` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -1290,22 +1290,22 @@ A lead was marked Not interested
 | `event_type` | `lead_not_interested` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -1371,22 +1371,22 @@ A lead moved to Out of office
 | `event_type` | `lead_out_of_office` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -1452,22 +1452,22 @@ A lead unsubscribed
 | `event_type` | `lead_unsubscribed` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 
@@ -1533,22 +1533,22 @@ A lead moved to Wrong person
 | `event_type` | `lead_wrong_person` | Yes | — |
 | `timestamp` | `string` | Yes | When the event happened (ISO 8601) |
 | `workspace` | `string` | Yes | Workspace ID |
-| `campaign_id` | `string` | No | — |
-| `campaign_name` | `string` | No | — |
-| `lead_email` | `string` | No | — |
-| `email_account` | `string` | No | Sending account involved |
-| `step` | `number \| string` | No | Sequence step, from 1 |
-| `variant` | `number \| string` | No | Step variant, from 1 |
-| `is_first` | `boolean` | No | First event of this type for the lead |
-| `email_id` | `string` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
-| `email_subject` | `string` | No | — |
-| `email_text` | `string` | No | — |
-| `email_html` | `string` | No | — |
-| `unibox_url` | `string` | No | — |
-| `reply_subject` | `string` | No | — |
-| `reply_text_snippet` | `string` | No | — |
-| `reply_text` | `string` | No | — |
-| `reply_html` | `string` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `campaign_name` | `string \| null` | No | — |
+| `lead_email` | `string \| null` | No | — |
+| `email_account` | `string \| null` | No | Sending account involved |
+| `step` | `number \| string \| null` | No | Sequence step, from 1 |
+| `variant` | `number \| string \| null` | No | Step variant, from 1 |
+| `is_first` | `boolean \| null` | No | First event of this type for the lead |
+| `email_id` | `string \| null` | No | Email ID; pass as reply_to_uuid to emails.reply to answer it |
+| `email_subject` | `string \| null` | No | — |
+| `email_text` | `string \| null` | No | — |
+| `email_html` | `string \| null` | No | — |
+| `unibox_url` | `string \| null` | No | — |
+| `reply_subject` | `string \| null` | No | — |
+| `reply_text_snippet` | `string \| null` | No | — |
+| `reply_text` | `string \| null` | No | — |
+| `reply_html` | `string \| null` | No | — |
 
 
 

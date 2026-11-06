@@ -38,8 +38,8 @@ await corsair.zendesk.api.comments.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `comments` | `object[]` | Yes | — |
-| `next_page` | `string` | No | — |
-| `previous_page` | `string` | No | — |
+| `next_page` | `string \| null` | No | — |
+| `previous_page` | `string \| null` | No | — |
 | `count` | `number` | No | — |
 
 <AccordionGroup>
@@ -279,8 +279,8 @@ await corsair.zendesk.api.tickets.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `tickets` | `object[]` | Yes | — |
-| `next_page` | `string` | No | — |
-| `previous_page` | `string` | No | — |
+| `next_page` | `string \| null` | No | — |
+| `previous_page` | `string \| null` | No | — |
 | `count` | `number` | No | — |
 
 <AccordionGroup>
@@ -588,8 +588,8 @@ await corsair.zendesk.api.users.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `users` | `object[]` | Yes | — |
-| `next_page` | `string` | No | — |
-| `previous_page` | `string` | No | — |
+| `next_page` | `string \| null` | No | — |
+| `previous_page` | `string \| null` | No | — |
 | `count` | `number` | No | — |
 
 <AccordionGroup>

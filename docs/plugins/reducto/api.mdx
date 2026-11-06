@@ -69,11 +69,11 @@ await corsair.reducto.api.classify.classify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object` | Yes | — |
+| `input` | `string \| string[] \| object` | Yes | — |
 | `classification_schema` | `object[]` | No | — |
-| `category_groups` | `object` | No | — |
-| `page_range` | `object[]` | No | — |
-| `document_metadata` | `string` | No | — |
+| `category_groups` | `Record<string, any>` | No | — |
+| `page_range` | `object \| object[] \| number[] \| null` | No | — |
+| `document_metadata` | `string \| null` | No | — |
 | `model` | `default \| accurate` | No | — |
 | `priority` | `boolean` | No | — |
 | `force_url_result` | `boolean` | No | — |
@@ -99,14 +99,6 @@ string | string[] | {
 ```
 </Accordion>
 
-<Accordion title="category_groups full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="page_range full type">
 
 ```ts
@@ -116,7 +108,7 @@ string | string[] | {
 } | {
   start?: number | null,
   end?: number | null
-}[] | number[]
+}[] | number[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -129,8 +121,8 @@ string | string[] | {
 |------|------|----------|-------------|
 | `job_id` | `string` | Yes | — |
 | `result` | `object` | Yes | — |
-| `duration` | `number` | No | — |
-| `usage` | `object` | No | — |
+| `duration` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -153,7 +145,7 @@ string | string[] | {
   num_pages: number,
   credits?: number | null,
   num_categories: number
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -178,11 +170,11 @@ await corsair.reducto.api.classify.classifyAsync({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object` | Yes | — |
+| `input` | `string \| string[] \| object` | Yes | — |
 | `classification_schema` | `object[]` | No | — |
-| `category_groups` | `object` | No | — |
-| `page_range` | `object[]` | No | — |
-| `document_metadata` | `string` | No | — |
+| `category_groups` | `Record<string, any>` | No | — |
+| `page_range` | `object \| object[] \| number[] \| null` | No | — |
+| `document_metadata` | `string \| null` | No | — |
 | `model` | `default \| accurate` | No | — |
 | `priority` | `boolean` | No | — |
 | `force_url_result` | `boolean` | No | — |
@@ -209,14 +201,6 @@ string | string[] | {
 ```
 </Accordion>
 
-<Accordion title="category_groups full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="page_range full type">
 
 ```ts
@@ -226,7 +210,7 @@ string | string[] | {
 } | {
   start?: number | null,
   end?: number | null
-}[] | number[]
+}[] | number[] | null
 ```
 </Accordion>
 
@@ -234,8 +218,7 @@ string | string[] | {
 
 ```ts
 {
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   priority?: boolean,
   webhook?: {
     mode: direct,
@@ -282,10 +265,10 @@ await corsair.reducto.api.edit.edit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `document_url` | `object` | Yes | — |
+| `document_url` | `string \| object` | Yes | — |
 | `edit_instructions` | `string` | Yes | — |
 | `edit_options` | `object` | No | — |
-| `form_schema` | `any[]` | No | — |
+| `form_schema` | `any[] \| null` | No | — |
 | `priority` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -320,9 +303,9 @@ string | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `document_url` | `string` | Yes | — |
-| `job_id` | `string` | No | — |
-| `form_schema` | `any[]` | No | — |
-| `usage` | `object` | No | — |
+| `job_id` | `string \| null` | No | — |
+| `form_schema` | `any[] \| null` | No | — |
+| `usage` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="usage full type">
@@ -331,7 +314,7 @@ string | {
 {
   num_pages: number,
   credits?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -356,10 +339,10 @@ await corsair.reducto.api.edit.editAsync({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `document_url` | `object` | Yes | — |
+| `document_url` | `string \| object` | Yes | — |
 | `edit_instructions` | `string` | Yes | — |
 | `edit_options` | `object` | No | — |
-| `form_schema` | `any[]` | No | — |
+| `form_schema` | `any[] \| null` | No | — |
 | `priority` | `boolean` | No | — |
 | `webhook` | `object` | No | — |
 
@@ -434,7 +417,7 @@ await corsair.reducto.api.extract.extract({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object` | Yes | — |
+| `input` | `string \| string[] \| object` | Yes | — |
 | `parsing` | `object` | No | — |
 | `instructions` | `object` | No | — |
 | `settings` | `object` | No | — |
@@ -472,21 +455,21 @@ string | string[] | {
       chunk_size?: number | null,
       chunk_overlap?: number
     },
-    filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[],
+    filter_blocks?: (Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature)[],
     embedding_optimized?: boolean
   },
   formatting?: {
     add_page_markers?: boolean,
     table_output_format?: html | json | md | jsonbbox | dynamic | csv,
     merge_tables?: boolean,
-    include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[]
+    include?: (change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks)[]
   },
   spreadsheet?: {
     split_large_tables?: {
       enabled?: boolean,
       size?: number
     },
-    include?: cell_colors | formula | dropdowns[],
+    include?: (cell_colors | formula | dropdowns)[],
     clustering?: accurate | fast | disabled,
     exclude?: string[],
     max_cell_count?: number | null
@@ -497,7 +480,7 @@ string | string[] | {
     force_url_result?: boolean,
     force_file_extension?: string | null,
     return_ocr_data?: boolean,
-    return_images?: figure | table | page[],
+    return_images?: (figure | table | page)[],
     embed_pdf_metadata?: boolean,
     extract_document_properties?: boolean,
     embed_pdf_metadata_dpi?: number,
@@ -560,11 +543,11 @@ string | string[] | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `usage` | `object` | Yes | — |
-| `result` | `object` | Yes | — |
-| `citations` | `object` | No | — |
-| `job_id` | `string` | No | — |
-| `duration` | `number` | No | — |
-| `studio_link` | `string` | No | — |
+| `result` | `any[] \| Record<string, any> \| object` | Yes | — |
+| `citations` | `any[] \| object \| null` | No | — |
+| `job_id` | `string \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `studio_link` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="usage full type">
@@ -581,8 +564,7 @@ string | string[] | {
 <Accordion title="result full type">
 
 ```ts
-any[] | {
-} | {
+any[] | Record<string, any> | {
   type: url,
   url: string,
   result_id: string
@@ -597,7 +579,7 @@ any[] | {
   type: url,
   url: string,
   result_id: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -622,7 +604,7 @@ await corsair.reducto.api.extract.extractAsync({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object` | Yes | — |
+| `input` | `string \| string[] \| object` | Yes | — |
 | `parsing` | `object` | No | — |
 | `instructions` | `object` | No | — |
 | `settings` | `object` | No | — |
@@ -662,21 +644,21 @@ string | string[] | {
       chunk_size?: number | null,
       chunk_overlap?: number
     },
-    filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[],
+    filter_blocks?: (Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature)[],
     embedding_optimized?: boolean
   },
   formatting?: {
     add_page_markers?: boolean,
     table_output_format?: html | json | md | jsonbbox | dynamic | csv,
     merge_tables?: boolean,
-    include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[]
+    include?: (change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks)[]
   },
   spreadsheet?: {
     split_large_tables?: {
       enabled?: boolean,
       size?: number
     },
-    include?: cell_colors | formula | dropdowns[],
+    include?: (cell_colors | formula | dropdowns)[],
     clustering?: accurate | fast | disabled,
     exclude?: string[],
     max_cell_count?: number | null
@@ -687,7 +669,7 @@ string | string[] | {
     force_url_result?: boolean,
     force_file_extension?: string | null,
     return_ocr_data?: boolean,
-    return_images?: figure | table | page[],
+    return_images?: (figure | table | page)[],
     embed_pdf_metadata?: boolean,
     extract_document_properties?: boolean,
     embed_pdf_metadata_dpi?: number,
@@ -746,8 +728,7 @@ string | string[] | {
 
 ```ts
 {
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   priority?: boolean,
   webhook?: {
     mode: direct,
@@ -825,7 +806,7 @@ await corsair.reducto.api.files.upload({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `file` | `custom` | Yes | — |
-| `extension` | `string` | No | — |
+| `extension` | `string \| null` | No | — |
 
 
 
@@ -834,7 +815,7 @@ await corsair.reducto.api.files.upload({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `file_id` | `string` | Yes | — |
-| `presigned_url` | `string` | No | — |
+| `presigned_url` | `string \| null` | No | — |
 
 
 
@@ -862,17 +843,7 @@ await corsair.reducto.api.jobs.cancel({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-} | null | undefined
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any> \| null \| undefined`
 
 
 ---
@@ -933,17 +904,17 @@ await corsair.reducto.api.jobs.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string` | Yes | — |
-| `result` | `any` | No | — |
-| `progress` | `number` | No | — |
-| `reason` | `string` | No | — |
-| `error` | `any` | No | — |
-| `type` | `string` | No | — |
-| `source` | `any` | No | — |
-| `num_pages` | `number` | No | — |
-| `total_pages` | `number` | No | — |
-| `duration` | `number` | No | — |
-| `created_at` | `string` | No | — |
-| `bucket` | `any` | No | — |
+| `result` | `any \| null` | No | — |
+| `progress` | `number \| null` | No | — |
+| `reason` | `string \| null` | No | — |
+| `error` | `any \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `source` | `any \| null` | No | — |
+| `num_pages` | `number \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `bucket` | `any \| null` | No | — |
 
 
 
@@ -966,7 +937,7 @@ await corsair.reducto.api.jobs.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `exclude_configs` | `boolean` | No | — |
-| `cursor` | `string` | No | — |
+| `cursor` | `string \| null` | No | — |
 | `limit` | `number` | No | — |
 
 
@@ -976,7 +947,7 @@ await corsair.reducto.api.jobs.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `jobs` | `object[]` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="jobs full type">
@@ -1020,7 +991,7 @@ await corsair.reducto.api.parse.parse({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object` | Yes | — |
+| `input` | `string \| string[] \| object` | Yes | — |
 | `enhance` | `object` | No | — |
 | `retrieval` | `object` | No | — |
 | `formatting` | `object` | No | — |
@@ -1065,7 +1036,7 @@ string | string[] | {
     chunk_size?: number | null,
     chunk_overlap?: number
   },
-  filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[],
+  filter_blocks?: (Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature)[],
   embedding_optimized?: boolean
 }
 ```
@@ -1078,7 +1049,7 @@ string | string[] | {
   add_page_markers?: boolean,
   table_output_format?: html | json | md | jsonbbox | dynamic | csv,
   merge_tables?: boolean,
-  include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[]
+  include?: (change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks)[]
 }
 ```
 </Accordion>
@@ -1091,7 +1062,7 @@ string | string[] | {
     enabled?: boolean,
     size?: number
   },
-  include?: cell_colors | formula | dropdowns[],
+  include?: (cell_colors | formula | dropdowns)[],
   clustering?: accurate | fast | disabled,
   exclude?: string[],
   max_cell_count?: number | null
@@ -1108,7 +1079,7 @@ string | string[] | {
   force_url_result?: boolean,
   force_file_extension?: string | null,
   return_ocr_data?: boolean,
-  return_images?: figure | table | page[],
+  return_images?: (figure | table | page)[],
   embed_pdf_metadata?: boolean,
   extract_document_properties?: boolean,
   embed_pdf_metadata_dpi?: number,
@@ -1138,10 +1109,10 @@ string | string[] | {
 | `duration` | `number` | Yes | — |
 | `usage` | `object` | Yes | — |
 | `result` | `object` | Yes | — |
-| `response_type` | `string` | No | — |
-| `pdf_url` | `string` | No | — |
-| `studio_link` | `string` | No | — |
-| `document_properties` | `object` | No | — |
+| `response_type` | `string \| null` | No | — |
+| `pdf_url` | `string \| null` | No | — |
+| `studio_link` | `string \| null` | No | — |
+| `document_properties` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="usage full type">
@@ -1181,8 +1152,7 @@ string | string[] | {
       image_url?: string | null,
       chart_data?: string[] | null,
       merged_tables?: any[],
-      extra?: {
-      }
+      extra?: Record<string, any>
     }[],
     enriched?: string | null,
     enrichment_success?: boolean
@@ -1239,7 +1209,7 @@ string | string[] | {
   last_modified_by?: string | null,
   created_at?: string | null,
   modified_at?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1264,7 +1234,7 @@ await corsair.reducto.api.parse.parseAsync({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object` | Yes | — |
+| `input` | `string \| string[] \| object` | Yes | — |
 | `enhance` | `object` | No | — |
 | `retrieval` | `object` | No | — |
 | `formatting` | `object` | No | — |
@@ -1311,7 +1281,7 @@ string | string[] | {
     chunk_size?: number | null,
     chunk_overlap?: number
   },
-  filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[],
+  filter_blocks?: (Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature)[],
   embedding_optimized?: boolean
 }
 ```
@@ -1324,7 +1294,7 @@ string | string[] | {
   add_page_markers?: boolean,
   table_output_format?: html | json | md | jsonbbox | dynamic | csv,
   merge_tables?: boolean,
-  include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[]
+  include?: (change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks)[]
 }
 ```
 </Accordion>
@@ -1337,7 +1307,7 @@ string | string[] | {
     enabled?: boolean,
     size?: number
   },
-  include?: cell_colors | formula | dropdowns[],
+  include?: (cell_colors | formula | dropdowns)[],
   clustering?: accurate | fast | disabled,
   exclude?: string[],
   max_cell_count?: number | null
@@ -1354,7 +1324,7 @@ string | string[] | {
   force_url_result?: boolean,
   force_file_extension?: string | null,
   return_ocr_data?: boolean,
-  return_images?: figure | table | page[],
+  return_images?: (figure | table | page)[],
   embed_pdf_metadata?: boolean,
   extract_document_properties?: boolean,
   embed_pdf_metadata_dpi?: number,
@@ -1377,8 +1347,7 @@ string | string[] | {
 
 ```ts
 {
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   priority?: boolean,
   webhook?: {
     mode: direct,
@@ -1425,7 +1394,7 @@ await corsair.reducto.api.pipeline.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object` | Yes | — |
+| `input` | `string \| string[] \| object` | Yes | — |
 | `pipeline_id` | `string` | Yes | — |
 | `settings` | `object` | No | — |
 
@@ -1492,7 +1461,7 @@ await corsair.reducto.api.pipeline.runAsync({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object` | Yes | — |
+| `input` | `string \| string[] \| object` | Yes | — |
 | `pipeline_id` | `string` | Yes | — |
 | `settings` | `object` | No | — |
 | `async` | `object` | No | — |
@@ -1521,8 +1490,7 @@ string | string[] | {
 
 ```ts
 {
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   priority?: boolean,
   webhook?: {
     mode: direct,
@@ -1569,7 +1537,7 @@ await corsair.reducto.api.split.split({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object` | Yes | — |
+| `input` | `string \| string[] \| object` | Yes | — |
 | `parsing` | `object` | No | — |
 | `split_description` | `object[]` | Yes | — |
 | `split_rules` | `string` | No | — |
@@ -1608,21 +1576,21 @@ string | string[] | {
       chunk_size?: number | null,
       chunk_overlap?: number
     },
-    filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[],
+    filter_blocks?: (Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature)[],
     embedding_optimized?: boolean
   },
   formatting?: {
     add_page_markers?: boolean,
     table_output_format?: html | json | md | jsonbbox | dynamic | csv,
     merge_tables?: boolean,
-    include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[]
+    include?: (change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks)[]
   },
   spreadsheet?: {
     split_large_tables?: {
       enabled?: boolean,
       size?: number
     },
-    include?: cell_colors | formula | dropdowns[],
+    include?: (cell_colors | formula | dropdowns)[],
     clustering?: accurate | fast | disabled,
     exclude?: string[],
     max_cell_count?: number | null
@@ -1633,7 +1601,7 @@ string | string[] | {
     force_url_result?: boolean,
     force_file_extension?: string | null,
     return_ocr_data?: boolean,
-    return_images?: figure | table | page[],
+    return_images?: (figure | table | page)[],
     embed_pdf_metadata?: boolean,
     extract_document_properties?: boolean,
     embed_pdf_metadata_dpi?: number,
@@ -1685,9 +1653,9 @@ string | string[] | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `usage` | `object` | Yes | — |
-| `result` | `object` | Yes | — |
-| `job_id` | `string` | No | — |
-| `duration` | `number` | No | — |
+| `result` | `object \| Record<string, any>` | Yes | — |
+| `job_id` | `string \| null` | No | — |
+| `duration` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="usage full type">
@@ -1712,8 +1680,7 @@ string | string[] | {
   type: url,
   url: string,
   result_id: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1738,7 +1705,7 @@ await corsair.reducto.api.split.splitAsync({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `object` | Yes | — |
+| `input` | `string \| string[] \| object` | Yes | — |
 | `parsing` | `object` | No | — |
 | `split_description` | `object[]` | Yes | — |
 | `split_rules` | `string` | No | — |
@@ -1778,21 +1745,21 @@ string | string[] | {
       chunk_size?: number | null,
       chunk_overlap?: number
     },
-    filter_blocks?: Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature[],
+    filter_blocks?: (Header | Footer | Title | Section Header | Page Number | List Item | Figure | Table | Key Value | Text | Comment | Signature)[],
     embedding_optimized?: boolean
   },
   formatting?: {
     add_page_markers?: boolean,
     table_output_format?: html | json | md | jsonbbox | dynamic | csv,
     merge_tables?: boolean,
-    include?: change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks[]
+    include?: (change_tracking | highlight | comments | hyperlinks | signatures | ignore_watermarks)[]
   },
   spreadsheet?: {
     split_large_tables?: {
       enabled?: boolean,
       size?: number
     },
-    include?: cell_colors | formula | dropdowns[],
+    include?: (cell_colors | formula | dropdowns)[],
     clustering?: accurate | fast | disabled,
     exclude?: string[],
     max_cell_count?: number | null
@@ -1803,7 +1770,7 @@ string | string[] | {
     force_url_result?: boolean,
     force_file_extension?: string | null,
     return_ocr_data?: boolean,
-    return_images?: figure | table | page[],
+    return_images?: (figure | table | page)[],
     embed_pdf_metadata?: boolean,
     extract_document_properties?: boolean,
     embed_pdf_metadata_dpi?: number,
@@ -1851,8 +1818,7 @@ string | string[] | {
 
 ```ts
 {
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   priority?: boolean,
   webhook?: {
     mode: direct,

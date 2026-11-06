@@ -153,8 +153,9 @@ That guide covers the expected scaffold and generator flow. In practice, the nor
 2. Open an issue first and align on the integration.
 3. Generate the plugin scaffold from the repo root.
 4. Implement endpoints, auth, schemas, and webhooks.
-5. Register the plugin in `demo/testing/src/server/corsair.ts`.
-6. Test the plugin through `demo/testing/src/scripts/test-script.ts`.
+5. Fill in `packages/<plugin>/plugin-docs.yaml`: `displayName` (the provider's name as they write it, e.g. `bunny.net`, `PDF.co`) and a one-sentence `description` of what the plugin covers. The docs, the catalog and corsair.dev use them, and `pnpm run validate:plugins` fails while either is missing or still a TODO. Then run `pnpm generate:docs -- --plugin=<id>`.
+6. Register the plugin in `demo/testing/src/server/corsair.ts`.
+7. Test the plugin through `demo/testing/src/scripts/test-script.ts`.
 
 The repo includes a generator:
 
