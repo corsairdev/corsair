@@ -19,9 +19,18 @@ import {
 	createAccount,
 	createContact,
 	createCustomFieldSub,
+	createMeeting,
+	createOpportunity,
+	createTag,
+	createTask,
+	createWorkflow,
 	deleteAccount,
 	deleteContact,
 	deleteCustomField,
+	deleteMeeting,
+	deleteOpportunity,
+	deleteTag,
+	deleteTask,
 	listAccountFeed,
 	listAccountMessages,
 	listAccounts,
@@ -29,14 +38,29 @@ import {
 	listCustomFieldOptions,
 	listCustomFields,
 	listCustomFieldTypes,
+	listOpportunities,
+	listTags,
+	listTagUsage,
+	listTasks,
+	listWorkflows,
 	retrieveAccount,
 	retrieveContact,
 	retrieveCustomField,
+	retrieveMeeting,
+	retrieveOpportunity,
+	retrieveTag,
+	retrieveWorkflow,
 	updateAccount,
 	updateAccountContacts,
 	updateAccountUsers,
 	updateContact,
 	updateCustomField,
+	updateMeeting,
+	updateOpportunity,
+	updateTag,
+	updateTask,
+	updateWorkflow,
+	updateWorkflowAudience,
 } from './endpoints';
 import type {
 	SalesflareEndpointInputs,
@@ -81,6 +105,14 @@ export type SalesflareEndpoints = {
 	createAccount: SalesflareEndpoint<'createAccount'>;
 	listContacts: SalesflareEndpoint<'listContacts'>;
 	createContact: SalesflareEndpoint<'createContact'>;
+	listOpportunities: SalesflareEndpoint<'listOpportunities'>;
+	createOpportunity: SalesflareEndpoint<'createOpportunity'>;
+	listTags: SalesflareEndpoint<'listTags'>;
+	createTag: SalesflareEndpoint<'createTag'>;
+	listTasks: SalesflareEndpoint<'listTasks'>;
+	createTask: SalesflareEndpoint<'createTask'>;
+	listWorkflows: SalesflareEndpoint<'listWorkflows'>;
+	createWorkflow: SalesflareEndpoint<'createWorkflow'>;
 	retrieveAccount: SalesflareEndpoint<'retrieveAccount'>;
 	updateAccount: SalesflareEndpoint<'updateAccount'>;
 	deleteAccount: SalesflareEndpoint<'deleteAccount'>;
@@ -90,16 +122,32 @@ export type SalesflareEndpoints = {
 	listCustomFieldTypes: SalesflareEndpoint<'listCustomFieldTypes'>;
 	listCustomFields: SalesflareEndpoint<'listCustomFields'>;
 	createCustomFieldSub: SalesflareEndpoint<'createCustomFieldSub'>;
+	retrieveMeeting: SalesflareEndpoint<'retrieveMeeting'>;
+	updateMeeting: SalesflareEndpoint<'updateMeeting'>;
+	deleteMeeting: SalesflareEndpoint<'deleteMeeting'>;
+	retrieveOpportunity: SalesflareEndpoint<'retrieveOpportunity'>;
+	updateOpportunity: SalesflareEndpoint<'updateOpportunity'>;
+	deleteOpportunity: SalesflareEndpoint<'deleteOpportunity'>;
+	retrieveTag: SalesflareEndpoint<'retrieveTag'>;
+	updateTag: SalesflareEndpoint<'updateTag'>;
+	deleteTag: SalesflareEndpoint<'deleteTag'>;
+	retrieveWorkflow: SalesflareEndpoint<'retrieveWorkflow'>;
+	updateWorkflow: SalesflareEndpoint<'updateWorkflow'>;
 	listAccountMessages: SalesflareEndpoint<'listAccountMessages'>;
 	listAccountFeed: SalesflareEndpoint<'listAccountFeed'>;
 	retrieveCustomField: SalesflareEndpoint<'retrieveCustomField'>;
 	updateCustomField: SalesflareEndpoint<'updateCustomField'>;
 	deleteCustomField: SalesflareEndpoint<'deleteCustomField'>;
+	listTagUsage: SalesflareEndpoint<'listTagUsage'>;
 	listCustomFieldOptions: SalesflareEndpoint<'listCustomFieldOptions'>;
+	createMeeting: SalesflareEndpoint<'createMeeting'>;
 	addAccountUsers: SalesflareEndpoint<'addAccountUsers'>;
 	updateAccountUsers: SalesflareEndpoint<'updateAccountUsers'>;
 	addAccountContacts: SalesflareEndpoint<'addAccountContacts'>;
 	updateAccountContacts: SalesflareEndpoint<'updateAccountContacts'>;
+	updateTask: SalesflareEndpoint<'updateTask'>;
+	deleteTask: SalesflareEndpoint<'deleteTask'>;
+	updateWorkflowAudience: SalesflareEndpoint<'updateWorkflowAudience'>;
 };
 
 const salesflareEndpointsNested = {
@@ -123,6 +171,34 @@ const salesflareEndpointsNested = {
 		updateContact: updateContact,
 		deleteContact: deleteContact,
 	},
+	opportunities: {
+		listOpportunities: listOpportunities,
+		createOpportunity: createOpportunity,
+		retrieveOpportunity: retrieveOpportunity,
+		updateOpportunity: updateOpportunity,
+		deleteOpportunity: deleteOpportunity,
+	},
+	tags: {
+		listTags: listTags,
+		createTag: createTag,
+		retrieveTag: retrieveTag,
+		updateTag: updateTag,
+		deleteTag: deleteTag,
+		listTagUsage: listTagUsage,
+	},
+	tasks: {
+		listTasks: listTasks,
+		createTask: createTask,
+		updateTask: updateTask,
+		deleteTask: deleteTask,
+	},
+	workflows: {
+		listWorkflows: listWorkflows,
+		createWorkflow: createWorkflow,
+		retrieveWorkflow: retrieveWorkflow,
+		updateWorkflow: updateWorkflow,
+		updateWorkflowAudience: updateWorkflowAudience,
+	},
 	customfields: {
 		listCustomFieldTypes: listCustomFieldTypes,
 		listCustomFields: listCustomFields,
@@ -131,6 +207,12 @@ const salesflareEndpointsNested = {
 		updateCustomField: updateCustomField,
 		deleteCustomField: deleteCustomField,
 		listCustomFieldOptions: listCustomFieldOptions,
+	},
+	meetings: {
+		retrieveMeeting: retrieveMeeting,
+		updateMeeting: updateMeeting,
+		deleteMeeting: deleteMeeting,
+		createMeeting: createMeeting,
 	},
 } as const;
 
@@ -150,6 +232,38 @@ export const salesflareEndpointSchemas = {
 	'contacts.createContact': {
 		input: SalesflareEndpointInputSchemas.createContact,
 		output: SalesflareEndpointOutputSchemas.createContact,
+	},
+	'opportunities.listOpportunities': {
+		input: SalesflareEndpointInputSchemas.listOpportunities,
+		output: SalesflareEndpointOutputSchemas.listOpportunities,
+	},
+	'opportunities.createOpportunity': {
+		input: SalesflareEndpointInputSchemas.createOpportunity,
+		output: SalesflareEndpointOutputSchemas.createOpportunity,
+	},
+	'tags.listTags': {
+		input: SalesflareEndpointInputSchemas.listTags,
+		output: SalesflareEndpointOutputSchemas.listTags,
+	},
+	'tags.createTag': {
+		input: SalesflareEndpointInputSchemas.createTag,
+		output: SalesflareEndpointOutputSchemas.createTag,
+	},
+	'tasks.listTasks': {
+		input: SalesflareEndpointInputSchemas.listTasks,
+		output: SalesflareEndpointOutputSchemas.listTasks,
+	},
+	'tasks.createTask': {
+		input: SalesflareEndpointInputSchemas.createTask,
+		output: SalesflareEndpointOutputSchemas.createTask,
+	},
+	'workflows.listWorkflows': {
+		input: SalesflareEndpointInputSchemas.listWorkflows,
+		output: SalesflareEndpointOutputSchemas.listWorkflows,
+	},
+	'workflows.createWorkflow': {
+		input: SalesflareEndpointInputSchemas.createWorkflow,
+		output: SalesflareEndpointOutputSchemas.createWorkflow,
 	},
 	'accounts.retrieveAccount': {
 		input: SalesflareEndpointInputSchemas.retrieveAccount,
@@ -187,6 +301,50 @@ export const salesflareEndpointSchemas = {
 		input: SalesflareEndpointInputSchemas.createCustomFieldSub,
 		output: SalesflareEndpointOutputSchemas.createCustomFieldSub,
 	},
+	'meetings.retrieveMeeting': {
+		input: SalesflareEndpointInputSchemas.retrieveMeeting,
+		output: SalesflareEndpointOutputSchemas.retrieveMeeting,
+	},
+	'meetings.updateMeeting': {
+		input: SalesflareEndpointInputSchemas.updateMeeting,
+		output: SalesflareEndpointOutputSchemas.updateMeeting,
+	},
+	'meetings.deleteMeeting': {
+		input: SalesflareEndpointInputSchemas.deleteMeeting,
+		output: SalesflareEndpointOutputSchemas.deleteMeeting,
+	},
+	'opportunities.retrieveOpportunity': {
+		input: SalesflareEndpointInputSchemas.retrieveOpportunity,
+		output: SalesflareEndpointOutputSchemas.retrieveOpportunity,
+	},
+	'opportunities.updateOpportunity': {
+		input: SalesflareEndpointInputSchemas.updateOpportunity,
+		output: SalesflareEndpointOutputSchemas.updateOpportunity,
+	},
+	'opportunities.deleteOpportunity': {
+		input: SalesflareEndpointInputSchemas.deleteOpportunity,
+		output: SalesflareEndpointOutputSchemas.deleteOpportunity,
+	},
+	'tags.retrieveTag': {
+		input: SalesflareEndpointInputSchemas.retrieveTag,
+		output: SalesflareEndpointOutputSchemas.retrieveTag,
+	},
+	'tags.updateTag': {
+		input: SalesflareEndpointInputSchemas.updateTag,
+		output: SalesflareEndpointOutputSchemas.updateTag,
+	},
+	'tags.deleteTag': {
+		input: SalesflareEndpointInputSchemas.deleteTag,
+		output: SalesflareEndpointOutputSchemas.deleteTag,
+	},
+	'workflows.retrieveWorkflow': {
+		input: SalesflareEndpointInputSchemas.retrieveWorkflow,
+		output: SalesflareEndpointOutputSchemas.retrieveWorkflow,
+	},
+	'workflows.updateWorkflow': {
+		input: SalesflareEndpointInputSchemas.updateWorkflow,
+		output: SalesflareEndpointOutputSchemas.updateWorkflow,
+	},
 	'accounts.listAccountMessages': {
 		input: SalesflareEndpointInputSchemas.listAccountMessages,
 		output: SalesflareEndpointOutputSchemas.listAccountMessages,
@@ -207,9 +365,17 @@ export const salesflareEndpointSchemas = {
 		input: SalesflareEndpointInputSchemas.deleteCustomField,
 		output: SalesflareEndpointOutputSchemas.deleteCustomField,
 	},
+	'tags.listTagUsage': {
+		input: SalesflareEndpointInputSchemas.listTagUsage,
+		output: SalesflareEndpointOutputSchemas.listTagUsage,
+	},
 	'customfields.listCustomFieldOptions': {
 		input: SalesflareEndpointInputSchemas.listCustomFieldOptions,
 		output: SalesflareEndpointOutputSchemas.listCustomFieldOptions,
+	},
+	'meetings.createMeeting': {
+		input: SalesflareEndpointInputSchemas.createMeeting,
+		output: SalesflareEndpointOutputSchemas.createMeeting,
 	},
 	'accounts.addAccountUsers': {
 		input: SalesflareEndpointInputSchemas.addAccountUsers,
@@ -226,6 +392,18 @@ export const salesflareEndpointSchemas = {
 	'accounts.updateAccountContacts': {
 		input: SalesflareEndpointInputSchemas.updateAccountContacts,
 		output: SalesflareEndpointOutputSchemas.updateAccountContacts,
+	},
+	'tasks.updateTask': {
+		input: SalesflareEndpointInputSchemas.updateTask,
+		output: SalesflareEndpointOutputSchemas.updateTask,
+	},
+	'tasks.deleteTask': {
+		input: SalesflareEndpointInputSchemas.deleteTask,
+		output: SalesflareEndpointOutputSchemas.deleteTask,
+	},
+	'workflows.updateWorkflowAudience': {
+		input: SalesflareEndpointInputSchemas.updateWorkflowAudience,
+		output: SalesflareEndpointOutputSchemas.updateWorkflowAudience,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof salesflareEndpointsNested
@@ -249,6 +427,38 @@ const salesflareEndpointMeta = {
 	'contacts.createContact': {
 		riskLevel: 'write',
 		description: 'Create a new contact',
+	},
+	'opportunities.listOpportunities': {
+		riskLevel: 'read',
+		description: 'List Opportunities',
+	},
+	'opportunities.createOpportunity': {
+		riskLevel: 'write',
+		description: 'Create a new opportunity',
+	},
+	'tags.listTags': {
+		riskLevel: 'read',
+		description: 'List Tags',
+	},
+	'tags.createTag': {
+		riskLevel: 'write',
+		description: 'Create a new tag',
+	},
+	'tasks.listTasks': {
+		riskLevel: 'read',
+		description: 'List Tasks',
+	},
+	'tasks.createTask': {
+		riskLevel: 'write',
+		description: 'Create a new task',
+	},
+	'workflows.listWorkflows': {
+		riskLevel: 'read',
+		description: 'List Workflows',
+	},
+	'workflows.createWorkflow': {
+		riskLevel: 'write',
+		description: 'Create a new workflow',
 	},
 	'accounts.retrieveAccount': {
 		riskLevel: 'read',
@@ -286,6 +496,50 @@ const salesflareEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Create a new customField sub-resource',
 	},
+	'meetings.retrieveMeeting': {
+		riskLevel: 'read',
+		description: 'Retrieve a single meeting by ID',
+	},
+	'meetings.updateMeeting': {
+		riskLevel: 'write',
+		description: 'Update a meeting',
+	},
+	'meetings.deleteMeeting': {
+		riskLevel: 'destructive',
+		description: 'Delete a meeting',
+	},
+	'opportunities.retrieveOpportunity': {
+		riskLevel: 'read',
+		description: 'Retrieve a single opportunity by ID',
+	},
+	'opportunities.updateOpportunity': {
+		riskLevel: 'write',
+		description: 'Update a opportunity',
+	},
+	'opportunities.deleteOpportunity': {
+		riskLevel: 'destructive',
+		description: 'Delete a opportunity',
+	},
+	'tags.retrieveTag': {
+		riskLevel: 'read',
+		description: 'Retrieve a single tag by ID',
+	},
+	'tags.updateTag': {
+		riskLevel: 'write',
+		description: 'Update a tag',
+	},
+	'tags.deleteTag': {
+		riskLevel: 'destructive',
+		description: 'Delete a tag',
+	},
+	'workflows.retrieveWorkflow': {
+		riskLevel: 'read',
+		description: 'Retrieve a single workflow by ID',
+	},
+	'workflows.updateWorkflow': {
+		riskLevel: 'write',
+		description: 'Update a workflow',
+	},
 	'accounts.listAccountMessages': {
 		riskLevel: 'read',
 		description: 'List messages on an account',
@@ -306,9 +560,17 @@ const salesflareEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Delete a customField',
 	},
+	'tags.listTagUsage': {
+		riskLevel: 'read',
+		description: 'List the usage statistics of a tag',
+	},
 	'customfields.listCustomFieldOptions': {
 		riskLevel: 'read',
 		description: 'List the options of a custom field',
+	},
+	'meetings.createMeeting': {
+		riskLevel: 'write',
+		description: 'Create a new meeting',
 	},
 	'accounts.addAccountUsers': {
 		riskLevel: 'write',
@@ -325,6 +587,18 @@ const salesflareEndpointMeta = {
 	'accounts.updateAccountContacts': {
 		riskLevel: 'write',
 		description: 'Update the contact links of an account',
+	},
+	'tasks.updateTask': {
+		riskLevel: 'write',
+		description: 'Update a task',
+	},
+	'tasks.deleteTask': {
+		riskLevel: 'destructive',
+		description: 'Delete a task',
+	},
+	'workflows.updateWorkflowAudience': {
+		riskLevel: 'write',
+		description: 'Update the audience record of a workflow',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof salesflareEndpointsNested

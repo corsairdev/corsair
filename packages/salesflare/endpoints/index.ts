@@ -27,4 +27,38 @@ export {
 	retrieveCustomField,
 	updateCustomField,
 } from './customfields';
+export {
+	createMeeting,
+	deleteMeeting,
+	retrieveMeeting,
+	updateMeeting,
+} from './meetings';
+export {
+	createOpportunity,
+	deleteOpportunity,
+	listOpportunities,
+	retrieveOpportunity,
+	updateOpportunity,
+} from './opportunities';
+export {
+	createTag,
+	deleteTag,
+	listTags,
+	listTagUsage,
+	retrieveTag,
+	updateTag,
+} from './tags';
+export {
+	createTask,
+	deleteTask,
+	listTasks,
+	updateTask,
+} from './tasks';
 export * from './types';
+export {
+	createWorkflow,
+	listWorkflows,
+	retrieveWorkflow,
+	updateWorkflow,
+	updateWorkflowAudience,
+} from './workflows';

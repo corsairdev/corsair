@@ -129,6 +129,171 @@ const CreateContactInputSchema = z
 	})
 	.passthrough();
 
+const ListOpportunitiesInputSchema = z.object({
+	search: z.string().optional(),
+	id: z.number().optional(),
+	name: z.string().optional(),
+	status: z.string().optional(),
+	stage: z.number().optional(),
+	'stage.name': z.string().optional(),
+	owner: z.number().optional(),
+	team_member: z.number().optional(),
+	owner_group: z.number().optional(),
+	assignee_group: z.number().optional(),
+	team_member_group: z.number().optional(),
+	account: z.number().optional(),
+	assignee: z.number().optional(),
+	min_value: z.number().optional(),
+	max_value: z.number().optional(),
+	close_after: z.string().optional(),
+	close_before: z.string().optional(),
+	creation_after: z.string().optional(),
+	creation_before: z.string().optional(),
+	closed: z.boolean().optional(),
+	done: z.boolean().optional(),
+	tag: z.array(z.number()).optional(),
+	'tag.name': z.string().optional(),
+	hotness: z.number().optional(),
+	limit: z.number().optional(),
+	offset: z.number().optional(),
+	order_by: z.array(z.string()).optional(),
+	pipeline: z.number().optional(),
+	custom: z.string().optional(),
+	details: z.boolean().optional(),
+	export: z.string().optional(),
+	q: z.string().optional(),
+});
+
+const CreateOpportunityInputSchema = z
+	.object({
+		owner: z.number().optional(),
+		account: z.number(),
+		stage: z.number().optional(),
+		lost_reason: z.number().optional(),
+		files: z.array(z.record(z.string(), z.unknown())).optional(),
+		lead_source: z.number().optional(),
+		start_date: z.string().optional(),
+		probability: z.number().optional(),
+		assignee: z.number().optional(),
+		creator: z.number().optional(),
+		status: z.string().optional(),
+		name: z.string().optional(),
+		value: z.number().optional(),
+		currency: z.number().optional(),
+		status_date: z.string().optional(),
+		close_date: z.string().optional(),
+		closed: z.boolean().optional(),
+		tags: z.array(z.string()).optional(),
+		recurring_price_per_unit: z.number().optional(),
+		frequency: z.enum(['annually', 'weekly', 'monthly', 'daily']).optional(),
+		units: z.number().optional(),
+		contract_start_date: z.string().optional(),
+		contract_end_date: z.string().optional(),
+		main_contact: z.number().optional(),
+		custom: z.record(z.string(), z.unknown()).optional(),
+	})
+	.passthrough();
+
+const ListTagsInputSchema = z.object({
+	id: z.array(z.number()).optional(),
+	name: z.string().optional(),
+	limit: z.number().optional(),
+	offset: z.number().optional(),
+	order_by: z.array(z.string()).optional(),
+	q: z.string().optional(),
+});
+
+const CreateTagInputSchema = z
+	.object({
+		name: z.string(),
+	})
+	.passthrough();
+
+const ListTasksInputSchema = z.object({
+	id: z.array(z.number()).optional(),
+	search: z.string().optional(),
+	assignees: z.array(z.number()).optional(),
+	type: z.array(z.number()).optional(),
+	account: z.array(z.number()).optional(),
+	order_by: z.array(z.string()).optional(),
+	limit: z.number().optional(),
+	offset: z.number().optional(),
+	export: z.string().optional(),
+	q: z.string().optional(),
+});
+
+const CreateTaskInputSchema = z.object({}).passthrough();
+
+const ListWorkflowsInputSchema = z.object({
+	limit: z.number().optional(),
+	offset: z.number().optional(),
+	order_by: z.array(z.string()).optional(),
+	search: z.string().optional(),
+	q: z.string().optional(),
+});
+
+const CreateWorkflowInputSchema = z
+	.object({
+		name: z.string(),
+		filter: z
+			.object({
+				ids: z.array(z.number()).optional(),
+			})
+			.optional(),
+		individual_record_filter: z
+			.object({
+				condition: z.enum(['AND', 'OR']),
+				rules: z.array(z.record(z.string(), z.unknown())),
+				order_by: z.string().optional(),
+				not: z.boolean().optional(),
+				valid: z.boolean().optional(),
+				search: z.string().optional(),
+			})
+			.optional(),
+		status: z.enum(['live', 'paused', 'scheduled', 'draft']).optional(),
+		status_message: z.string().optional(),
+		record_type: z.enum(['contact']).optional(),
+		goal: z.enum(['opened', 'clicked', 'replied']).optional(),
+		continuous: z.boolean().optional(),
+		exit_after_days: z.number().optional(),
+		schedule_date: z.string().optional(),
+		schedule_time_start: z.string().optional(),
+		schedule_time_end: z.string().optional(),
+		schedule_days: z.array(z.number()).optional(),
+		steps: z
+			.array(
+				z.object({
+					id: z.number().optional(),
+					name: z.string().optional(),
+					order: z.number(),
+					filter: z.record(z.string(), z.unknown()).optional(),
+					trigger_step: z.number().optional(),
+					trigger_step_index: z.number().optional(),
+					trigger_after_days: z.number().optional(),
+					trigger: z
+						.enum([
+							'sent',
+							'opened',
+							'clicked',
+							'replied',
+							'not_opened',
+							'not_replied',
+							'not_clicked',
+						])
+						.optional(),
+					action_type: z.enum(['send_email']).optional(),
+					action_config: z.record(z.string(), z.unknown()).optional(),
+					action_status: z.string().optional(),
+					action_source: z.number().optional(),
+					action_source_email: z.string().optional(),
+					analytics: z.record(z.string(), z.unknown()).optional(),
+					metrics_data: z.record(z.string(), z.unknown()).optional(),
+				}),
+			)
+			.optional(),
+	})
+	.passthrough();
+
 const RetrieveAccountInputSchema = z.object({
 	accountId: z.string().min(1),
 });
@@ -358,6 +523,144 @@ const CreateCustomFieldSubInputSchema = z
 	})
 	.passthrough();
 
+const RetrieveMeetingInputSchema = z.object({
+	meetingId: z.string().min(1),
+});
+
+const UpdateMeetingInputSchema = z
+	.object({
+		meetingId: z.string().min(1),
+		calendar_id: z.string(),
+		external_id: z.string(),
+		minutes: z.string().optional(),
+		notes: z.string(),
+		edited_by: z.number().optional(),
+	})
+	.passthrough();
+
+const DeleteMeetingInputSchema = z.object({
+	meetingId: z.string().min(1),
+});
+
+const RetrieveOpportunityInputSchema = z.object({
+	id: z.string().min(1),
+});
+
+const UpdateOpportunityInputSchema = z
+	.object({
+		id: z.string().min(1),
+		owner: z.number().optional(),
+		account: z.number().optional(),
+		stage: z.number().optional(),
+		lost_reason: z.number().optional(),
+		files: z.array(z.record(z.string(), z.unknown())).optional(),
+		lead_source: z.number().optional(),
+		start_date: z.string().optional(),
+		probability: z.number().optional(),
+		assignee: z.number().optional(),
+		creator: z.number().optional(),
+		name: z.string().optional(),
+		value: z.number().optional(),
+		close_date: z.string().optional(),
+		closed: z.boolean().optional(),
+		done: z.boolean().optional(),
+		tags: z.array(z.string()).optional(),
+		recurring_price_per_unit: z.number().optional(),
+		frequency: z.enum(['annually', 'weekly', 'monthly', 'daily']).optional(),
+		units: z.number().optional(),
+		contract_start_date: z.string().optional(),
+		contract_end_date: z.string().optional(),
+		main_contact: z.number().optional(),
+		custom: z.record(z.string(), z.unknown()).optional(),
+	})
+	.passthrough();
+
+const DeleteOpportunityInputSchema = z.object({
+	id: z.string().min(1),
+});
+
+const RetrieveTagInputSchema = z.object({
+	tagId: z.string().min(1),
+});
+
+const UpdateTagInputSchema = z
+	.object({
+		tagId: z.string().min(1),
+		name: z.string(),
+	})
+	.passthrough();
+
+const DeleteTagInputSchema = z.object({
+	tagId: z.string().min(1),
+});
+
+const RetrieveWorkflowInputSchema = z.object({
+	id: z.string().min(1),
+});
+
+const UpdateWorkflowInputSchema = z
+	.object({
+		id: z.string().min(1),
+		name: z.string(),
+		filter: z
+			.object({
+				ids: z.array(z.number()).optional(),
+			})
+			.optional(),
+		individual_record_filter: z
+			.object({
+				condition: z.enum(['AND', 'OR']),
+				rules: z.array(z.record(z.string(), z.unknown())),
+				order_by: z.string().optional(),
+				not: z.boolean().optional(),
+				valid: z.boolean().optional(),
+				search: z.string().optional(),
+			})
+			.optional(),
+		status: z.enum(['live', 'paused', 'scheduled', 'draft']).optional(),
+		status_message: z.string().optional(),
+		record_type: z.enum(['contact']).optional(),
+		goal: z.enum(['opened', 'clicked', 'replied']).optional(),
+		continuous: z.boolean().optional(),
+		exit_after_days: z.number().optional(),
+		schedule_date: z.string().optional(),
+		schedule_time_start: z.string().optional(),
+		schedule_time_end: z.string().optional(),
+		schedule_days: z.array(z.number()).optional(),
+		steps: z
+			.array(
+				z.object({
+					id: z.number().optional(),
+					name: z.string().optional(),
+					order: z.number(),
+					filter: z.record(z.string(), z.unknown()).optional(),
+					trigger_step: z.number().optional(),
+					trigger_step_index: z.number().optional(),
+					trigger_after_days: z.number().optional(),
+					trigger: z
+						.enum([
+							'sent',
+							'opened',
+							'clicked',
+							'replied',
+							'not_opened',
+							'not_replied',
+							'not_clicked',
+						])
+						.optional(),
+					action_type: z.enum(['send_email']).optional(),
+					action_config: z.record(z.string(), z.unknown()).optional(),
+					action_status: z.string().optional(),
+					action_source: z.number().optional(),
+					action_source_email: z.string().optional(),
+					analytics: z.record(z.string(), z.unknown()).optional(),
+					metrics_data: z.record(z.string(), z.unknown()).optional(),
+				}),
+			)
+			.optional(),
+	})
+	.passthrough();
+
 const ListAccountMessagesInputSchema = z.object({
 	accountId: z.string().min(1),
 	before: z.string().optional(),
@@ -430,11 +733,17 @@ const DeleteCustomFieldInputSchema = z.object({
 	id: z.string().min(1),
 });
 
+const ListTagUsageInputSchema = z.object({
+	tagId: z.string().min(1),
+});
+
 const ListCustomFieldOptionsInputSchema = z.object({
 	itemClass: z.string().min(1),
 	customFieldApiField: z.string().min(1),
 	searchString: z.string().optional(),
 });
+
+const CreateMeetingInputSchema = z.object({}).passthrough();
 
 const AddAccountUsersInputSchema = z
 	.object({
@@ -460,11 +769,43 @@ const UpdateAccountContactsInputSchema = z
 	})
 	.passthrough();
 
+const UpdateTaskInputSchema = z
+	.object({
+		id: z.string().min(1),
+		account: z.number().optional(),
+		description: z.string().optional(),
+		reminder_date: z.string().optional(),
+		assignees: z.array(z.number()).optional(),
+		completed: z.boolean().optional(),
+	})
+	.passthrough();
+
+const DeleteTaskInputSchema = z.object({
+	id: z.string().min(1),
+});
+
+const UpdateWorkflowAudienceInputSchema = z
+	.object({
+		id: z.string().min(1),
+		recordId: z.string().min(1),
+		exited: z.boolean().optional(),
+		met_goal: z.boolean().optional(),
+	})
+	.passthrough();
+
 export const SalesflareEndpointInputSchemas = {
 	listAccounts: ListAccountsInputSchema,
 	createAccount: CreateAccountInputSchema,
 	listContacts: ListContactsInputSchema,
 	createContact: CreateContactInputSchema,
+	listOpportunities: ListOpportunitiesInputSchema,
+	createOpportunity: CreateOpportunityInputSchema,
+	listTags: ListTagsInputSchema,
+	createTag: CreateTagInputSchema,
+	listTasks: ListTasksInputSchema,
+	createTask: CreateTaskInputSchema,
+	listWorkflows: ListWorkflowsInputSchema,
+	createWorkflow: CreateWorkflowInputSchema,
 	retrieveAccount: RetrieveAccountInputSchema,
 	updateAccount: UpdateAccountInputSchema,
 	deleteAccount: DeleteAccountInputSchema,
@@ -474,16 +815,32 @@ export const SalesflareEndpointInputSchemas = {
 	listCustomFieldTypes: ListCustomFieldTypesInputSchema,
 	listCustomFields: ListCustomFieldsInputSchema,
 	createCustomFieldSub: CreateCustomFieldSubInputSchema,
+	retrieveMeeting: RetrieveMeetingInputSchema,
+	updateMeeting: UpdateMeetingInputSchema,
+	deleteMeeting: DeleteMeetingInputSchema,
+	retrieveOpportunity: RetrieveOpportunityInputSchema,
+	updateOpportunity: UpdateOpportunityInputSchema,
+	deleteOpportunity: DeleteOpportunityInputSchema,
+	retrieveTag: RetrieveTagInputSchema,
+	updateTag: UpdateTagInputSchema,
+	deleteTag: DeleteTagInputSchema,
+	retrieveWorkflow: RetrieveWorkflowInputSchema,
+	updateWorkflow: UpdateWorkflowInputSchema,
 	listAccountMessages: ListAccountMessagesInputSchema,
 	listAccountFeed: ListAccountFeedInputSchema,
 	retrieveCustomField: RetrieveCustomFieldInputSchema,
 	updateCustomField: UpdateCustomFieldInputSchema,
 	deleteCustomField: DeleteCustomFieldInputSchema,
+	listTagUsage: ListTagUsageInputSchema,
 	listCustomFieldOptions: ListCustomFieldOptionsInputSchema,
+	createMeeting: CreateMeetingInputSchema,
 	addAccountUsers: AddAccountUsersInputSchema,
 	updateAccountUsers: UpdateAccountUsersInputSchema,
 	addAccountContacts: AddAccountContactsInputSchema,
 	updateAccountContacts: UpdateAccountContactsInputSchema,
+	updateTask: UpdateTaskInputSchema,
+	deleteTask: DeleteTaskInputSchema,
+	updateWorkflowAudience: UpdateWorkflowAudienceInputSchema,
 } as const;
 
 export const SalesflareEndpointOutputSchemas = {
@@ -491,6 +848,14 @@ export const SalesflareEndpointOutputSchemas = {
 	createAccount: SalesflareResourceOutputSchema,
 	listContacts: SalesflareListOutputSchema,
 	createContact: SalesflareResourceOutputSchema,
+	listOpportunities: SalesflareListOutputSchema,
+	createOpportunity: SalesflareResourceOutputSchema,
+	listTags: SalesflareListOutputSchema,
+	createTag: SalesflareResourceOutputSchema,
+	listTasks: SalesflareListOutputSchema,
+	createTask: SalesflareResourceOutputSchema,
+	listWorkflows: SalesflareListOutputSchema,
+	createWorkflow: SalesflareResourceOutputSchema,
 	retrieveAccount: SalesflareResourceOutputSchema,
 	updateAccount: SalesflareResourceOutputSchema,
 	deleteAccount: SalesflareEmptyOutputSchema,
@@ -500,16 +865,32 @@ export const SalesflareEndpointOutputSchemas = {
 	listCustomFieldTypes: SalesflareListOutputSchema,
 	listCustomFields: SalesflareResourceOutputSchema,
 	createCustomFieldSub: SalesflareResourceOutputSchema,
+	retrieveMeeting: SalesflareResourceOutputSchema,
+	updateMeeting: SalesflareResourceOutputSchema,
+	deleteMeeting: SalesflareEmptyOutputSchema,
+	retrieveOpportunity: SalesflareResourceOutputSchema,
+	updateOpportunity: SalesflareResourceOutputSchema,
+	deleteOpportunity: SalesflareEmptyOutputSchema,
+	retrieveTag: SalesflareResourceOutputSchema,
+	updateTag: SalesflareResourceOutputSchema,
+	deleteTag: SalesflareEmptyOutputSchema,
+	retrieveWorkflow: SalesflareResourceOutputSchema,
+	updateWorkflow: SalesflareResourceOutputSchema,
 	listAccountMessages: SalesflareResourceOutputSchema,
 	listAccountFeed: SalesflareResourceOutputSchema,
 	retrieveCustomField: SalesflareResourceOutputSchema,
 	updateCustomField: SalesflareResourceOutputSchema,
 	deleteCustomField: SalesflareEmptyOutputSchema,
+	listTagUsage: SalesflareResourceOutputSchema,
 	listCustomFieldOptions: SalesflareResourceOutputSchema,
+	createMeeting: SalesflareResourceOutputSchema,
 	addAccountUsers: SalesflareResourceOutputSchema,
 	updateAccountUsers: SalesflareResourceOutputSchema,
 	addAccountContacts: SalesflareResourceOutputSchema,
 	updateAccountContacts: SalesflareResourceOutputSchema,
+	updateTask: SalesflareResourceOutputSchema,
+	deleteTask: SalesflareEmptyOutputSchema,
+	updateWorkflowAudience: SalesflareResourceOutputSchema,
 } as const;
 
 export type SalesflareEndpointInputs = {
