@@ -112,6 +112,9 @@ const defaultAuthType = 'api_key' as const;
 
 // const assertion: riskLevel must stay the literal union, not string.
 const snowflakeEndpointMeta = {
+	// Any SQL goes through here, DROP and DELETE included, and a statement's
+	// effect can't be read from its text reliably, so every call asks first
+	// (same as clickhouse query.execute).
 	'statements.submit': {
 		riskLevel: 'destructive',
 		description:

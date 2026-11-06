@@ -97,7 +97,7 @@ export const SubmitStatementInputSchema = z
 			.boolean()
 			.optional()
 			.describe(
-				'Requires `requestId`. `true` resubmits the same request without running it twice.',
+				'Requires `requestId`. Set `true` with the `requestId` of the original request to resubmit it; Snowflake does not run it twice. A new `requestId` runs the statement again.',
 			),
 		statement: z.string().min(1),
 		timeout: TimeoutSchema.optional(),
@@ -125,12 +125,7 @@ export const GetStatementInputSchema = z
 			.min(0)
 			.optional()
 			.describe('Partition index, starting at 0.'),
-		retry: z
-			.boolean()
-			.optional()
-			.describe(
-				'Requires `requestId`. `true` resubmits the same request without running it twice.',
-			),
+		retry: z.boolean().optional().describe('Requires `requestId`.'),
 	})
 	.strict()
 	.refine(retryNeedsRequestId, retryIssue);
@@ -143,12 +138,7 @@ export const CancelStatementInputSchema = z
 		requestId: UuidShape.optional().describe(
 			'UUID-shaped request ID (8-4-4-4-12 hex).',
 		),
-		retry: z
-			.boolean()
-			.optional()
-			.describe(
-				'Requires `requestId`. `true` resubmits the same request without running it twice.',
-			),
+		retry: z.boolean().optional().describe('Requires `requestId`.'),
 	})
 	.strict()
 	.refine(retryNeedsRequestId, retryIssue);

@@ -29,6 +29,8 @@ describe('Enginemailer plugin contract', () => {
 		expect(metadata['subscribers.deleteSubscriber']?.riskLevel).toBe(
 			'destructive',
 		);
+		expect(metadata['subscribers.unsubscribe']?.riskLevel).toBe('destructive');
+		expect(metadata['subscribers.batchUpdateStatus']?.riskLevel).toBe('read');
 		expect(metadata['campaigns.deleteCampaign']?.riskLevel).toBe('destructive');
 		// Sending reaches every recipient and cannot be recalled.
 		expect(metadata['campaigns.sendCampaign']?.riskLevel).toBe('destructive');

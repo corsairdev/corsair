@@ -854,8 +854,11 @@ const gumroadEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Read one audience email by id',
 	},
+	// publish="true" or draft="false" sends to the whole audience at once, so
+	// creating can have the same one-way effect as emails.send.
 	'emails.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Create a draft audience email by subject, HTML body and audience, or send it immediately with publish=true',
 	},

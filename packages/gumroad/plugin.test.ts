@@ -168,6 +168,7 @@ const destructiveOperations = new Set([
 	'sales.revokeAccess',
 	'licenses.disable',
 	'emails.send',
+	'emails.create',
 ]);
 
 describe('gumroad plugin definition', () => {

@@ -223,7 +223,7 @@ await corsair.gumroad.api.earnings.get({ year: '2025' });
 
 Create a draft audience email by subject, HTML body and audience, or send it immediately with publish=true
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.gumroad.api.emails.create({ subject: 'Welcome', body: 'Thanks for your purchase' });
