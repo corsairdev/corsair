@@ -59,7 +59,7 @@ pnpm add @corsair-dev/netsuite
 | `oauth.oauth2AuthorizeSystemDomain` | `netsuite.api.oauth.oauth2AuthorizeSystemDomain` | `read` | Build an OAuth 2.0 authorization URL on the system domain |
 | `oauth.oauth2GetJwksKeys` | `netsuite.api.oauth.oauth2GetJwksKeys` | `read` | Retrieve NetSuite OAuth 2.0 JWKS public keys |
 | `oauth.oauth2Logout` | `netsuite.api.oauth.oauth2Logout` | `write` | Log out an OAuth 2.0 session using an ID token hint |
-| `oauth.oauth2RevokeRefreshToken` | `netsuite.api.oauth.oauth2RevokeRefreshToken` | `write` | Revoke a NetSuite OAuth 2.0 refresh token |
+| `oauth.oauth2RevokeRefreshToken` | `netsuite.api.oauth.oauth2RevokeRefreshToken` | `destructive` | Revoke a NetSuite OAuth 2.0 refresh token |
 | `oauth.oauth2TokenAuthorizationCode` | `netsuite.api.oauth.oauth2TokenAuthorizationCode` | `write` | Exchange an OAuth 2.0 authorization code for tokens |
 | `oauth.oauth2TokenClientCredentials` | `netsuite.api.oauth.oauth2TokenClientCredentials` | `write` | Exchange a JWT client assertion for an OAuth 2.0 access token |
 | `oauth.oauth2TokenRefresh` | `netsuite.api.oauth.oauth2TokenRefresh` | `write` | Refresh a NetSuite OAuth 2.0 access token |
@@ -77,7 +77,7 @@ pnpm add @corsair-dev/netsuite
 | `records.getSublistLine` | `netsuite.api.records.getSublistLine` | `read` | Retrieve a specific line from a NetSuite sublist |
 | `records.getSubrecord` | `netsuite.api.records.getSubrecord` | `read` | Retrieve a subrecord from a NetSuite parent record |
 | `records.listRecords` | `netsuite.api.records.listRecords` | `read` | List records of any exposed NetSuite type |
-| `records.transformRecord` | `netsuite.api.records.transformRecord` | `write` | Transform a NetSuite record into another record type |
+| `records.transformRecord` | `netsuite.api.records.transformRecord` | `destructive` | Transform a NetSuite record into another record type |
 | `records.upsertRecordByExternalId` | `netsuite.api.records.upsertRecordByExternalId` | `write` | Upsert a NetSuite record by external ID |
 | `salesOrders.createSalesOrder` | `netsuite.api.salesOrders.createSalesOrder` | `write` | Create a NetSuite sales order |
 | `salesOrders.deleteSalesOrder` | `netsuite.api.salesOrders.deleteSalesOrder` | `destructive` | Delete a NetSuite sales order record |

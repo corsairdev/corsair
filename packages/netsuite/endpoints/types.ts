@@ -757,6 +757,7 @@ export const Oauth2RevokeRefreshTokenInputSchema = z
 	.object({
 		token: z.string(),
 		client_id: z.string().optional(),
+		client_secret: z.string().optional(),
 	})
 	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 
@@ -766,6 +767,7 @@ export const Oauth2TokenAuthorizationCodeInputSchema = z
 	.object({
 		code: z.string(),
 		client_id: z.string().optional(),
+		client_secret: z.string().optional(),
 		grant_type: z.string().optional(),
 		redirect_uri: z.string(),
 		code_verifier: z.string(),

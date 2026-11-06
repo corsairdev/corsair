@@ -571,6 +571,51 @@ describe('endpoint dispatch', () => {
 		);
 	});
 
+	it('authenticates revoke and code exchange as confidential or public clients', async () => {
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(jsonResponse({})) as unknown as typeof fetch;
+		await NetSuite.oauth2RevokeRefreshToken(mockCtx() as never, {
+			token: 'refresh-to-revoke',
+		});
+		const [revokeUrl, confidential] = jest.mocked(globalThis.fetch).mock
+			.calls[0] as [string, RequestInit];
+		expect(revokeUrl).toBe(
+			'https://tstdrv123.suitetalk.api.netsuite.com/services/rest/auth/oauth2/v1/revoke',
+		);
+		expect(header(confidential, 'Authorization')).toBe(
+			`Basic ${Buffer.from('client-id:client-secret').toString('base64')}`,
+		);
+		expect(String(confidential.body)).toBe('token=refresh-to-revoke');
+
+		const publicCtx = {
+			...mockCtx(),
+			options: { accountId: ACCOUNT, clientId: 'public-client' },
+		};
+		await NetSuite.oauth2TokenAuthorizationCode(publicCtx as never, {
+			code: 'auth-code',
+			redirect_uri: 'https://example.com/cb',
+			code_verifier: 'verifier',
+		});
+		const [, publicInit] = jest.mocked(globalThis.fetch).mock.calls[1] as [
+			string,
+			RequestInit,
+		];
+		expect(header(publicInit, 'Authorization')).toBeNull();
+		const form = new URLSearchParams(String(publicInit.body));
+		expect(form.get('client_id')).toBe('public-client');
+		expect(form.get('grant_type')).toBe('authorization_code');
+		expect(form.get('code_verifier')).toBe('verifier');
+	});
+
+	it('marks transforms and token revocation as destructive', () => {
+		const meta = netsuite({ accountId: ACCOUNT }).endpointMeta;
+		expect(meta?.['records.transformRecord']?.riskLevel).toBe('destructive');
+		expect(meta?.['oauth.oauth2RevokeRefreshToken']?.riskLevel).toBe(
+			'destructive',
+		);
+	});
+
 	it('builds account and system authorization URLs', async () => {
 		const account = (await NetSuite.oauth2AuthorizeAccountDomain(
 			mockCtx() as never,

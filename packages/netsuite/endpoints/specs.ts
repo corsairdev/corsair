@@ -14,6 +14,9 @@ export type RouteSpec = {
 	formBody?: Record<string, string>;
 	staticForm?: Record<string, string>;
 	basicAuth?: [string, string];
+	// Send basicAuth only when a client secret is present (confidential
+	// clients); public clients send client_id in the form body instead.
+	basicAuthIfSecret?: boolean;
 	base?: NetSuiteBase;
 	auth?: 'none';
 	accept?: string;
@@ -440,8 +443,11 @@ export const netSuiteSpecs = {
 		method: 'POST',
 		path: '/auth/oauth2/v1/revoke',
 		formBody: { token: 'token', client_id: 'client_id' },
+		basicAuth: ['client_id', 'client_secret'],
+		basicAuthIfSecret: true,
 		auth: 'none',
-		riskLevel: 'write',
+		// A revoked refresh token (and its access tokens) cannot be restored.
+		riskLevel: 'destructive',
 		metaDescription: 'Revoke a NetSuite OAuth 2.0 refresh token',
 	},
 	oauth2TokenAuthorizationCode: {
@@ -455,6 +461,8 @@ export const netSuiteSpecs = {
 			code_verifier: 'code_verifier',
 		},
 		staticForm: { grant_type: 'authorization_code' },
+		basicAuth: ['client_id', 'client_secret'],
+		basicAuthIfSecret: true,
 		auth: 'none',
 		riskLevel: 'write',
 		metaDescription: 'Exchange an OAuth 2.0 authorization code for tokens',
@@ -505,7 +513,9 @@ export const netSuiteSpecs = {
 		headers: writeHeaders,
 		responseHeader: 'Location',
 		body: 'record_body',
-		riskLevel: 'write',
+		// Creates a new record and changes the source record's status (for
+		// example billing a sales order), which a delete does not undo.
+		riskLevel: 'destructive',
 		metaDescription: 'Transform a NetSuite record into another record type',
 	},
 	updateCustomer: update('customer', 'Update a NetSuite customer record'),

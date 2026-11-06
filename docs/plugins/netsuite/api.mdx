@@ -48,7 +48,7 @@ await corsair.netsuite.api.asyncJobs.asyncGetJobStatus({ jobId: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -127,7 +127,7 @@ await corsair.netsuite.api.asyncJobs.asyncGetJobTask({ jobId: '123', taskId: '45
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -206,7 +206,7 @@ await corsair.netsuite.api.asyncJobs.asyncGetJobTaskResult({ jobId: '123', taskI
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -306,7 +306,7 @@ await corsair.netsuite.api.customerPayments.createCustomerPayment({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -384,7 +384,7 @@ await corsair.netsuite.api.customerPayments.deleteCustomerPayment({ id: '123' })
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -465,7 +465,7 @@ await corsair.netsuite.api.customerPayments.getCustomerPayment({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -545,7 +545,7 @@ await corsair.netsuite.api.customerPayments.listCustomerPayments({ limit: 20 });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -643,7 +643,7 @@ await corsair.netsuite.api.customerPayments.updateCustomerPayment({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -745,7 +745,7 @@ await corsair.netsuite.api.customers.createCustomer({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -823,7 +823,7 @@ await corsair.netsuite.api.customers.deleteCustomer({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -904,7 +904,7 @@ await corsair.netsuite.api.customers.getCustomer({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -1002,7 +1002,7 @@ await corsair.netsuite.api.customers.updateCustomer({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -1099,7 +1099,7 @@ await corsair.netsuite.api.employees.createEmployee({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -1177,7 +1177,7 @@ await corsair.netsuite.api.employees.deleteEmployee({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -1258,7 +1258,7 @@ await corsair.netsuite.api.employees.getEmployee({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -1338,7 +1338,7 @@ await corsair.netsuite.api.employees.listEmployees({ limit: 20 });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -1436,7 +1436,7 @@ await corsair.netsuite.api.employees.updateEmployee({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -1517,7 +1517,7 @@ await corsair.netsuite.api.integrations.listIntegrations({ limit: 20 });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -1623,7 +1623,7 @@ await corsair.netsuite.api.invoices.createInvoice({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -1701,7 +1701,7 @@ await corsair.netsuite.api.invoices.deleteInvoice({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -1782,7 +1782,7 @@ await corsair.netsuite.api.invoices.getInvoice({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -1862,7 +1862,7 @@ await corsair.netsuite.api.invoices.listInvoices({ limit: 20 });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -1960,7 +1960,7 @@ await corsair.netsuite.api.invoices.updateInvoice({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -2042,7 +2042,7 @@ await corsair.netsuite.api.itemFulfillments.deleteItemFulfillment({ id: '123' })
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -2123,7 +2123,7 @@ await corsair.netsuite.api.itemFulfillments.getItemFulfillment({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -2203,7 +2203,7 @@ await corsair.netsuite.api.itemFulfillments.listItemFulfillments({ limit: 20 });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -2301,7 +2301,7 @@ await corsair.netsuite.api.itemFulfillments.updateItemFulfillment({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -2381,7 +2381,7 @@ await corsair.netsuite.api.itemReceipts.deleteItemReceipt({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -2462,7 +2462,7 @@ await corsair.netsuite.api.itemReceipts.getItemReceipt({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -2542,7 +2542,7 @@ await corsair.netsuite.api.itemReceipts.listItemReceipts({ limit: 20 });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -2640,7 +2640,7 @@ await corsair.netsuite.api.itemReceipts.updateItemReceipt({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -2739,7 +2739,7 @@ await corsair.netsuite.api.items.createItem({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -2818,7 +2818,7 @@ await corsair.netsuite.api.items.deleteItem({ item_record_type: 'inventoryItem',
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -2899,7 +2899,7 @@ await corsair.netsuite.api.items.getItem({ itemRecordType: 'inventoryItem', id: 
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -2999,7 +2999,7 @@ await corsair.netsuite.api.items.updateItem({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -3107,7 +3107,7 @@ await corsair.netsuite.api.journalEntries.createJournalEntry({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -3187,7 +3187,7 @@ await corsair.netsuite.api.journalEntries.deleteJournalEntry({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -3268,7 +3268,7 @@ await corsair.netsuite.api.journalEntries.getJournalEntry({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -3348,7 +3348,7 @@ await corsair.netsuite.api.journalEntries.listJournalEntries({ limit: 20 });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -3446,7 +3446,7 @@ await corsair.netsuite.api.journalEntries.updateJournalEntry({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -3527,7 +3527,7 @@ await corsair.netsuite.api.metadata.getRecordMetadata({ record_type: 'customer' 
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -3606,7 +3606,7 @@ await corsair.netsuite.api.metadata.listMetadataCatalog({});
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -3671,7 +3671,7 @@ await corsair.netsuite.api.oauth.createJwtClientAssertion({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `alg` | `PS256 \| RS256 \| ES256 \| HS256` | No | — |
+| `alg` | `PS256 \| PS384 \| PS512 \| ES256 \| ES384 \| ES512` | No | — |
 | `aud` | `string` | No | — |
 | `exp` | `number` | No | — |
 | `iat` | `number` | No | — |
@@ -3699,7 +3699,7 @@ await corsair.netsuite.api.oauth.createJwtClientAssertion({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -3764,7 +3764,7 @@ await corsair.netsuite.api.oauth.oauth2AuthorizeAccountDomain({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `scope` | `string` | Yes | — |
-| `state` | `string` | No | — |
+| `state` | `string` | Yes | — |
 | `prompt` | `string` | No | — |
 | `client_id` | `string` | Yes | — |
 | `redirect_uri` | `string` | Yes | — |
@@ -3791,7 +3791,7 @@ await corsair.netsuite.api.oauth.oauth2AuthorizeAccountDomain({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -3884,7 +3884,7 @@ await corsair.netsuite.api.oauth.oauth2AuthorizeSystemDomain({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -3957,7 +3957,7 @@ await corsair.netsuite.api.oauth.oauth2GetJwksKeys({});
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -4035,7 +4035,7 @@ await corsair.netsuite.api.oauth.oauth2Logout({ id_token_hint: 'id-token-xxx' })
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -4082,7 +4082,7 @@ string | {
 
 Revoke a NetSuite OAuth 2.0 refresh token
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.netsuite.api.oauth.oauth2RevokeRefreshToken({ token: 'refresh-token-xxx', client_id: 'client-id' });
@@ -4094,6 +4094,7 @@ await corsair.netsuite.api.oauth.oauth2RevokeRefreshToken({ token: 'refresh-toke
 |------|------|----------|-------------|
 | `token` | `string` | Yes | — |
 | `client_id` | `string` | No | — |
+| `client_secret` | `string` | No | — |
 
 
 
@@ -4114,7 +4115,7 @@ await corsair.netsuite.api.oauth.oauth2RevokeRefreshToken({ token: 'refresh-toke
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -4178,6 +4179,7 @@ await corsair.netsuite.api.oauth.oauth2TokenAuthorizationCode({
 |------|------|----------|-------------|
 | `code` | `string` | Yes | — |
 | `client_id` | `string` | No | — |
+| `client_secret` | `string` | No | — |
 | `grant_type` | `string` | No | — |
 | `redirect_uri` | `string` | Yes | — |
 | `code_verifier` | `string` | Yes | — |
@@ -4201,7 +4203,7 @@ await corsair.netsuite.api.oauth.oauth2TokenAuthorizationCode({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -4281,7 +4283,7 @@ await corsair.netsuite.api.oauth.oauth2TokenClientCredentials({ client_assertion
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -4340,7 +4342,7 @@ await corsair.netsuite.api.oauth.oauth2TokenRefresh({ refresh_token: 'refresh-to
 |------|------|----------|-------------|
 | `client_id` | `string` | No | — |
 | `client_secret` | `string` | No | — |
-| `refresh_token` | `string` | No | — |
+| `refresh_token` | `string` | Yes | — |
 
 
 
@@ -4361,7 +4363,7 @@ await corsair.netsuite.api.oauth.oauth2TokenRefresh({ refresh_token: 'refresh-to
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -4493,7 +4495,7 @@ await corsair.netsuite.api.purchaseOrders.createPurchaseOrder({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -4571,7 +4573,7 @@ await corsair.netsuite.api.purchaseOrders.deletePurchaseOrder({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -4652,7 +4654,7 @@ await corsair.netsuite.api.purchaseOrders.getPurchaseOrder({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -4732,7 +4734,7 @@ await corsair.netsuite.api.purchaseOrders.listPurchaseOrders({ limit: 20 });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -4830,7 +4832,7 @@ await corsair.netsuite.api.purchaseOrders.updatePurchaseOrder({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -4912,7 +4914,7 @@ await corsair.netsuite.api.query.executeDataset({ dataset_id: 'custdataset_sales
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -4991,7 +4993,7 @@ await corsair.netsuite.api.query.listDatasets({ limit: 20 });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -5071,7 +5073,7 @@ await corsair.netsuite.api.query.runSuiteqlQuery({ q: 'SELECT id, companyName FR
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -5175,7 +5177,7 @@ await corsair.netsuite.api.records.createRecord({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -5257,7 +5259,7 @@ await corsair.netsuite.api.records.getReferenceSelectField({ record_type: 'custo
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -5339,7 +5341,7 @@ await corsair.netsuite.api.records.getSublistCollection({ record_type: 'customer
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -5426,7 +5428,7 @@ await corsair.netsuite.api.records.getSublistLine({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -5506,7 +5508,7 @@ await corsair.netsuite.api.records.getSubrecord({ record_type: 'salesOrder', id:
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -5587,7 +5589,7 @@ await corsair.netsuite.api.records.listRecords({ recordType: 'customer', limit: 
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -5634,7 +5636,7 @@ string | {
 
 Transform a NetSuite record into another record type
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.netsuite.api.records.transformRecord({ source_record_type: 'salesOrder', record_id: '123', target_record_type: 'invoice' });
@@ -5683,7 +5685,7 @@ await corsair.netsuite.api.records.transformRecord({ source_record_type: 'salesO
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -5782,7 +5784,7 @@ await corsair.netsuite.api.records.upsertRecordByExternalId({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -5908,7 +5910,7 @@ await corsair.netsuite.api.salesOrders.createSalesOrder({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -5986,7 +5988,7 @@ await corsair.netsuite.api.salesOrders.deleteSalesOrder({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -6067,7 +6069,7 @@ await corsair.netsuite.api.salesOrders.getSalesOrder({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -6147,7 +6149,7 @@ await corsair.netsuite.api.salesOrders.listSalesOrders({ limit: 20 });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -6245,7 +6247,7 @@ await corsair.netsuite.api.salesOrders.updateSalesOrder({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -6326,7 +6328,7 @@ await corsair.netsuite.api.system.getDatacenterUrls({ account: 'TSTDRV123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -6399,7 +6401,7 @@ await corsair.netsuite.api.system.getGovernanceLimits({});
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -6472,7 +6474,7 @@ await corsair.netsuite.api.system.getServerTime({});
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -6577,7 +6579,7 @@ await corsair.netsuite.api.vendorBills.createVendorBill({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -6658,7 +6660,7 @@ await corsair.netsuite.api.vendorBills.getVendorBill({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -6756,7 +6758,7 @@ await corsair.netsuite.api.vendorBills.updateVendorBill({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -6836,7 +6838,7 @@ await corsair.netsuite.api.vendorPayments.deleteVendorPayment({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -6917,7 +6919,7 @@ await corsair.netsuite.api.vendorPayments.getVendorPayment({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -6997,7 +6999,7 @@ await corsair.netsuite.api.vendorPayments.listVendorPayments({ limit: 20 });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -7095,7 +7097,7 @@ await corsair.netsuite.api.vendorPayments.updateVendorPayment({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -7197,7 +7199,7 @@ await corsair.netsuite.api.vendors.createVendor({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -7278,7 +7280,7 @@ await corsair.netsuite.api.vendors.getVendor({ id: '123' });
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |
@@ -7376,7 +7378,7 @@ await corsair.netsuite.api.vendors.updateVendor({
 | `refresh_token` | `string` | No | — |
 | `id_token` | `string` | No | — |
 | `token_type` | `string` | No | — |
-| `expires_in` | `number` | No | — |
+| `expires_in` | `number \| string` | No | — |
 | `expires_at` | `number` | No | — |
 | `scope` | `string` | No | — |
 | `authorization_url` | `string` | No | — |

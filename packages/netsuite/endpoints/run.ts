@@ -107,7 +107,12 @@ function applyDefaults(
 	return out;
 }
 
-function applyRefreshDefaults(
+// Token-endpoint helpers default client_id and client_secret to the plugin
+// options. Tokens themselves always come from the caller: filling in the
+// connection's stored refresh token would hand a live access token to whoever
+// calls the operation, and for public clients NetSuite rotates the refresh
+// token on use, so the stored connection would stop working.
+function applyClientCredentialDefaults(
 	ctx: NetSuiteContext,
 	input: Record<string, unknown>,
 ): void {
@@ -118,13 +123,11 @@ function applyRefreshDefaults(
 	const fill = (field: string, value: string | null | undefined) => {
 		if (value && read(input, field) === undefined) input[field] = value;
 	};
-	// The refresh token must come from the caller. Filling in the connection's
-	// stored token would hand a live access token to whoever calls this
-	// operation, and for public clients NetSuite rotates the refresh token on
-	// use, so the stored connection would stop working.
 	fill('client_id', options.clientId);
 	fill('client_secret', options.clientSecret);
+}
 
+function assertRefreshInputs(input: Record<string, unknown>): void {
 	for (const [field, label] of [
 		['client_id', 'client_id'],
 		['client_secret', 'client_secret'],
@@ -137,6 +140,18 @@ function applyRefreshDefaults(
 			);
 		}
 	}
+}
+
+function clientBasicAuth(
+	input: Record<string, unknown>,
+	spec: RouteSpec,
+): [string, string] | undefined {
+	if (!spec.basicAuth) return undefined;
+	const id = read(input, spec.basicAuth[0]);
+	const secret = read(input, spec.basicAuth[1]);
+	const hasSecret = typeof secret === 'string' && secret.length > 0;
+	if (spec.basicAuthIfSecret && !hasSecret) return undefined;
+	return [String(id ?? ''), String(secret ?? '')];
 }
 
 function buildPath(
@@ -709,9 +724,13 @@ export async function runNetSuite<K extends NetSuiteSpecKey>(
 					ctx,
 					spec.auth === 'none' ? read(resolvedInput, 'account') : undefined,
 				);
-	if (event === 'oauth2TokenRefresh') {
-		applyRefreshDefaults(ctx, resolvedInput);
-	}
+	if (spec.basicAuth) applyClientCredentialDefaults(ctx, resolvedInput);
+	if (event === 'oauth2TokenRefresh') assertRefreshInputs(resolvedInput);
+	const basicAuth = clientBasicAuth(resolvedInput, spec);
+	const formBody = buildForm(resolvedInput, spec);
+	// A confidential client authenticates with the Basic header, so client_id
+	// does not also go in the body (public clients send only the body field).
+	if (basicAuth && formBody) delete formBody.client_id;
 	const raw = spec.custom
 		? await customEndpoint(
 				event as NetSuiteSpecKey,
@@ -731,13 +750,8 @@ export async function runNetSuite<K extends NetSuiteSpecKey>(
 					query: buildQuery(resolvedInput, spec),
 					headers: buildHeaders(resolvedInput, spec),
 					body: buildBody(resolvedInput, spec),
-					formBody: buildForm(resolvedInput, spec),
-					basicAuth: spec.basicAuth
-						? [
-								String(read(resolvedInput, spec.basicAuth[0]) ?? ''),
-								String(read(resolvedInput, spec.basicAuth[1]) ?? ''),
-							]
-						: undefined,
+					formBody,
+					basicAuth,
 					base: spec.base,
 					auth: spec.auth,
 					accept: spec.acceptFromInput
