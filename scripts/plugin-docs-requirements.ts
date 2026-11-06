@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 
 // Every plugin needs packages/<plugin>/plugin-docs.yaml with a real display
@@ -7,11 +9,47 @@ import { parse as parseYaml } from 'yaml';
 
 export const PLUGIN_DOCS_FILE = 'plugin-docs.yaml';
 
+/** Packages under packages/ that are not integrations. */
+const NON_PLUGIN_PACKAGES = new Set([
+	'corsair',
+	'cli',
+	'mcp',
+	'studio',
+	'ui',
+	'app',
+]);
+
+/** The plugin folder names under `packagesDir`, the set validate:plugins checks. */
+export function listPluginDirs(packagesDir: string): string[] {
+	return fs
+		.readdirSync(packagesDir, { withFileTypes: true })
+		.filter(
+			(dirent) =>
+				dirent.isDirectory() &&
+				!NON_PLUGIN_PACKAGES.has(dirent.name) &&
+				// frpc-<platform>-<arch> are prebuilt binary shims, not integrations.
+				!dirent.name.startsWith('frpc-'),
+		)
+		.map((dirent) => dirent.name);
+}
+
+/** Every problem with one plugin's plugin-docs.yaml, including a missing file. */
+export function pluginDocsProblemsIn(pluginPath: string): string[] {
+	const file = path.join(pluginPath, PLUGIN_DOCS_FILE);
+	if (!fs.existsSync(file)) {
+		return [`Missing ${PLUGIN_DOCS_FILE}`];
+	}
+	return pluginDocsYamlProblems(fs.readFileSync(file, 'utf8')).map(
+		(problem) => `${PLUGIN_DOCS_FILE} ${problem}`,
+	);
+}
+
 const PLACEHOLDER = /\b(TODO|TBD|FIXME)\b|lorem ipsum/i;
 const MIN_DESCRIPTION_LENGTH = 30;
 
 /** What is wrong with a plugin-docs.yaml, or [] when it is good enough to publish. */
 export function pluginDocsYamlProblems(text: string): string[] {
+	// The file is author-written YAML of any shape until checked below.
 	let doc: unknown;
 	try {
 		doc = parseYaml(text);
@@ -21,6 +59,8 @@ export function pluginDocsYamlProblems(text: string): string[] {
 	if (!doc || typeof doc !== 'object' || Array.isArray(doc)) {
 		return ['must be a YAML mapping'];
 	}
+	// Only displayName and description are read here; each is type-checked
+	// before use, and the rest of the file belongs to the docs generator.
 	const { displayName, description } = doc as Record<string, unknown>;
 	const problems: string[] = [];
 
@@ -49,7 +89,8 @@ export function starterPluginDocsYaml(displayName: string): string {
 	return [
 		'# Display copy for the docs, the catalog, corsair.dev and Hub.',
 		'# `pnpm validate:plugins` fails until the TODO is replaced.',
-		`displayName: ${displayName}`,
+		// JSON strings are valid YAML, so names with `:` or `#` survive.
+		`displayName: ${JSON.stringify(displayName)}`,
 		'description: TODO one sentence on what the API is and what this plugin can do with it.',
 		'',
 	].join('\n');

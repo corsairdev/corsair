@@ -69,6 +69,16 @@ jobs:
       - name: Check docs/docs.json parses
         run: node -e "JSON.parse(require('node:fs').readFileSync('docs/docs.json', 'utf8'))"
 
+      # Docs-only PRs (one plugin's plugin-docs.yaml and its pages) also skip
+      # validate:plugins, so run its plugin-docs.yaml rule here. Only the yaml
+      # parser is installed, outside the workspace.
+      - name: Check plugin-docs.yaml (docs-only lane)
+        if: steps.scope.outputs.skip_heavy == 'true'
+        run: |
+          npm install --no-save --no-package-lock --ignore-scripts --prefix "$RUNNER_TEMP/plugin-docs-check" yaml@2.8.1
+          ln -s "$RUNNER_TEMP/plugin-docs-check/node_modules" node_modules
+          node --experimental-strip-types scripts/check-plugin-docs-yaml.ts
+
   checks:
     name: Static checks
     needs: scope
