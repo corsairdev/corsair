@@ -1859,6 +1859,14 @@
                 ]
               },
               {
+                "group": "Excel",
+                "pages": [
+                  "plugins/excel/overview",
+                  "plugins/excel/api",
+                  "plugins/excel/database"
+                ]
+              },
+              {
                 "group": "Exist",
                 "pages": [
                   "plugins/exist/overview",
