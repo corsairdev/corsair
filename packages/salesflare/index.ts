@@ -919,16 +919,11 @@ export type ExternalSalesflarePlugin<T extends SalesflarePluginOptions> =
 
 // Binds every Salesflare endpoint to its declared input and output schemas.
 // Calls use this validated tree at runtime; the schemas registry stays as
-// introspection metadata.
-// unknown: the tree mixes endpoint functions with family group objects at
-// arbitrary depth, so the wrapper walks unknown values and narrows each node
-// individually. Expressing this as a recursive conditional type over every
-// family would couple the plugin to core generics without adding runtime
-// safety — the parse calls below are the actual boundary.
-function withSalesflareSchemas<T extends Record<string, unknown>>(
-	tree: T,
-	prefix = '',
-): T {
+// introspection metadata. The runtime context and per-operation shapes are
+// intentional opacity: each unknown below carries its own justification.
+function withSalesflareSchemas<
+	T extends Record<string, unknown>, // unknown: the tree mixes endpoint functions with family objects at any depth
+>(tree: T, prefix = ''): T {
 	const validatedEntries = Object.entries(tree).map(([key, value]) => {
 		const operation = prefix ? `${prefix}.${key}` : key;
 		if (typeof value === 'function') {
@@ -939,17 +934,14 @@ function withSalesflareSchemas<T extends Record<string, unknown>>(
 			if (!schema) {
 				throw new Error(`Missing Salesflare endpoint schema for ${operation}`);
 			}
-			// unknown: the walked node is an endpoint function from a
-			// heterogeneous tree level; input and output are parsed by the
-			// contract below before and after the call.
 			const endpoint = value as (
-				ctx: unknown,
-				input: unknown,
-			) => Promise<unknown>;
-			// unknown: the context shape is the Corsair runtime context whose
-			// services vary by deployment; the wrapper passes it through
-			// untouched and only owns the schema boundary around the call.
-			const validated = async (ctx: unknown, input: unknown) => {
+				ctx: unknown, // unknown: the Corsair runtime context varies by deployment; passed through untouched
+				input: unknown, // unknown: parsed by schema.input.parse before the call
+			) => Promise<unknown>; // unknown: each operation returns its own documented shape, parsed by schema.output.parse
+			const validated = async (
+				ctx: unknown, // unknown: same runtime context as above; only the schema boundary wraps the call
+				input: unknown, // unknown: caller-supplied payload, parsed before transport
+			) => {
 				const parsedInput = schema.input.parse(input ?? {});
 				const result = await endpoint(ctx, parsedInput);
 				return schema.output.parse(result);
@@ -957,11 +949,15 @@ function withSalesflareSchemas<T extends Record<string, unknown>>(
 			return [key, validated];
 		}
 		if (value && typeof value === 'object') {
-			// unknown: family group nodes are plain objects at arbitrary depth;
-			// the wrapper recurses so every nested leaf gets a contract.
 			return [
 				key,
-				withSalesflareSchemas(value as Record<string, unknown>, operation),
+				// unknown: family group nodes are plain objects at arbitrary
+				// depth; the wrapper recurses so every nested leaf gets a
+				// contract from the registry.
+				withSalesflareSchemas(
+					value as Record<string, unknown>, // unknown: a family group object, recursed one level deeper
+					operation,
+				),
 			];
 		}
 		return [key, value];
@@ -969,7 +965,11 @@ function withSalesflareSchemas<T extends Record<string, unknown>>(
 	// unknown: the rebuilt tree keeps the caller's shape while each leaf is
 	// replaced by its schema-validated wrapper; the endpoint schemas registry
 	// and the satisfies-checked tree definition keep this honest.
-	return Object.fromEntries(validatedEntries) as T;
+	// unknown: the rebuild keeps the caller's tree shape while every leaf is
+	// replaced by its schema-validated wrapper; TypeScript cannot express the
+	// mixed function/object remap structurally, and the satisfies-checked
+	// tree definition plus the endpoint schemas registry keep it honest.
+	return Object.fromEntries(validatedEntries) as T; // unknown: same tree shape, leaves wrapped by their contracts
 }
 
 const validatedSalesflareEndpointsNested = withSalesflareSchemas(

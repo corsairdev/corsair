@@ -56,7 +56,7 @@ describe('Salesflare client', () => {
 		);
 		const error = await makeSalesflareRequest({ key: 'secret' }, '/tasks', {
 			method: 'GET',
-		}).catch((caught: unknown) => caught);
+		}).catch((caught: unknown) => caught); // unknown: the rejection value is opaque; narrowed by the assertions below
 		expect(error).toBeInstanceOf(SalesflareAPIError);
 		expect((error as SalesflareAPIError).status).toBe(429);
 		expect((error as SalesflareAPIError).retryAfter).toBe(30000);

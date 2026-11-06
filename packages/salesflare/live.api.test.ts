@@ -15,6 +15,7 @@ describeLive('Salesflare live API', () => {
 		// and envelope parsing; the response body itself is provider-defined
 		// and only its documented top-level shape is asserted.
 		const response = await makeSalesflareRequest<unknown>(
+			// unknown: provider-defined body; only the envelope is asserted
 			// The key's presence is already checked by describeLive above.
 			{ key: apiKey! },
 			'/me',

@@ -24,6 +24,7 @@ function requiredKeys(schema: { shape: Record<string, ZodField> }): string[] {
 }
 
 function scalarFor(field: ZodField, key: string): unknown {
+	// unknown: builds a type-appropriate scalar from zod runtime defs
 	const type = field._zod.def.type;
 	if (type === 'number') {
 		return 1;
@@ -44,10 +45,11 @@ function scalarFor(field: ZodField, key: string): unknown {
 function buildValidInput(schema: {
 	shape: Record<string, ZodField>;
 }): Record<string, unknown> {
+	// unknown: minimal valid inputs mix scalar kinds per required field
 	// Minimal valid input: only required fields get values. Optional fields
 	// stay absent — placeholder strings would violate enum and array
 	// contracts and test nothing about the required-field boundary.
-	const input: Record<string, unknown> = {};
+	const input: Record<string, unknown> = {}; // unknown: caller-shaped values keyed by schema field
 	for (const [key, field] of Object.entries(schema.shape)) {
 		if (field.isOptional()) continue;
 		input[key] = scalarFor(field, key);
@@ -85,6 +87,8 @@ describe('Salesflare schema', () => {
 		// unknown: the walk covers heterogeneous tree levels (functions and
 		// group objects) before any Zod parsing, so a single stricter type
 		// cannot describe both shapes.
+		// unknown: the walk covers heterogeneous tree levels (functions and
+		// group objects) before any zod parsing.
 		const visit = (value: unknown, prefix: string[] = []) => {
 			if (typeof value === 'function') {
 				paths.push(prefix.join('.'));
@@ -115,9 +119,11 @@ describe('Salesflare schema', () => {
 			// unknown: zod v4 schema objects are accessed structurally to derive
 			// the required-field table; stricter typing would couple the test to
 			// zod internals.
+			// unknown: zod v4 schema internals are read structurally to derive
+			// the required-field table; stricter typing would couple to zod.
 			const schema = rawSchema as unknown as {
 				shape: Record<string, ZodField>;
-				safeParse: (value: unknown) => { success: boolean };
+				safeParse: (value: unknown) => { success: boolean }; // unknown: values are provider-shaped fixtures, not typed inputs
 			};
 			const required = requiredKeys(schema);
 			if (!required.length) continue;
@@ -178,6 +184,7 @@ describe('Salesflare schema', () => {
 		// spec's resource shape and deliberately independent of the output
 		// schemas: a contract that rejects a genuine payload fails here
 		// instead of hiding the mistake behind a schema-chosen mock.
+		// unknown: spec-derived mocks, one per operation, keyed by operation path.
 		const fixedOutputs: Record<string, unknown> = {
 			'accounts.listAccounts': [
 				{
@@ -614,6 +621,8 @@ describe('Salesflare schema', () => {
 		// unknown: the walk covers functions and group objects across the
 		// plugin tree; the endpoint contract only exists after the group path
 		// is joined, so a single stricter type cannot describe both shapes.
+		// unknown: the walk covers functions and group objects across the
+		// plugin tree; the contract resolves only after the path joins.
 		const visit = async (value: unknown, prefix: string[] = []) => {
 			if (typeof value === 'function') {
 				invokedOperations += 1;
@@ -630,7 +639,7 @@ describe('Salesflare schema', () => {
 						shape: Record<string, ZodField>;
 					}
 				).shape;
-				const input: Record<string, unknown> = {};
+				const input: Record<string, unknown> = {}; // unknown: caller-shaped values keyed by schema field
 				for (const [key, field] of Object.entries(shape)) {
 					if (field.isOptional()) continue;
 					input[key] = scalarFor(field, key);
@@ -645,9 +654,12 @@ describe('Salesflare schema', () => {
 				// unknown: the walked node is a validated endpoint function whose
 				// signature the heterogeneous tree does not expose; this call is
 				// the schema boundary under test.
-				const result = await (
-					value as (context: unknown, args: unknown) => Promise<unknown>
-				)(ctx, input);
+				const result =
+					await // unknown: walked leaf invoked at the boundary under test
+					(value as (context: unknown, args: unknown) => Promise<unknown>)(
+						ctx,
+						input,
+					);
 				if (output === undefined) {
 					expect(result).toBeUndefined();
 				} else {
