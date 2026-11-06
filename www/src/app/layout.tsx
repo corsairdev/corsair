@@ -14,6 +14,12 @@ const googleAnalyticsId = process.env.NEXT_PUBLIC_GA_ID;
 // don't count as corsair.dev visits.
 const ahrefsAnalyticsKey = 'crwd3fDrSyDxBeS+avatNw';
 const isProduction = process.env.VERCEL_ENV === 'production';
+// The chat widget is on the live site and on pull request previews. Local
+// dev includes it too. Other environments leave it out.
+const showAgentWidget =
+	isProduction ||
+	process.env.VERCEL_ENV === 'preview' ||
+	process.env.NODE_ENV === 'development';
 
 const hostGrotesk = Host_Grotesk({
 	subsets: ['latin'],
@@ -146,7 +152,7 @@ export default function RootLayout({
 					}}
 				/>
 				{children}
-				{isProduction || process.env.NODE_ENV === 'development' ? (
+				{showAgentWidget ? (
 					<script
 						src="https://www.cosmicjs.com/agent.js"
 						data-key="pk_452b8945642a6cdf48463126be9e68e4"
