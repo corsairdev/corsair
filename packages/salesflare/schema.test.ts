@@ -10,7 +10,10 @@ import { makeSalesflareRequest } from './client';
 
 // unknown: zod v4 field internals are read to derive type-appropriate
 // boundary values; stricter typing would couple the tests to zod internals.
-type ZodField = { isOptional: () => boolean; _zod: { def: { type: string } } };
+type ZodField = {
+	isOptional: () => boolean;
+	_zod: { def: { type: string; element?: ZodField } };
+};
 
 function requiredKeys(schema: { shape: Record<string, ZodField> }): string[] {
 	return Object.keys(schema.shape).filter(
@@ -18,6 +21,24 @@ function requiredKeys(schema: { shape: Record<string, ZodField> }): string[] {
 		// guards the indexed access under noUncheckedIndexedAccess.
 		(key) => schema.shape[key]?.isOptional() === false,
 	);
+}
+
+function scalarFor(field: ZodField, key: string): unknown {
+	const type = field._zod.def.type;
+	if (type === 'number') {
+		return 1;
+	}
+	if (type === 'boolean') {
+		return true;
+	}
+	if (type === 'array') {
+		// unknown: zod v4 array element defs are read structurally to build a
+		// type-appropriate scalar; stricter typing would couple the test to
+		// zod internals.
+		const element = field._zod.def.element;
+		return [element ? scalarFor(element, key) : 'test-' + key];
+	}
+	return 'test-' + key;
 }
 
 function buildValidInput(schema: {
@@ -29,9 +50,7 @@ function buildValidInput(schema: {
 	const input: Record<string, unknown> = {};
 	for (const [key, field] of Object.entries(schema.shape)) {
 		if (field.isOptional()) continue;
-		const type = field._zod.def.type;
-		input[key] =
-			type === 'number' ? 1 : type === 'boolean' ? true : 'test-' + key;
+		input[key] = scalarFor(field, key);
 	}
 	return input;
 }
@@ -109,12 +128,18 @@ describe('Salesflare schema', () => {
 
 	it('rejects unsafe path identifiers at the endpoint boundary', async () => {
 		const plugin = salesflare({ key: 'secret' });
+		// never: the fixture provides exactly the context fields these
+		// handlers read (key, options, $getAccountId); omitted runtime
+		// services are not exercised by this plugin endpoints.
 		const ctx = {
 			key: 'secret',
 			options: {},
 			$getAccountId: jest.fn().mockResolvedValue('account-1'),
 		} as never;
 		const unsafe = '../users';
+		// unknown: only two representative tree leaves are exercised here and
+		// the plugin tree nests every family recursively, so the test narrows
+		// the two accessed leaves instead of naming the full recursive type.
 		await expect(
 			(
 				plugin.endpoints as unknown as {
@@ -141,35 +166,442 @@ describe('Salesflare schema', () => {
 		const request = jest.mocked(makeSalesflareRequest);
 		request.mockClear();
 		const plugin = salesflare({ key: 'secret' });
+		// never: the fixture provides exactly the context fields these
+		// handlers read (key, options, $getAccountId); omitted runtime
+		// services are not exercised by this plugin endpoints.
 		const ctx = {
 			key: 'secret',
 			options: {},
 			$getAccountId: jest.fn().mockResolvedValue('account-1'),
 		} as never;
-		// Real-shaped Salesflare records, chosen independently of the output
-		// schemas so a contract that rejects genuine payloads or strips
-		// documented fields fails here instead of in production.
-		const outputCandidates = [
-			{
-				data: [
-					{
-						id: 'rec-1',
-						name: 'Real record',
-						createdAt: 1700000000000,
-						updatedAt: 1700000000001,
-					},
-				],
-			},
-			{
-				id: 'rec-1',
+		// Fixed provider-shaped responses, one per operation, derived from the
+		// spec's resource shape and deliberately independent of the output
+		// schemas: a contract that rejects a genuine payload fails here
+		// instead of hiding the mistake behind a schema-chosen mock.
+		const fixedOutputs: Record<string, unknown> = {
+			'accounts.listAccounts': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'accounts.createAccount': {
+				id: 1,
 				name: 'Real record',
-				createdAt: 1700000000000,
-				updatedAt: 1700000000001,
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
 			},
-			[],
-			{},
-			undefined,
-		];
+			'contacts.listContacts': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'contacts.createContact': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'currencies.listCurrencies': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'groups.listGroups': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'me.retrieveCurrentUser': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'opportunities.listOpportunities': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'opportunities.createOpportunity': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'persons.listPersons': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'pipelines.listPipelines': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'stages.listStages': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'tags.listTags': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'tags.createTag': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'tasks.listTasks': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'tasks.createTask': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'users.listUsers': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'workflows.listWorkflows': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'workflows.createWorkflow': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'accounts.retrieveAccount': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'accounts.updateAccount': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'accounts.deleteAccount': undefined,
+			'campaigns.listCampaignMergeFields': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'contacts.retrieveContact': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'contacts.updateContact': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'contacts.deleteContact': undefined,
+			'customfields.listCustomFieldTypes': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'customfields.listCustomFields': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'customfields.createCustomFieldSub': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'datasources.listEmailDataSources': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'filterfields.listFilterFields': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'groups.retrieveGroup': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'me.listMyContacts': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'meetings.retrieveMeeting': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'meetings.updateMeeting': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'meetings.deleteMeeting': undefined,
+			'opportunities.retrieveOpportunity': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'opportunities.updateOpportunity': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'opportunities.deleteOpportunity': undefined,
+			'settings.retrieveAiSettings': [
+				{
+					id: 1,
+					name: 'Real record',
+					created: '2024-01-01T00:00:00.000Z',
+					updated: '2024-01-01T00:00:00.000Z',
+				},
+			],
+			'settings.updateAiSettings': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'stages.retrieveStage': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'tags.retrieveTag': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'tags.updateTag': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'tags.deleteTag': undefined,
+			'users.retrieveUser': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'workflows.retrieveWorkflow': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'workflows.updateWorkflow': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'accounts.listAccountMessages': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'accounts.listAccountFeed': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'customfields.retrieveCustomField': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'customfields.updateCustomField': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'customfields.deleteCustomField': undefined,
+			'tags.listTagUsage': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'customfields.listCustomFieldOptions': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'calls.createCall': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'meetings.createMeeting': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'messages.createMessage': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'accounts.addAccountUsers': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'accounts.updateAccountUsers': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'accounts.addAccountContacts': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'accounts.updateAccountContacts': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'messages.createMessageFeedbackAlias': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'messages.createMessageFeedback': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'calls.updateCall': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'messages.updateMessage': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'messages.deleteMessage': undefined,
+			'tasks.updateTask': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'tasks.deleteTask': undefined,
+			'datasources.updateEmailDataSource': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+			'workflows.updateWorkflowAudience': {
+				id: 1,
+				name: 'Real record',
+				created: '2024-01-01T00:00:00.000Z',
+				updated: '2024-01-01T00:00:00.000Z',
+			},
+		};
 		let invokedOperations = 0;
 		// unknown: the walk covers functions and group objects across the
 		// plugin tree; the endpoint contract only exists after the group path
@@ -193,18 +625,24 @@ describe('Salesflare schema', () => {
 				const input: Record<string, unknown> = {};
 				for (const [key, field] of Object.entries(shape)) {
 					if (field.isOptional()) continue;
-					const type = field._zod.def.type;
-					input[key] =
-						type === 'number' ? 1 : type === 'boolean' ? true : 'test-' + key;
+					input[key] = scalarFor(field, key);
 				}
-				const output = outputCandidates.find(
-					(candidate) => contract.output.safeParse(candidate).success,
-				);
+				if (!(path in fixedOutputs)) {
+					throw new Error(
+						'No fixed provider-shaped response registered for ' + String(path),
+					);
+				}
+				const output = fixedOutputs[path];
 				request.mockResolvedValue(output);
+				// unknown: the walked node is a validated endpoint function whose
+				// signature the heterogeneous tree does not expose; this call is
+				// the schema boundary under test.
 				const result = await (
 					value as (context: unknown, args: unknown) => Promise<unknown>
 				)(ctx, input);
-				if (output !== undefined) {
+				if (output === undefined) {
+					expect(result).toBeUndefined();
+				} else {
 					expect(result).toEqual(output);
 				}
 				return;
