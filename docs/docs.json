@@ -1808,6 +1808,14 @@
                 ]
               },
               {
+                "group": "Enigma",
+                "pages": [
+                  "plugins/enigma/overview",
+                  "plugins/enigma/api",
+                  "plugins/enigma/database"
+                ]
+              },
+              {
                 "group": "Epic Games",
                 "pages": [
                   "plugins/epicgames/overview",
