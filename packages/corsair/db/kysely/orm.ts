@@ -51,16 +51,53 @@ function unwrapSchema(schema: ZodTypeAny): ZodTypeAny {
 	return current;
 }
 
+// unknown: enum and literal values can be any primitive; typeof sorts them.
+function literalFieldType(value: unknown): DataFieldType | undefined {
+	if (typeof value === 'string') return 'string';
+	if (typeof value === 'number') return 'number';
+	if (typeof value === 'boolean') return 'boolean';
+	return undefined;
+}
+
+function sameFieldType(
+	types: (DataFieldType | undefined)[],
+): DataFieldType | undefined {
+	const [first] = types;
+	return first && types.every((t) => t === first) ? first : undefined;
+}
+
+/**
+ * Enums, literals and unions whose members share one primitive type filter as
+ * that type, matching the filters `inspect` advertises for them. Without this a
+ * numeric literal union (`0 | 1 | 2`) fell back to string filters, which drop
+ * `gt` and numeric `equals` and return every row.
+ */
 function getFieldType(schema: ZodTypeAny): DataFieldType | undefined {
 	const unwrapped = unwrapSchema(schema);
 	if (unwrapped instanceof z.ZodString) return 'string';
 	if (unwrapped instanceof z.ZodNumber) return 'number';
 	if (unwrapped instanceof z.ZodBoolean) return 'boolean';
 	if (unwrapped instanceof z.ZodDate) return 'date';
+	if (unwrapped instanceof z.ZodEnum) {
+		return sameFieldType(unwrapped.options.map(literalFieldType));
+	}
+	if (unwrapped instanceof z.ZodLiteral) {
+		return sameFieldType([...unwrapped.values].map(literalFieldType));
+	}
+	if (unwrapped instanceof z.ZodUnion) {
+		return sameFieldType(
+			unwrapped.options
+				.filter((option) => !(option instanceof z.ZodNull))
+				.map((option) => getFieldType(option as ZodTypeAny)),
+		);
+	}
 	return undefined;
 }
 
-function getDataFieldTypes(schema: ZodTypeAny): Record<string, DataFieldType> {
+/** Which filter each entity field takes. Exported for tests. */
+export function getDataFieldTypes(
+	schema: ZodTypeAny,
+): Record<string, DataFieldType> {
 	const unwrapped = unwrapSchema(schema);
 	if (!(unwrapped instanceof z.ZodObject)) return {};
 	const shape = unwrapped.shape;

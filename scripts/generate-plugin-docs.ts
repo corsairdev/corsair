@@ -547,10 +547,15 @@ function findWebhookByShortPath(
 }
 
 /** Loose check that a yaml example value matches a docs type string (e.g. `string`, `boolean`). */
+// unknown: yaml examples parse to any JSON-like value; the checks below narrow it.
 function valueMatchesDocType(value: unknown, typeStr: string): boolean {
 	const t = typeStr.trim();
-	// Any JSON value, and `any`, accept every example.
-	if (/\bJsonValue\b/.test(t) || t === 'any') return true;
+	// Any JSON value, and `any`, accept every example, but only when the whole
+	// type (or one of its top-level members) is that. `JsonValue[]` still needs
+	// an array and `Record<string, JsonValue>` an object.
+	if (topLevelUnionMembers(t).some((m) => m === 'JsonValue' || m === 'any')) {
+		return true;
+	}
 	if (value === null) {
 		return /\bnull\b/.test(t) || t.includes('| null') || t.endsWith('null');
 	}

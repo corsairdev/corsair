@@ -153,6 +153,8 @@ function group(type: string): string {
 }
 
 /** Enum and literal values render bare (`full | none`); the empty string renders as `""`. */
+// unknown: zod enum and literal values can be any primitive (string, number,
+// boolean, bigint, null), and String() formats each one.
 function formatLiteralValue(value: unknown): string {
 	return value === '' ? '""' : String(value);
 }
@@ -170,7 +172,7 @@ function getZodLazyTarget(def: ZodDef): ZodTypeAny | undefined {
  * holds more prefetches) renders its shape once and `(recursive)` where it
  * refers to itself, instead of recursing forever or printing `lazy`.
  */
-const lazyInProgress = new Set<unknown>();
+const lazyInProgress = new Set<ZodTypeAny>();
 
 /** Splits a rendered type on its top-level `|`. */
 function topLevelMembers(type: string): string[] {
@@ -576,6 +578,7 @@ const DATE_OPERATORS = ['equals', 'before', 'after', 'between'];
 
 type DbFieldType = 'string' | 'number' | 'boolean' | 'date';
 
+// unknown: a literal can hold any primitive; typeof picks its filter type.
 function literalLeafType(value: unknown): DbFieldType | null {
 	if (typeof value === 'string') return 'string';
 	if (typeof value === 'number') return 'number';
@@ -1230,6 +1233,8 @@ function unwrapZodForDocs(schema: ZodTypeAny): ZodTypeAny {
 }
 
 /** The value a `.default()` on the way in supplies, if there is one. */
+// unknown: a default is whatever the field's own type is (number, string,
+// array, object); callers only JSON.stringify it.
 function findDefault(schema: ZodTypeAny): { value: unknown } | undefined {
 	let current: ZodTypeAny | undefined = schema;
 	while (current) {
@@ -1251,6 +1256,7 @@ const MAX_DEFAULT_TEXT = 40;
 /** `Defaults to 10.` appended to an input description, unless it already says so. */
 function describeDefault(
 	description: string | undefined,
+	// unknown: the default from findDefault, any JSON value; it is only stringified.
 	value: unknown,
 ): string | undefined {
 	if (description && /\bdefault/i.test(description)) return description;
