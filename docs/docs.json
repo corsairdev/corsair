@@ -1883,6 +1883,15 @@
                 ]
               },
               {
+                "group": "fal",
+                "pages": [
+                  "plugins/fal/overview",
+                  "plugins/fal/api",
+                  "plugins/fal/database",
+                  "plugins/fal/webhooks"
+                ]
+              },
+              {
                 "group": "Faraday",
                 "pages": [
                   "plugins/faraday/overview",

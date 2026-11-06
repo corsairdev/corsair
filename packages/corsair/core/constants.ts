@@ -224,6 +224,7 @@ export const BaseProviders = [
 	'exist',
 	'extractaai',
 	'facebook',
+	'fal',
 	'faraday',
 	'figma',
 	'filevine',
@@ -660,6 +661,7 @@ export const ProviderDisplayNames = {
 	exist: 'Exist',
 	extractaai: 'Extracta.ai',
 	facebook: 'Facebook',
+	fal: 'fal',
 	faraday: 'Faraday',
 	figma: 'Figma',
 	filevine: 'Filevine',
@@ -1100,6 +1102,7 @@ export type AllProviders =
 	| 'exist'
 	| 'extractaai'
 	| 'facebook'
+	| 'fal'
 	| 'faraday'
 	| 'figma'
 	| 'filevine'

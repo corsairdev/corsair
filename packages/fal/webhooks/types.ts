@@ -1,0 +1,293 @@
+import crypto from 'node:crypto';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
+import { z } from 'zod';
+
+// ── Payload ─────────────────────────────────────────────────────────────────
+
+/** What fal POSTs to a request's webhook URL when the request completes. */
+export const RequestCompletedEventSchema = z
+	.object({
+		request_id: z.string(),
+		gateway_request_id: z
+			.string()
+			.nullish()
+			.describe(
+				'The last attempt’s id; differs from request_id when fal retried.',
+			),
+		status: z
+			.enum(['OK', 'ERROR'])
+			.describe(
+				'OK: payload is the model output. ERROR: payload is the error body.',
+			),
+		payload: z.record(z.string(), z.unknown()).nullable(),
+		error: z.string().nullish(),
+		payload_error: z
+			.string()
+			.nullish()
+			.describe(
+				'Set when fal could not include the output; read it with queue.result.',
+			),
+	})
+	.loose();
+
+export type RequestCompletedEvent = z.infer<typeof RequestCompletedEventSchema>;
+
+export type FalWebhookOutputs = {
+	requestCompleted: RequestCompletedEvent;
+};
+
+// ── Matching ────────────────────────────────────────────────────────────────
+
+export const FAL_WEBHOOK_HEADERS = {
+	requestId: 'x-fal-webhook-request-id',
+	userId: 'x-fal-webhook-user-id',
+	timestamp: 'x-fal-webhook-timestamp',
+	signature: 'x-fal-webhook-signature',
+} as const;
+
+export function headerValue(
+	headers: Record<string, string | string[] | undefined> | undefined,
+	name: string,
+): string | undefined {
+	if (!headers) return undefined;
+	const direct = headers[name] ?? headers[name.toLowerCase()];
+	const found =
+		direct ??
+		Object.entries(headers).find(
+			([key]) => key.toLowerCase() === name.toLowerCase(),
+		)?.[1];
+	const value = Array.isArray(found) ? found[0] : found;
+	return typeof value === 'string' && value.length > 0 ? value : undefined;
+}
+
+function parseBody(body: unknown): Record<string, unknown> | null {
+	if (typeof body === 'string') {
+		try {
+			const parsed: unknown = JSON.parse(body);
+			return parsed !== null &&
+				typeof parsed === 'object' &&
+				!Array.isArray(parsed)
+				? (parsed as Record<string, unknown>)
+				: null;
+		} catch {
+			return null;
+		}
+	}
+	return body !== null && typeof body === 'object' && !Array.isArray(body)
+		? (body as Record<string, unknown>)
+		: null;
+}
+
+/** A fal webhook carries the four signature headers. */
+export function isFalWebhook(request: RawWebhookRequest): boolean {
+	const headers = request.headers as Record<
+		string,
+		string | string[] | undefined
+	>;
+	return Boolean(
+		headerValue(headers, FAL_WEBHOOK_HEADERS.signature) &&
+			headerValue(headers, FAL_WEBHOOK_HEADERS.requestId),
+	);
+}
+
+export const matchRequestCompleted: CorsairWebhookMatcher = (request) => {
+	if (!isFalWebhook(request)) return false;
+	const body = parseBody(request.body);
+	return (
+		body !== null &&
+		typeof body.request_id === 'string' &&
+		(body.status === 'OK' || body.status === 'ERROR')
+	);
+};
+
+// ── Signature verification ──────────────────────────────────────────────────
+
+export const FAL_JWKS_URL = 'https://rest.fal.ai/.well-known/jwks.json';
+
+/** fal: cache the key set, but not past 24 hours; keys rotate. */
+const JWKS_CACHE_MS = 24 * 60 * 60 * 1000;
+const TIMESTAMP_LEEWAY_SECONDS = 300;
+
+export type FalJwk = { kty?: string; crv?: string; kid?: string; x?: string };
+
+let jwksCache: { keys: FalJwk[]; fetchedAt: number } | null = null;
+
+export async function fetchFalJwks(now = Date.now()): Promise<FalJwk[]> {
+	if (jwksCache && now - jwksCache.fetchedAt < JWKS_CACHE_MS) {
+		return jwksCache.keys;
+	}
+	const response = await fetch(FAL_JWKS_URL, {
+		signal: AbortSignal.timeout(10_000),
+	});
+	if (!response.ok) {
+		throw new Error(`fal JWKS fetch failed with HTTP ${response.status}`);
+	}
+	const body = (await response.json()) as { keys?: FalJwk[] };
+	const keys = Array.isArray(body.keys) ? body.keys : [];
+	jwksCache = { keys, fetchedAt: now };
+	return keys;
+}
+
+/** Clears the cached key set (tests, or after a rotation). */
+export function resetFalJwksCache(): void {
+	jwksCache = null;
+}
+
+// DER prefix that wraps a raw 32-byte Ed25519 key as SubjectPublicKeyInfo.
+const ED25519_SPKI_PREFIX = Buffer.from('302a300506032b6570032100', 'hex');
+
+function ed25519KeyFromJwk(jwk: FalJwk): crypto.KeyObject | null {
+	if (typeof jwk.x !== 'string') return null;
+	// fal's x is base64 with padding; accept base64url too.
+	const raw = Buffer.from(
+		jwk.x.replace(/-/g, '+').replace(/_/g, '/'),
+		'base64',
+	);
+	if (raw.length !== 32) return null;
+	return crypto.createPublicKey({
+		key: Buffer.concat([ED25519_SPKI_PREFIX, raw]),
+		format: 'der',
+		type: 'spki',
+	});
+}
+
+export type FalVerifyOptions = {
+	/** Keys to check against instead of fetching fal's JWKS. */
+	jwks?: FalJwk[];
+	/** Current time in ms, for the ±5 minute timestamp window. */
+	now?: number;
+};
+
+/**
+ * fal serialises webhook bodies with Python's `json.dumps(body, sort_keys=True)`:
+ * sorted keys, `", "` and `": "` separators, non-ASCII escaped. When a caller
+ * hands processWebhook parsed JSON, the raw body Corsair sees is JS's compact
+ * re-serialisation, which never hashes the same; rebuilding fal's form lets
+ * those deliveries verify. Integers past 2^53 cannot be rebuilt, so give up.
+ */
+export function falJsonDumps(value: unknown): string | null {
+	if (value === null) return 'null';
+	if (typeof value === 'boolean') return value ? 'true' : 'false';
+	if (typeof value === 'number') {
+		return Number.isFinite(value) &&
+			(!Number.isInteger(value) || Number.isSafeInteger(value))
+			? JSON.stringify(value)
+			: null;
+	}
+	if (typeof value === 'string') {
+		return JSON.stringify(value).replace(
+			/[\u0080-\uffff]/g,
+			(char) => `\\u${char.charCodeAt(0).toString(16).padStart(4, '0')}`,
+		);
+	}
+	if (Array.isArray(value)) {
+		const items = value.map(falJsonDumps);
+		return items.includes(null) ? null : `[${items.join(', ')}]`;
+	}
+	if (typeof value === 'object') {
+		const entries = Object.keys(value)
+			.sort()
+			.map((key) => {
+				const item = falJsonDumps((value as Record<string, unknown>)[key]);
+				return item === null ? null : `${falJsonDumps(key)}: ${item}`;
+			});
+		return entries.includes(null) ? null : `{${entries.join(', ')}}`;
+	}
+	return null;
+}
+
+/** The bodies that may be the one fal signed: the raw body, then fal's form of it. */
+function candidateBodies(rawBody: string): string[] {
+	try {
+		const rebuilt = falJsonDumps(JSON.parse(rawBody));
+		return rebuilt && rebuilt !== rawBody ? [rawBody, rebuilt] : [rawBody];
+	} catch {
+		return [rawBody];
+	}
+}
+
+/**
+ * fal signs `request id \n user id \n timestamp \n sha256(body)` with
+ * Ed25519; any key in its JWKS may have signed it. Pass the body text as
+ * received (`await req.text()`); parsed JSON is rebuilt in fal's form.
+ */
+export async function verifyFalWebhookSignature(
+	request: Pick<WebhookRequest<unknown>, 'headers' | 'rawBody' | 'hubVerified'>,
+	options: FalVerifyOptions = {},
+): Promise<{ valid: boolean; error?: string }> {
+	// Hub checked the signature before forwarding the delivery.
+	if (request.hubVerified) return { valid: true };
+
+	const headers = request.headers as Record<
+		string,
+		string | string[] | undefined
+	>;
+	const requestId = headerValue(headers, FAL_WEBHOOK_HEADERS.requestId);
+	const userId = headerValue(headers, FAL_WEBHOOK_HEADERS.userId);
+	const timestamp = headerValue(headers, FAL_WEBHOOK_HEADERS.timestamp);
+	const signature = headerValue(headers, FAL_WEBHOOK_HEADERS.signature);
+
+	if (!requestId || !userId || !timestamp || !signature) {
+		return { valid: false, error: 'Missing fal webhook signature headers' };
+	}
+	if (!request.rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for fal signature verification',
+		};
+	}
+
+	const now = options.now ?? Date.now();
+	const sentAt = Number(timestamp);
+	if (
+		!Number.isFinite(sentAt) ||
+		Math.abs(Math.floor(now / 1000) - sentAt) > TIMESTAMP_LEEWAY_SECONDS
+	) {
+		return {
+			valid: false,
+			error: 'fal webhook timestamp is outside the 5 minute window',
+		};
+	}
+
+	if (!/^[0-9a-f]+$/i.test(signature) || signature.length !== 128) {
+		return { valid: false, error: 'fal webhook signature is not hex Ed25519' };
+	}
+
+	const messages = candidateBodies(request.rawBody).map((body) =>
+		Buffer.from(
+			[
+				requestId,
+				userId,
+				timestamp,
+				crypto.createHash('sha256').update(body, 'utf8').digest('hex'),
+			].join('\n'),
+			'utf8',
+		),
+	);
+	const signatureBytes = Buffer.from(signature, 'hex');
+
+	let keys: FalJwk[];
+	try {
+		keys = options.jwks ?? (await fetchFalJwks(now));
+	} catch (error) {
+		return {
+			valid: false,
+			error: `Could not load fal's signing keys: ${error instanceof Error ? error.message : 'unknown error'}`,
+		};
+	}
+
+	for (const jwk of keys) {
+		const key = ed25519KeyFromJwk(jwk);
+		if (!key) continue;
+		for (const message of messages) {
+			if (crypto.verify(null, message, key, signatureBytes)) {
+				return { valid: true };
+			}
+		}
+	}
+	return { valid: false, error: 'Invalid fal webhook signature' };
+}

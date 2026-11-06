@@ -1,0 +1,215 @@
+import { processWebhook } from 'corsair';
+import { createCorsair } from 'corsair/core';
+import { createCorsairOrm } from 'corsair/orm';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
+import { fal } from './index';
+import { completedBody, createFalSigner, REQUEST_ID } from './test-fixtures';
+import { FAL_JWKS_URL, resetFalJwksCache } from './webhooks/types';
+
+async function createClient(options: Parameters<typeof fal>[0]) {
+	const testDb = createTestDatabase();
+	await createIntegrationAndAccount(testDb.db, 'fal', 'default');
+	const corsair = createCorsair({
+		plugins: [fal(options)],
+		database: testDb.db,
+		kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+	});
+	return { corsair, testDb };
+}
+
+const { jwks, sign } = createFalSigner();
+let fetchMock: jest.SpyInstance;
+
+// unknown: response bodies are arbitrary JSON.
+function respond(body: unknown, status = 200) {
+	fetchMock.mockImplementationOnce(
+		async () =>
+			new Response(JSON.stringify(body), {
+				status,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+	);
+}
+
+const queued = {
+	status: 'IN_QUEUE',
+	request_id: REQUEST_ID,
+	response_url: `https://queue.fal.run/fal-ai/flux/requests/${REQUEST_ID}`,
+	queue_position: 0,
+};
+
+beforeEach(() => {
+	resetFalJwksCache();
+	fetchMock = jest.spyOn(globalThis, 'fetch');
+	jest.spyOn(console, 'log').mockImplementation(() => undefined);
+});
+
+afterEach(() => {
+	jest.restoreAllMocks();
+});
+
+describe('fal plugin through createCorsair', () => {
+	it('fails fast with AuthMissingError when no key is stored', async () => {
+		const { corsair, testDb } = await createClient({});
+		try {
+			await corsair.fal.keys.issue_new_dek();
+			await expect(
+				corsair.fal.api.models.pricing({ endpointIds: ['fal-ai/flux/dev'] }),
+			).rejects.toThrow(/auth-missing/);
+			expect(fetchMock).not.toHaveBeenCalled();
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('sends the stored key as "Key <key>" to the queue', async () => {
+		const { corsair, testDb } = await createClient({});
+		try {
+			await corsair.fal.keys.issue_new_dek();
+			await corsair.fal.keys.set_api_key('fal-stored-key');
+			respond(queued);
+
+			const submitted = await corsair.fal.api.queue.submit({
+				endpointId: 'fal-ai/flux/schnell',
+				input: { prompt: 'a lighthouse' },
+			});
+
+			expect(submitted.request_id).toBe(REQUEST_ID);
+			const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+			expect(url).toBe('https://queue.fal.run/fal-ai/flux/schnell');
+			expect(new Headers(init.headers).get('authorization')).toBe(
+				'Key fal-stored-key',
+			);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('follows a request to SUCCEEDED with its output', async () => {
+		const { corsair, testDb } = await createClient({ key: 'fal-key' });
+		try {
+			respond({
+				...queued,
+				status: 'COMPLETED',
+				metrics: { inference_time: 0.7 },
+			});
+			respond(completedBody.payload);
+
+			const status = await corsair.fal.api.queue.status({
+				responseUrl: queued.response_url,
+			});
+
+			expect(status.state).toBe('SUCCEEDED');
+			expect(status.output).toEqual(completedBody.payload);
+			expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
+				`https://queue.fal.run/fal-ai/flux/requests/${REQUEST_ID}/status`,
+				`https://queue.fal.run/fal-ai/flux/requests/${REQUEST_ID}`,
+			]);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('does not retry a 422 from a sync run', async () => {
+		const { corsair, testDb } = await createClient({ key: 'fal-key' });
+		try {
+			respond(
+				{ detail: [{ loc: ['body', 'prompt'], msg: 'Field required' }] },
+				422,
+			);
+			await expect(
+				corsair.fal.api.models.run({
+					endpointId: 'fal-ai/flux/schnell',
+					input: {},
+				}),
+			).rejects.toMatchObject({ status: 422 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
+
+describe('fal webhooks through processWebhook', () => {
+	function serveJwks() {
+		fetchMock.mockImplementation(async (url: string | URL | Request) => {
+			if (String(url) === FAL_JWKS_URL) {
+				return new Response(JSON.stringify({ keys: jwks }), { status: 200 });
+			}
+			throw new Error(`unexpected fetch ${String(url)}`);
+		});
+	}
+
+	it('routes a signed delivery to requests.completed and logs it', async () => {
+		const { corsair, testDb } = await createClient({ key: 'fal-key' });
+		try {
+			serveJwks();
+			const delivery = sign();
+
+			const result = await processWebhook(
+				corsair,
+				delivery.headers,
+				delivery.rawBody,
+			);
+
+			expect(result.plugin).toBe('fal');
+			expect(result.action).toBe('requests.completed');
+			expect(result.response?.statusCode ?? 200).toBe(200);
+			const events = await createCorsairOrm(testDb.database).events.findMany({
+				where: { event_type: 'fal.webhook.requests.completed' },
+			});
+			expect(events).toHaveLength(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('verifies a delivery passed as parsed JSON, as the generic handler does', async () => {
+		const { corsair, testDb } = await createClient({ key: 'fal-key' });
+		try {
+			serveJwks();
+			const delivery = sign();
+
+			const result = await processWebhook(
+				corsair,
+				delivery.headers,
+				delivery.body as Record<string, unknown>,
+			);
+
+			expect(result.action).toBe('requests.completed');
+			const events = await createCorsairOrm(testDb.database).events.findMany({
+				where: { event_type: 'fal.webhook.requests.completed' },
+			});
+			expect(events).toHaveLength(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('refuses a delivery whose body was changed in transit', async () => {
+		const { corsair, testDb } = await createClient({ key: 'fal-key' });
+		try {
+			serveJwks();
+			const delivery = sign();
+			const tampered = delivery.rawBody.replace('35683856', '1');
+
+			// processWebhook answers the sender the same either way; what shows
+			// the refusal is that nothing was logged and the handler said 401.
+			const result = await processWebhook(corsair, delivery.headers, tampered);
+			expect(result.plugin).toBe('fal');
+			const events = await createCorsairOrm(testDb.database).events.findMany({
+				where: { event_type: 'fal.webhook.requests.completed' },
+			});
+			expect(events).toHaveLength(0);
+
+			const response = await corsair.fal.webhooks.requests.completed.handler({
+				payload: JSON.parse(tampered),
+				headers: delivery.headers,
+				rawBody: tampered,
+			});
+			expect(response).toMatchObject({ success: false, statusCode: 401 });
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
