@@ -6,7 +6,10 @@ import type { IntegrationPhase, IntegrationReleaseReason } from '@/db/schema';
 import { integrationStatus, integrations } from '@/db/schema';
 import type { ClaimBlockReason } from '@/lib/integration-claim-limits';
 import { canClaimMore } from '@/lib/integration-claim-limits';
-import { isIntegrationActivelyClaimed } from '@/lib/integration-phases';
+import {
+	holdsClaimSlot,
+	isIntegrationActivelyClaimed,
+} from '@/lib/integration-phases';
 
 export type { ClaimBlockReason } from '@/lib/integration-claim-limits';
 
@@ -241,11 +244,13 @@ export async function getUserClaimEligibility(
 	db: DB,
 	userId: string,
 ): Promise<UserClaimEligibility> {
-	// Every claim the user still holds counts against the cap — in progress,
-	// ready to review, and finished alike. A slot frees up only when a claim is
-	// released, by unclaiming or by a deadline timeout.
+	// Only claims the contributor can still act on count against the cap. A
+	// `ready_to_review` claim is waiting on a maintainer and `finished` is done,
+	// so neither is work the contributor could drop to free a slot.
 	const activeClaims = await getActiveClaimsForUser(db, userId);
-	const builtCount = activeClaims.length;
+	const builtCount = activeClaims.filter((claim) =>
+		holdsClaimSlot(claim.phase),
+	).length;
 
 	if (!canClaimMore(builtCount)) {
 		return {
