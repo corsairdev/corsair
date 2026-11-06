@@ -106,6 +106,9 @@ describe('search on SQLite', () => {
 
 	afterEach(() => sqlite.close());
 
+	// The cases filter number, boolean, date and string fields with bare values
+	// and operator objects ({ gt }, { in }, { after }), so one loose record type
+	// covers every call; the ORM under test is what checks each shape.
 	const find = async (data: Record<string, unknown>) =>
 		(await corsair.slack.db.channels.search({ data }))
 			.map((row) => row.data.title)
