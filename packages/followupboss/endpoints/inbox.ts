@@ -37,9 +37,9 @@ export const inboxAppsDeactivate: FollowUpBossEndpoints['inboxAppsDeactivate'] =
 			},
 		);
 
-export const inboxAppsDeleteParticipant = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const inboxAppsDeleteParticipant: FollowUpBossEndpoints['inboxAppsDeleteParticipant'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -64,9 +64,9 @@ export const inboxAppsDeleteParticipant = (
 		},
 	);
 
-export const inboxAppsGetParticipants = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const inboxAppsGetParticipants: FollowUpBossEndpoints['inboxAppsGetParticipants'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -87,9 +87,9 @@ export const inboxAppsGetParticipants = (
 		},
 	);
 
-export const inboxAppsCreateParticipant = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const inboxAppsCreateParticipant: FollowUpBossEndpoints['inboxAppsCreateParticipant'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -157,9 +157,9 @@ export const inboxAppsAddNote: FollowUpBossEndpoints['inboxAppsAddNote'] = (
 		},
 	);
 
-export const inboxAppsAddSystemConfirmationMessage = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const inboxAppsAddSystemConfirmationMessage: FollowUpBossEndpoints['inboxAppsAddSystemConfirmationMessage'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -201,9 +201,9 @@ export const inboxAppsInstall: FollowUpBossEndpoints['inboxAppsInstall'] = (
 		},
 	);
 
-export const inboxAppsUpdateConversation = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const inboxAppsUpdateConversation: FollowUpBossEndpoints['inboxAppsUpdateConversation'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -227,9 +227,9 @@ export const inboxAppsUpdateConversation = (
 		},
 	);
 
-export const inboxAppsUpdateMessage = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const inboxAppsUpdateMessage: FollowUpBossEndpoints['inboxAppsUpdateMessage'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -250,9 +250,9 @@ export const inboxAppsUpdateMessage = (
 		},
 	);
 
-export const inboxAppsInstalledApp = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const inboxAppsInstalledApp: FollowUpBossEndpoints['inboxAppsInstalledApp'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,

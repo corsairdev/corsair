@@ -1861,8 +1861,6 @@ export type {
 	FollowUpBossAppointmentType,
 	FollowUpBossCall,
 	FollowUpBossDeletedResponse,
-	FollowUpBossEndpointInputs,
-	FollowUpBossEndpointOutputs,
 	FollowUpBossEvent,
 	FollowUpBossIdentity,
 	FollowUpBossMe,
@@ -1874,4 +1872,8 @@ export type {
 	FollowUpBossTask,
 	FollowUpBossTextMessage,
 } from './endpoints/types';
+export type {
+	FollowUpBossEndpointInputs,
+	FollowUpBossEndpointOutputs,
+} from './endpoints/registry';
 export { TASK_TYPES } from './endpoints/types';

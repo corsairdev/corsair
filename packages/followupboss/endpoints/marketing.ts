@@ -138,9 +138,9 @@ export const templatesMerge: FollowUpBossEndpoints['templatesMerge'] = (
 
 // ── text message templates ─────────────────────────────────────────────────
 
-export const textMessageTemplatesList = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const textMessageTemplatesList: FollowUpBossEndpoints['textMessageTemplatesList'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -163,9 +163,9 @@ export const textMessageTemplatesList = (
 // The published OAS paths this create as POST '//textMessageTemplates' with a
 // doubled slash; the single-slash collection path its sibling GET uses is sent
 // instead.
-export const textMessageTemplatesCreate = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const textMessageTemplatesCreate: FollowUpBossEndpoints['textMessageTemplatesCreate'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -183,9 +183,9 @@ export const textMessageTemplatesCreate = (
 		},
 	);
 
-export const textMessageTemplatesGet = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const textMessageTemplatesGet: FollowUpBossEndpoints['textMessageTemplatesGet'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -205,9 +205,9 @@ export const textMessageTemplatesGet = (
 		},
 	);
 
-export const textMessageTemplatesUpdate = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const textMessageTemplatesUpdate: FollowUpBossEndpoints['textMessageTemplatesUpdate'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -228,9 +228,9 @@ export const textMessageTemplatesUpdate = (
 		},
 	);
 
-export const textMessageTemplatesDelete = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const textMessageTemplatesDelete: FollowUpBossEndpoints['textMessageTemplatesDelete'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -252,9 +252,9 @@ export const textMessageTemplatesDelete = (
 		},
 	);
 
-export const textMessageTemplatesMerge = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const textMessageTemplatesMerge: FollowUpBossEndpoints['textMessageTemplatesMerge'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,

@@ -334,9 +334,9 @@ export const stagesDelete: FollowUpBossEndpoints['stagesDelete'] = (
 
 // ── deal custom fields ─────────────────────────────────────────────────────
 
-export const dealCustomFieldsList = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const dealCustomFieldsList: FollowUpBossEndpoints['dealCustomFieldsList'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -373,9 +373,9 @@ export const dealCustomFieldsGet: FollowUpBossEndpoints['dealCustomFieldsGet'] =
 			},
 		);
 
-export const dealCustomFieldsCreate = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const dealCustomFieldsCreate: FollowUpBossEndpoints['dealCustomFieldsCreate'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -392,9 +392,9 @@ export const dealCustomFieldsCreate = (
 		},
 	);
 
-export const dealCustomFieldsUpdate = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const dealCustomFieldsUpdate: FollowUpBossEndpoints['dealCustomFieldsUpdate'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -415,9 +415,9 @@ export const dealCustomFieldsUpdate = (
 		},
 	);
 
-export const dealCustomFieldsDelete = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const dealCustomFieldsDelete: FollowUpBossEndpoints['dealCustomFieldsDelete'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -440,9 +440,9 @@ export const dealCustomFieldsDelete = (
 
 // ── deal attachments ───────────────────────────────────────────────────────
 
-export const dealAttachmentsCreate = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const dealAttachmentsCreate: FollowUpBossEndpoints['dealAttachmentsCreate'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -479,9 +479,9 @@ export const dealAttachmentsGet: FollowUpBossEndpoints['dealAttachmentsGet'] = (
 		},
 	);
 
-export const dealAttachmentsUpdate = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const dealAttachmentsUpdate: FollowUpBossEndpoints['dealAttachmentsUpdate'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -502,9 +502,9 @@ export const dealAttachmentsUpdate = (
 		},
 	);
 
-export const dealAttachmentsDelete = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const dealAttachmentsDelete: FollowUpBossEndpoints['dealAttachmentsDelete'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -527,9 +527,9 @@ export const dealAttachmentsDelete = (
 
 // ── appointment outcomes ───────────────────────────────────────────────────
 
-export const appointmentOutcomesList = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const appointmentOutcomesList: FollowUpBossEndpoints['appointmentOutcomesList'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -549,9 +549,9 @@ export const appointmentOutcomesList = (
 		},
 	);
 
-export const appointmentOutcomesGet = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const appointmentOutcomesGet: FollowUpBossEndpoints['appointmentOutcomesGet'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -571,9 +571,9 @@ export const appointmentOutcomesGet = (
 		},
 	);
 
-export const appointmentOutcomesCreate = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const appointmentOutcomesCreate: FollowUpBossEndpoints['appointmentOutcomesCreate'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -590,9 +590,9 @@ export const appointmentOutcomesCreate = (
 		},
 	);
 
-export const appointmentOutcomesUpdate = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const appointmentOutcomesUpdate: FollowUpBossEndpoints['appointmentOutcomesUpdate'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
@@ -615,9 +615,9 @@ export const appointmentOutcomesUpdate = (
 
 // Deleting an outcome requires the query parameter that reassigns the
 // existing appointments to another outcome, and the 200 body is an array.
-export const appointmentOutcomesDelete = (
-	ctx: FollowUpBossContext,
-	input: unknown,
+export const appointmentOutcomesDelete: FollowUpBossEndpoints['appointmentOutcomesDelete'] = (
+	ctx,
+	input,
 ) =>
 	call(
 		ctx,
