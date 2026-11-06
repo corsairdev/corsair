@@ -425,7 +425,7 @@ await corsair.lever.api.contacts.update({ contactId: 'c38e60e9-5992-45e5-8f81-d4
 | `contactId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `headline` | `string` | No | — |
-| `location` | `object` | No | — |
+| `location` | `string \| object` | No | — |
 | `phones` | `object[]` | No | — |
 | `emails` | `string[]` | No | — |
 
@@ -705,10 +705,8 @@ await corsair.lever.api.feedback.create({
 ```ts
 {
   id: string,
-  value: string | number | boolean | null | (
-    string | number | {
-    }
-  )[] | {
+  value: string | number | boolean | null | (string | number | {
+  })[] | {
   }
 }[]
 ```
@@ -807,7 +805,7 @@ await corsair.lever.api.feedback.delete({ opportunityId: '250d8f03-738a-4bba-a67
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -988,10 +986,8 @@ await corsair.lever.api.feedback.update({
 ```ts
 {
   id: string,
-  value: string | number | boolean | null | (
-    string | number | {
-    }
-  )[] | {
+  value: string | number | boolean | null | (string | number | {
+  })[] | {
   }
 }[]
 ```
@@ -1141,7 +1137,7 @@ await corsair.lever.api.feedbackTemplates.delete({ feedbackTemplateId: '5b0f589c
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1376,7 +1372,7 @@ await corsair.lever.api.files.delete({ opportunityId: '250d8f03-738a-4bba-a671-8
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1557,10 +1553,8 @@ await corsair.lever.api.forms.create({
 {
   type: string,
   text: string,
-  value?: string | number | boolean | null | (
-    string | number | {
-    }
-  )[] | {
+  value?: string | number | boolean | null | (string | number | {
+  })[] | {
   }
 }[]
 ```
@@ -1869,7 +1863,7 @@ await corsair.lever.api.formTemplates.delete({ formTemplateId: '8f1c2d3e-4a5b-4c
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2113,7 +2107,7 @@ await corsair.lever.api.interviews.create({
 | `location` | `string` | No | — |
 | `feedbackTemplate` | `string` | No | — |
 | `feedbackReminder` | `once \| daily \| frequently \| none` | No | — |
-| `conferenceData` | `object` | No | — |
+| `conferenceData` | `object \| null` | No | — |
 | `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
 
 <AccordionGroup>
@@ -2133,7 +2127,7 @@ await corsair.lever.api.interviews.create({
 {
   conferenceUrl: string,
   conferenceSolution?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2166,20 +2160,16 @@ await corsair.lever.api.interviews.create({
     location?: string | null,
     feedbackTemplate?: string | {
     } | null,
-    feedbackForms?: (
-      string | {
-      }
-    )[] | null,
+    feedbackForms?: (string | {
+    })[] | null,
     feedbackReminder?: string | null,
     user?: string | {
     } | null,
     stage?: string | {
     } | null,
     canceledAt?: number | string | null,
-    postings?: (
-      string | {
-      }
-    )[] | null,
+    postings?: (string | {
+    })[] | null,
     gcalEventUrl?: string | null,
     conferences?: {
     }[] | null
@@ -2201,20 +2191,16 @@ await corsair.lever.api.interviews.create({
   location?: string | null,
   feedbackTemplate?: string | {
   } | null,
-  feedbackForms?: (
-    string | {
-    }
-  )[] | null,
+  feedbackForms?: (string | {
+  })[] | null,
   feedbackReminder?: string | null,
   user?: string | {
   } | null,
   stage?: string | {
   } | null,
   canceledAt?: number | string | null,
-  postings?: (
-    string | {
-    }
-  )[] | null,
+  postings?: (string | {
+  })[] | null,
   gcalEventUrl?: string | null,
   conferences?: {
   }[] | null
@@ -2249,7 +2235,7 @@ await corsair.lever.api.interviews.delete({ opportunityId: '250d8f03-738a-4bba-a
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2312,20 +2298,16 @@ await corsair.lever.api.interviews.list({ opportunityId: '250d8f03-738a-4bba-a67
   location?: string | null,
   feedbackTemplate?: string | {
   } | null,
-  feedbackForms?: (
-    string | {
-    }
-  )[] | null,
+  feedbackForms?: (string | {
+  })[] | null,
   feedbackReminder?: string | null,
   user?: string | {
   } | null,
   stage?: string | {
   } | null,
   canceledAt?: number | string | null,
-  postings?: (
-    string | {
-    }
-  )[] | null,
+  postings?: (string | {
+  })[] | null,
   gcalEventUrl?: string | null,
   conferences?: {
   }[] | null
@@ -2384,20 +2366,16 @@ await corsair.lever.api.interviews.retrieve({ opportunityId: '250d8f03-738a-4bba
   location?: string | null,
   feedbackTemplate?: string | {
   } | null,
-  feedbackForms?: (
-    string | {
-    }
-  )[] | null,
+  feedbackForms?: (string | {
+  })[] | null,
   feedbackReminder?: string | null,
   user?: string | {
   } | null,
   stage?: string | {
   } | null,
   canceledAt?: number | string | null,
-  postings?: (
-    string | {
-    }
-  )[] | null,
+  postings?: (string | {
+  })[] | null,
   gcalEventUrl?: string | null,
   conferences?: {
   }[] | null
@@ -2445,7 +2423,7 @@ await corsair.lever.api.interviews.update({
 | `location` | `string` | No | — |
 | `feedbackTemplate` | `string` | No | — |
 | `feedbackReminder` | `once \| daily \| frequently \| none` | No | — |
-| `conferenceData` | `object` | No | — |
+| `conferenceData` | `object \| null` | No | — |
 | `perform_as` | `string` | Yes | Lever user ID to perform this action as (sent as the perform_as query parameter) |
 
 <AccordionGroup>
@@ -2465,7 +2443,7 @@ await corsair.lever.api.interviews.update({
 {
   conferenceUrl: string,
   conferenceSolution?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2498,20 +2476,16 @@ await corsair.lever.api.interviews.update({
     location?: string | null,
     feedbackTemplate?: string | {
     } | null,
-    feedbackForms?: (
-      string | {
-      }
-    )[] | null,
+    feedbackForms?: (string | {
+    })[] | null,
     feedbackReminder?: string | null,
     user?: string | {
     } | null,
     stage?: string | {
     } | null,
     canceledAt?: number | string | null,
-    postings?: (
-      string | {
-      }
-    )[] | null,
+    postings?: (string | {
+    })[] | null,
     gcalEventUrl?: string | null,
     conferences?: {
     }[] | null
@@ -2533,20 +2507,16 @@ await corsair.lever.api.interviews.update({
   location?: string | null,
   feedbackTemplate?: string | {
   } | null,
-  feedbackForms?: (
-    string | {
-    }
-  )[] | null,
+  feedbackForms?: (string | {
+  })[] | null,
   feedbackReminder?: string | null,
   user?: string | {
   } | null,
   stage?: string | {
   } | null,
   canceledAt?: number | string | null,
-  postings?: (
-    string | {
-    }
-  )[] | null,
+  postings?: (string | {
+  })[] | null,
   gcalEventUrl?: string | null,
   conferences?: {
   }[] | null
@@ -2630,7 +2600,7 @@ await corsair.lever.api.notes.delete({ opportunityId: '250d8f03-738a-4bba-a671-8
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2953,7 +2923,7 @@ await corsair.lever.api.opportunities.addLinks({
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2993,7 +2963,7 @@ await corsair.lever.api.opportunities.addSources({
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3033,7 +3003,7 @@ await corsair.lever.api.opportunities.addTags({
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3154,14 +3124,10 @@ await corsair.lever.api.opportunities.create({
   } | null,
   owner?: string | {
   } | null,
-  followers?: (
-    string | {
-    }
-  )[] | null,
-  applications?: (
-    string | {
-    }
-  )[] | null,
+  followers?: (string | {
+  })[] | null,
+  applications?: (string | {
+  })[] | null,
   stage?: string | {
   } | null,
   resume?: string | {
@@ -3272,14 +3238,10 @@ await corsair.lever.api.opportunities.list({ limit: 50, stage_id: '00922a60-7c15
   } | null,
   owner?: string | {
   } | null,
-  followers?: (
-    string | {
-    }
-  )[] | null,
-  applications?: (
-    string | {
-    }
-  )[] | null,
+  followers?: (string | {
+  })[] | null,
+  applications?: (string | {
+  })[] | null,
   stage?: string | {
   } | null,
   resume?: string | {
@@ -3434,7 +3396,7 @@ await corsair.lever.api.opportunities.removeLinks({
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3474,7 +3436,7 @@ await corsair.lever.api.opportunities.removeSources({
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3514,7 +3476,7 @@ await corsair.lever.api.opportunities.removeTags({
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3591,14 +3553,10 @@ await corsair.lever.api.opportunities.retrieve({ opportunityId: '250d8f03-738a-4
   } | null,
   owner?: string | {
   } | null,
-  followers?: (
-    string | {
-    }
-  )[] | null,
-  applications?: (
-    string | {
-    }
-  )[] | null,
+  followers?: (string | {
+  })[] | null,
+  applications?: (string | {
+  })[] | null,
   stage?: string | {
   } | null,
   resume?: string | {
@@ -3641,7 +3599,7 @@ await corsair.lever.api.opportunities.updateArchivedState({ opportunityId: '250d
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `opportunityId` | `string` | Yes | — |
-| `reason` | `string` | No | — |
+| `reason` | `string \| null` | Yes | — |
 | `cleanInterviews` | `boolean` | No | — |
 | `requisitionId` | `string` | No | — |
 | `perform_as` | `string` | No | Lever user ID to perform this action as (sent as the perform_as query parameter) |
@@ -3688,14 +3646,10 @@ await corsair.lever.api.opportunities.updateArchivedState({ opportunityId: '250d
   } | null,
   owner?: string | {
   } | null,
-  followers?: (
-    string | {
-    }
-  )[] | null,
-  applications?: (
-    string | {
-    }
-  )[] | null,
+  followers?: (string | {
+  })[] | null,
+  applications?: (string | {
+  })[] | null,
   stage?: string | {
   } | null,
   resume?: string | {
@@ -3783,14 +3737,10 @@ await corsair.lever.api.opportunities.updateStage({ opportunityId: '250d8f03-738
   } | null,
   owner?: string | {
   } | null,
-  followers?: (
-    string | {
-    }
-  )[] | null,
-  applications?: (
-    string | {
-    }
-  )[] | null,
+  followers?: (string | {
+  })[] | null,
+  applications?: (string | {
+  })[] | null,
   stage?: string | {
   } | null,
   resume?: string | {
@@ -3878,10 +3828,8 @@ await corsair.lever.api.panels.create({
 {
   data: {
     id: string,
-    applications?: (
-      string | {
-      }
-    )[] | null,
+    applications?: (string | {
+    })[] | null,
     canceledAt?: number | string | null,
     createdAt?: number | string | null,
     start?: number | string | null,
@@ -3910,20 +3858,16 @@ await corsair.lever.api.panels.create({
       location?: string | null,
       feedbackTemplate?: string | {
       } | null,
-      feedbackForms?: (
-        string | {
-        }
-      )[] | null,
+      feedbackForms?: (string | {
+      })[] | null,
       feedbackReminder?: string | null,
       user?: string | {
       } | null,
       stage?: string | {
       } | null,
       canceledAt?: number | string | null,
-      postings?: (
-        string | {
-        }
-      )[] | null,
+      postings?: (string | {
+      })[] | null,
       gcalEventUrl?: string | null,
       conferences?: {
       }[] | null
@@ -3933,10 +3877,8 @@ await corsair.lever.api.panels.create({
   next?: string
 } | {
   id: string,
-  applications?: (
-    string | {
-    }
-  )[] | null,
+  applications?: (string | {
+  })[] | null,
   canceledAt?: number | string | null,
   createdAt?: number | string | null,
   start?: number | string | null,
@@ -3965,20 +3907,16 @@ await corsair.lever.api.panels.create({
     location?: string | null,
     feedbackTemplate?: string | {
     } | null,
-    feedbackForms?: (
-      string | {
-      }
-    )[] | null,
+    feedbackForms?: (string | {
+    })[] | null,
     feedbackReminder?: string | null,
     user?: string | {
     } | null,
     stage?: string | {
     } | null,
     canceledAt?: number | string | null,
-    postings?: (
-      string | {
-      }
-    )[] | null,
+    postings?: (string | {
+    })[] | null,
     gcalEventUrl?: string | null,
     conferences?: {
     }[] | null
@@ -4014,7 +3952,7 @@ await corsair.lever.api.panels.delete({ opportunityId: '250d8f03-738a-4bba-a671-
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4063,10 +4001,8 @@ await corsair.lever.api.panels.list({ opportunityId: '250d8f03-738a-4bba-a671-8a
 ```ts
 {
   id: string,
-  applications?: (
-    string | {
-    }
-  )[] | null,
+  applications?: (string | {
+  })[] | null,
   canceledAt?: number | string | null,
   createdAt?: number | string | null,
   start?: number | string | null,
@@ -4095,20 +4031,16 @@ await corsair.lever.api.panels.list({ opportunityId: '250d8f03-738a-4bba-a671-8a
     location?: string | null,
     feedbackTemplate?: string | {
     } | null,
-    feedbackForms?: (
-      string | {
-      }
-    )[] | null,
+    feedbackForms?: (string | {
+    })[] | null,
     feedbackReminder?: string | null,
     user?: string | {
     } | null,
     stage?: string | {
     } | null,
     canceledAt?: number | string | null,
-    postings?: (
-      string | {
-      }
-    )[] | null,
+    postings?: (string | {
+    })[] | null,
     gcalEventUrl?: string | null,
     conferences?: {
     }[] | null
@@ -4155,10 +4087,8 @@ await corsair.lever.api.panels.retrieve({ opportunityId: '250d8f03-738a-4bba-a67
 ```ts
 {
   id: string,
-  applications?: (
-    string | {
-    }
-  )[] | null,
+  applications?: (string | {
+  })[] | null,
   canceledAt?: number | string | null,
   createdAt?: number | string | null,
   start?: number | string | null,
@@ -4187,20 +4117,16 @@ await corsair.lever.api.panels.retrieve({ opportunityId: '250d8f03-738a-4bba-a67
     location?: string | null,
     feedbackTemplate?: string | {
     } | null,
-    feedbackForms?: (
-      string | {
-      }
-    )[] | null,
+    feedbackForms?: (string | {
+    })[] | null,
     feedbackReminder?: string | null,
     user?: string | {
     } | null,
     stage?: string | {
     } | null,
     canceledAt?: number | string | null,
-    postings?: (
-      string | {
-      }
-    )[] | null,
+    postings?: (string | {
+    })[] | null,
     gcalEventUrl?: string | null,
     conferences?: {
     }[] | null
@@ -4277,10 +4203,8 @@ await corsair.lever.api.panels.update({
 {
   data: {
     id: string,
-    applications?: (
-      string | {
-      }
-    )[] | null,
+    applications?: (string | {
+    })[] | null,
     canceledAt?: number | string | null,
     createdAt?: number | string | null,
     start?: number | string | null,
@@ -4309,20 +4233,16 @@ await corsair.lever.api.panels.update({
       location?: string | null,
       feedbackTemplate?: string | {
       } | null,
-      feedbackForms?: (
-        string | {
-        }
-      )[] | null,
+      feedbackForms?: (string | {
+      })[] | null,
       feedbackReminder?: string | null,
       user?: string | {
       } | null,
       stage?: string | {
       } | null,
       canceledAt?: number | string | null,
-      postings?: (
-        string | {
-        }
-      )[] | null,
+      postings?: (string | {
+      })[] | null,
       gcalEventUrl?: string | null,
       conferences?: {
       }[] | null
@@ -4332,10 +4252,8 @@ await corsair.lever.api.panels.update({
   next?: string
 } | {
   id: string,
-  applications?: (
-    string | {
-    }
-  )[] | null,
+  applications?: (string | {
+  })[] | null,
   canceledAt?: number | string | null,
   createdAt?: number | string | null,
   start?: number | string | null,
@@ -4364,20 +4282,16 @@ await corsair.lever.api.panels.update({
     location?: string | null,
     feedbackTemplate?: string | {
     } | null,
-    feedbackForms?: (
-      string | {
-      }
-    )[] | null,
+    feedbackForms?: (string | {
+    })[] | null,
     feedbackReminder?: string | null,
     user?: string | {
     } | null,
     stage?: string | {
     } | null,
     canceledAt?: number | string | null,
-    postings?: (
-      string | {
-      }
-    )[] | null,
+    postings?: (string | {
+    })[] | null,
     gcalEventUrl?: string | null,
     conferences?: {
     }[] | null
@@ -4416,7 +4330,7 @@ await corsair.lever.api.postings.apply({
 | `send_confirmation_email` | `boolean` | No | — |
 | `personalInformation` | `object[]` | Yes | — |
 | `customQuestions` | `object[]` | No | — |
-| `eeoResponses` | `object` | No | — |
+| `eeoResponses` | `Record<string, string>` | No | — |
 | `urls` | `object[]` | No | — |
 | `ipAddress` | `string` | No | — |
 | `timezone` | `string` | No | — |
@@ -4442,21 +4356,11 @@ await corsair.lever.api.postings.apply({
 {
   id: string,
   fields: {
-    value: string | number | boolean | null | (
-      string | number | {
-      }
-    )[] | {
+    value: string | number | boolean | null | (string | number | {
+    })[] | {
     }
   }[]
 }[]
-```
-</Accordion>
-
-<Accordion title="eeoResponses full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -4539,7 +4443,7 @@ await corsair.lever.api.postings.create({
 |------|------|----------|-------------|
 | `text` | `string` | Yes | — |
 | `state` | `published \| internal \| closed \| draft \| pending \| rejected` | No | — |
-| `distributionChannels` | `public \| internal[]` | No | — |
+| `distributionChannels` | `(public \| internal)[]` | No | — |
 | `owner` | `string` | No | — |
 | `hiringManager` | `string` | No | — |
 | `categories` | `object` | No | — |
@@ -4628,10 +4532,8 @@ await corsair.lever.api.postings.create({
   content?: {
   } | null,
   country?: string | null,
-  followers?: (
-    string | {
-    }
-  )[] | null,
+  followers?: (string | {
+  })[] | null,
   tags?: string[] | null,
   state?: string | null,
   distributionChannels?: string[] | null,
@@ -4723,10 +4625,8 @@ await corsair.lever.api.postings.list({ state: 'published', limit: 50 });
   content?: {
   } | null,
   country?: string | null,
-  followers?: (
-    string | {
-    }
-  )[] | null,
+  followers?: (string | {
+  })[] | null,
   tags?: string[] | null,
   state?: string | null,
   distributionChannels?: string[] | null,
@@ -4926,10 +4826,8 @@ await corsair.lever.api.postings.retrieve({ postingId: '5d0f2f8a-1b2c-4d3e-9f4a-
   content?: {
   } | null,
   country?: string | null,
-  followers?: (
-    string | {
-    }
-  )[] | null,
+  followers?: (string | {
+  })[] | null,
   tags?: string[] | null,
   state?: string | null,
   distributionChannels?: string[] | null,
@@ -5020,7 +4918,7 @@ await corsair.lever.api.postings.update({ postingId: '5d0f2f8a-1b2c-4d3e-9f4a-5b
 | `postingId` | `string` | Yes | — |
 | `text` | `string` | No | — |
 | `state` | `published \| internal \| closed \| draft \| pending \| rejected` | No | — |
-| `distributionChannels` | `public \| internal[]` | No | — |
+| `distributionChannels` | `(public \| internal)[]` | No | — |
 | `owner` | `string` | No | — |
 | `hiringManager` | `string` | No | — |
 | `categories` | `object` | No | — |
@@ -5109,10 +5007,8 @@ await corsair.lever.api.postings.update({ postingId: '5d0f2f8a-1b2c-4d3e-9f4a-5b
   content?: {
   } | null,
   country?: string | null,
-  followers?: (
-    string | {
-    }
-  )[] | null,
+  followers?: (string | {
+  })[] | null,
   tags?: string[] | null,
   state?: string | null,
   distributionChannels?: string[] | null,
@@ -5430,7 +5326,7 @@ await corsair.lever.api.requisitionFields.delete({ requisitionFieldId: 'work_typ
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5469,7 +5365,7 @@ await corsair.lever.api.requisitionFields.deleteOptions({
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5815,10 +5711,8 @@ await corsair.lever.api.requisitions.create({ requisitionCode: 'ENG-9', name: 'J
   employmentStatus?: string | null,
   location?: string | null,
   internalNotes?: string | null,
-  postings?: (
-    string | {
-    }
-  )[] | null,
+  postings?: (string | {
+  })[] | null,
   department?: string | null,
   team?: string | null,
   offerIds?: string[] | null,
@@ -5857,7 +5751,7 @@ await corsair.lever.api.requisitions.delete({ requisitionId: '52881d44-4f95-4fcb
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -5931,10 +5825,8 @@ await corsair.lever.api.requisitions.list({ status: 'open' });
   employmentStatus?: string | null,
   location?: string | null,
   internalNotes?: string | null,
-  postings?: (
-    string | {
-    }
-  )[] | null,
+  postings?: (string | {
+  })[] | null,
   department?: string | null,
   team?: string | null,
   offerIds?: string[] | null,
@@ -6004,10 +5896,8 @@ await corsair.lever.api.requisitions.retrieve({ requisitionId: '52881d44-4f95-4f
   employmentStatus?: string | null,
   location?: string | null,
   internalNotes?: string | null,
-  postings?: (
-    string | {
-    }
-  )[] | null,
+  postings?: (string | {
+  })[] | null,
   department?: string | null,
   team?: string | null,
   offerIds?: string[] | null,
@@ -6121,10 +6011,8 @@ await corsair.lever.api.requisitions.update({
   employmentStatus?: string | null,
   location?: string | null,
   internalNotes?: string | null,
-  postings?: (
-    string | {
-    }
-  )[] | null,
+  postings?: (string | {
+  })[] | null,
   department?: string | null,
   team?: string | null,
   offerIds?: string[] | null,
@@ -6943,7 +6831,7 @@ await corsair.lever.api.webhooks.delete({ webhookId: '7988b225-3cc1-44f3-8fcb-ba
 
 
 
-**Output:** `object`
+**Output:** `object \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
