@@ -108,7 +108,12 @@ await tenant.netsuite.api.listRecords({ recordType: 'customer', limit: 10 });
 ```ts
 const tenant = corsair.withTenant('acme');
 await tenant.netsuite.api.createCustomer({
-	body: { entityId: 'ACME', companyName: 'Acme Inc.' },
+	body: {
+		entityId: 'ACME',
+		companyName: 'Acme Inc.',
+		isPerson: false,
+		subsidiary: { id: '1' },
+	},
 });
 ```
 

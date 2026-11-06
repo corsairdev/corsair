@@ -1,4 +1,5 @@
 import { generateKeyPairSync, verify } from 'node:crypto';
+import { ApiError } from 'corsair/http';
 import {
 	makeNetSuiteRequest,
 	netSuiteAccountBase,
@@ -11,8 +12,16 @@ import { netSuiteSpecs } from './endpoints/specs';
 import {
 	NetSuiteEndpointInputSchemas,
 	NetSuiteEndpointOutputSchemas,
+	UpdateSalesOrderInputSchema,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { netsuite } from './index';
+import {
+	NetSuiteCustomerPaymentEntity,
+	NetSuiteEmployeeEntity,
+	NetSuiteInvoiceEntity,
+	NetSuiteItemFulfillmentEntity,
+} from './schema';
 
 const ACCOUNT = 'TSTDRV123';
 const TOKEN = 'test-token';
@@ -164,9 +173,9 @@ const keys = Object.keys(specs) as NetSuiteSpecKey[];
 
 describe('NetSuite plugin', () => {
 	it('wires OAuth2, 85 endpoints, schemas and metadata', () => {
-		const plugin = netsuite();
+		const plugin = netsuite({ accountId: ACCOUNT });
 		expect(plugin.id).toBe('netsuite');
-		expect(plugin.options?.authType).toBe('oauth_2');
+		expect((plugin.options as { authType?: string }).authType).toBe('oauth_2');
 		expect(plugin.oauthConfig?.scopes).toEqual(['rest_webservices']);
 		expect(plugin.webhooks).toEqual({});
 		expect(keys).toHaveLength(85);
@@ -223,6 +232,104 @@ describe('NetSuite plugin', () => {
 		await expect(
 			makeNetSuiteRequest('/record/v1/customer', TOKEN, {}),
 		).rejects.toThrow('accountId is required');
+	});
+
+	it('requires accountId only when an OAuth token URL is used', () => {
+		const plugin = netsuite();
+		expect(() => plugin.oauthConfig?.tokenUrl).toThrow(
+			'accountId is required to build NetSuite OAuth token URLs',
+		);
+		expect(netsuite({ accountId: ACCOUNT }).oauthConfig?.tokenUrl).toContain(
+			'tstdrv123.suitetalk.api.netsuite.com',
+		);
+		expect(() => netsuite({ key: TOKEN })).not.toThrow();
+	});
+
+	it('blocks OAuth endpoint calls until accountId is configured', async () => {
+		const plugin = netsuite();
+		await expect(
+			plugin.keyBuilder?.(
+				{
+					authType: 'oauth_2',
+					meteredOperationId: 'netsuite.getCustomer',
+					keys: {},
+				} as never,
+				'endpoint',
+			),
+		).rejects.toThrow('accountId is required for OAuth');
+	});
+
+	it('accepts reference-object status values and rejects invalid references', () => {
+		expect(
+			NetSuiteInvoiceEntity.parse({
+				id: '1',
+				status: { id: 'open', refName: 'Open' },
+			}).status,
+		).toEqual({ id: 'open', refName: 'Open' });
+		expect(
+			NetSuiteItemFulfillmentEntity.parse({ status: 'Picked' }).status,
+		).toBe('Picked');
+		expect(
+			NetSuiteCustomerPaymentEntity.parse({ tranDate: '2026-01-01' }).tranDate,
+		).toBe('2026-01-01');
+		expect(() =>
+			NetSuiteEmployeeEntity.parse({ supervisor: { id: false } }),
+		).toThrow();
+	});
+
+	it('uses the stored access token when no refresh credentials exist', async () => {
+		const plugin = netsuite({ accountId: ACCOUNT });
+		const key = await plugin.keyBuilder?.(
+			{
+				authType: 'oauth_2',
+				options: { accountId: ACCOUNT },
+				meteredOperationId: 'netsuite.getCustomer',
+				keys: {
+					get_integration_credentials: async () => ({
+						client_id: 'client-id',
+						client_secret: null,
+					}),
+					get_access_token: async () => TOKEN,
+				},
+			} as never,
+			'endpoint',
+		);
+		expect(key).toBe(TOKEN);
+	});
+
+	it('treats replace as a sublist-name string', () => {
+		expect(
+			UpdateSalesOrderInputSchema.parse({
+				id: '1',
+				data: {},
+				replace: 'item',
+			}).replace,
+		).toBe('item');
+		expect(() =>
+			UpdateSalesOrderInputSchema.parse({
+				id: '1',
+				data: {},
+				replace: true,
+			}),
+		).toThrow();
+	});
+
+	it('only matches 429 text for non-ApiError failures', () => {
+		const apiError = new ApiError(
+			{ method: 'POST', url: '/query/v1/suiteql' },
+			{
+				url: '/query/v1/suiteql',
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				body: 'validation failed with code 429',
+			},
+			'Bad Request',
+		);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(apiError)).toBe(false);
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(new Error('429 Too Many Requests')),
+		).toBe(true);
 	});
 });
 
@@ -303,6 +410,87 @@ describe('endpoint dispatch', () => {
 		);
 		expect(url).toContain('fields=entityId%2Cemail');
 		expect(header(init, 'Authorization')).toBe('Bearer test-token');
+	});
+
+	it('uses the validated account input for token-free datacenter discovery', async () => {
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(
+				jsonResponse({ items: [] }),
+			) as unknown as typeof fetch;
+		const ctx = { ...mockCtx(), options: {} };
+		await NetSuite.getDatacenterUrls(ctx as never, { account: ACCOUNT });
+		const [url, init] = jest.mocked(globalThis.fetch).mock.calls[0] as [
+			string,
+			RequestInit,
+		];
+		expect(url).toContain('https://rest.netsuite.com/rest/datacenterurls');
+		expect(url).toContain(`account=${ACCOUNT}`);
+		expect(header(init, 'Authorization')).toBeNull();
+	});
+
+	it('forwards expandSubResources when resolving a reference field', async () => {
+		let calls = 0;
+		globalThis.fetch = jest.fn(async () => {
+			calls += 1;
+			return calls === 1
+				? jsonResponse({
+						entity: {
+							links: [{ href: '/services/rest/record/v1/customer/2' }],
+						},
+					})
+				: jsonResponse({ id: 2, entityId: 'CUST-2' });
+		}) as unknown as typeof fetch;
+
+		await NetSuite.getReferenceSelectField(mockCtx() as never, {
+			record_type: 'customer',
+			id: '1',
+			select_field: 'entity',
+			expandSubResources: true,
+		});
+		const secondUrl = String(jest.mocked(globalThis.fetch).mock.calls[1]?.[0]);
+		expect(secondUrl).toContain('expandSubResources=true');
+	});
+
+	it('falls back to the integration table when SuiteQL rejects integrationapplication', async () => {
+		const bodies: string[] = [];
+		let calls = 0;
+		globalThis.fetch = jest.fn(
+			async (_url: string | URL | Request, init?: RequestInit) => {
+				calls += 1;
+				bodies.push(String(init?.body ?? ''));
+				if (calls === 1) {
+					return jsonResponse(
+						{ error: { message: 'Invalid table integrationapplication' } },
+						400,
+					);
+				}
+				return jsonResponse({ items: [] });
+			},
+		) as unknown as typeof fetch;
+
+		await NetSuite.listIntegrations(mockCtx() as never, { limit: 20 });
+		expect(calls).toBe(2);
+		expect(bodies[0]).toContain('integrationapplication');
+		expect(bodies[1]).toContain('FROM integration');
+	});
+
+	it('defaults the client assertion type for client-credentials tokens', async () => {
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(
+				jsonResponse({ access_token: 'token' }),
+			) as unknown as typeof fetch;
+		await NetSuite.oauth2TokenClientCredentials(mockCtx() as never, {
+			client_assertion: 'assertion',
+		});
+		const [, init] = jest.mocked(globalThis.fetch).mock.calls[0] as [
+			string,
+			RequestInit,
+		];
+		expect(String(init.body)).toContain(
+			'client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer',
+		);
 	});
 
 	it('sends SuiteQL q in the JSON body with transient preference', async () => {
@@ -466,7 +654,7 @@ describe('endpoint dispatch', () => {
 	});
 
 	it('allows token-free setup helpers to run without acquiring an access token', async () => {
-		const plugin = netsuite();
+		const plugin = netsuite({ accountId: ACCOUNT });
 		const key = await plugin.keyBuilder?.(
 			{
 				authType: 'oauth_2',
@@ -628,6 +816,46 @@ describe('endpoint dispatch', () => {
 			companyName: 'Acme Corp',
 			email: 'new@example.com',
 			phone: '555-0100',
+		});
+	});
+
+	it('clears null fields from the cached record instead of storing null', async () => {
+		const upsertMock = jest.fn();
+		const findMock = jest.fn().mockResolvedValue({
+			data: {
+				id: '9',
+				email: 'person@example.com',
+				supervisor: { id: '1', refName: 'Boss' },
+			},
+		});
+		const ctx = {
+			...mockCtx(),
+			db: {
+				employees: {
+					findByEntityId: findMock,
+					upsertByEntityId: upsertMock,
+				},
+			},
+		};
+		globalThis.fetch = jest.fn().mockResolvedValue({
+			ok: true,
+			status: 204,
+			headers: new Headers({
+				location:
+					'https://tstdrv123.suitetalk.api.netsuite.com/services/rest/record/v1/employee/9',
+			}),
+			json: async () => ({}),
+		}) as unknown as typeof fetch;
+
+		await NetSuite.updateEmployee(ctx as never, {
+			id: '9',
+			data: { supervisor: null },
+		});
+		expect(upsertMock).toHaveBeenCalledWith('9', {
+			id: '9',
+			email: 'person@example.com',
+			location:
+				'https://tstdrv123.suitetalk.api.netsuite.com/services/rest/record/v1/employee/9',
 		});
 	});
 

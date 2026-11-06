@@ -817,7 +817,7 @@ export const UpdateCustomerInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 		data: z.record(z.string(), z.unknown()),
-		replace: z.boolean().optional(),
+		replace: z.string().optional(),
 		replaceSelectedFields: z.boolean().optional(),
 		prefer: z.string().optional(),
 		idempotency_key: z.string().optional(),
@@ -832,7 +832,7 @@ export const UpdateCustomerPaymentInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 		data: z.record(z.string(), z.unknown()),
-		replace: z.boolean().optional(),
+		replace: z.string().optional(),
 		replaceSelectedFields: z.boolean().optional(),
 		prefer: z.string().optional(),
 		idempotency_key: z.string().optional(),
@@ -862,7 +862,7 @@ export const UpdateInvoiceInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 		data: z.record(z.string(), z.unknown()),
-		replace: z.boolean().optional(),
+		replace: z.string().optional(),
 		replaceSelectedFields: z.boolean().optional(),
 		prefer: z.string().optional(),
 		idempotency_key: z.string().optional(),
@@ -938,7 +938,7 @@ export const UpdatePurchaseOrderInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 		data: z.record(z.string(), z.unknown()),
-		replace: z.boolean().optional(),
+		replace: z.string().optional(),
 		prefer: z.string().optional(),
 		idempotency_key: z.string().optional(),
 		replaceSelectedFields: z.boolean().optional(),
@@ -953,7 +953,7 @@ export const UpdateSalesOrderInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 		data: z.record(z.string(), z.unknown()),
-		replace: z.boolean().optional(),
+		replace: z.string().optional(),
 		replaceSelectedFields: z.boolean().optional(),
 		prefer: z.string().optional(),
 		idempotency_key: z.string().optional(),
@@ -968,7 +968,7 @@ export const UpdateVendorInputSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]),
 		data: z.record(z.string(), z.unknown()),
-		replace: z.boolean().optional(),
+		replace: z.string().optional(),
 		replaceSelectedFields: z.boolean().optional(),
 		prefer: z.string().optional(),
 		idempotency_key: z.string().optional(),
@@ -1014,7 +1014,7 @@ export const UpsertRecordByExternalIdInputSchema = z
 		body: z.record(z.string(), z.unknown()),
 		external_id: z.string(),
 		record_type: z.string(),
-		replace: z.boolean().optional(),
+		replace: z.string().optional(),
 	})
 	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 

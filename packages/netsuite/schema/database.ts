@@ -9,17 +9,24 @@ const netSuiteLinkSchema = z
 	.passthrough();
 
 // NetSuite record references may be returned as reference objects ({ id, refName }), numeric IDs, or string names.
-// Record with unknown values accommodates arbitrary custom subrecord fields and custom segment attributes.
+// The object branch is .passthrough() so custom subrecord fields and custom segment attributes survive.
+const netSuiteReferenceObjectSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		refName: z.string().optional(),
+	})
+	.passthrough();
+
 const netSuiteReferenceSchema = z.union([
-	z
-		.object({
-			id: z.union([z.string(), z.number()]).optional(),
-			refName: z.string().optional(),
-		})
-		.passthrough(),
+	netSuiteReferenceObjectSchema,
 	z.string(),
 	z.number(),
-	z.record(z.string(), z.unknown()),
+]);
+
+// NetSuite returns status fields as strings or reference objects depending on simpleEnumFormat.
+const netSuiteStatusSchema = z.union([
+	z.string(),
+	netSuiteReferenceObjectSchema,
 ]);
 
 // NetSuite line items and sublists contain heterogeneous properties (strings, numbers, nested reference objects).
@@ -55,7 +62,7 @@ export const NetSuiteCustomerPaymentEntity = z
 		customer: netSuiteReferenceSchema.optional(),
 		payment: z.number().optional(),
 		total: z.number().optional(),
-		trandate: z.string().optional(),
+		tranDate: z.string().optional(),
 		currency: netSuiteReferenceSchema.optional(),
 	})
 	.passthrough();
@@ -78,7 +85,7 @@ export const NetSuiteInvoiceEntity = z
 		tranId: z.string().optional(),
 		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
-		status: z.string().optional(),
+		status: netSuiteStatusSchema.optional(),
 		total: z.number().optional(),
 		balance: z.number().optional(),
 		currency: netSuiteReferenceSchema.optional(),
@@ -103,7 +110,7 @@ export const NetSuiteItemFulfillmentEntity = z
 		tranId: z.string().optional(),
 		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
-		status: z.string().optional(),
+		status: netSuiteStatusSchema.optional(),
 	})
 	.passthrough();
 
@@ -113,7 +120,7 @@ export const NetSuiteItemReceiptEntity = z
 		tranId: z.string().optional(),
 		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
-		status: z.string().optional(),
+		status: netSuiteStatusSchema.optional(),
 	})
 	.passthrough();
 
@@ -134,7 +141,7 @@ export const NetSuitePurchaseOrderEntity = z
 		tranId: z.string().optional(),
 		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
-		status: z.string().optional(),
+		status: netSuiteStatusSchema.optional(),
 		total: z.number().optional(),
 		item: netSuiteSublistSchema.optional(),
 	})
@@ -146,7 +153,7 @@ export const NetSuiteSalesOrderEntity = z
 		tranId: z.string().optional(),
 		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
-		status: z.string().optional(),
+		status: netSuiteStatusSchema.optional(),
 		total: z.number().optional(),
 		item: netSuiteSublistSchema.optional(),
 	})
@@ -169,7 +176,7 @@ export const NetSuiteVendorBillEntity = z
 		tranId: z.string().optional(),
 		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
-		status: z.string().optional(),
+		status: netSuiteStatusSchema.optional(),
 		total: z.number().optional(),
 		balance: z.number().optional(),
 	})
@@ -181,7 +188,7 @@ export const NetSuiteVendorPaymentEntity = z
 		tranId: z.string().optional(),
 		entity: netSuiteReferenceSchema.optional(),
 		tranDate: z.string().optional(),
-		status: z.string().optional(),
+		status: netSuiteStatusSchema.optional(),
 		total: z.number().optional(),
 	})
 	.passthrough();

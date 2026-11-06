@@ -468,6 +468,10 @@ export const netSuiteSpecs = {
 			client_assertion_type: 'client_assertion_type',
 		},
 		staticForm: { grant_type: 'client_credentials' },
+		defaults: {
+			client_assertion_type:
+				'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+		},
 		auth: 'none',
 		riskLevel: 'write',
 		metaDescription:

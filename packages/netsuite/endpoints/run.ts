@@ -37,7 +37,12 @@ const SENSITIVE_INPUT_KEYS = new Set([
 function redactInput(input: Record<string, unknown>): Record<string, unknown> {
 	const out: Record<string, unknown> = { ...input };
 	for (const key of Object.keys(out)) {
-		if (SENSITIVE_INPUT_KEYS.has(key)) out[key] = REDACTED;
+		if (
+			SENSITIVE_INPUT_KEYS.has(key) ||
+			SENSITIVE_INPUT_KEYS.has(camelToSnake(key))
+		) {
+			out[key] = REDACTED;
+		}
 	}
 	return out;
 }
@@ -61,15 +66,23 @@ function read(input: Record<string, unknown>, key: string): unknown {
 	return undefined;
 }
 
-async function resolveAccountId(ctx: NetSuiteContext): Promise<string> {
+async function resolveAccountId(
+	ctx: NetSuiteContext,
+	publicAccount?: unknown,
+): Promise<string> {
 	const options = ctx.options as {
 		accountId?: string;
 		account?: string;
 	};
-	// Never read the account from endpoint input: an untrusted caller could
-	// point the stored bearer token at a host they control.
+	// Authenticated requests must never read the account from endpoint input:
+	// an untrusted caller could point the stored bearer token at a host they
+	// control. Public endpoints (auth: 'none') carry no token, so their validated
+	// account input is a safe fallback for datacenter discovery.
 	const direct = options.accountId ?? options.account;
 	if (direct) return direct;
+	if (typeof publicAccount === 'string' && publicAccount.length > 0) {
+		return publicAccount;
+	}
 
 	// Necessity: Cast ctx.keys through unknown to access provider-specific key getter functions (e.g. get_account_id).
 	// Why stricter typing is not feasible: PluginKeyManager is generic across all Corsair plugins and does not define provider-specific account key accessors.
@@ -402,6 +415,23 @@ function entityForSpec(
 	return undefined;
 }
 
+function mergeCacheRecord(
+	existing: Record<string, unknown>,
+	incoming: Record<string, unknown>,
+): Record<string, unknown> {
+	const merged = { ...existing };
+	for (const [key, value] of Object.entries(incoming)) {
+		// NetSuite sends null to clear a field. Removing the key matches that
+		// intent and keeps the stored record valid against optional schemas.
+		if (value === null) {
+			delete merged[key];
+			continue;
+		}
+		merged[key] = value;
+	}
+	return merged;
+}
+
 // Accepts unknown response to extract item arrays from either collection envelopes or direct records.
 function cacheItems(response: unknown): Record<string, unknown>[] {
 	if (Array.isArray(response)) return response.filter(isRecord);
@@ -491,10 +521,10 @@ async function syncEntityCache(
 				const existing = await client.findByEntityId?.(stringId);
 				const existingData =
 					existing && isRecord(existing.data) ? existing.data : {};
-				await client.upsertByEntityId(stringId, {
-					...existingData,
-					...item,
-				});
+				await client.upsertByEntityId(
+					stringId,
+					mergeCacheRecord(existingData, item),
+				);
 			}
 			return;
 		}
@@ -506,12 +536,8 @@ async function syncEntityCache(
 			const existing = await client.findByEntityId?.(id);
 			const existingData =
 				existing && isRecord(existing.data) ? existing.data : {};
-			await client.upsertByEntityId(id, {
-				...existingData,
-				...(isRecord(body) ? body : {}),
-				id,
-				location,
-			});
+			const merged = mergeCacheRecord(existingData, isRecord(body) ? body : {});
+			await client.upsertByEntityId(id, { ...merged, id, location });
 		}
 	} catch (error) {
 		console.warn(`[netsuite] failed to sync ${entity} cache:`, error);
@@ -604,7 +630,13 @@ async function customEndpoint(
 		const referenced = await makeNetSuiteRequest<Record<string, unknown>>(
 			toRequestPath(href),
 			ctx.key,
-			{ accountId },
+			{
+				accountId,
+				query:
+					read(input, 'expandSubResources') === true
+						? { expandSubResources: true }
+						: undefined,
+			},
 		);
 		return { field: selectField, ...referenced };
 	}
@@ -630,7 +662,7 @@ async function customEndpoint(
 				error instanceof ApiError &&
 				error.status === 400 &&
 				/integrationapplication|invalid table|unknown table/i.test(
-					String(error.message),
+					`${error.message} ${JSON.stringify(error.body ?? '')}`,
 				)
 			) {
 				return await run('integration');
@@ -648,8 +680,11 @@ export async function runNetSuite<K extends NetSuiteSpecKey>(
 	input: NetSuiteEndpointInputs[K],
 	spec: RouteSpec,
 ): Promise<NetSuiteEndpointOutputs[K]> {
-	const accountId = await resolveAccountId(ctx);
 	const resolvedInput = applyDefaults(input as Record<string, unknown>, spec);
+	const accountId = await resolveAccountId(
+		ctx,
+		spec.auth === 'none' ? read(resolvedInput, 'account') : undefined,
+	);
 	if (event === 'oauth2TokenRefresh') {
 		await applyRefreshDefaults(ctx, resolvedInput);
 	}

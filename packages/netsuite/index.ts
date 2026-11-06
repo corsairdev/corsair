@@ -153,9 +153,18 @@ export function netsuite<const T extends NetSuitePluginOptions>(
 		oauthConfig: {
 			providerName: 'NetSuite',
 			authUrl: `${authBase}/app/login/oauth2/authorize.nl`,
-			tokenUrl: accountId
-				? netSuiteOAuthTokenUrl(accountId)
-				: 'https://system.netsuite.com/app/login/oauth2/token.nl',
+			// The authorization host is documented for the system domain, but the
+			// token exchange is account-specific. Keep construction lazy so plugin
+			// introspection can load the factory without an account; fail clearly
+			// only when an OAuth code exchange actually reads this URL.
+			get tokenUrl() {
+				if (!accountId) {
+					throw new Error(
+						'[netsuite] accountId is required to build NetSuite OAuth token URLs. Pass `accountId` to netsuite().',
+					);
+				}
+				return netSuiteOAuthTokenUrl(accountId);
+			},
 			scopes: ['rest_webservices'],
 			tokenAuthMethod: 'basic',
 			requiresRegisteredRedirect: true,
@@ -193,15 +202,23 @@ export function netsuite<const T extends NetSuitePluginOptions>(
 							get_account_id?: () => Promise<string | null | undefined>;
 						}
 					).get_account_id?.());
-				if (resolvedAccount) {
-					return await getOAuthAccessToken(ctx, {
-						plugin: 'netsuite',
-						tokenUrl: netSuiteOAuthTokenUrl(resolvedAccount),
-						tokenAuthMethod: 'basic',
-					});
+				if (!resolvedAccount) {
+					throw new Error(
+						'[auth-missing:netsuite:oauth_2]: NetSuite accountId is required for OAuth. Pass `accountId` to netsuite().',
+					);
 				}
-				const token = await ctx.keys.get_access_token();
-				if (token) return token;
+				const credentials = await ctx.keys.get_integration_credentials();
+				// Without a client secret or hub there is no refresh path. A stored
+				// access token is still usable, so prefer it over throwing AuthMissing.
+				if (!credentials.client_secret && !ctx.hub) {
+					const stored = await ctx.keys.get_access_token();
+					if (stored) return stored;
+				}
+				return await getOAuthAccessToken(ctx, {
+					plugin: 'netsuite',
+					tokenUrl: netSuiteOAuthTokenUrl(resolvedAccount),
+					tokenAuthMethod: 'basic',
+				});
 			}
 			throw new Error(
 				`[auth-missing:netsuite:${ctx.authType}]: NetSuite access token or accountId is missing`,

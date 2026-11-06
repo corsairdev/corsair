@@ -20,6 +20,9 @@ examples:
       body:
         entityId: "ACME"
         companyName: "Acme Inc."
+        isPerson: false
+        subsidiary:
+          id: "1"
 apiExamples:
   asyncGetJobStatus:
     jobId: "123"
@@ -33,6 +36,9 @@ apiExamples:
     body:
       entityId: "ACME"
       companyName: "Acme Inc."
+      isPerson: false
+      subsidiary:
+        id: "1"
   createCustomerPayment:
     body:
       customer:
@@ -46,6 +52,12 @@ apiExamples:
     body:
       entity:
         id: "123"
+      item:
+        items:
+          - item:
+              id: "1"
+            quantity: 1
+            amount: 100
   createItem:
     record_type: inventoryItem
     body:
@@ -54,12 +66,20 @@ apiExamples:
   createJournalEntry:
     body:
       memo: "Opening balance"
+      line:
+        items:
+          - account:
+              id: "10"
+            debit: 300
+          - account:
+              id: "14"
+            credit: 300
   createJwtClientAssertion:
     aud: "https://tstdrv123.suitetalk.api.netsuite.com/services/rest/auth/oauth2/v1/token"
     certificate_id: cert-1
     client_id: "client-id"
     scope: "rest_webservices"
-    private_key_pem: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC...\n-----END PRIVATE KEY-----"
+    private_key_pem: "<PEM string with escaped newlines>"
   createPurchaseOrder:
     entity:
       id: "123"
@@ -73,6 +93,9 @@ apiExamples:
     body:
       entityId: "CUST-01"
       companyName: "Customer One"
+      isPerson: false
+      subsidiary:
+        id: "1"
   createSalesOrder:
     entity:
       id: "123"
@@ -85,10 +108,18 @@ apiExamples:
     body:
       entityId: "SUPPLIER-1"
       companyName: "Global Supplier"
+      isPerson: false
+      subsidiary:
+        id: "1"
   createVendorBill:
     body:
       entity:
         id: "123"
+      expense:
+        items:
+          - account:
+              id: "1"
+            amount: 100
   deleteCustomer:
     id: "123"
   deleteCustomerPayment:
@@ -155,9 +186,9 @@ apiExamples:
     sublist_name: addressBook
     line_id: "1"
   getSubrecord:
-    record_type: customer
+    record_type: salesOrder
     id: "123"
-    subrecord_name: address
+    subrecord_name: billingaddress
   getVendor:
     id: "123"
   getVendorBill:
@@ -194,10 +225,16 @@ apiExamples:
     client_id: "client-id"
     redirect_uri: "https://example.com/callback"
     scope: "rest_webservices"
+    state: "replace-with-at-least-22-random-characters"
+    code_challenge: "replace-with-s256-code-challenge"
+    code_challenge_method: S256
   oauth2AuthorizeSystemDomain:
     client_id: "client-id"
     redirect_uri: "https://example.com/callback"
     scope: "rest_webservices"
+    state: "replace-with-at-least-22-random-characters"
+    code_challenge: "replace-with-s256-code-challenge"
+    code_challenge_method: S256
   oauth2GetJwksKeys: {}
   oauth2Logout:
     id_token_hint: "id-token-xxx"
@@ -211,6 +248,7 @@ apiExamples:
     code_verifier: "verifier"
   oauth2TokenClientCredentials:
     client_assertion: "jwt-assertion-string"
+    client_assertion_type: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
   oauth2TokenRefresh:
     refresh_token: "refresh-token-xxx"
     client_id: "client-id"
@@ -279,3 +317,6 @@ apiExamples:
     external_id: "EXT-CUST-100"
     body:
       companyName: "Acme Global"
+      isPerson: false
+      subsidiary:
+        id: "1"

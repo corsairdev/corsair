@@ -6,6 +6,7 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
+			if (error instanceof ApiError) return msg.includes('rate_limited');
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
 		handler: async (error: Error) => {

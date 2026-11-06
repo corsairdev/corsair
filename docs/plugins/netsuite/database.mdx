@@ -30,7 +30,7 @@ const rows = await corsair.netsuite.db.customerPayments.search({
 | `tranId` | `string` | equals, contains, startsWith, endsWith, in |
 | `payment` | `number` | equals, gt, gte, lt, lte, in |
 | `total` | `number` | equals, gt, gte, lt, lte, in |
-| `trandate` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -114,7 +114,6 @@ const rows = await corsair.netsuite.db.invoices.search({
 | `externalId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
-| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `total` | `number` | equals, gt, gte, lt, lte, in |
 | `balance` | `number` | equals, gt, gte, lt, lte, in |
 
@@ -142,7 +141,6 @@ const rows = await corsair.netsuite.db.itemFulfillments.search({
 | `externalId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
-| `status` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -168,7 +166,6 @@ const rows = await corsair.netsuite.db.itemReceipts.search({
 | `externalId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
-| `status` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -249,7 +246,6 @@ const rows = await corsair.netsuite.db.purchaseOrders.search({
 | `externalId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
-| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `total` | `number` | equals, gt, gte, lt, lte, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
@@ -276,7 +272,6 @@ const rows = await corsair.netsuite.db.salesOrders.search({
 | `externalId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
-| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `total` | `number` | equals, gt, gte, lt, lte, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
@@ -303,7 +298,6 @@ const rows = await corsair.netsuite.db.vendorBills.search({
 | `externalId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
-| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `total` | `number` | equals, gt, gte, lt, lte, in |
 | `balance` | `number` | equals, gt, gte, lt, lte, in |
 
@@ -331,7 +325,6 @@ const rows = await corsair.netsuite.db.vendorPayments.search({
 | `externalId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranId` | `string` | equals, contains, startsWith, endsWith, in |
 | `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
-| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `total` | `number` | equals, gt, gte, lt, lte, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
