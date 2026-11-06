@@ -32,17 +32,25 @@ export function IntegrationHubCta({
 						<ArrowRight size={18} weight="bold" aria-hidden />
 					</span>
 				</a>
-				<p className="mt-3 text-sm text-[#1c1c1c99]">
-					Building your own app on the Corsair SDK?{' '}
+				<div className="mt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-1 text-sm text-[#1c1c1c99]">
 					<a
-						href={hubWwwPluginLoginUrl(pluginId)}
-						target="_blank"
-						rel="noopener noreferrer"
+						href="#connect"
 						className="font-medium text-[#4a38f5] no-underline hover:underline"
 					>
-						Get API keys
+						Setup steps for Claude, ChatGPT, Cursor and Claude Code
 					</a>
-				</p>
+					<p>
+						Building your own app on the Corsair SDK?{' '}
+						<a
+							href={hubWwwPluginLoginUrl(pluginId)}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="font-medium text-[#4a38f5] no-underline hover:underline"
+						>
+							Get API keys
+						</a>
+					</p>
+				</div>
 			</div>
 		</section>
 	);

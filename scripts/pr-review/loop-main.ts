@@ -2,9 +2,13 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import {
 	ASSERTION_WARN_FLOOR,
+	countTestFilesByPlugin,
 	detectPlugin,
+	PR_FILES_JQ,
+	parsePrFileRows,
 	renderScorecard,
 	runGate,
+	touchedPlugins,
 } from './gate.ts';
 import {
 	buildEscalationComment,
@@ -64,12 +68,23 @@ const pr = event.pull_request.number as number;
 const reviewId = event.review.id as number;
 const author = event.pull_request.user.login as string;
 
-const changedFiles = gh([
+const { changedFiles, addedFiles } = parsePrFileRows(
+	gh([
+		'api',
+		`repos/${repo}/pulls/${pr}/files`,
+		'--paginate',
+		'--jq',
+		PR_FILES_JQ,
+	]),
+);
+// Read live, as in the gate job, so a team multi-plugin PR gets the same
+// verdict here as in the required check.
+const labels = gh([
 	'api',
-	`repos/${repo}/pulls/${pr}/files`,
+	`repos/${repo}/issues/${pr}/labels`,
 	'--paginate',
 	'--jq',
-	'.[].filename',
+	'.[].name',
 ])
 	.trim()
 	.split('\n')
@@ -97,24 +112,27 @@ const plugin = detectPlugin(changedFiles);
 
 // Test existence comes from the head tree (update PRs need not touch
 // tests); assertion depth only inspects changed test files — the gate job
-// (full checkout) is authoritative for depth.
-let testFileCount = 0;
-if (plugin) {
+// (full checkout) is authoritative for depth. One recursive tree call
+// counts tests for every touched plugin (team multi-plugin PRs need all).
+let testFileCounts: Record<string, number> = {};
+const touched = touchedPlugins(changedFiles);
+if (touched.length > 0) {
 	try {
-		// Recursive tree so nested tests (e.g. tests/) count, matching the
-		// gate job's recursive disk scan.
-		testFileCount = Number(
-			gh([
-				'api',
-				`repos/${headRepo}/git/trees/${headSha}?recursive=1`,
-				'--jq',
-				`[.tree[] | select(.path | startswith("packages/${plugin}/") and endswith(".test.ts"))] | length`,
-			]).trim(),
-		);
+		const testPaths = gh([
+			'api',
+			`repos/${headRepo}/git/trees/${headSha}?recursive=1`,
+			'--jq',
+			'.tree[] | select(.path | startswith("packages/") and endswith(".test.ts")) | .path',
+		])
+			.trim()
+			.split('\n')
+			.filter(Boolean);
+		testFileCounts = countTestFilesByPlugin(testPaths, touched);
 	} catch {
-		testFileCount = 0;
+		testFileCounts = {};
 	}
 }
+const testFileCount = plugin ? (testFileCounts[plugin] ?? 0) : 0;
 let assertionCount = testFileCount > 0 ? ASSERTION_WARN_FLOOR : 0;
 for (const f of changedFiles) {
 	if (plugin && f.startsWith(`packages/${plugin}/`) && f.endsWith('.test.ts')) {
@@ -132,6 +150,10 @@ const gate = runGate({
 	isDraft: event.pull_request.draft as boolean,
 	testFileCount,
 	assertionCount,
+	labels,
+	authorAssociation: event.pull_request.author_association as string,
+	addedFiles,
+	testFileCounts,
 });
 if (!gate.isPluginPr) {
 	console.log('Not a plugin PR (or draft) — loop skipped.');

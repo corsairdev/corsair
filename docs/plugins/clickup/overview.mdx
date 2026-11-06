@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Clickup plugin for Corsair"
+description: "Work management platform. Manage workspaces, spaces, folders, lists, tasks, comments, goals, time entries, docs, chat, views, and custom fields."
 ---
 
-Use **Clickup** through Corsair: one client, typed API calls.
+Use **ClickUp** through Corsair: one client, typed API calls.
 
 **What you get:**
 
@@ -43,6 +43,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -50,7 +51,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -88,19 +89,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`chat.channelsFollowers`**
+**List tasks in a list**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.clickup.api.chat.channelsFollowers({});
+await tenant.clickup.api.tasks.list({ list_id: '901234567' });
 ```
 
 
-**`chat.channelsCreate`**
+**Create a task**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.clickup.api.chat.channelsCreate({});
+await tenant.clickup.api.tasks.create({ list_id: '901234567', name: 'Review the launch checklist' });
 ```
 
 

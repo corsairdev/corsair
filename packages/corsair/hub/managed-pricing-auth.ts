@@ -425,7 +425,29 @@ export function answeredFailed(
 		if (!node || typeof node !== 'object') return false;
 		node = (node as Record<string, unknown>)[key];
 	}
+	if ('empty' in failedWhen) {
+		return Array.isArray(node) && node.length === 0;
+	}
 	return node === failedWhen.equals;
+}
+
+/**
+ * The first `errors[i].error` or `.message` that is text, if any.
+ * unknown: provider error lists have no shared shape, so each item and field
+ * is checked before it is read.
+ */
+function firstListedError(errors: unknown): string | undefined {
+	if (!Array.isArray(errors)) return undefined;
+	for (const item of errors) {
+		if (!item || typeof item !== 'object') continue;
+		// Safe: `item` is a non-null object here, and both fields are type-checked below.
+		const { error, message } = item as Record<string, unknown>;
+		const text = [error, message].find(
+			(value): value is string => typeof value === 'string' && value.length > 0,
+		);
+		if (text) return text;
+	}
+	return undefined;
 }
 
 /** What Hub records as the reason: the flag, and the provider's own code or
@@ -435,14 +457,18 @@ export function describeAnsweredFailure(
 	result: unknown,
 	failedWhen: ManagedPricingFailedWhen,
 ): string {
-	const flag = `${failedWhen.path} was ${JSON.stringify(failedWhen.equals)}`;
+	const flag =
+		'empty' in failedWhen
+			? `${failedWhen.path} was empty`
+			: `${failedWhen.path} was ${JSON.stringify(failedWhen.equals)}`;
 	const body =
 		result && typeof result === 'object'
 			? (result as Record<string, unknown>)
 			: {};
-	const detail = [body.code, body.error].find(
-		(value): value is string => typeof value === 'string' && value.length > 0,
-	);
+	const detail =
+		[body.code, body.error].find(
+			(value): value is string => typeof value === 'string' && value.length > 0,
+		) ?? firstListedError(body.errors);
 	return detail ? `${flag}: ${detail}` : flag;
 }
 
