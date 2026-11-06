@@ -10,6 +10,8 @@ const isStatusError = (error: Error): error is StatusError =>
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => isStatusError(error) && error.status === 429,
+		// Single retry owner for 429s: the transport stays single-attempt
+		// (see client.ts) and only this policy retries, honoring Retry-After.
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
 			if (isStatusError(error) && error.retryAfter !== undefined) {
