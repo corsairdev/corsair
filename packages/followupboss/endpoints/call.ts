@@ -1,9 +1,7 @@
 import { asRecord, logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { FollowUpBossContext } from '..';
-import type {
-	FollowUpBossRequest,
-} from '../client';
+import type { FollowUpBossRequest } from '../client';
 import { makeFollowUpBossRequest } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
