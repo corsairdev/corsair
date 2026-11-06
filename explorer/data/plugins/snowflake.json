@@ -1,0 +1,297 @@
+{
+  "id": "snowflake",
+  "displayName": "Snowflake",
+  "description": "Run SQL on a Snowflake account: submit a statement, fetch one result partition, or cancel execution.",
+  "npmPackageName": "@corsair-dev/snowflake",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 3,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "account", "tokenType"]
+    }
+  ],
+  "api": [
+    {
+      "path": "snowflake.api.statements.cancel",
+      "shortPath": "statements.cancel",
+      "description": "Cancel a running SQL statement.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statementHandle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sqlState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statementHandle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "statementStatusUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdOn",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "snowflake.api.statements.get",
+      "shortPath": "statements.get",
+      "description": "Fetch the status of a statement and one partition of its result.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "statementHandle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "partition",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sqlState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statementHandle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "statementHandles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "createdOn",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "statementStatusUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resultSetMetaData",
+            "optional": true,
+            "type": "{ format?: string, numRows?: number, rowType?: { name?: string, type?: string, length?: number | null, precision?: number | null, scale?: number | null, nullable?: boolean }[], partitionInfo?: { rowCount?: number, uncompressedSize?: number, compressedSize?: number }[] }"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null[][]"
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "{ numRowsInserted?: number, numRowsUpdated?: number, numRowsDeleted?: number, numDuplicateRowsUpdated?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "snowflake.api.statements.submit",
+      "shortPath": "statements.submit",
+      "description": "Submit SQL for execution. Returns rows, a handle while the statement is still running, or DML stats.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "async",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "nullable",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "retry",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "statement",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "database",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "warehouse",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bindings",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{ timezone?: string, query_tag?: string, binary_output_format?: string, date_output_format?: string, time_output_format?: string, timestamp_output_format?: string, timestamp_ltz_output_format?: string, timestamp_ntz_output_format?: string, timestamp_tz_output_format?: string, multi_statement_count?: number | string, client_result_chunk_size?: number, rows_per_resultset?: number, use_cached_result?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sqlState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "statementHandle",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "statementHandles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "createdOn",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "statementStatusUrl",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resultSetMetaData",
+            "optional": true,
+            "type": "{ format?: string, numRows?: number, rowType?: { name?: string, type?: string, length?: number | null, precision?: number | null, scale?: number | null, nullable?: boolean }[], partitionInfo?: { rowCount?: number, uncompressedSize?: number, compressedSize?: number }[] }"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string | null[][]"
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "{ numRowsInserted?: number, numRowsUpdated?: number, numRowsDeleted?: number, numDuplicateRowsUpdated?: number }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
