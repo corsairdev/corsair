@@ -1045,7 +1045,6 @@ export type AllProviders =
 	| 'cloudinary'
 	| 'coassemble'
 	| 'coda'
-
 	| 'codacy'
 	| 'codeinterpreter'
 	| 'cody'
