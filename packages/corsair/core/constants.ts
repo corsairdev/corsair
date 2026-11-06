@@ -335,6 +335,7 @@ export const BaseProviders = [
 	'revai',
 	'rootly',
 	'runpod',
+	'salesflare',
 	'salesforce',
 	'saperly',
 	'sapsuccessfactors',
@@ -756,6 +757,7 @@ export const ProviderDisplayNames = {
 	revai: 'RevAI',
 	rootly: 'Rootly',
 	runpod: 'RunPod',
+	salesflare: 'Salesflare',
 	salesforce: 'Salesforce',
 	saperly: 'Saperly',
 	sapsuccessfactors: 'SAP SuccessFactors',
@@ -1183,6 +1185,7 @@ export type AllProviders =
 	| 'revai'
 	| 'rootly'
 	| 'runpod'
+	| 'salesflare'
 	| 'salesforce'
 	| 'saperly'
 	| 'sapsuccessfactors'
