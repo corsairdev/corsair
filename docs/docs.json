@@ -525,7 +525,7 @@
                 ]
               },
               {
-                "group": "Apollo",
+                "group": "Apollo.io",
                 "pages": [
                   "plugins/apollo/overview",
                   "plugins/apollo/api",
