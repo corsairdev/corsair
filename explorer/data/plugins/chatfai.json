@@ -55,17 +55,17 @@
           {
             "key": "nickname",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "publicDescription",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "image",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "visibility",
@@ -85,7 +85,7 @@
           {
             "key": "firstMessage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "voiceEnabled",
@@ -178,7 +178,7 @@
           {
             "key": "nextCursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

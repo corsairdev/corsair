@@ -1,7 +1,7 @@
 {
   "id": "classmarker",
-  "displayName": "Classmarker",
-  "description": "Classmarker plugin for Corsair",
+  "displayName": "ClassMarker",
+  "description": "Online exam platform. Manage tests, users, groups, question banks, categories, and access lists, and read results, certificates, and webhooks.",
   "npmPackageName": "@corsair-dev/classmarker",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -456,7 +456,7 @@
           {
             "key": "certificates",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -645,7 +645,7 @@
           {
             "key": "question",
             "optional": false,
-            "type": "{ question: string, question_type: multiplechoice | multipleresponse | truefalse, category_id: number, points: string | number, correct_feedback?: string, incorrect_feedback?: string, random_answers?: boolean, options: {}, correct_options: string[], grade_style?: partial_with_deduction | partial_without_deduction | off } | { question: string, question_type: essay, category_id: number, points: string | number, correct_feedback?: string, incorrect_feedback?: string }"
+            "type": "{ question: string, question_type: multiplechoice | multipleresponse | truefalse, category_id: number, points: string | number, correct_feedback?: string, incorrect_feedback?: string, random_answers?: boolean, options: Record<string, { content?: string }>, correct_options: string[], grade_style?: partial_with_deduction | partial_without_deduction | off } | { question: string, question_type: essay, category_id: number, points: string | number, correct_feedback?: string, incorrect_feedback?: string }"
           },
           {
             "key": "verify_only",
@@ -656,7 +656,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ status: verified, request_path?: string, server_timestamp?: number } | { question_id: number, question: string, question_type: string, category_id?: number, random_answers?: boolean, points?: string | number, correct_feedback?: string, incorrect_feedback?: string, last_updated_timestamp?: number, status?: string, grade_style?: string, options?: {}, correct_options?: string[] } | { status: ok | no_results | error | verified, request_path?: string, server_timestamp?: number, finished_after_timestamp_used?: number, num_results_available?: number, num_results_returned?: number, more_results_exist?: boolean, next_finished_after_timestamp?: number, error?: { error_code?: string, error_message?: string, next_request_after?: number }, question_id?: number }"
+        "type": "{ status: verified, request_path?: string, server_timestamp?: number } | { question_id: number, question: string, question_type: string, category_id?: number, random_answers?: boolean, points?: string | number, correct_feedback?: string, incorrect_feedback?: string, last_updated_timestamp?: number, status?: string, grade_style?: string, options?: Record<string, { content?: string }>, correct_options?: string[] } | { status: ok | no_results | error | verified, request_path?: string, server_timestamp?: number, finished_after_timestamp_used?: number, num_results_available?: number, num_results_returned?: number, more_results_exist?: boolean, next_finished_after_timestamp?: number, error?: { error_code?: string, error_message?: string, next_request_after?: number }, question_id?: number }"
       }
     },
     {
@@ -676,7 +676,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ question_id: number, question: string, question_type: string, category_id?: number, random_answers?: boolean, points?: string | number, correct_feedback?: string, incorrect_feedback?: string, last_updated_timestamp?: number, status?: string, grade_style?: string, options?: {}, correct_options?: string[] } | { status: ok | no_results | error | verified, request_path?: string, server_timestamp?: number, finished_after_timestamp_used?: number, num_results_available?: number, num_results_returned?: number, more_results_exist?: boolean, next_finished_after_timestamp?: number, error?: { error_code?: string, error_message?: string, next_request_after?: number }, question_id?: number }"
+        "type": "{ question_id: number, question: string, question_type: string, category_id?: number, random_answers?: boolean, points?: string | number, correct_feedback?: string, incorrect_feedback?: string, last_updated_timestamp?: number, status?: string, grade_style?: string, options?: Record<string, { content?: string }>, correct_options?: string[] } | { status: ok | no_results | error | verified, request_path?: string, server_timestamp?: number, finished_after_timestamp_used?: number, num_results_available?: number, num_results_returned?: number, more_results_exist?: boolean, next_finished_after_timestamp?: number, error?: { error_code?: string, error_message?: string, next_request_after?: number }, question_id?: number }"
       }
     },
     {
@@ -745,7 +745,7 @@
           {
             "key": "questions",
             "optional": true,
-            "type": "{ question_id: number, question: string, question_type: string, category_id?: number, random_answers?: boolean, points?: string | number, correct_feedback?: string, incorrect_feedback?: string, last_updated_timestamp?: number, status?: string, grade_style?: string, options?: {}, correct_options?: string[] }[]"
+            "type": "{ question_id: number, question: string, question_type: string, category_id?: number, random_answers?: boolean, points?: string | number, correct_feedback?: string, incorrect_feedback?: string, last_updated_timestamp?: number, status?: string, grade_style?: string, options?: Record<string, { content?: string }>, correct_options?: string[] }[]"
           }
         ]
       }
@@ -766,7 +766,7 @@
           {
             "key": "question",
             "optional": false,
-            "type": "{ question: string, question_type: multiplechoice | multipleresponse | truefalse, category_id: number, points: string | number, correct_feedback?: string, incorrect_feedback?: string, random_answers?: boolean, options: {}, correct_options: string[], grade_style?: partial_with_deduction | partial_without_deduction | off } | { question: string, question_type: essay, category_id: number, points: string | number, correct_feedback?: string, incorrect_feedback?: string }"
+            "type": "{ question: string, question_type: multiplechoice | multipleresponse | truefalse, category_id: number, points: string | number, correct_feedback?: string, incorrect_feedback?: string, random_answers?: boolean, options: Record<string, { content?: string }>, correct_options: string[], grade_style?: partial_with_deduction | partial_without_deduction | off } | { question: string, question_type: essay, category_id: number, points: string | number, correct_feedback?: string, incorrect_feedback?: string }"
           },
           {
             "key": "verify_only",
@@ -777,7 +777,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ status: verified, request_path?: string, server_timestamp?: number } | { question_id: number, question: string, question_type: string, category_id?: number, random_answers?: boolean, points?: string | number, correct_feedback?: string, incorrect_feedback?: string, last_updated_timestamp?: number, status?: string, grade_style?: string, options?: {}, correct_options?: string[] } | { status: ok | no_results | error | verified, request_path?: string, server_timestamp?: number, finished_after_timestamp_used?: number, num_results_available?: number, num_results_returned?: number, more_results_exist?: boolean, next_finished_after_timestamp?: number, error?: { error_code?: string, error_message?: string, next_request_after?: number }, question_id?: number }"
+        "type": "{ status: verified, request_path?: string, server_timestamp?: number } | { question_id: number, question: string, question_type: string, category_id?: number, random_answers?: boolean, points?: string | number, correct_feedback?: string, incorrect_feedback?: string, last_updated_timestamp?: number, status?: string, grade_style?: string, options?: Record<string, { content?: string }>, correct_options?: string[] } | { status: ok | no_results | error | verified, request_path?: string, server_timestamp?: number, finished_after_timestamp_used?: number, num_results_available?: number, num_results_returned?: number, more_results_exist?: boolean, next_finished_after_timestamp?: number, error?: { error_code?: string, error_message?: string, next_request_after?: number }, question_id?: number }"
       }
     },
     {
@@ -1660,7 +1660,7 @@
           {
             "key": "webhooks",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }

@@ -31,7 +31,7 @@ await corsair.gladia.api.live.deleteSession({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -76,24 +76,16 @@ await corsair.gladia.api.live.getTranscriptionResult({});
 | `version` | `number` | No | — |
 | `status` | `queued \| processing \| done \| error` | No | — |
 | `created_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
+| `completed_at` | `string \| null` | No | — |
 | `kind` | `live \| pre-recorded` | No | — |
-| `custom_metadata` | `object` | No | — |
-| `error_code` | `number` | No | — |
-| `file` | `object` | No | — |
-| `request_params` | `object` | No | — |
+| `custom_metadata` | `Record<string, any>` | No | — |
+| `error_code` | `number \| null` | No | — |
+| `file` | `object \| null` | No | — |
+| `request_params` | `Record<string, any> \| null` | No | — |
 | `result` | `any` | No | — |
-| `post_session_metadata` | `object` | No | — |
+| `post_session_metadata` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
-<Accordion title="custom_metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="file full type">
 
 ```ts
@@ -105,23 +97,7 @@ await corsair.gladia.api.live.getTranscriptionResult({});
   audio_duration?: number,
   number_of_channels?: number,
   source?: string
-}
-```
-</Accordion>
-
-<Accordion title="request_params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="post_session_metadata full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -151,75 +127,17 @@ await corsair.gladia.api.live.initiateTranscriptionSession({});
 | `bit_depth` | `8 \| 16 \| 24 \| 32` | No | — |
 | `sample_rate` | `8000 \| 16000 \| 32000 \| 44100 \| 48000` | No | — |
 | `channels` | `number` | No | — |
-| `custom_metadata` | `object` | No | — |
+| `custom_metadata` | `Record<string, any>` | No | — |
 | `model` | `string` | No | — |
 | `endpointing` | `number` | No | — |
 | `maximum_duration_without_endpointing` | `number` | No | — |
-| `language_config` | `object` | No | — |
-| `pre_processing` | `object` | No | — |
-| `realtime_processing` | `object` | No | — |
-| `post_processing` | `object` | No | — |
-| `messages_config` | `object` | No | — |
+| `language_config` | `Record<string, any>` | No | — |
+| `pre_processing` | `Record<string, any>` | No | — |
+| `realtime_processing` | `Record<string, any>` | No | — |
+| `post_processing` | `Record<string, any>` | No | — |
+| `messages_config` | `Record<string, any>` | No | — |
 | `callback` | `boolean` | No | — |
-| `callback_config` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="language_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="pre_processing full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="realtime_processing full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="post_processing full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="messages_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="callback_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `callback_config` | `Record<string, any>` | No | — |
 
 
 
@@ -256,18 +174,8 @@ await corsair.gladia.api.live.listTranscriptionJobs({});
 | `date` | `string` | No | — |
 | `before_date` | `string` | No | — |
 | `after_date` | `string` | No | — |
-| `status` | `queued \| processing \| done \| error[]` | No | — |
-| `custom_metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `status` | `(queued \| processing \| done \| error)[]` | No | — |
+| `custom_metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -277,7 +185,7 @@ await corsair.gladia.api.live.listTranscriptionJobs({});
 |------|------|----------|-------------|
 | `first` | `string` | Yes | — |
 | `current` | `string` | Yes | — |
-| `next` | `string` | No | — |
+| `next` | `string \| null` | Yes | — |
 | `items` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -292,8 +200,7 @@ await corsair.gladia.api.live.listTranscriptionJobs({});
   created_at?: string,
   completed_at?: string | null,
   kind?: live | pre-recorded,
-  custom_metadata?: {
-  },
+  custom_metadata?: Record<string, any>,
   error_code?: number | null,
   file?: {
     id?: string,
@@ -304,11 +211,9 @@ await corsair.gladia.api.live.listTranscriptionJobs({});
     number_of_channels?: number,
     source?: string
   } | null,
-  request_params?: {
-  } | null,
+  request_params?: Record<string, any> | null,
   result?: any,
-  post_session_metadata?: {
-  }
+  post_session_metadata?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -340,7 +245,7 @@ await corsair.gladia.api.preRecorded.deleteJob({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -385,24 +290,16 @@ await corsair.gladia.api.preRecorded.getJob({});
 | `version` | `number` | No | — |
 | `status` | `queued \| processing \| done \| error` | No | — |
 | `created_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
+| `completed_at` | `string \| null` | No | — |
 | `kind` | `live \| pre-recorded` | No | — |
-| `custom_metadata` | `object` | No | — |
-| `error_code` | `number` | No | — |
-| `file` | `object` | No | — |
-| `request_params` | `object` | No | — |
+| `custom_metadata` | `Record<string, any>` | No | — |
+| `error_code` | `number \| null` | No | — |
+| `file` | `object \| null` | No | — |
+| `request_params` | `Record<string, any> \| null` | No | — |
 | `result` | `any` | No | — |
-| `post_session_metadata` | `object` | No | — |
+| `post_session_metadata` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
-<Accordion title="custom_metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="file full type">
 
 ```ts
@@ -414,23 +311,7 @@ await corsair.gladia.api.preRecorded.getJob({});
   audio_duration?: number,
   number_of_channels?: number,
   source?: string
-}
-```
-</Accordion>
-
-<Accordion title="request_params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="post_session_metadata full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -457,121 +338,31 @@ await corsair.gladia.api.preRecorded.initiateTranscription({});
 |------|------|----------|-------------|
 | `audio_url` | `string` | Yes | — |
 | `custom_vocabulary` | `boolean` | No | — |
-| `custom_vocabulary_config` | `object` | No | — |
+| `custom_vocabulary_config` | `Record<string, any>` | No | — |
 | `callback_url` | `string` | No | — |
 | `callback` | `boolean` | No | — |
-| `callback_config` | `object` | No | — |
+| `callback_config` | `Record<string, any>` | No | — |
 | `subtitles` | `boolean` | No | — |
-| `subtitles_config` | `object` | No | — |
+| `subtitles_config` | `Record<string, any>` | No | — |
 | `diarization` | `boolean` | No | — |
-| `diarization_config` | `object` | No | — |
+| `diarization_config` | `Record<string, any>` | No | — |
 | `translation` | `boolean` | No | — |
-| `translation_config` | `object` | No | — |
+| `translation_config` | `Record<string, any>` | No | — |
 | `summarization` | `boolean` | No | — |
-| `summarization_config` | `object` | No | — |
+| `summarization_config` | `Record<string, any>` | No | — |
 | `named_entity_recognition` | `boolean` | No | — |
 | `custom_spelling` | `boolean` | No | — |
-| `custom_spelling_config` | `object` | No | — |
+| `custom_spelling_config` | `Record<string, any>` | No | — |
 | `sentiment_analysis` | `boolean` | No | — |
 | `audio_to_llm` | `boolean` | No | — |
-| `audio_to_llm_config` | `object` | No | — |
+| `audio_to_llm_config` | `Record<string, any>` | No | — |
 | `pii_redaction` | `boolean` | No | — |
-| `pii_redaction_config` | `object` | No | — |
-| `custom_metadata` | `object` | No | — |
+| `pii_redaction_config` | `Record<string, any>` | No | — |
+| `custom_metadata` | `Record<string, any>` | No | — |
 | `sentences` | `boolean` | No | — |
 | `punctuation_enhanced` | `boolean` | No | — |
-| `language_config` | `object` | No | — |
+| `language_config` | `Record<string, any>` | No | — |
 | `model` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_vocabulary_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="callback_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="subtitles_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="diarization_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="translation_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="summarization_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="custom_spelling_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="audio_to_llm_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="pii_redaction_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="custom_metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="language_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -607,18 +398,8 @@ await corsair.gladia.api.preRecorded.listJobs({});
 | `date` | `string` | No | — |
 | `before_date` | `string` | No | — |
 | `after_date` | `string` | No | — |
-| `status` | `queued \| processing \| done \| error[]` | No | — |
-| `custom_metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `status` | `(queued \| processing \| done \| error)[]` | No | — |
+| `custom_metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -628,7 +409,7 @@ await corsair.gladia.api.preRecorded.listJobs({});
 |------|------|----------|-------------|
 | `first` | `string` | Yes | — |
 | `current` | `string` | Yes | — |
-| `next` | `string` | No | — |
+| `next` | `string \| null` | Yes | — |
 | `items` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -643,8 +424,7 @@ await corsair.gladia.api.preRecorded.listJobs({});
   created_at?: string,
   completed_at?: string | null,
   kind?: live | pre-recorded,
-  custom_metadata?: {
-  },
+  custom_metadata?: Record<string, any>,
   error_code?: number | null,
   file?: {
     id?: string,
@@ -655,11 +435,9 @@ await corsair.gladia.api.preRecorded.listJobs({});
     number_of_channels?: number,
     source?: string
   } | null,
-  request_params?: {
-  } | null,
+  request_params?: Record<string, any> | null,
   result?: any,
-  post_session_metadata?: {
-  }
+  post_session_metadata?: Record<string, any>
 }[]
 ```
 </Accordion>

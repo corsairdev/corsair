@@ -123,7 +123,7 @@
           {
             "key": "CustomFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -288,7 +288,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "nextRecordsUrl",
@@ -346,7 +346,7 @@
           {
             "key": "objectDescribe",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -392,7 +392,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -458,7 +458,7 @@
           {
             "key": "CustomFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "id",
@@ -539,7 +539,7 @@
           {
             "key": "CustomFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "id",
@@ -576,7 +576,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -596,7 +596,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -621,7 +621,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -639,7 +639,7 @@
           {
             "key": "templates",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -659,7 +659,7 @@
           {
             "key": "dashboards",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -695,7 +695,7 @@
           {
             "key": "templates",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -715,7 +715,7 @@
           {
             "key": "reports",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -742,7 +742,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -762,7 +762,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1023,7 +1023,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1113,7 +1113,7 @@
           {
             "key": "metadata",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1185,7 +1185,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1323,7 +1323,7 @@
           {
             "key": "graphs",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -1333,7 +1333,7 @@
           {
             "key": "graphs",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1354,7 +1354,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -1369,7 +1369,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1397,7 +1397,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -1426,7 +1426,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1442,7 +1442,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -1467,7 +1467,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -1492,7 +1492,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -1511,7 +1511,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -1537,7 +1537,7 @@
           {
             "key": "graphs",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -1547,7 +1547,7 @@
           {
             "key": "graphs",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1568,13 +1568,13 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -1649,7 +1649,7 @@
           {
             "key": "CustomFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -1835,7 +1835,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "nextRecordsUrl",
@@ -1866,7 +1866,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -1919,7 +1919,7 @@
           {
             "key": "metadata",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -1970,7 +1970,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2016,7 +2016,7 @@
           {
             "key": "CustomFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "id",
@@ -2077,7 +2077,7 @@
           {
             "key": "CustomFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "id",
@@ -2167,7 +2167,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -2191,7 +2191,7 @@
           {
             "key": "shares",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2326,7 +2326,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2352,7 +2352,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2378,7 +2378,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2445,7 +2445,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "string | {}[]"
+            "type": "string | Record<string, any>[]"
           }
         ]
       }
@@ -2558,7 +2558,7 @@
           {
             "key": "CustomFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -2730,7 +2730,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "nextRecordsUrl",
@@ -2787,7 +2787,7 @@
           {
             "key": "records",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2843,7 +2843,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -2894,7 +2894,7 @@
           {
             "key": "CustomFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "id",
@@ -2960,7 +2960,7 @@
           {
             "key": "CustomFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "id",
@@ -3001,7 +3001,7 @@
           {
             "key": "overrides",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3124,7 +3124,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3234,7 +3234,7 @@
           {
             "key": "record",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -3269,7 +3269,7 @@
           {
             "key": "sobjects",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -3295,7 +3295,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -3317,7 +3317,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3331,7 +3331,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3360,7 +3360,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -3387,7 +3387,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3405,7 +3405,7 @@
           {
             "key": "actions",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -3421,7 +3421,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3446,7 +3446,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3464,7 +3464,7 @@
           {
             "key": "actions",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -3490,7 +3490,7 @@
           {
             "key": "sObjects",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -3512,7 +3512,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3542,7 +3542,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3556,7 +3556,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3581,7 +3581,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3606,7 +3606,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3636,7 +3636,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3666,7 +3666,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3694,7 +3694,7 @@
           {
             "key": "sobjects",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -3721,7 +3721,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3741,7 +3741,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3796,7 +3796,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3810,7 +3810,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3824,7 +3824,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3838,7 +3838,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -3858,7 +3858,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -4075,7 +4075,7 @@
           {
             "key": "actions",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -4095,7 +4095,7 @@
           {
             "key": "actions",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -4203,7 +4203,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4265,7 +4265,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4306,7 +4306,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -4538,7 +4538,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -4591,7 +4591,7 @@
           {
             "key": "metadata",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -4632,7 +4632,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -4852,7 +4852,7 @@
           {
             "key": "CustomFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -5002,7 +5002,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "nextRecordsUrl",
@@ -5043,7 +5043,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -5074,7 +5074,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -5132,7 +5132,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -5209,7 +5209,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -5255,7 +5255,7 @@
           {
             "key": "CustomFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "id",
@@ -5316,7 +5316,7 @@
           {
             "key": "CustomFields",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "id",
@@ -5362,7 +5362,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -5388,7 +5388,7 @@
           {
             "key": "searchRecords",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -5409,7 +5409,7 @@
           {
             "key": "sobjects",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -5419,7 +5419,7 @@
           {
             "key": "searchRecords",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -5441,7 +5441,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -5491,7 +5491,7 @@
           {
             "key": "sobjects",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -5501,7 +5501,7 @@
           {
             "key": "searchRecords",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -5532,7 +5532,7 @@
           {
             "key": "searchRecords",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -5563,7 +5563,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -5599,7 +5599,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -5635,7 +5635,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "nextRecordsUrl",
@@ -5666,7 +5666,7 @@
           {
             "key": "searchRecords",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -5728,7 +5728,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -5983,7 +5983,7 @@
           {
             "key": "records",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -6193,7 +6193,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6229,7 +6229,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -6260,7 +6260,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6280,7 +6280,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6294,7 +6294,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6314,7 +6314,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6328,7 +6328,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6348,7 +6348,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6368,7 +6368,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6393,7 +6393,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6413,7 +6413,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6438,7 +6438,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6463,7 +6463,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6493,7 +6493,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6513,7 +6513,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6533,7 +6533,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6553,7 +6553,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6573,7 +6573,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6593,7 +6593,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6613,7 +6613,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6638,7 +6638,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6658,7 +6658,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6683,7 +6683,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6703,7 +6703,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6723,7 +6723,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6748,7 +6748,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6768,7 +6768,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6782,7 +6782,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6796,7 +6796,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6821,7 +6821,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6841,7 +6841,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6855,7 +6855,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6869,7 +6869,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6883,7 +6883,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6903,7 +6903,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6917,7 +6917,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6931,7 +6931,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6945,7 +6945,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -6970,7 +6970,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -7010,7 +7010,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, any>"
       }
     },
     {
@@ -7029,7 +7029,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -7065,7 +7065,7 @@
           {
             "key": "preferences",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -7101,7 +7101,7 @@
           {
             "key": "fields",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "ifUnmodifiedSince",
@@ -7137,7 +7137,7 @@
           {
             "key": "preferences",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },

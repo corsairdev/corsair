@@ -36,17 +36,7 @@ await corsair.baselinker.api.connect.getConnectIntegrationContractors({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `contractors` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="contractors full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `contractors` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -72,17 +62,7 @@ await corsair.baselinker.api.connect.getConnectIntegrations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `integrations` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="integrations full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `integrations` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -151,17 +131,7 @@ await corsair.baselinker.api.couriers.getCourierAccounts({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `accounts` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="accounts full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `accounts` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -193,26 +163,8 @@ await corsair.baselinker.api.couriers.getCourierFields({});
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
 | `multi_packages` | `boolean` | No | — |
-| `fields` | `object` | No | — |
-| `package_fields` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="package_fields full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `any[] \| Record<string, any>` | No | — |
+| `package_fields` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -234,17 +186,7 @@ await corsair.baselinker.api.couriers.getCourierPackagesStatusHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `package_ids` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="package_ids full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `package_ids` | `any[] \| Record<string, any>` | Yes | — |
 
 
 
@@ -253,17 +195,7 @@ any[] | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `packages_history` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="packages_history full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `packages_history` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -289,17 +221,7 @@ await corsair.baselinker.api.couriers.getCouriersList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `couriers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="couriers full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `couriers` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -330,17 +252,7 @@ await corsair.baselinker.api.couriers.getOrderPackages({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `packages` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="packages full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `packages` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -371,17 +283,7 @@ await corsair.baselinker.api.couriers.getPackageDetails({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `package_details` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="package_details full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `package_details` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -404,27 +306,9 @@ await corsair.baselinker.api.couriers.getProtocol({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `courier_code` | `string` | Yes | — |
-| `package_ids` | `object` | No | — |
-| `package_numbers` | `object` | No | — |
+| `package_ids` | `any[] \| Record<string, any>` | No | — |
+| `package_numbers` | `any[] \| Record<string, any>` | No | — |
 | `account_id` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="package_ids full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="package_numbers full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -465,17 +349,7 @@ await corsair.baselinker.api.couriers.getRequestParcelPickupFields({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `fields` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -498,36 +372,10 @@ await corsair.baselinker.api.couriers.runRequestParcelPickup({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `courier_code` | `string` | Yes | — |
-| `package_ids` | `object` | No | — |
-| `package_numbers` | `object` | No | — |
+| `package_ids` | `any[] \| Record<string, any>` | No | — |
+| `package_numbers` | `any[] \| Record<string, any>` | No | — |
 | `account_id` | `number` | Yes | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="package_ids full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="package_numbers full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="fields full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `any[] \| Record<string, any>` | Yes | — |
 
 
 
@@ -608,19 +456,9 @@ await corsair.baselinker.api.documents.addInvoiceCorrection({});
 | `invoice_state` | `string` | No | — |
 | `invoice_country_code` | `string` | No | — |
 | `invoice_nip` | `string` | No | — |
-| `items` | `object` | No | — |
+| `items` | `any[] \| Record<string, any>` | No | — |
 | `fv_payment` | `string` | No | — |
 | `fv_person` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -699,17 +537,7 @@ await corsair.baselinker.api.documents.getInvoices({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `invoices` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="invoices full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `invoices` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -741,7 +569,7 @@ await corsair.baselinker.api.documents.getNewReceipts({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `orders` | `object` | No | — |
+| `orders` | `any[] \| Record<string, any>` | No | — |
 | `receipt_id` | `number` | No | — |
 | `series_id` | `number` | No | — |
 | `receipt_full_nr` | `string` | No | — |
@@ -749,25 +577,7 @@ await corsair.baselinker.api.documents.getNewReceipts({});
 | `date_add` | `number` | No | — |
 | `payment_method` | `string` | No | — |
 | `nip` | `string` | No | — |
-| `products` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="orders full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="products full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `products` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -801,17 +611,7 @@ await corsair.baselinker.api.documents.getReceipts({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `receipts` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="receipts full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `receipts` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -837,17 +637,7 @@ await corsair.baselinker.api.documents.getSeries({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `series` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="series full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `series` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -951,17 +741,7 @@ await corsair.baselinker.api.externalStorages.getExternalStorageProductsQuantity
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
 | `storage_id` | `string` | No | — |
-| `products` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="products full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `products` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -987,17 +767,7 @@ await corsair.baselinker.api.externalStorages.getExternalStoragesList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `storages` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="storages full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `storages` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -1023,17 +793,7 @@ await corsair.baselinker.api.externalStorages.getStoragesList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `storages` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="storages full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `storages` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -1060,39 +820,13 @@ await corsair.baselinker.api.inventory.addInventory({});
 | `inventory_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
-| `languages` | `object` | No | — |
+| `languages` | `any[] \| Record<string, any>` | No | — |
 | `default_language` | `string` | No | — |
-| `price_groups` | `object` | No | — |
+| `price_groups` | `any[] \| Record<string, any>` | No | — |
 | `default_price_group` | `number` | No | — |
-| `warehouses` | `object` | No | — |
+| `warehouses` | `any[] \| Record<string, any>` | No | — |
 | `default_warehouse` | `string` | No | — |
 | `reservations` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="languages full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="price_groups full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="warehouses full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1282,9 +1016,9 @@ await corsair.baselinker.api.inventory.addInventoryProduct({});
 | `is_bundle` | `boolean` | No | — |
 | `sku` | `string` | No | — |
 | `ean` | `string` | No | — |
-| `ean_additional` | `object` | No | — |
+| `ean_additional` | `any[] \| Record<string, any>` | No | — |
 | `asin` | `string` | No | — |
-| `tags` | `object` | No | — |
+| `tags` | `any[] \| Record<string, any>` | No | — |
 | `tax_rate` | `number` | No | — |
 | `weight` | `number` | No | — |
 | `height` | `number` | No | — |
@@ -1294,114 +1028,16 @@ await corsair.baselinker.api.inventory.addInventoryProduct({});
 | `star` | `number` | No | — |
 | `manufacturer_id` | `number` | No | — |
 | `category_id` | `number` | No | — |
-| `prices` | `object` | No | — |
-| `stock` | `object` | No | — |
-| `locations` | `object` | No | — |
-| `text_fields` | `object` | No | — |
-| `images` | `object` | No | — |
-| `videos` | `object` | No | — |
-| `media_options` | `object` | No | — |
-| `links` | `object` | No | — |
-| `bundle_products` | `object` | No | — |
-| `suppliers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="ean_additional full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="prices full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="stock full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="locations full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="text_fields full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="images full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="videos full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="media_options full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="bundle_products full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="suppliers full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `prices` | `any[] \| Record<string, any>` | No | — |
+| `stock` | `any[] \| Record<string, any>` | No | — |
+| `locations` | `any[] \| Record<string, any>` | No | — |
+| `text_fields` | `any[] \| Record<string, any>` | No | — |
+| `images` | `any[] \| Record<string, any>` | No | — |
+| `videos` | `any[] \| Record<string, any>` | No | — |
+| `media_options` | `any[] \| Record<string, any>` | No | — |
+| `links` | `any[] \| Record<string, any>` | No | — |
+| `bundle_products` | `any[] \| Record<string, any>` | No | — |
+| `suppliers` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -1411,17 +1047,7 @@ any[] | {
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
 | `product_id` | `number` | No | — |
-| `warnings` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="warnings full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `warnings` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -1737,17 +1363,7 @@ await corsair.baselinker.api.inventory.getInventories({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `inventories` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="inventories full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `inventories` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -1778,17 +1394,7 @@ await corsair.baselinker.api.inventory.getInventoryAvailableTextFieldKeys({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `text_field_keys` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="text_field_keys full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `text_field_keys` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -1819,17 +1425,7 @@ await corsair.baselinker.api.inventory.getInventoryCategories({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `categories` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="categories full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `categories` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -1855,17 +1451,7 @@ await corsair.baselinker.api.inventory.getInventoryExtraFields({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `extra_fields` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="extra_fields full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extra_fields` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -1896,17 +1482,7 @@ await corsair.baselinker.api.inventory.getInventoryIntegrations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `integrations` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="integrations full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `integrations` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -1937,17 +1513,7 @@ await corsair.baselinker.api.inventory.getInventoryManufacturers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `manufacturers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="manufacturers full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `manufacturers` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -1979,17 +1545,7 @@ await corsair.baselinker.api.inventory.getInventoryPayers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `payers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="payers full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `payers` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2015,17 +1571,7 @@ await corsair.baselinker.api.inventory.getInventoryPriceGroups({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `price_groups` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="price_groups full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `price_groups` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2051,17 +1597,7 @@ await corsair.baselinker.api.inventory.getInventoryPrintoutTemplates({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `printouts` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="printouts full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `printouts` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2097,17 +1633,7 @@ await corsair.baselinker.api.inventory.getInventoryProductLogs({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `logs` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="logs full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `logs` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2130,7 +1656,7 @@ await corsair.baselinker.api.inventory.getInventoryProductsData({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `inventory_id` | `number` | Yes | — |
-| `products` | `object` | No | — |
+| `products` | `any[] \| Record<string, any>` | No | — |
 | `include_erp_units` | `boolean` | No | — |
 | `include_wms_units` | `boolean` | No | — |
 | `include_additional_eans` | `boolean` | No | — |
@@ -2139,16 +1665,6 @@ await corsair.baselinker.api.inventory.getInventoryProductsData({});
 | `include_marketplace_categories` | `boolean` | No | — |
 | `include_channels_media` | `boolean` | No | — |
 
-<AccordionGroup>
-<Accordion title="products full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output**
@@ -2156,17 +1672,7 @@ any[] | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `products` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="products full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `products` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2210,17 +1716,7 @@ await corsair.baselinker.api.inventory.getInventoryProductsList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `products` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="products full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `products` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2252,17 +1748,7 @@ await corsair.baselinker.api.inventory.getInventoryProductsPrices({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `products` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="products full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `products` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2304,17 +1790,7 @@ await corsair.baselinker.api.inventory.getInventoryProductsStock({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `products` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="products full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `products` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2346,17 +1822,7 @@ await corsair.baselinker.api.inventory.getInventorySuppliers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `suppliers` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="suppliers full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `suppliers` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2382,17 +1848,7 @@ await corsair.baselinker.api.inventory.getInventoryTags({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `tags` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="tags full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `tags` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2418,17 +1874,7 @@ await corsair.baselinker.api.inventory.getInventoryWarehouses({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `warehouses` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="warehouses full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `warehouses` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2482,17 +1928,7 @@ await corsair.baselinker.api.inventory.updateInventoryProductsStock({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `inventory_id` | `number` | Yes | — |
-| `products` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="products full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `products` | `any[] \| Record<string, any>` | Yes | — |
 
 
 
@@ -2502,17 +1938,7 @@ any[] | {
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
 | `counter` | `number` | No | — |
-| `warnings` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="warnings full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `warnings` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2585,17 +2011,7 @@ await corsair.baselinker.api.inventoryDocuments.getInventoryDocumentItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `items` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `items` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2634,17 +2050,7 @@ await corsair.baselinker.api.inventoryDocuments.getInventoryDocuments({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `documents` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="documents full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `documents` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2675,17 +2081,7 @@ await corsair.baselinker.api.inventoryDocuments.getInventoryDocumentSeries({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `document_series` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="document_series full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `document_series` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2746,26 +2142,8 @@ await corsair.baselinker.api.orders.addOrder({});
 | `want_invoice` | `boolean` | No | — |
 | `extra_field_1` | `string` | No | — |
 | `extra_field_2` | `string` | No | — |
-| `custom_extra_fields` | `object` | No | — |
-| `products` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_extra_fields full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="products full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `custom_extra_fields` | `any[] \| Record<string, any>` | No | — |
+| `products` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2797,18 +2175,8 @@ await corsair.baselinker.api.orders.addOrderBySplit({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `order_id` | `number` | Yes | — |
-| `items_to_split` | `object` | No | — |
+| `items_to_split` | `any[] \| Record<string, any>` | No | — |
 | `delivery_cost_to_split` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="items_to_split full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2901,17 +2269,7 @@ await corsair.baselinker.api.orders.deleteOrders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `order_ids` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="order_ids full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `order_ids` | `any[] \| Record<string, any>` | Yes | — |
 
 
 
@@ -2920,17 +2278,7 @@ any[] | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `deleted_order_ids` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="deleted_order_ids full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `deleted_order_ids` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -2953,18 +2301,8 @@ await corsair.baselinker.api.orders.getJournalList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `last_log_id` | `number` | Yes | — |
-| `logs_types` | `object` | No | — |
+| `logs_types` | `any[] \| Record<string, any>` | No | — |
 | `order_id` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="logs_types full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2973,17 +2311,7 @@ any[] | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `logs` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="logs full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `logs` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3009,17 +2337,7 @@ await corsair.baselinker.api.orders.getOrderExtraFields({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `extra_fields` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="extra_fields full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extra_fields` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3051,17 +2369,7 @@ await corsair.baselinker.api.orders.getOrderPaymentsHistory({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `payments` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="payments full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `payments` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3093,17 +2401,7 @@ await corsair.baselinker.api.orders.getOrderPickPackHistory({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `history` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="history full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `history` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3129,17 +2427,7 @@ await corsair.baselinker.api.orders.getOrderPrintoutTemplates({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `printouts` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="printouts full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `printouts` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3184,17 +2472,7 @@ await corsair.baselinker.api.orders.getOrders({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `orders` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="orders full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `orders` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3225,17 +2503,7 @@ await corsair.baselinker.api.orders.getOrdersByPhone({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `orders` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="orders full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `orders` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3261,17 +2529,7 @@ await corsair.baselinker.api.orders.getOrderSources({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `sources` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="sources full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `sources` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3297,17 +2555,7 @@ await corsair.baselinker.api.orders.getOrderStatusList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `statuses` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="statuses full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `statuses` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3341,7 +2589,7 @@ await corsair.baselinker.api.orders.getOrderTransactionData({});
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
 | `currency` | `string` | No | — |
-| `fulfillment_shipments` | `object` | No | — |
+| `fulfillment_shipments` | `any[] \| Record<string, any>` | No | — |
 | `fulfillment_center_id` | `string` | No | — |
 | `ship_date_from` | `number` | No | — |
 | `ship_date_to` | `number` | No | — |
@@ -3350,25 +2598,7 @@ await corsair.baselinker.api.orders.getOrderTransactionData({});
 | `marketplace_transaction_id` | `string` | No | — |
 | `account_id` | `number` | No | — |
 | `transaction_date` | `number` | No | — |
-| `order_items` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="fulfillment_shipments full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="order_items full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `order_items` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3394,17 +2624,7 @@ await corsair.baselinker.api.orders.getPickPackCarts({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `carts` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="carts full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `carts` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3490,20 +2710,10 @@ await corsair.baselinker.api.orders.setOrderFields({});
 | `want_invoice` | `boolean` | No | — |
 | `extra_field_1` | `string` | No | — |
 | `extra_field_2` | `string` | No | — |
-| `custom_extra_fields` | `object` | No | — |
+| `custom_extra_fields` | `any[] \| Record<string, any>` | No | — |
 | `pick_state` | `number` | No | — |
 | `pack_state` | `number` | No | — |
 | `star` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_extra_fields full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3614,19 +2824,9 @@ await corsair.baselinker.api.orders.setOrdersMerge({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `main_order_id` | `number` | Yes | — |
-| `order_ids_to_merge` | `object` | Yes | — |
+| `order_ids_to_merge` | `any[] \| Record<string, any>` | Yes | — |
 | `merge_mode` | `string` | Yes | — |
 | `sum_delivery_costs` | `boolean` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="order_ids_to_merge full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3688,18 +2888,8 @@ await corsair.baselinker.api.orders.setOrderStatuses({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `order_ids` | `object` | Yes | — |
+| `order_ids` | `any[] \| Record<string, any>` | Yes | — |
 | `status_id` | `number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="order_ids full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3739,26 +2929,8 @@ await corsair.baselinker.api.purchaseOrders.addInventoryPurchaseOrder({});
 | `notes` | `string` | No | — |
 | `invoice_no` | `string` | No | — |
 | `date_delivery_expected` | `number` | No | — |
-| `additional_costs` | `object` | No | — |
-| `packages` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="additional_costs full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="packages full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `additional_costs` | `any[] \| Record<string, any>` | No | — |
+| `packages` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3791,17 +2963,7 @@ await corsair.baselinker.api.purchaseOrders.addInventoryPurchaseOrderItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `order_id` | `number` | Yes | — |
-| `items` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `items` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3810,17 +2972,7 @@ any[] | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `items` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `items` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3852,17 +3004,7 @@ await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrderItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `items` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `items` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3900,17 +3042,7 @@ await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrders({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `purchase_orders` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="purchase_orders full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `purchase_orders` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3941,17 +3073,7 @@ await corsair.baselinker.api.purchaseOrders.getInventoryPurchaseOrderSeries({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `series` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="series full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `series` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -3975,17 +3097,7 @@ await corsair.baselinker.api.purchaseOrders.setInventoryPurchaseOrderStatus({});
 |------|------|----------|-------------|
 | `order_id` | `number` | Yes | — |
 | `status` | `number` | Yes | — |
-| `completed_items` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="completed_items full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `completed_items` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -4038,29 +3150,11 @@ await corsair.baselinker.api.returns.addOrderReturn({});
 | `delivery_country_code` | `string` | No | — |
 | `extra_field_1` | `string` | No | — |
 | `extra_field_2` | `string` | No | — |
-| `custom_extra_fields` | `object` | No | — |
-| `products` | `object` | No | — |
+| `custom_extra_fields` | `any[] \| Record<string, any>` | No | — |
+| `products` | `any[] \| Record<string, any>` | No | — |
 | `refund_account_number` | `string` | No | — |
 | `refund_iban` | `string` | No | — |
 | `refund_swift` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_extra_fields full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-
-<Accordion title="products full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4175,17 +3269,7 @@ await corsair.baselinker.api.returns.getOrderReturnExtraFields({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `extra_fields` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="extra_fields full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extra_fields` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -4208,18 +3292,8 @@ await corsair.baselinker.api.returns.getOrderReturnJournalList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `last_log_id` | `number` | Yes | — |
-| `logs_types` | `object` | No | — |
+| `logs_types` | `any[] \| Record<string, any>` | No | — |
 | `return_id` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="logs_types full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4228,17 +3302,7 @@ any[] | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `logs` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="logs full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `logs` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -4270,17 +3334,7 @@ await corsair.baselinker.api.returns.getOrderReturnPaymentsHistory({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `payments` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="payments full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `payments` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -4306,17 +3360,7 @@ await corsair.baselinker.api.returns.getOrderReturnProductStatuses({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `order_return_product_statuses` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="order_return_product_statuses full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `order_return_product_statuses` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -4342,17 +3386,7 @@ await corsair.baselinker.api.returns.getOrderReturnReasonsList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `return_reasons` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="return_reasons full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `return_reasons` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -4391,17 +3425,7 @@ await corsair.baselinker.api.returns.getOrderReturns({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `returns` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="returns full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `returns` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -4427,17 +3451,7 @@ await corsair.baselinker.api.returns.getOrderReturnStatusList({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `SUCCESS` | Yes | — |
-| `statuses` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="statuses full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `statuses` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -4474,17 +3488,7 @@ await corsair.baselinker.api.returns.setOrderReturnFields({});
 | `delivery_country_code` | `string` | No | — |
 | `extra_field_1` | `string` | No | — |
 | `extra_field_2` | `string` | No | — |
-| `custom_extra_fields` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_extra_fields full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+| `custom_extra_fields` | `any[] \| Record<string, any>` | No | — |
 
 
 
@@ -4627,18 +3631,8 @@ await corsair.baselinker.api.returns.setOrderReturnStatuses({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `return_ids` | `object` | Yes | — |
+| `return_ids` | `any[] \| Record<string, any>` | Yes | — |
 | `status_id` | `number` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="return_ids full type">
-
-```ts
-any[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 

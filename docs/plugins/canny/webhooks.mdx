@@ -138,8 +138,7 @@ Occurs when a new comment is created in Canny
       isAdmin: boolean,
       avatarURL?: string | null
     } | null,
-    customFields?: {
-    }
+    customFields?: Record<string, string | number | boolean | null>
   },
   value: string
 }
@@ -239,8 +238,7 @@ Occurs when a new comment is created in Canny
         isAdmin: boolean,
         avatarURL?: string | null
       } | null,
-      customFields?: {
-      }
+      customFields?: Record<string, string | number | boolean | null>
     },
     value: string
   }
@@ -344,8 +342,7 @@ Occurs when a new post is created in Canny
     isAdmin: boolean,
     avatarURL?: string | null
   } | null,
-  customFields?: {
-  }
+  customFields?: Record<string, string | number | boolean | null>
 }
 ```
 </Accordion>
@@ -415,8 +412,7 @@ Occurs when a new post is created in Canny
       isAdmin: boolean,
       avatarURL?: string | null
     } | null,
-    customFields?: {
-    }
+    customFields?: Record<string, string | number | boolean | null>
   }
 }
 ```
@@ -516,8 +512,7 @@ Occurs when a post's status is changed in Canny
     isAdmin: boolean,
     avatarURL?: string | null
   } | null,
-  customFields?: {
-  }
+  customFields?: Record<string, string | number | boolean | null>
 }
 ```
 </Accordion>
@@ -587,8 +582,7 @@ Occurs when a post's status is changed in Canny
       isAdmin: boolean,
       avatarURL?: string | null
     } | null,
-    customFields?: {
-    }
+    customFields?: Record<string, string | number | boolean | null>
   }
 }
 ```
@@ -713,8 +707,7 @@ Occurs when a new vote is cast in Canny
       isAdmin: boolean,
       avatarURL?: string | null
     } | null,
-    customFields?: {
-    }
+    customFields?: Record<string, string | number | boolean | null>
   },
   voter?: {
     id: string,
@@ -818,8 +811,7 @@ Occurs when a new vote is cast in Canny
         isAdmin: boolean,
         avatarURL?: string | null
       } | null,
-      customFields?: {
-      }
+      customFields?: Record<string, string | number | boolean | null>
     },
     voter?: {
       id: string,

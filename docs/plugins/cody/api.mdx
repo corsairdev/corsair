@@ -65,8 +65,7 @@ await corsair.cody.api.bots.list({});
     per_page?: number,
     current_page?: number,
     total_pages?: number,
-    links?: {
-    }
+    links?: Record<string, string | null>
   }
 }
 ```
@@ -259,8 +258,7 @@ await corsair.cody.api.conversations.list({});
     per_page?: number,
     current_page?: number,
     total_pages?: number,
-    links?: {
-    }
+    links?: Record<string, string | null>
   }
 }
 ```
@@ -339,7 +337,7 @@ await corsair.cody.api.documents.create({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | Name of the document |
 | `content` | `string` | Yes | Text or HTML content of the document (up to 768 KB) |
-| `content_type` | `text/plain \| text/html` | Yes | MIME content type of the content body |
+| `content_type` | `text/plain \| text/html` | No | MIME content type of the content body. Defaults to "text/plain". |
 | `folder_id` | `string` | No | Folder ID where the document should be stored |
 
 
@@ -598,8 +596,7 @@ await corsair.cody.api.documents.list({});
     per_page?: number,
     current_page?: number,
     total_pages?: number,
-    links?: {
-    }
+    links?: Record<string, string | null>
   }
 }
 ```
@@ -750,8 +747,7 @@ await corsair.cody.api.folders.list({});
     per_page?: number,
     current_page?: number,
     total_pages?: number,
-    links?: {
-    }
+    links?: Record<string, string | null>
   }
 }
 ```
@@ -848,8 +844,7 @@ await corsair.cody.api.messages.get({});
   flagged?: boolean,
   created_at?: number,
   sources?: {
-    data?: {
-    }[]
+    data?: Record<string, any>[]
   },
   usage?: {
     tokens?: number,
@@ -907,8 +902,7 @@ await corsair.cody.api.messages.list({});
   flagged?: boolean,
   created_at?: number,
   sources?: {
-    data?: {
-    }[]
+    data?: Record<string, any>[]
   },
   usage?: {
     tokens?: number,
@@ -928,8 +922,7 @@ await corsair.cody.api.messages.list({});
     per_page?: number,
     current_page?: number,
     total_pages?: number,
-    links?: {
-    }
+    links?: Record<string, string | null>
   }
 }
 ```
@@ -980,8 +973,7 @@ await corsair.cody.api.messages.send({});
   flagged?: boolean,
   created_at?: number,
   sources?: {
-    data?: {
-    }[]
+    data?: Record<string, any>[]
   },
   usage?: {
     tokens?: number,

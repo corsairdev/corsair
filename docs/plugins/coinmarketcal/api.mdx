@@ -78,12 +78,12 @@ await corsair.coinmarketcal.api.coins.get({ slug: 'bitcoin' });
 | `slug` | `string` | Yes | — |
 | `symbol` | `string` | No | — |
 | `name` | `string` | No | — |
-| `rank` | `number` | No | — |
+| `rank` | `number \| null` | No | — |
 | `tracked` | `boolean` | No | — |
-| `iconUrl` | `string` | No | — |
-| `upcomingCount` | `number` | No | — |
-| `majorCount` | `number` | No | — |
-| `peakImpact` | `number` | No | — |
+| `iconUrl` | `string \| null` | No | — |
+| `upcomingCount` | `number \| null` | No | — |
+| `majorCount` | `number \| null` | No | — |
+| `peakImpact` | `number \| null` | No | — |
 
 
 
@@ -182,19 +182,19 @@ await corsair.coinmarketcal.api.events.get({ id: '12345' });
 | `id` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `title` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `date` | `string` | No | — |
-| `dateEnd` | `string` | No | — |
+| `dateEnd` | `string \| null` | No | — |
 | `dateType` | `string` | No | — |
 | `isEstimated` | `boolean` | No | — |
 | `displayedDate` | `string` | No | — |
 | `categories` | `string[]` | No | — |
 | `coins` | `object[]` | No | — |
-| `impact` | `number \| string` | No | — |
-| `impactSummary` | `string` | No | — |
-| `sourceUrl` | `string` | No | — |
-| `snapshotUrl` | `string` | No | — |
-| `lastVerifiedAt` | `string` | No | — |
+| `impact` | `number \| string \| null` | No | — |
+| `impactSummary` | `string \| null` | No | — |
+| `sourceUrl` | `string \| null` | No | — |
+| `snapshotUrl` | `string \| null` | No | — |
+| `lastVerifiedAt` | `string \| null` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 

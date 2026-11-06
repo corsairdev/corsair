@@ -149,7 +149,7 @@ await corsair.certifier.api.credentials.createIssueSend({});
 | `recipient` | `object` | Yes | — |
 | `issueDate` | `string` | No | — |
 | `expiryDate` | `string` | No | — |
-| `customAttributes` | `object` | No | — |
+| `customAttributes` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="recipient full type">
@@ -158,14 +158,6 @@ await corsair.certifier.api.credentials.createIssueSend({});
 {
   name: string,
   email: string
-}
-```
-</Accordion>
-
-<Accordion title="customAttributes full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -182,10 +174,10 @@ await corsair.certifier.api.credentials.createIssueSend({});
 | `groupId` | `string` | No | — |
 | `status` | `string` | No | — |
 | `recipient` | `object` | No | — |
-| `issueDate` | `string` | No | — |
-| `expiryDate` | `string` | No | — |
-| `attributes` | `object` | No | — |
-| `customAttributes` | `object` | No | — |
+| `issueDate` | `string \| null` | No | — |
+| `expiryDate` | `string \| null` | No | — |
+| `attributes` | `Record<string, string \| null>` | No | — |
+| `customAttributes` | `Record<string, string \| null>` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 
@@ -197,22 +189,6 @@ await corsair.certifier.api.credentials.createIssueSend({});
   id?: string,
   name?: string,
   email?: string
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="customAttributes full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -266,10 +242,8 @@ await corsair.certifier.api.credentials.list({});
   },
   issueDate?: string | null,
   expiryDate?: string | null,
-  attributes?: {
-  },
-  customAttributes?: {
-  },
+  attributes?: Record<string, string | null>,
+  customAttributes?: Record<string, string | null>,
   createdAt?: string,
   updatedAt?: string
 }[]
@@ -307,20 +281,12 @@ await corsair.certifier.api.credentials.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filter` | `object` | Yes | — |
+| `filter` | `Record<string, any>` | Yes | — |
 | `sort` | `object` | No | — |
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="filter full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="sort full type">
 
 ```ts
@@ -357,10 +323,8 @@ await corsair.certifier.api.credentials.search({});
   },
   issueDate?: string | null,
   expiryDate?: string | null,
-  attributes?: {
-  },
-  customAttributes?: {
-  },
+  attributes?: Record<string, string | null>,
+  customAttributes?: Record<string, string | null>,
   createdAt?: string,
   updatedAt?: string
 }[]
@@ -412,10 +376,10 @@ await corsair.certifier.api.credentials.send({});
 | `groupId` | `string` | No | — |
 | `status` | `string` | No | — |
 | `recipient` | `object` | No | — |
-| `issueDate` | `string` | No | — |
-| `expiryDate` | `string` | No | — |
-| `attributes` | `object` | No | — |
-| `customAttributes` | `object` | No | — |
+| `issueDate` | `string \| null` | No | — |
+| `expiryDate` | `string \| null` | No | — |
+| `attributes` | `Record<string, string \| null>` | No | — |
+| `customAttributes` | `Record<string, string \| null>` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 
@@ -427,22 +391,6 @@ await corsair.certifier.api.credentials.send({});
   id?: string,
   name?: string,
   email?: string
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="customAttributes full type">
-
-```ts
-{
 }
 ```
 </Accordion>

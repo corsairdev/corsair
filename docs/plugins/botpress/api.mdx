@@ -31,10 +31,10 @@ await corsair.botpress.api.account.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `email` | `string` | No | — |
-| `displayName` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `emailVerified` | `boolean` | No | — |
+| `email` | `string \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `emailVerified` | `boolean \| null` | No | — |
 
 
 
@@ -123,10 +123,10 @@ await corsair.botpress.api.account.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `email` | `string` | No | — |
-| `displayName` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `emailVerified` | `boolean` | No | — |
+| `email` | `string \| null` | No | — |
+| `displayName` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `emailVerified` | `boolean \| null` | No | — |
 
 
 
@@ -159,8 +159,8 @@ await corsair.botpress.api.billing.chargeUnpaidInvoices({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `chargedInvoices` | `object[]` | No | — |
-| `failedInvoices` | `object[]` | No | — |
+| `chargedInvoices` | `object[] \| null` | No | — |
+| `failedInvoices` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="chargedInvoices full type">
@@ -169,7 +169,7 @@ await corsair.botpress.api.billing.chargeUnpaidInvoices({});
 {
   id: string,
   amount: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -180,7 +180,7 @@ await corsair.botpress.api.billing.chargeUnpaidInvoices({});
   id: string,
   amount: number,
   failedReason: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -213,8 +213,8 @@ await corsair.botpress.api.billing.getUpcomingInvoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `total` | `number` | No | — |
-| `lineItems` | `object[]` | No | — |
+| `total` | `number \| null` | No | — |
+| `lineItems` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="lineItems full type">
@@ -230,7 +230,7 @@ await corsair.botpress.api.billing.getUpcomingInvoice({});
   type?: invoiceitem | subscription | null,
   periodStart?: string | null,
   periodEnd?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -348,122 +348,24 @@ await corsair.botpress.api.bots.create({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string>` | No | — |
 | `dev` | `boolean` | No | — |
 | `code` | `string` | No | — |
 | `url` | `string` | No | — |
-| `states` | `object` | No | — |
-| `events` | `object` | No | — |
-| `recurringEvents` | `object` | No | — |
-| `actions` | `object` | No | — |
-| `configuration` | `object` | No | — |
-| `user` | `object` | No | — |
-| `conversation` | `object` | No | — |
-| `message` | `object` | No | — |
-| `subscriptions` | `object` | No | — |
+| `states` | `Record<string, any>` | No | — |
+| `events` | `Record<string, any>` | No | — |
+| `recurringEvents` | `Record<string, any>` | No | — |
+| `actions` | `Record<string, any>` | No | — |
+| `configuration` | `Record<string, any>` | No | — |
+| `user` | `Record<string, any>` | No | — |
+| `conversation` | `Record<string, any>` | No | — |
+| `message` | `Record<string, any>` | No | — |
+| `subscriptions` | `Record<string, any>` | No | — |
 | `maxExecutionTime` | `number` | No | — |
-| `medias` | `object` | No | — |
-| `secrets` | `object` | No | — |
+| `medias` | `Record<string, any>` | No | — |
+| `secrets` | `Record<string, string \| null>` | No | — |
 | `type` | `studio \| adk` | No | — |
 | `moduleFormat` | `cjs \| esm` | No | — |
-
-<AccordionGroup>
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="states full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="events full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="recurringEvents full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="actions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="configuration full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="user full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="conversation full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="subscriptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="medias full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="secrets full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -472,26 +374,16 @@ await corsair.botpress.api.bots.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `createdBy` | `string` | No | — |
-| `dev` | `boolean` | No | — |
-| `alwaysAlive` | `boolean` | No | — |
-| `status` | `string` | No | — |
-| `type` | `string` | No | — |
-| `signingSecret` | `string` | No | — |
-| `tags` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `createdBy` | `string \| null` | No | — |
+| `dev` | `boolean \| null` | No | — |
+| `alwaysAlive` | `boolean \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `signingSecret` | `string \| null` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -537,11 +429,9 @@ await corsair.botpress.api.bots.listActionRuns({});
   timestamp?: string | null,
   integrationName?: string | null,
   actionType?: string | null,
-  input?: {
-  } | null,
+  input?: Record<string, any> | null,
   inputTruncated?: boolean | null,
-  output?: {
-  } | null,
+  output?: Record<string, any> | null,
   outputTruncated?: boolean | null,
   status?: SUCCESS | FAILURE | null,
   durationMs?: number | null,
@@ -627,143 +517,29 @@ await corsair.botpress.api.bots.update({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string>` | No | — |
 | `blocked` | `boolean` | No | — |
 | `alwaysAlive` | `boolean` | No | — |
 | `maxExecutionTime` | `number` | No | — |
-| `url` | `string` | No | — |
+| `url` | `string \| null` | No | — |
 | `authentication` | `iam \| hmac-sha256` | No | — |
-| `configuration` | `object` | No | — |
-| `user` | `object` | No | — |
-| `message` | `object` | No | — |
-| `conversation` | `object` | No | — |
-| `events` | `object` | No | — |
-| `actions` | `object` | No | — |
-| `states` | `object` | No | — |
-| `recurringEvents` | `object` | No | — |
-| `integrations` | `object` | No | — |
-| `plugins` | `object` | No | — |
-| `subscriptions` | `object` | No | — |
+| `configuration` | `Record<string, any>` | No | — |
+| `user` | `Record<string, any>` | No | — |
+| `message` | `Record<string, any>` | No | — |
+| `conversation` | `Record<string, any>` | No | — |
+| `events` | `Record<string, any>` | No | — |
+| `actions` | `Record<string, any>` | No | — |
+| `states` | `Record<string, any>` | No | — |
+| `recurringEvents` | `Record<string, any>` | No | — |
+| `integrations` | `Record<string, any>` | No | — |
+| `plugins` | `Record<string, any>` | No | — |
+| `subscriptions` | `Record<string, any>` | No | — |
 | `code` | `string` | No | — |
-| `medias` | `object` | No | — |
-| `secrets` | `object` | No | — |
+| `medias` | `Record<string, any>` | No | — |
+| `secrets` | `Record<string, string \| null>` | No | — |
 | `layers` | `string[]` | No | — |
 | `type` | `studio \| adk` | No | — |
 | `moduleFormat` | `cjs \| esm` | No | — |
-
-<AccordionGroup>
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="configuration full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="user full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="message full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="conversation full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="events full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="actions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="states full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="recurringEvents full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="integrations full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="plugins full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="subscriptions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="medias full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="secrets full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -772,26 +548,16 @@ await corsair.botpress.api.bots.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `createdBy` | `string` | No | — |
-| `dev` | `boolean` | No | — |
-| `alwaysAlive` | `boolean` | No | — |
-| `status` | `string` | No | — |
-| `type` | `string` | No | — |
-| `signingSecret` | `string` | No | — |
-| `tags` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `createdBy` | `string \| null` | No | — |
+| `dev` | `boolean \| null` | No | — |
+| `alwaysAlive` | `boolean \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `signingSecret` | `string \| null` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -817,26 +583,8 @@ await corsair.botpress.api.chat.createConversation({});
 |------|------|----------|-------------|
 | `botId` | `string` | Yes | — |
 | `channel` | `string` | Yes | — |
-| `tags` | `object` | Yes | — |
-| `properties` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `tags` | `Record<string, string>` | Yes | — |
+| `properties` | `Record<string, string>` | No | — |
 
 
 
@@ -845,31 +593,13 @@ await corsair.botpress.api.chat.createConversation({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `channel` | `string` | No | — |
-| `integration` | `string` | No | — |
-| `tags` | `object` | No | — |
-| `messageCount` | `number` | No | — |
-| `properties` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `channel` | `string \| null` | No | — |
+| `integration` | `string \| null` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
+| `messageCount` | `number \| null` | No | — |
+| `properties` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -894,7 +624,7 @@ await corsair.botpress.api.chat.listConversations({});
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `botId` | `string` | Yes | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string>` | No | — |
 | `sortField` | `createdAt \| updatedAt` | No | — |
 | `sortDirection` | `asc \| desc` | No | — |
 | `participantIds` | `string[]` | No | — |
@@ -904,16 +634,6 @@ await corsair.botpress.api.chat.listConversations({});
 | `beforeDate` | `string` | No | — |
 | `minMessageCount` | `number` | No | — |
 | `maxMessageCount` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -934,11 +654,9 @@ await corsair.botpress.api.chat.listConversations({});
   updatedAt?: string | null,
   channel?: string | null,
   integration?: string | null,
-  tags?: {
-  } | null,
+  tags?: Record<string, string> | null,
   messageCount?: number | null,
-  properties?: {
-  } | null
+  properties?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -968,28 +686,12 @@ await corsair.botpress.api.chat.sendMessage({});
 | `conversationId` | `string` | Yes | — |
 | `userId` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
-| `payload` | `object` | Yes | — |
-| `tags` | `object` | Yes | — |
+| `payload` | `Record<string, any>` | Yes | — |
+| `tags` | `Record<string, string>` | Yes | — |
 | `schedule` | `object` | No | — |
 | `origin` | `synthetic` | No | — |
 
 <AccordionGroup>
-<Accordion title="payload full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="schedule full type">
 
 ```ts
@@ -1008,33 +710,15 @@ await corsair.botpress.api.chat.sendMessage({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `type` | `string` | No | — |
-| `payload` | `object` | No | — |
-| `direction` | `incoming \| outgoing` | No | — |
-| `userId` | `string` | No | — |
-| `conversationId` | `string` | No | — |
-| `tags` | `object` | No | — |
-| `origin` | `synthetic` | No | — |
-
-<AccordionGroup>
-<Accordion title="payload full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `payload` | `Record<string, any> \| null` | No | — |
+| `direction` | `incoming \| outgoing \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `conversationId` | `string \| null` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
+| `origin` | `synthetic \| null` | No | — |
 
 
 
@@ -1059,30 +743,12 @@ await corsair.botpress.api.chat.updateWorkflow({});
 | `botId` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
 | `status` | `completed \| cancelled \| listening \| paused \| failed \| in_progress` | No | — |
-| `output` | `object` | No | — |
+| `output` | `Record<string, any>` | No | — |
 | `timeoutAt` | `string` | No | — |
 | `failureReason` | `string` | No | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string \| null>` | No | — |
 | `userId` | `string` | No | — |
 | `eventId` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1091,45 +757,19 @@ await corsair.botpress.api.chat.updateWorkflow({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `status` | `pending \| in_progress \| failed \| completed \| listening \| paused \| timedout \| cancelled` | No | — |
-| `input` | `object` | No | — |
-| `output` | `object` | No | — |
-| `parentWorkflowId` | `string` | No | — |
-| `conversationId` | `string` | No | — |
-| `userId` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `completedAt` | `string` | No | — |
-| `failureReason` | `string` | No | — |
-| `timeoutAt` | `string` | No | — |
-| `tags` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `status` | `pending \| in_progress \| failed \| completed \| listening \| paused \| timedout \| cancelled \| null` | No | — |
+| `input` | `Record<string, any> \| null` | No | — |
+| `output` | `Record<string, any> \| null` | No | — |
+| `parentWorkflowId` | `string \| null` | No | — |
+| `conversationId` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `completedAt` | `string \| null` | No | — |
+| `failureReason` | `string \| null` | No | — |
+| `timeoutAt` | `string \| null` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 
 
 
@@ -1249,31 +889,11 @@ await corsair.botpress.api.hub.getDereferencedPluginById({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `interfaces` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="interfaces full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `interfaces` | `Record<string, string>` | Yes | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1306,16 +926,16 @@ await corsair.botpress.api.hub.getIntegration({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `iconUrl` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `public` | `boolean` | No | — |
-| `visibility` | `string` | No | — |
-| `verificationStatus` | `string` | No | — |
-| `lifecycleStatus` | `string` | No | — |
-| `ownerWorkspace` | `object` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `iconUrl` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `public` | `boolean \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `verificationStatus` | `string \| null` | No | — |
+| `lifecycleStatus` | `string \| null` | No | — |
+| `ownerWorkspace` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="ownerWorkspace full type">
@@ -1325,7 +945,7 @@ await corsair.botpress.api.hub.getIntegration({});
   id?: string | null,
   handle?: string | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1361,16 +981,16 @@ await corsair.botpress.api.hub.getIntegrationById({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `iconUrl` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `public` | `boolean` | No | — |
-| `visibility` | `string` | No | — |
-| `verificationStatus` | `string` | No | — |
-| `lifecycleStatus` | `string` | No | — |
-| `ownerWorkspace` | `object` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `iconUrl` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `public` | `boolean \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `verificationStatus` | `string \| null` | No | — |
+| `lifecycleStatus` | `string \| null` | No | — |
+| `ownerWorkspace` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="ownerWorkspace full type">
@@ -1380,7 +1000,7 @@ await corsair.botpress.api.hub.getIntegrationById({});
   id?: string | null,
   handle?: string | null,
   name?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1417,13 +1037,13 @@ await corsair.botpress.api.hub.getInterface({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `iconUrl` | `string` | No | — |
-| `readmeUrl` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `public` | `boolean` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `iconUrl` | `string \| null` | No | — |
+| `readmeUrl` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `public` | `boolean \| null` | No | — |
 
 
 
@@ -1456,13 +1076,13 @@ await corsair.botpress.api.hub.getInterfaceById({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `iconUrl` | `string` | No | — |
-| `readmeUrl` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `public` | `boolean` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `iconUrl` | `string \| null` | No | — |
+| `readmeUrl` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `public` | `boolean \| null` | No | — |
 
 
 
@@ -1496,14 +1116,14 @@ await corsair.botpress.api.hub.getPlugin({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `iconUrl` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `public` | `boolean` | No | — |
-| `visibility` | `string` | No | — |
-| `lifecycleStatus` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `iconUrl` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `public` | `boolean \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `lifecycleStatus` | `string \| null` | No | — |
 
 
 
@@ -1536,14 +1156,14 @@ await corsair.botpress.api.hub.getPluginById({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `iconUrl` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `public` | `boolean` | No | — |
-| `visibility` | `string` | No | — |
-| `lifecycleStatus` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `iconUrl` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `public` | `boolean \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `lifecycleStatus` | `string \| null` | No | — |
 
 
 
@@ -1782,99 +1402,27 @@ await corsair.botpress.api.integrations.create({});
 | `description` | `string` | No | — |
 | `url` | `string` | No | — |
 | `code` | `string` | No | — |
-| `configuration` | `object` | No | — |
-| `configurations` | `object` | No | — |
-| `states` | `object` | No | — |
-| `events` | `object` | No | — |
-| `actions` | `object` | No | — |
-| `entities` | `object` | No | — |
-| `channels` | `object` | No | — |
-| `user` | `object` | No | — |
-| `interfaces` | `object` | No | — |
+| `configuration` | `Record<string, any>` | No | — |
+| `configurations` | `Record<string, any>` | No | — |
+| `states` | `Record<string, any>` | No | — |
+| `events` | `Record<string, any>` | No | — |
+| `actions` | `Record<string, any>` | No | — |
+| `entities` | `Record<string, any>` | No | — |
+| `channels` | `Record<string, any>` | No | — |
+| `user` | `Record<string, any>` | No | — |
+| `interfaces` | `Record<string, any>` | No | — |
 | `identifier` | `object` | No | — |
 | `extraOperations` | `object` | No | — |
 | `sdkVersion` | `string` | No | — |
-| `secrets` | `object` | No | — |
+| `secrets` | `Record<string, string \| null>` | No | — |
 | `icon` | `string` | No | — |
 | `readme` | `string` | No | — |
 | `public` | `boolean` | No | — |
 | `visibility` | `public \| private \| unlisted` | No | — |
 | `layers` | `string[]` | No | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
-<Accordion title="configuration full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="configurations full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="states full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="events full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="actions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="entities full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="channels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="user full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="interfaces full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="identifier full type">
 
 ```ts
@@ -1888,24 +1436,9 @@ await corsair.botpress.api.integrations.create({});
 <Accordion title="extraOperations full type">
 
 ```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="secrets full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
-}
+Record<string, {
+  enabled: boolean
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1919,17 +1452,17 @@ await corsair.botpress.api.integrations.create({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `visibility` | `public \| private \| unlisted` | No | — |
-| `verificationStatus` | `string` | No | — |
-| `dev` | `boolean` | No | — |
-| `url` | `string` | No | — |
-| `iconUrl` | `string` | No | — |
-| `readmeUrl` | `string` | No | — |
-| `signingSecret` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `visibility` | `public \| private \| unlisted \| null` | No | — |
+| `verificationStatus` | `string \| null` | No | — |
+| `dev` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `iconUrl` | `string \| null` | No | — |
+| `readmeUrl` | `string \| null` | No | — |
+| `signingSecret` | `string \| null` | No | — |
 
 
 
@@ -1990,17 +1523,17 @@ await corsair.botpress.api.integrations.get({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `version` | `string` | Yes | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `visibility` | `public \| private \| unlisted` | No | — |
-| `verificationStatus` | `string` | No | — |
-| `dev` | `boolean` | No | — |
-| `url` | `string` | No | — |
-| `iconUrl` | `string` | No | — |
-| `readmeUrl` | `string` | No | — |
-| `signingSecret` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `visibility` | `public \| private \| unlisted \| null` | No | — |
+| `verificationStatus` | `string \| null` | No | — |
+| `dev` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `iconUrl` | `string \| null` | No | — |
+| `readmeUrl` | `string \| null` | No | — |
+| `signingSecret` | `string \| null` | No | — |
 
 
 
@@ -2154,20 +1687,20 @@ await corsair.botpress.api.integrations.validateUpdate({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `configuration` | `object` | No | — |
-| `configurations` | `object` | No | — |
-| `states` | `object` | No | — |
-| `events` | `object` | No | — |
-| `actions` | `object` | No | — |
-| `entities` | `object` | No | — |
-| `channels` | `object` | No | — |
-| `user` | `object` | No | — |
-| `interfaces` | `object` | No | — |
+| `configuration` | `Record<string, any>` | No | — |
+| `configurations` | `Record<string, any>` | No | — |
+| `states` | `Record<string, any>` | No | — |
+| `events` | `Record<string, any>` | No | — |
+| `actions` | `Record<string, any>` | No | — |
+| `entities` | `Record<string, any>` | No | — |
+| `channels` | `Record<string, any>` | No | — |
+| `user` | `Record<string, any>` | No | — |
+| `interfaces` | `Record<string, any>` | No | — |
 | `identifier` | `object` | No | — |
 | `extraOperations` | `object` | No | — |
 | `sdkVersion` | `string` | No | — |
 | `maxExecutionTime` | `number` | No | — |
-| `secrets` | `object` | No | — |
+| `secrets` | `Record<string, string \| null>` | No | — |
 | `icon` | `string` | No | — |
 | `readme` | `string` | No | — |
 | `title` | `string` | No | — |
@@ -2178,78 +1711,6 @@ await corsair.botpress.api.integrations.validateUpdate({});
 | `layers` | `string[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="configuration full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="configurations full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="states full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="events full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="actions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="entities full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="channels full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="user full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="interfaces full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="identifier full type">
 
 ```ts
@@ -2263,16 +1724,9 @@ await corsair.botpress.api.integrations.validateUpdate({});
 <Accordion title="extraOperations full type">
 
 ```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="secrets full type">
-
-```ts
-{
-}
+Record<string, {
+  enabled: boolean
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -2331,17 +1785,7 @@ await corsair.botpress.api.knowledgeBases.list({});
 | `nextToken` | `string` | No | — |
 | `pageSize` | `number` | No | — |
 | `botId` | `string` | Yes | — |
-| `tags` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `tags` | `Record<string, string>` | No | — |
 
 
 
@@ -2361,8 +1805,7 @@ await corsair.botpress.api.knowledgeBases.list({});
   name: string,
   description?: string | null,
   createdAt?: string | null,
-  tags?: {
-  } | null
+  tags?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -2458,8 +1901,8 @@ await corsair.botpress.api.tools.getTableRow({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
 
 
 
@@ -2481,18 +1924,8 @@ await corsair.botpress.api.tools.runVrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
 | `script` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2573,8 +2006,8 @@ await corsair.botpress.api.workspaces.checkHandleAvailability({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `available` | `boolean` | Yes | — |
-| `suggestions` | `string[]` | No | — |
-| `usedBy` | `string` | No | — |
+| `suggestions` | `string[] \| null` | No | — |
+| `usedBy` | `string \| null` | No | — |
 
 
 
@@ -2607,22 +2040,22 @@ await corsair.botpress.api.workspaces.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `ownerId` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `blocked` | `boolean` | No | — |
-| `plan` | `string` | No | — |
-| `billingVersion` | `string` | No | — |
-| `spendingLimit` | `number` | No | — |
-| `botCount` | `number` | No | — |
-| `about` | `string` | No | — |
-| `profilePicture` | `string` | No | — |
-| `contactEmail` | `string` | No | — |
-| `website` | `string` | No | — |
-| `socialAccounts` | `any[]` | No | — |
-| `isPublic` | `boolean` | No | — |
-| `handle` | `string` | No | — |
-| `activeTrialId` | `string` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `blocked` | `boolean \| null` | No | — |
+| `plan` | `string \| null` | No | — |
+| `billingVersion` | `string \| null` | No | — |
+| `spendingLimit` | `number \| null` | No | — |
+| `botCount` | `number \| null` | No | — |
+| `about` | `string \| null` | No | — |
+| `profilePicture` | `string \| null` | No | — |
+| `contactEmail` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `socialAccounts` | `any[] \| null` | No | — |
+| `isPublic` | `boolean \| null` | No | — |
+| `handle` | `string \| null` | No | — |
+| `activeTrialId` | `string \| null` | No | — |
 
 
 
@@ -2679,22 +2112,22 @@ await corsair.botpress.api.workspaces.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `ownerId` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `blocked` | `boolean` | No | — |
-| `plan` | `string` | No | — |
-| `billingVersion` | `string` | No | — |
-| `spendingLimit` | `number` | No | — |
-| `botCount` | `number` | No | — |
-| `about` | `string` | No | — |
-| `profilePicture` | `string` | No | — |
-| `contactEmail` | `string` | No | — |
-| `website` | `string` | No | — |
-| `socialAccounts` | `any[]` | No | — |
-| `isPublic` | `boolean` | No | — |
-| `handle` | `string` | No | — |
-| `activeTrialId` | `string` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `blocked` | `boolean \| null` | No | — |
+| `plan` | `string \| null` | No | — |
+| `billingVersion` | `string \| null` | No | — |
+| `spendingLimit` | `number \| null` | No | — |
+| `botCount` | `number \| null` | No | — |
+| `about` | `string \| null` | No | — |
+| `profilePicture` | `string \| null` | No | — |
+| `contactEmail` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `socialAccounts` | `any[] \| null` | No | — |
+| `isPublic` | `boolean \| null` | No | — |
+| `handle` | `string \| null` | No | — |
+| `activeTrialId` | `string \| null` | No | — |
 
 
 
@@ -2721,8 +2154,10 @@ await corsair.botpress.api.workspaces.getAllQuotaCompletion({});
 <Accordion title="Output full type">
 
 ```ts
-{
-}
+Record<string, {
+  type?: invocation_timeout | invocation_calls | storage_count | bot_count | knowledgebase_vector_storage | workspace_ratelimit | table_row_count | workspace_member_count | integrations_owned_count | ai_spend | openai_spend | bing_search_spend | always_alive | indexed_file_count | file_max_size_bytes | null,
+  completion?: number | null
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -2756,9 +2191,9 @@ await corsair.botpress.api.workspaces.getQuota({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `period` | `string` | No | — |
-| `value` | `number` | No | — |
-| `type` | `invocation_timeout \| invocation_calls \| storage_count \| bot_count \| knowledgebase_vector_storage \| workspace_ratelimit \| table_row_count \| workspace_member_count \| integrations_owned_count \| ai_spend \| openai_spend \| bing_search_spend \| always_alive \| indexed_file_count \| file_max_size_bytes` | No | — |
+| `period` | `string \| null` | No | — |
+| `value` | `number \| null` | No | — |
+| `type` | `invocation_timeout \| invocation_calls \| storage_count \| bot_count \| knowledgebase_vector_storage \| workspace_ratelimit \| table_row_count \| workspace_member_count \| integrations_owned_count \| ai_spend \| openai_spend \| bing_search_spend \| always_alive \| indexed_file_count \| file_max_size_bytes \| null` | No | — |
 
 
 
@@ -2948,22 +2383,22 @@ await corsair.botpress.api.workspaces.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `ownerId` | `string` | No | — |
-| `createdAt` | `string` | No | — |
-| `updatedAt` | `string` | No | — |
-| `blocked` | `boolean` | No | — |
-| `plan` | `string` | No | — |
-| `billingVersion` | `string` | No | — |
-| `spendingLimit` | `number` | No | — |
-| `botCount` | `number` | No | — |
-| `about` | `string` | No | — |
-| `profilePicture` | `string` | No | — |
-| `contactEmail` | `string` | No | — |
-| `website` | `string` | No | — |
-| `socialAccounts` | `any[]` | No | — |
-| `isPublic` | `boolean` | No | — |
-| `handle` | `string` | No | — |
-| `activeTrialId` | `string` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `blocked` | `boolean \| null` | No | — |
+| `plan` | `string \| null` | No | — |
+| `billingVersion` | `string \| null` | No | — |
+| `spendingLimit` | `number \| null` | No | — |
+| `botCount` | `number \| null` | No | — |
+| `about` | `string \| null` | No | — |
+| `profilePicture` | `string \| null` | No | — |
+| `contactEmail` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `socialAccounts` | `any[] \| null` | No | — |
+| `isPublic` | `boolean \| null` | No | — |
+| `handle` | `string \| null` | No | — |
+| `activeTrialId` | `string \| null` | No | — |
 
 
 

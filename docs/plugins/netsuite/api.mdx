@@ -1,0 +1,5700 @@
+---
+title: API
+description: "API reference for NetSuite: every `netsuite.api.*` operation with input and output types."
+---
+
+Every `netsuite.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Async Jobs
+
+### asyncGetJobStatus
+
+`asyncJobs.asyncGetJobStatus`
+
+Retrieve the status of an asynchronous NetSuite REST job
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.asyncJobs.asyncGetJobStatus({ jobId: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### asyncGetJobTask
+
+`asyncJobs.asyncGetJobTask`
+
+Retrieve the task reference and status for an asynchronous job
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.asyncJobs.asyncGetJobTask({ jobId: '123', taskId: '456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string \| number` | Yes | — |
+| `taskId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### asyncGetJobTaskResult
+
+`asyncJobs.asyncGetJobTaskResult`
+
+Retrieve the result of an asynchronous job task
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.asyncJobs.asyncGetJobTaskResult({ jobId: '123', taskId: '456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string \| number` | Yes | — |
+| `taskId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customer Payments
+
+### createCustomerPayment
+
+`customerPayments.createCustomerPayment`
+
+Create a NetSuite customer payment record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.customerPayments.createCustomerPayment({
+	body: {
+		customer: { id: '123' },
+		payment: 100,
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `Record<string, any>` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteCustomerPayment
+
+`customerPayments.deleteCustomerPayment`
+
+Delete a NetSuite customer payment record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.customerPayments.deleteCustomerPayment({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCustomerPayment
+
+`customerPayments.getCustomerPayment`
+
+Get a NetSuite customer payment record by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.customerPayments.getCustomerPayment({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCustomerPayments
+
+`customerPayments.listCustomerPayments`
+
+List NetSuite customer payment records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.customerPayments.listCustomerPayments({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateCustomerPayment
+
+`customerPayments.updateCustomerPayment`
+
+Update a NetSuite customer payment record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.customerPayments.updateCustomerPayment({
+	id: '123',
+	data: { memo: 'Payment updated' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `replace` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customers
+
+### createCustomer
+
+`customers.createCustomer`
+
+Create a NetSuite customer record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.customers.createCustomer({
+	body: {
+		entityId: 'ACME',
+		companyName: 'Acme Inc.',
+		isPerson: false,
+		subsidiary: { id: '1' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `Record<string, any>` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteCustomer
+
+`customers.deleteCustomer`
+
+Delete a NetSuite customer record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.customers.deleteCustomer({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCustomer
+
+`customers.getCustomer`
+
+Get a NetSuite customer record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.customers.getCustomer({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateCustomer
+
+`customers.updateCustomer`
+
+Update a NetSuite customer record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.customers.updateCustomer({
+	id: '123',
+	data: { comments: 'VIP customer' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `replace` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Employees
+
+### createEmployee
+
+`employees.createEmployee`
+
+Create a NetSuite employee record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.employees.createEmployee({
+	body: {
+		firstName: 'Jane',
+		lastName: 'Doe',
+		subsidiary: { id: '1' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `Record<string, any>` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteEmployee
+
+`employees.deleteEmployee`
+
+Delete a NetSuite employee record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.employees.deleteEmployee({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getEmployee
+
+`employees.getEmployee`
+
+Get a NetSuite employee record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.employees.getEmployee({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEmployees
+
+`employees.listEmployees`
+
+List NetSuite employee records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.employees.listEmployees({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateEmployee
+
+`employees.updateEmployee`
+
+Update a NetSuite employee record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.employees.updateEmployee({
+	id: '123',
+	data: { title: 'Lead Engineer' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### createInvoice
+
+`invoices.createInvoice`
+
+Create a NetSuite invoice record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.invoices.createInvoice({
+	body: {
+		entity: { id: '123' },
+		item: {
+			items: [{
+				item: { id: '1' },
+				quantity: 1,
+				amount: 100,
+			}],
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `Record<string, any>` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteInvoice
+
+`invoices.deleteInvoice`
+
+Delete a NetSuite invoice record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.invoices.deleteInvoice({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInvoice
+
+`invoices.getInvoice`
+
+Get a NetSuite invoice record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.invoices.getInvoice({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listInvoices
+
+`invoices.listInvoices`
+
+List NetSuite invoice records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.invoices.listInvoices({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateInvoice
+
+`invoices.updateInvoice`
+
+Update a NetSuite invoice record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.invoices.updateInvoice({
+	id: '123',
+	data: { memo: 'Invoice updated' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `replace` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Item Fulfillments
+
+### deleteItemFulfillment
+
+`itemFulfillments.deleteItemFulfillment`
+
+Delete a NetSuite item fulfillment record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.itemFulfillments.deleteItemFulfillment({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getItemFulfillment
+
+`itemFulfillments.getItemFulfillment`
+
+Get a NetSuite item fulfillment record by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.itemFulfillments.getItemFulfillment({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listItemFulfillments
+
+`itemFulfillments.listItemFulfillments`
+
+List NetSuite item fulfillment records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.itemFulfillments.listItemFulfillments({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateItemFulfillment
+
+`itemFulfillments.updateItemFulfillment`
+
+Update a NetSuite item fulfillment record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.itemFulfillments.updateItemFulfillment({
+	id: '123',
+	data: { memo: 'Fulfillment processed' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `replace_selected_fields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Item Receipts
+
+### deleteItemReceipt
+
+`itemReceipts.deleteItemReceipt`
+
+Delete a NetSuite item receipt record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.itemReceipts.deleteItemReceipt({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getItemReceipt
+
+`itemReceipts.getItemReceipt`
+
+Get a NetSuite item receipt record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.itemReceipts.getItemReceipt({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listItemReceipts
+
+`itemReceipts.listItemReceipts`
+
+List NetSuite item receipt records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.itemReceipts.listItemReceipts({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateItemReceipt
+
+`itemReceipts.updateItemReceipt`
+
+Update a NetSuite item receipt record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.itemReceipts.updateItemReceipt({
+	id: '123',
+	data: { memo: 'Receipt processed' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Items
+
+### createItem
+
+`items.createItem`
+
+Create a NetSuite item record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.items.createItem({
+	record_type: 'inventoryItem',
+	body: { itemId: 'WIDGET-01', displayName: 'Acme Widget' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `Record<string, any>` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `record_type` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteItem
+
+`items.deleteItem`
+
+Delete a NetSuite item record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.items.deleteItem({ item_record_type: 'inventoryItem', id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `item_record_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getItem
+
+`items.getItem`
+
+Get a NetSuite item record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.items.getItem({ itemRecordType: 'inventoryItem', id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `itemRecordType` | `string` | Yes | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateItem
+
+`items.updateItem`
+
+Update a NetSuite item record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.items.updateItem({
+	item_type: 'inventoryItem',
+	id: '123',
+	data: { displayName: 'Updated Widget' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `item_type` | `string` | Yes | — |
+| `idempotency_key` | `string` | No | — |
+| `replace_selected_fields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Journal Entries
+
+### createJournalEntry
+
+`journalEntries.createJournalEntry`
+
+Create a NetSuite journal entry record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.journalEntries.createJournalEntry({
+	body: {
+		memo: 'Opening balance',
+		line: {
+			items: [{
+				account: { id: '10' },
+				debit: 300,
+			}, {
+				account: { id: '14' },
+				credit: 300,
+			}],
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `Record<string, any>` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteJournalEntry
+
+`journalEntries.deleteJournalEntry`
+
+Delete a NetSuite journal entry record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.journalEntries.deleteJournalEntry({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJournalEntry
+
+`journalEntries.getJournalEntry`
+
+Get a NetSuite journal entry record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.journalEntries.getJournalEntry({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listJournalEntries
+
+`journalEntries.listJournalEntries`
+
+List NetSuite journal entry records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.journalEntries.listJournalEntries({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateJournalEntry
+
+`journalEntries.updateJournalEntry`
+
+Update a NetSuite journal entry record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.journalEntries.updateJournalEntry({
+	id: '123',
+	data: { memo: 'Q3 adjustment' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `replace_selected_fields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Metadata
+
+### getRecordMetadata
+
+`metadata.getRecordMetadata`
+
+Retrieve the metadata schema for a NetSuite record type
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.metadata.getRecordMetadata({ record_type: 'customer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accept` | `string` | No | — |
+| `record_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMetadataCatalog
+
+`metadata.listMetadataCatalog`
+
+List metadata for all exposed NetSuite record types
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.metadata.listMetadataCatalog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accept` | `string` | No | — |
+| `select` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Oauth
+
+### createJwtClientAssertion
+
+`oauth.createJwtClientAssertion`
+
+Create a signed JWT client assertion for OAuth 2.0 client credentials
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.oauth.createJwtClientAssertion({
+	aud: 'https://tstdrv123.suitetalk.api.netsuite.com/services/rest/auth/oauth2/v1/token',
+	certificate_id: 'cert-1',
+	client_id: 'client-id',
+	scope: 'rest_webservices',
+	private_key_pem: '<PEM string with escaped newlines>',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `alg` | `PS256 \| PS384 \| PS512 \| ES256 \| ES384 \| ES512` | No | — |
+| `aud` | `string` | No | — |
+| `exp` | `number` | No | — |
+| `iat` | `number` | No | — |
+| `scope` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `certificate_id` | `string` | No | — |
+| `private_key_pem` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### oauth2AuthorizeAccountDomain
+
+`oauth.oauth2AuthorizeAccountDomain`
+
+Build an OAuth 2.0 authorization URL on the account domain
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.oauth.oauth2AuthorizeAccountDomain({
+	client_id: 'client-id',
+	redirect_uri: 'https://example.com/callback',
+	scope: 'rest_webservices',
+	state: 'replace-with-at-least-22-random-characters',
+	code_challenge: 'replace-with-s256-code-challenge',
+	code_challenge_method: 'S256',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scope` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+| `prompt` | `string` | No | — |
+| `client_id` | `string` | Yes | — |
+| `redirect_uri` | `string` | Yes | — |
+| `response_type` | `string` | No | — |
+| `code_challenge` | `string` | No | — |
+| `code_challenge_method` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### oauth2AuthorizeSystemDomain
+
+`oauth.oauth2AuthorizeSystemDomain`
+
+Build an OAuth 2.0 authorization URL on the system domain
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.oauth.oauth2AuthorizeSystemDomain({
+	client_id: 'client-id',
+	redirect_uri: 'https://example.com/callback',
+	scope: 'rest_webservices',
+	state: 'replace-with-at-least-22-random-characters',
+	code_challenge: 'replace-with-s256-code-challenge',
+	code_challenge_method: 'S256',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nonce` | `string` | No | — |
+| `scope` | `string` | Yes | — |
+| `state` | `string` | Yes | — |
+| `prompt` | `string` | No | — |
+| `client_id` | `string` | Yes | — |
+| `redirect_uri` | `string` | Yes | — |
+| `response_type` | `string` | No | — |
+| `code_challenge` | `string` | No | — |
+| `code_challenge_method` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### oauth2GetJwksKeys
+
+`oauth.oauth2GetJwksKeys`
+
+Retrieve NetSuite OAuth 2.0 JWKS public keys
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.oauth.oauth2GetJwksKeys({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### oauth2Logout
+
+`oauth.oauth2Logout`
+
+Log out an OAuth 2.0 session using an ID token hint
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.oauth.oauth2Logout({ id_token_hint: 'id-token-xxx' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id_token_hint` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### oauth2RevokeRefreshToken
+
+`oauth.oauth2RevokeRefreshToken`
+
+Revoke a NetSuite OAuth 2.0 refresh token
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.oauth.oauth2RevokeRefreshToken({ token: 'refresh-token-xxx', client_id: 'client-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `client_secret` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### oauth2TokenAuthorizationCode
+
+`oauth.oauth2TokenAuthorizationCode`
+
+Exchange an OAuth 2.0 authorization code for tokens
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.oauth.oauth2TokenAuthorizationCode({
+	code: 'auth-code',
+	client_id: 'client-id',
+	redirect_uri: 'https://example.com/callback',
+	code_verifier: 'verifier',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `client_id` | `string` | No | — |
+| `client_secret` | `string` | No | — |
+| `grant_type` | `string` | No | — |
+| `redirect_uri` | `string` | Yes | — |
+| `code_verifier` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### oauth2TokenClientCredentials
+
+`oauth.oauth2TokenClientCredentials`
+
+Exchange a JWT client assertion for an OAuth 2.0 access token
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.oauth.oauth2TokenClientCredentials({ client_assertion: 'jwt-assertion-string', client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `grant_type` | `string` | No | — |
+| `client_assertion` | `string` | Yes | — |
+| `client_assertion_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### oauth2TokenRefresh
+
+`oauth.oauth2TokenRefresh`
+
+Refresh a NetSuite OAuth 2.0 access token
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.oauth.oauth2TokenRefresh({ refresh_token: 'refresh-token-xxx', client_id: 'client-id', client_secret: 'client-secret' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client_id` | `string` | No | — |
+| `client_secret` | `string` | No | — |
+| `refresh_token` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Purchase Orders
+
+### createPurchaseOrder
+
+`purchaseOrders.createPurchaseOrder`
+
+Create a NetSuite purchase order
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.purchaseOrders.createPurchaseOrder({
+	entity: { id: '123' },
+	item: {
+		items: [{
+			item: { id: '1' },
+			quantity: 10,
+		}],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `Record<string, any>` | Yes | — |
+| `memo` | `string` | No | — |
+| `Prefer` | `string` | No | — |
+| `entity` | `Record<string, any>` | Yes | — |
+| `replace` | `string` | No | — |
+| `location` | `Record<string, any>` | No | — |
+| `tranDate` | `string` | No | — |
+| `customForm` | `Record<string, any>` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deletePurchaseOrder
+
+`purchaseOrders.deletePurchaseOrder`
+
+Delete a NetSuite purchase order record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.purchaseOrders.deletePurchaseOrder({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPurchaseOrder
+
+`purchaseOrders.getPurchaseOrder`
+
+Get a NetSuite purchase order by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.purchaseOrders.getPurchaseOrder({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPurchaseOrders
+
+`purchaseOrders.listPurchaseOrders`
+
+List NetSuite purchase order records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.purchaseOrders.listPurchaseOrders({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updatePurchaseOrder
+
+`purchaseOrders.updatePurchaseOrder`
+
+Update a NetSuite purchase order record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.purchaseOrders.updatePurchaseOrder({
+	id: '123',
+	data: { memo: 'Approved by Purchasing' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `replace` | `string` | No | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Query
+
+### executeDataset
+
+`query.executeDataset`
+
+Execute a SuiteAnalytics Workbook dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.query.executeDataset({ dataset_id: 'custdataset_sales' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `dataset_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDatasets
+
+`query.listDatasets`
+
+List SuiteAnalytics Workbook datasets
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.query.listDatasets({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runSuiteqlQuery
+
+`query.runSuiteqlQuery`
+
+Run a SuiteQL query against NetSuite data
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.query.runSuiteqlQuery({ q: 'SELECT id, companyName FROM customer WHERE id = 123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Records
+
+### createRecord
+
+`records.createRecord`
+
+Create a record of any exposed NetSuite type
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.records.createRecord({
+	record_type: 'customer',
+	body: {
+		entityId: 'CUST-01',
+		companyName: 'Customer One',
+		isPerson: false,
+		subsidiary: { id: '1' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `Record<string, any>` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `record_type` | `string` | Yes | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getReferenceSelectField
+
+`records.getReferenceSelectField`
+
+Retrieve the record referenced by a select-type field
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.records.getReferenceSelectField({ record_type: 'customer', select_field: 'subsidiary', id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `record_type` | `string` | Yes | — |
+| `select_field` | `string` | Yes | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSublistCollection
+
+`records.getSublistCollection`
+
+Retrieve a sublist collection from a NetSuite record
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.records.getSublistCollection({ record_type: 'customer', id: '123', sublist_name: 'addressBook' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `record_type` | `string` | Yes | — |
+| `sublist_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSublistLine
+
+`records.getSublistLine`
+
+Retrieve a specific line from a NetSuite sublist
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.records.getSublistLine({
+	record_type: 'customer',
+	id: '123',
+	sublist_name: 'addressBook',
+	line_id: '1',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `line_id` | `string \| number` | Yes | — |
+| `record_type` | `string` | Yes | — |
+| `sublist_name` | `string` | Yes | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSubrecord
+
+`records.getSubrecord`
+
+Retrieve a subrecord from a NetSuite parent record
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.records.getSubrecord({ record_type: 'salesOrder', id: '123', subrecord_name: 'billingaddress' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `record_type` | `string` | Yes | — |
+| `subrecord_name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRecords
+
+`records.listRecords`
+
+List records of any exposed NetSuite type
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.records.listRecords({ recordType: 'customer', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `recordType` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transformRecord
+
+`records.transformRecord`
+
+Transform a NetSuite record into another record type
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.records.transformRecord({ source_record_type: 'salesOrder', record_id: '123', target_record_type: 'invoice' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `record_id` | `string \| number` | Yes | — |
+| `record_body` | `Record<string, any>` | No | — |
+| `source_record_type` | `string` | Yes | — |
+| `target_record_type` | `string` | Yes | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsertRecordByExternalId
+
+`records.upsertRecordByExternalId`
+
+Upsert a NetSuite record by external ID
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.records.upsertRecordByExternalId({
+	record_type: 'customer',
+	external_id: 'EXT-CUST-100',
+	body: {
+		companyName: 'Acme Global',
+		isPerson: false,
+		subsidiary: { id: '1' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `Record<string, any>` | Yes | — |
+| `external_id` | `string` | Yes | — |
+| `record_type` | `string` | Yes | — |
+| `replace` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sales Orders
+
+### createSalesOrder
+
+`salesOrders.createSalesOrder`
+
+Create a NetSuite sales order
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.salesOrders.createSalesOrder({
+	entity: { id: '123' },
+	item: {
+		items: [{
+			item: { id: '1' },
+			quantity: 5,
+		}],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `Record<string, any>` | Yes | — |
+| `memo` | `string` | No | — |
+| `Prefer` | `string` | No | — |
+| `entity` | `Record<string, any>` | Yes | — |
+| `replace` | `string` | No | — |
+| `tranDate` | `string` | No | — |
+| `promocode` | `Record<string, any>` | No | — |
+| `customForm` | `string \| number \| Record<string, any>` | No | — |
+| `orderStatus` | `string \| Record<string, any>` | No | — |
+| `otherrefnum` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteSalesOrder
+
+`salesOrders.deleteSalesOrder`
+
+Delete a NetSuite sales order record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.salesOrders.deleteSalesOrder({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSalesOrder
+
+`salesOrders.getSalesOrder`
+
+Get a NetSuite sales order record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.salesOrders.getSalesOrder({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSalesOrders
+
+`salesOrders.listSalesOrders`
+
+List NetSuite sales order records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.salesOrders.listSalesOrders({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateSalesOrder
+
+`salesOrders.updateSalesOrder`
+
+Update a NetSuite sales order record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.salesOrders.updateSalesOrder({
+	id: '123',
+	data: { memo: 'Priority shipping' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `replace` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## System
+
+### getDatacenterUrls
+
+`system.getDatacenterUrls`
+
+Discover account-specific NetSuite service domains
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.system.getDatacenterUrls({ account: 'TSTDRV123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `c` | `string` | No | — |
+| `account` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getGovernanceLimits
+
+`system.getGovernanceLimits`
+
+Retrieve NetSuite account and integration concurrency limits
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.system.getGovernanceLimits({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getServerTime
+
+`system.getServerTime`
+
+Retrieve the current NetSuite server time in UTC
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.system.getServerTime({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Vendor Bills
+
+### createVendorBill
+
+`vendorBills.createVendorBill`
+
+Create a NetSuite vendor bill record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.vendorBills.createVendorBill({
+	body: {
+		entity: { id: '123' },
+		expense: {
+			items: [{
+				account: { id: '1' },
+				amount: 100,
+			}],
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `Record<string, any>` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVendorBill
+
+`vendorBills.getVendorBill`
+
+Retrieve a NetSuite vendor bill by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.vendorBills.getVendorBill({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateVendorBill
+
+`vendorBills.updateVendorBill`
+
+Update a NetSuite vendor bill record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.vendorBills.updateVendorBill({
+	id: '123',
+	data: { memo: 'Approved for payment' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Vendor Payments
+
+### deleteVendorPayment
+
+`vendorPayments.deleteVendorPayment`
+
+Delete a NetSuite vendor payment record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.netsuite.api.vendorPayments.deleteVendorPayment({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVendorPayment
+
+`vendorPayments.getVendorPayment`
+
+Retrieve a NetSuite vendor payment by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.vendorPayments.getVendorPayment({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listVendorPayments
+
+`vendorPayments.listVendorPayments`
+
+List NetSuite vendor payment records
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.vendorPayments.listVendorPayments({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateVendorPayment
+
+`vendorPayments.updateVendorPayment`
+
+Update a NetSuite vendor payment record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.vendorPayments.updateVendorPayment({
+	id: '123',
+	data: { memo: 'Payment processed' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Vendors
+
+### createVendor
+
+`vendors.createVendor`
+
+Create a NetSuite vendor record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.vendors.createVendor({
+	body: {
+		entityId: 'SUPPLIER-1',
+		companyName: 'Global Supplier',
+		isPerson: false,
+		subsidiary: { id: '1' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `Record<string, any>` | Yes | — |
+| `Prefer` | `string` | No | — |
+| `replace` | `string` | No | — |
+| `X-NetSuite-Idempotency-Key` | `string` | No | — |
+| `X-NetSuite-PropertyNameValidation` | `string` | No | — |
+| `X-NetSuite-PropertyValueValidation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVendor
+
+`vendors.getVendor`
+
+Get a single NetSuite vendor record by internal ID
+
+**Risk:** `read`
+
+```ts
+await corsair.netsuite.api.vendors.getVendor({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `fields` | `string` | No | — |
+| `simpleEnumFormat` | `boolean` | No | — |
+| `expandSubResources` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateVendor
+
+`vendors.updateVendor`
+
+Update a NetSuite vendor record
+
+**Risk:** `write`
+
+```ts
+await corsair.netsuite.api.vendors.updateVendor({
+	id: '123',
+	data: { comments: 'Primary supplier' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `data` | `Record<string, any>` | Yes | — |
+| `replace` | `string` | No | — |
+| `replaceSelectedFields` | `boolean` | No | — |
+| `prefer` | `string` | No | — |
+| `idempotency_key` | `string` | No | — |
+| `property_name_validation` | `string` | No | — |
+| `property_value_validation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `externalId` | `string` | No | — |
+| `links` | `object[]` | No | — |
+| `location` | `string \| Record<string, any>` | No | — |
+| `items` | `Record<string, any>[]` | No | — |
+| `count` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `hasMore` | `boolean` | No | — |
+| `access_token` | `string` | No | — |
+| `refresh_token` | `string` | No | — |
+| `id_token` | `string` | No | — |
+| `token_type` | `string` | No | — |
+| `expires_in` | `number \| string` | No | — |
+| `expires_at` | `number` | No | — |
+| `scope` | `string` | No | — |
+| `authorization_url` | `string` | No | — |
+| `url` | `string` | No | — |
+| `client_assertion` | `string` | No | — |
+| `client_assertion_type` | `string` | No | — |
+| `token_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  rel?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

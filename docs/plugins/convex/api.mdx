@@ -67,8 +67,8 @@ await corsair.convex.api.deployKeys.create({
 |------|------|----------|-------------|
 | `deployment_name` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `allowedActions` | `deployment:deploy \| deployment:env:view \| deployment:env:write \| deployment:pause \| deployment:unpause \| deployment:logs:view \| deployment:metrics:view \| deployment:integrations:view \| deployment:integrations:write \| deployment:data:view \| deployment:data:write \| deployment:backups:view \| deployment:backups:create \| deployment:backups:download \| deployment:backups:delete \| deployment:backups:import \| deployment:functions:actAsUser \| deployment:functions:runInternalQueries \| deployment:functions:runInternalMutations \| deployment:functions:runInternalActions \| deployment:functions:runTestQuery \| deployment:auditLog:view \| deployment:usageLimits:view \| deployment:usageLimits:write \| deployment:usage:view \| deployment:aiGateway:use[]` | No | — |
-| `expiresAt` | `number` | No | — |
+| `allowedActions` | `(deployment:deploy \| deployment:env:view \| deployment:env:write \| deployment:pause \| deployment:unpause \| deployment:logs:view \| deployment:metrics:view \| deployment:integrations:view \| deployment:integrations:write \| deployment:data:view \| deployment:data:write \| deployment:backups:view \| deployment:backups:create \| deployment:backups:download \| deployment:backups:delete \| deployment:backups:import \| deployment:functions:actAsUser \| deployment:functions:runInternalQueries \| deployment:functions:runInternalMutations \| deployment:functions:runInternalActions \| deployment:functions:runTestQuery \| deployment:auditLog:view \| deployment:usageLimits:view \| deployment:usageLimits:write \| deployment:usage:view \| deployment:aiGateway:use)[]` | No | — |
+| `expiresAt` | `number \| null` | No | — |
 
 
 
@@ -162,8 +162,7 @@ await corsair.convex.api.deployment.executeQueryBatch({
 ```ts
 {
   path: string,
-  args: {
-  },
+  args: Record<string, JsonValue>,
   format?: string | null
 }[]
 ```
@@ -185,12 +184,12 @@ await corsair.convex.api.deployment.executeQueryBatch({
 (
   {
     status: success,
-    value: lazy,
+    value: JsonValue,
     logLines?: string[]
   } | {
     status: error,
     errorMessage: string,
-    errorData?: lazy,
+    errorData?: JsonValue,
     logLines?: string[]
   }
 )[]
@@ -298,11 +297,11 @@ await corsair.convex.api.deployments.create({ project_id: '123', type: 'prod', r
 |------|------|----------|-------------|
 | `project_id` | `string` | Yes | — |
 | `type` | `dev \| prod \| preview \| custom` | Yes | — |
-| `class` | `string` | No | — |
-| `region` | `string` | No | — |
-| `reference` | `string` | No | — |
-| `isDefault` | `boolean` | No | — |
-| `expiresAt` | `number` | No | — |
+| `class` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `reference` | `string \| null` | No | — |
+| `isDefault` | `boolean \| null` | No | — |
+| `expiresAt` | `number \| null` | No | — |
 
 
 
@@ -313,19 +312,19 @@ await corsair.convex.api.deployments.create({ project_id: '123', type: 'prod', r
 | `id` | `number` | No | — |
 | `name` | `string` | Yes | — |
 | `createTime` | `number` | Yes | — |
-| `lastDeployTime` | `number` | No | — |
+| `lastDeployTime` | `number \| null` | No | — |
 | `deploymentType` | `dev \| prod \| preview \| custom` | Yes | — |
 | `projectId` | `number` | Yes | — |
-| `creator` | `number` | No | — |
-| `previewIdentifier` | `string` | No | — |
+| `creator` | `number \| null` | No | — |
+| `previewIdentifier` | `string \| null` | No | — |
 | `region` | `string` | No | — |
 | `isDefault` | `boolean` | No | — |
 | `reference` | `string` | No | — |
-| `dashboardEditConfirmation` | `boolean` | No | — |
+| `dashboardEditConfirmation` | `boolean \| null` | No | — |
 | `deploymentUrl` | `string` | No | — |
-| `expiresAt` | `number` | No | — |
+| `expiresAt` | `number \| null` | No | — |
 | `class` | `string` | No | — |
-| `sendLogsToClient` | `boolean` | No | — |
+| `sendLogsToClient` | `boolean \| null` | No | — |
 | `kind` | `cloud \| local` | Yes | — |
 | `port` | `number` | No | — |
 | `deviceName` | `string` | No | — |
@@ -392,19 +391,19 @@ await corsair.convex.api.deployments.get({ deployment_name: 'happy-otter-123' })
 | `id` | `number` | No | — |
 | `name` | `string` | Yes | — |
 | `createTime` | `number` | Yes | — |
-| `lastDeployTime` | `number` | No | — |
+| `lastDeployTime` | `number \| null` | No | — |
 | `deploymentType` | `dev \| prod \| preview \| custom` | Yes | — |
 | `projectId` | `number` | Yes | — |
-| `creator` | `number` | No | — |
-| `previewIdentifier` | `string` | No | — |
+| `creator` | `number \| null` | No | — |
+| `previewIdentifier` | `string \| null` | No | — |
 | `region` | `string` | No | — |
 | `isDefault` | `boolean` | No | — |
 | `reference` | `string` | No | — |
-| `dashboardEditConfirmation` | `boolean` | No | — |
+| `dashboardEditConfirmation` | `boolean \| null` | No | — |
 | `deploymentUrl` | `string` | No | — |
-| `expiresAt` | `number` | No | — |
+| `expiresAt` | `number \| null` | No | — |
 | `class` | `string` | No | — |
-| `sendLogsToClient` | `boolean` | No | — |
+| `sendLogsToClient` | `boolean \| null` | No | — |
 | `kind` | `cloud \| local` | Yes | — |
 | `port` | `number` | No | — |
 | `deviceName` | `string` | No | — |
@@ -432,7 +431,7 @@ await corsair.convex.api.deployments.list({ project_id: '123', deploymentType: '
 |------|------|----------|-------------|
 | `project_id` | `string` | Yes | — |
 | `includeLocal` | `boolean` | No | — |
-| `isDefault` | `boolean` | No | — |
+| `isDefault` | `boolean \| null` | No | — |
 | `deploymentType` | `dev \| prod \| preview \| custom` | No | — |
 
 
@@ -489,13 +488,13 @@ await corsair.convex.api.deployments.update({ deployment_name: 'happy-otter-123'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `deployment_name` | `string` | Yes | — |
-| `reference` | `string` | No | — |
-| `dashboardEditConfirmation` | `boolean` | No | — |
-| `expiresAt` | `number` | No | — |
-| `sendLogsToClient` | `boolean` | No | — |
-| `class` | `string` | No | — |
-| `isDefault` | `boolean` | No | — |
-| `deploymentType` | `dev \| prod \| preview \| custom` | No | — |
+| `reference` | `string \| null` | No | — |
+| `dashboardEditConfirmation` | `boolean \| null` | No | — |
+| `expiresAt` | `number \| null` | No | — |
+| `sendLogsToClient` | `boolean \| null` | No | — |
+| `class` | `string \| null` | No | — |
+| `isDefault` | `boolean \| null` | No | — |
+| `deploymentType` | `dev \| prod \| preview \| custom \| null` | No | — |
 
 
 
@@ -646,9 +645,9 @@ await corsair.convex.api.projects.create({ team_id: '41', projectName: 'My App',
 |------|------|----------|-------------|
 | `team_id` | `string` | Yes | — |
 | `projectName` | `string` | Yes | — |
-| `deploymentType` | `dev \| prod \| preview \| custom` | No | — |
-| `deploymentClass` | `string` | No | — |
-| `deploymentRegion` | `string` | No | — |
+| `deploymentType` | `dev \| prod \| preview \| custom \| null` | No | — |
+| `deploymentClass` | `string \| null` | No | — |
+| `deploymentRegion` | `string \| null` | No | — |
 
 
 
@@ -659,8 +658,8 @@ await corsair.convex.api.projects.create({ team_id: '41', projectName: 'My App',
 | `projectId` | `number` | Yes | — |
 | `id` | `number` | Yes | — |
 | `slug` | `string` | Yes | — |
-| `deploymentName` | `string` | No | — |
-| `deploymentUrl` | `string` | No | — |
+| `deploymentName` | `string \| null` | No | — |
+| `deploymentUrl` | `string \| null` | No | — |
 
 
 
@@ -726,8 +725,8 @@ await corsair.convex.api.projects.getById({ project_id: '123' });
 | `teamId` | `number` | Yes | — |
 | `teamSlug` | `string` | Yes | — |
 | `createTime` | `number` | Yes | — |
-| `prodDeploymentName` | `string` | No | — |
-| `devDeploymentName` | `string` | No | — |
+| `prodDeploymentName` | `string \| null` | No | — |
+| `devDeploymentName` | `string \| null` | No | — |
 
 
 
@@ -764,8 +763,8 @@ await corsair.convex.api.projects.getBySlug({ team_id_or_slug: 'acme', project_s
 | `teamId` | `number` | Yes | — |
 | `teamSlug` | `string` | Yes | — |
 | `createTime` | `number` | Yes | — |
-| `prodDeploymentName` | `string` | No | — |
-| `devDeploymentName` | `string` | No | — |
+| `prodDeploymentName` | `string \| null` | No | — |
+| `devDeploymentName` | `string \| null` | No | — |
 
 
 

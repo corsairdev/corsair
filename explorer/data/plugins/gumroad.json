@@ -93,7 +93,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -204,7 +204,7 @@
           {
             "key": "currency",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "gross_cents",
@@ -238,7 +238,8 @@
       "path": "gumroad.api.emails.create",
       "shortPath": "emails.create",
       "description": "Create a draft audience email by subject, HTML body and audience, or send it immediately with publish=true",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
+      "irreversible": true,
       "input": {
         "kind": "object",
         "fields": [
@@ -255,8 +256,9 @@
           },
           {
             "key": "audience",
-            "optional": false,
-            "type": "all | audience | customers | seller | followers | follower | product"
+            "optional": true,
+            "type": "all | audience | customers | seller | followers | follower | product",
+            "description": "Defaults to \"audience\"."
           },
           {
             "key": "product_id",
@@ -327,7 +329,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -401,12 +403,12 @@
           {
             "key": "next_page_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "next_page_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -443,12 +445,12 @@
           {
             "key": "preview_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -495,7 +497,8 @@
       "path": "gumroad.api.emails.send",
       "shortPath": "emails.send",
       "description": "Publish a draft audience email and send it to its audience",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
+      "irreversible": true,
       "input": {
         "kind": "object",
         "fields": [
@@ -731,7 +734,7 @@
       "path": "gumroad.api.licenses.disable",
       "shortPath": "licenses.disable",
       "description": "Disable a license key so it fails verification, and read its purchase",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [
@@ -878,9 +881,9 @@
           },
           {
             "key": "increment_uses_count",
-            "optional": false,
+            "optional": true,
             "type": "true | false",
-            "description": "\"false\" to leave the license use counter unchanged"
+            "description": "\"false\" to leave the license use counter unchanged. Defaults to \"true\"."
           }
         ]
       },
@@ -947,7 +950,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -979,7 +982,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1037,8 +1040,9 @@
           },
           {
             "key": "offer_type",
-            "optional": false,
-            "type": "cents | percent"
+            "optional": true,
+            "type": "cents | percent",
+            "description": "Defaults to \"cents\"."
           },
           {
             "key": "max_purchase_count",
@@ -1052,9 +1056,9 @@
           },
           {
             "key": "universal",
-            "optional": false,
+            "optional": true,
             "type": "true | false",
-            "description": "\"true\" applies the code to all products"
+            "description": "\"true\" applies the code to all products. Defaults to \"false\"."
           },
           {
             "key": "auto_apply",
@@ -1069,12 +1073,12 @@
           {
             "key": "valid_at",
             "optional": true,
-            "type": "string | "
+            "type": "string | \"\""
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string | "
+            "type": "string | \"\""
           }
         ]
       },
@@ -1127,7 +1131,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1240,12 +1244,12 @@
           {
             "key": "next_page_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "next_page_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1319,12 +1323,12 @@
           {
             "key": "valid_at",
             "optional": true,
-            "type": "string | "
+            "type": "string | \"\""
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string | "
+            "type": "string | \"\""
           }
         ]
       },
@@ -1387,12 +1391,12 @@
           {
             "key": "valid_at",
             "optional": true,
-            "type": "string | "
+            "type": "string | \"\""
           },
           {
             "key": "expires_at",
             "optional": true,
-            "type": "string | "
+            "type": "string | \"\""
           }
         ]
       },
@@ -1428,15 +1432,15 @@
           },
           {
             "key": "include_sales",
-            "optional": false,
+            "optional": true,
             "type": "true | false",
-            "description": "\"false\" to exclude sales, refunded_sales and disputed_sales"
+            "description": "\"false\" to exclude sales, refunded_sales and disputed_sales. Defaults to \"true\"."
           },
           {
             "key": "include_transactions",
-            "optional": false,
+            "optional": true,
             "type": "true | false",
-            "description": "\"true\" to include the payout CSV transaction lines"
+            "description": "\"true\" to include the payout CSV transaction lines. Defaults to \"false\"."
           }
         ]
       },
@@ -1482,9 +1486,9 @@
           },
           {
             "key": "include_upcoming",
-            "optional": false,
+            "optional": true,
             "type": "true | false",
-            "description": "\"false\" to exclude the upcoming payout"
+            "description": "\"false\" to exclude the upcoming payout. Defaults to \"true\"."
           }
         ]
       },
@@ -1504,12 +1508,12 @@
           {
             "key": "next_page_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "next_page_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1524,13 +1528,15 @@
         "fields": [
           {
             "key": "include_sales",
-            "optional": false,
-            "type": "true | false"
+            "optional": true,
+            "type": "true | false",
+            "description": "Defaults to \"true\"."
           },
           {
             "key": "include_transactions",
-            "optional": false,
-            "type": "true | false"
+            "optional": true,
+            "type": "true | false",
+            "description": "Defaults to \"false\"."
           }
         ]
       },
@@ -1613,7 +1619,7 @@
           {
             "key": "main_cover_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1656,7 +1662,7 @@
           {
             "key": "main_cover_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1772,7 +1778,7 @@
           {
             "key": "rich_content",
             "optional": true,
-            "type": "{ id: string, title: string, description: lazy }[]"
+            "type": "{ id: string, title: string, description: JsonValue }[]"
           },
           {
             "key": "files",
@@ -1792,12 +1798,12 @@
           {
             "key": "product",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: {} | null }"
+            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: Record<string, number> | null }"
           },
           {
             "key": "warning",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1829,7 +1835,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1838,7 +1844,7 @@
       "path": "gumroad.api.products.disable",
       "shortPath": "products.disable",
       "description": "Unpublish (disable) an existing product",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [
@@ -1861,7 +1867,7 @@
           {
             "key": "product",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: {} | null }"
+            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: Record<string, number> | null }"
           }
         ]
       }
@@ -1893,7 +1899,7 @@
           {
             "key": "product",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: {} | null }"
+            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: Record<string, number> | null }"
           }
         ]
       }
@@ -1925,7 +1931,7 @@
           {
             "key": "product",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: {} | null }"
+            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: Record<string, number> | null }"
           }
         ]
       }
@@ -1950,17 +1956,17 @@
           {
             "key": "products",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: {} | null }[]"
+            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: Record<string, number> | null }[]"
           },
           {
             "key": "next_page_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "next_page_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2003,12 +2009,12 @@
           {
             "key": "next_page_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "next_page_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2040,7 +2046,7 @@
           {
             "key": "thumbnail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2213,7 +2219,7 @@
           {
             "key": "rich_content",
             "optional": true,
-            "type": "{ id: string, title: string, description: lazy }[]",
+            "type": "{ id: string, title: string, description: JsonValue }[]",
             "description": "Full replacement"
           },
           {
@@ -2240,17 +2246,17 @@
           {
             "key": "product",
             "optional": false,
-            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: {} | null }"
+            "type": "{ id: string, name: string, description?: string | null, published?: boolean | null, deleted?: boolean | null, price?: number | null, currency?: string | null, short_url?: string | null, thumbnail_url?: string | null, preview_url?: string | null, custom_permalink?: string | null, custom_summary?: string | null, custom_receipt?: string | null, custom_html?: string | null, require_shipping?: boolean | null, customizable_price?: boolean | null, max_purchase_count?: number | null, subscription_duration?: string | null, tags?: string[] | null, formatted_price?: string | null, sales_count?: number | null, sales_usd_cents?: number | null, is_tiered_membership?: boolean | null, recurrences?: string[] | null, purchasing_power_parity_prices?: Record<string, number> | null }"
           },
           {
             "key": "warning",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "file_id_mappings",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           }
         ]
       }
@@ -2303,147 +2309,147 @@
           {
             "key": "native_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "thumbnail_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updated_at",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "seller",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           },
           {
             "key": "price_cents",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "currency_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "price_formatted",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_pay_what_you_want",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "suggested_price_cents",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "is_recurring_billing",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_tiered_membership",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "recurrences",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           },
           {
             "key": "free_trial",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           },
           {
             "key": "description_html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "summary",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "covers",
             "optional": true,
-            "type": "{}[]"
+            "type": "{}[] | null"
           },
           {
             "key": "attributes",
             "optional": true,
-            "type": "{}[]"
+            "type": "{}[] | null"
           },
           {
             "key": "ratings",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           },
           {
             "key": "reviews",
             "optional": true,
-            "type": "{}[]"
+            "type": "{}[] | null"
           },
           {
             "key": "sales_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "options",
             "optional": true,
-            "type": "{}[]"
+            "type": "{}[] | null"
           },
           {
             "key": "quantity_remaining",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "is_quantity_enabled",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_sales_limited",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_published",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "is_physical",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "refund_policy",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           }
         ]
       }
@@ -2479,47 +2485,47 @@
           {
             "key": "username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "bio",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "avatar_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "profile_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subdomain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "twitter_handle",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_verified",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "products",
             "optional": true,
-            "type": "{}[]"
+            "type": "{}[] | null"
           }
         ]
       }
@@ -2617,12 +2623,12 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "source",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "payload",
@@ -2658,7 +2664,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2769,12 +2775,12 @@
           {
             "key": "next_page_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "next_page_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2820,7 +2826,8 @@
       "path": "gumroad.api.sales.refund",
       "shortPath": "sales.refund",
       "description": "Refund a sale fully, or partially with amount_cents; returns the updated sale",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
+      "irreversible": true,
       "input": {
         "kind": "object",
         "fields": [
@@ -2885,7 +2892,7 @@
       "path": "gumroad.api.sales.revokeAccess",
       "shortPath": "sales.revokeAccess",
       "description": "Revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales)",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [
@@ -3027,12 +3034,12 @@
           {
             "key": "next_page_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "next_page_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3130,22 +3137,22 @@
           {
             "key": "custom_html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "rendered_html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_landing_page",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "profile_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3177,7 +3184,7 @@
           {
             "key": "custom_html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sanitization_report",
@@ -3197,8 +3204,8 @@
         "fields": [
           {
             "key": "custom_html",
-            "optional": true,
-            "type": "string",
+            "optional": false,
+            "type": "string | null",
             "description": "The profile landing page HTML; null clears it"
           }
         ]
@@ -3214,17 +3221,17 @@
           {
             "key": "custom_html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "previous_custom_html",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "profile_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sanitization_report",
@@ -3391,7 +3398,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3601,7 +3608,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -3882,7 +3889,7 @@
           {
             "key": "workflow",
             "optional": false,
-            "type": "{ id: string, name?: string | null, audience_type?: string | null, trigger?: string | null, product_id?: string | null, variant_id?: string | null, state?: string | null, published_at?: string | null, first_published_at?: string | null, send_to_past_customers?: boolean | null, emails_count?: number | null, filters?: {} | null, created_at?: string | null, updated_at?: string | null, emails?: { id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null, delay?: { amount?: number | null, unit?: string | null } | null, sent_count?: number | null, open_count?: number | null, open_rate?: number | null, click_count?: number | null, click_rate?: number | null }[] | null }"
+            "type": "{ id: string, name?: string | null, audience_type?: string | null, trigger?: string | null, product_id?: string | null, variant_id?: string | null, state?: string | null, published_at?: string | null, first_published_at?: string | null, send_to_past_customers?: boolean | null, emails_count?: number | null, filters?: Record<string, string> | null, created_at?: string | null, updated_at?: string | null, emails?: { id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null, delay?: { amount?: number | null, unit?: string | null } | null, sent_count?: number | null, open_count?: number | null, open_rate?: number | null, click_count?: number | null, click_rate?: number | null }[] | null }"
           }
         ]
       }
@@ -3907,7 +3914,7 @@
           {
             "key": "workflows",
             "optional": false,
-            "type": "{ id: string, name?: string | null, audience_type?: string | null, trigger?: string | null, product_id?: string | null, variant_id?: string | null, state?: string | null, published_at?: string | null, first_published_at?: string | null, send_to_past_customers?: boolean | null, emails_count?: number | null, filters?: {} | null, created_at?: string | null, updated_at?: string | null, emails?: { id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null, delay?: { amount?: number | null, unit?: string | null } | null, sent_count?: number | null, open_count?: number | null, open_rate?: number | null, click_count?: number | null, click_rate?: number | null }[] | null }[]"
+            "type": "{ id: string, name?: string | null, audience_type?: string | null, trigger?: string | null, product_id?: string | null, variant_id?: string | null, state?: string | null, published_at?: string | null, first_published_at?: string | null, send_to_past_customers?: boolean | null, emails_count?: number | null, filters?: Record<string, string> | null, created_at?: string | null, updated_at?: string | null, emails?: { id: string, subject?: string | null, message?: string | null, audience_type?: string | null, product_id?: string | null, state?: string | null, published_at?: string | null, scheduled_at?: string | null, send_emails?: boolean | null, shown_on_profile?: boolean | null, audience_count?: number | null, recipients_count?: number | null, url?: string | null, created_at?: string | null, updated_at?: string | null, delay?: { amount?: number | null, unit?: string | null } | null, sent_count?: number | null, open_count?: number | null, open_rate?: number | null, click_count?: number | null, click_rate?: number | null }[] | null }[]"
           }
         ]
       }

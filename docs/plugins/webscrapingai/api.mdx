@@ -67,22 +67,12 @@ await corsair.webscrapingai.api.ai.askQuestion({});
 | `proxy` | `datacenter \| residential \| stealth` | No | — |
 | `country` | `string` | No | — |
 | `device` | `desktop \| mobile \| tablet` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `js_script` | `string` | No | — |
 | `custom_proxy` | `string` | No | — |
 | `error_on_404` | `boolean` | No | — |
 | `error_on_redirect` | `boolean` | No | — |
 | `question` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -115,44 +105,16 @@ await corsair.webscrapingai.api.ai.extractFields({});
 | `proxy` | `datacenter \| residential \| stealth` | No | — |
 | `country` | `string` | No | — |
 | `device` | `desktop \| mobile \| tablet` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `js_script` | `string` | No | — |
 | `custom_proxy` | `string` | No | — |
 | `error_on_404` | `boolean` | No | — |
 | `error_on_redirect` | `boolean` | No | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, string>` | Yes | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -183,21 +145,11 @@ await corsair.webscrapingai.api.scraping.getHtml({});
 | `proxy` | `datacenter \| residential \| stealth` | No | — |
 | `country` | `string` | No | — |
 | `device` | `desktop \| mobile \| tablet` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `js_script` | `string` | No | — |
 | `custom_proxy` | `string` | No | — |
 | `error_on_404` | `boolean` | No | — |
 | `error_on_redirect` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -230,22 +182,12 @@ await corsair.webscrapingai.api.scraping.getSelectedHtml({});
 | `proxy` | `datacenter \| residential \| stealth` | No | — |
 | `country` | `string` | No | — |
 | `device` | `desktop \| mobile \| tablet` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `js_script` | `string` | No | — |
 | `custom_proxy` | `string` | No | — |
 | `error_on_404` | `boolean` | No | — |
 | `error_on_redirect` | `boolean` | No | — |
 | `selector` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -278,36 +220,16 @@ await corsair.webscrapingai.api.scraping.getSelectedMultiple({});
 | `proxy` | `datacenter \| residential \| stealth` | No | — |
 | `country` | `string` | No | — |
 | `device` | `desktop \| mobile \| tablet` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `js_script` | `string` | No | — |
 | `custom_proxy` | `string` | No | — |
 | `error_on_404` | `boolean` | No | — |
 | `error_on_redirect` | `boolean` | No | — |
 | `selectors` | `string[]` | Yes | — |
 
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-string | string[] | {
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `string \| string[] \| Record<string, string>`
 
 
 ---
@@ -336,7 +258,7 @@ await corsair.webscrapingai.api.scraping.getText({});
 | `proxy` | `datacenter \| residential \| stealth` | No | — |
 | `country` | `string` | No | — |
 | `device` | `desktop \| mobile \| tablet` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `js_script` | `string` | No | — |
 | `custom_proxy` | `string` | No | — |
 | `error_on_404` | `boolean` | No | — |
@@ -344,19 +266,9 @@ await corsair.webscrapingai.api.scraping.getText({});
 | `text_format` | `plain \| json \| xml` | No | — |
 | `return_links` | `boolean` | No | — |
 
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `string \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">

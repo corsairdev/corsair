@@ -69,7 +69,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}[]"
+        "type": "Record<string, any>[]"
       }
     },
     {
@@ -219,7 +219,7 @@
           {
             "key": "status",
             "optional": true,
-            "type": "{ isActive?: boolean, occupancy?: { metrics?: {} } }"
+            "type": "{ isActive?: boolean, occupancy?: { metrics?: Record<string, number> } }"
           }
         ]
       }
@@ -261,7 +261,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, data?: any, clientId?: string, connectionId?: string, timestamp?: number, encoding?: string, extras?: {} }[]"
+        "type": "{ id?: string, name?: string, data?: any, clientId?: string, connectionId?: string, timestamp?: number, encoding?: string, extras?: Record<string, any> }[]"
       }
     },
     {
@@ -316,7 +316,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id?: string, name?: string, data?: any, clientId?: string, connectionId?: string, timestamp?: number, encoding?: string, extras?: {} }[]"
+        "type": "{ id?: string, name?: string, data?: any, clientId?: string, connectionId?: string, timestamp?: number, encoding?: string, extras?: Record<string, any> }[]"
       }
     },
     {
@@ -385,7 +385,7 @@
           {
             "key": "next",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -395,12 +395,12 @@
           {
             "key": "items",
             "optional": false,
-            "type": "(string | { channelId?: string, status?: { isActive?: boolean, occupancy?: { metrics?: {} } } })[]"
+            "type": "(string | { channelId?: string, status?: { isActive?: boolean, occupancy?: { metrics?: Record<string, number> } } })[]"
           },
           {
             "key": "next",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -416,7 +416,7 @@
           {
             "key": "messages",
             "optional": false,
-            "type": "{ channels: string[], messages: { id?: string, name?: string, data?: any, clientId?: string, connectionId?: string, timestamp?: number, encoding?: string, extras?: {} }[] }[]"
+            "type": "{ channels: string[], messages: { id?: string, name?: string, data?: any, clientId?: string, connectionId?: string, timestamp?: number, encoding?: string, extras?: Record<string, any> }[] }[]"
           }
         ]
       },
@@ -456,7 +456,7 @@
           {
             "key": "extras",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -566,7 +566,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "updateToken",
@@ -576,7 +576,7 @@
           {
             "key": "push",
             "optional": true,
-            "type": "{ state?: string, recipient?: {} }"
+            "type": "{ state?: string, recipient?: Record<string, any> }"
           }
         ]
       }
@@ -602,7 +602,7 @@
           {
             "key": "next",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -617,7 +617,7 @@
           {
             "key": "next",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -653,7 +653,7 @@
           {
             "key": "next",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -668,7 +668,7 @@
           {
             "key": "next",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -699,7 +699,7 @@
           {
             "key": "next",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -709,12 +709,12 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, clientId?: string, platform?: string, formFactor?: string, metadata?: {}, updateToken?: string, push?: { state?: string, recipient?: {} } }[]"
+            "type": "{ id: string, clientId?: string, platform?: string, formFactor?: string, metadata?: Record<string, any>, updateToken?: string, push?: { state?: string, recipient?: Record<string, any> } }[]"
           },
           {
             "key": "next",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -740,12 +740,12 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "push",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -775,7 +775,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "updateToken",
@@ -785,7 +785,7 @@
           {
             "key": "push",
             "optional": true,
-            "type": "{ state?: string, recipient?: {} }"
+            "type": "{ state?: string, recipient?: Record<string, any> }"
           }
         ]
       }
@@ -801,17 +801,17 @@
           {
             "key": "recipient",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "data",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "notification",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -831,7 +831,7 @@
           {
             "key": "notifications",
             "optional": false,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       },
@@ -871,7 +871,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "updateToken",
@@ -911,7 +911,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "updateToken",
@@ -921,7 +921,7 @@
           {
             "key": "push",
             "optional": true,
-            "type": "{ state?: string, recipient?: {} }"
+            "type": "{ state?: string, recipient?: Record<string, any> }"
           }
         ]
       }
@@ -1002,7 +1002,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "updateToken",
@@ -1042,7 +1042,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "updateToken",
@@ -1052,7 +1052,7 @@
           {
             "key": "push",
             "optional": true,
-            "type": "{ state?: string, recipient?: {} }"
+            "type": "{ state?: string, recipient?: Record<string, any> }"
           }
         ]
       }

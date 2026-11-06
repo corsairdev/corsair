@@ -28,7 +28,7 @@ await corsair.pdl.api.autocomplete.suggest({ field: 'job_title', text: 'soft', s
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `field` | `string` | Yes | — |
-| `text` | `string` | Yes | — |
+| `text` | `string` | No | Defaults to "". |
 | `size` | `number` | No | — |
 | `titlecase` | `boolean` | No | — |
 | `pretty` | `boolean` | No | — |
@@ -50,8 +50,7 @@ await corsair.pdl.api.autocomplete.suggest({ field: 'job_title', text: 'soft', s
 {
   count: number,
   name: string,
-  meta?: {
-  }
+  meta?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -142,8 +141,7 @@ await corsair.pdl.api.company.enrich({ website: 'peopledatalabs.com' });
   found: true,
   status: number,
   likelihood: number,
-  company: {
-  }
+  company: Record<string, any>
 } | {
   found: false
 }
@@ -170,22 +168,12 @@ await corsair.pdl.api.company.search({ sql: "SELECT * FROM company WHERE tags='m
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
 | `sql` | `string` | No | — |
 | `size` | `number` | No | — |
 | `scroll_token` | `string` | No | — |
 | `titlecase` | `boolean` | No | — |
 | `pretty` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -194,19 +182,9 @@ await corsair.pdl.api.company.search({ sql: "SELECT * FROM company WHERE tags='m
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `number` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `total` | `number` | Yes | — |
 | `scroll_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -253,15 +231,11 @@ await corsair.pdl.api.ip.enrich({ ip: '174.110.144.98', return_person: true, min
   data: {
     ip: {
       address: string,
-      metadata?: {
-      },
-      location?: {
-      }
+      metadata?: Record<string, any>,
+      location?: Record<string, any>
     },
-    company?: {
-    },
-    person?: {
-    }
+    company?: Record<string, any>,
+    person?: Record<string, any>
   },
   dataset_version?: string | number
 } | {
@@ -301,20 +275,10 @@ await corsair.pdl.api.job.search({ title: 'software engineer', company_website: 
 | `remote_work_policy` | `string` | No | — |
 | `inferred_skills` | `string` | No | — |
 | `is_active` | `boolean` | No | — |
-| `query` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
 | `size` | `number` | No | — |
 | `scroll_token` | `string` | No | — |
 | `pretty` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -323,20 +287,10 @@ await corsair.pdl.api.job.search({ title: 'software engineer', company_website: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `number` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `total` | `number` | Yes | — |
 | `scroll_token` | `string` | No | — |
 | `dataset_version` | `string \| number` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -402,10 +356,8 @@ await corsair.pdl.api.person.bulk({ requests: [{ params: { profile: 'linkedin.co
 
 ```ts
 {
-  params: {
-  },
-  metadata?: {
-  }
+  params: Record<string, any>,
+  metadata?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -422,10 +374,8 @@ await corsair.pdl.api.person.bulk({ requests: [{ params: { profile: 'linkedin.co
 {
   status: number,
   likelihood?: number,
-  data?: {
-  } | null,
-  metadata?: {
-  },
+  data?: Record<string, any> | null,
+  metadata?: Record<string, any>,
   error?: {
     type?: string,
     message?: string
@@ -492,8 +442,7 @@ await corsair.pdl.api.person.enrich({ profile: 'linkedin.com/in/gracehopper', mi
   found: true,
   status: number,
   likelihood: number,
-  data?: {
-  } | null,
+  data: Record<string, any> | null,
   matched?: string[]
 } | {
   found: false
@@ -557,8 +506,7 @@ await corsair.pdl.api.person.identify({ name: 'grace hopper', company: 'us navy'
   status: number,
   matches: {
     match_score: number,
-    data: {
-    }[],
+    data: Record<string, any>[],
     matched_on?: string[]
   }[]
 } | {
@@ -587,23 +535,13 @@ await corsair.pdl.api.person.search({ query: { term: { location_country: 'mexico
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
 | `sql` | `string` | No | — |
 | `size` | `number` | No | — |
 | `scroll_token` | `string` | No | — |
 | `dataset` | `string` | No | — |
 | `titlecase` | `boolean` | No | — |
 | `pretty` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -612,19 +550,9 @@ await corsair.pdl.api.person.search({ query: { term: { location_country: 'mexico
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `number` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `total` | `number` | Yes | — |
 | `scroll_token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 

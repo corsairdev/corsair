@@ -44,7 +44,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ ID: string | number, AccountID?: string | number | null, DemoCompany?: string | number | null, CompanyName: string, CompanyCRMID?: string | null, DateCreated?: string | null, CreatedBy?: string | number | null, DateEdited?: string | null, EditedBy?: string | number | null, Deleted?: string | number | null, DeletedBy?: string | number | null } | {}"
+            "type": "{ ID: string | number, AccountID?: string | number | null, DemoCompany?: string | number | null, CompanyName: string, CompanyCRMID?: string | null, DateCreated?: string | null, CreatedBy?: string | number | null, DateEdited?: string | null, EditedBy?: string | number | null, Deleted?: string | number | null, DeletedBy?: string | number | null } | Record<string, any>"
           }
         ]
       }

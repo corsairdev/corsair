@@ -84,7 +84,7 @@
           {
             "key": "structured_output_schema",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       },
@@ -139,32 +139,32 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_detail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "structured_output",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "playbook_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parent_session_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -240,32 +240,32 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_detail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "structured_output",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "playbook_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parent_session_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -316,12 +316,12 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ session_id: string, url: string, status: string, tags: string[], org_id: string, created_at: number, updated_at: number, acus_consumed: number, pull_requests: { url?: string }[], title?: string | null, user_id?: string | null, status_detail?: string | null, structured_output?: {} | null, playbook_id?: string | null, parent_session_id?: string | null }[]"
+            "type": "{ session_id: string, url: string, status: string, tags: string[], org_id: string, created_at: number, updated_at: number, acus_consumed: number, pull_requests: { url?: string }[], title?: string | null, user_id?: string | null, status_detail?: string | null, structured_output?: Record<string, any> | null, playbook_id?: string | null, parent_session_id?: string | null }[]"
           },
           {
             "key": "end_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_next_page",
@@ -331,7 +331,7 @@
           {
             "key": "total",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -412,32 +412,32 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status_detail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "structured_output",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           },
           {
             "key": "playbook_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "parent_session_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

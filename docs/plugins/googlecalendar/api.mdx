@@ -61,16 +61,29 @@ await corsair.googlecalendar.api.calendar.getAvailability({});
 <Accordion title="calendars full type">
 
 ```ts
-{
-}
+Record<string, {
+  busy?: {
+    start?: string,
+    end?: string
+  }[],
+  errors?: {
+    domain?: string,
+    reason?: string
+  }[]
+}>
 ```
 </Accordion>
 
 <Accordion title="groups full type">
 
 ```ts
-{
-}
+Record<string, {
+  calendars?: string[],
+  errors?: {
+    domain?: string,
+    reason?: string
+  }[]
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -367,8 +380,7 @@ await corsair.googlecalendar.api.events.create({});
   width?: number,
   height?: number,
   display?: string,
-  preferences?: {
-  }
+  preferences?: Record<string, string>
 }
 ```
 </Accordion>
@@ -630,8 +642,7 @@ await corsair.googlecalendar.api.events.get({});
   width?: number,
   height?: number,
   display?: string,
-  preferences?: {
-  }
+  preferences?: Record<string, string>
 }
 ```
 </Accordion>
@@ -824,8 +835,7 @@ await corsair.googlecalendar.api.events.getMany({});
     width?: number,
     height?: number,
     display?: string,
-    preferences?: {
-    }
+    preferences?: Record<string, string>
   },
   eventType?: default | outOfOffice | focusTime | workingLocation | birthday | fromGmail
 }[]
@@ -1124,8 +1134,7 @@ await corsair.googlecalendar.api.events.update({});
   width?: number,
   height?: number,
   display?: string,
-  preferences?: {
-  }
+  preferences?: Record<string, string>
 }
 ```
 </Accordion>

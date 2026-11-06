@@ -136,7 +136,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "calories",
@@ -156,7 +156,7 @@
           {
             "key": "gear_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "commute",
@@ -266,12 +266,12 @@
           {
             "key": "suffer_score",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "workout_type",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "start_latlng",
@@ -286,12 +286,12 @@
           {
             "key": "upload_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "external_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_kudoed",
@@ -387,7 +387,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "calories",
@@ -407,7 +407,7 @@
           {
             "key": "gear_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "commute",
@@ -517,12 +517,12 @@
           {
             "key": "suffer_score",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "workout_type",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "start_latlng",
@@ -537,12 +537,12 @@
           {
             "key": "upload_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "external_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_kudoed",
@@ -578,7 +578,7 @@
           {
             "key": "keys",
             "optional": false,
-            "type": "time | distance | latlng | altitude | velocity_smooth | heartrate | cadence | watts | temp | moving | grade_smooth[]"
+            "type": "(time | distance | latlng | altitude | velocity_smooth | heartrate | cadence | watts | temp | moving | grade_smooth)[]"
           },
           {
             "key": "key_by_type",
@@ -803,7 +803,7 @@
           {
             "key": "username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstname",
@@ -818,22 +818,22 @@
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sex",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "premium",
@@ -873,12 +873,12 @@
           {
             "key": "ftp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "weight",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "profile",
@@ -1035,7 +1035,7 @@
           {
             "key": "username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstname",
@@ -1050,22 +1050,22 @@
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sex",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "premium",
@@ -1105,12 +1105,12 @@
           {
             "key": "ftp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "weight",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "profile",
@@ -1181,7 +1181,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "club_type",
@@ -1196,17 +1196,17 @@
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "private",
@@ -1277,22 +1277,22 @@
           {
             "key": "brand_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "model_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "frame_type",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "athlete_id",
@@ -1393,7 +1393,7 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "distance",
@@ -1620,12 +1620,12 @@
           {
             "key": "kom_rank",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "pr_rank",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "achievements",
@@ -1681,7 +1681,7 @@
           {
             "key": "keys",
             "optional": false,
-            "type": "time | distance | latlng | altitude | velocity_smooth | heartrate | cadence | watts | temp | moving | grade_smooth[]"
+            "type": "(time | distance | latlng | altitude | velocity_smooth | heartrate | cadence | watts | temp | moving | grade_smooth)[]"
           },
           {
             "key": "key_by_type",
@@ -1868,17 +1868,17 @@
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "private",
@@ -1949,7 +1949,7 @@
           {
             "key": "keys",
             "optional": false,
-            "type": "time | distance | latlng | altitude | velocity_smooth | heartrate | cadence | watts | temp | moving | grade_smooth[]"
+            "type": "(time | distance | latlng | altitude | velocity_smooth | heartrate | cadence | watts | temp | moving | grade_smooth)[]"
           },
           {
             "key": "key_by_type",
@@ -2125,17 +2125,17 @@
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "private",
@@ -2246,12 +2246,12 @@
           {
             "key": "external_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -2261,7 +2261,7 @@
           {
             "key": "activity_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -2292,12 +2292,12 @@
           {
             "key": "external_id",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "error",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -2307,7 +2307,7 @@
           {
             "key": "activity_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }

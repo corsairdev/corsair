@@ -653,7 +653,7 @@ const gumroadEndpointMeta = {
 		description: 'Publish (enable) an existing product',
 	},
 	'products.disable': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Unpublish (disable) an existing product',
 	},
 	'products.reviewsList': {
@@ -854,8 +854,11 @@ const gumroadEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Read one audience email by id',
 	},
+	// publish="true" or draft="false" sends to the whole audience at once, so
+	// creating can have the same one-way effect as emails.send.
 	'emails.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Create a draft audience email by subject, HTML body and audience, or send it immediately with publish=true',
 	},
@@ -865,7 +868,8 @@ const gumroadEndpointMeta = {
 			"Send a preview of an audience email to the seller's own address",
 	},
 	'emails.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Publish a draft audience email and send it to its audience',
 	},
 	'emails.schedule': {
@@ -934,12 +938,13 @@ const gumroadEndpointMeta = {
 			'Mark a physical sale as shipped with an optional tracking URL',
 	},
 	'sales.refund': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Refund a sale fully, or partially with amount_cents; returns the updated sale',
 	},
 	'sales.revokeAccess': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales)",
 	},
@@ -971,7 +976,7 @@ const gumroadEndpointMeta = {
 		description: 'Re-enable a disabled license key and read its purchase',
 	},
 	'licenses.disable': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Disable a license key so it fails verification, and read its purchase',
 	},

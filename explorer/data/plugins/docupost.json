@@ -1,7 +1,7 @@
 {
   "id": "docupost",
-  "displayName": "Docupost",
-  "description": "Docupost plugin for Corsair",
+  "displayName": "DocuPost",
+  "description": "Mail API for sending letters and postcards and checking the account balance.",
   "npmPackageName": "@corsair-dev/docupost",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

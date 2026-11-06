@@ -159,7 +159,7 @@ await corsair.scrapegraphai.api.agenticScraper.history({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `requests` | `object[]` | Yes | — |
-| `next_key` | `object` | No | — |
+| `next_key` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="requests full type">
@@ -171,8 +171,7 @@ await corsair.scrapegraphai.api.agenticScraper.history({});
   webpage_id: string,
   website_url: string,
   user_prompt?: string | null,
-  output_schema?: {
-  } | null,
+  output_schema?: Record<string, any> | null,
   requested_at: string,
   finished_at?: string | null,
   status: queued | processing | processinghtml | processedhtml | completed | failed,
@@ -182,14 +181,6 @@ await corsair.scrapegraphai.api.agenticScraper.history({});
   usage_id?: string | null,
   error?: string | null
 }[]
-```
-</Accordion>
-
-<Accordion title="next_key full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -245,8 +236,7 @@ await corsair.scrapegraphai.api.endpoint.getSuggestions({});
     description: string,
     is_url?: boolean
   }[],
-  pydantic_schema: {
-  },
+  pydantic_schema: Record<string, any>,
   extraction_prompt: string,
   interaction_steps?: string[] | null
 }[]
@@ -293,8 +283,7 @@ await corsair.scrapegraphai.api.endpoint.save({});
     description: string,
     is_url?: boolean
   }[],
-  pydantic_schema: {
-  },
+  pydantic_schema: Record<string, any>,
   extraction_prompt: string,
   interaction_steps?: string[] | null
 }[]
@@ -329,7 +318,7 @@ await corsair.scrapegraphai.api.feedback.submit({});
 |------|------|----------|-------------|
 | `request_id` | `string` | Yes | — |
 | `rating` | `number` | Yes | — |
-| `feedback_text` | `string` | No | — |
+| `feedback_text` | `string \| null` | No | — |
 
 
 
@@ -363,22 +352,22 @@ await corsair.scrapegraphai.api.feedback.submitProduct({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `feedback_id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
-| `company` | `string` | No | — |
-| `how_discovered` | `string` | No | — |
-| `usage_frequency` | `string` | No | — |
-| `use_cases` | `string[]` | No | — |
-| `rating` | `number` | No | — |
-| `liked_most` | `string` | No | — |
-| `disliked` | `string` | No | — |
-| `requested_features` | `string` | No | — |
-| `setup_easy` | `boolean` | No | — |
-| `issues` | `string` | No | — |
-| `recommend_score` | `number` | No | — |
-| `improvement_suggestions` | `string` | No | — |
-| `can_contact` | `boolean` | No | — |
-| `contact_method` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `how_discovered` | `string \| null` | No | — |
+| `usage_frequency` | `string \| null` | No | — |
+| `use_cases` | `string[] \| null` | No | — |
+| `rating` | `number \| null` | No | — |
+| `liked_most` | `string \| null` | No | — |
+| `disliked` | `string \| null` | No | — |
+| `requested_features` | `string \| null` | No | — |
+| `setup_easy` | `boolean \| null` | No | — |
+| `issues` | `string \| null` | No | — |
+| `recommend_score` | `number \| null` | No | — |
+| `improvement_suggestions` | `string \| null` | No | — |
+| `can_contact` | `boolean \| null` | No | — |
+| `contact_method` | `string \| null` | No | — |
 
 
 
@@ -420,7 +409,7 @@ await corsair.scrapegraphai.api.markdownify.history({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `requests` | `object[]` | Yes | — |
-| `next_key` | `object` | No | — |
+| `next_key` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="requests full type">
@@ -435,20 +424,10 @@ await corsair.scrapegraphai.api.markdownify.history({});
   error?: string | null,
   website_url: string,
   finished_at?: string | null,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   usage_id?: string | null,
-  request_params?: {
-  } | null
+  request_params?: Record<string, any> | null
 }[]
-```
-</Accordion>
-
-<Accordion title="next_key full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -479,21 +458,11 @@ await corsair.scrapegraphai.api.markdownify.start({});
 | `stealth` | `boolean` | No | — |
 | `branding` | `boolean` | No | — |
 | `stream` | `boolean` | No | — |
-| `country_code` | `string` | No | — |
+| `country_code` | `string \| null` | No | — |
 | `wait_ms` | `number` | No | — |
-| `headers` | `object` | No | — |
-| `steps` | `string[]` | No | — |
-| `webhook_url` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `headers` | `Record<string, string> \| null` | No | — |
+| `steps` | `string[] \| null` | No | — |
+| `webhook_url` | `string \| null` | No | — |
 
 
 
@@ -504,7 +473,7 @@ await corsair.scrapegraphai.api.markdownify.start({});
 | `request_id` | `string` | Yes | — |
 | `status` | `queued \| processing \| completed \| failed` | Yes | — |
 | `website_url` | `string` | Yes | — |
-| `result` | `string` | No | — |
+| `result` | `string \| null` | No | — |
 | `error` | `string` | No | — |
 
 
@@ -538,7 +507,7 @@ await corsair.scrapegraphai.api.markdownify.status({});
 | `request_id` | `string` | No | — |
 | `status` | `queued \| processing \| completed \| failed` | No | — |
 | `website_url` | `string` | No | — |
-| `result` | `string` | No | — |
+| `result` | `string \| null` | No | — |
 | `error` | `string` | No | — |
 
 
@@ -589,8 +558,7 @@ await corsair.scrapegraphai.api.scheduledJobs.list({});
   job_name: string,
   service_type: smartscraper | searchscraper | markdownify | smartcrawler | agenticscrapper | site_monitor,
   cron_expression: string,
-  job_config: {
-  },
+  job_config: Record<string, any>,
   is_active: boolean,
   created_at: string,
   updated_at: string,
@@ -624,17 +592,7 @@ await corsair.scrapegraphai.api.schema.generate({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_prompt` | `string` | Yes | — |
-| `existing_schema` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="existing_schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `existing_schema` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -646,18 +604,8 @@ await corsair.scrapegraphai.api.schema.generate({});
 | `status` | `string` | Yes | — |
 | `user_prompt` | `string` | Yes | — |
 | `refined_prompt` | `string` | Yes | — |
-| `generated_schema` | `object` | Yes | — |
-| `error` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="generated_schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `generated_schema` | `Record<string, any>` | Yes | — |
+| `error` | `string \| null` | No | — |
 
 
 
@@ -691,7 +639,7 @@ await corsair.scrapegraphai.api.scrape.history({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `requests` | `object[]` | Yes | — |
-| `next_key` | `object` | No | — |
+| `next_key` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="requests full type">
@@ -704,23 +652,13 @@ await corsair.scrapegraphai.api.scrape.history({});
   render_heavy_js?: boolean,
   result?: string | null,
   status?: queued | processing | completed | failed,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string | null,
   finished_at?: string | null,
   requested_at?: string,
   cost?: number,
-  request_params?: {
-  } | null
+  request_params?: Record<string, any> | null
 }[]
-```
-</Accordion>
-
-<Accordion title="next_key full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -757,7 +695,7 @@ await corsair.scrapegraphai.api.searchScraper.history({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `requests` | `object[]` | Yes | — |
-| `next_key` | `object` | No | — |
+| `next_key` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="requests full type">
@@ -770,24 +708,14 @@ await corsair.scrapegraphai.api.searchScraper.history({});
   search_query?: string | null,
   extraction_query?: string | null,
   references_urls?: string[] | null,
-  output_schema?: {
-  } | null,
+  output_schema?: Record<string, any> | null,
   result?: any | null,
   status?: queued | processing | completed | failed,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   error?: string | null,
   requested_at?: string,
   finished_at?: string | null
 }[]
-```
-</Accordion>
-
-<Accordion title="next_key full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -814,34 +742,16 @@ await corsair.scrapegraphai.api.searchScraper.start({});
 |------|------|----------|-------------|
 | `user_prompt` | `string` | Yes | — |
 | `num_results` | `number` | No | — |
-| `headers` | `object` | No | — |
-| `output_schema` | `object` | No | — |
+| `headers` | `Record<string, string> \| null` | No | — |
+| `output_schema` | `Record<string, any> \| null` | No | — |
 | `extraction_mode` | `boolean` | No | — |
 | `markdown_mode` | `boolean` | No | — |
 | `stealth` | `boolean` | No | — |
 | `mock` | `boolean` | No | — |
 | `stream` | `boolean` | No | — |
-| `webhook_url` | `string` | No | — |
-| `location_geo_code` | `string` | No | — |
-| `time_range` | `past_hour \| past_24_hours \| past_week \| past_month \| past_year` | No | — |
-
-<AccordionGroup>
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="output_schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `webhook_url` | `string \| null` | No | — |
+| `location_geo_code` | `string \| null` | No | — |
+| `time_range` | `past_hour \| past_24_hours \| past_week \| past_month \| past_year \| null` | No | — |
 
 
 
@@ -852,11 +762,11 @@ await corsair.scrapegraphai.api.searchScraper.start({});
 | `request_id` | `string` | Yes | — |
 | `status` | `queued \| processing \| completed \| failed` | Yes | — |
 | `user_prompt` | `string` | Yes | — |
-| `num_results` | `number` | No | — |
-| `result` | `any` | No | — |
-| `reference_urls` | `string[]` | No | — |
-| `markdown_content` | `string` | No | — |
-| `error` | `string` | No | — |
+| `num_results` | `number \| null` | No | — |
+| `result` | `any \| null` | No | — |
+| `reference_urls` | `string[] \| null` | No | — |
+| `markdown_content` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
 
 
 
@@ -889,11 +799,11 @@ await corsair.scrapegraphai.api.searchScraper.status({});
 | `request_id` | `string` | No | — |
 | `status` | `queued \| processing \| completed \| failed` | No | — |
 | `user_prompt` | `string` | No | — |
-| `num_results` | `number` | No | — |
-| `result` | `any` | No | — |
-| `reference_urls` | `string[]` | No | — |
-| `markdown_content` | `string` | No | — |
-| `error` | `string` | No | — |
+| `num_results` | `number \| null` | No | — |
+| `result` | `any \| null` | No | — |
+| `reference_urls` | `string[] \| null` | No | — |
+| `markdown_content` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
 
 
 
@@ -927,7 +837,7 @@ await corsair.scrapegraphai.api.sitemap.history({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `requests` | `object[]` | Yes | — |
-| `next_key` | `object` | No | — |
+| `next_key` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="requests full type">
@@ -942,17 +852,8 @@ await corsair.scrapegraphai.api.sitemap.history({});
   status: string,
   urls_count: number,
   error_message?: string | null,
-  metadata?: {
-  } | null
+  metadata?: Record<string, any> | null
 }[]
-```
-</Accordion>
-
-<Accordion title="next_key full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -989,7 +890,7 @@ await corsair.scrapegraphai.api.smartCrawler.history({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `requests` | `object[]` | Yes | — |
-| `next_key` | `object` | No | — |
+| `next_key` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="requests full type">
@@ -1003,8 +904,7 @@ await corsair.scrapegraphai.api.smartCrawler.history({});
   max_pages: number,
   status: queued | processing | completed | failed,
   error?: string | null,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   requested_at: string,
   finished_at?: string | null,
   total_cost?: number | null,
@@ -1012,20 +912,10 @@ await corsair.scrapegraphai.api.smartCrawler.history({});
   pages_processed?: number | null,
   crawled_urls?: string[] | null,
   task_id?: string | null,
-  result?: {
-  } | null,
+  result?: Record<string, any> | null,
   result_url?: string | null,
-  request_params?: {
-  } | null
+  request_params?: Record<string, any> | null
 }[]
-```
-</Accordion>
-
-<Accordion title="next_key full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1052,30 +942,22 @@ await corsair.scrapegraphai.api.smartCrawler.start({});
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
 | `depth` | `number` | No | — |
-| `breadth` | `number` | No | — |
-| `max_pages` | `number` | No | — |
-| `prompt` | `string` | No | — |
-| `schema` | `object` | No | — |
-| `rules` | `object` | No | — |
+| `breadth` | `number \| null` | No | — |
+| `max_pages` | `number \| null` | No | — |
+| `prompt` | `string \| null` | No | — |
+| `schema` | `Record<string, any> \| null` | No | — |
+| `rules` | `object \| null` | No | — |
 | `sitemap` | `boolean` | No | — |
 | `render_heavy_js` | `boolean` | No | — |
 | `extraction_mode` | `boolean` | No | — |
 | `stealth` | `boolean` | No | — |
 | `mock` | `boolean` | No | — |
-| `webhook_url` | `string` | No | — |
+| `webhook_url` | `string \| null` | No | — |
 | `reader_mode` | `boolean` | No | — |
 | `wait_ms` | `number` | No | — |
-| `country_code` | `string` | No | — |
+| `country_code` | `string \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="rules full type">
 
 ```ts
@@ -1084,7 +966,7 @@ await corsair.scrapegraphai.api.smartCrawler.start({});
   include_paths?: string[] | null,
   exclude_paths?: string[] | null,
   same_domain?: boolean | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1099,36 +981,18 @@ await corsair.scrapegraphai.api.smartCrawler.start({});
 | `request_id` | `string` | No | — |
 | `status` | `string` | No | — |
 | `url` | `string` | No | — |
-| `prompt` | `string` | No | — |
+| `prompt` | `string \| null` | No | — |
 | `max_pages` | `number` | No | — |
-| `error` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `error` | `string \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 | `requested_at` | `string` | No | — |
-| `finished_at` | `string` | No | — |
-| `total_cost` | `number` | No | — |
-| `credits_used` | `number` | No | — |
-| `pages_processed` | `number` | No | — |
-| `crawled_urls` | `string[]` | No | — |
-| `result` | `object` | No | — |
-| `result_url` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="result full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `finished_at` | `string \| null` | No | — |
+| `total_cost` | `number \| null` | No | — |
+| `credits_used` | `number \| null` | No | — |
+| `pages_processed` | `number \| null` | No | — |
+| `crawled_urls` | `string[] \| null` | No | — |
+| `result` | `Record<string, any> \| null` | No | — |
+| `result_url` | `string \| null` | No | — |
 
 
 
@@ -1162,36 +1026,18 @@ await corsair.scrapegraphai.api.smartCrawler.status({});
 | `request_id` | `string` | No | — |
 | `status` | `string` | No | — |
 | `url` | `string` | No | — |
-| `prompt` | `string` | No | — |
+| `prompt` | `string \| null` | No | — |
 | `max_pages` | `number` | No | — |
-| `error` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `error` | `string \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 | `requested_at` | `string` | No | — |
-| `finished_at` | `string` | No | — |
-| `total_cost` | `number` | No | — |
-| `credits_used` | `number` | No | — |
-| `pages_processed` | `number` | No | — |
-| `crawled_urls` | `string[]` | No | — |
-| `result` | `object` | No | — |
-| `result_url` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="result full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `finished_at` | `string \| null` | No | — |
+| `total_cost` | `number \| null` | No | — |
+| `credits_used` | `number \| null` | No | — |
+| `pages_processed` | `number \| null` | No | — |
+| `crawled_urls` | `string[] \| null` | No | — |
+| `result` | `Record<string, any> \| null` | No | — |
+| `result_url` | `string \| null` | No | — |
 
 
 
@@ -1221,17 +1067,7 @@ await corsair.scrapegraphai.api.smartCrawler.webhookLogs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `logs` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="logs full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `logs` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1265,7 +1101,7 @@ await corsair.scrapegraphai.api.smartScraper.history({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `requests` | `object[]` | Yes | — |
-| `next_key` | `object` | No | — |
+| `next_key` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="requests full type">
@@ -1277,27 +1113,15 @@ await corsair.scrapegraphai.api.smartScraper.history({});
   webpage_id?: string | null,
   website_url?: string | null,
   user_prompt: string,
-  output_schema?: {
-  } | null,
-  result?: {
-  } | string | null,
+  output_schema?: Record<string, any> | null,
+  result?: Record<string, any> | string | null,
   status?: queued | processing | completed | failed,
   requested_at: string,
   finished_at?: string | null,
   error?: string | null,
-  metadata?: {
-  } | null,
-  request_params?: {
-  } | null
+  metadata?: Record<string, any> | null,
+  request_params?: Record<string, any> | null
 }[]
-```
-</Accordion>
-
-<Accordion title="next_key full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1323,52 +1147,26 @@ await corsair.scrapegraphai.api.smartScraper.start({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_prompt` | `string` | Yes | — |
-| `website_url` | `string` | No | — |
-| `website_html` | `string` | No | — |
-| `website_markdown` | `string` | No | — |
+| `website_url` | `string \| null` | No | — |
+| `website_html` | `string \| null` | No | — |
+| `website_markdown` | `string \| null` | No | — |
 | `render_heavy_js` | `boolean` | No | — |
 | `mock` | `boolean` | No | — |
 | `stealth` | `boolean` | No | — |
 | `branding` | `boolean` | No | — |
 | `stream` | `boolean` | No | — |
-| `country_code` | `string` | No | — |
+| `country_code` | `string \| null` | No | — |
 | `wait_ms` | `number` | No | — |
-| `output_schema` | `object` | No | — |
-| `headers` | `object` | No | — |
+| `output_schema` | `Record<string, any> \| null` | No | — |
+| `headers` | `Record<string, string> \| null` | No | — |
 | `number_of_scrolls` | `number` | No | — |
 | `total_pages` | `number` | No | — |
-| `steps` | `string[]` | No | — |
-| `cookies` | `object` | No | — |
+| `steps` | `string[] \| null` | No | — |
+| `cookies` | `Record<string, string> \| null` | No | — |
 | `plain_text` | `boolean` | No | — |
-| `webhook_url` | `string` | No | — |
+| `webhook_url` | `string \| null` | No | — |
 | `offset` | `number` | No | — |
 | `is_multipage_child` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="output_schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="cookies full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1378,20 +1176,10 @@ await corsair.scrapegraphai.api.smartScraper.start({});
 |------|------|----------|-------------|
 | `request_id` | `string` | Yes | — |
 | `status` | `queued \| processing \| completed \| failed` | Yes | — |
-| `website_url` | `string` | No | — |
+| `website_url` | `string \| null` | No | — |
 | `user_prompt` | `string` | Yes | — |
-| `result` | `object` | No | — |
+| `result` | `Record<string, any> \| string \| null` | No | — |
 | `error` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="result full type">
-
-```ts
-{
-} | string
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1423,20 +1211,10 @@ await corsair.scrapegraphai.api.smartScraper.status({});
 |------|------|----------|-------------|
 | `request_id` | `string` | No | — |
 | `status` | `queued \| processing \| completed \| failed` | No | — |
-| `website_url` | `string` | No | — |
+| `website_url` | `string \| null` | No | — |
 | `user_prompt` | `string` | No | — |
-| `result` | `object` | No | — |
+| `result` | `Record<string, any> \| string \| null` | No | — |
 | `error` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="result full type">
-
-```ts
-{
-} | string
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1460,21 +1238,11 @@ await corsair.scrapegraphai.api.utilities.toonify({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
+**Output:** `string \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">

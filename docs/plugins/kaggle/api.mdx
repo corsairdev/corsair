@@ -134,17 +134,7 @@ await corsair.kaggle.api.competitions.generateSubmissionUrl({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -173,24 +163,19 @@ await corsair.kaggle.api.competitions.list({});
 
 
 
-**Output:** `object`
+**Output:** `Record<string, any>[] \| object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-{
-}[] | {
-  results?: {
-  }[],
-  data?: {
-  }[],
-  list?: {
-  }[],
+Record<string, any>[] | {
+  results?: Record<string, any>[],
+  data?: Record<string, any>[],
+  list?: Record<string, any>[],
   totalResults?: number,
   nextPageToken?: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -220,24 +205,19 @@ await corsair.kaggle.api.competitions.listFiles({});
 
 
 
-**Output:** `object`
+**Output:** `Record<string, any>[] \| object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-{
-}[] | {
-  results?: {
-  }[],
-  data?: {
-  }[],
-  list?: {
-  }[],
+Record<string, any>[] | {
+  results?: Record<string, any>[],
+  data?: Record<string, any>[],
+  list?: Record<string, any>[],
   totalResults?: number,
   nextPageToken?: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -267,17 +247,7 @@ await corsair.kaggle.api.competitions.submit({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -302,17 +272,7 @@ await corsair.kaggle.api.competitions.viewLeaderboard({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -342,31 +302,11 @@ await corsair.kaggle.api.datasets.create({});
 | `description` | `string` | No | — |
 | `isPrivate` | `boolean` | No | — |
 | `licenseName` | `string` | No | — |
-| `files` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="files full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `files` | `Record<string, any>[]` | No | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -390,31 +330,11 @@ await corsair.kaggle.api.datasets.createVersion({});
 | `ownerSlug` | `string` | Yes | — |
 | `datasetSlug` | `string` | Yes | — |
 | `versionNotes` | `string` | No | — |
-| `files` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="files full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `files` | `Record<string, any>[]` | No | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -511,17 +431,7 @@ await corsair.kaggle.api.datasets.getMetadata({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -547,17 +457,7 @@ await corsair.kaggle.api.datasets.getStatus({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -591,24 +491,19 @@ await corsair.kaggle.api.datasets.list({});
 
 
 
-**Output:** `object`
+**Output:** `Record<string, any>[] \| object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-{
-}[] | {
-  results?: {
-  }[],
-  data?: {
-  }[],
-  list?: {
-  }[],
+Record<string, any>[] | {
+  results?: Record<string, any>[],
+  data?: Record<string, any>[],
+  list?: Record<string, any>[],
   totalResults?: number,
   nextPageToken?: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -640,24 +535,19 @@ await corsair.kaggle.api.datasets.listFiles({});
 
 
 
-**Output:** `object`
+**Output:** `Record<string, any>[] \| object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-{
-}[] | {
-  results?: {
-  }[],
-  data?: {
-  }[],
-  list?: {
-  }[],
+Record<string, any>[] | {
+  results?: Record<string, any>[],
+  data?: Record<string, any>[],
+  list?: Record<string, any>[],
   totalResults?: number,
   nextPageToken?: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -735,17 +625,7 @@ await corsair.kaggle.api.kernels.getStatus({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -781,24 +661,19 @@ await corsair.kaggle.api.kernels.list({});
 
 
 
-**Output:** `object`
+**Output:** `Record<string, any>[] \| object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-{
-}[] | {
-  results?: {
-  }[],
-  data?: {
-  }[],
-  list?: {
-  }[],
+Record<string, any>[] | {
+  results?: Record<string, any>[],
+  data?: Record<string, any>[],
+  list?: Record<string, any>[],
   totalResults?: number,
   nextPageToken?: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -829,24 +704,19 @@ await corsair.kaggle.api.kernels.listOutputFiles({});
 
 
 
-**Output:** `object`
+**Output:** `Record<string, any>[] \| object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-{
-}[] | {
-  results?: {
-  }[],
-  data?: {
-  }[],
-  list?: {
-  }[],
+Record<string, any>[] | {
+  results?: Record<string, any>[],
+  data?: Record<string, any>[],
+  list?: Record<string, any>[],
   totalResults?: number,
   nextPageToken?: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -876,17 +746,7 @@ await corsair.kaggle.api.kernels.pull({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -914,17 +774,7 @@ await corsair.kaggle.api.models.get({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -952,17 +802,7 @@ await corsair.kaggle.api.models.getInstance({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -991,24 +831,19 @@ await corsair.kaggle.api.models.list({});
 
 
 
-**Output:** `object`
+**Output:** `Record<string, any>[] \| object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-{
-}[] | {
-  results?: {
-  }[],
-  data?: {
-  }[],
-  list?: {
-  }[],
+Record<string, any>[] | {
+  results?: Record<string, any>[],
+  data?: Record<string, any>[],
+  list?: Record<string, any>[],
   totalResults?: number,
   nextPageToken?: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1042,24 +877,19 @@ await corsair.kaggle.api.models.listInstanceVersionFiles({});
 
 
 
-**Output:** `object`
+**Output:** `Record<string, any>[] \| object \| Record<string, any>`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-{
-}[] | {
-  results?: {
-  }[],
-  data?: {
-  }[],
-  list?: {
-  }[],
+Record<string, any>[] | {
+  results?: Record<string, any>[],
+  data?: Record<string, any>[],
+  list?: Record<string, any>[],
   totalResults?: number,
   nextPageToken?: string
-} | {
-}
+} | Record<string, any>
 ```
 </Accordion>
 </AccordionGroup>

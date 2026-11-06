@@ -38,14 +38,14 @@ await corsair.amara.api.activity.get({});
 | `id` | `number \| string` | No | — |
 | `type` | `number \| string` | No | — |
 | `type_name` | `string` | No | — |
-| `created` | `string` | No | — |
-| `video` | `string` | No | — |
-| `video_uri` | `string` | No | — |
-| `language` | `string` | No | — |
-| `language_url` | `string` | No | — |
-| `user` | `object` | No | — |
-| `comment` | `string` | No | — |
-| `new_video_title` | `string` | No | — |
+| `created` | `string \| null` | No | — |
+| `video` | `string \| null` | No | — |
+| `video_uri` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `language_url` | `string \| null` | No | — |
+| `user` | `object \| string \| null` | No | — |
+| `comment` | `string \| null` | No | — |
+| `new_video_title` | `string \| null` | No | — |
 | `resource_uri` | `string` | No | — |
 
 <AccordionGroup>
@@ -56,7 +56,7 @@ await corsair.amara.api.activity.get({});
   id?: string,
   username?: string,
   uri?: string
-} | string
+} | string | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -164,17 +164,7 @@ await corsair.amara.api.languages.listAvailable({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `languages` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="languages full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `languages` | `Record<string, string>` | Yes | — |
 
 
 
@@ -238,7 +228,7 @@ await corsair.amara.api.teams.addMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `object` | No | — |
+| `user` | `object \| string` | No | — |
 | `role` | `string` | No | — |
 | `languages_managed` | `string[]` | No | — |
 | `resource_uri` | `string` | No | — |
@@ -301,10 +291,10 @@ await corsair.amara.api.teams.createProject({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `slug` | `string` | No | — |
-| `description` | `string` | No | — |
-| `guidelines` | `string` | No | — |
-| `created` | `string` | No | — |
-| `modified` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `guidelines` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
 | `workflow_enabled` | `boolean` | No | — |
 | `resource_uri` | `string` | No | — |
 
@@ -369,19 +359,19 @@ await corsair.amara.api.teams.getDetails({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `slug` | `string` | No | — |
-| `type` | `string` | No | — |
-| `description` | `string` | No | — |
-| `team_visibility` | `string` | No | — |
-| `video_visibility` | `string` | No | — |
+| `type` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `team_visibility` | `string \| null` | No | — |
+| `video_visibility` | `string \| null` | No | — |
 | `is_visible` | `boolean` | No | — |
-| `membership_policy` | `string` | No | — |
-| `video_policy` | `string` | No | — |
+| `membership_policy` | `string \| null` | No | — |
+| `video_policy` | `string \| null` | No | — |
 | `activity_uri` | `string` | No | — |
 | `members_uri` | `string` | No | — |
 | `projects_uri` | `string` | No | — |
-| `applications_uri` | `string` | No | — |
-| `languages_uri` | `string` | No | — |
-| `tasks_uri` | `string` | No | — |
+| `applications_uri` | `string \| null` | No | — |
+| `languages_uri` | `string \| null` | No | — |
+| `tasks_uri` | `string \| null` | No | — |
 | `resource_uri` | `string` | No | — |
 
 
@@ -444,7 +434,7 @@ await corsair.amara.api.teams.getMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `object` | No | — |
+| `user` | `object \| string` | No | — |
 | `role` | `string` | No | — |
 | `languages_managed` | `string[]` | No | — |
 | `resource_uri` | `string` | No | — |
@@ -504,10 +494,10 @@ await corsair.amara.api.teams.getProject({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `slug` | `string` | No | — |
-| `description` | `string` | No | — |
-| `guidelines` | `string` | No | — |
-| `created` | `string` | No | — |
-| `modified` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `guidelines` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
 | `workflow_enabled` | `boolean` | No | — |
 | `resource_uri` | `string` | No | — |
 
@@ -545,10 +535,10 @@ await corsair.amara.api.teams.getTask({});
 | `language` | `string` | No | — |
 | `type` | `string` | No | — |
 | `priority` | `number` | No | — |
-| `assignee` | `object` | No | — |
-| `completed` | `string \| boolean` | No | — |
-| `created` | `string` | No | — |
-| `modified` | `string` | No | — |
+| `assignee` | `object \| string \| null` | No | — |
+| `completed` | `string \| boolean \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
 | `resource_uri` | `string` | No | — |
 
 <AccordionGroup>
@@ -570,7 +560,7 @@ await corsair.amara.api.teams.getTask({});
   created_by?: string | null,
   is_partner?: boolean,
   activity_uri?: string
-} | string
+} | string | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1013,7 +1003,7 @@ await corsair.amara.api.teams.updateMember({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `user` | `object` | No | — |
+| `user` | `object \| string` | No | — |
 | `role` | `string` | No | — |
 | `languages_managed` | `string[]` | No | — |
 | `resource_uri` | `string` | No | — |
@@ -1076,10 +1066,10 @@ await corsair.amara.api.teams.updateProject({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `slug` | `string` | No | — |
-| `description` | `string` | No | — |
-| `guidelines` | `string` | No | — |
-| `created` | `string` | No | — |
-| `modified` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `guidelines` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `modified` | `string \| null` | No | — |
 | `workflow_enabled` | `boolean` | No | — |
 | `resource_uri` | `string` | No | — |
 
@@ -1185,18 +1175,18 @@ await corsair.amara.api.users.getData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | No | — |
+| `username` | `string \| null` | No | — |
 | `id` | `string` | No | — |
-| `full_name` | `string` | No | — |
-| `first_name` | `string` | No | — |
-| `last_name` | `string` | No | — |
-| `biography` | `string` | No | — |
-| `homepage` | `string` | No | — |
-| `avatar` | `string` | No | — |
+| `full_name` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `biography` | `string \| null` | No | — |
+| `homepage` | `string \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
 | `languages` | `string[]` | No | — |
 | `num_videos` | `number` | No | — |
 | `resource_uri` | `string` | No | — |
-| `created_by` | `string` | No | — |
+| `created_by` | `string \| null` | No | — |
 | `is_partner` | `boolean` | No | — |
 | `activity_uri` | `string` | No | — |
 
@@ -1233,8 +1223,8 @@ await corsair.amara.api.videos.addSubtitleNote({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `string` | No | — |
-| `created` | `string` | No | — |
-| `user` | `object` | No | — |
+| `created` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -1244,7 +1234,7 @@ await corsair.amara.api.videos.addSubtitleNote({});
   id?: string,
   username?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1279,14 +1269,14 @@ await corsair.amara.api.videos.addUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `created` | `string` | No | — |
+| `created` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `primary` | `boolean` | No | — |
 | `original` | `boolean` | No | — |
 | `id` | `number` | No | — |
 | `resource_uri` | `string` | No | — |
-| `videoid` | `string` | No | — |
-| `type` | `string` | No | — |
+| `videoid` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
 
 
 
@@ -1313,20 +1303,10 @@ await corsair.amara.api.videos.create({});
 | `team` | `string` | No | — |
 | `project` | `string` | No | — |
 | `duration` | `number` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `thumbnail` | `string` | No | — |
 | `description` | `string` | No | — |
 | `primary_audio_language_code` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1335,17 +1315,17 @@ await corsair.amara.api.videos.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `video_type` | `string` | No | — |
-| `primary_audio_language_code` | `string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `duration` | `number` | No | — |
-| `thumbnail` | `string` | No | — |
-| `created` | `string` | No | — |
-| `team` | `string` | No | — |
-| `project` | `string` | No | — |
+| `video_type` | `string \| null` | No | — |
+| `primary_audio_language_code` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `team` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
 | `all_urls` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `languages` | `object[]` | No | — |
 | `activity_uri` | `string` | No | — |
 | `urls_uri` | `string` | No | — |
@@ -1353,14 +1333,6 @@ await corsair.amara.api.videos.create({});
 | `resource_uri` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="languages full type">
 
 ```ts
@@ -1399,11 +1371,11 @@ await corsair.amara.api.videos.createSubtitleLanguage({});
 | `video_id` | `string` | Yes | — |
 | `language_code` | `string` | Yes | — |
 | `is_primary_audio_language` | `boolean` | No | — |
-| `soft_limit_cpl` | `number` | No | — |
-| `soft_limit_cps` | `number` | No | — |
-| `soft_limit_lines` | `number` | No | — |
-| `soft_limit_max_duration` | `number` | No | — |
-| `soft_limit_min_duration` | `number` | No | — |
+| `soft_limit_cpl` | `number \| null` | No | — |
+| `soft_limit_cps` | `number \| null` | No | — |
+| `soft_limit_lines` | `number \| null` | No | — |
+| `soft_limit_max_duration` | `number \| null` | No | — |
+| `soft_limit_min_duration` | `number \| null` | No | — |
 | `subtitles_complete` | `boolean` | No | — |
 
 
@@ -1412,20 +1384,20 @@ await corsair.amara.api.videos.createSubtitleLanguage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `created` | `string` | No | — |
+| `created` | `string \| null` | No | — |
 | `language_code` | `string` | No | — |
 | `is_primary_audio_language` | `boolean` | No | — |
 | `is_rtl` | `boolean` | No | — |
-| `soft_limit_cpl` | `number` | No | — |
-| `soft_limit_cps` | `number` | No | — |
-| `soft_limit_lines` | `number` | No | — |
-| `soft_limit_max_duration` | `number` | No | — |
-| `soft_limit_min_duration` | `number` | No | — |
+| `soft_limit_cpl` | `number \| null` | No | — |
+| `soft_limit_cps` | `number \| null` | No | — |
+| `soft_limit_lines` | `number \| null` | No | — |
+| `soft_limit_max_duration` | `number \| null` | No | — |
+| `soft_limit_min_duration` | `number \| null` | No | — |
 | `published` | `boolean` | No | — |
-| `name` | `string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `name` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `subtitle_count` | `number` | No | — |
 | `subtitles_complete` | `boolean` | No | — |
 | `versions` | `object[]` | No | — |
@@ -1433,14 +1405,6 @@ await corsair.amara.api.videos.createSubtitleLanguage({});
 | `resource_uri` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="versions full type">
 
 ```ts
@@ -1482,21 +1446,11 @@ await corsair.amara.api.videos.createSubtitles({});
 | `language_code` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `action` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `subtitles` | `string \| any[]` | No | — |
 | `sub_format` | `string` | No | — |
 | `description` | `string` | No | — |
 | `subtitles_url` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1504,20 +1458,20 @@ await corsair.amara.api.videos.createSubtitles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version_number` | `number` | No | — |
-| `sub_format` | `string` | No | — |
-| `subtitles` | `object` | No | — |
-| `author` | `object` | No | — |
-| `created` | `string` | No | — |
-| `description` | `string` | No | — |
+| `version_number` | `number \| null` | No | — |
+| `sub_format` | `string \| null` | No | — |
+| `subtitles` | `object[] \| string \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `language` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `notes_uri` | `string` | No | — |
 | `resource_uri` | `string` | No | — |
 | `site_uri` | `string` | No | — |
-| `title` | `string` | No | — |
-| `video_description` | `string` | No | — |
-| `video_title` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `video_description` | `string \| null` | No | — |
+| `video_title` | `string \| null` | No | — |
 | `actions_uri` | `string` | No | — |
 
 <AccordionGroup>
@@ -1528,10 +1482,9 @@ await corsair.amara.api.videos.createSubtitles({});
   start?: number,
   end?: number,
   text?: string,
-  meta?: {
-  },
+  meta?: Record<string, any>,
   position?: number
-}[] | string
+}[] | string | null
 ```
 </Accordion>
 
@@ -1542,7 +1495,7 @@ await corsair.amara.api.videos.createSubtitles({});
   id?: string,
   username?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -1553,14 +1506,6 @@ await corsair.amara.api.videos.createSubtitles({});
   code?: string,
   dir?: string | null,
   name?: string
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1628,20 +1573,20 @@ await corsair.amara.api.videos.fetchSubtitlesData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `version_number` | `number` | No | — |
-| `sub_format` | `string` | No | — |
-| `subtitles` | `object` | No | — |
-| `author` | `object` | No | — |
-| `created` | `string` | No | — |
-| `description` | `string` | No | — |
+| `version_number` | `number \| null` | No | — |
+| `sub_format` | `string \| null` | No | — |
+| `subtitles` | `object[] \| string \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `language` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `notes_uri` | `string` | No | — |
 | `resource_uri` | `string` | No | — |
 | `site_uri` | `string` | No | — |
-| `title` | `string` | No | — |
-| `video_description` | `string` | No | — |
-| `video_title` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `video_description` | `string \| null` | No | — |
+| `video_title` | `string \| null` | No | — |
 | `actions_uri` | `string` | No | — |
 
 <AccordionGroup>
@@ -1652,10 +1597,9 @@ await corsair.amara.api.videos.fetchSubtitlesData({});
   start?: number,
   end?: number,
   text?: string,
-  meta?: {
-  },
+  meta?: Record<string, any>,
   position?: number
-}[] | string
+}[] | string | null
 ```
 </Accordion>
 
@@ -1666,7 +1610,7 @@ await corsair.amara.api.videos.fetchSubtitlesData({});
   id?: string,
   username?: string,
   uri?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -1677,14 +1621,6 @@ await corsair.amara.api.videos.fetchSubtitlesData({});
   code?: string,
   dir?: string | null,
   name?: string
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1719,20 +1655,20 @@ await corsair.amara.api.videos.getSubtitleLanguageDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `created` | `string` | No | — |
+| `created` | `string \| null` | No | — |
 | `language_code` | `string` | No | — |
 | `is_primary_audio_language` | `boolean` | No | — |
 | `is_rtl` | `boolean` | No | — |
-| `soft_limit_cpl` | `number` | No | — |
-| `soft_limit_cps` | `number` | No | — |
-| `soft_limit_lines` | `number` | No | — |
-| `soft_limit_max_duration` | `number` | No | — |
-| `soft_limit_min_duration` | `number` | No | — |
+| `soft_limit_cpl` | `number \| null` | No | — |
+| `soft_limit_cps` | `number \| null` | No | — |
+| `soft_limit_lines` | `number \| null` | No | — |
+| `soft_limit_max_duration` | `number \| null` | No | — |
+| `soft_limit_min_duration` | `number \| null` | No | — |
 | `published` | `boolean` | No | — |
-| `name` | `string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `name` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `subtitle_count` | `number` | No | — |
 | `subtitles_complete` | `boolean` | No | — |
 | `versions` | `object[]` | No | — |
@@ -1740,14 +1676,6 @@ await corsair.amara.api.videos.getSubtitleLanguageDetails({});
 | `resource_uri` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="versions full type">
 
 ```ts
@@ -1794,14 +1722,14 @@ await corsair.amara.api.videos.getUrl({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `created` | `string` | No | — |
+| `created` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `primary` | `boolean` | No | — |
 | `original` | `boolean` | No | — |
 | `id` | `number` | No | — |
 | `resource_uri` | `string` | No | — |
-| `videoid` | `string` | No | — |
-| `type` | `string` | No | — |
+| `videoid` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
 
 
 
@@ -1863,8 +1791,7 @@ await corsair.amara.api.videos.getUrlDetails({});
   team?: string | null,
   project?: string | null,
   all_urls?: string[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   languages?: {
     code?: string,
     name?: string,
@@ -1951,8 +1878,7 @@ await corsair.amara.api.videos.list({});
   team?: string | null,
   project?: string | null,
   all_urls?: string[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   languages?: {
     code?: string,
     name?: string,
@@ -2145,8 +2071,7 @@ await corsair.amara.api.videos.listSubtitleLanguages({});
   name?: string | null,
   title?: string | null,
   description?: string | null,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   subtitle_count?: number,
   subtitles_complete?: boolean,
   versions?: {
@@ -2324,14 +2249,14 @@ await corsair.amara.api.videos.makeUrlPrimary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `created` | `string` | No | — |
+| `created` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `primary` | `boolean` | No | — |
 | `original` | `boolean` | No | — |
 | `id` | `number` | No | — |
 | `resource_uri` | `string` | No | — |
-| `videoid` | `string` | No | — |
-| `type` | `string` | No | — |
+| `videoid` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
 
 
 
@@ -2389,21 +2314,11 @@ await corsair.amara.api.videos.update({});
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
 | `duration` | `number` | No | — |
-| `team` | `string` | No | — |
-| `project` | `string` | No | — |
+| `team` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
 | `thumbnail` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `primary_audio_language_code` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2412,17 +2327,17 @@ await corsair.amara.api.videos.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `video_type` | `string` | No | — |
-| `primary_audio_language_code` | `string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `duration` | `number` | No | — |
-| `thumbnail` | `string` | No | — |
-| `created` | `string` | No | — |
-| `team` | `string` | No | — |
-| `project` | `string` | No | — |
+| `video_type` | `string \| null` | No | — |
+| `primary_audio_language_code` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `team` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
 | `all_urls` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `languages` | `object[]` | No | — |
 | `activity_uri` | `string` | No | — |
 | `urls_uri` | `string` | No | — |
@@ -2430,14 +2345,6 @@ await corsair.amara.api.videos.update({});
 | `resource_uri` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="languages full type">
 
 ```ts
@@ -2476,11 +2383,11 @@ await corsair.amara.api.videos.updateSubtitleLanguage({});
 | `video_id` | `string` | Yes | — |
 | `language_code` | `string` | Yes | — |
 | `is_primary_audio_language` | `boolean` | No | — |
-| `soft_limit_cpl` | `number` | No | — |
-| `soft_limit_cps` | `number` | No | — |
-| `soft_limit_lines` | `number` | No | — |
-| `soft_limit_max_duration` | `number` | No | — |
-| `soft_limit_min_duration` | `number` | No | — |
+| `soft_limit_cpl` | `number \| null` | No | — |
+| `soft_limit_cps` | `number \| null` | No | — |
+| `soft_limit_lines` | `number \| null` | No | — |
+| `soft_limit_max_duration` | `number \| null` | No | — |
+| `soft_limit_min_duration` | `number \| null` | No | — |
 | `subtitles_complete` | `boolean` | No | — |
 
 
@@ -2489,20 +2396,20 @@ await corsair.amara.api.videos.updateSubtitleLanguage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `created` | `string` | No | — |
+| `created` | `string \| null` | No | — |
 | `language_code` | `string` | No | — |
 | `is_primary_audio_language` | `boolean` | No | — |
 | `is_rtl` | `boolean` | No | — |
-| `soft_limit_cpl` | `number` | No | — |
-| `soft_limit_cps` | `number` | No | — |
-| `soft_limit_lines` | `number` | No | — |
-| `soft_limit_max_duration` | `number` | No | — |
-| `soft_limit_min_duration` | `number` | No | — |
+| `soft_limit_cpl` | `number \| null` | No | — |
+| `soft_limit_cps` | `number \| null` | No | — |
+| `soft_limit_lines` | `number \| null` | No | — |
+| `soft_limit_max_duration` | `number \| null` | No | — |
+| `soft_limit_min_duration` | `number \| null` | No | — |
 | `published` | `boolean` | No | — |
-| `name` | `string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `name` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `subtitle_count` | `number` | No | — |
 | `subtitles_complete` | `boolean` | No | — |
 | `versions` | `object[]` | No | — |
@@ -2510,14 +2417,6 @@ await corsair.amara.api.videos.updateSubtitleLanguage({});
 | `resource_uri` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="versions full type">
 
 ```ts
@@ -2564,17 +2463,17 @@ await corsair.amara.api.videos.viewDetails({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `video_type` | `string` | No | — |
-| `primary_audio_language_code` | `string` | No | — |
-| `title` | `string` | No | — |
-| `description` | `string` | No | — |
-| `duration` | `number` | No | — |
-| `thumbnail` | `string` | No | — |
-| `created` | `string` | No | — |
-| `team` | `string` | No | — |
-| `project` | `string` | No | — |
+| `video_type` | `string \| null` | No | — |
+| `primary_audio_language_code` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `team` | `string \| null` | No | — |
+| `project` | `string \| null` | No | — |
 | `all_urls` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `languages` | `object[]` | No | — |
 | `activity_uri` | `string` | No | — |
 | `urls_uri` | `string` | No | — |
@@ -2582,14 +2481,6 @@ await corsair.amara.api.videos.viewDetails({});
 | `resource_uri` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="languages full type">
 
 ```ts

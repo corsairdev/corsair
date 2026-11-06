@@ -84,6 +84,7 @@ const rows = await corsair.googlemeet.db.recordings.search({
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `startTime` | `string` | equals, contains, startsWith, endsWith, in |
 | `endTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
@@ -110,6 +111,7 @@ const rows = await corsair.googlemeet.db.smartNotes.search({
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `startTime` | `string` | equals, contains, startsWith, endsWith, in |
 | `endTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
@@ -162,6 +164,7 @@ const rows = await corsair.googlemeet.db.transcripts.search({
 | `name` | `string` | equals, contains, startsWith, endsWith, in |
 | `startTime` | `string` | equals, contains, startsWith, endsWith, in |
 | `endTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
 | `createdAt` | `date` | equals, before, after, between |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._

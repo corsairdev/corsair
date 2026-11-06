@@ -1,6 +1,6 @@
 ---
 title: API
-description: "API reference for CurrentsApi: every `currentsapi.api.*` operation with input and output types."
+description: "API reference for Currents API: every `currentsapi.api.*` operation with input and output types."
 ---
 
 Every `currentsapi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
@@ -59,19 +59,9 @@ await corsair.currentsapi.api.languages.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `languages` | `object` | Yes | — |
+| `languages` | `Record<string, string>` | Yes | — |
 | `description` | `string` | No | — |
 | `status` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="languages full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -95,7 +85,7 @@ await corsair.currentsapi.api.latest.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `language` | `string` | Yes | — |
+| `language` | `string` | No | Defaults to "en". |
 | `category` | `string` | No | — |
 | `country` | `string` | No | — |
 | `page_number` | `number` | No | — |
@@ -164,19 +154,9 @@ await corsair.currentsapi.api.regions.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `regions` | `object` | Yes | — |
+| `regions` | `Record<string, string>` | Yes | — |
 | `description` | `string` | No | — |
 | `status` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="regions full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -202,7 +182,7 @@ await corsair.currentsapi.api.search.get({});
 |------|------|----------|-------------|
 | `keywords` | `string` | No | — |
 | `query` | `string` | No | — |
-| `language` | `string` | Yes | — |
+| `language` | `string` | No | Defaults to "en". |
 | `category` | `string` | No | — |
 | `country` | `string` | No | — |
 | `start_date` | `string` | No | — |

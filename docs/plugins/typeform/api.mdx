@@ -50,8 +50,7 @@ await corsair.typeform.api.forms.create({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     fields?: any[],
@@ -120,10 +119,8 @@ await corsair.typeform.api.forms.create({});
   show_key_hint_on_choices?: boolean,
   redirect_after_submit_url?: string,
   show_number_of_submissions?: boolean,
-  capabilities?: {
-  },
-  notifications?: {
-  }
+  capabilities?: Record<string, any>,
+  notifications?: Record<string, any>
 }
 ```
 </Accordion>
@@ -147,8 +144,7 @@ await corsair.typeform.api.forms.create({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     button_text?: string,
@@ -169,8 +165,7 @@ await corsair.typeform.api.forms.create({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     button_text?: string,
@@ -201,15 +196,15 @@ await corsair.typeform.api.forms.create({});
 | `theme` | `object` | No | — |
 | `hidden` | `string[]` | No | — |
 | `settings` | `object` | No | — |
-| `variables` | `object` | No | — |
+| `variables` | `Record<string, any>` | No | — |
 | `workspace` | `object` | No | — |
 | `welcome_screens` | `object[]` | No | — |
 | `thankyou_screens` | `object[]` | No | — |
-| `_links` | `object` | No | — |
-| `cui_settings` | `object` | No | — |
-| `captcha` | `object` | No | — |
-| `meta` | `object` | No | — |
-| `links` | `object` | No | — |
+| `_links` | `Record<string, any>` | No | — |
+| `cui_settings` | `Record<string, any>` | No | — |
+| `captcha` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
+| `links` | `Record<string, any>` | No | — |
 | `language` | `string` | No | — |
 | `duplicate_prevention` | `boolean` | No | — |
 
@@ -226,8 +221,7 @@ await corsair.typeform.api.forms.create({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     fields?: any[],
@@ -296,18 +290,8 @@ await corsair.typeform.api.forms.create({});
   show_key_hint_on_choices?: boolean,
   redirect_after_submit_url?: string,
   show_number_of_submissions?: boolean,
-  capabilities?: {
-  },
-  notifications?: {
-  }
-}
-```
-</Accordion>
-
-<Accordion title="variables full type">
-
-```ts
-{
+  capabilities?: Record<string, any>,
+  notifications?: Record<string, any>
 }
 ```
 </Accordion>
@@ -331,8 +315,7 @@ await corsair.typeform.api.forms.create({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     button_text?: string,
@@ -353,8 +336,7 @@ await corsair.typeform.api.forms.create({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     button_text?: string,
@@ -365,46 +347,6 @@ await corsair.typeform.api.forms.create({});
     share_icons?: boolean
   }
 }[]
-```
-</Accordion>
-
-<Accordion title="_links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="cui_settings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="captcha full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -472,15 +414,15 @@ await corsair.typeform.api.forms.get({});
 | `theme` | `object` | No | — |
 | `hidden` | `string[]` | No | — |
 | `settings` | `object` | No | — |
-| `variables` | `object` | No | — |
+| `variables` | `Record<string, any>` | No | — |
 | `workspace` | `object` | No | — |
 | `welcome_screens` | `object[]` | No | — |
 | `thankyou_screens` | `object[]` | No | — |
-| `_links` | `object` | No | — |
-| `cui_settings` | `object` | No | — |
-| `captcha` | `object` | No | — |
-| `meta` | `object` | No | — |
-| `links` | `object` | No | — |
+| `_links` | `Record<string, any>` | No | — |
+| `cui_settings` | `Record<string, any>` | No | — |
+| `captcha` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
+| `links` | `Record<string, any>` | No | — |
 | `language` | `string` | No | — |
 | `duplicate_prevention` | `boolean` | No | — |
 
@@ -497,8 +439,7 @@ await corsair.typeform.api.forms.get({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     fields?: any[],
@@ -567,18 +508,8 @@ await corsair.typeform.api.forms.get({});
   show_key_hint_on_choices?: boolean,
   redirect_after_submit_url?: string,
   show_number_of_submissions?: boolean,
-  capabilities?: {
-  },
-  notifications?: {
-  }
-}
-```
-</Accordion>
-
-<Accordion title="variables full type">
-
-```ts
-{
+  capabilities?: Record<string, any>,
+  notifications?: Record<string, any>
 }
 ```
 </Accordion>
@@ -602,8 +533,7 @@ await corsair.typeform.api.forms.get({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     button_text?: string,
@@ -624,8 +554,7 @@ await corsair.typeform.api.forms.get({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     button_text?: string,
@@ -636,46 +565,6 @@ await corsair.typeform.api.forms.get({});
     share_icons?: boolean
   }
 }[]
-```
-</Accordion>
-
-<Accordion title="_links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="cui_settings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="captcha full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -763,8 +652,7 @@ await corsair.typeform.api.forms.list({});
   theme?: {
     href?: string
   },
-  _links?: {
-  }
+  _links?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -838,7 +726,7 @@ await corsair.typeform.api.forms.update({});
 | `theme` | `object` | No | — |
 | `hidden` | `string[]` | No | — |
 | `settings` | `object` | No | — |
-| `variables` | `object` | No | — |
+| `variables` | `Record<string, any>` | No | — |
 | `workspace` | `object` | No | — |
 | `welcome_screens` | `object[]` | No | — |
 | `thankyou_screens` | `object[]` | No | — |
@@ -856,8 +744,7 @@ await corsair.typeform.api.forms.update({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     fields?: any[],
@@ -926,18 +813,8 @@ await corsair.typeform.api.forms.update({});
   show_key_hint_on_choices?: boolean,
   redirect_after_submit_url?: string,
   show_number_of_submissions?: boolean,
-  capabilities?: {
-  },
-  notifications?: {
-  }
-}
-```
-</Accordion>
-
-<Accordion title="variables full type">
-
-```ts
-{
+  capabilities?: Record<string, any>,
+  notifications?: Record<string, any>
 }
 ```
 </Accordion>
@@ -961,8 +838,7 @@ await corsair.typeform.api.forms.update({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     button_text?: string,
@@ -983,8 +859,7 @@ await corsair.typeform.api.forms.update({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     button_text?: string,
@@ -1015,15 +890,15 @@ await corsair.typeform.api.forms.update({});
 | `theme` | `object` | No | — |
 | `hidden` | `string[]` | No | — |
 | `settings` | `object` | No | — |
-| `variables` | `object` | No | — |
+| `variables` | `Record<string, any>` | No | — |
 | `workspace` | `object` | No | — |
 | `welcome_screens` | `object[]` | No | — |
 | `thankyou_screens` | `object[]` | No | — |
-| `_links` | `object` | No | — |
-| `cui_settings` | `object` | No | — |
-| `captcha` | `object` | No | — |
-| `meta` | `object` | No | — |
-| `links` | `object` | No | — |
+| `_links` | `Record<string, any>` | No | — |
+| `cui_settings` | `Record<string, any>` | No | — |
+| `captcha` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
+| `links` | `Record<string, any>` | No | — |
 | `language` | `string` | No | — |
 | `duplicate_prevention` | `boolean` | No | — |
 
@@ -1040,8 +915,7 @@ await corsair.typeform.api.forms.update({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     fields?: any[],
@@ -1110,18 +984,8 @@ await corsair.typeform.api.forms.update({});
   show_key_hint_on_choices?: boolean,
   redirect_after_submit_url?: string,
   show_number_of_submissions?: boolean,
-  capabilities?: {
-  },
-  notifications?: {
-  }
-}
-```
-</Accordion>
-
-<Accordion title="variables full type">
-
-```ts
-{
+  capabilities?: Record<string, any>,
+  notifications?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1145,8 +1009,7 @@ await corsair.typeform.api.forms.update({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     button_text?: string,
@@ -1167,8 +1030,7 @@ await corsair.typeform.api.forms.update({});
     href?: string,
     type?: string,
     scale?: number,
-    properties?: {
-    }
+    properties?: Record<string, any>
   },
   properties?: {
     button_text?: string,
@@ -1179,46 +1041,6 @@ await corsair.typeform.api.forms.update({});
     share_icons?: boolean
   }
 }[]
-```
-</Accordion>
-
-<Accordion title="_links full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="cui_settings full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="captcha full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1502,17 +1324,7 @@ await corsair.typeform.api.me.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `owner_info` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="owner_info full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `owner_info` | `Record<string, any>` | No | — |
 
 
 
@@ -1653,10 +1465,8 @@ await corsair.typeform.api.responses.list({});
       ref?: string,
       type?: string
     },
-    payment?: {
-    },
-    multi_format?: {
-    }
+    payment?: Record<string, any>,
+    multi_format?: Record<string, any>
   }[],
   calculated?: {
     score?: number
@@ -1668,8 +1478,7 @@ await corsair.typeform.api.responses.list({});
     network_id?: string,
     user_agent?: string
   },
-  hidden?: {
-  },
+  hidden?: Record<string, string>,
   variables?: {
     key?: string,
     type?: string,
@@ -1761,7 +1570,7 @@ await corsair.typeform.api.themes.create({});
 | `colors` | `object` | No | — |
 | `background` | `object` | No | — |
 | `fields` | `object` | No | — |
-| `screens` | `object` | No | — |
+| `screens` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="colors full type">
@@ -1793,14 +1602,6 @@ await corsair.typeform.api.themes.create({});
 {
   alignment?: left | center,
   font_size?: small | medium | large
-}
-```
-</Accordion>
-
-<Accordion title="screens full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1868,7 +1669,7 @@ await corsair.typeform.api.themes.get({});
 | `colors` | `object` | No | — |
 | `background` | `object` | No | — |
 | `fields` | `object` | No | — |
-| `screens` | `object` | No | — |
+| `screens` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="colors full type">
@@ -1900,14 +1701,6 @@ await corsair.typeform.api.themes.get({});
 {
   alignment?: left | center,
   font_size?: small | medium | large
-}
-```
-</Accordion>
-
-<Accordion title="screens full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1972,8 +1765,7 @@ await corsair.typeform.api.themes.list({});
     alignment?: left | center,
     font_size?: small | medium | large
   },
-  screens?: {
-  }
+  screens?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2069,7 +1861,7 @@ await corsair.typeform.api.themes.patch({});
 | `colors` | `object` | No | — |
 | `background` | `object` | No | — |
 | `fields` | `object` | No | — |
-| `screens` | `object` | No | — |
+| `screens` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="colors full type">
@@ -2101,14 +1893,6 @@ await corsair.typeform.api.themes.patch({});
 {
   alignment?: left | center,
   font_size?: small | medium | large
-}
-```
-</Accordion>
-
-<Accordion title="screens full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2204,7 +1988,7 @@ await corsair.typeform.api.themes.update({});
 | `colors` | `object` | No | — |
 | `background` | `object` | No | — |
 | `fields` | `object` | No | — |
-| `screens` | `object` | No | — |
+| `screens` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="colors full type">
@@ -2236,14 +2020,6 @@ await corsair.typeform.api.themes.update({});
 {
   alignment?: left | center,
   font_size?: small | medium | large
-}
-```
-</Accordion>
-
-<Accordion title="screens full type">
-
-```ts
-{
 }
 ```
 </Accordion>

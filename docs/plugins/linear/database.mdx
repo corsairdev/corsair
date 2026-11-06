@@ -60,6 +60,7 @@ const rows = await corsair.linear.db.issues.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `title` | `string` | equals, contains, startsWith, endsWith, in |
 | `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `priority` | `number` | equals, gt, gte, lt, lte, in |
 | `estimate` | `number` | equals, gt, gte, lt, lte, in |
 | `sortOrder` | `number` | equals, gt, gte, lt, lte, in |
 | `number` | `number` | equals, gt, gte, lt, lte, in |
@@ -108,6 +109,7 @@ const rows = await corsair.linear.db.projects.search({
 | `description` | `string` | equals, contains, startsWith, endsWith, in |
 | `icon` | `string` | equals, contains, startsWith, endsWith, in |
 | `color` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
 | `priority` | `number` | equals, gt, gte, lt, lte, in |
 | `sortOrder` | `number` | equals, gt, gte, lt, lte, in |
 | `startDate` | `date` | equals, before, after, between |

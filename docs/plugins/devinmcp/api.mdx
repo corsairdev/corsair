@@ -38,17 +38,7 @@ await corsair.devinmcp.api.session.create({});
 | `snapshot_id` | `string` | No | — |
 | `idempotent` | `boolean` | No | — |
 | `unlisted` | `boolean` | No | — |
-| `structured_output_schema` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="structured_output_schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `structured_output_schema` | `Record<string, any>` | No | — |
 
 
 
@@ -65,12 +55,12 @@ await corsair.devinmcp.api.session.create({});
 | `updated_at` | `number` | Yes | — |
 | `acus_consumed` | `number` | Yes | — |
 | `pull_requests` | `object[]` | Yes | — |
-| `title` | `string` | No | — |
-| `user_id` | `string` | No | — |
-| `status_detail` | `string` | No | — |
-| `structured_output` | `object` | No | — |
-| `playbook_id` | `string` | No | — |
-| `parent_session_id` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `status_detail` | `string \| null` | No | — |
+| `structured_output` | `Record<string, any> \| null` | No | — |
+| `playbook_id` | `string \| null` | No | — |
+| `parent_session_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="pull_requests full type">
@@ -79,14 +69,6 @@ await corsair.devinmcp.api.session.create({});
 {
   url?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="structured_output full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -129,12 +111,12 @@ await corsair.devinmcp.api.session.get({});
 | `updated_at` | `number` | Yes | — |
 | `acus_consumed` | `number` | Yes | — |
 | `pull_requests` | `object[]` | Yes | — |
-| `title` | `string` | No | — |
-| `user_id` | `string` | No | — |
-| `status_detail` | `string` | No | — |
-| `structured_output` | `object` | No | — |
-| `playbook_id` | `string` | No | — |
-| `parent_session_id` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `status_detail` | `string \| null` | No | — |
+| `structured_output` | `Record<string, any> \| null` | No | — |
+| `playbook_id` | `string \| null` | No | — |
+| `parent_session_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="pull_requests full type">
@@ -143,14 +125,6 @@ await corsair.devinmcp.api.session.get({});
 {
   url?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="structured_output full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -189,9 +163,9 @@ await corsair.devinmcp.api.session.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
-| `end_cursor` | `string` | No | — |
+| `end_cursor` | `string \| null` | No | — |
 | `has_next_page` | `boolean` | No | — |
-| `total` | `number` | No | — |
+| `total` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -212,8 +186,7 @@ await corsair.devinmcp.api.session.list({});
   title?: string | null,
   user_id?: string | null,
   status_detail?: string | null,
-  structured_output?: {
-  } | null,
+  structured_output?: Record<string, any> | null,
   playbook_id?: string | null,
   parent_session_id?: string | null
 }[]
@@ -260,12 +233,12 @@ await corsair.devinmcp.api.session.sendMessage({});
 | `updated_at` | `number` | Yes | — |
 | `acus_consumed` | `number` | Yes | — |
 | `pull_requests` | `object[]` | Yes | — |
-| `title` | `string` | No | — |
-| `user_id` | `string` | No | — |
-| `status_detail` | `string` | No | — |
-| `structured_output` | `object` | No | — |
-| `playbook_id` | `string` | No | — |
-| `parent_session_id` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `status_detail` | `string \| null` | No | — |
+| `structured_output` | `Record<string, any> \| null` | No | — |
+| `playbook_id` | `string \| null` | No | — |
+| `parent_session_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="pull_requests full type">
@@ -274,14 +247,6 @@ await corsair.devinmcp.api.session.sendMessage({});
 {
   url?: string
 }[]
-```
-</Accordion>
-
-<Accordion title="structured_output full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>

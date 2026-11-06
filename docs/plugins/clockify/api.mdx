@@ -128,9 +128,9 @@ await corsair.clockify.api.timeEntries.create({});
 | `id` | `string` | Yes | — |
 | `description` | `string` | Yes | — |
 | `workspaceId` | `string` | Yes | — |
-| `projectId` | `string` | No | — |
-| `taskId` | `string` | No | — |
-| `timeInterval` | `object` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `taskId` | `string \| null` | No | — |
+| `timeInterval` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="timeInterval full type">
@@ -140,7 +140,7 @@ await corsair.clockify.api.timeEntries.create({});
   start: string,
   end?: string | null,
   duration?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -186,7 +186,7 @@ await corsair.clockify.api.timeEntries.list({});
   workspaceId: string,
   projectId?: string | null,
   taskId?: string | null,
-  timeInterval?: {
+  timeInterval: {
     start: string,
     end?: string | null,
     duration?: string | null

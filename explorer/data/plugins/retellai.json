@@ -64,7 +64,7 @@
           {
             "key": "end_timestamp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "direction",
@@ -89,7 +89,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "transcript",
@@ -104,12 +104,12 @@
           {
             "key": "transcript_with_tool_calls",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "scrubbed_transcript_with_tool_calls",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "recording_url",
@@ -119,12 +119,12 @@
           {
             "key": "call_analysis",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "retell_llm_dynamic_variables",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -140,7 +140,7 @@
           {
             "key": "filterCriteria",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "limit",
@@ -170,12 +170,12 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ call_id: string, call_type?: string, agent_id?: string, call_status?: string, start_timestamp?: number, end_timestamp?: number | null, direction?: string, from_number?: string, to_number?: string, disconnection_reason?: string, metadata?: {} }[]"
+            "type": "{ call_id: string, call_type?: string, agent_id?: string, call_status?: string, start_timestamp?: number, end_timestamp?: number | null, direction?: string, from_number?: string, to_number?: string, disconnection_reason?: string, metadata?: Record<string, any> }[]"
           },
           {
             "key": "pagination_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_more",
@@ -231,12 +231,12 @@
           {
             "key": "end_timestamp",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "transcript",
@@ -246,12 +246,12 @@
           {
             "key": "message_with_tool_calls",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "chat_analysis",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -267,7 +267,7 @@
           {
             "key": "filterCriteria",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "limit",
@@ -297,12 +297,12 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ chat_id: string, agent_id?: string, chat_status?: string, start_timestamp?: number, end_timestamp?: number | null, metadata?: {} }[]"
+            "type": "{ chat_id: string, agent_id?: string, chat_status?: string, start_timestamp?: number, end_timestamp?: number | null, metadata?: Record<string, any> }[]"
           },
           {
             "key": "pagination_key",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "has_more",

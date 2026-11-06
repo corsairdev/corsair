@@ -76,7 +76,7 @@ await corsair.mailcheck.api.email.verify({});
 | `smtpExists` | `boolean` | Yes | — |
 | `isNotDisposable` | `boolean` | Yes | — |
 | `isNotSmtpCatchAll` | `boolean` | Yes | — |
-| `gravatar` | `object` | No | — |
+| `gravatar` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="gravatar full type">
@@ -90,7 +90,7 @@ await corsair.mailcheck.api.email.verify({});
       domain: string
     }[]
   }[]
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

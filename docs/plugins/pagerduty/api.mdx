@@ -350,10 +350,10 @@ await corsair.pagerduty.api.incidents.list({});
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `statuses` | `triggered \| acknowledged \| resolved[]` | No | — |
+| `statuses` | `(triggered \| acknowledged \| resolved)[]` | No | — |
 | `since` | `string` | No | — |
 | `until` | `string` | No | — |
-| `urgencies` | `high \| low[]` | No | — |
+| `urgencies` | `(high \| low)[]` | No | — |
 | `service_ids` | `string[]` | No | — |
 | `team_ids` | `string[]` | No | — |
 | `sort_by` | `string` | No | — |
@@ -368,7 +368,7 @@ await corsair.pagerduty.api.incidents.list({});
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `more` | `boolean` | No | — |
-| `total` | `number` | No | — |
+| `total` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="incidents full type">
@@ -643,7 +643,7 @@ await corsair.pagerduty.api.logEntries.list({});
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `more` | `boolean` | No | — |
-| `total` | `number` | No | — |
+| `total` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="log_entries full type">

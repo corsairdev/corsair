@@ -68,17 +68,7 @@ await corsair.salesforce.api.accounts.createAccount({});
 | `BillingState` | `string` | No | — |
 | `BillingPostalCode` | `string` | No | — |
 | `BillingCountry` | `string` | No | — |
-| `CustomFields` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="CustomFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `CustomFields` | `Record<string, any>` | No | — |
 
 
 
@@ -216,18 +206,8 @@ await corsair.salesforce.api.accounts.listAccounts({});
 |------|------|----------|-------------|
 | `totalSize` | `number` | Yes | — |
 | `done` | `boolean` | Yes | — |
-| `records` | `object[]` | Yes | — |
+| `records` | `Record<string, any>[]` | Yes | — |
 | `nextRecordsUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -287,17 +267,7 @@ await corsair.salesforce.api.accounts.retrieveAccountDataAndErrorResponses({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `objectDescribe` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="objectDescribe full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `objectDescribe` | `Record<string, any>` | No | — |
 
 
 
@@ -331,17 +301,7 @@ await corsair.salesforce.api.accounts.searchAccounts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -373,18 +333,8 @@ await corsair.salesforce.api.accounts.updateAccount({});
 | `BillingState` | `string` | No | — |
 | `BillingPostalCode` | `string` | No | — |
 | `BillingCountry` | `string` | No | — |
-| `CustomFields` | `object` | No | — |
+| `CustomFields` | `Record<string, any>` | No | — |
 | `id` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="CustomFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -424,18 +374,8 @@ await corsair.salesforce.api.accounts.updateAccountObjectById({});
 | `BillingState` | `string` | No | — |
 | `BillingPostalCode` | `string` | No | — |
 | `BillingCountry` | `string` | No | — |
-| `CustomFields` | `object` | No | — |
+| `CustomFields` | `Record<string, any>` | No | — |
 | `id` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="CustomFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -471,17 +411,7 @@ await corsair.salesforce.api.analyticsReports.getDashboard({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -506,17 +436,7 @@ await corsair.salesforce.api.analyticsReports.getReport({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -542,17 +462,7 @@ await corsair.salesforce.api.analyticsReports.getReportInstance({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -576,17 +486,7 @@ await corsair.salesforce.api.analyticsReports.listAnalyticsTemplates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `templates` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="templates full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `templates` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -611,17 +511,7 @@ await corsair.salesforce.api.analyticsReports.listDashboards({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `dashboards` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="dashboards full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `dashboards` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -653,17 +543,7 @@ await corsair.salesforce.api.analyticsReports.listEmailTemplates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `templates` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="templates full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `templates` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -688,17 +568,7 @@ await corsair.salesforce.api.analyticsReports.listReports({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `reports` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="reports full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `reports` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -725,17 +595,7 @@ await corsair.salesforce.api.analyticsReports.queryReport({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -760,17 +620,7 @@ await corsair.salesforce.api.analyticsReports.runReport({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -997,17 +847,7 @@ await corsair.salesforce.api.campaigns.listCampaigns({});
 |------|------|----------|-------------|
 | `totalSize` | `number` | Yes | — |
 | `done` | `boolean` | Yes | — |
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1099,17 +939,7 @@ await corsair.salesforce.api.campaigns.retrieveCampaignDataWithErrorHandling({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `metadata` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1173,17 +1003,7 @@ await corsair.salesforce.api.campaigns.searchCampaigns({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1281,17 +1101,7 @@ await corsair.salesforce.api.composite.compositeGraphAction({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `graphs` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="graphs full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `graphs` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1299,17 +1109,7 @@ await corsair.salesforce.api.composite.compositeGraphAction({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `graphs` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="graphs full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `graphs` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1332,17 +1132,7 @@ await corsair.salesforce.api.composite.createSobjectTree({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `sobject` | `string` | Yes | — |
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1351,17 +1141,7 @@ await corsair.salesforce.api.composite.createSobjectTree({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `hasErrors` | `boolean` | Yes | — |
-| `results` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `results` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1388,17 +1168,7 @@ await corsair.salesforce.api.composite.deleteSobjectCollections({});
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[]`
 
 
 ---
@@ -1428,17 +1198,7 @@ await corsair.salesforce.api.composite.getABatchOfRecords({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `results` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1459,17 +1219,7 @@ await corsair.salesforce.api.composite.getCompositeResources({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1495,17 +1245,7 @@ await corsair.salesforce.api.composite.getCompositeSobjects({});
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[]`
 
 
 ---
@@ -1531,17 +1271,7 @@ await corsair.salesforce.api.composite.getSobjectCollections({});
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[]`
 
 
 ---
@@ -1563,17 +1293,7 @@ await corsair.salesforce.api.composite.patchCompositeSobjects({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `allOrNone` | `boolean` | No | — |
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1603,17 +1323,7 @@ await corsair.salesforce.api.composite.postCompositeGraph({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `graphs` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="graphs full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `graphs` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1621,17 +1331,7 @@ await corsair.salesforce.api.composite.postCompositeGraph({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `graphs` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="graphs full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `graphs` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1654,31 +1354,11 @@ await corsair.salesforce.api.composite.postCompositeSobjects({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `allOrNone` | `boolean` | No | — |
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[]`
 
 
 ---
@@ -1738,17 +1418,7 @@ await corsair.salesforce.api.contacts.createContact({});
 | `Phone` | `string` | No | — |
 | `AccountId` | `string` | No | — |
 | `Title` | `string` | No | — |
-| `CustomFields` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="CustomFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `CustomFields` | `Record<string, any>` | No | — |
 
 
 
@@ -1915,18 +1585,8 @@ await corsair.salesforce.api.contacts.listContacts({});
 |------|------|----------|-------------|
 | `totalSize` | `number` | Yes | — |
 | `done` | `boolean` | Yes | — |
-| `records` | `object[]` | Yes | — |
+| `records` | `Record<string, any>[]` | Yes | — |
 | `nextRecordsUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1956,17 +1616,7 @@ await corsair.salesforce.api.contacts.queryContactsByName({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2026,17 +1676,7 @@ await corsair.salesforce.api.contacts.retrieveContactInfoWithStandardResponses({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `metadata` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | Yes | — |
 
 
 
@@ -2071,17 +1711,7 @@ await corsair.salesforce.api.contacts.searchContacts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2109,18 +1739,8 @@ await corsair.salesforce.api.contacts.updateContact({});
 | `Phone` | `string` | No | — |
 | `AccountId` | `string` | No | — |
 | `Title` | `string` | No | — |
-| `CustomFields` | `object` | No | — |
+| `CustomFields` | `Record<string, any>` | No | — |
 | `id` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="CustomFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2156,18 +1776,8 @@ await corsair.salesforce.api.contacts.updateContactById({});
 | `Phone` | `string` | No | — |
 | `AccountId` | `string` | No | — |
 | `Title` | `string` | No | — |
-| `CustomFields` | `object` | No | — |
+| `CustomFields` | `Record<string, any>` | No | — |
 | `id` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="CustomFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2263,17 +1873,7 @@ await corsair.salesforce.api.files.getFileInformation({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2302,17 +1902,7 @@ await corsair.salesforce.api.files.getFileShares({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `shares` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="shares full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `shares` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2440,17 +2030,7 @@ await corsair.salesforce.api.jobs.getJobFailedRecordResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2480,17 +2060,7 @@ await corsair.salesforce.api.jobs.getJobSuccessfulRecordResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2520,17 +2090,7 @@ await corsair.salesforce.api.jobs.getJobUnprocessedRecordResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2593,17 +2153,7 @@ await corsair.salesforce.api.jobs.getQueryJobResults({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-string | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `string \| Record<string, any>[]` | Yes | — |
 
 
 
@@ -2696,17 +2246,7 @@ await corsair.salesforce.api.leads.createLead({});
 | `Phone` | `string` | No | — |
 | `Status` | `string` | No | — |
 | `Title` | `string` | No | — |
-| `CustomFields` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="CustomFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `CustomFields` | `Record<string, any>` | No | — |
 
 
 
@@ -2870,18 +2410,8 @@ await corsair.salesforce.api.leads.listLeads({});
 |------|------|----------|-------------|
 | `totalSize` | `number` | Yes | — |
 | `done` | `boolean` | Yes | — |
-| `records` | `object[]` | Yes | — |
+| `records` | `Record<string, any>[]` | Yes | — |
 | `nextRecordsUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2941,17 +2471,7 @@ await corsair.salesforce.api.leads.retrieveLeadDataWithVariousResponses({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | No | — |
 
 
 
@@ -2987,17 +2507,7 @@ await corsair.salesforce.api.leads.searchLeads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -3026,18 +2536,8 @@ await corsair.salesforce.api.leads.updateLead({});
 | `Phone` | `string` | No | — |
 | `Status` | `string` | No | — |
 | `Title` | `string` | No | — |
-| `CustomFields` | `object` | No | — |
+| `CustomFields` | `Record<string, any>` | No | — |
 | `id` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="CustomFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3074,18 +2574,8 @@ await corsair.salesforce.api.leads.updateLeadByIdWithJsonPayload({});
 | `Phone` | `string` | No | — |
 | `Status` | `string` | No | — |
 | `Title` | `string` | No | — |
-| `CustomFields` | `object` | No | — |
+| `CustomFields` | `Record<string, any>` | No | — |
 | `id` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="CustomFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3119,17 +2609,7 @@ await corsair.salesforce.api.metadata.cloneRecord({});
 |------|------|----------|-------------|
 | `sobject` | `string` | Yes | — |
 | `recordId` | `string` | Yes | — |
-| `overrides` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="overrides full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `overrides` | `Record<string, any>` | No | — |
 
 
 
@@ -3228,17 +2708,7 @@ await corsair.salesforce.api.metadata.createSObjectRecord({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `sobject` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | Yes | — |
 
 
 
@@ -3334,17 +2804,7 @@ await corsair.salesforce.api.metadata.executeSobjectQuickAction({});
 | `sobject` | `string` | Yes | — |
 | `actionName` | `string` | Yes | — |
 | `contextId` | `string` | No | — |
-| `record` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="record full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `record` | `Record<string, any>` | No | — |
 
 
 
@@ -3378,17 +2838,7 @@ await corsair.salesforce.api.metadata.getAllCustomObjects({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `sobjects` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="sobjects full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `sobjects` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -3418,17 +2868,7 @@ await corsair.salesforce.api.metadata.getAllFieldsForObject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fields` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -3454,17 +2894,7 @@ await corsair.salesforce.api.metadata.getApi({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3484,17 +2914,7 @@ await corsair.salesforce.api.metadata.getChatterResources({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3524,17 +2944,7 @@ await corsair.salesforce.api.metadata.getChildRecords({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -3561,17 +2971,7 @@ await corsair.salesforce.api.metadata.getConsentAction({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3595,17 +2995,7 @@ await corsair.salesforce.api.metadata.getGlobalActions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `actions` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="actions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `actions` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -3626,17 +3016,7 @@ await corsair.salesforce.api.metadata.getOrgLimits({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3662,17 +3042,7 @@ await corsair.salesforce.api.metadata.getPicklistValuesByRecordType({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3696,17 +3066,7 @@ await corsair.salesforce.api.metadata.getQuickActions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `actions` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="actions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `actions` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -3736,17 +3096,7 @@ await corsair.salesforce.api.metadata.getRecordCounts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `sObjects` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="sObjects full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `sObjects` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -3772,17 +3122,7 @@ await corsair.salesforce.api.metadata.getSobjectApprovalLayouts({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3809,17 +3149,7 @@ await corsair.salesforce.api.metadata.getSobjectByExternalId({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3839,17 +3169,7 @@ await corsair.salesforce.api.metadata.getSobjectPlatformaction({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3875,17 +3195,7 @@ await corsair.salesforce.api.metadata.getSobjectQuickActionDefaultValues({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3911,17 +3221,7 @@ await corsair.salesforce.api.metadata.getSObjectQuickActionDefaultValues({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3948,17 +3248,7 @@ await corsair.salesforce.api.metadata.getSObjectRecord({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -3985,17 +3275,7 @@ await corsair.salesforce.api.metadata.getSobjectRelationship({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4021,17 +3301,7 @@ await corsair.salesforce.api.metadata.getSobjects({});
 |------|------|----------|-------------|
 | `encoding` | `string` | No | — |
 | `maxBatchSize` | `number` | No | — |
-| `sobjects` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="sobjects full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `sobjects` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -4058,17 +3328,7 @@ await corsair.salesforce.api.metadata.getSObjectsDescribeLayoutsRecordTypeId({})
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4093,17 +3353,7 @@ await corsair.salesforce.api.metadata.getSobjectsSobjectDescribeApprovallayouts(
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4156,17 +3406,7 @@ await corsair.salesforce.api.metadata.getSupport({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4186,17 +3426,7 @@ await corsair.salesforce.api.metadata.getSupportedObjectsDirectory({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4216,17 +3446,7 @@ await corsair.salesforce.api.metadata.getSupportKnowledgeArticles({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4246,17 +3466,7 @@ await corsair.salesforce.api.metadata.getTheme({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4281,17 +3491,7 @@ await corsair.salesforce.api.metadata.getUserInfo({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -4538,17 +3738,7 @@ await corsair.salesforce.api.metadata.listCustomInvocableActions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `actions` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="actions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `actions` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -4573,17 +3763,7 @@ await corsair.salesforce.api.metadata.listStandardInvocableActions({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `actions` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="actions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `actions` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -4685,17 +3865,7 @@ await corsair.salesforce.api.metadata.sobjectRowsUpdate({});
 |------|------|----------|-------------|
 | `sobject` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | Yes | — |
 
 
 
@@ -4757,17 +3927,7 @@ await corsair.salesforce.api.metadata.updateSobject({});
 |------|------|----------|-------------|
 | `sobject` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | Yes | — |
 
 
 
@@ -4800,17 +3960,7 @@ await corsair.salesforce.api.metadata.upsertSobjectByExternalId({});
 | `sobject` | `string` | Yes | — |
 | `fieldName` | `string` | Yes | — |
 | `fieldValue` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | Yes | — |
 
 
 
@@ -5013,17 +4163,7 @@ await corsair.salesforce.api.notes.listNotes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -5083,17 +4223,7 @@ await corsair.salesforce.api.notes.retrieveNoteObjectInformation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `metadata` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | Yes | — |
 
 
 
@@ -5126,17 +4256,7 @@ await corsair.salesforce.api.notes.searchNotes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -5300,17 +4420,7 @@ await corsair.salesforce.api.opportunities.createOpportunity({});
 | `AccountId` | `string` | No | — |
 | `Amount` | `number` | No | — |
 | `Probability` | `number` | No | — |
-| `CustomFields` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="CustomFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `CustomFields` | `Record<string, any>` | No | — |
 
 
 
@@ -5445,18 +4555,8 @@ await corsair.salesforce.api.opportunities.listOpportunities({});
 |------|------|----------|-------------|
 | `totalSize` | `number` | Yes | — |
 | `done` | `boolean` | Yes | — |
-| `records` | `object[]` | Yes | — |
+| `records` | `Record<string, any>[]` | Yes | — |
 | `nextRecordsUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5488,17 +4588,7 @@ await corsair.salesforce.api.opportunities.listPricebookEntries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -5529,17 +4619,7 @@ await corsair.salesforce.api.opportunities.listPricebooks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -5600,17 +4680,7 @@ await corsair.salesforce.api.opportunities.retrieveOpportunitiesData({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -5675,17 +4745,7 @@ await corsair.salesforce.api.opportunities.searchOpportunities({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -5713,18 +4773,8 @@ await corsair.salesforce.api.opportunities.updateOpportunity({});
 | `AccountId` | `string` | No | — |
 | `Amount` | `number` | No | — |
 | `Probability` | `number` | No | — |
-| `CustomFields` | `object` | No | — |
+| `CustomFields` | `Record<string, any>` | No | — |
 | `id` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="CustomFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5760,18 +4810,8 @@ await corsair.salesforce.api.opportunities.updateOpportunityById({});
 | `AccountId` | `string` | No | — |
 | `Amount` | `number` | No | — |
 | `Probability` | `number` | No | — |
-| `CustomFields` | `object` | No | — |
+| `CustomFields` | `Record<string, any>` | No | — |
 | `id` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="CustomFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5812,17 +4852,7 @@ await corsair.salesforce.api.soqlSosl.executeSoqlQuery({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `totalSize` | `number` | Yes | — |
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -5852,17 +4882,7 @@ await corsair.salesforce.api.soqlSosl.executeSoslSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `searchRecords` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="searchRecords full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `searchRecords` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -5885,17 +4905,7 @@ await corsair.salesforce.api.soqlSosl.getParameterizedSearch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `q` | `string` | No | — |
-| `sobjects` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="sobjects full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `sobjects` | `Record<string, any>[]` | No | — |
 
 
 
@@ -5903,17 +4913,7 @@ await corsair.salesforce.api.soqlSosl.getParameterizedSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `searchRecords` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="searchRecords full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `searchRecords` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -5939,17 +4939,7 @@ await corsair.salesforce.api.soqlSosl.getSearchLayout({});
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>[]`
 
 
 ---
@@ -6002,17 +4992,7 @@ await corsair.salesforce.api.soqlSosl.parameterizedSearch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `q` | `string` | No | — |
-| `sobjects` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="sobjects full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `sobjects` | `Record<string, any>[]` | No | — |
 
 
 
@@ -6020,17 +5000,7 @@ await corsair.salesforce.api.soqlSosl.parameterizedSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `searchRecords` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="searchRecords full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `searchRecords` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -6061,17 +5031,7 @@ await corsair.salesforce.api.soqlSosl.postParameterizedSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `searchRecords` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="searchRecords full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `searchRecords` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -6102,17 +5062,7 @@ await corsair.salesforce.api.soqlSosl.query({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `totalSize` | `number` | Yes | — |
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -6144,17 +5094,7 @@ await corsair.salesforce.api.soqlSosl.queryAll({});
 |------|------|----------|-------------|
 | `totalSize` | `number` | Yes | — |
 | `done` | `boolean` | Yes | — |
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -6186,18 +5126,8 @@ await corsair.salesforce.api.soqlSosl.runSoqlQuery({});
 |------|------|----------|-------------|
 | `totalSize` | `number` | Yes | — |
 | `done` | `boolean` | Yes | — |
-| `records` | `object[]` | Yes | — |
+| `records` | `Record<string, any>[]` | Yes | — |
 | `nextRecordsUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6227,17 +5157,7 @@ await corsair.salesforce.api.soqlSosl.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `searchRecords` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="searchRecords full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `searchRecords` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -6299,17 +5219,7 @@ await corsair.salesforce.api.soqlSosl.toolingQuery({});
 |------|------|----------|-------------|
 | `totalSize` | `number` | Yes | — |
 | `done` | `boolean` | Yes | — |
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -6486,17 +5396,7 @@ await corsair.salesforce.api.tasks.searchTasks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="records full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -6658,17 +5558,7 @@ await corsair.salesforce.api.uiApi.createARecord({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `apiName` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | Yes | — |
 
 
 
@@ -6700,17 +5590,7 @@ await corsair.salesforce.api.uiApi.createRecordUiApi({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `apiName` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | Yes | — |
 
 
 
@@ -6740,17 +5620,7 @@ await corsair.salesforce.api.uiApi.getAllNavigationItems({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -6775,17 +5645,7 @@ await corsair.salesforce.api.uiApi.getApp({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -6805,17 +5665,7 @@ await corsair.salesforce.api.uiApi.getApps({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -6840,17 +5690,7 @@ await corsair.salesforce.api.uiApi.getCompactLayouts({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -6870,17 +5710,7 @@ await corsair.salesforce.api.uiApi.getLastSelectedApp({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -6905,17 +5735,7 @@ await corsair.salesforce.api.uiApi.getListViewActions({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -6940,17 +5760,7 @@ await corsair.salesforce.api.uiApi.getListViewMetadataBatch({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -6976,17 +5786,7 @@ await corsair.salesforce.api.uiApi.getListViewMetadataByName({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7011,17 +5811,7 @@ await corsair.salesforce.api.uiApi.getListViewRecordsById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7047,17 +5837,7 @@ await corsair.salesforce.api.uiApi.getListViewRecordsByName({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7083,17 +5863,7 @@ await corsair.salesforce.api.uiApi.getListViewResults({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7120,17 +5890,7 @@ await corsair.salesforce.api.uiApi.getLookupFieldSuggestions({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7155,17 +5915,7 @@ await corsair.salesforce.api.uiApi.getLookupSuggestionsCaseContact({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7190,17 +5940,7 @@ await corsair.salesforce.api.uiApi.getLookupSuggestionsOpportunityAccount({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7225,17 +5965,7 @@ await corsair.salesforce.api.uiApi.getMruListViewMetadata({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7260,17 +5990,7 @@ await corsair.salesforce.api.uiApi.getMruListViewRecords({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7295,17 +6015,7 @@ await corsair.salesforce.api.uiApi.getObjectListViews({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7330,17 +6040,7 @@ await corsair.salesforce.api.uiApi.getPhotoActions({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7366,17 +6066,7 @@ await corsair.salesforce.api.uiApi.getRecordEditPageActions({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7401,17 +6091,7 @@ await corsair.salesforce.api.uiApi.getRecordUiDataAndMetadata({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7437,17 +6117,7 @@ await corsair.salesforce.api.uiApi.getRelatedListActions({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7472,17 +6142,7 @@ await corsair.salesforce.api.uiApi.getRelatedListPreferencesBatch({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7507,17 +6167,7 @@ await corsair.salesforce.api.uiApi.getRelatedListRecordsContacts({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7543,17 +6193,7 @@ await corsair.salesforce.api.uiApi.getSobjectListView({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7578,17 +6218,7 @@ await corsair.salesforce.api.uiApi.getSobjectListViews({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7608,17 +6238,7 @@ await corsair.salesforce.api.uiApi.getUiApiActionsLookupAccount({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7638,17 +6258,7 @@ await corsair.salesforce.api.uiApi.getUiapiActionsMruListAccount({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7674,17 +6284,7 @@ await corsair.salesforce.api.uiApi.getUiApiActionsRecordRelatedList({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7709,17 +6309,7 @@ await corsair.salesforce.api.uiApi.getUiApiAppsUserNavItems({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7739,17 +6329,7 @@ await corsair.salesforce.api.uiApi.getUiapiListInfoAccountAllAccounts({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7769,17 +6349,7 @@ await corsair.salesforce.api.uiApi.getUiapiListInfoAccountRecent({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7799,17 +6369,7 @@ await corsair.salesforce.api.uiApi.getUiapiListInfoAccountSearchResult({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7834,17 +6394,7 @@ await corsair.salesforce.api.uiApi.getUiApiListInfoRecent({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7864,17 +6414,7 @@ await corsair.salesforce.api.uiApi.getUiapiLookupsOpportunityAccountId({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7894,17 +6434,7 @@ await corsair.salesforce.api.uiApi.getUiapimruListInfoAccount({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7924,17 +6454,7 @@ await corsair.salesforce.api.uiApi.getUiApiMruListRecordsAccount({});
 **Input:** _empty object_
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -7960,17 +6480,7 @@ await corsair.salesforce.api.uiApi.getUiapiRelatedListPreferences({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -8020,17 +6530,7 @@ await corsair.salesforce.api.uiApi.listViewResults({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -8052,17 +6552,7 @@ await corsair.salesforce.api.uiApi.updateFavorite({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `favoriteId` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | Yes | — |
 
 
 
@@ -8094,17 +6584,7 @@ await corsair.salesforce.api.uiApi.updateListViewPreferences({});
 |------|------|----------|-------------|
 | `sobject` | `string` | Yes | — |
 | `listViewId` | `string` | Yes | — |
-| `preferences` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="preferences full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `preferences` | `Record<string, any>` | Yes | — |
 
 
 
@@ -8136,18 +6616,8 @@ await corsair.salesforce.api.uiApi.updateRecord({});
 |------|------|----------|-------------|
 | `recordId` | `string` | Yes | — |
 | `apiName` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
+| `fields` | `Record<string, any>` | Yes | — |
 | `ifUnmodifiedSince` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -8178,17 +6648,7 @@ await corsair.salesforce.api.uiApi.updateRelatedListPreferences({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `relatedListId` | `string` | Yes | — |
-| `preferences` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="preferences full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `preferences` | `Record<string, any>` | Yes | — |
 
 
 

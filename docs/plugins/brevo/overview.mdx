@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Brevo plugin for Corsair"
+description: "Marketing and email platform. Manage contacts and email campaigns, and read account details."
 ---
 
 Use **Brevo** through Corsair: one client, typed API calls, local DB sync.
@@ -44,6 +44,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -51,7 +52,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
@@ -89,19 +90,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`account.get`**
+**List contacts**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.brevo.api.account.get({});
+await tenant.brevo.api.contacts.list({});
 ```
 
 
-**`contacts.create`**
+**Create a contact**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.brevo.api.contacts.create({});
+await tenant.brevo.api.contacts.create({ email: 'you@example.com' });
 ```
 
 
@@ -109,9 +110,17 @@ See the full list on the [API](/plugins/brevo/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.brevo.db.<entity>.search()` and `.list()`: `campaigns`, `contacts`.
+Search synced contacts without hitting Brevo.
 
-See [Database](/plugins/brevo/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.brevo.db.contacts.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `campaigns`, `contacts`. See [Database](/plugins/brevo/database) for filters and operators.
 
 ## What's next
 

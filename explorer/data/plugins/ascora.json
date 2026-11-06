@@ -72,7 +72,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -104,12 +104,12 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contact",
             "optional": true,
-            "type": "{ contactId: string, customerId?: string | null, firstName?: string | null, lastName?: string | null, emailAddress?: string | null, phoneNumber?: string | null, mobileNumber?: string | null, faxNumber?: string | null, defaultContact?: boolean, contactRole?: string | null }"
+            "type": "{ contactId: string, customerId?: string | null, firstName?: string | null, lastName?: string | null, emailAddress?: string | null, phoneNumber?: string | null, mobileNumber?: string | null, faxNumber?: string | null, defaultContact?: boolean, contactRole?: string | null } | null"
           }
         ]
       }
@@ -187,12 +187,12 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "contact",
             "optional": true,
-            "type": "{ contactId: string, customerId?: string | null, firstName?: string | null, lastName?: string | null, emailAddress?: string | null, phoneNumber?: string | null, mobileNumber?: string | null, faxNumber?: string | null, defaultContact?: boolean, contactRole?: string | null }"
+            "type": "{ contactId: string, customerId?: string | null, firstName?: string | null, lastName?: string | null, emailAddress?: string | null, phoneNumber?: string | null, mobileNumber?: string | null, faxNumber?: string | null, defaultContact?: boolean, contactRole?: string | null } | null"
           }
         ]
       }
@@ -224,12 +224,12 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customer",
             "optional": true,
-            "type": "{ customerId: string, customerNumber?: string | null, customerName?: string | null, companyName?: string | null, contactFirstName?: string | null, contactLastName?: string | null, emailAddress?: string | null, phoneNumber?: string | null, mobileNumber?: string | null, onHold?: boolean, billingCustomerOnHold?: boolean, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetPostcode?: string | null, streetState?: string | null, streetCountry?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, postalCountry?: string | null, customerType?: { id?: string | null, name?: string | null } | null, leadSource?: { id?: string | null, name?: string | null } | null, billingCustomer?: { id?: string | null, name?: string | null } | null, assignedUser?: { id?: string | null, name?: string | null } | null, customFields?: { fieldName?: string, fieldValue?: string }[] }"
+            "type": "{ customerId: string, customerNumber?: string | null, customerName?: string | null, companyName?: string | null, contactFirstName?: string | null, contactLastName?: string | null, emailAddress?: string | null, phoneNumber?: string | null, mobileNumber?: string | null, onHold?: boolean, billingCustomerOnHold?: boolean, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetPostcode?: string | null, streetState?: string | null, streetCountry?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, postalCountry?: string | null, customerType?: { id?: string | null, name?: string | null } | null, leadSource?: { id?: string | null, name?: string | null } | null, billingCustomer?: { id?: string | null, name?: string | null } | null, assignedUser?: { id?: string | null, name?: string | null } | null, customFields?: { fieldName?: string, fieldValue?: string }[] } | null"
           }
         ]
       }
@@ -303,7 +303,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -470,12 +470,12 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customer",
             "optional": true,
-            "type": "{ customerId: string, customerNumber?: string | null, customerName?: string | null, companyName?: string | null, contactFirstName?: string | null, contactLastName?: string | null, emailAddress?: string | null, phoneNumber?: string | null, mobileNumber?: string | null, onHold?: boolean, billingCustomerOnHold?: boolean, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetPostcode?: string | null, streetState?: string | null, streetCountry?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, postalCountry?: string | null, customerType?: { id?: string | null, name?: string | null } | null, leadSource?: { id?: string | null, name?: string | null } | null, billingCustomer?: { id?: string | null, name?: string | null } | null, assignedUser?: { id?: string | null, name?: string | null } | null, customFields?: { fieldName?: string, fieldValue?: string }[] }"
+            "type": "{ customerId: string, customerNumber?: string | null, customerName?: string | null, companyName?: string | null, contactFirstName?: string | null, contactLastName?: string | null, emailAddress?: string | null, phoneNumber?: string | null, mobileNumber?: string | null, onHold?: boolean, billingCustomerOnHold?: boolean, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetPostcode?: string | null, streetState?: string | null, streetCountry?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, postalCountry?: string | null, customerType?: { id?: string | null, name?: string | null } | null, leadSource?: { id?: string | null, name?: string | null } | null, billingCustomer?: { id?: string | null, name?: string | null } | null, assignedUser?: { id?: string | null, name?: string | null } | null, customFields?: { fieldName?: string, fieldValue?: string }[] } | null"
           }
         ]
       }
@@ -581,7 +581,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -637,7 +637,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -714,7 +714,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -791,7 +791,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -838,12 +838,12 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "job",
             "optional": true,
-            "type": "{ jobId: string, topLevelJobNumber?: string | null, jobNumber?: string | null, jobName?: string | null, jobDescription?: string | null, workUndertaken?: string | null, jobStatus?: number, jobStatusText?: string | null, dateCreated?: string | null, pricingMethod?: string | null, totalIncTax?: number, totalExTax?: number, purchaseOrderNumber?: string | null, clientOrderNumber?: string | null, addressLine1?: string | null, addressLine2?: string | null, suburb?: string | null, state?: string | null, postcode?: string | null, country?: string | null, jobType?: { id?: string | null, name?: string | null } | null, siteCustomer?: { id?: string | null, name?: string | null } | null, billingCustomer?: { id?: string | null, name?: string | null } | null }"
+            "type": "{ jobId: string, topLevelJobNumber?: string | null, jobNumber?: string | null, jobName?: string | null, jobDescription?: string | null, workUndertaken?: string | null, jobStatus?: number, jobStatusText?: string | null, dateCreated?: string | null, pricingMethod?: string | null, totalIncTax?: number, totalExTax?: number, purchaseOrderNumber?: string | null, clientOrderNumber?: string | null, addressLine1?: string | null, addressLine2?: string | null, suburb?: string | null, state?: string | null, postcode?: string | null, country?: string | null, jobType?: { id?: string | null, name?: string | null } | null, siteCustomer?: { id?: string | null, name?: string | null } | null, billingCustomer?: { id?: string | null, name?: string | null } | null } | null"
           }
         ]
       }
@@ -917,7 +917,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -982,7 +982,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -1052,7 +1052,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1146,7 +1146,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -1257,7 +1257,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -1304,12 +1304,12 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "supplier",
             "optional": true,
-            "type": "{ supplierId: string, supplierNumber?: string | null, name?: string | null, businessNumber?: string | null, contactFirstName?: string | null, contactLastName?: string | null, notes?: string | null, phone?: string | null, fax?: string | null, mobile?: string | null, emailAddress?: string | null, expenseAccount?: string | null, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetState?: string | null, streetPostcode?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, invoiceDueDaysType?: number }"
+            "type": "{ supplierId: string, supplierNumber?: string | null, name?: string | null, businessNumber?: string | null, contactFirstName?: string | null, contactLastName?: string | null, notes?: string | null, phone?: string | null, fax?: string | null, mobile?: string | null, emailAddress?: string | null, expenseAccount?: string | null, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetState?: string | null, streetPostcode?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, invoiceDueDaysType?: number } | null"
           }
         ]
       }
@@ -1365,7 +1365,7 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "results",
@@ -1512,12 +1512,12 @@
           {
             "key": "message",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "supplier",
             "optional": true,
-            "type": "{ supplierId: string, supplierNumber?: string | null, name?: string | null, businessNumber?: string | null, contactFirstName?: string | null, contactLastName?: string | null, notes?: string | null, phone?: string | null, fax?: string | null, mobile?: string | null, emailAddress?: string | null, expenseAccount?: string | null, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetState?: string | null, streetPostcode?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, invoiceDueDaysType?: number }"
+            "type": "{ supplierId: string, supplierNumber?: string | null, name?: string | null, businessNumber?: string | null, contactFirstName?: string | null, contactLastName?: string | null, notes?: string | null, phone?: string | null, fax?: string | null, mobile?: string | null, emailAddress?: string | null, expenseAccount?: string | null, streetLine1?: string | null, streetLine2?: string | null, streetSuburb?: string | null, streetState?: string | null, streetPostcode?: string | null, postalLine1?: string | null, postalLine2?: string | null, postalSuburb?: string | null, postalState?: string | null, postalPostcode?: string | null, invoiceDueDaysType?: number } | null"
           }
         ]
       }

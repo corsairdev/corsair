@@ -39,13 +39,13 @@ await corsair.worldnewsapi.api.news.extractNews({});
 | `title` | `string` | No | — |
 | `text` | `string` | No | — |
 | `url` | `string` | No | — |
-| `image` | `string` | No | — |
+| `image` | `string \| null` | No | — |
 | `images` | `object[]` | No | — |
-| `video` | `string` | No | — |
+| `video` | `string \| null` | No | — |
 | `videos` | `object[]` | No | — |
 | `publish_date` | `string` | No | — |
-| `author` | `string` | No | — |
-| `authors` | `string \| null[]` | No | — |
+| `author` | `string \| null` | No | — |
+| `authors` | `(string \| null)[]` | No | — |
 | `language` | `string` | No | — |
 | `source_country` | `string` | No | — |
 | `sentiment` | `number` | No | — |
@@ -274,7 +274,7 @@ await corsair.worldnewsapi.api.news.searchNews({});
   video?: string | null,
   publish_date?: string,
   author?: string | null,
-  authors?: string | null[],
+  authors?: (string | null)[],
   category?: string,
   language?: string,
   source_country?: string,
@@ -380,7 +380,7 @@ await corsair.worldnewsapi.api.news.topNews({});
     video?: string | null,
     publish_date?: string,
     author?: string | null,
-    authors?: string | null[],
+    authors?: (string | null)[],
     category?: string,
     language?: string,
     source_country?: string,

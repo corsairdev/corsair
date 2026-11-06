@@ -51,7 +51,7 @@
           {
             "key": "suggested_correction",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email_deliverability",
@@ -71,17 +71,17 @@
           {
             "key": "email_domain",
             "optional": false,
-            "type": "{ domain?: string | null, domain_age?: number | null, is_live_site?: boolean | null, registrar?: string | null, registrar_url?: string | null, date_registered?: string | null, date_last_renewed?: string | null, date_expires?: string | null, is_risky_tld?: boolean | null }"
+            "type": "{ domain: string | null, domain_age?: number | null, is_live_site?: boolean | null, registrar?: string | null, registrar_url?: string | null, date_registered?: string | null, date_last_renewed?: string | null, date_expires?: string | null, is_risky_tld?: boolean | null }"
           },
           {
             "key": "email_risk",
             "optional": false,
-            "type": "{ address_risk_status?: string | null, domain_risk_status?: string | null }"
+            "type": "{ address_risk_status: string | null, domain_risk_status: string | null }"
           },
           {
             "key": "email_breaches",
             "optional": true,
-            "type": "{ total_breaches?: number | null, date_first_breached?: string | null, date_last_breached?: string | null, breached_domains?: { domain: string, breach_date?: string | null }[] }"
+            "type": "{ total_breaches: number | null, date_first_breached?: string | null, date_last_breached?: string | null, breached_domains?: { domain: string, breach_date?: string | null }[] }"
           }
         ]
       }

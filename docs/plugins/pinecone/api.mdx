@@ -30,10 +30,10 @@ await corsair.pinecone.api.assistantChat.chat({});
 | `host` | `string` | Yes | — |
 | `assistantName` | `string` | Yes | — |
 | `messages` | `object[]` | Yes | — |
-| `stream` | `false` | Yes | — |
+| `stream` | `false` | No | Defaults to false. |
 | `model` | `string` | No | — |
 | `temperature` | `number` | No | — |
-| `filter` | `object` | No | — |
+| `filter` | `Record<string, any>` | No | — |
 | `json_response` | `boolean` | No | — |
 | `include_highlights` | `boolean` | No | — |
 | `context_options` | `object` | No | — |
@@ -46,14 +46,6 @@ await corsair.pinecone.api.assistantChat.chat({});
   role: user | assistant,
   content: string
 }[]
-```
-</Accordion>
-
-<Accordion title="filter full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -128,10 +120,10 @@ await corsair.pinecone.api.assistantChat.completion({});
 | `host` | `string` | Yes | — |
 | `assistantName` | `string` | Yes | — |
 | `messages` | `object[]` | Yes | — |
-| `stream` | `false` | Yes | — |
+| `stream` | `false` | No | Defaults to false. |
 | `model` | `string` | No | — |
 | `temperature` | `number` | No | — |
-| `filter` | `object` | No | — |
+| `filter` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="messages full type">
@@ -141,14 +133,6 @@ await corsair.pinecone.api.assistantChat.completion({});
   role: user | assistant,
   content: string
 }[]
-```
-</Accordion>
-
-<Accordion title="filter full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -206,7 +190,7 @@ await corsair.pinecone.api.assistantChat.context({});
 | `assistantName` | `string` | Yes | — |
 | `query` | `string` | No | — |
 | `messages` | `object[]` | No | — |
-| `filter` | `object` | No | — |
+| `filter` | `Record<string, any>` | No | — |
 | `top_k` | `number` | No | — |
 | `snippet_size` | `number` | No | — |
 | `multimodal` | `boolean` | No | — |
@@ -220,14 +204,6 @@ await corsair.pinecone.api.assistantChat.context({});
   role: user | assistant,
   content: string
 }[]
-```
-</Accordion>
-
-<Accordion title="filter full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -295,9 +271,9 @@ await corsair.pinecone.api.assistantFiles.delete({});
 | `operation_type` | `upload_file \| upsert_file \| update_file_metadata \| delete_file` | Yes | — |
 | `status` | `Processing \| Completed \| Failed` | Yes | — |
 | `created_on` | `string` | Yes | — |
-| `file_id` | `string` | No | — |
+| `file_id` | `string \| null` | No | — |
 | `percent_complete` | `number` | No | — |
-| `error_message` | `string` | No | — |
+| `error_message` | `string \| null` | No | — |
 
 
 
@@ -333,22 +309,12 @@ await corsair.pinecone.api.assistantFiles.describe({});
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `size` | `number` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 | `status` | `Processing \| Available \| Deleting \| ProcessingFailed` | No | — |
 | `created_on` | `string` | No | — |
 | `updated_on` | `string` | No | — |
-| `signed_url` | `string` | No | — |
+| `signed_url` | `string \| null` | No | — |
 | `multimodal` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -393,8 +359,7 @@ await corsair.pinecone.api.assistantFiles.list({});
   id: string,
   name: string,
   size?: number,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   status?: Processing | Available | Deleting | ProcessingFailed,
   created_on?: string,
   updated_on?: string,
@@ -438,18 +403,8 @@ await corsair.pinecone.api.assistantFiles.upload({});
 | `fileName` | `string` | Yes | — |
 | `fileBase64` | `string` | Yes | — |
 | `contentType` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `multimodal` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -461,9 +416,9 @@ await corsair.pinecone.api.assistantFiles.upload({});
 | `operation_type` | `upload_file \| upsert_file \| update_file_metadata \| delete_file` | Yes | — |
 | `status` | `Processing \| Completed \| Failed` | Yes | — |
 | `created_on` | `string` | Yes | — |
-| `file_id` | `string` | No | — |
+| `file_id` | `string \| null` | No | — |
 | `percent_complete` | `number` | No | — |
-| `error_message` | `string` | No | — |
+| `error_message` | `string \| null` | No | — |
 
 
 
@@ -488,19 +443,9 @@ await corsair.pinecone.api.assistants.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `instructions` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `region` | `us \| eu` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -511,21 +456,11 @@ await corsair.pinecone.api.assistants.create({});
 | `name` | `string` | Yes | — |
 | `status` | `Initializing \| Failed \| Ready \| Terminating \| InitializationFailed` | Yes | — |
 | `host` | `string` | No | — |
-| `instructions` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 | `region` | `us \| eu` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -551,14 +486,14 @@ await corsair.pinecone.api.assistants.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| "" \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | | undefined
+} | "" | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -593,21 +528,11 @@ await corsair.pinecone.api.assistants.get({});
 | `name` | `string` | Yes | — |
 | `status` | `Initializing \| Failed \| Ready \| Terminating \| InitializationFailed` | Yes | — |
 | `host` | `string` | No | — |
-| `instructions` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 | `region` | `us \| eu` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -650,8 +575,7 @@ await corsair.pinecone.api.assistants.list({});
   status: Initializing | Failed | Ready | Terminating | InitializationFailed,
   host?: string,
   instructions?: string | null,
-  metadata?: {
-  } | null,
+  metadata?: Record<string, any> | null,
   region?: us | eu,
   created_at?: string,
   updated_at?: string
@@ -689,18 +613,8 @@ await corsair.pinecone.api.assistants.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `assistantName` | `string` | Yes | — |
-| `instructions` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `instructions` | `string \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -711,21 +625,11 @@ await corsair.pinecone.api.assistants.update({});
 | `name` | `string` | Yes | — |
 | `status` | `Initializing \| Failed \| Ready \| Terminating \| InitializationFailed` | Yes | — |
 | `host` | `string` | No | — |
-| `instructions` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
 | `region` | `us \| eu` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -797,17 +701,7 @@ await corsair.pinecone.api.backups.createIndex({});
 | `backupId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `deletion_protection` | `enabled \| disabled` | No | — |
-| `tags` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `tags` | `Record<string, string>` | No | — |
 
 
 
@@ -842,14 +736,14 @@ await corsair.pinecone.api.backups.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| "" \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | | undefined
+} | "" | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -928,7 +822,7 @@ await corsair.pinecone.api.backups.listForIndex({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `pagination` | `object` | No | — |
+| `pagination` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -957,7 +851,7 @@ await corsair.pinecone.api.backups.listForIndex({});
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -992,7 +886,7 @@ await corsair.pinecone.api.backups.listForProject({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `pagination` | `object` | No | — |
+| `pagination` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1021,7 +915,7 @@ await corsair.pinecone.api.backups.listForProject({});
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1053,14 +947,14 @@ await corsair.pinecone.api.bulkImports.cancel({});
 
 
 
-**Output:** `object`
+**Output:** `object \| "" \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | | undefined
+} | "" | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -1098,7 +992,7 @@ await corsair.pinecone.api.bulkImports.describe({});
 | `status` | `string` | No | — |
 | `percentComplete` | `number` | No | — |
 | `createdAt` | `string` | No | — |
-| `finishedAt` | `string` | No | — |
+| `finishedAt` | `string \| null` | No | — |
 | `recordsImported` | `number` | No | — |
 | `error` | `string` | No | — |
 
@@ -1272,19 +1166,11 @@ await corsair.pinecone.api.indexes.configure({});
 |------|------|----------|-------------|
 | `indexName` | `string` | Yes | — |
 | `deletion_protection` | `enabled \| disabled` | No | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 | `spec` | `object` | No | — |
 | `embed` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="spec full type">
 
 ```ts
@@ -1311,12 +1197,12 @@ await corsair.pinecone.api.indexes.configure({});
 | `name` | `string` | Yes | — |
 | `metric` | `string` | No | — |
 | `host` | `string` | No | — |
-| `dimension` | `number` | No | — |
+| `dimension` | `number \| null` | No | — |
 | `vector_type` | `dense \| sparse` | No | — |
 | `deletion_protection` | `enabled \| disabled` | No | — |
 | `status` | `object` | No | — |
 | `spec` | `object` | No | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -1330,14 +1216,6 @@ await corsair.pinecone.api.indexes.configure({});
 </Accordion>
 
 <Accordion title="spec full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
 
 ```ts
 {
@@ -1372,7 +1250,7 @@ await corsair.pinecone.api.indexes.create({});
 | `vector_type` | `dense \| sparse` | No | — |
 | `spec` | `object` | Yes | — |
 | `deletion_protection` | `enabled \| disabled` | No | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="spec full type">
@@ -1383,14 +1261,6 @@ await corsair.pinecone.api.indexes.create({});
     cloud: aws | gcp | azure,
     region: string
   }
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1405,12 +1275,12 @@ await corsair.pinecone.api.indexes.create({});
 | `name` | `string` | Yes | — |
 | `metric` | `string` | No | — |
 | `host` | `string` | No | — |
-| `dimension` | `number` | No | — |
+| `dimension` | `number \| null` | No | — |
 | `vector_type` | `dense \| sparse` | No | — |
 | `deletion_protection` | `enabled \| disabled` | No | — |
 | `status` | `object` | No | — |
 | `spec` | `object` | No | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -1424,14 +1294,6 @@ await corsair.pinecone.api.indexes.create({});
 </Accordion>
 
 <Accordion title="spec full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
 
 ```ts
 {
@@ -1465,7 +1327,7 @@ await corsair.pinecone.api.indexes.createForModel({});
 | `region` | `string` | Yes | — |
 | `embed` | `object` | Yes | — |
 | `deletion_protection` | `enabled \| disabled` | No | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="embed full type">
@@ -1473,21 +1335,12 @@ await corsair.pinecone.api.indexes.createForModel({});
 ```ts
 {
   model: string,
-  field_map: {
-  },
+  field_map: Record<string, string>,
   metric?: cosine | euclidean | dotproduct,
   read_parameters?: {
   },
   write_parameters?: {
   }
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1502,12 +1355,12 @@ await corsair.pinecone.api.indexes.createForModel({});
 | `name` | `string` | Yes | — |
 | `metric` | `string` | No | — |
 | `host` | `string` | No | — |
-| `dimension` | `number` | No | — |
+| `dimension` | `number \| null` | No | — |
 | `vector_type` | `dense \| sparse` | No | — |
 | `deletion_protection` | `enabled \| disabled` | No | — |
 | `status` | `object` | No | — |
 | `spec` | `object` | No | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -1521,14 +1374,6 @@ await corsair.pinecone.api.indexes.createForModel({});
 </Accordion>
 
 <Accordion title="spec full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
 
 ```ts
 {
@@ -1561,14 +1406,14 @@ await corsair.pinecone.api.indexes.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| "" \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | | undefined
+} | "" | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -1603,12 +1448,12 @@ await corsair.pinecone.api.indexes.describe({});
 | `name` | `string` | Yes | — |
 | `metric` | `string` | No | — |
 | `host` | `string` | No | — |
-| `dimension` | `number` | No | — |
+| `dimension` | `number \| null` | No | — |
 | `vector_type` | `dense \| sparse` | No | — |
 | `deletion_protection` | `enabled \| disabled` | No | — |
 | `status` | `object` | No | — |
 | `spec` | `object` | No | — |
-| `tags` | `object` | No | — |
+| `tags` | `Record<string, string> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -1622,14 +1467,6 @@ await corsair.pinecone.api.indexes.describe({});
 </Accordion>
 
 <Accordion title="spec full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="tags full type">
 
 ```ts
 {
@@ -1680,8 +1517,7 @@ await corsair.pinecone.api.indexes.list({});
   },
   spec?: {
   },
-  tags?: {
-  } | null
+  tags?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -1952,8 +1788,9 @@ await corsair.pinecone.api.namespaces.create({});
 
 ```ts
 {
-  fields: {
-  }
+  fields: Record<string, {
+    filterable: boolean
+  }>
 }
 ```
 </Accordion>
@@ -1993,14 +1830,14 @@ await corsair.pinecone.api.namespaces.delete({});
 
 
 
-**Output:** `object`
+**Output:** `object \| "" \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | | undefined
+} | "" | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -2128,8 +1965,7 @@ await corsair.pinecone.api.records.search({});
   },
   vector?: number[],
   id?: string,
-  filter?: {
-  }
+  filter?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2201,14 +2037,14 @@ await corsair.pinecone.api.records.upsert({});
 
 
 
-**Output:** `object`
+**Output:** `object \| "" \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | | undefined
+} | "" | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -2248,7 +2084,7 @@ await corsair.pinecone.api.restoreJobs.describe({});
 | `target_index_id` | `string` | No | — |
 | `status` | `string` | No | — |
 | `created_at` | `string` | No | — |
-| `completed_at` | `string` | No | — |
+| `completed_at` | `string \| null` | No | — |
 | `percent_complete` | `number` | No | — |
 
 
@@ -2281,7 +2117,7 @@ await corsair.pinecone.api.restoreJobs.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `pagination` | `object` | No | — |
+| `pagination` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2304,7 +2140,7 @@ await corsair.pinecone.api.restoreJobs.list({});
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2335,28 +2171,18 @@ await corsair.pinecone.api.vectors.delete({});
 | `ids` | `string[]` | No | — |
 | `deleteAll` | `boolean` | No | — |
 | `namespace` | `string` | No | — |
-| `filter` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="filter full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `filter` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
+**Output:** `object \| "" \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | | undefined
+} | "" | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -2381,17 +2207,7 @@ await corsair.pinecone.api.vectors.describeIndexStats({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `host` | `string` | Yes | — |
-| `filter` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="filter full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `filter` | `Record<string, any>` | No | — |
 
 
 
@@ -2408,8 +2224,8 @@ await corsair.pinecone.api.vectors.describeIndexStats({});
 <Accordion title="namespaces full type">
 
 ```ts
-{
-}
+Record<string, {
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -2451,8 +2267,15 @@ await corsair.pinecone.api.vectors.fetch({});
 <Accordion title="vectors full type">
 
 ```ts
-{
-}
+Record<string, {
+  id: string,
+  values?: number[],
+  sparse_values?: {
+    indices: number[],
+    values: number[]
+  },
+  metadata?: Record<string, any>
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -2537,7 +2360,7 @@ await corsair.pinecone.api.vectors.query({});
 | `vector` | `number[]` | No | — |
 | `id` | `string` | No | — |
 | `sparseVector` | `object` | No | — |
-| `filter` | `object` | No | — |
+| `filter` | `Record<string, any>` | No | — |
 | `includeValues` | `boolean` | No | — |
 | `includeMetadata` | `boolean` | No | — |
 
@@ -2548,14 +2371,6 @@ await corsair.pinecone.api.vectors.query({});
 {
   indices: number[],
   values: number[]
-}
-```
-</Accordion>
-
-<Accordion title="filter full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -2579,8 +2394,7 @@ await corsair.pinecone.api.vectors.query({});
   id: string,
   score?: number,
   values?: number[],
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2618,7 +2432,7 @@ await corsair.pinecone.api.vectors.update({});
 | `id` | `string` | Yes | — |
 | `values` | `number[]` | No | — |
 | `sparseValues` | `object` | No | — |
-| `setMetadata` | `object` | No | — |
+| `setMetadata` | `Record<string, any>` | No | — |
 | `namespace` | `string` | No | — |
 
 <AccordionGroup>
@@ -2631,26 +2445,18 @@ await corsair.pinecone.api.vectors.update({});
 }
 ```
 </Accordion>
-
-<Accordion title="setMetadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
 
-**Output:** `object`
+**Output:** `object \| "" \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | | undefined
+} | "" | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -2689,8 +2495,7 @@ await corsair.pinecone.api.vectors.upsert({});
     indices: number[],
     values: number[]
   },
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }[]
 ```
 </Accordion>

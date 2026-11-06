@@ -103,22 +103,12 @@ await corsair.brevo.api.contacts.create({});
 |------|------|----------|-------------|
 | `email` | `string` | No | — |
 | `ext_id` | `string` | No | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, any>` | No | — |
 | `emailBlacklisted` | `boolean` | No | — |
 | `smsBlacklisted` | `boolean` | No | — |
 | `listIds` | `number[]` | No | — |
 | `updateEnabled` | `boolean` | No | — |
 | `smtpBlacklistSender` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -187,24 +177,14 @@ await corsair.brevo.api.contacts.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | — |
-| `email` | `string` | No | — |
+| `email` | `string \| null` | No | — |
 | `emailBlacklisted` | `boolean` | No | — |
 | `smsBlacklisted` | `boolean` | No | — |
 | `createdAt` | `string` | No | — |
 | `modifiedAt` | `string` | No | — |
 | `listIds` | `number[]` | No | — |
 | `listUnsubscribed` | `number[]` | No | — |
-| `attributes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `attributes` | `Record<string, any>` | No | — |
 
 
 
@@ -255,8 +235,7 @@ await corsair.brevo.api.contacts.list({});
   modifiedAt?: string,
   listIds?: number[],
   listUnsubscribed?: number[],
-  attributes?: {
-  }
+  attributes?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -283,22 +262,12 @@ await corsair.brevo.api.contacts.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `identifier` | `string \| number` | Yes | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, any>` | No | — |
 | `emailBlacklisted` | `boolean` | No | — |
 | `smsBlacklisted` | `boolean` | No | — |
 | `listIds` | `number[]` | No | — |
 | `unlinkListIds` | `number[]` | No | — |
 | `smtpBlacklistSender` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -344,7 +313,7 @@ await corsair.brevo.api.emailCampaigns.create({});
 | `header` | `string` | No | — |
 | `footer` | `string` | No | — |
 | `utmCampaign` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="sender full type">
@@ -364,14 +333,6 @@ await corsair.brevo.api.emailCampaigns.create({});
 {
   lists?: number[],
   exclusionLists?: number[]
-}
-```
-</Accordion>
-
-<Accordion title="params full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -459,7 +420,7 @@ await corsair.brevo.api.emailCampaigns.get({});
 | `htmlUrl` | `string` | No | — |
 | `tag` | `string` | No | — |
 | `recipients` | `object` | No | — |
-| `statistics` | `object` | No | — |
+| `statistics` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="sender full type">
@@ -479,14 +440,6 @@ await corsair.brevo.api.emailCampaigns.get({});
 {
   lists?: number[],
   exclusionLists?: number[]
-}
-```
-</Accordion>
-
-<Accordion title="statistics full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -646,7 +599,7 @@ await corsair.brevo.api.emailCampaigns.update({});
 | `header` | `string` | No | — |
 | `footer` | `string` | No | — |
 | `utmCampaign` | `string` | No | — |
-| `params` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="sender full type">
@@ -666,14 +619,6 @@ await corsair.brevo.api.emailCampaigns.update({});
 {
   lists?: number[],
   exclusionLists?: number[]
-}
-```
-</Accordion>
-
-<Accordion title="params full type">
-
-```ts
-{
 }
 ```
 </Accordion>

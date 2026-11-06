@@ -60,8 +60,7 @@ await corsair.zoom.api.archiveFiles.list({});
   file_count?: number,
   file_size?: number,
   status?: string,
-  archive_files?: {
-  }[]
+  archive_files?: Record<string, any>[]
 }[]
 ```
 </Accordion>
@@ -369,27 +368,9 @@ await corsair.zoom.api.meetings.getSummary({});
 | `summary_last_modified_time` | `string` | No | — |
 | `summary_title` | `string` | No | — |
 | `summary_overview` | `string` | No | — |
-| `summary_details` | `object[]` | No | — |
+| `summary_details` | `Record<string, any>[]` | No | — |
 | `next_steps` | `string[]` | No | — |
-| `edited_summary` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="summary_details full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="edited_summary full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `edited_summary` | `Record<string, any>` | No | — |
 
 
 

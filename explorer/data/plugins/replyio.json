@@ -75,13 +75,13 @@
           {
             "key": "statuses",
             "optional": true,
-            "type": "optedOut | replied | bounced[]"
+            "type": "(optedOut | replied | bounced)[]"
           }
         ]
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { error: string, errorDetails?: string }>"
       }
     },
     {
@@ -180,7 +180,7 @@
           {
             "key": "accountId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customFields",
@@ -200,102 +200,102 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "company",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companySize",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "industry",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timeZoneId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "linkedInUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "linkedInSalesNavigatorUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "linkedInRecruiterUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phoneStatus",
             "optional": true,
-            "type": "pending | invalid | valid | validationFailed | notValidated"
+            "type": "pending | invalid | valid | validationFailed | notValidated | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ownerUserId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "accountId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "isOptedOut",
@@ -305,27 +305,27 @@
           {
             "key": "callStatus",
             "optional": true,
-            "type": "none | toCall | called"
+            "type": "none | toCall | called | null"
           },
           {
             "key": "meetingStatus",
             "optional": true,
-            "type": "none | meetingBooked"
+            "type": "none | meetingBooked | null"
           },
           {
             "key": "addingDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastModifiedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customFields",
@@ -388,102 +388,102 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "company",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companySize",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "industry",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timeZoneId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "linkedInUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "linkedInSalesNavigatorUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "linkedInRecruiterUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phoneStatus",
             "optional": true,
-            "type": "pending | invalid | valid | validationFailed | notValidated"
+            "type": "pending | invalid | valid | validationFailed | notValidated | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ownerUserId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "accountId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "isOptedOut",
@@ -493,27 +493,27 @@
           {
             "key": "callStatus",
             "optional": true,
-            "type": "none | toCall | called"
+            "type": "none | toCall | called | null"
           },
           {
             "key": "meetingStatus",
             "optional": true,
-            "type": "none | meetingBooked"
+            "type": "none | meetingBooked | null"
           },
           {
             "key": "addingDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastModifiedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customFields",
@@ -683,7 +683,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { error: string, errorDetails?: string }>"
       }
     },
     {
@@ -707,107 +707,107 @@
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone2",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "company",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companySize",
             "optional": true,
-            "type": "Empty | SelfEmployed | Ten | Fifty | TwoHundred | FiveHundred | OneThousand | FiveThousand | TenThousand | OverTenThousand"
+            "type": "Empty | SelfEmployed | Ten | Fifty | TwoHundred | FiveHundred | OneThousand | FiveThousand | TenThousand | OverTenThousand | null"
           },
           {
             "key": "industry",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timeZoneId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "linkedInUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "linkedInSalesNavigatorUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "linkedInRecruiterUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "accountId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "isOptedOut",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "callStatus",
             "optional": true,
-            "type": "none | toCall | called"
+            "type": "none | toCall | called | null"
           },
           {
             "key": "meetingStatus",
             "optional": true,
-            "type": "none | meetingBooked"
+            "type": "none | meetingBooked | null"
           },
           {
             "key": "ownerUserId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "customFields",
@@ -827,102 +827,102 @@
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "domain",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "firstName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phone",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "company",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "companySize",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "industry",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "city",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "country",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timeZoneId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "linkedInUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "linkedInSalesNavigatorUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "linkedInRecruiterUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "phoneStatus",
             "optional": true,
-            "type": "pending | invalid | valid | validationFailed | notValidated"
+            "type": "pending | invalid | valid | validationFailed | notValidated | null"
           },
           {
             "key": "notes",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "ownerUserId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "accountId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "isOptedOut",
@@ -932,27 +932,27 @@
           {
             "key": "callStatus",
             "optional": true,
-            "type": "none | toCall | called"
+            "type": "none | toCall | called | null"
           },
           {
             "key": "meetingStatus",
             "optional": true,
-            "type": "none | meetingBooked"
+            "type": "none | meetingBooked | null"
           },
           {
             "key": "addingDate",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "lastModifiedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "customFields",
@@ -1172,7 +1172,7 @@
           {
             "key": "ownerUserId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "email",
@@ -1182,7 +1182,7 @@
           {
             "key": "senderName",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "emailAccountType",
@@ -1197,7 +1197,7 @@
           {
             "key": "dailyLimit",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "connectionStatus",
@@ -1212,27 +1212,27 @@
           {
             "key": "isInUse",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "sendingConnectivityError",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "receivingConnectivityError",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "sendingLockedByProvider",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "updatedAt",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1290,7 +1290,7 @@
           {
             "key": "startStepId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ignoreStepDelay",
@@ -1300,7 +1300,7 @@
           {
             "key": "startFrom",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       },
@@ -1315,7 +1315,7 @@
           {
             "key": "notProcessed",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, { error: invalidInput | contactLimitExceeded | contactAlreadyInSequence | contactNotFound | forbidden, errorDetails?: string }>"
           }
         ]
       }
@@ -1397,7 +1397,7 @@
           {
             "key": "additionalColumns",
             "optional": true,
-            "type": "CurrentStep | LastStepCompletedAt | Status[]"
+            "type": "(CurrentStep | LastStepCompletedAt | Status)[]"
           }
         ]
       },
@@ -1475,7 +1475,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{}"
+        "type": "Record<string, { error: string, errorDetails?: string }>"
       }
     },
     {
@@ -1504,7 +1504,7 @@
           {
             "key": "ownerUserId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -1514,7 +1514,7 @@
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1529,12 +1529,12 @@
           {
             "key": "health",
             "optional": true,
-            "type": "healthy | stalled | degraded | blocked"
+            "type": "healthy | stalled | degraded | blocked | null"
           },
           {
             "key": "scheduleId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "emailAccounts",
@@ -1549,7 +1549,7 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           },
           {
             "key": "steps",
@@ -1612,7 +1612,7 @@
           {
             "key": "ownerUserId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -1622,7 +1622,7 @@
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1637,12 +1637,12 @@
           {
             "key": "health",
             "optional": true,
-            "type": "healthy | stalled | degraded | blocked"
+            "type": "healthy | stalled | degraded | blocked | null"
           },
           {
             "key": "scheduleId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "emailAccounts",
@@ -1657,7 +1657,7 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           },
           {
             "key": "steps",
@@ -1769,7 +1769,7 @@
           {
             "key": "ownerUserId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -1779,7 +1779,7 @@
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1794,12 +1794,12 @@
           {
             "key": "health",
             "optional": true,
-            "type": "healthy | stalled | degraded | blocked"
+            "type": "healthy | stalled | degraded | blocked | null"
           },
           {
             "key": "scheduleId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "emailAccounts",
@@ -1814,7 +1814,7 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           },
           {
             "key": "steps",
@@ -1850,7 +1850,7 @@
           {
             "key": "ownerUserId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "name",
@@ -1860,7 +1860,7 @@
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "status",
@@ -1875,12 +1875,12 @@
           {
             "key": "health",
             "optional": true,
-            "type": "healthy | stalled | degraded | blocked"
+            "type": "healthy | stalled | degraded | blocked | null"
           },
           {
             "key": "scheduleId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "emailAccounts",
@@ -1895,7 +1895,7 @@
           {
             "key": "settings",
             "optional": true,
-            "type": "{}"
+            "type": "{} | null"
           },
           {
             "key": "steps",
@@ -1941,17 +1941,17 @@
           {
             "key": "parentId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ifConditionPositive",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "delayInMinutes",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }
@@ -1992,17 +1992,17 @@
           {
             "key": "parentId",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "ifConditionPositive",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean | null"
           },
           {
             "key": "delayInMinutes",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           }
         ]
       }

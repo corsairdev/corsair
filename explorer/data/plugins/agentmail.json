@@ -129,7 +129,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "reply_to",
@@ -250,7 +250,7 @@
           {
             "key": "messages",
             "optional": false,
-            "type": "{ inbox_id: string, thread_id: string, message_id: string, labels: string[], timestamp: string, from: string, to: string[], size: number, updated_at: string, created_at: string, cc?: string[], bcc?: string[], subject?: string, preview?: string, attachments?: { attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[], in_reply_to?: string, references?: string[], headers?: {} }[]"
+            "type": "{ inbox_id: string, thread_id: string, message_id: string, labels: string[], timestamp: string, from: string, to: string[], size: number, updated_at: string, created_at: string, cc?: string[], bcc?: string[], subject?: string, preview?: string, attachments?: { attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[], in_reply_to?: string, references?: string[], headers?: Record<string, string> }[]"
           },
           {
             "key": "limit",
@@ -260,7 +260,7 @@
           {
             "key": "next_page_token",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -321,7 +321,7 @@
           {
             "key": "headers",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       },
@@ -368,7 +368,7 @@
           {
             "key": "message",
             "optional": false,
-            "type": "{ inbox_id: string, thread_id: string, message_id: string, labels: string[], timestamp: string, from: string, to: string[], size: number, updated_at: string, created_at: string, reply_to?: string[], cc?: string[], bcc?: string[], subject?: string, preview?: string, text?: string, html?: string, extracted_text?: string, extracted_html?: string, attachments?: { attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[], in_reply_to?: string, references?: string[], headers?: {} }"
+            "type": "{ inbox_id: string, thread_id: string, message_id: string, labels: string[], timestamp: string, from: string, to: string[], size: number, updated_at: string, created_at: string, reply_to?: string[], cc?: string[], bcc?: string[], subject?: string, preview?: string, text?: string, html?: string, extracted_text?: string, extracted_html?: string, attachments?: { attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[], in_reply_to?: string, references?: string[], headers?: Record<string, string> }"
           },
           {
             "key": "thread",
@@ -377,7 +377,7 @@
           }
         ]
       },
-      "responseType": "{ type: event, event_type: message.received, event_id: string, message: { inbox_id: string, thread_id: string, message_id: string, labels: string[], timestamp: string, from: string, to: string[], size: number, updated_at: string, created_at: string, reply_to?: string[], cc?: string[], bcc?: string[], subject?: string, preview?: string, text?: string, html?: string, extracted_text?: string, extracted_html?: string, attachments?: { attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[], in_reply_to?: string, references?: string[], headers?: {} }, thread: { inbox_id: string, thread_id: string, labels: string[], timestamp: string, senders: string[], recipients: string[], last_message_id: string, message_count: number, size: number, updated_at: string, created_at: string, received_timestamp?: string, sent_timestamp?: string, subject?: string, preview?: string, attachments?: { attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[] } }",
+      "responseType": "{ type: event, event_type: message.received, event_id: string, message: { inbox_id: string, thread_id: string, message_id: string, labels: string[], timestamp: string, from: string, to: string[], size: number, updated_at: string, created_at: string, reply_to?: string[], cc?: string[], bcc?: string[], subject?: string, preview?: string, text?: string, html?: string, extracted_text?: string, extracted_html?: string, attachments?: { attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[], in_reply_to?: string, references?: string[], headers?: Record<string, string> }, thread: { inbox_id: string, thread_id: string, labels: string[], timestamp: string, senders: string[], recipients: string[], last_message_id: string, message_count: number, size: number, updated_at: string, created_at: string, received_timestamp?: string, sent_timestamp?: string, subject?: string, preview?: string, attachments?: { attachment_id: string, size: number, filename?: string, content_type?: string, content_disposition?: string, content_id?: string }[] } }",
       "usageExample": "agentmail({\n    webhookHooks: {\n        message: {\n            received: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
     }
   ],

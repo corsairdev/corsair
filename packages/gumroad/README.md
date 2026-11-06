@@ -17,19 +17,19 @@ pnpm add @corsair-dev/gumroad
 | `customFields.list` | `gumroad.api.customFields.list` | `read` | List a product's checkout custom fields |
 | `customFields.update` | `gumroad.api.customFields.update` | `write` | Flip whether one of a product's custom fields is required |
 | `earnings.get` | `gumroad.api.earnings.get` | `read` | Read the annual earnings breakdown (gross, fees, taxes, affiliate credit, net) for one tax year |
-| `emails.create` | `gumroad.api.emails.create` | `write` | Create a draft audience email by subject, HTML body and audience, or send it immediately with publish=true |
+| `emails.create` | `gumroad.api.emails.create` | `destructive` | Create a draft audience email by subject, HTML body and audience, or send it immediately with publish=true |
 | `emails.delete` | `gumroad.api.emails.delete` | `destructive` | Delete an audience email |
 | `emails.get` | `gumroad.api.emails.get` | `read` | Read one audience email by id |
 | `emails.list` | `gumroad.api.emails.list` | `read` | List the seller's audience emails, optionally filtered to published, scheduled or draft state |
 | `emails.preview` | `gumroad.api.emails.preview` | `write` | Send a preview of an audience email to the seller's own address |
 | `emails.schedule` | `gumroad.api.emails.schedule` | `write` | Schedule a draft audience email to publish at a set time in the seller's timezone |
-| `emails.send` | `gumroad.api.emails.send` | `write` | Publish a draft audience email and send it to its audience |
+| `emails.send` | `gumroad.api.emails.send` | `destructive` | Publish a draft audience email and send it to its audience |
 | `emails.unschedule` | `gumroad.api.emails.unschedule` | `write` | Cancel a scheduled audience email and turn it back into a draft |
 | `files.abort` | `gumroad.api.files.abort` | `write` | Cancel a multipart upload started by files.presign |
 | `files.complete` | `gumroad.api.files.complete` | `write` | Finalize a multipart upload with the S3 upload id, key and part etags, returning the canonical file URL |
 | `files.presign` | `gumroad.api.files.presign` | `write` | Start a multipart file upload and get presigned S3 URLs per 100 MB part (max 20 GB); the binary PUTs to S3 are client-side |
 | `licenses.decrementUsesCount` | `gumroad.api.licenses.decrementUsesCount` | `write` | Decrement a license key use counter and read its purchase |
-| `licenses.disable` | `gumroad.api.licenses.disable` | `write` | Disable a license key so it fails verification, and read its purchase |
+| `licenses.disable` | `gumroad.api.licenses.disable` | `destructive` | Disable a license key so it fails verification, and read its purchase |
 | `licenses.enable` | `gumroad.api.licenses.enable` | `write` | Re-enable a disabled license key and read its purchase |
 | `licenses.rotate` | `gumroad.api.licenses.rotate` | `write` | Rotate a license key to a new one; the previous key stops validating immediately |
 | `licenses.verify` | `gumroad.api.licenses.verify` | `write` | Verify a license key against a product and read its purchase; increments the license use counter unless increment_uses_count is "false" |
@@ -52,7 +52,7 @@ pnpm add @corsair-dev/gumroad
 | `products.coversDelete` | `gumroad.api.products.coversDelete` | `destructive` | Permanently delete one of a product's covers by id |
 | `products.create` | `gumroad.api.products.create` | `write` | Create a product with name, price in cents, type, tags, refund policy, rich content pages and attached files |
 | `products.delete` | `gumroad.api.products.delete` | `destructive` | Permanently delete a product |
-| `products.disable` | `gumroad.api.products.disable` | `write` | Unpublish (disable) an existing product |
+| `products.disable` | `gumroad.api.products.disable` | `destructive` | Unpublish (disable) an existing product |
 | `products.enable` | `gumroad.api.products.enable` | `write` | Publish (enable) an existing product |
 | `products.get` | `gumroad.api.products.get` | `read` | Get one product by id, including description, price, tags and purchasing-power-parity prices |
 | `products.list` | `gumroad.api.products.list` | `read` | List the authenticated user's Gumroad products with price, publication state and sales counts |
@@ -69,9 +69,9 @@ pnpm add @corsair-dev/gumroad
 | `sales.get` | `gumroad.api.sales.get` | `read` | Get one sale by id with price, fees, taxes, refund and chargeback state |
 | `sales.list` | `gumroad.api.sales.list` | `read` | List successful sales, filterable by date range, product, buyer email, order id, name or license key |
 | `sales.markAsShipped` | `gumroad.api.sales.markAsShipped` | `write` | Mark a physical sale as shipped with an optional tracking URL |
-| `sales.refund` | `gumroad.api.sales.refund` | `write` | Refund a sale fully, or partially with amount_cents; returns the updated sale |
+| `sales.refund` | `gumroad.api.sales.refund` | `destructive` | Refund a sale fully, or partially with amount_cents; returns the updated sale |
 | `sales.resendReceipt` | `gumroad.api.sales.resendReceipt` | `write` | Resend the purchase receipt to the customer's email |
-| `sales.revokeAccess` | `gumroad.api.sales.revokeAccess` | `write` | Revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales) |
+| `sales.revokeAccess` | `gumroad.api.sales.revokeAccess` | `destructive` | Revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales) |
 | `sales.undoRevokeAccess` | `gumroad.api.sales.undoRevokeAccess` | `write` | Restore a buyer's access to a previously revoked sale |
 | `subscribers.get` | `gumroad.api.subscribers.get` | `read` | Read one subscriber by id with status, recurrence and license key |
 | `subscribers.list` | `gumroad.api.subscribers.list` | `read` | List one product's subscribers with status, recurrence and license key |

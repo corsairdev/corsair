@@ -28,9 +28,9 @@ await corsair.asticaai.api.analyzeAudio.analyze({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `input` | `string` | Yes | — |
-| `modelVersion` | `string` | Yes | — |
-| `doStream` | `0 \| 1` | Yes | — |
-| `low_priority` | `0 \| 1` | Yes | — |
+| `modelVersion` | `string` | No | Defaults to "1.0_full". |
+| `doStream` | `0 \| 1` | No | Defaults to 0. |
+| `low_priority` | `0 \| 1` | No | Defaults to 0. |
 
 
 
@@ -40,8 +40,8 @@ await corsair.asticaai.api.analyzeAudio.analyze({});
 |------|------|----------|-------------|
 | `status` | `string` | No | — |
 | `error` | `string` | No | — |
-| `text` | `string` | No | — |
-| `resultURI` | `string` | No | — |
+| `text` | `string \| null` | No | — |
+| `resultURI` | `string \| null` | No | — |
 
 
 
@@ -66,7 +66,7 @@ await corsair.asticaai.api.readText.read({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `input` | `string` | Yes | — |
-| `modelVersion` | `2.5_full \| 2.1_full \| 2.0_full \| 1.0_full` | Yes | — |
+| `modelVersion` | `2.5_full \| 2.1_full \| 2.0_full \| 1.0_full` | No | Defaults to "2.5_full". |
 
 
 
@@ -77,7 +77,7 @@ await corsair.asticaai.api.readText.read({});
 | `status` | `string` | No | — |
 | `error` | `string` | No | — |
 | `readResult` | `object` | No | — |
-| `astica` | `object` | No | — |
+| `astica` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="readResult full type">
@@ -114,14 +114,6 @@ await corsair.asticaai.api.readText.read({});
     }[]
   }[],
   styles?: any[]
-}
-```
-</Accordion>
-
-<Accordion title="astica full type">
-
-```ts
-{
 }
 ```
 </Accordion>

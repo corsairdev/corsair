@@ -35,7 +35,7 @@
           {
             "key": "target",
             "optional": false,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Targeting criteria to estimate audience size for, as a LinkedIn targeting object (e.g. { and: [ { or: [...] }] })."
           }
         ]
@@ -46,13 +46,13 @@
           {
             "key": "elements",
             "optional": true,
-            "type": "{}[]",
+            "type": "Record<string, any>[]",
             "description": "Audience size entries for the given targeting criteria."
           },
           {
             "key": "paging",
             "optional": true,
-            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+            "type": "{ start?: number, count?: number, total?: number, links?: Record<string, any>[] }"
           }
         ]
       }
@@ -72,13 +72,13 @@
           {
             "key": "facets",
             "optional": true,
-            "type": "{}[]",
+            "type": "Record<string, any>[]",
             "description": "Available targeting facets."
           },
           {
             "key": "elements",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           }
         ]
       }
@@ -111,13 +111,13 @@
           {
             "key": "elements",
             "optional": true,
-            "type": "{}[]",
+            "type": "Record<string, any>[]",
             "description": "Matching targeting entities."
           },
           {
             "key": "paging",
             "optional": true,
-            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+            "type": "{ start?: number, count?: number, total?: number, links?: Record<string, any>[] }"
           }
         ]
       }
@@ -174,7 +174,7 @@
           {
             "key": "lastModified",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -218,7 +218,7 @@
           {
             "key": "downloadUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "original",
@@ -300,7 +300,7 @@
           {
             "key": "paging",
             "optional": true,
-            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+            "type": "{ start?: number, count?: number, total?: number, links?: Record<string, any>[] }"
           }
         ]
       }
@@ -327,7 +327,7 @@
           {
             "key": "value",
             "optional": false,
-            "type": "{ asset: string, mediaArtifact?: string, uploadMechanism?: {} }"
+            "type": "{ asset: string, mediaArtifact?: string, uploadMechanism?: Record<string, any> }"
           }
         ]
       }
@@ -349,7 +349,7 @@
           {
             "key": "role",
             "optional": true,
-            "type": "ADMINISTRATOR | DIRECT_SPONSORED_CONTENT_POSTER | RECRUITING_POSTER | LEAD_GEN_FORMS_MANAGER | CONTENT_ADMIN | ANALYTICS_ROLE[]",
+            "type": "(ADMINISTRATOR | DIRECT_SPONSORED_CONTENT_POSTER | RECRUITING_POSTER | LEAD_GEN_FORMS_MANAGER | CONTENT_ADMIN | ANALYTICS_ROLE)[]",
             "description": "Filter to specific organization roles."
           },
           {
@@ -383,7 +383,7 @@
           {
             "key": "paging",
             "optional": true,
-            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+            "type": "{ start?: number, count?: number, total?: number, links?: Record<string, any>[] }"
           }
         ]
       }
@@ -421,12 +421,12 @@
           {
             "key": "elements",
             "optional": true,
-            "type": "{}[]"
+            "type": "Record<string, any>[]"
           },
           {
             "key": "paging",
             "optional": true,
-            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+            "type": "{ start?: number, count?: number, total?: number, links?: Record<string, any>[] }"
           }
         ]
       }
@@ -471,13 +471,13 @@
           {
             "key": "elements",
             "optional": false,
-            "type": "{}[]",
+            "type": "Record<string, any>[]",
             "description": "Page statistics entries."
           },
           {
             "key": "paging",
             "optional": true,
-            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+            "type": "{ start?: number, count?: number, total?: number, links?: Record<string, any>[] }"
           }
         ]
       }
@@ -522,13 +522,13 @@
           {
             "key": "elements",
             "optional": false,
-            "type": "{}[]",
+            "type": "Record<string, any>[]",
             "description": "Share statistics entries."
           },
           {
             "key": "paging",
             "optional": true,
-            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+            "type": "{ start?: number, count?: number, total?: number, links?: Record<string, any>[] }"
           }
         ]
       }
@@ -818,7 +818,7 @@
           {
             "key": "createdAt",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "isReshareDisabledByAuthor",
@@ -828,12 +828,12 @@
           {
             "key": "media",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "content",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -870,32 +870,32 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "given_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "family_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "picture",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "email",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "locale",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "vanityName",
@@ -964,22 +964,22 @@
           {
             "key": "firstName",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "lastName",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "headline",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "profilePicture",
             "optional": true,
-            "type": "{ displayImage~?: string, displayImage~:playableStreams?: {}[] }"
+            "type": "{ displayImage~?: string, displayImage~:playableStreams?: Record<string, any>[] }"
           }
         ]
       }
@@ -1018,13 +1018,13 @@
           {
             "key": "elements",
             "optional": false,
-            "type": "{ actor?: string, type?: string, created?: {} }[]",
+            "type": "{ actor?: string, type?: string, created?: Record<string, any> }[]",
             "description": "The reactions on the entity."
           },
           {
             "key": "paging",
             "optional": true,
-            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+            "type": "{ start?: number, count?: number, total?: number, links?: Record<string, any>[] }"
           }
         ]
       }
@@ -1080,7 +1080,7 @@
           {
             "key": "paging",
             "optional": true,
-            "type": "{ start?: number, count?: number, total?: number, links?: {}[] }"
+            "type": "{ start?: number, count?: number, total?: number, links?: Record<string, any>[] }"
           }
         ]
       }

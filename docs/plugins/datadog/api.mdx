@@ -38,7 +38,7 @@ await corsair.datadog.api.apiKeys.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -47,19 +47,9 @@ await corsair.datadog.api.apiKeys.list({});
 {
   id?: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -141,8 +131,7 @@ await corsair.datadog.api.dashboards.create({});
 ```ts
 {
   id?: number,
-  definition: {
-  },
+  definition: Record<string, any>,
   layout?: {
     x: number,
     y: number,
@@ -162,7 +151,7 @@ await corsair.datadog.api.dashboards.create({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `title` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `layout_type` | `string` | No | — |
 | `url` | `string` | No | — |
 | `author_handle` | `string` | No | — |
@@ -170,9 +159,9 @@ await corsair.datadog.api.dashboards.create({});
 | `created_at` | `string` | No | — |
 | `modified_at` | `string` | No | — |
 | `widgets` | `object[]` | No | — |
-| `template_variables` | `object[]` | No | — |
-| `notify_list` | `string[]` | No | — |
-| `tags` | `string[]` | No | — |
+| `template_variables` | `Record<string, any>[] \| null` | No | — |
+| `notify_list` | `string[] \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="widgets full type">
@@ -180,22 +169,13 @@ await corsair.datadog.api.dashboards.create({});
 ```ts
 {
   id?: number,
-  definition: {
-  },
+  definition: Record<string, any>,
   layout?: {
     x: number,
     y: number,
     width: number,
     height: number
   }
-}[]
-```
-</Accordion>
-
-<Accordion title="template_variables full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -261,7 +241,7 @@ await corsair.datadog.api.dashboards.get({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `title` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `layout_type` | `string` | No | — |
 | `url` | `string` | No | — |
 | `author_handle` | `string` | No | — |
@@ -269,9 +249,9 @@ await corsair.datadog.api.dashboards.get({});
 | `created_at` | `string` | No | — |
 | `modified_at` | `string` | No | — |
 | `widgets` | `object[]` | No | — |
-| `template_variables` | `object[]` | No | — |
-| `notify_list` | `string[]` | No | — |
-| `tags` | `string[]` | No | — |
+| `template_variables` | `Record<string, any>[] \| null` | No | — |
+| `notify_list` | `string[] \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="widgets full type">
@@ -279,22 +259,13 @@ await corsair.datadog.api.dashboards.get({});
 ```ts
 {
   id?: number,
-  definition: {
-  },
+  definition: Record<string, any>,
   layout?: {
     x: number,
     y: number,
     width: number,
     height: number
   }
-}[]
-```
-</Accordion>
-
-<Accordion title="template_variables full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -386,8 +357,7 @@ await corsair.datadog.api.dashboards.update({});
 ```ts
 {
   id?: number,
-  definition: {
-  },
+  definition: Record<string, any>,
   layout?: {
     x: number,
     y: number,
@@ -407,7 +377,7 @@ await corsair.datadog.api.dashboards.update({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `title` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `layout_type` | `string` | No | — |
 | `url` | `string` | No | — |
 | `author_handle` | `string` | No | — |
@@ -415,9 +385,9 @@ await corsair.datadog.api.dashboards.update({});
 | `created_at` | `string` | No | — |
 | `modified_at` | `string` | No | — |
 | `widgets` | `object[]` | No | — |
-| `template_variables` | `object[]` | No | — |
-| `notify_list` | `string[]` | No | — |
-| `tags` | `string[]` | No | — |
+| `template_variables` | `Record<string, any>[] \| null` | No | — |
+| `notify_list` | `string[] \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="widgets full type">
@@ -425,22 +395,13 @@ await corsair.datadog.api.dashboards.update({});
 ```ts
 {
   id?: number,
-  definition: {
-  },
+  definition: Record<string, any>,
   layout?: {
     x: number,
     y: number,
     width: number,
     height: number
   }
-}[]
-```
-</Accordion>
-
-<Accordion title="template_variables full type">
-
-```ts
-{
 }[]
 ```
 </Accordion>
@@ -496,10 +457,8 @@ await corsair.datadog.api.downtimes.create({});
     message?: string | null,
     created?: string,
     modified?: string,
-    monitor_identifier?: {
-    },
-    schedule?: {
-    }
+    monitor_identifier?: Record<string, any>,
+    schedule?: Record<string, any>
   }
 }
 ```
@@ -548,10 +507,8 @@ await corsair.datadog.api.downtimes.list({});
       message?: string | null,
       created?: string,
       modified?: string,
-      monitor_identifier?: {
-      },
-      schedule?: {
-      }
+      monitor_identifier?: Record<string, any>,
+      schedule?: Record<string, any>
     }
   }[]
 }& {
@@ -731,8 +688,7 @@ await corsair.datadog.api.hosts.list({});
   last_reported_time?: number,
   up?: boolean,
   sources?: string[],
-  tags_by_source?: {
-  }
+  tags_by_source?: Record<string, string[]>
 }[]
 ```
 </Accordion>
@@ -796,7 +752,7 @@ await corsair.datadog.api.incidents.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -805,19 +761,9 @@ await corsair.datadog.api.incidents.list({});
 {
   id?: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -857,26 +803,8 @@ await corsair.datadog.api.logs.aggregate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `meta` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 
 
@@ -909,8 +837,7 @@ await corsair.datadog.api.logs.listIndexes({});
 ```ts
 {
   name?: string,
-  filter?: {
-  },
+  filter?: Record<string, any>,
   is_rate_limited?: boolean,
   daily_limit?: number | null,
   num_retention_days?: number
@@ -963,8 +890,7 @@ await corsair.datadog.api.logs.search({});
 {
   id?: string,
   type?: string,
-  attributes?: {
-  }
+  attributes?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1061,10 +987,9 @@ await corsair.datadog.api.metrics.query({});
 {
   metric?: string,
   display_name?: string,
-  pointlist?: number | null[][],
+  pointlist?: (number | null)[][],
   scope?: string,
-  unit?: {
-  } | null[] | null
+  unit?: (Record<string, any> | null)[] | null
 }[]
 ```
 </Accordion>
@@ -1098,7 +1023,10 @@ await corsair.datadog.api.metrics.submit({});
 ```ts
 {
   metric: string,
-  points: tuple[],
+  points: [
+    number,
+    number
+  ][],
   type?: gauge | count | rate,
   host?: string,
   tags?: string[]
@@ -1143,17 +1071,7 @@ await corsair.datadog.api.monitors.create({});
 | `message` | `string` | No | — |
 | `tags` | `string[]` | No | — |
 | `priority` | `number` | No | — |
-| `options` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `options` | `Record<string, any>` | No | — |
 
 
 
@@ -1167,12 +1085,12 @@ await corsair.datadog.api.monitors.create({});
 | `query` | `string` | No | — |
 | `message` | `string` | No | — |
 | `tags` | `string[]` | No | — |
-| `priority` | `number` | No | — |
+| `priority` | `number \| null` | No | — |
 | `overall_state` | `string` | No | — |
 | `created` | `string` | No | — |
 | `modified` | `string` | No | — |
 | `creator` | `object` | No | — |
-| `options` | `object` | No | — |
+| `options` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -1182,14 +1100,6 @@ await corsair.datadog.api.monitors.create({});
   name?: string | null,
   email?: string,
   handle?: string
-}
-```
-</Accordion>
-
-<Accordion title="options full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1260,12 +1170,12 @@ await corsair.datadog.api.monitors.get({});
 | `query` | `string` | No | — |
 | `message` | `string` | No | — |
 | `tags` | `string[]` | No | — |
-| `priority` | `number` | No | — |
+| `priority` | `number \| null` | No | — |
 | `overall_state` | `string` | No | — |
 | `created` | `string` | No | — |
 | `modified` | `string` | No | — |
 | `creator` | `object` | No | — |
-| `options` | `object` | No | — |
+| `options` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -1275,14 +1185,6 @@ await corsair.datadog.api.monitors.get({});
   name?: string | null,
   email?: string,
   handle?: string
-}
-```
-</Accordion>
-
-<Accordion title="options full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1339,8 +1241,7 @@ await corsair.datadog.api.monitors.list({});
     email?: string,
     handle?: string
   },
-  options?: {
-  }
+  options?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1381,12 +1282,12 @@ await corsair.datadog.api.monitors.mute({});
 | `query` | `string` | No | — |
 | `message` | `string` | No | — |
 | `tags` | `string[]` | No | — |
-| `priority` | `number` | No | — |
+| `priority` | `number \| null` | No | — |
 | `overall_state` | `string` | No | — |
 | `created` | `string` | No | — |
 | `modified` | `string` | No | — |
 | `creator` | `object` | No | — |
-| `options` | `object` | No | — |
+| `options` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -1396,14 +1297,6 @@ await corsair.datadog.api.monitors.mute({});
   name?: string | null,
   email?: string,
   handle?: string
-}
-```
-</Accordion>
-
-<Accordion title="options full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1463,8 +1356,7 @@ await corsair.datadog.api.monitors.search({});
     email?: string,
     handle?: string
   },
-  options?: {
-  }
+  options?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1518,12 +1410,12 @@ await corsair.datadog.api.monitors.unmute({});
 | `query` | `string` | No | — |
 | `message` | `string` | No | — |
 | `tags` | `string[]` | No | — |
-| `priority` | `number` | No | — |
+| `priority` | `number \| null` | No | — |
 | `overall_state` | `string` | No | — |
 | `created` | `string` | No | — |
 | `modified` | `string` | No | — |
 | `creator` | `object` | No | — |
-| `options` | `object` | No | — |
+| `options` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -1533,14 +1425,6 @@ await corsair.datadog.api.monitors.unmute({});
   name?: string | null,
   email?: string,
   handle?: string
-}
-```
-</Accordion>
-
-<Accordion title="options full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1571,18 +1455,8 @@ await corsair.datadog.api.monitors.update({});
 | `query` | `string` | No | — |
 | `message` | `string` | No | — |
 | `tags` | `string[]` | No | — |
-| `priority` | `number` | No | — |
-| `options` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `priority` | `number \| null` | No | — |
+| `options` | `Record<string, any>` | No | — |
 
 
 
@@ -1596,12 +1470,12 @@ await corsair.datadog.api.monitors.update({});
 | `query` | `string` | No | — |
 | `message` | `string` | No | — |
 | `tags` | `string[]` | No | — |
-| `priority` | `number` | No | — |
+| `priority` | `number \| null` | No | — |
 | `overall_state` | `string` | No | — |
 | `created` | `string` | No | — |
 | `modified` | `string` | No | — |
 | `creator` | `object` | No | — |
-| `options` | `object` | No | — |
+| `options` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="creator full type">
@@ -1611,14 +1485,6 @@ await corsair.datadog.api.monitors.update({});
   name?: string | null,
   email?: string,
   handle?: string
-}
-```
-</Accordion>
-
-<Accordion title="options full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1657,7 +1523,7 @@ await corsair.datadog.api.roles.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1666,19 +1532,9 @@ await corsair.datadog.api.roles.list({});
 {
   id?: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1724,8 +1580,7 @@ await corsair.datadog.api.services.listDefinitions({});
 {
   type?: string,
   id?: string,
-  attributes?: {
-  }
+  attributes?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1791,7 +1646,7 @@ await corsair.datadog.api.slos.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `error` | `string` | No | — |
+| `error` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1929,8 +1784,8 @@ await corsair.datadog.api.spans.aggregate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | No | — |
-| `meta` | `object` | No | — |
+| `data` | `object \| Record<string, any>[]` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1938,18 +1793,8 @@ await corsair.datadog.api.spans.aggregate({});
 ```ts
 {
   type?: string,
-  attributes?: {
-  }
-} | {
-}[]
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
+  attributes?: Record<string, any>
+} | Record<string, any>[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1993,8 +1838,7 @@ await corsair.datadog.api.spans.search({});
   data?: {
     id?: string,
     type?: string,
-    attributes?: {
-    }
+    attributes?: Record<string, any>
   }[],
   meta?: {
     page?: {
@@ -2004,8 +1848,7 @@ await corsair.datadog.api.spans.search({});
     }
   }
 }& {
-  links?: {
-  }
+  links?: Record<string, any>
 }
 ```
 </Accordion>
@@ -2033,30 +1876,12 @@ await corsair.datadog.api.synthetics.createApiTest({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `config` | `object` | Yes | — |
+| `config` | `Record<string, any>` | Yes | — |
 | `locations` | `string[]` | Yes | — |
-| `options` | `object` | Yes | — |
+| `options` | `Record<string, any>` | Yes | — |
 | `message` | `string` | No | — |
 | `tags` | `string[]` | No | — |
 | `subtype` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2071,27 +1896,9 @@ await corsair.datadog.api.synthetics.createApiTest({});
 | `status` | `string` | No | — |
 | `tags` | `string[]` | No | — |
 | `locations` | `string[]` | No | — |
-| `config` | `object` | No | — |
-| `options` | `object` | No | — |
+| `config` | `Record<string, any>` | No | — |
+| `options` | `Record<string, any>` | No | — |
 | `message` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2128,27 +1935,9 @@ await corsair.datadog.api.synthetics.getApiTest({});
 | `status` | `string` | No | — |
 | `tags` | `string[]` | No | — |
 | `locations` | `string[]` | No | — |
-| `config` | `object` | No | — |
-| `options` | `object` | No | — |
+| `config` | `Record<string, any>` | No | — |
+| `options` | `Record<string, any>` | No | — |
 | `message` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2232,10 +2021,8 @@ await corsair.datadog.api.synthetics.listTests({});
   status?: string,
   tags?: string[],
   locations?: string[],
-  config?: {
-  },
-  options?: {
-  },
+  config?: Record<string, any>,
+  options?: Record<string, any>,
   message?: string
 }[]
 ```
@@ -2304,17 +2091,7 @@ await corsair.datadog.api.tags.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `tags` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="tags full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `tags` | `Record<string, string[]>` | No | — |
 
 
 
@@ -2383,17 +2160,7 @@ await corsair.datadog.api.usage.getSummary({});
 |------|------|----------|-------------|
 | `start_date` | `string` | No | — |
 | `end_date` | `string` | No | — |
-| `usage` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="usage full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `usage` | `Record<string, any>[]` | No | — |
 
 
 
@@ -2428,7 +2195,7 @@ await corsair.datadog.api.users.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2437,19 +2204,9 @@ await corsair.datadog.api.users.list({});
 {
   id?: string,
   type?: string,
-  attributes?: {
-  },
-  relationships?: {
-  }
+  attributes?: Record<string, any>,
+  relationships?: Record<string, any>
 }[]
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -2490,8 +2247,8 @@ await corsair.datadog.api.webhooks.create({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `url` | `string` | No | — |
-| `payload` | `string` | No | — |
-| `custom_headers` | `string` | No | — |
+| `payload` | `string \| null` | No | — |
+| `custom_headers` | `string \| null` | No | — |
 | `encode_as` | `string` | No | — |
 
 
@@ -2524,8 +2281,8 @@ await corsair.datadog.api.webhooks.get({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `url` | `string` | No | — |
-| `payload` | `string` | No | — |
-| `custom_headers` | `string` | No | — |
+| `payload` | `string \| null` | No | — |
+| `custom_headers` | `string \| null` | No | — |
 | `encode_as` | `string` | No | — |
 
 

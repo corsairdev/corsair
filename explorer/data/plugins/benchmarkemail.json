@@ -1,7 +1,7 @@
 {
   "id": "benchmarkemail",
-  "displayName": "BenchmarkEmail",
-  "description": "BenchmarkEmail plugin for Corsair",
+  "displayName": "Benchmark Email",
+  "description": "Email marketing platform. Manage contacts, lists, emails, automations, sign-up forms, polls, surveys, webhooks, and reports, plus account settings and the media archive.",
   "npmPackageName": "@corsair-dev/benchmarkemail",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
@@ -34,7 +34,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -76,7 +76,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -118,7 +118,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -200,7 +200,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -283,7 +283,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -325,7 +325,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1375,7 +1375,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1417,7 +1417,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1459,7 +1459,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1542,7 +1542,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1584,7 +1584,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1626,7 +1626,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1668,7 +1668,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1710,7 +1710,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1752,7 +1752,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1804,7 +1804,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1841,7 +1841,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1888,7 +1888,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1930,7 +1930,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -1972,7 +1972,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -2014,7 +2014,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -2377,7 +2377,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -2501,7 +2501,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -2543,7 +2543,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -2590,7 +2590,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -2642,7 +2642,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -2689,7 +2689,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -2956,7 +2956,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -3003,7 +3003,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -3050,7 +3050,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -3145,7 +3145,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -3197,7 +3197,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -3244,7 +3244,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -3291,7 +3291,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -3338,7 +3338,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -3473,7 +3473,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -3521,7 +3521,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -4566,7 +4566,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -4608,7 +4608,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -4650,7 +4650,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -4707,7 +4707,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -4800,7 +4800,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -4847,7 +4847,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -4894,7 +4894,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -4990,7 +4990,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -5042,7 +5042,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -5089,7 +5089,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -5136,7 +5136,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -5178,7 +5178,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -5225,7 +5225,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -6136,7 +6136,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -6224,7 +6224,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -6271,7 +6271,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -6318,7 +6318,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -6365,7 +6365,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -6407,7 +6407,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -6449,7 +6449,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -6496,7 +6496,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -8067,7 +8067,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -8476,7 +8476,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -8523,7 +8523,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -8560,7 +8560,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -9019,7 +9019,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -9061,7 +9061,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -9108,7 +9108,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -9150,7 +9150,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -9409,7 +9409,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -10026,7 +10026,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -10963,7 +10963,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -11010,7 +11010,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -11052,7 +11052,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -11099,7 +11099,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -11650,7 +11650,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -12186,7 +12186,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -12233,7 +12233,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]
@@ -12372,7 +12372,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Request body fields for the target route"
           }
         ]

@@ -3556,17 +3556,7 @@ await corsair.clickup.api.tasks.create({});
 | `notify_all` | `boolean` | No | — |
 | `parent` | `string` | No | — |
 | `links_to` | `string` | No | — |
-| `custom_fields` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="custom_fields full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `custom_fields` | `Record<string, any>[]` | No | — |
 
 
 
@@ -4476,14 +4466,14 @@ await corsair.clickup.api.timeEntries.running({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
+| `data` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

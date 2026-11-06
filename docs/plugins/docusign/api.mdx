@@ -27,17 +27,7 @@ await corsair.docusign.api.addContactsToContactsList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -65,17 +55,7 @@ await corsair.docusign.api.addEmailOverridesToEnvelope({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -103,17 +83,7 @@ await corsair.docusign.api.addEnvelopeAttachments({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -141,17 +111,7 @@ await corsair.docusign.api.addExistingBrandToGroup({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `groupId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -180,17 +140,7 @@ await corsair.docusign.api.addFileToWorkspace({});
 |------|------|----------|-------------|
 | `workspaceId` | `string` | Yes | — |
 | `folderId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -218,17 +168,7 @@ await corsair.docusign.api.addMembersToSigningGroup({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `signingGroupId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -255,17 +195,7 @@ await corsair.docusign.api.addNewUsersToASpecifiedAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -293,17 +223,7 @@ await corsair.docusign.api.addOrUpdateAccountStamps({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `decode_only` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -331,17 +251,7 @@ await corsair.docusign.api.addOrUpdateUserCustomSettings({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -369,17 +279,7 @@ await corsair.docusign.api.addOrUpdateUserSignature({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -408,17 +308,7 @@ await corsair.docusign.api.addPartToChunkedUpload({});
 |------|------|----------|-------------|
 | `chunkedUploadId` | `string` | Yes | — |
 | `chunkedUploadPartSeq` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -446,17 +336,7 @@ await corsair.docusign.api.addStepToEnvelopeWorkflow({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -486,17 +366,7 @@ await corsair.docusign.api.addTemplatesToDocumentInEnvelope({});
 | `envelopeId` | `string` | Yes | — |
 | `documentId` | `string` | Yes | — |
 | `preserve_template_recipient` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -525,17 +395,7 @@ await corsair.docusign.api.addTemplatesToEnvelope({});
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
 | `preserve_template_recipient` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -563,17 +423,7 @@ await corsair.docusign.api.addUserSignatureAndInitialsImages({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -601,17 +451,7 @@ await corsair.docusign.api.addUsersToExistingGroup({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `groupId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -640,17 +480,7 @@ await corsair.docusign.api.applyActionToBulkSendEnvelopes({});
 |------|------|----------|-------------|
 | `bulkSendBatchId` | `string` | Yes | — |
 | `bulkAction` | `resend \| correct \| void` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -678,17 +508,7 @@ await corsair.docusign.api.changeUsersInAccount({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `allow_all_languages` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -760,17 +580,7 @@ await corsair.docusign.api.commitChunkedUploadForEnvelopes({});
 |------|------|----------|-------------|
 | `chunkedUploadId` | `string` | Yes | — |
 | `action` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -798,17 +608,7 @@ await corsair.docusign.api.configureCloudStorageRedirectUrl({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -836,17 +636,7 @@ await corsair.docusign.api.createAccountCustomField({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `apply_to_templates` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -873,17 +663,7 @@ await corsair.docusign.api.createACollaborativeWorkspace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -910,17 +690,7 @@ await corsair.docusign.api.createBccEmailArchiveConfiguration({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -947,17 +717,7 @@ await corsair.docusign.api.createBrandProfilesForAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -985,17 +745,7 @@ await corsair.docusign.api.createBulkSendRequest({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `bulkSendListId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1023,17 +773,7 @@ await corsair.docusign.api.createBulkSendTestRequest({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `bulkSendListId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1060,17 +800,7 @@ await corsair.docusign.api.createConnectConfigurationForAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1099,17 +829,7 @@ await corsair.docusign.api.createCustomDocumentFieldsInEnvelope({});
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
 | `documentId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1137,17 +857,7 @@ await corsair.docusign.api.createCustomFieldsForEnvelope({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1217,17 +927,7 @@ await corsair.docusign.api.createCustomTabWithProperties({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1256,17 +956,7 @@ await corsair.docusign.api.createDocumentResponsiveHtmlPreview({});
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
 | `documentId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1295,7 +985,7 @@ await corsair.docusign.api.createEnvelope({});
 |------|------|----------|-------------|
 | `templateId` | `string` | No | — |
 | `emailSubject` | `string` | Yes | — |
-| `status` | `sent \| created` | Yes | — |
+| `status` | `sent \| created` | No | Defaults to "sent". |
 | `templateRoles` | `object[]` | No | — |
 | `documents` | `object[]` | No | — |
 | `recipients` | `object` | No | — |
@@ -1372,17 +1062,7 @@ await corsair.docusign.api.createGroupsForAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1412,17 +1092,7 @@ await corsair.docusign.api.createIdproofResourceTokenForRecipient({});
 | `envelopeId` | `string` | Yes | — |
 | `recipientId` | `string` | Yes | — |
 | `token_scopes` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1450,17 +1120,7 @@ await corsair.docusign.api.createNewAccountPermissionProfile({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `include` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1487,17 +1147,7 @@ await corsair.docusign.api.createNotaryJurisdictionObject({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1525,17 +1175,7 @@ await corsair.docusign.api.createOrUpdateUserAuthorizations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1564,17 +1204,7 @@ await corsair.docusign.api.createPreviewOfResponsiveHtml({});
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
 | `documentId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1602,17 +1232,7 @@ await corsair.docusign.api.createPreviewOfResponsiveHtmlInEnvelope({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1641,17 +1261,7 @@ await corsair.docusign.api.createRecipientManualReviewLink({});
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
 | `recipientId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1679,17 +1289,7 @@ await corsair.docusign.api.createRecipientPreviewForEnvelope({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1755,17 +1355,7 @@ await corsair.docusign.api.createSenderViewUrlForEnvelope({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1792,17 +1382,7 @@ await corsair.docusign.api.createSigningGroup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1830,17 +1410,7 @@ await corsair.docusign.api.createTemplateDocumentCustomFields({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1868,17 +1438,7 @@ await corsair.docusign.api.createTemplateRecipientPreviewUrl({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1906,17 +1466,7 @@ await corsair.docusign.api.createTemplateResponsiveHtmlPreview({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1944,17 +1494,7 @@ await corsair.docusign.api.createTemplateWorkflowStep({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1982,17 +1522,7 @@ await corsair.docusign.api.createUrlforTemplateEditView({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -2020,17 +1550,7 @@ await corsair.docusign.api.createUserAuthorizationForAgentUser({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -2480,17 +2000,7 @@ await corsair.docusign.api.deleteCustomFieldsInTemplate({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -2746,17 +2256,7 @@ await corsair.docusign.api.deleteEnvelopeLock({});
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
 | `lockToken` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -3324,17 +2824,7 @@ await corsair.docusign.api.deleteTemplateLock({});
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
 | `lockToken` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -3783,17 +3273,7 @@ await corsair.docusign.api.generateEditViewUrlforEnvelope({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -3821,17 +3301,7 @@ await corsair.docusign.api.generateEnvelopeCorrectionUrl({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -3859,17 +3329,7 @@ await corsair.docusign.api.generateRecipientSharedViewUrl({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -5442,17 +4902,7 @@ await corsair.docusign.api.getUrlforEmbeddingDocusignUi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -5747,17 +5197,7 @@ await corsair.docusign.api.initiateNewChunkedUpload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -6115,17 +5555,7 @@ await corsair.docusign.api.listTemplates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `envelopeTemplates` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="envelopeTemplates full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `envelopeTemplates` | `Record<string, JsonValue>[]` | No | — |
 
 
 
@@ -6246,17 +5676,7 @@ await corsair.docusign.api.lockAnEnvelopeForEditing({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -6284,17 +5704,7 @@ await corsair.docusign.api.lockTemplateForEditing({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -6321,17 +5731,7 @@ await corsair.docusign.api.modifyAccountNotificationSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -6358,17 +5758,7 @@ await corsair.docusign.api.modifyTabSettingsForAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -6395,17 +5785,7 @@ await corsair.docusign.api.postPaymentToInvoice({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -6432,17 +5812,7 @@ await corsair.docusign.api.purchaseAdditionalEnvelopes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -6469,17 +5839,7 @@ await corsair.docusign.api.queueDowngradeBillingPlanRequest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -6506,17 +5866,7 @@ await corsair.docusign.api.registerCurrentUserAsNotary({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -6598,17 +5948,7 @@ await corsair.docusign.api.removeTemplatesFromFavorites({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -6664,17 +6004,7 @@ await corsair.docusign.api.republishConnectDataForEnvelope({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -6701,17 +6031,7 @@ await corsair.docusign.api.republishConnectInfoForEnvelopes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -8440,17 +7760,7 @@ await corsair.docusign.api.rotatePageImageForEnvelope({});
 | `envelopeId` | `string` | Yes | — |
 | `documentId` | `string` | Yes | — |
 | `pageNumber` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -8480,17 +7790,7 @@ await corsair.docusign.api.rotateTemplatePageImage({});
 | `templateId` | `string` | Yes | — |
 | `documentId` | `string` | Yes | — |
 | `pageNumber` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -8550,17 +7850,7 @@ await corsair.docusign.api.setEnvelopePurgeConfigForAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -8590,7 +7880,7 @@ await corsair.docusign.api.setInitialsImageForAccountlessSigner({});
 | `envelopeId` | `string` | Yes | — |
 | `recipientId` | `string` | Yes | — |
 | `imageBase64` | `string` | Yes | — |
-| `contentType` | `image/gif \| image/png \| image/jpeg \| image/bmp` | Yes | — |
+| `contentType` | `image/gif \| image/png \| image/jpeg \| image/bmp` | No | Defaults to "image/png". |
 
 
 
@@ -8620,17 +7910,7 @@ await corsair.docusign.api.setSharedAccessForUsersAndTemplates({});
 | `item_type` | `string` | No | — |
 | `preserve_existing_shared_access` | `string` | No | — |
 | `user_ids` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -8660,7 +7940,7 @@ await corsair.docusign.api.setSignatureImageForNoAccountSigner({});
 | `envelopeId` | `string` | Yes | — |
 | `recipientId` | `string` | Yes | — |
 | `imageBase64` | `string` | Yes | — |
-| `contentType` | `image/gif \| image/png \| image/jpeg \| image/bmp` | Yes | — |
+| `contentType` | `image/gif \| image/png \| image/jpeg \| image/bmp` | No | Defaults to "image/png". |
 
 
 
@@ -8687,17 +7967,7 @@ await corsair.docusign.api.setTemplatesAsAccountFavorites({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -8724,17 +7994,7 @@ await corsair.docusign.api.setUpConnectOauthConfiguration({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -8766,7 +8026,7 @@ await corsair.docusign.api.setUserSignatureImage({});
 | `imageType` | `string` | Yes | — |
 | `transparent_png` | `string` | No | — |
 | `imageBase64` | `string` | Yes | — |
-| `contentType` | `image/gif \| image/png \| image/jpeg \| image/bmp` | Yes | — |
+| `contentType` | `image/gif \| image/png \| image/jpeg \| image/bmp` | No | Defaults to "image/png". |
 
 
 
@@ -8795,17 +8055,7 @@ await corsair.docusign.api.shareTemplateWithGroup({});
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
 | `templatePart` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -8832,17 +8082,7 @@ await corsair.docusign.api.submitBatchHistoricalEnvelopesToWebhook({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -8869,17 +8109,7 @@ await corsair.docusign.api.toggleApiRequestLogging({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -8908,17 +8138,7 @@ await corsair.docusign.api.updateAccountBrandSettings({});
 |------|------|----------|-------------|
 | `brandId` | `string` | Yes | — |
 | `replace_brand` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -8947,17 +8167,7 @@ await corsair.docusign.api.updateAccountCustomField({});
 |------|------|----------|-------------|
 | `customFieldId` | `string` | Yes | — |
 | `apply_to_templates` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -8984,17 +8194,7 @@ await corsair.docusign.api.updateAccountPasswordRules({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9021,17 +8221,7 @@ await corsair.docusign.api.updateAccountSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9060,17 +8250,7 @@ await corsair.docusign.api.updateAccountStampById({});
 |------|------|----------|-------------|
 | `signatureId` | `string` | Yes | — |
 | `close_existing_signature` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9097,17 +8277,7 @@ await corsair.docusign.api.updateAccountStamps({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9134,17 +8304,7 @@ await corsair.docusign.api.updateAccountWatermarkInformation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9171,17 +8331,7 @@ await corsair.docusign.api.updateAccountWatermarkPreview({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9209,17 +8359,7 @@ await corsair.docusign.api.updateBillingPlanForAccount({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `preview_billing_plan` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9247,17 +8387,7 @@ await corsair.docusign.api.updateBulkSendBatchName({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `bulkSendBatchId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9284,17 +8414,7 @@ await corsair.docusign.api.updateConnectOauthConfiguration({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9321,17 +8441,7 @@ await corsair.docusign.api.updateContactsInformation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9360,17 +8470,7 @@ await corsair.docusign.api.updateCustomFieldsInEnvelopeDocument({});
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
 | `documentId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9398,17 +8498,7 @@ await corsair.docusign.api.updateCustomTabInformationForAccount({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `customTabId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9436,17 +8526,7 @@ await corsair.docusign.api.updateDocumentVisibilityRecipients({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9473,17 +8553,7 @@ await corsair.docusign.api.updateDocusignConnectConfiguration({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9512,17 +8582,7 @@ await corsair.docusign.api.updateElectronicRecordDisclosure({});
 |------|------|----------|-------------|
 | `langCode` | `string` | Yes | — |
 | `include_metadata` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9549,17 +8609,7 @@ await corsair.docusign.api.updateEnoteIntegrationConfig({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9588,17 +8638,7 @@ await corsair.docusign.api.updateEnvelopeAttachment({});
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
 | `attachmentId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9626,17 +8666,7 @@ await corsair.docusign.api.updateEnvelopeCustomFields({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9665,17 +8695,7 @@ await corsair.docusign.api.updateEnvelopeDelayedRoutingRules({});
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
 | `workflowStepId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9704,17 +8724,7 @@ await corsair.docusign.api.updateEnvelopeDocGenFormFields({});
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
 | `update_docgen_formfields_only` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9742,17 +8752,7 @@ await corsair.docusign.api.updateEnvelopeEmailSettings({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9780,17 +8780,7 @@ await corsair.docusign.api.updateEnvelopeNotificationSettings({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9818,17 +8808,7 @@ await corsair.docusign.api.updateEnvelopeScheduledSendingRules({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9856,17 +8836,7 @@ await corsair.docusign.api.updateEnvelopeWorkflowDefinition({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9895,17 +8865,7 @@ await corsair.docusign.api.updateEnvelopeWorkflowStep({});
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
 | `workflowStepId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9932,17 +8892,7 @@ await corsair.docusign.api.updateGroupInformation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -9971,17 +8921,7 @@ await corsair.docusign.api.updateLockForEnvelope({});
 |------|------|----------|-------------|
 | `envelopeId` | `string` | Yes | — |
 | `lockToken` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10009,17 +8949,7 @@ await corsair.docusign.api.updateNotaryJurisdictionInfo({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `jurisdictionId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10048,17 +8978,7 @@ await corsair.docusign.api.updatePermissionProfileSettings({});
 |------|------|----------|-------------|
 | `permissionProfileId` | `string` | Yes | — |
 | `include` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10130,17 +9050,7 @@ await corsair.docusign.api.updateSigningGroupDetails({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `signingGroupId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10167,17 +9077,7 @@ await corsair.docusign.api.updateSigningGroupNames({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10205,17 +9105,7 @@ await corsair.docusign.api.updateTemplateCustomFields({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10244,17 +9134,7 @@ await corsair.docusign.api.updateTemplateDelayedRoutingRules({});
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
 | `workflowStepId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10283,17 +9163,7 @@ await corsair.docusign.api.updateTemplateDocumentCustomFields({});
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
 | `documentId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10321,17 +9191,7 @@ await corsair.docusign.api.updateTemplateDocVisibility({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10360,17 +9220,7 @@ await corsair.docusign.api.updateTemplateLockInformation({});
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
 | `lockToken` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10398,17 +9248,7 @@ await corsair.docusign.api.updateTemplateNotificationSettings({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10437,17 +9277,7 @@ await corsair.docusign.api.updateTemplateRecipientDocumentVisibility({});
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
 | `recipientId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10475,17 +9305,7 @@ await corsair.docusign.api.updateTemplateScheduledSendingRules({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10513,17 +9333,7 @@ await corsair.docusign.api.updateTemplateWorkflowDefinition({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10552,17 +9362,7 @@ await corsair.docusign.api.updateUserAccountSettings({});
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
 | `allow_all_languages` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10591,17 +9391,7 @@ await corsair.docusign.api.updateUserAuthorizationDates({});
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
 | `authorizationId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10630,17 +9420,7 @@ await corsair.docusign.api.updateUserInformationForSpecifiedUser({});
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
 | `allow_all_languages` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10667,17 +9447,7 @@ await corsair.docusign.api.updateUserNotaryInformation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10706,7 +9476,7 @@ await corsair.docusign.api.updateUserProfileImage({});
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
 | `imageBase64` | `string` | Yes | — |
-| `contentType` | `image/gif \| image/png \| image/jpeg \| image/bmp` | Yes | — |
+| `contentType` | `image/gif \| image/png \| image/jpeg \| image/bmp` | No | Defaults to "image/png". |
 
 
 
@@ -10734,17 +9504,7 @@ await corsair.docusign.api.updateUserProfileInformation({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10774,17 +9534,7 @@ await corsair.docusign.api.updateUserSignatureById({});
 | `userId` | `string` | Yes | — |
 | `signatureId` | `string` | Yes | — |
 | `close_existing_signature` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10813,17 +9563,7 @@ await corsair.docusign.api.updateWorkflowStepForTemplate({});
 |------|------|----------|-------------|
 | `templateId` | `string` | Yes | — |
 | `workflowStepId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10851,17 +9591,7 @@ await corsair.docusign.api.updateWorkspaceInformation({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workspaceId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -10891,17 +9621,7 @@ await corsair.docusign.api.updateWorkspaceItemMetadata({});
 | `workspaceId` | `string` | Yes | — |
 | `folderId` | `string` | Yes | — |
 | `fileId` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, JsonValue>` | No | — |
 
 
 

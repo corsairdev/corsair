@@ -54,42 +54,42 @@
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "video",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "video_uri",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "language",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "language_url",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{ id?: string, username?: string, uri?: string } | string"
+            "type": "{ id?: string, username?: string, uri?: string } | string | null"
           },
           {
             "key": "comment",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "new_video_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resource_uri",
@@ -187,7 +187,7 @@
           {
             "key": "languages",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, string>"
           }
         ]
       }
@@ -329,22 +329,22 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "guidelines",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "modified",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "workflow_enabled",
@@ -421,22 +421,22 @@
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team_visibility",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "video_visibility",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_visible",
@@ -446,12 +446,12 @@
           {
             "key": "membership_policy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "video_policy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "activity_uri",
@@ -471,17 +471,17 @@
           {
             "key": "applications_uri",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "languages_uri",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "tasks_uri",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resource_uri",
@@ -604,22 +604,22 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "guidelines",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "modified",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "workflow_enabled",
@@ -685,22 +685,22 @@
           {
             "key": "assignee",
             "optional": true,
-            "type": "{ username?: string | null, id?: string, full_name?: string | null, first_name?: string | null, last_name?: string | null, biography?: string | null, homepage?: string | null, avatar?: string | null, languages?: string[], num_videos?: number, resource_uri?: string, created_by?: string | null, is_partner?: boolean, activity_uri?: string } | string"
+            "type": "{ username?: string | null, id?: string, full_name?: string | null, first_name?: string | null, last_name?: string | null, biography?: string | null, homepage?: string | null, avatar?: string | null, languages?: string[], num_videos?: number, resource_uri?: string, created_by?: string | null, is_partner?: boolean, activity_uri?: string } | string | null"
           },
           {
             "key": "completed",
             "optional": true,
-            "type": "string | boolean"
+            "type": "string | boolean | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "modified",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "resource_uri",
@@ -1098,22 +1098,22 @@
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "guidelines",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "modified",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "workflow_enabled",
@@ -1193,7 +1193,7 @@
           {
             "key": "username",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "id",
@@ -1203,32 +1203,32 @@
           {
             "key": "full_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "first_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "last_name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "biography",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "homepage",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "avatar",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "languages",
@@ -1248,7 +1248,7 @@
           {
             "key": "created_by",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "is_partner",
@@ -1299,12 +1299,12 @@
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "user",
             "optional": true,
-            "type": "{ id?: string, username?: string, uri?: string }"
+            "type": "{ id?: string, username?: string, uri?: string } | null"
           }
         ]
       }
@@ -1340,7 +1340,7 @@
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
@@ -1370,12 +1370,12 @@
           {
             "key": "videoid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -1416,7 +1416,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "thumbnail",
@@ -1446,47 +1446,47 @@
           {
             "key": "video_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "primary_audio_language_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "thumbnail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "all_urls",
@@ -1496,7 +1496,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "languages",
@@ -1552,27 +1552,27 @@
           {
             "key": "soft_limit_cpl",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_cps",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_lines",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_max_duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_min_duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "subtitles_complete",
@@ -1587,7 +1587,7 @@
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "language_code",
@@ -1607,27 +1607,27 @@
           {
             "key": "soft_limit_cpl",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_cps",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_lines",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_max_duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_min_duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "published",
@@ -1637,22 +1637,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "subtitle_count",
@@ -1713,7 +1713,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "subtitles",
@@ -1743,32 +1743,32 @@
           {
             "key": "version_number",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sub_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subtitles",
             "optional": true,
-            "type": "{ start?: number, end?: number, text?: string, meta?: {}, position?: number }[] | string"
+            "type": "{ start?: number, end?: number, text?: string, meta?: Record<string, any>, position?: number }[] | string | null"
           },
           {
             "key": "author",
             "optional": true,
-            "type": "{ id?: string, username?: string, uri?: string }"
+            "type": "{ id?: string, username?: string, uri?: string } | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "language",
@@ -1778,7 +1778,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "notes_uri",
@@ -1798,17 +1798,17 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "video_description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "video_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "actions_uri",
@@ -1887,32 +1887,32 @@
           {
             "key": "version_number",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "sub_format",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "subtitles",
             "optional": true,
-            "type": "{ start?: number, end?: number, text?: string, meta?: {}, position?: number }[] | string"
+            "type": "{ start?: number, end?: number, text?: string, meta?: Record<string, any>, position?: number }[] | string | null"
           },
           {
             "key": "author",
             "optional": true,
-            "type": "{ id?: string, username?: string, uri?: string }"
+            "type": "{ id?: string, username?: string, uri?: string } | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "language",
@@ -1922,7 +1922,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "notes_uri",
@@ -1942,17 +1942,17 @@
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "video_description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "video_title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "actions_uri",
@@ -1988,7 +1988,7 @@
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "language_code",
@@ -2008,27 +2008,27 @@
           {
             "key": "soft_limit_cpl",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_cps",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_lines",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_max_duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_min_duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "published",
@@ -2038,22 +2038,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "subtitle_count",
@@ -2109,7 +2109,7 @@
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
@@ -2139,12 +2139,12 @@
           {
             "key": "videoid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2176,7 +2176,7 @@
           {
             "key": "objects",
             "optional": true,
-            "type": "{ id: string, video_type?: string | null, primary_audio_language_code?: string | null, title?: string | null, description?: string | null, duration?: number | null, thumbnail?: string | null, created?: string | null, team?: string | null, project?: string | null, all_urls?: string[], metadata?: {}, languages?: { code?: string, name?: string, published?: boolean, dir?: string | null, subtitles_uri?: string, resource_uri?: string }[], activity_uri?: string, urls_uri?: string, subtitle_languages_uri?: string, resource_uri?: string }[]"
+            "type": "{ id: string, video_type?: string | null, primary_audio_language_code?: string | null, title?: string | null, description?: string | null, duration?: number | null, thumbnail?: string | null, created?: string | null, team?: string | null, project?: string | null, all_urls?: string[], metadata?: Record<string, any>, languages?: { code?: string, name?: string, published?: boolean, dir?: string | null, subtitles_uri?: string, resource_uri?: string }[], activity_uri?: string, urls_uri?: string, subtitle_languages_uri?: string, resource_uri?: string }[]"
           }
         ]
       }
@@ -2255,7 +2255,7 @@
           {
             "key": "objects",
             "optional": true,
-            "type": "{ id: string, video_type?: string | null, primary_audio_language_code?: string | null, title?: string | null, description?: string | null, duration?: number | null, thumbnail?: string | null, created?: string | null, team?: string | null, project?: string | null, all_urls?: string[], metadata?: {}, languages?: { code?: string, name?: string, published?: boolean, dir?: string | null, subtitles_uri?: string, resource_uri?: string }[], activity_uri?: string, urls_uri?: string, subtitle_languages_uri?: string, resource_uri?: string }[]"
+            "type": "{ id: string, video_type?: string | null, primary_audio_language_code?: string | null, title?: string | null, description?: string | null, duration?: number | null, thumbnail?: string | null, created?: string | null, team?: string | null, project?: string | null, all_urls?: string[], metadata?: Record<string, any>, languages?: { code?: string, name?: string, published?: boolean, dir?: string | null, subtitles_uri?: string, resource_uri?: string }[], activity_uri?: string, urls_uri?: string, subtitle_languages_uri?: string, resource_uri?: string }[]"
           }
         ]
       }
@@ -2366,7 +2366,7 @@
           {
             "key": "objects",
             "optional": true,
-            "type": "{ created?: string | null, language_code?: string, is_primary_audio_language?: boolean, is_rtl?: boolean, soft_limit_cpl?: number | null, soft_limit_cps?: number | null, soft_limit_lines?: number | null, soft_limit_max_duration?: number | null, soft_limit_min_duration?: number | null, published?: boolean, name?: string | null, title?: string | null, description?: string | null, metadata?: {}, subtitle_count?: number, subtitles_complete?: boolean, versions?: { author?: { id?: string, username?: string, uri?: string } | null, published?: boolean, version_number?: number, created?: string | null }[], subtitles_uri?: string, resource_uri?: string }[]"
+            "type": "{ created?: string | null, language_code?: string, is_primary_audio_language?: boolean, is_rtl?: boolean, soft_limit_cpl?: number | null, soft_limit_cps?: number | null, soft_limit_lines?: number | null, soft_limit_max_duration?: number | null, soft_limit_min_duration?: number | null, published?: boolean, name?: string | null, title?: string | null, description?: string | null, metadata?: Record<string, any>, subtitle_count?: number, subtitles_complete?: boolean, versions?: { author?: { id?: string, username?: string, uri?: string } | null, published?: boolean, version_number?: number, created?: string | null }[], subtitles_uri?: string, resource_uri?: string }[]"
           }
         ]
       }
@@ -2493,7 +2493,7 @@
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "url",
@@ -2523,12 +2523,12 @@
           {
             "key": "videoid",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -2600,12 +2600,12 @@
           {
             "key": "team",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "thumbnail",
@@ -2615,7 +2615,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "primary_audio_language_code",
@@ -2635,47 +2635,47 @@
           {
             "key": "video_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "primary_audio_language_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "thumbnail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "all_urls",
@@ -2685,7 +2685,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "languages",
@@ -2741,27 +2741,27 @@
           {
             "key": "soft_limit_cpl",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_cps",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_lines",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_max_duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_min_duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "subtitles_complete",
@@ -2776,7 +2776,7 @@
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "language_code",
@@ -2796,27 +2796,27 @@
           {
             "key": "soft_limit_cpl",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_cps",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_lines",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_max_duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "soft_limit_min_duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "published",
@@ -2826,22 +2826,22 @@
           {
             "key": "name",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "subtitle_count",
@@ -2897,47 +2897,47 @@
           {
             "key": "video_type",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "primary_audio_language_code",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "description",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "duration",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "thumbnail",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "created",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "team",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "project",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "all_urls",
@@ -2947,7 +2947,7 @@
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "languages",

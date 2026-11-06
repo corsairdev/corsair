@@ -47,7 +47,7 @@ pnpm add @corsair-dev/render
 | `disks.delete` | `render.api.disks.delete` | `destructive` | Delete a Render disk |
 | `disks.list` | `render.api.disks.list` | `read` | List Render disks |
 | `disks.listSnapshots` | `render.api.disks.listSnapshots` | `read` | List snapshots for a Render disk |
-| `disks.restoreSnapshot` | `render.api.disks.restoreSnapshot` | `write` | Restore a snapshot to a Render disk |
+| `disks.restoreSnapshot` | `render.api.disks.restoreSnapshot` | `destructive` | Restore a snapshot to a Render disk |
 | `disks.retrieve` | `render.api.disks.retrieve` | `read` | Retrieve a Render disk |
 | `disks.update` | `render.api.disks.update` | `write` | Update a Render disk |
 | `events.retrieve` | `render.api.events.retrieve` | `read` | Retrieve a Render event |

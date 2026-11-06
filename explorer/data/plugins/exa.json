@@ -990,6 +990,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "createdAt",
           "type": "date",
           "operators": ["equals", "before", "after", "between"]
@@ -1017,6 +1022,11 @@
         },
         {
           "field": "websetId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "cadenceType",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
@@ -1113,6 +1123,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "createdAt",
           "type": "date",
           "operators": ["equals", "before", "after", "between"]
@@ -1135,6 +1150,11 @@
         },
         {
           "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },

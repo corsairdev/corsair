@@ -144,17 +144,17 @@
           {
             "key": "projectId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "taskId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "timeInterval",
-            "optional": true,
-            "type": "{ start: string, end?: string | null, duration?: string | null }"
+            "optional": false,
+            "type": "{ start: string, end?: string | null, duration?: string | null } | null"
           }
         ]
       }
@@ -201,7 +201,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: string, description: string, workspaceId: string, projectId?: string | null, taskId?: string | null, timeInterval?: { start: string, end?: string | null, duration?: string | null } | null }[]"
+        "type": "{ id: string, description: string, workspaceId: string, projectId?: string | null, taskId?: string | null, timeInterval: { start: string, end?: string | null, duration?: string | null } | null }[]"
       }
     },
     {

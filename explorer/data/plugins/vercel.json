@@ -39,7 +39,7 @@
           {
             "key": "redirect",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "teamId",
@@ -68,8 +68,8 @@
           },
           {
             "key": "oldDeploymentId",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           }
         ]
       }
@@ -110,12 +110,12 @@
           {
             "key": "aliases",
             "optional": false,
-            "type": "{ uid: string, alias: string, created: string, createdAt: number, deploymentId?: string | null, projectId?: string | null, redirect?: string | null }[]"
+            "type": "{ uid: string, alias: string, created: string, createdAt: number, deploymentId: string | null, projectId: string | null, redirect: string | null }[]"
           },
           {
             "key": "pagination",
             "optional": false,
-            "type": "{ count: number, next?: number | null, prev?: number | null }"
+            "type": "{ count: number, next: number | null, prev: number | null }"
           }
         ]
       }
@@ -156,12 +156,12 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "env",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string>"
           },
           {
             "key": "teamId",
@@ -206,32 +206,32 @@
           {
             "key": "creator",
             "optional": true,
-            "type": "{ uid: string, email: string, username: string }"
+            "type": "{ uid: string, email: string, username: string } | null"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "target",
-            "optional": true,
-            "type": "production | staging | string"
+            "optional": false,
+            "type": "production | staging | string | null"
           },
           {
             "key": "aliasError",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "aliasAssigned",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "inspectorUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -292,32 +292,32 @@
           {
             "key": "creator",
             "optional": true,
-            "type": "{ uid: string, email: string, username: string }"
+            "type": "{ uid: string, email: string, username: string } | null"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, string> | null"
           },
           {
             "key": "target",
-            "optional": true,
-            "type": "production | staging | string"
+            "optional": false,
+            "type": "production | staging | string | null"
           },
           {
             "key": "aliasError",
             "optional": true,
-            "type": "{ code: string, message: string }"
+            "type": "{ code: string, message: string } | null"
           },
           {
             "key": "aliasAssigned",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "inspectorUrl",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -358,12 +358,12 @@
           {
             "key": "deployments",
             "optional": false,
-            "type": "{ uid: string, name: string, url: string, created: number, readyState: string, type: LAMBDAS | PREBUILT | STATIC | string, creator?: { uid: string, email: string, username: string } | null, meta?: {} | null, target?: production | staging | string | null, aliasError?: { code: string, message: string } | null, aliasAssigned?: number | null, inspectorUrl?: string | null }[]"
+            "type": "{ uid: string, name: string, url: string, created: number, readyState: string, type: LAMBDAS | PREBUILT | STATIC | string, creator?: { uid: string, email: string, username: string } | null, meta?: Record<string, string> | null, target: production | staging | string | null, aliasError?: { code: string, message: string } | null, aliasAssigned?: number | null, inspectorUrl?: string | null }[]"
           },
           {
             "key": "pagination",
             "optional": false,
-            "type": "{ count: number, next?: number | null, prev?: number | null }"
+            "type": "{ count: number, next: number | null, prev: number | null }"
           }
         ]
       }
@@ -404,12 +404,12 @@
           {
             "key": "domains",
             "optional": false,
-            "type": "{ id: string, name: string, createdAt: number, boughtAt?: number | null, expiresAt?: number | null, transferredAt?: number | null, verified: boolean, nameservers: string[], intendedNameservers: string[] }[]"
+            "type": "{ id: string, name: string, createdAt: number, boughtAt: number | null, expiresAt: number | null, transferredAt: number | null, verified: boolean, nameservers: string[], intendedNameservers: string[] }[]"
           },
           {
             "key": "pagination",
             "optional": false,
-            "type": "{ count: number, next?: number | null, prev?: number | null }"
+            "type": "{ count: number, next: number | null, prev: number | null }"
           }
         ]
       }
@@ -455,12 +455,12 @@
           {
             "key": "domains",
             "optional": false,
-            "type": "{ name: string, apexName: string, projectId: string, redirect?: string | null, redirectStatusCode?: number | null, gitBranch?: string | null, updatedAt: number, createdAt: number, verified: boolean }[]"
+            "type": "{ name: string, apexName: string, projectId: string, redirect: string | null, redirectStatusCode: number | null, gitBranch: string | null, updatedAt: number, createdAt: number, verified: boolean }[]"
           },
           {
             "key": "pagination",
             "optional": false,
-            "type": "{ count: number, next?: number | null, prev?: number | null }"
+            "type": "{ count: number, next: number | null, prev: number | null }"
           }
         ]
       }
@@ -496,12 +496,12 @@
           {
             "key": "target",
             "optional": false,
-            "type": "production | preview | development[]"
+            "type": "(production | preview | development)[]"
           },
           {
             "key": "gitBranch",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "comment",
@@ -541,17 +541,17 @@
           {
             "key": "target",
             "optional": false,
-            "type": "production | preview | development[]"
+            "type": "(production | preview | development)[]"
           },
           {
             "key": "gitBranch",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "configurationId",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "createdAt",
@@ -566,12 +566,12 @@
           {
             "key": "createdBy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "updatedBy",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }
@@ -602,7 +602,7 @@
           {
             "key": "envs",
             "optional": true,
-            "type": "{ id: string, key: string, value: string, type: plain | secret | encrypted | sensitive, target: production | preview | development[], gitBranch?: string | null, configurationId?: string | null, createdAt: number, updatedAt: number, createdBy?: string | null, updatedBy?: string | null }[]"
+            "type": "{ id: string, key: string, value: string, type: plain | secret | encrypted | sensitive, target: (production | preview | development)[], gitBranch: string | null, configurationId?: string | null, createdAt: number, updatedAt: number, createdBy?: string | null, updatedBy?: string | null }[]"
           }
         ]
       }
@@ -657,23 +657,23 @@
           },
           {
             "key": "framework",
-            "optional": true,
-            "type": "string"
+            "optional": false,
+            "type": "string | null"
           },
           {
             "key": "link",
             "optional": true,
-            "type": "{ type: string, repo: string, repoId?: number, org?: string | null, gitCredentialId?: string | null, productionBranch?: string | null, createdAt?: number | null, updatedAt?: number | null, deployHooks?: any[] | null }"
+            "type": "{ type: string, repo: string, repoId?: number, org?: string | null, gitCredentialId?: string | null, productionBranch?: string | null, createdAt?: number | null, updatedAt?: number | null, deployHooks?: any[] | null } | null"
           },
           {
             "key": "latestDeployments",
             "optional": true,
-            "type": "any[]"
+            "type": "any[] | null"
           },
           {
             "key": "targets",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any> | null"
           }
         ]
       }
@@ -714,12 +714,12 @@
           {
             "key": "projects",
             "optional": false,
-            "type": "{ id: string, name: string, accountId: string, createdAt: number, updatedAt: number, framework?: string | null, link?: { type: string, repo: string, repoId?: number, org?: string | null, gitCredentialId?: string | null, productionBranch?: string | null, createdAt?: number | null, updatedAt?: number | null, deployHooks?: any[] | null } | null, latestDeployments?: any[] | null, targets?: {} | null }[]"
+            "type": "{ id: string, name: string, accountId: string, createdAt: number, updatedAt: number, framework: string | null, link?: { type: string, repo: string, repoId?: number, org?: string | null, gitCredentialId?: string | null, productionBranch?: string | null, createdAt?: number | null, updatedAt?: number | null, deployHooks?: any[] | null } | null, latestDeployments?: any[] | null, targets?: Record<string, any> | null }[]"
           },
           {
             "key": "pagination",
             "optional": false,
-            "type": "{ count: number, next?: number | null, prev?: number | null }"
+            "type": "{ count: number, next: number | null, prev: number | null }"
           }
         ]
       }
@@ -745,12 +745,12 @@
           {
             "key": "teams",
             "optional": false,
-            "type": "{ id: string, slug: string, name: string, createdAt: number, updatedAt?: number | null, avatar?: string | null, membership: { uid: string, role: OWNER | MEMBER | DEVELOPER | BILLING | VIEWER | string, createdAt: number } }[]"
+            "type": "{ id: string, slug: string, name: string, createdAt: number, updatedAt?: number | null, avatar: string | null, membership: { uid: string, role: OWNER | MEMBER | DEVELOPER | BILLING | VIEWER | string, createdAt: number } }[]"
           },
           {
             "key": "pagination",
             "optional": false,
-            "type": "{ count: number, next?: number | null, prev?: number | null }"
+            "type": "{ count: number, next: number | null, prev: number | null }"
           }
         ]
       }

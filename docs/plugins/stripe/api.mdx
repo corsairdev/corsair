@@ -84,17 +84,7 @@ await corsair.stripe.api.charges.create({});
 | `source` | `string` | No | — |
 | `customer` | `string` | No | — |
 | `description` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -107,25 +97,15 @@ await corsair.stripe.api.charges.create({});
 | `amount` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `customer` | `string` | No | — |
-| `description` | `string` | No | — |
+| `customer` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `paid` | `boolean` | No | — |
 | `refunded` | `boolean` | No | — |
 | `created` | `number` | No | — |
-| `payment_intent` | `string` | No | — |
-| `failure_code` | `string` | No | — |
-| `failure_message` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `payment_intent` | `string \| null` | No | — |
+| `failure_code` | `string \| null` | No | — |
+| `failure_message` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -160,25 +140,15 @@ await corsair.stripe.api.charges.get({});
 | `amount` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `customer` | `string` | No | — |
-| `description` | `string` | No | — |
+| `customer` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `paid` | `boolean` | No | — |
 | `refunded` | `boolean` | No | — |
 | `created` | `number` | No | — |
-| `payment_intent` | `string` | No | — |
-| `failure_code` | `string` | No | — |
-| `failure_message` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `payment_intent` | `string \| null` | No | — |
+| `failure_code` | `string \| null` | No | — |
+| `failure_message` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -235,8 +205,7 @@ await corsair.stripe.api.charges.list({});
   payment_intent?: string | null,
   failure_code?: string | null,
   failure_message?: string | null,
-  metadata?: {
-  }
+  metadata?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -264,27 +233,9 @@ await corsair.stripe.api.charges.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `description` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `receipt_email` | `string` | No | — |
-| `shipping` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="shipping full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `shipping` | `Record<string, any>` | No | — |
 
 
 
@@ -297,25 +248,15 @@ await corsair.stripe.api.charges.update({});
 | `amount` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `customer` | `string` | No | — |
-| `description` | `string` | No | — |
+| `customer` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `paid` | `boolean` | No | — |
 | `refunded` | `boolean` | No | — |
 | `created` | `number` | No | — |
-| `payment_intent` | `string` | No | — |
-| `failure_code` | `string` | No | — |
-| `failure_message` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `payment_intent` | `string \| null` | No | — |
+| `failure_code` | `string \| null` | No | — |
+| `failure_message` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -347,17 +288,7 @@ await corsair.stripe.api.coupons.create({});
 | `duration` | `forever \| once \| repeating` | No | — |
 | `duration_in_months` | `number` | No | — |
 | `max_redemptions` | `number` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -367,28 +298,18 @@ await corsair.stripe.api.coupons.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `coupon` | Yes | — |
-| `name` | `string` | No | — |
-| `amount_off` | `number` | No | — |
-| `percent_off` | `number` | No | — |
-| `currency` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `amount_off` | `number \| null` | No | — |
+| `percent_off` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
 | `duration` | `string` | No | — |
-| `duration_in_months` | `number` | No | — |
-| `max_redemptions` | `number` | No | — |
+| `duration_in_months` | `number \| null` | No | — |
+| `max_redemptions` | `number \| null` | No | — |
 | `times_redeemed` | `number` | No | — |
 | `valid` | `boolean` | No | — |
 | `created` | `number` | No | — |
 | `livemode` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -443,8 +364,7 @@ await corsair.stripe.api.coupons.list({});
   valid?: boolean,
   created?: number,
   livemode?: boolean,
-  metadata?: {
-  }
+  metadata?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -476,17 +396,7 @@ await corsair.stripe.api.customers.create({});
 | `name` | `string` | No | — |
 | `phone` | `string` | No | — |
 | `description` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -496,25 +406,15 @@ await corsair.stripe.api.customers.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `customer` | Yes | — |
-| `email` | `string` | No | — |
-| `name` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `description` | `string` | No | — |
-| `currency` | `string` | No | — |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
 | `balance` | `number` | No | — |
 | `created` | `number` | No | — |
 | `livemode` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -578,25 +478,15 @@ await corsair.stripe.api.customers.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `object` | `customer` | Yes | — |
-| `email` | `string` | No | — |
-| `name` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `description` | `string` | No | — |
-| `currency` | `string` | No | — |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
 | `balance` | `number` | No | — |
 | `created` | `number` | No | — |
 | `livemode` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -649,8 +539,7 @@ await corsair.stripe.api.customers.list({});
   balance?: number,
   created?: number,
   livemode?: boolean,
-  metadata?: {
-  }
+  metadata?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -684,17 +573,7 @@ await corsair.stripe.api.paymentIntents.create({});
 | `description` | `string` | No | — |
 | `payment_method` | `string` | No | — |
 | `confirm` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -707,24 +586,14 @@ await corsair.stripe.api.paymentIntents.create({});
 | `amount` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `customer` | `string` | No | — |
-| `description` | `string` | No | — |
+| `customer` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `created` | `number` | No | — |
-| `payment_method` | `string` | No | — |
-| `client_secret` | `string` | No | — |
-| `canceled_at` | `number` | No | — |
-| `cancellation_reason` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `payment_method` | `string \| null` | No | — |
+| `client_secret` | `string \| null` | No | — |
+| `canceled_at` | `number \| null` | No | — |
+| `cancellation_reason` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -759,24 +628,14 @@ await corsair.stripe.api.paymentIntents.get({});
 | `amount` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `customer` | `string` | No | — |
-| `description` | `string` | No | — |
+| `customer` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `created` | `number` | No | — |
-| `payment_method` | `string` | No | — |
-| `client_secret` | `string` | No | — |
-| `canceled_at` | `number` | No | — |
-| `cancellation_reason` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `payment_method` | `string \| null` | No | — |
+| `client_secret` | `string \| null` | No | — |
+| `canceled_at` | `number \| null` | No | — |
+| `cancellation_reason` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -831,8 +690,7 @@ await corsair.stripe.api.paymentIntents.list({});
   client_secret?: string | null,
   canceled_at?: number | null,
   cancellation_reason?: string | null,
-  metadata?: {
-  }
+  metadata?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -864,17 +722,7 @@ await corsair.stripe.api.paymentIntents.update({});
 | `customer` | `string` | No | — |
 | `description` | `string` | No | — |
 | `payment_method` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -887,24 +735,14 @@ await corsair.stripe.api.paymentIntents.update({});
 | `amount` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
-| `customer` | `string` | No | — |
-| `description` | `string` | No | — |
+| `customer` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
 | `created` | `number` | No | — |
-| `payment_method` | `string` | No | — |
-| `client_secret` | `string` | No | — |
-| `canceled_at` | `number` | No | — |
-| `cancellation_reason` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `payment_method` | `string \| null` | No | — |
+| `client_secret` | `string \| null` | No | — |
+| `canceled_at` | `number \| null` | No | — |
+| `cancellation_reason` | `string \| null` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -934,7 +772,7 @@ await corsair.stripe.api.prices.create({});
 | `product_data` | `object` | No | — |
 | `nickname` | `string` | No | — |
 | `recurring` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="product_data full type">
@@ -955,14 +793,6 @@ await corsair.stripe.api.prices.create({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -975,14 +805,14 @@ await corsair.stripe.api.prices.create({});
 | `object` | `price` | Yes | — |
 | `active` | `boolean` | No | — |
 | `currency` | `string` | No | — |
-| `unit_amount` | `number` | No | — |
-| `nickname` | `string` | No | — |
+| `unit_amount` | `number \| null` | No | — |
+| `nickname` | `string \| null` | No | — |
 | `product` | `string` | No | — |
 | `type` | `string` | No | — |
-| `recurring` | `object` | No | — |
+| `recurring` | `object \| null` | No | — |
 | `created` | `number` | No | — |
 | `livemode` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="recurring full type">
@@ -991,15 +821,7 @@ await corsair.stripe.api.prices.create({});
 {
   interval: string,
   interval_count: number
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1062,8 +884,7 @@ await corsair.stripe.api.prices.list({});
   } | null,
   created?: number,
   livemode?: boolean,
-  metadata?: {
-  }
+  metadata?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -1095,36 +916,10 @@ await corsair.stripe.api.sources.create({});
 | `amount` | `number` | No | — |
 | `currency` | `string` | No | — |
 | `flow` | `string` | No | — |
-| `owner` | `object` | No | — |
-| `redirect` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `owner` | `Record<string, any>` | No | — |
+| `redirect` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `token` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="owner full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="redirect full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1135,22 +930,12 @@ await corsair.stripe.api.sources.create({});
 | `id` | `string` | Yes | — |
 | `object` | `source` | Yes | — |
 | `type` | `string` | No | — |
-| `amount` | `number` | No | — |
-| `currency` | `string` | No | — |
+| `amount` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
 | `status` | `string` | No | — |
 | `created` | `number` | No | — |
 | `livemode` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -1183,22 +968,12 @@ await corsair.stripe.api.sources.get({});
 | `id` | `string` | Yes | — |
 | `object` | `source` | Yes | — |
 | `type` | `string` | No | — |
-| `amount` | `number` | No | — |
-| `currency` | `string` | No | — |
+| `amount` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
 | `status` | `string` | No | — |
 | `created` | `number` | No | — |
 | `livemode` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -1223,27 +998,11 @@ await corsair.stripe.api.tokens.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `card` | `object` | No | — |
-| `bank_account` | `object` | No | — |
-| `pii` | `object` | No | — |
+| `bank_account` | `Record<string, any>` | No | — |
+| `pii` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="card full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="bank_account full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="pii full type">
 
 ```ts
 {

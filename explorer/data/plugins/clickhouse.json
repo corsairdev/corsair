@@ -274,7 +274,7 @@
           {
             "key": "totalRows",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           },
           {
             "key": "columns",
@@ -284,7 +284,7 @@
           {
             "key": "sampleRows",
             "optional": true,
-            "type": "{}[]",
+            "type": "Record<string, any>[]",
             "description": "Sample rows; only present when includeSample is true"
           }
         ]

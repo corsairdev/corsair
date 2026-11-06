@@ -1065,6 +1065,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "email",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -1348,6 +1353,11 @@
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         },
         {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
           "field": "email",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
@@ -1441,6 +1451,11 @@
         },
         {
           "field": "profile_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
           "type": "string",
           "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
         }

@@ -157,7 +157,7 @@ await corsair.xquik.api.tweets.batch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `tweets` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -182,8 +182,7 @@ await corsair.xquik.api.tweets.batch({});
   bookmarkCount?: number,
   conversationId?: string,
   createdAt?: string,
-  entities?: {
-  },
+  entities?: Record<string, any>,
   id: string,
   inReplyToId?: string,
   inReplyToUserId?: string,
@@ -345,8 +344,7 @@ await corsair.xquik.api.tweets.get({});
   bookmarkCount: number,
   conversationId?: string,
   createdAt?: string,
-  entities?: {
-  },
+  entities?: Record<string, any>,
   id: string,
   isNoteTweet?: boolean,
   isQuoteStatus?: boolean,
@@ -489,7 +487,7 @@ await corsair.xquik.api.tweets.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `tweets` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -514,8 +512,7 @@ await corsair.xquik.api.tweets.search({});
   bookmarkCount?: number,
   conversationId?: string,
   createdAt?: string,
-  entities?: {
-  },
+  entities?: Record<string, any>,
   id: string,
   inReplyToId?: string,
   inReplyToUserId?: string,
@@ -606,7 +603,7 @@ await corsair.xquik.api.users.batch({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `users` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -693,7 +690,7 @@ await corsair.xquik.api.users.followers({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `users` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -749,7 +746,7 @@ await corsair.xquik.api.users.following({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `users` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -845,7 +842,7 @@ await corsair.xquik.api.users.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `users` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -928,7 +925,7 @@ await corsair.xquik.api.users.tweets({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `has_next_page` | `boolean` | Yes | — |
-| `next_cursor` | `string` | No | — |
+| `next_cursor` | `string \| null` | No | — |
 | `tweets` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -953,8 +950,7 @@ await corsair.xquik.api.users.tweets({});
   bookmarkCount?: number,
   conversationId?: string,
   createdAt?: string,
-  entities?: {
-  },
+  entities?: Record<string, any>,
   id: string,
   inReplyToId?: string,
   inReplyToUserId?: string,
@@ -1036,7 +1032,7 @@ await corsair.xquik.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `eventTypes` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet[]` | Yes | — |
+| `eventTypes` | `(tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet)[]` | Yes | — |
 | `url` | `string` | Yes | — |
 
 
@@ -1046,7 +1042,7 @@ await corsair.xquik.api.webhooks.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `createdAt` | `string` | Yes | — |
-| `eventTypes` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet[]` | Yes | — |
+| `eventTypes` | `(tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet)[]` | Yes | — |
 | `id` | `string` | Yes | — |
 | `isActive` | `boolean` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -1161,7 +1157,7 @@ await corsair.xquik.api.webhooks.list({});
 ```ts
 {
   createdAt: string,
-  eventTypes: tweet.new | tweet.quote | tweet.reply | tweet.retweet[],
+  eventTypes: (tweet.new | tweet.quote | tweet.reply | tweet.retweet)[],
   id: string,
   isActive: boolean,
   url: string
@@ -1222,7 +1218,7 @@ await corsair.xquik.api.webhooks.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `eventTypes` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet[]` | No | — |
+| `eventTypes` | `(tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet)[]` | No | — |
 | `id` | `string` | Yes | — |
 | `isActive` | `boolean` | No | — |
 | `url` | `string` | No | — |
@@ -1234,7 +1230,7 @@ await corsair.xquik.api.webhooks.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `createdAt` | `string` | Yes | — |
-| `eventTypes` | `tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet[]` | Yes | — |
+| `eventTypes` | `(tweet.new \| tweet.quote \| tweet.reply \| tweet.retweet)[]` | Yes | — |
 | `id` | `string` | Yes | — |
 | `isActive` | `boolean` | Yes | — |
 | `url` | `string` | Yes | — |
@@ -1273,7 +1269,7 @@ await corsair.xquik.api.writeActions.get({});
 | `charged` | `boolean` | Yes | — |
 | `confirmationAttempts` | `number` | No | — |
 | `confirmationCheckedAt` | `string` | No | — |
-| `confirmationSource` | `string` | No | — |
+| `confirmationSource` | `string \| null` | No | — |
 | `confirmedAt` | `string` | No | — |
 | `createdAt` | `string` | Yes | — |
 | `message` | `string` | No | — |
@@ -1282,7 +1278,7 @@ await corsair.xquik.api.writeActions.get({});
 | `sendDispatched` | `boolean` | Yes | — |
 | `sendDispatchedAt` | `string` | No | — |
 | `status` | `failed \| pending_confirmation \| success` | Yes | — |
-| `targetId` | `string` | No | — |
+| `targetId` | `string \| null` | No | — |
 | `tweetId` | `string` | No | — |
 | `writeActionId` | `string` | Yes | — |
 

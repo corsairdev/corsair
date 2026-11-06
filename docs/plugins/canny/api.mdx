@@ -271,8 +271,7 @@ await corsair.canny.api.comments.list({});
       isAdmin: boolean,
       avatarURL?: string | null
     } | null,
-    customFields?: {
-    }
+    customFields?: Record<string, string | number | boolean | null>
   },
   value: string
 }[]
@@ -317,19 +316,19 @@ await corsair.canny.api.posts.changeStatus({});
 | `id` | `string` | Yes | — |
 | `author` | `object` | Yes | — |
 | `board` | `object` | Yes | — |
-| `category` | `object` | No | — |
+| `category` | `object \| null` | No | — |
 | `commentCount` | `number` | Yes | — |
 | `created` | `string` | Yes | — |
 | `details` | `string` | No | — |
-| `eta` | `string` | No | — |
+| `eta` | `string \| null` | No | — |
 | `imageURLs` | `string[]` | No | — |
 | `score` | `number` | Yes | — |
 | `status` | `string` | Yes | — |
 | `tags` | `object[]` | No | — |
 | `title` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
-| `owner` | `object` | No | — |
-| `customFields` | `object` | No | — |
+| `owner` | `object \| null` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean \| null>` | No | — |
 
 <AccordionGroup>
 <Accordion title="author full type">
@@ -373,7 +372,7 @@ await corsair.canny.api.posts.changeStatus({});
   url?: string,
   postCount?: number,
   parentID?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -401,15 +400,7 @@ await corsair.canny.api.posts.changeStatus({});
   url: string,
   isAdmin: boolean,
   avatarURL?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="customFields full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -441,21 +432,11 @@ await corsair.canny.api.posts.create({});
 | `title` | `string` | Yes | — |
 | `details` | `string` | No | — |
 | `categoryID` | `string` | No | — |
-| `customFields` | `object` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean \| null>` | No | — |
 | `eta` | `string` | No | — |
 | `etaPublic` | `boolean` | No | — |
 | `imageURLs` | `string[]` | No | — |
 | `ownerID` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="customFields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -588,8 +569,7 @@ await corsair.canny.api.posts.list({});
     isAdmin: boolean,
     avatarURL?: string | null
   } | null,
-  customFields?: {
-  }
+  customFields?: Record<string, string | number | boolean | null>
 }[]
 ```
 </Accordion>
@@ -628,19 +608,19 @@ await corsair.canny.api.posts.retrieve({});
 | `id` | `string` | Yes | — |
 | `author` | `object` | Yes | — |
 | `board` | `object` | Yes | — |
-| `category` | `object` | No | — |
+| `category` | `object \| null` | No | — |
 | `commentCount` | `number` | Yes | — |
 | `created` | `string` | Yes | — |
 | `details` | `string` | No | — |
-| `eta` | `string` | No | — |
+| `eta` | `string \| null` | No | — |
 | `imageURLs` | `string[]` | No | — |
 | `score` | `number` | Yes | — |
 | `status` | `string` | Yes | — |
 | `tags` | `object[]` | No | — |
 | `title` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
-| `owner` | `object` | No | — |
-| `customFields` | `object` | No | — |
+| `owner` | `object \| null` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean \| null>` | No | — |
 
 <AccordionGroup>
 <Accordion title="author full type">
@@ -684,7 +664,7 @@ await corsair.canny.api.posts.retrieve({});
   url?: string,
   postCount?: number,
   parentID?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -712,15 +692,7 @@ await corsair.canny.api.posts.retrieve({});
   url: string,
   isAdmin: boolean,
   avatarURL?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="customFields full type">
-
-```ts
-{
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -897,8 +869,7 @@ await corsair.canny.api.votes.list({});
       isAdmin: boolean,
       avatarURL?: string | null
     } | null,
-    customFields?: {
-    }
+    customFields?: Record<string, string | number | boolean | null>
   },
   voter?: {
     id: string,

@@ -1,9 +1,9 @@
 ---
 title: Database
-description: "Slackbot local sync: searchable entities, `.search()` filters, and operators."
+description: "Slack Bot local sync: searchable entities, `.search()` filters, and operators."
 ---
 
-The Slackbot plugin syncs data locally. Use `corsair.slackbot.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+The Slack Bot plugin syncs data locally. Use `corsair.slackbot.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
 
 <Info>
 **New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
@@ -91,6 +91,7 @@ const rows = await corsair.slackbot.db.messages.search({
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `ts` | `string` | equals, contains, startsWith, endsWith, in |
 | `channel` | `string` | equals, contains, startsWith, endsWith, in |
+| `channel_type` | `string` | equals, contains, startsWith, endsWith, in |
 | `subtype` | `string` | equals, contains, startsWith, endsWith, in |
 | `text` | `string` | equals, contains, startsWith, endsWith, in |
 | `user` | `string` | equals, contains, startsWith, endsWith, in |

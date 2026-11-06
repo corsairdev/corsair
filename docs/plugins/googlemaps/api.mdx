@@ -38,17 +38,7 @@ await corsair.googlemaps.api.aerial.lookupAerialVideo({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `state` | `string` | No | PROCESSING, ACTIVE, FAILED. |
-| `uris` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="uris full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `uris` | `Record<string, any>` | No | — |
 
 
 
@@ -126,18 +116,8 @@ await corsair.googlemaps.api.geocoding.geocodeAddress({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | No | — |
+| `results` | `Record<string, any>[]` | No | — |
 | `status` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -169,17 +149,7 @@ await corsair.googlemaps.api.geocoding.geocodeAddressWithQuery({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `places` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="places full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `places` | `Record<string, any>[]` | No | — |
 
 
 
@@ -211,18 +181,8 @@ await corsair.googlemaps.api.geocoding.geocodeDestinations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | No | — |
+| `results` | `Record<string, any>[]` | No | — |
 | `status` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -253,18 +213,8 @@ await corsair.googlemaps.api.geocoding.geocodePlace({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | No | — |
+| `results` | `Record<string, any>[]` | No | — |
 | `status` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -297,18 +247,8 @@ await corsair.googlemaps.api.geocoding.geocodingApi({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | No | — |
+| `results` | `Record<string, any>[]` | No | — |
 | `status` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -340,18 +280,8 @@ await corsair.googlemaps.api.geocoding.reverseGeocodeLocation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `object[]` | No | — |
+| `results` | `Record<string, any>[]` | No | — |
 | `status` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="results full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -379,26 +309,8 @@ await corsair.googlemaps.api.geolocation.geolocate({});
 | `homeMobileNetworkCode` | `number` | No | MNC for home network. |
 | `radioType` | `string` | No | lte, gsm, cdma, wcdma. |
 | `carrier` | `string` | No | Carrier name. |
-| `cellTowers` | `object[]` | No | Cell tower objects. |
-| `wifiAccessPoints` | `object[]` | No | WiFi access point objects. |
-
-<AccordionGroup>
-<Accordion title="cellTowers full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="wifiAccessPoints full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `cellTowers` | `Record<string, any>[]` | No | Cell tower objects. |
+| `wifiAccessPoints` | `Record<string, any>[]` | No | WiFi access point objects. |
 
 
 
@@ -444,20 +356,10 @@ await corsair.googlemaps.api.places.autocomplete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `input` | `string` | Yes | Text query to get predictions for. |
-| `locationBias` | `object` | No | Location bias area. |
+| `locationBias` | `Record<string, any>` | No | Location bias area. |
 | `includedPrimaryTypes` | `string[]` | No | Primary place types. |
 | `languageCode` | `string` | No | Language code. |
 | `regionCode` | `string` | No | Region code. |
-
-<AccordionGroup>
-<Accordion title="locationBias full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -465,17 +367,7 @@ await corsair.googlemaps.api.places.autocomplete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `suggestions` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="suggestions full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `suggestions` | `Record<string, any>[]` | No | — |
 
 
 
@@ -485,7 +377,7 @@ await corsair.googlemaps.api.places.autocomplete({});
 
 `places.getPlaceDetails`
 
-Retrieves comprehensive details for a place using its resource name (places/{place_id} format). Use when you need detailed information about a specific place.
+Retrieves comprehensive details for a place using its resource name (places/&#123;place_id&#125; format). Use when you need detailed information about a specific place.
 
 **Risk:** `read`
 
@@ -497,7 +389,7 @@ await corsair.googlemaps.api.places.getPlaceDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `place_id` | `string` | Yes | Place ID (or resource name places/{place_id}). |
+| `place_id` | `string` | Yes | Place ID (or resource name places/&#123;place_id&#125;). |
 | `fields` | `string` | No | Field mask for response fields. |
 | `languageCode` | `string` | No | Language code. |
 
@@ -510,19 +402,9 @@ await corsair.googlemaps.api.places.getPlaceDetails({});
 | `id` | `string` | No | — |
 | `name` | `string` | No | — |
 | `formattedAddress` | `string` | No | — |
-| `location` | `object` | No | — |
+| `location` | `Record<string, any>` | No | — |
 | `rating` | `number` | No | — |
 | `types` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="location full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -579,17 +461,7 @@ await corsair.googlemaps.api.places.nearbySearch({});
 | `includedTypes` | `string[]` | No | Included place types. |
 | `excludedTypes` | `string[]` | No | Excluded place types. |
 | `maxResultCount` | `number` | No | Max results (1-20). |
-| `locationRestriction` | `object` | Yes | Center circle restriction. |
-
-<AccordionGroup>
-<Accordion title="locationRestriction full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `locationRestriction` | `Record<string, any>` | Yes | Center circle restriction. |
 
 
 
@@ -597,17 +469,7 @@ await corsair.googlemaps.api.places.nearbySearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `places` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="places full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `places` | `Record<string, any>[]` | No | — |
 
 
 
@@ -631,20 +493,10 @@ await corsair.googlemaps.api.places.textSearch({});
 |------|------|----------|-------------|
 | `textQuery` | `string` | Yes | Text search query string. |
 | `includedType` | `string` | No | Primary place type filter. |
-| `locationBias` | `object` | No | Location bias circle or rectangle. |
+| `locationBias` | `Record<string, any>` | No | Location bias circle or rectangle. |
 | `minRating` | `number` | No | Minimum place rating filter. |
 | `openNow` | `boolean` | No | Filter currently open places. |
 | `maxResultCount` | `number` | No | Max result count. |
-
-<AccordionGroup>
-<Accordion title="locationBias full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -652,17 +504,7 @@ await corsair.googlemaps.api.places.textSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `places` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="places full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `places` | `Record<string, any>[]` | No | — |
 
 
 
@@ -686,29 +528,11 @@ await corsair.googlemaps.api.routes.computeRouteMatrix({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `origins` | `object[]` | Yes | List of origin waypoints. |
-| `destinations` | `object[]` | Yes | List of destination waypoints. |
+| `origins` | `Record<string, any>[]` | Yes | List of origin waypoints. |
+| `destinations` | `Record<string, any>[]` | Yes | List of destination waypoints. |
 | `travelMode` | `string` | No | DRIVE, BICYCLE, WALK, TWO_WHEELER, TRANSIT. |
 | `routingPreference` | `string` | No | TRAFFIC_UNAWARE, TRAFFIC_AWARE, TRAFFIC_AWARE_OPTIMAL. |
 | `departureTime` | `string` | No | Departure timestamp. |
-
-<AccordionGroup>
-<Accordion title="origins full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="destinations full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -718,20 +542,10 @@ await corsair.googlemaps.api.routes.computeRouteMatrix({});
 |------|------|----------|-------------|
 | `originIndex` | `number` | No | — |
 | `destinationIndex` | `number` | No | — |
-| `status` | `object` | No | — |
+| `status` | `Record<string, any>` | No | — |
 | `condition` | `string` | No | — |
 | `distanceMeters` | `number` | No | — |
 | `duration` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="status full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -767,18 +581,8 @@ await corsair.googlemaps.api.routes.distanceMatrix({});
 |------|------|----------|-------------|
 | `origin_addresses` | `string[]` | No | — |
 | `destination_addresses` | `string[]` | No | — |
-| `rows` | `object[]` | No | — |
+| `rows` | `Record<string, any>[]` | No | — |
 | `status` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="rows full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -812,18 +616,8 @@ await corsair.googlemaps.api.routes.getDirection({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `routes` | `object[]` | No | — |
+| `routes` | `Record<string, any>[]` | No | — |
 | `status` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="routes full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -845,28 +639,10 @@ await corsair.googlemaps.api.routes.getRoute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `origin` | `object` | Yes | Origin waypoint object. |
-| `destination` | `object` | Yes | Destination waypoint object. |
+| `origin` | `Record<string, any>` | Yes | Origin waypoint object. |
+| `destination` | `Record<string, any>` | Yes | Destination waypoint object. |
 | `travelMode` | `string` | No | DRIVE, BICYCLE, WALK, TWO_WHEELER, TRANSIT. |
 | `routingPreference` | `string` | No | TRAFFIC_UNAWARE, TRAFFIC_AWARE. |
-
-<AccordionGroup>
-<Accordion title="origin full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="destination full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -874,17 +650,7 @@ await corsair.googlemaps.api.routes.getRoute({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `routes` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="routes full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `routes` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1027,27 +793,9 @@ await corsair.googlemaps.api.tiles.get3dTilesRoot({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `asset` | `object` | No | — |
+| `asset` | `Record<string, any>` | No | — |
 | `geometricError` | `number` | No | — |
-| `root` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="asset full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="root full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `root` | `Record<string, any>` | No | — |
 
 
 

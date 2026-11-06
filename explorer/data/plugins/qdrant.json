@@ -112,12 +112,12 @@
           {
             "key": "vectors",
             "optional": true,
-            "type": "{ size: number, distance: Cosine | Euclid | Dot | Manhattan, datatype?: float32 | float16 | uint8 | turbo4 | turbo8 | turbo16, on_disk?: boolean, multivector_config?: { comparator: max_sim } } | {}"
+            "type": "{ size: number, distance: Cosine | Euclid | Dot | Manhattan, datatype?: float32 | float16 | uint8 | turbo4 | turbo8 | turbo16, on_disk?: boolean, multivector_config?: { comparator: max_sim } } | Record<string, { size: number, distance: Cosine | Euclid | Dot | Manhattan, datatype?: float32 | float16 | uint8 | turbo4 | turbo8 | turbo16, on_disk?: boolean, multivector_config?: { comparator: max_sim } }>"
           },
           {
             "key": "sparse_vectors",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, { modifier?: none | idf }>"
           },
           {
             "key": "shard_number",
@@ -147,43 +147,43 @@
           {
             "key": "hnsw_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "wal_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "optimizers_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "quantization_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "strict_mode_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "id_tracker",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "payload",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Payload storage configuration"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "timeout",
@@ -283,12 +283,12 @@
           {
             "key": "points_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "indexed_vectors_count",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "segments_count",
@@ -298,12 +298,12 @@
           {
             "key": "config",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "payload_schema",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           }
         ]
       }
@@ -344,42 +344,42 @@
           {
             "key": "vectors",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, Record<string, any>>"
           },
           {
             "key": "sparse_vectors",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, Record<string, any>>"
           },
           {
             "key": "params",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "hnsw_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "optimizers_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "quantization_config",
             "optional": true,
-            "type": "{} | Disabled"
+            "type": "Record<string, any> | Disabled"
           },
           {
             "key": "strict_mode_config",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "metadata",
             "optional": true,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "timeout",
@@ -420,7 +420,7 @@
           },
           {
             "key": "wait",
-            "optional": false,
+            "optional": true,
             "type": "boolean",
             "description": "Wait until the change is applied (Qdrant defaults to false)"
           },
@@ -443,7 +443,7 @@
           {
             "key": "operation_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
@@ -474,7 +474,7 @@
           },
           {
             "key": "wait",
-            "optional": false,
+            "optional": true,
             "type": "boolean",
             "description": "Wait until the change is applied (Qdrant defaults to false)"
           },
@@ -497,7 +497,7 @@
           {
             "key": "operation_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
@@ -529,7 +529,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{ must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }"
+            "type": "{ must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }"
           },
           {
             "key": "shard_key",
@@ -538,7 +538,7 @@
           },
           {
             "key": "wait",
-            "optional": false,
+            "optional": true,
             "type": "boolean",
             "description": "Wait until the change is applied (Qdrant defaults to false)"
           },
@@ -561,7 +561,7 @@
           {
             "key": "operation_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
@@ -588,7 +588,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{ must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }"
+            "type": "{ must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }"
           },
           {
             "key": "exact",
@@ -645,7 +645,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{ must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }"
+            "type": "{ must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }"
           },
           {
             "key": "shard_key",
@@ -654,7 +654,7 @@
           },
           {
             "key": "wait",
-            "optional": false,
+            "optional": true,
             "type": "boolean",
             "description": "Wait until the change is applied (Qdrant defaults to false)"
           },
@@ -677,7 +677,7 @@
           {
             "key": "operation_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
@@ -714,7 +714,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{ must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }"
+            "type": "{ must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }"
           },
           {
             "key": "shard_key",
@@ -723,7 +723,7 @@
           },
           {
             "key": "wait",
-            "optional": false,
+            "optional": true,
             "type": "boolean",
             "description": "Wait until the change is applied (Qdrant defaults to false)"
           },
@@ -746,7 +746,7 @@
           {
             "key": "operation_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
@@ -784,7 +784,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{ must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }"
+            "type": "{ must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }"
           },
           {
             "key": "shard_key",
@@ -793,7 +793,7 @@
           },
           {
             "key": "wait",
-            "optional": false,
+            "optional": true,
             "type": "boolean",
             "description": "Wait until the change is applied (Qdrant defaults to false)"
           },
@@ -816,7 +816,7 @@
           {
             "key": "operation_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
@@ -875,7 +875,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ id: number | string, payload?: {} | null, vector?: number[] | number[][] | {} | null, shard_key?: string | number | null, order_value?: number | null }[]"
+        "type": "{ id: number | string, payload?: Record<string, any> | null, vector?: number[] | number[][] | Record<string, number[] | number[][] | { indices: number[], values: number[] }> | null, shard_key?: string | number | null, order_value?: number | null }[]"
       }
     },
     {
@@ -894,7 +894,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "key",
@@ -910,7 +910,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{ must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }"
+            "type": "{ must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }"
           },
           {
             "key": "shard_key",
@@ -919,7 +919,7 @@
           },
           {
             "key": "wait",
-            "optional": false,
+            "optional": true,
             "type": "boolean",
             "description": "Wait until the change is applied (Qdrant defaults to false)"
           },
@@ -942,7 +942,7 @@
           {
             "key": "operation_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
@@ -969,7 +969,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{ must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }"
+            "type": "{ must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }"
           },
           {
             "key": "limit",
@@ -1021,12 +1021,12 @@
           {
             "key": "points",
             "optional": false,
-            "type": "{ id: number | string, payload?: {} | null, vector?: number[] | number[][] | {} | null, shard_key?: string | number | null, order_value?: number | null }[]"
+            "type": "{ id: number | string, payload?: Record<string, any> | null, vector?: number[] | number[][] | Record<string, number[] | number[][] | { indices: number[], values: number[] }> | null, shard_key?: string | number | null, order_value?: number | null }[]"
           },
           {
             "key": "next_page_offset",
             "optional": true,
-            "type": "number | string"
+            "type": "number | string | null"
           }
         ]
       }
@@ -1047,7 +1047,7 @@
           {
             "key": "payload",
             "optional": false,
-            "type": "{}"
+            "type": "Record<string, any>"
           },
           {
             "key": "key",
@@ -1063,7 +1063,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{ must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }"
+            "type": "{ must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }"
           },
           {
             "key": "shard_key",
@@ -1072,7 +1072,7 @@
           },
           {
             "key": "wait",
-            "optional": false,
+            "optional": true,
             "type": "boolean",
             "description": "Wait until the change is applied (Qdrant defaults to false)"
           },
@@ -1095,7 +1095,7 @@
           {
             "key": "operation_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
@@ -1122,12 +1122,12 @@
           {
             "key": "points",
             "optional": false,
-            "type": "{ id: number | string, vector: number[] | number[][] | { model: string } | {} }[]"
+            "type": "{ id: number | string, vector: number[] | number[][] | { model: string } | Record<string, number[] | number[][] | { indices: number[], values: number[] } | { model: string }> }[]"
           },
           {
             "key": "update_filter",
             "optional": true,
-            "type": "{ must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }"
+            "type": "{ must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }"
           },
           {
             "key": "shard_key",
@@ -1136,7 +1136,7 @@
           },
           {
             "key": "wait",
-            "optional": false,
+            "optional": true,
             "type": "boolean",
             "description": "Wait until the change is applied (Qdrant defaults to false)"
           },
@@ -1159,7 +1159,7 @@
           {
             "key": "operation_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
@@ -1186,12 +1186,12 @@
           {
             "key": "points",
             "optional": false,
-            "type": "{ id: number | string, vector: number[] | number[][] | { model: string } | {}, payload?: {} | null }[]"
+            "type": "{ id: number | string, vector: number[] | number[][] | { model: string } | Record<string, number[] | number[][] | { indices: number[], values: number[] } | { model: string }>, payload?: Record<string, any> | null }[]"
           },
           {
             "key": "update_filter",
             "optional": true,
-            "type": "{ must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }",
+            "type": "{ must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }",
             "description": "Only overwrite existing points that match this filter"
           },
           {
@@ -1206,7 +1206,7 @@
           },
           {
             "key": "wait",
-            "optional": false,
+            "optional": true,
             "type": "boolean",
             "description": "Wait until the change is applied (Qdrant defaults to false)"
           },
@@ -1229,7 +1229,7 @@
           {
             "key": "operation_id",
             "optional": true,
-            "type": "number"
+            "type": "number | null"
           },
           {
             "key": "status",
@@ -1256,7 +1256,7 @@
           {
             "key": "searches",
             "optional": false,
-            "type": "{ prefetch?: lazy | lazy[], query?: number[] | number[][] | number | string | {}, using?: string, filter?: { must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }, params?: {}, score_threshold?: number, limit?: number, offset?: number, with_payload?: boolean | string[] | { include: string[] } | { exclude: string[] }, with_vector?: boolean | string[], lookup_from?: { collection: string, vector?: string, shard_key?: string | number | (string | number)[] | {} }, shard_key?: string | number | (string | number)[] | {} }[]"
+            "type": "{ prefetch?: { prefetch?: (recursive) | (recursive)[], query?: number[] | number[][] | number | string | {}, using?: string, filter?: { must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }, params?: Record<string, any>, score_threshold?: number, limit?: number, lookup_from?: { collection: string, vector?: string, shard_key?: string | number | (string | number)[] | {} } } | { prefetch?: (recursive) | (recursive)[], query?: number[] | number[][] | number | string | {}, using?: string, filter?: { must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }, params?: Record<string, any>, score_threshold?: number, limit?: number, lookup_from?: { collection: string, vector?: string, shard_key?: string | number | (string | number)[] | {} } }[], query?: number[] | number[][] | number | string | {}, using?: string, filter?: { must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }, params?: Record<string, any>, score_threshold?: number, limit?: number, offset?: number, with_payload?: boolean | string[] | { include: string[] } | { exclude: string[] }, with_vector?: boolean | string[], lookup_from?: { collection: string, vector?: string, shard_key?: string | number | (string | number)[] | {} }, shard_key?: string | number | (string | number)[] | {} }[]"
           },
           {
             "key": "consistency",
@@ -1273,7 +1273,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ points: { id: number | string, payload?: {} | null, vector?: number[] | number[][] | {} | null, shard_key?: string | number | null, order_value?: number | null, version: number, score: number }[] }[]"
+        "type": "{ points: { id: number | string, payload?: Record<string, any> | null, vector?: number[] | number[][] | Record<string, number[] | number[][] | { indices: number[], values: number[] }> | null, shard_key?: string | number | null, order_value?: number | null, version: number, score: number }[] }[]"
       }
     },
     {
@@ -1303,7 +1303,7 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{ must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }"
+            "type": "{ must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }"
           },
           {
             "key": "exact",
@@ -1355,7 +1355,7 @@
           {
             "key": "prefetch",
             "optional": true,
-            "type": "lazy | lazy[]"
+            "type": "{ prefetch?: (recursive) | (recursive)[], query?: number[] | number[][] | number | string | {}, using?: string, filter?: { must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }, params?: Record<string, any>, score_threshold?: number, limit?: number, lookup_from?: { collection: string, vector?: string, shard_key?: string | number | (string | number)[] | {} } } | { prefetch?: (recursive) | (recursive)[], query?: number[] | number[][] | number | string | {}, using?: string, filter?: { must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }, params?: Record<string, any>, score_threshold?: number, limit?: number, lookup_from?: { collection: string, vector?: string, shard_key?: string | number | (string | number)[] | {} } }[]"
           },
           {
             "key": "query",
@@ -1371,12 +1371,12 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{ must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }"
+            "type": "{ must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }"
           },
           {
             "key": "params",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Search params, e.g. { hnsw_ef, exact }"
           },
           {
@@ -1443,7 +1443,7 @@
           {
             "key": "groups",
             "optional": false,
-            "type": "{ id: string | number, hits: { id: number | string, payload?: {} | null, vector?: number[] | number[][] | {} | null, shard_key?: string | number | null, order_value?: number | null, version: number, score: number }[], lookup?: { id: number | string, payload?: {} | null, vector?: number[] | number[][] | {} | null, shard_key?: string | number | null, order_value?: number | null } | null }[]"
+            "type": "{ id: string | number, hits: { id: number | string, payload?: Record<string, any> | null, vector?: number[] | number[][] | Record<string, number[] | number[][] | { indices: number[], values: number[] }> | null, shard_key?: string | number | null, order_value?: number | null, version: number, score: number }[], lookup?: { id: number | string, payload?: Record<string, any> | null, vector?: number[] | number[][] | Record<string, number[] | number[][] | { indices: number[], values: number[] }> | null, shard_key?: string | number | null, order_value?: number | null } | null }[]"
           }
         ]
       }
@@ -1464,7 +1464,7 @@
           {
             "key": "prefetch",
             "optional": true,
-            "type": "lazy | lazy[]"
+            "type": "{ prefetch?: (recursive) | (recursive)[], query?: number[] | number[][] | number | string | {}, using?: string, filter?: { must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }, params?: Record<string, any>, score_threshold?: number, limit?: number, lookup_from?: { collection: string, vector?: string, shard_key?: string | number | (string | number)[] | {} } } | { prefetch?: (recursive) | (recursive)[], query?: number[] | number[][] | number | string | {}, using?: string, filter?: { must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }, params?: Record<string, any>, score_threshold?: number, limit?: number, lookup_from?: { collection: string, vector?: string, shard_key?: string | number | (string | number)[] | {} } }[]"
           },
           {
             "key": "query",
@@ -1480,12 +1480,12 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "{ must?: {} | {}[], should?: {} | {}[], must_not?: {} | {}[], min_should?: { conditions: {}[], min_count: number } }"
+            "type": "{ must?: Record<string, any> | Record<string, any>[], should?: Record<string, any> | Record<string, any>[], must_not?: Record<string, any> | Record<string, any>[], min_should?: { conditions: Record<string, any>[], min_count: number } }"
           },
           {
             "key": "params",
             "optional": true,
-            "type": "{}",
+            "type": "Record<string, any>",
             "description": "Search params, e.g. { hnsw_ef, exact }"
           },
           {
@@ -1542,7 +1542,7 @@
           {
             "key": "points",
             "optional": false,
-            "type": "{ id: number | string, payload?: {} | null, vector?: number[] | number[][] | {} | null, shard_key?: string | number | null, order_value?: number | null, version: number, score: number }[]"
+            "type": "{ id: number | string, payload?: Record<string, any> | null, vector?: number[] | number[][] | Record<string, number[] | number[][] | { indices: number[], values: number[] }> | null, shard_key?: string | number | null, order_value?: number | null, version: number, score: number }[]"
           }
         ]
       }
@@ -1573,7 +1573,7 @@
           {
             "key": "creation_time",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           },
           {
             "key": "size",
@@ -1583,7 +1583,7 @@
           {
             "key": "checksum",
             "optional": true,
-            "type": "string"
+            "type": "string | null"
           }
         ]
       }

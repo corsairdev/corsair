@@ -38,7 +38,7 @@ await corsair.bart.api.advisories.elevators({});
 |------|------|----------|-------------|
 | `date` | `string` | No | — |
 | `time` | `string` | No | — |
-| `bsa` | `object` | No | — |
+| `bsa` | `object[] \| object` | No | — |
 
 <AccordionGroup>
 <Accordion title="bsa full type">
@@ -102,8 +102,8 @@ await corsair.bart.api.advisories.list({});
 |------|------|----------|-------------|
 | `date` | `string` | No | — |
 | `time` | `string` | No | — |
-| `bsa` | `object` | No | — |
-| `message` | `object` | No | — |
+| `bsa` | `object[] \| object` | No | — |
+| `message` | `string \| Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="bsa full type">
@@ -131,14 +131,6 @@ await corsair.bart.api.advisories.list({});
   },
   posted?: string,
   expires?: string
-}
-```
-</Accordion>
-
-<Accordion title="message full type">
-
-```ts
-string | {
 }
 ```
 </Accordion>
@@ -205,8 +197,8 @@ await corsair.bart.api.etd.station({});
 |------|------|----------|-------------|
 | `date` | `string` | No | — |
 | `time` | `string` | No | — |
-| `station` | `object` | Yes | — |
-| `message` | `object` | No | — |
+| `station` | `object[] \| object` | Yes | — |
+| `message` | `string \| Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="station full type">
@@ -331,14 +323,6 @@ await corsair.bart.api.etd.station({});
 }
 ```
 </Accordion>
-
-<Accordion title="message full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -387,8 +371,7 @@ await corsair.bart.api.fares.calculate({});
 ```ts
 {
   fare?: string,
-  discount?: {
-  }
+  discount?: Record<string, string>
 }
 ```
 </Accordion>
@@ -597,8 +580,7 @@ await corsair.bart.api.schedules.arrivals({});
   before?: string,
   after?: string,
   request?: {
-    trip?: {
-    }
+    trip?: Record<string, string>
   },
   trip?: {
     @origin?: string,
@@ -709,9 +691,7 @@ await corsair.bart.api.schedules.arrivals({});
 
 ```ts
 {
-  file?: {
-  }[] | {
-  }
+  file?: Record<string, string>[] | Record<string, string>
 }
 ```
 </Accordion>
@@ -766,8 +746,7 @@ await corsair.bart.api.schedules.departures({});
   before?: string,
   after?: string,
   request?: {
-    trip?: {
-    }
+    trip?: Record<string, string>
   },
   trip?: {
     @origin?: string,
@@ -878,9 +857,7 @@ await corsair.bart.api.schedules.departures({});
 
 ```ts
 {
-  file?: {
-  }[] | {
-  }
+  file?: Record<string, string>[] | Record<string, string>
 }
 ```
 </Accordion>
@@ -990,7 +967,7 @@ await corsair.bart.api.stations.access({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `stations` | `object` | No | — |
-| `station` | `object` | No | — |
+| `station` | `object[] \| object` | No | — |
 
 <AccordionGroup>
 <Accordion title="stations full type">
@@ -1171,7 +1148,7 @@ await corsair.bart.api.stations.info({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `stations` | `object` | No | — |
-| `station` | `object` | No | — |
+| `station` | `object[] \| object` | No | — |
 
 <AccordionGroup>
 <Accordion title="stations full type">
