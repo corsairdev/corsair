@@ -106,7 +106,7 @@ const overrides: Record<string, unknown> = {
 	client_secret: 'client-secret',
 	certificate_id: 'cert-id',
 	private_key_pem: privateKey,
-	state: 'state',
+	state: 'state-with-at-least-22-chars',
 	scope: 'rest_webservices',
 	client_assertion: 'assertion',
 	client_assertion_type:
@@ -578,7 +578,7 @@ describe('endpoint dispatch', () => {
 				client_id: 'id',
 				redirect_uri: 'https://example.com/cb',
 				scope: 'rest_webservices',
-				state: 's',
+				state: 'state-with-at-least-22-chars',
 			} as never,
 		)) as { authorization_url: string };
 		expect(account.authorization_url).toContain(
@@ -592,13 +592,60 @@ describe('endpoint dispatch', () => {
 				client_id: 'id',
 				redirect_uri: 'https://example.com/cb',
 				scope: 'rest_webservices',
-				state: 's',
+				state: 'state-with-at-least-22-chars',
 				nonce: 'n',
 			} as never,
 		)) as { authorization_url: string };
 		expect(system.authorization_url).toContain(
 			'https://system.netsuite.com/app/login/oauth2/authorize.nl',
 		);
+	});
+
+	it('requires a 22-character state and needs no account for the system domain', async () => {
+		const input = {
+			client_id: 'id',
+			redirect_uri: 'https://example.com/cb',
+			scope: 'rest_webservices',
+		};
+		await expect(
+			NetSuite.oauth2AuthorizeAccountDomain(mockCtx() as never, input as never),
+		).rejects.toThrow();
+		await expect(
+			NetSuite.oauth2AuthorizeAccountDomain(mockCtx() as never, {
+				...input,
+				state: 'too-short',
+			}),
+		).rejects.toThrow();
+
+		const noAccount = { ...mockCtx(), options: {}, keys: {} };
+		const system = await NetSuite.oauth2AuthorizeSystemDomain(
+			noAccount as never,
+			{ ...input, state: 'state-with-at-least-22-chars' },
+		);
+		const url = new URL(system.authorization_url as string);
+		expect(url.origin).toBe('https://system.netsuite.com');
+		expect(url.searchParams.get('state')).toBe('state-with-at-least-22-chars');
+		expect(url.searchParams.get('response_type')).toBe('code');
+	});
+
+	it('accepts the string expires_in NetSuite returns from the token endpoint', async () => {
+		globalThis.fetch = jest.fn().mockResolvedValue(
+			jsonResponse({
+				access_token: 'access',
+				refresh_token: 'refresh',
+				expires_in: '3600',
+				token_type: 'bearer',
+			}),
+		) as unknown as typeof fetch;
+		const result = await NetSuite.oauth2TokenAuthorizationCode(
+			mockCtx() as never,
+			{
+				code: 'code',
+				redirect_uri: 'https://example.com/cb',
+				code_verifier: 'verifier',
+			},
+		);
+		expect(result.expires_in).toBe('3600');
 	});
 
 	it('creates a verifiable PS256 JWT assertion', async () => {
@@ -931,14 +978,32 @@ describe('endpoint dispatch', () => {
 		});
 	});
 
-	it('resolves refresh credentials from context defaults and rejects when missing', async () => {
+	it('fills client credentials from options but never uses the stored refresh token', async () => {
 		globalThis.fetch = jest
 			.fn()
 			.mockResolvedValue(
 				jsonResponse({ access_token: 'refreshed' }),
 			) as unknown as typeof fetch;
-		const result = await NetSuite.oauth2TokenRefresh(mockCtx() as never, {});
+		const storedRefresh = jest.fn().mockResolvedValue('stored-refresh');
+		const ctxWithStore = {
+			...mockCtx(),
+			keys: { ...mockCtx().keys, get_refresh_token: storedRefresh },
+		};
+		await expect(
+			NetSuite.oauth2TokenRefresh(ctxWithStore as never, {} as never),
+		).rejects.toThrow();
+		expect(storedRefresh).not.toHaveBeenCalled();
+		expect(globalThis.fetch).not.toHaveBeenCalled();
+
+		const result = await NetSuite.oauth2TokenRefresh(mockCtx() as never, {
+			refresh_token: 'caller-refresh',
+		});
 		expect(result).toEqual({ access_token: 'refreshed' });
+		const [, firstInit] = jest.mocked(globalThis.fetch).mock.calls[0] as [
+			string,
+			RequestInit,
+		];
+		expect(String(firstInit.body)).toContain('refresh_token=caller-refresh');
 
 		const [, init] = jest.mocked(globalThis.fetch).mock.calls[0] as [
 			string,
@@ -954,7 +1019,9 @@ describe('endpoint dispatch', () => {
 			keys: {},
 		};
 		await expect(
-			NetSuite.oauth2TokenRefresh(emptyCtx as never, {}),
+			NetSuite.oauth2TokenRefresh(emptyCtx as never, {
+				refresh_token: 'caller-refresh',
+			}),
 		).rejects.toThrow(
 			'[auth-missing:netsuite]: oauth2TokenRefresh requires client_id',
 		);

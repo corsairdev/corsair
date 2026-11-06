@@ -47,7 +47,8 @@ const passthroughResponse = z
 		refresh_token: z.string().optional(),
 		id_token: z.string().optional(),
 		token_type: z.string().optional(),
-		expires_in: z.number().optional(),
+		// NetSuite sends expires_in as the string "3600".
+		expires_in: z.union([z.number(), z.string()]).optional(),
 		expires_at: z.number().optional(),
 		scope: z.string().optional(),
 		authorization_url: z.string().optional(),
@@ -706,10 +707,13 @@ export const ListVendorPaymentsInputSchema = z
 
 export const ListVendorPaymentsOutputSchema = passthroughResponse;
 
+// NetSuite requires a state of 22 to 1024 characters on every authorize request.
+const oauthStateSchema = z.string().min(22).max(1024);
+
 export const Oauth2AuthorizeAccountDomainInputSchema = z
 	.object({
 		scope: z.string(),
-		state: z.string().optional(),
+		state: oauthStateSchema,
 		prompt: z.string().optional(),
 		client_id: z.string(),
 		redirect_uri: z.string(),
@@ -725,7 +729,7 @@ export const Oauth2AuthorizeSystemDomainInputSchema = z
 	.object({
 		nonce: z.string().optional(),
 		scope: z.string(),
-		state: z.string(),
+		state: oauthStateSchema,
 		prompt: z.string().optional(),
 		client_id: z.string(),
 		redirect_uri: z.string(),
@@ -784,7 +788,7 @@ export const Oauth2TokenRefreshInputSchema = z
 	.object({
 		client_id: z.string().optional(),
 		client_secret: z.string().optional(),
-		refresh_token: z.string().optional(),
+		refresh_token: z.string().min(1),
 	})
 	.passthrough(); // NetSuite responses may include additional fields beyond those declared
 

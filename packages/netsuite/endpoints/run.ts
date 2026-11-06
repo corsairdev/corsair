@@ -107,23 +107,23 @@ function applyDefaults(
 	return out;
 }
 
-async function applyRefreshDefaults(
+function applyRefreshDefaults(
 	ctx: NetSuiteContext,
 	input: Record<string, unknown>,
-): Promise<void> {
+): void {
 	const options = ctx.options as {
 		clientId?: string;
 		clientSecret?: string;
 	};
-	const keys = ctx.keys as {
-		get_refresh_token?: () => Promise<string | null | undefined>;
-	};
 	const fill = (field: string, value: string | null | undefined) => {
 		if (value && read(input, field) === undefined) input[field] = value;
 	};
+	// The refresh token must come from the caller. Filling in the connection's
+	// stored token would hand a live access token to whoever calls this
+	// operation, and for public clients NetSuite rotates the refresh token on
+	// use, so the stored connection would stop working.
 	fill('client_id', options.clientId);
 	fill('client_secret', options.clientSecret);
-	fill('refresh_token', await keys.get_refresh_token?.());
 
 	for (const [field, label] of [
 		['client_id', 'client_id'],
@@ -700,12 +700,17 @@ export async function runNetSuite<K extends NetSuiteSpecKey>(
 	spec: RouteSpec,
 ): Promise<NetSuiteEndpointOutputs[K]> {
 	const resolvedInput = applyDefaults(input as Record<string, unknown>, spec);
-	const accountId = await resolveAccountId(
-		ctx,
-		spec.auth === 'none' ? read(resolvedInput, 'account') : undefined,
-	);
+	// The system-domain authorize URL is for callers that don't know the
+	// account yet (NetSuite sends it back as `company`), so it needs none.
+	const accountId =
+		spec.custom === 'authorize-system'
+			? ''
+			: await resolveAccountId(
+					ctx,
+					spec.auth === 'none' ? read(resolvedInput, 'account') : undefined,
+				);
 	if (event === 'oauth2TokenRefresh') {
-		await applyRefreshDefaults(ctx, resolvedInput);
+		applyRefreshDefaults(ctx, resolvedInput);
 	}
 	const raw = spec.custom
 		? await customEndpoint(
