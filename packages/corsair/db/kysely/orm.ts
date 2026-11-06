@@ -1,4 +1,5 @@
-import type { Kysely, SelectQueryBuilder } from 'kysely';
+import type { Expression, Kysely, SelectQueryBuilder, SqlBool } from 'kysely';
+import { SqliteAdapter, sql } from 'kysely';
 import type { ZodTypeAny } from 'zod';
 import { z } from 'zod';
 
@@ -14,6 +15,44 @@ import {
 	jsonbTextField,
 	jsonbTimestampField,
 } from './postgres';
+import { jsonNumberField, jsonTimestampField } from './sqlite';
+
+/**
+ * How a JSON `data` field is read in SQL. Postgres casts the `->>` text
+ * (`::numeric`, `::boolean`, `::timestamptz`); SQLite has none of those casts,
+ * so it reads with json_extract, and compares booleans with 1/0 because
+ * better-sqlite3 cannot bind a JS boolean. Text reads with `->>` on both.
+ */
+type JsonFieldSql = {
+	number: (key: string) => ReturnType<typeof jsonbNumberField>;
+	booleanEquals: (key: string, value: boolean) => Expression<SqlBool>;
+	timestamp: (key: string) => ReturnType<typeof jsonbTimestampField>;
+};
+
+const POSTGRES_FIELDS: JsonFieldSql = {
+	number: (key) => jsonbNumberField(key),
+	booleanEquals: (key, value) =>
+		sql<SqlBool>`${jsonbBooleanField(key)} = ${value}`,
+	timestamp: (key) => jsonbTimestampField(key),
+};
+
+const SQLITE_FIELDS: JsonFieldSql = {
+	number: (key) => jsonNumberField(key),
+	booleanEquals: (key, value) =>
+		sql<SqlBool>`json_extract(data, ${`$.${key}`}) = ${value ? 1 : 0}`,
+	timestamp: (key) => jsonTimestampField(key),
+};
+
+/**
+ * Reads the dialect from the instance itself, so a Kysely the caller built
+ * with a SQLite dialect gets SQLite SQL too (createCorsairDatabase assumes
+ * Postgres for those).
+ */
+function jsonFieldSql(db: Kysely<CorsairKyselyDatabase>): JsonFieldSql {
+	return db.getExecutor().adapter instanceof SqliteAdapter
+		? SQLITE_FIELDS
+		: POSTGRES_FIELDS;
+}
 
 type EntityQueryBuilder = SelectQueryBuilder<
 	CorsairKyselyDatabase,
@@ -168,11 +207,11 @@ function applyNumberFilter(
 
 function applyBooleanFilter(
 	q: EntityQueryBuilder,
-	expr: ReturnType<typeof jsonbBooleanField>,
+	equals: (value: boolean) => Expression<SqlBool>,
 	filterValue: unknown,
 ) {
 	if (typeof filterValue === 'boolean') {
-		return q.where(expr, '=', filterValue);
+		return q.where(equals(filterValue));
 	}
 	if (
 		typeof filterValue === 'object' &&
@@ -180,7 +219,7 @@ function applyBooleanFilter(
 		!Array.isArray(filterValue)
 	) {
 		const obj = filterValue as Record<string, unknown>;
-		if (typeof obj.equals === 'boolean') q = q.where(expr, '=', obj.equals);
+		if (typeof obj.equals === 'boolean') q = q.where(equals(obj.equals));
 	}
 	return q;
 }
@@ -213,18 +252,23 @@ function applyDateFilter(
 
 function applyDataFilter(
 	q: EntityQueryBuilder,
+	fields: JsonFieldSql,
 	key: string,
 	fieldType: DataFieldType,
 	filterValue: unknown,
 ) {
 	if (fieldType === 'number') {
-		return applyNumberFilter(q, jsonbNumberField(key), filterValue);
+		return applyNumberFilter(q, fields.number(key), filterValue);
 	}
 	if (fieldType === 'boolean') {
-		return applyBooleanFilter(q, jsonbBooleanField(key), filterValue);
+		return applyBooleanFilter(
+			q,
+			(value) => fields.booleanEquals(key, value),
+			filterValue,
+		);
 	}
 	if (fieldType === 'date') {
-		return applyDateFilter(q, jsonbTimestampField(key), filterValue);
+		return applyDateFilter(q, fields.timestamp(key), filterValue);
 	}
 	return applyStringFilter(q, jsonbTextField(key), filterValue);
 }
@@ -428,7 +472,7 @@ export function createKyselyEntityClient<DataSchema extends ZodTypeAny>(
 				for (const [key, filterValue] of Object.entries(options.data)) {
 					if (filterValue === undefined) continue;
 					const fieldType = dataFieldTypes[key] ?? 'string';
-					q = applyDataFilter(q, key, fieldType, filterValue);
+					q = applyDataFilter(q, jsonFieldSql(db), key, fieldType, filterValue);
 				}
 			}
 
