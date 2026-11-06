@@ -556,9 +556,9 @@ await corsair.adyntel.api.meta.ads({ company_domain: 'zappos.com', media_type: '
 | `number_of_ads` | `number` | No | — |
 | `count_landing_pages` | `number` | No | — |
 | `unique_landing_pages` | `string[]` | No | — |
-| `start_min_date` | `number` | No | — |
-| `start_max_date` | `number` | No | — |
-| `results` | `object[]` | No | One inner array per result page. |
+| `start_min_date` | `string` | No | — |
+| `start_max_date` | `string` | No | — |
+| `results` | `object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="results full type">
@@ -607,7 +607,7 @@ await corsair.adyntel.api.meta.ads({ company_domain: 'zappos.com', media_type: '
     is_reshared?: boolean | null,
     root_reshared_post?: Record<string, unknown> | null
   } | null
-}[][]
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -653,29 +653,40 @@ await corsair.adyntel.api.meta.adSearch({ keyword: 'webinar', country_code: 'US'
 | `search_type` | `string` | No | — |
 | `is_result_complete` | `boolean` | No | — |
 | `number_of_ads` | `number` | No | — |
-| `start_min_date` | `number` | No | — |
-| `start_max_date` | `number` | No | — |
-| `results` | `object[]` | No | — |
+| `start_min_date` | `string` | No | — |
+| `start_max_date` | `string` | No | — |
+| `results` | `object[]` | No | One inner array per result page. |
 
 <AccordionGroup>
 <Accordion title="results full type">
 
 ```ts
 {
+  ad_archive_id?: string | null,
   adArchiveID?: string | null,
   adid?: string | null,
+  ad_id?: string | null,
+  page_id?: string | number | null,
   pageID?: string | null,
+  page_name?: string | null,
   pageName?: string | null,
+  is_active?: boolean | null,
   isActive?: boolean | null,
+  is_profile_page?: boolean | null,
   isProfilePage?: boolean | null,
   categories?: (
     string | number
   )[] | null,
+  publisher_platform?: string[] | null,
   publisherPlatform?: string[] | null,
   currency?: string | null,
+  start_date?: number | null,
   startDate?: number | null,
+  end_date?: number | null,
   endDate?: number | null,
+  total_active_time?: number | null,
   totalActiveTime?: number | null,
+  entity_type?: string | null,
   entityType?: string | null,
   snapshot?: {
     page_id?: string | number | null,
