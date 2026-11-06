@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T09:55:27.822Z",
+  "generatedAt": "2026-11-06T11:16:28.741Z",
   "corsairVersion": "0.1.157",
   "catalogVersion": 2,
   "plugins": [
@@ -216,7 +216,7 @@
     {
       "id": "agiled",
       "displayName": "Agiled",
-      "description": "Agiled plugin for Corsair",
+      "description": "Business management platform for CRM, projects and invoicing; this plugin lists the contacts in an Agiled workspace.",
       "npmPackageName": "@corsair-dev/agiled",
       "authTypes": [
         "api_key"
@@ -758,7 +758,7 @@
     {
       "id": "ashby",
       "displayName": "Ashby",
-      "description": "Ashby plugin for Corsair",
+      "description": "Recruiting platform. Manage candidates, applications, interviews, offers, jobs, departments, locations, users, and webhooks.",
       "npmPackageName": "@corsair-dev/ashby",
       "authTypes": [
         "api_key"
@@ -1328,7 +1328,7 @@
     {
       "id": "borneo",
       "displayName": "Borneo",
-      "description": "Borneo plugin for Corsair",
+      "description": "Data security and privacy compliance platform. Run and read data scans, processing activities, recipients, resources, breaches, documents, employees, domains, and dashboard figures.",
       "npmPackageName": "@corsair-dev/borneo",
       "authTypes": [
         "api_key",
@@ -2459,7 +2459,7 @@
     {
       "id": "convex",
       "displayName": "Convex",
-      "description": "Convex plugin for Corsair",
+      "description": "Reactive backend platform. Manage projects, deployments and deploy keys, delete custom domains, read token details and the available deployment classes and regions, and run query batches, read query timestamps and list log streams on a deployment.",
       "npmPackageName": "@corsair-dev/convex",
       "authTypes": [
         "api_key",
@@ -2474,8 +2474,8 @@
     },
     {
       "id": "convoloai",
-      "displayName": "ConvoloAi",
-      "description": "ConvoloAi plugin for Corsair",
+      "displayName": "Convolo AI",
+      "description": "AI phone and speed-to-lead platform. Manage voice agents, calls, website call widgets, and leads.",
       "npmPackageName": "@corsair-dev/convoloai",
       "authTypes": [
         "api_key"
@@ -2609,8 +2609,8 @@
     },
     {
       "id": "dadataru",
-      "displayName": "Dadataru",
-      "description": "Dadataru plugin for Corsair",
+      "displayName": "DaData",
+      "description": "Russian data cleaning and lookup API. Standardize addresses, names, phones and other records, suggest and find addresses, companies, banks and reference codes, and locate IP addresses.",
       "npmPackageName": "@corsair-dev/dadataru",
       "authTypes": [
         "api_key"
@@ -3303,8 +3303,8 @@
     },
     {
       "id": "flexisign",
-      "displayName": "Flexisign",
-      "description": "Flexisign plugin for Corsair",
+      "displayName": "FlexiSign",
+      "description": "Electronic signature platform; this plugin lists the document templates available in a FlexiSign account.",
       "npmPackageName": "@corsair-dev/flexisign",
       "authTypes": [
         "api_key"
@@ -3638,7 +3638,7 @@
     {
       "id": "griptape",
       "displayName": "Griptape",
-      "description": "Griptape plugin for Corsair",
+      "description": "AI application platform. Manage assistants, knowledge bases, models, buckets, tools, structures, functions, data connectors, threads, and secrets in Griptape Cloud.",
       "npmPackageName": "@corsair-dev/griptape",
       "authTypes": [
         "api_key"
@@ -4741,7 +4741,7 @@
     {
       "id": "prisma",
       "displayName": "Prisma",
-      "description": "Prisma plugin for Corsair",
+      "description": "Database platform API. Manage Prisma Postgres projects, databases, connection strings and backups, list workspaces, regions and integrations, and run read-only queries, writes and schema inspection over Postgres.",
       "npmPackageName": "@corsair-dev/prisma",
       "authTypes": [
         "api_key",
@@ -5062,7 +5062,7 @@
     {
       "id": "scaleai",
       "displayName": "Scale AI",
-      "description": "Scale AI plugin for Corsair — data labeling tasks, batches, projects and Studio",
+      "description": "Data labeling platform. Create and manage annotation tasks, batches, projects, files, teams, quality tasks, audits, and Studio work.",
       "npmPackageName": "@corsair-dev/scaleai",
       "authTypes": [
         "api_key"
@@ -54116,7 +54116,7 @@
       "pluginId": "enginemailer",
       "kind": "api",
       "shortPath": "n8n.deactivateSubscriber",
-      "haystack": "n8n.deactivatesubscriber enginemailer.api.n8n.deactivatesubscriber unsubscribe a subscriber through enginemailer n8n write"
+      "haystack": "n8n.deactivatesubscriber enginemailer.api.n8n.deactivatesubscriber unsubscribe a subscriber through enginemailer n8n destructive"
     },
     {
       "pluginId": "enginemailer",
@@ -54212,7 +54212,7 @@
       "pluginId": "enginemailer",
       "kind": "api",
       "shortPath": "subscribers.batchUpdateStatus",
-      "haystack": "subscribers.batchupdatestatus enginemailer.api.subscribers.batchupdatestatus update subscriber status in a batch write"
+      "haystack": "subscribers.batchupdatestatus enginemailer.api.subscribers.batchupdatestatus get the status of a batch subscriber update by its job id read"
     },
     {
       "pluginId": "enginemailer",
@@ -54254,7 +54254,7 @@
       "pluginId": "enginemailer",
       "kind": "api",
       "shortPath": "subscribers.unsubscribe",
-      "haystack": "subscribers.unsubscribe enginemailer.api.subscribers.unsubscribe unsubscribe a subscriber write"
+      "haystack": "subscribers.unsubscribe enginemailer.api.subscribers.unsubscribe unsubscribe a subscriber destructive"
     },
     {
       "pluginId": "enginemailer",
@@ -54710,7 +54710,7 @@
       "pluginId": "esputnik",
       "kind": "api",
       "shortPath": "contacts.deleteFromUnsubscribed",
-      "haystack": "contacts.deletefromunsubscribed esputnik.api.contacts.deletefromunsubscribed remove emails from the esputnik unsubscribe list write"
+      "haystack": "contacts.deletefromunsubscribed esputnik.api.contacts.deletefromunsubscribed remove emails from the esputnik unsubscribe list destructive"
     },
     {
       "pluginId": "esputnik",
@@ -54962,7 +54962,7 @@
       "pluginId": "esputnik",
       "kind": "api",
       "shortPath": "preprocessor.updatePreprocessorFile",
-      "haystack": "preprocessor.updatepreprocessorfile esputnik.api.preprocessor.updatepreprocessorfile replace the data of an esputnik preprocessor file write"
+      "haystack": "preprocessor.updatepreprocessorfile esputnik.api.preprocessor.updatepreprocessorfile replace the data of an esputnik preprocessor file destructive"
     },
     {
       "pluginId": "esputnik",
@@ -63734,7 +63734,7 @@
       "pluginId": "gumroad",
       "kind": "api",
       "shortPath": "emails.create",
-      "haystack": "emails.create gumroad.api.emails.create create a draft audience email by subject, html body and audience, or send it immediately with publish=true write"
+      "haystack": "emails.create gumroad.api.emails.create create a draft audience email by subject, html body and audience, or send it immediately with publish=true destructive"
     },
     {
       "pluginId": "gumroad",
@@ -63770,7 +63770,7 @@
       "pluginId": "gumroad",
       "kind": "api",
       "shortPath": "emails.send",
-      "haystack": "emails.send gumroad.api.emails.send publish a draft audience email and send it to its audience write"
+      "haystack": "emails.send gumroad.api.emails.send publish a draft audience email and send it to its audience destructive"
     },
     {
       "pluginId": "gumroad",
@@ -63806,7 +63806,7 @@
       "pluginId": "gumroad",
       "kind": "api",
       "shortPath": "licenses.disable",
-      "haystack": "licenses.disable gumroad.api.licenses.disable disable a license key so it fails verification, and read its purchase write"
+      "haystack": "licenses.disable gumroad.api.licenses.disable disable a license key so it fails verification, and read its purchase destructive"
     },
     {
       "pluginId": "gumroad",
@@ -63944,7 +63944,7 @@
       "pluginId": "gumroad",
       "kind": "api",
       "shortPath": "products.disable",
-      "haystack": "products.disable gumroad.api.products.disable unpublish (disable) an existing product write"
+      "haystack": "products.disable gumroad.api.products.disable unpublish (disable) an existing product destructive"
     },
     {
       "pluginId": "gumroad",
@@ -64046,7 +64046,7 @@
       "pluginId": "gumroad",
       "kind": "api",
       "shortPath": "sales.refund",
-      "haystack": "sales.refund gumroad.api.sales.refund refund a sale fully, or partially with amount_cents; returns the updated sale write"
+      "haystack": "sales.refund gumroad.api.sales.refund refund a sale fully, or partially with amount_cents; returns the updated sale destructive"
     },
     {
       "pluginId": "gumroad",
@@ -64058,7 +64058,7 @@
       "pluginId": "gumroad",
       "kind": "api",
       "shortPath": "sales.revokeAccess",
-      "haystack": "sales.revokeaccess gumroad.api.sales.revokeaccess revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales) write"
+      "haystack": "sales.revokeaccess gumroad.api.sales.revokeaccess revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales) destructive"
     },
     {
       "pluginId": "gumroad",
@@ -71996,7 +71996,7 @@
       "pluginId": "lever",
       "kind": "api",
       "shortPath": "requisitionFields.deleteOptions",
-      "haystack": "requisitionfields.deleteoptions lever.api.requisitionfields.deleteoptions remove dropdown option values from a requisition field write"
+      "haystack": "requisitionfields.deleteoptions lever.api.requisitionfields.deleteoptions remove dropdown option values from a requisition field destructive"
     },
     {
       "pluginId": "lever",
@@ -72008,7 +72008,7 @@
       "pluginId": "lever",
       "kind": "api",
       "shortPath": "requisitionFields.replaceOptions",
-      "haystack": "requisitionfields.replaceoptions lever.api.requisitionfields.replaceoptions replace the dropdown options of a requisition field write"
+      "haystack": "requisitionfields.replaceoptions lever.api.requisitionfields.replaceoptions replace the dropdown options of a requisition field destructive"
     },
     {
       "pluginId": "lever",
@@ -82106,7 +82106,7 @@
       "pluginId": "render",
       "kind": "api",
       "shortPath": "disks.restoreSnapshot",
-      "haystack": "disks.restoresnapshot render.api.disks.restoresnapshot restore a snapshot to a render disk write"
+      "haystack": "disks.restoresnapshot render.api.disks.restoresnapshot restore a snapshot to a render disk destructive"
     },
     {
       "pluginId": "render",
@@ -90050,7 +90050,7 @@
       "pluginId": "snowflake",
       "kind": "api",
       "shortPath": "statements.submit",
-      "haystack": "statements.submit snowflake.api.statements.submit submit sql for execution. returns rows, a handle while the statement is still running, or dml stats. write"
+      "haystack": "statements.submit snowflake.api.statements.submit submit sql for execution. returns rows, a handle while the statement is still running, or dml stats. destructive"
     },
     {
       "pluginId": "sourcegraph",
@@ -100910,7 +100910,7 @@
       "pluginId": "workable",
       "kind": "api",
       "shortPath": "departments.merge",
-      "haystack": "departments.merge workable.api.departments.merge merge a department into another department write"
+      "haystack": "departments.merge workable.api.departments.merge merge a department into another department destructive"
     },
     {
       "pluginId": "workable",

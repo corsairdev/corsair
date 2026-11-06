@@ -1,7 +1,7 @@
 {
   "id": "scaleai",
   "displayName": "Scale AI",
-  "description": "Scale AI plugin for Corsair — data labeling tasks, batches, projects and Studio",
+  "description": "Data labeling platform. Create and manage annotation tasks, batches, projects, files, teams, quality tasks, audits, and Studio work.",
   "npmPackageName": "@corsair-dev/scaleai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

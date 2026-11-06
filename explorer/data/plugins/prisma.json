@@ -1,7 +1,7 @@
 {
   "id": "prisma",
   "displayName": "Prisma",
-  "description": "Prisma plugin for Corsair",
+  "description": "Database platform API. Manage Prisma Postgres projects, databases, connection strings and backups, list workspaces, regions and integrations, and run read-only queries, writes and schema inspection over Postgres.",
   "npmPackageName": "@corsair-dev/prisma",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

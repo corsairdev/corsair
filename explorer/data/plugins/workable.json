@@ -270,7 +270,8 @@
       "path": "workable.api.departments.merge",
       "shortPath": "departments.merge",
       "description": "Merge a department into another department",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
+      "irreversible": true,
       "input": {
         "kind": "object",
         "fields": [

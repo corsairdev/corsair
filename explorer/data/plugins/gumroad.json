@@ -238,7 +238,8 @@
       "path": "gumroad.api.emails.create",
       "shortPath": "emails.create",
       "description": "Create a draft audience email by subject, HTML body and audience, or send it immediately with publish=true",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
+      "irreversible": true,
       "input": {
         "kind": "object",
         "fields": [
@@ -496,7 +497,8 @@
       "path": "gumroad.api.emails.send",
       "shortPath": "emails.send",
       "description": "Publish a draft audience email and send it to its audience",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
+      "irreversible": true,
       "input": {
         "kind": "object",
         "fields": [
@@ -732,7 +734,7 @@
       "path": "gumroad.api.licenses.disable",
       "shortPath": "licenses.disable",
       "description": "Disable a license key so it fails verification, and read its purchase",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [
@@ -1842,7 +1844,7 @@
       "path": "gumroad.api.products.disable",
       "shortPath": "products.disable",
       "description": "Unpublish (disable) an existing product",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [
@@ -2824,7 +2826,8 @@
       "path": "gumroad.api.sales.refund",
       "shortPath": "sales.refund",
       "description": "Refund a sale fully, or partially with amount_cents; returns the updated sale",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
+      "irreversible": true,
       "input": {
         "kind": "object",
         "fields": [
@@ -2889,7 +2892,7 @@
       "path": "gumroad.api.sales.revokeAccess",
       "shortPath": "sales.revokeAccess",
       "description": "Revoke the buyer's access to a sale without refunding it (refused for refunded, physical or subscription sales)",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [

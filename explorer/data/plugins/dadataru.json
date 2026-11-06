@@ -1,7 +1,7 @@
 {
   "id": "dadataru",
-  "displayName": "Dadataru",
-  "description": "Dadataru plugin for Corsair",
+  "displayName": "DaData",
+  "description": "Russian data cleaning and lookup API. Standardize addresses, names, phones and other records, suggest and find addresses, companies, banks and reference codes, and locate IP addresses.",
   "npmPackageName": "@corsair-dev/dadataru",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

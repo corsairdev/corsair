@@ -905,7 +905,7 @@
       "path": "esputnik.api.contacts.deleteFromUnsubscribed",
       "shortPath": "contacts.deleteFromUnsubscribed",
       "description": "Remove emails from the eSputnik unsubscribe list",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [
@@ -1964,7 +1964,7 @@
       "path": "esputnik.api.preprocessor.updatePreprocessorFile",
       "shortPath": "preprocessor.updatePreprocessorFile",
       "description": "Replace the data of an eSputnik preprocessor file",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [

@@ -1,7 +1,7 @@
 {
   "id": "borneo",
   "displayName": "Borneo",
-  "description": "Borneo plugin for Corsair",
+  "description": "Data security and privacy compliance platform. Run and read data scans, processing activities, recipients, resources, breaches, documents, employees, domains, and dashboard figures.",
   "npmPackageName": "@corsair-dev/borneo",
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",

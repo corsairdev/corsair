@@ -1,7 +1,7 @@
 {
   "id": "flexisign",
-  "displayName": "Flexisign",
-  "description": "Flexisign plugin for Corsair",
+  "displayName": "FlexiSign",
+  "description": "Electronic signature platform; this plugin lists the document templates available in a FlexiSign account.",
   "npmPackageName": "@corsair-dev/flexisign",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

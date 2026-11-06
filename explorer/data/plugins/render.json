@@ -1148,7 +1148,8 @@
       "path": "render.api.disks.restoreSnapshot",
       "shortPath": "disks.restoreSnapshot",
       "description": "Restore a snapshot to a Render disk",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
+      "irreversible": true,
       "input": {
         "kind": "object",
         "fields": [

@@ -3422,7 +3422,8 @@
       "path": "lever.api.requisitionFields.deleteOptions",
       "shortPath": "requisitionFields.deleteOptions",
       "description": "Remove dropdown option values from a requisition field",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
+      "irreversible": true,
       "input": {
         "kind": "object",
         "fields": [
@@ -3499,7 +3500,7 @@
       "path": "lever.api.requisitionFields.replaceOptions",
       "shortPath": "requisitionFields.replaceOptions",
       "description": "Replace the dropdown options of a requisition field",
-      "riskLevel": "write",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [

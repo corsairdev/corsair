@@ -1,7 +1,7 @@
 {
   "id": "convoloai",
-  "displayName": "ConvoloAi",
-  "description": "ConvoloAi plugin for Corsair",
+  "displayName": "Convolo AI",
+  "description": "AI phone and speed-to-lead platform. Manage voice agents, calls, website call widgets, and leads.",
   "npmPackageName": "@corsair-dev/convoloai",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",

@@ -58,7 +58,8 @@
           {
             "key": "brand",
             "optional": true,
-            "type": "{ id: string, enigmaId?: string | null, names: string[], websites: string[], industries: { industryCode?: string | null, industryDesc?: string | null, industryType?: string | null }[], cardRevenue12m?: { quantityType?: string | null, period?: string | null, projectedQuantity?: number | null, periodStartDate?: string | null, periodEndDate?: string | null } | null, operatingLocations: { items: { id: string, names: string[], address?: { fullAddress?: string | null, streetAddress1?: string | null, streetAddress2?: string | null, city?: string | null, state?: string | null, zip?: string | null, county?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null } | null, operatingStatus?: string | null, cardRevenue12m?: { quantityType?: string | null, period?: string | null, projectedQuantity?: number | null, periodStartDate?: string | null, periodEndDate?: string | null } | null }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } }, legalEntities: { items: { id: string, enigmaId?: string | null, names: string[], legalEntityType?: string | null, registeredEntities: { name?: string | null, registeredEntityType?: string | null, formationDate?: string | null }[] }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } } } | null"
+            "type": "{ id: string, enigmaId?: string | null, names: string[], websites: string[], industries: { industryCode?: string | null, industryDesc?: string | null, industryType?: string | null }[], cardRevenue12m?: { quantityType?: string | null, period?: string | null, projectedQuantity?: number | null, periodStartDate?: string | null, periodEndDate?: string | null } | null, operatingLocations: { items: { id: string, names: string[], address?: { fullAddress?: string | null, streetAddress1?: string | null, streetAddress2?: string | null, city?: string | null, state?: string | null, zip?: string | null, county?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null } | null, operatingStatus?: string | null, cardRevenue12m?: { quantityType?: string | null, period?: string | null, projectedQuantity?: number | null, periodStartDate?: string | null, periodEndDate?: string | null } | null }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } }, legalEntities: { items: { id: string, enigmaId?: string | null, names: string[], legalEntityType?: string | null, registeredEntities: { name?: string | null, registeredEntityType?: string | null, formationDate?: string | null }[] }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } } } | null",
+            "description": "`null` when nothing matched."
           }
         ]
       }
@@ -115,7 +116,8 @@
           {
             "key": "brand",
             "optional": true,
-            "type": "{ id: string, enigmaId?: string | null, names: string[], websites: string[], industries: { industryCode?: string | null, industryDesc?: string | null, industryType?: string | null }[], operatingLocationCount?: number | null, cardRevenue12m?: { quantityType?: string | null, period?: string | null, projectedQuantity?: number | null, periodStartDate?: string | null, periodEndDate?: string | null } | null } | null"
+            "type": "{ id: string, enigmaId?: string | null, names: string[], websites: string[], industries: { industryCode?: string | null, industryDesc?: string | null, industryType?: string | null }[], operatingLocationCount?: number | null, cardRevenue12m?: { quantityType?: string | null, period?: string | null, projectedQuantity?: number | null, periodStartDate?: string | null, periodEndDate?: string | null } | null } | null",
+            "description": "`null` when nothing matched."
           }
         ]
       }
@@ -148,7 +150,8 @@
           {
             "key": "legalEntity",
             "optional": true,
-            "type": "{ id: string, enigmaId?: string | null, names: string[], legalEntityType?: string | null, registeredEntities: { items: { name?: string | null, registeredEntityType?: string | null, formationDate?: string | null }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } }, addresses: { items: { fullAddress?: string | null, streetAddress1?: string | null, streetAddress2?: string | null, city?: string | null, state?: string | null, zip?: string | null, county?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } }, brands: { items: { id: string, enigmaId?: string | null, names: string[] }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } } } | null"
+            "type": "{ id: string, enigmaId?: string | null, names: string[], legalEntityType?: string | null, registeredEntities: { items: { name?: string | null, registeredEntityType?: string | null, formationDate?: string | null }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } }, addresses: { items: { fullAddress?: string | null, streetAddress1?: string | null, streetAddress2?: string | null, city?: string | null, state?: string | null, zip?: string | null, county?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } }, brands: { items: { id: string, enigmaId?: string | null, names: string[] }[], pageInfo: { hasNextPage?: boolean | null, endCursor?: string | null } } } | null",
+            "description": "`null` when nothing matched."
           }
         ]
       }
@@ -199,7 +202,8 @@
           {
             "key": "location",
             "optional": true,
-            "type": "{ id: string, names: string[], address?: { fullAddress?: string | null, streetAddress1?: string | null, streetAddress2?: string | null, city?: string | null, state?: string | null, zip?: string | null, county?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null } | null, phoneNumbers: string[], websites: string[], operatingStatus?: string | null, brands: { id: string, enigmaId?: string | null, names: string[] }[] } | null"
+            "type": "{ id: string, names: string[], address?: { fullAddress?: string | null, streetAddress1?: string | null, streetAddress2?: string | null, city?: string | null, state?: string | null, zip?: string | null, county?: string | null, country?: string | null, latitude?: number | null, longitude?: number | null } | null, phoneNumbers: string[], websites: string[], operatingStatus?: string | null, brands: { id: string, enigmaId?: string | null, names: string[] }[] } | null",
+            "description": "`null` when nothing matched."
           }
         ]
       }
