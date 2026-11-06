@@ -33,3 +33,5 @@ apiExamples:
   statements.cancel:
     args:
       statementHandle: 019c06a4-0000-df4f-0000-00100006589e
+apiNotes:
+  statements.submit: "`parameters.client_result_chunk_size` is in megabytes, from 16 to 160."
