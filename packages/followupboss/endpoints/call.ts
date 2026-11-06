@@ -62,10 +62,14 @@ export function envelopeOne(
 }
 
 // unknown: same open envelope as envelopeOne.
-export function envelopeMany(raw: unknown, key: string): unknown[] {
+// The return is unknown, not unknown[], on purpose: a present non-array
+// collection (a malformed reply) must reach the output schema's z.array and
+// be rejected there, instead of being coerced into an empty-looking list.
+// unknown: raw is the response body until asRecord narrows it.
+export function envelopeMany(raw: unknown, key: string): unknown {
 	const record = raw === undefined ? null : asRecord(raw);
 	const collection = record?.[key];
-	return Array.isArray(collection) ? collection : [];
+	return collection === undefined ? [] : collection;
 }
 
 // unknown: same open envelope as envelopeOne.

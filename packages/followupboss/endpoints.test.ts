@@ -192,6 +192,40 @@ describe('people', () => {
 		expect(result).toEqual(created);
 	});
 
+	it('create sends the contact details in the body', async () => {
+		respond({ ...person, id: 956 }, 201);
+
+		await invoke(People.create, {
+			firstName: 'Ava',
+			lastName: 'Reyes',
+			emails: [{ value: 'ava@northwind.example', type: 'home' }],
+			phones: [{ value: '888-555-0123', type: 'mobile' }],
+			addresses: [{ city: 'Austin', state: 'TX' }],
+		});
+
+		expect(lastRequest()).toMatchObject({
+			method: 'POST',
+			path: '/v1/people',
+			body: {
+				firstName: 'Ava',
+				lastName: 'Reyes',
+				emails: [{ value: 'ava@northwind.example', type: 'home' }],
+				phones: [{ value: '888-555-0123', type: 'mobile' }],
+				addresses: [{ city: 'Austin', state: 'TX' }],
+			},
+		});
+	});
+
+	it('list forwards the keyset next cursor', async () => {
+		respond({ people: [person] });
+
+		await invoke(People.list, { next: 'eyJzaW5jZUlkIjoxMDV9' });
+
+		expect(lastRequest().query).toEqual({
+			next: 'eyJzaW5jZUlkIjoxMDV9',
+		});
+	});
+
 	it('create omits the deduplicate query param when it is not given', async () => {
 		// IDs are positive integers, so path segments never need escaping; the
 		// seam to pin instead is that undefined query params must not appear.

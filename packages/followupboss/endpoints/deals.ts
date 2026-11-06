@@ -1,5 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type { FollowUpBossContext } from '..';
+import type { FollowUpBossContext, FollowUpBossEndpoints } from '..';
 import { segment } from '../client';
 import { call, envelopeMany, envelopeMeta, envelopeOne } from './call';
 import {
@@ -13,24 +13,30 @@ import {
 // FUB publishes the deal custom field list under the envelope key
 // `dealCustomfields` (lowercase `f`), unlike the camelCase resource path; the
 // camelCase spelling is accepted from the wire as well.
-function dealCustomFieldsMany(raw: unknown): unknown[] {
+// unknown: raw is the response body until asRecord narrows it, and the return
+// stays unknown on purpose so a malformed non-array collection reaches the
+// output schema's z.array instead of being masked as an empty list.
+function dealCustomFieldsMany(raw: unknown): unknown {
 	const documented = envelopeMany(raw, 'dealCustomfields');
-	return documented.length > 0
-		? documented
-		: envelopeMany(raw, 'dealCustomFields');
+	if (!Array.isArray(documented)) return documented;
+	if (documented.length > 0) return documented;
+	const camel = envelopeMany(raw, 'dealCustomFields');
+	return Array.isArray(camel) && camel.length > 0 ? camel : documented;
 }
 
 // Same pattern: the documented list envelope key is all lowercase.
-function appointmentOutcomesMany(raw: unknown): unknown[] {
+// unknown: same open response body and deliberate opaque return as above.
+function appointmentOutcomesMany(raw: unknown): unknown {
 	const documented = envelopeMany(raw, 'appointmentoutcomes');
-	return documented.length > 0
-		? documented
-		: envelopeMany(raw, 'appointmentOutcomes');
+	if (!Array.isArray(documented)) return documented;
+	if (documented.length > 0) return documented;
+	const camel = envelopeMany(raw, 'appointmentOutcomes');
+	return Array.isArray(camel) && camel.length > 0 ? camel : documented;
 }
 
 // ── deals ──────────────────────────────────────────────────────────────────
 
-export const dealsList = (ctx: FollowUpBossContext, input: unknown) =>
+export const dealsList: FollowUpBossEndpoints['dealsList'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -49,7 +55,7 @@ export const dealsList = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const dealsGet = (ctx: FollowUpBossContext, input: unknown) =>
+export const dealsGet: FollowUpBossEndpoints['dealsGet'] = (ctx, input) =>
 	call(
 		ctx,
 		{ event: 'deals.get', input: Inputs.dealsGet, output: Outputs.dealsGet },
@@ -62,7 +68,7 @@ export const dealsGet = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const dealsCreate = (ctx: FollowUpBossContext, input: unknown) =>
+export const dealsCreate: FollowUpBossEndpoints['dealsCreate'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -79,7 +85,7 @@ export const dealsCreate = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const dealsUpdate = (ctx: FollowUpBossContext, input: unknown) =>
+export const dealsUpdate: FollowUpBossEndpoints['dealsUpdate'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -99,7 +105,7 @@ export const dealsUpdate = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const dealsDelete = (ctx: FollowUpBossContext, input: unknown) =>
+export const dealsDelete: FollowUpBossEndpoints['dealsDelete'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -118,7 +124,10 @@ export const dealsDelete = (ctx: FollowUpBossContext, input: unknown) =>
 
 // ── pipelines ──────────────────────────────────────────────────────────────
 
-export const pipelinesList = (ctx: FollowUpBossContext, input: unknown) =>
+export const pipelinesList: FollowUpBossEndpoints['pipelinesList'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -137,7 +146,10 @@ export const pipelinesList = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const pipelinesGet = (ctx: FollowUpBossContext, input: unknown) =>
+export const pipelinesGet: FollowUpBossEndpoints['pipelinesGet'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -153,7 +165,10 @@ export const pipelinesGet = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const pipelinesCreate = (ctx: FollowUpBossContext, input: unknown) =>
+export const pipelinesCreate: FollowUpBossEndpoints['pipelinesCreate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -169,7 +184,10 @@ export const pipelinesCreate = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const pipelinesUpdate = (ctx: FollowUpBossContext, input: unknown) =>
+export const pipelinesUpdate: FollowUpBossEndpoints['pipelinesUpdate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -189,7 +207,10 @@ export const pipelinesUpdate = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const pipelinesDelete = (ctx: FollowUpBossContext, input: unknown) =>
+export const pipelinesDelete: FollowUpBossEndpoints['pipelinesDelete'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -208,7 +229,7 @@ export const pipelinesDelete = (ctx: FollowUpBossContext, input: unknown) =>
 
 // ── stages ─────────────────────────────────────────────────────────────────
 
-export const stagesList = (ctx: FollowUpBossContext, input: unknown) =>
+export const stagesList: FollowUpBossEndpoints['stagesList'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -227,7 +248,7 @@ export const stagesList = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const stagesGet = (ctx: FollowUpBossContext, input: unknown) =>
+export const stagesGet: FollowUpBossEndpoints['stagesGet'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -243,7 +264,10 @@ export const stagesGet = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const stagesCreate = (ctx: FollowUpBossContext, input: unknown) =>
+export const stagesCreate: FollowUpBossEndpoints['stagesCreate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -259,7 +283,10 @@ export const stagesCreate = (ctx: FollowUpBossContext, input: unknown) =>
 		},
 	);
 
-export const stagesUpdate = (ctx: FollowUpBossContext, input: unknown) =>
+export const stagesUpdate: FollowUpBossEndpoints['stagesUpdate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -281,7 +308,10 @@ export const stagesUpdate = (ctx: FollowUpBossContext, input: unknown) =>
 
 // Deleting a stage requires the query parameter that reassigns the action
 // plans referencing it, so the operation is destructive on both resources.
-export const stagesDelete = (ctx: FollowUpBossContext, input: unknown) =>
+export const stagesDelete: FollowUpBossEndpoints['stagesDelete'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -326,21 +356,22 @@ export const dealCustomFieldsList = (
 		},
 	);
 
-export const dealCustomFieldsGet = (ctx: FollowUpBossContext, input: unknown) =>
-	call(
-		ctx,
-		{
-			event: 'dealCustomFields.get',
-			input: Inputs.dealCustomFieldsGet,
-			output: Outputs.dealCustomFieldsGet,
-		},
-		input,
-		({ id }) => ({ method: 'GET', path: `/dealCustomFields/${segment(id)}` }),
-		{
-			shape: (raw) => envelopeOne(raw, 'dealCustomfields'),
-			log: ({ id }) => ({ customFieldId: id }),
-		},
-	);
+export const dealCustomFieldsGet: FollowUpBossEndpoints['dealCustomFieldsGet'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'dealCustomFields.get',
+				input: Inputs.dealCustomFieldsGet,
+				output: Outputs.dealCustomFieldsGet,
+			},
+			input,
+			({ id }) => ({ method: 'GET', path: `/dealCustomFields/${segment(id)}` }),
+			{
+				shape: (raw) => envelopeOne(raw, 'dealCustomfields'),
+				log: ({ id }) => ({ customFieldId: id }),
+			},
+		);
 
 export const dealCustomFieldsCreate = (
 	ctx: FollowUpBossContext,
@@ -429,7 +460,10 @@ export const dealAttachmentsCreate = (
 		},
 	);
 
-export const dealAttachmentsGet = (ctx: FollowUpBossContext, input: unknown) =>
+export const dealAttachmentsGet: FollowUpBossEndpoints['dealAttachmentsGet'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{

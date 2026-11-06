@@ -24,6 +24,12 @@ export const FubMetadataSchema = z
 	.loose();
 
 export const ListQuerySchema = z.object({
+	next: z
+		.string()
+		.optional()
+		.describe(
+			'Keyset cursor from the _metadata.next field; FUB enforces it for deep pagination.',
+		),
 	limit: z
 		.number()
 		.int()
@@ -203,6 +209,9 @@ const PeopleCreateInputSchema = z.object({
 	tags: z.array(z.string()).optional(),
 	timeframes: z.array(TimeframeSchema).optional(),
 	customFields: CustomFieldsSchema.optional(),
+	emails: z.array(EmailSchema).min(1).optional(),
+	phones: z.array(PhoneSchema).min(1).optional(),
+	addresses: z.array(AddressSchema).optional(),
 	deduplicate: z
 		.boolean()
 		.optional()
@@ -231,6 +240,9 @@ const PeopleUpdateInputSchema = z.object({
 	assignedLenderName: z.string().optional(),
 	assignedLenderId: z.number().int().optional(),
 	background: z.string().optional(),
+	emails: z.array(EmailSchema).min(1).optional(),
+	phones: z.array(PhoneSchema).min(1).optional(),
+	addresses: z.array(AddressSchema).optional(),
 	tags: z.array(z.string()).optional(),
 	timeframes: z.array(TimeframeSchema).optional(),
 	customFields: CustomFieldsSchema.optional(),
@@ -819,12 +831,6 @@ const EventEnvelopeSchema = z
 	.loose();
 
 const EventsListInputSchema = ListQuerySchema.extend({
-	next: z
-		.string()
-		.optional()
-		.describe(
-			'Keyset cursor from `_metadata.next`; FUB enforces it for deep pagination.',
-		),
 	personId: z.number().int().optional(),
 	type: z
 		.array(z.string())
