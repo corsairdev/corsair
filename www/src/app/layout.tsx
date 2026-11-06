@@ -135,6 +135,9 @@ export default function RootLayout({
 				azeretMono.variable,
 			)}
 		>
+			<head>
+				<link rel="agent" href="https://corsair.dev/agent.txt" />
+			</head>
 			<body className="min-h-screen antialiased">
 				<script
 					type="application/ld+json"
@@ -143,6 +146,14 @@ export default function RootLayout({
 					}}
 				/>
 				{children}
+				{isProduction || process.env.NODE_ENV === 'development' ? (
+					<script
+						src="https://www.cosmicjs.com/agent.js"
+						data-key="pk_452b8945642a6cdf48463126be9e68e4"
+						data-theme="light"
+						async
+					/>
+				) : null}
 			</body>
 			{googleAnalyticsId ? <GoogleAnalytics gaId={googleAnalyticsId} /> : null}
 			{isProduction ? (

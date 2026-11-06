@@ -1,0 +1,5 @@
+Protocol: CAP/1.0
+Name: Corsair
+Chat: https://corsair.dev
+CAP: https://dapi.cosmicjs.com/cap/v1/ck_ce8f090f8a60aaaf15b06a05fc2fbf21
+Spec: https://conciergeprotocol.org/cap.txt
