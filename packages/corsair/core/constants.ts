@@ -21,6 +21,7 @@ export const BaseProviders = [
 	'activecampaign',
 	'activetrail',
 	'addresszen',
+	'adyntel',
 	'aeroleads',
 	'affinda',
 	'agencyzoom',
@@ -456,6 +457,7 @@ export const ProviderDisplayNames = {
 	activecampaign: 'ActiveCampaign',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
+	adyntel: 'Adyntel',
 	aeroleads: 'Aeroleads',
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
@@ -897,6 +899,7 @@ export type AllProviders =
 	| 'activecampaign'
 	| 'activetrail'
 	| 'addresszen'
+	| 'adyntel'
 	| 'aeroleads'
 	| 'affinda'
 	| 'agencyzoom'
