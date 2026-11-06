@@ -957,6 +957,8 @@ function withSalesflareSchemas<T extends Record<string, unknown>>(
 			return [key, validated];
 		}
 		if (value && typeof value === 'object') {
+			// unknown: family group nodes are plain objects at arbitrary depth;
+			// the wrapper recurses so every nested leaf gets a contract.
 			return [
 				key,
 				withSalesflareSchemas(value as Record<string, unknown>, operation),
@@ -964,6 +966,9 @@ function withSalesflareSchemas<T extends Record<string, unknown>>(
 		}
 		return [key, value];
 	});
+	// unknown: the rebuilt tree keeps the caller's shape while each leaf is
+	// replaced by its schema-validated wrapper; the endpoint schemas registry
+	// and the satisfies-checked tree definition keep this honest.
 	return Object.fromEntries(validatedEntries) as T;
 }
 

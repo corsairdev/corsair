@@ -85,7 +85,13 @@ describe('Salesflare endpoint request seams', () => {
 		request.mockResolvedValue([]);
 	});
 
+	// never: every route-seam call passes a provider-shaped literal whose exact
+	// type the generic runtime boundary cannot express; the same shapes are
+	// validated against the zod contracts by the schema-boundary suite.
 	it('covers every registered operation route', async () => {
+		// never: the fixture provides exactly the context fields these handlers
+		// read (key, options, $getAccountId); omitted runtime services are not
+		// exercised by this plugin's endpoints.
 		const ctx = {
 			key: 'secret',
 			options: {},
