@@ -4,6 +4,8 @@
 export const salesflarePathParameter = (
 	template: string,
 	name: string,
+	// unknown: identifiers arrive from untyped caller args, so the guard
+	// validates the string shape before any substitution happens.
 	value: unknown,
 ) => {
 	if (

@@ -148,6 +148,7 @@ const CreateContactInputSchema = z
 		'opt-out_campaign': z.string().optional(),
 		bounced: z.boolean().optional(),
 		bounced_date: z.string().optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		files: z.array(z.record(z.string(), z.unknown())).optional(),
 		tags: z.array(z.string()).optional(),
 		address: z
@@ -257,6 +258,7 @@ const CreateOpportunityInputSchema = z
 		account: z.number(),
 		stage: z.number().optional(),
 		lost_reason: z.number().optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		files: z.array(z.record(z.string(), z.unknown())).optional(),
 		lead_source: z.number().optional(),
 		start_date: z.string().optional(),
@@ -367,9 +369,11 @@ const CreateWorkflowInputSchema = z
 				ids: z.array(z.number()).optional(),
 			})
 			.optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		individual_record_filter: z
 			.object({
 				condition: z.enum(['AND', 'OR']),
+				// unknown: the provider leaves rules's shape undocumented; values pass through as-is
 				rules: z.array(z.record(z.string(), z.unknown())),
 				order_by: z.string().optional(),
 				not: z.boolean().optional(),
@@ -387,12 +391,14 @@ const CreateWorkflowInputSchema = z
 		schedule_time_start: z.string().optional(),
 		schedule_time_end: z.string().optional(),
 		schedule_days: z.array(z.number()).optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		steps: z
 			.array(
 				z.object({
 					id: z.number().optional(),
 					name: z.string().optional(),
 					order: z.number(),
+					// unknown: the provider leaves filter's shape undocumented; values pass through as-is
 					filter: z.record(z.string(), z.unknown()).optional(),
 					trigger_step: z.number().optional(),
 					trigger_step_index: z.number().optional(),
@@ -409,11 +415,14 @@ const CreateWorkflowInputSchema = z
 						])
 						.optional(),
 					action_type: z.enum(['send_email']).optional(),
+					// unknown: the provider leaves action_config's shape undocumented; values pass through as-is
 					action_config: z.record(z.string(), z.unknown()).optional(),
 					action_status: z.string().optional(),
 					action_source: z.number().optional(),
 					action_source_email: z.string().optional(),
+					// unknown: the provider leaves analytics's shape undocumented; values pass through as-is
 					analytics: z.record(z.string(), z.unknown()).optional(),
+					// unknown: the provider leaves metrics_data's shape undocumented; values pass through as-is
 					metrics_data: z.record(z.string(), z.unknown()).optional(),
 				}),
 			)
@@ -492,9 +501,11 @@ const UpdateAccountInputSchema = z
 		parent_account: z.number().optional(),
 		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		custom: z.record(z.string(), z.unknown()).optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		q: z
 			.object({
 				condition: z.enum(['AND', 'OR']),
+				// unknown: the provider leaves rules's shape undocumented; values pass through as-is
 				rules: z.array(z.record(z.string(), z.unknown())),
 				order_by: z.string().optional(),
 				not: z.boolean().optional(),
@@ -536,6 +547,7 @@ const UpdateContactInputSchema = z
 		'opt-out_campaign': z.string().optional(),
 		bounced: z.boolean().optional(),
 		bounced_date: z.string().optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		files: z.array(z.record(z.string(), z.unknown())).optional(),
 		tags: z.array(z.string()).optional(),
 		address: z
@@ -726,6 +738,7 @@ const UpdateOpportunityInputSchema = z
 		account: z.number().optional(),
 		stage: z.number().optional(),
 		lost_reason: z.number().optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		files: z.array(z.record(z.string(), z.unknown())).optional(),
 		lead_source: z.number().optional(),
 		start_date: z.string().optional(),
@@ -809,9 +822,11 @@ const UpdateWorkflowInputSchema = z
 				ids: z.array(z.number()).optional(),
 			})
 			.optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		individual_record_filter: z
 			.object({
 				condition: z.enum(['AND', 'OR']),
+				// unknown: the provider leaves rules's shape undocumented; values pass through as-is
 				rules: z.array(z.record(z.string(), z.unknown())),
 				order_by: z.string().optional(),
 				not: z.boolean().optional(),
@@ -829,12 +844,14 @@ const UpdateWorkflowInputSchema = z
 		schedule_time_start: z.string().optional(),
 		schedule_time_end: z.string().optional(),
 		schedule_days: z.array(z.number()).optional(),
+		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		steps: z
 			.array(
 				z.object({
 					id: z.number().optional(),
 					name: z.string().optional(),
 					order: z.number(),
+					// unknown: the provider leaves filter's shape undocumented; values pass through as-is
 					filter: z.record(z.string(), z.unknown()).optional(),
 					trigger_step: z.number().optional(),
 					trigger_step_index: z.number().optional(),
@@ -851,11 +868,14 @@ const UpdateWorkflowInputSchema = z
 						])
 						.optional(),
 					action_type: z.enum(['send_email']).optional(),
+					// unknown: the provider leaves action_config's shape undocumented; values pass through as-is
 					action_config: z.record(z.string(), z.unknown()).optional(),
 					action_status: z.string().optional(),
 					action_source: z.number().optional(),
 					action_source_email: z.string().optional(),
+					// unknown: the provider leaves analytics's shape undocumented; values pass through as-is
 					analytics: z.record(z.string(), z.unknown()).optional(),
+					// unknown: the provider leaves metrics_data's shape undocumented; values pass through as-is
 					metrics_data: z.record(z.string(), z.unknown()).optional(),
 				}),
 			)

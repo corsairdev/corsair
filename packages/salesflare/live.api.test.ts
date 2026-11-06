@@ -11,7 +11,11 @@ const describeLive = apiKey ? describe : describe.skip;
 // mocked route and schema suites instead.
 describeLive('Salesflare live API', () => {
 	it('authenticates and parses the current user', async () => {
+		// unknown: the live smoke test only proves authentication, transport,
+		// and envelope parsing; the response body itself is provider-defined
+		// and only its documented top-level shape is asserted.
 		const response = await makeSalesflareRequest<unknown>(
+			// The key's presence is already checked by describeLive above.
 			{ key: apiKey! },
 			'/me',
 			{ method: 'GET' },
