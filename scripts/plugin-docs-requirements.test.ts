@@ -44,6 +44,15 @@ describe('pluginDocsYamlProblems', () => {
 		);
 	});
 
+	it('accepts ordinary words that spell a marker in lower case', () => {
+		assert.deepEqual(
+			pluginDocsYamlProblems(
+				'displayName: Todoist\ndescription: Task manager API; this plugin reads and edits todo items and projects.\n',
+			),
+			[],
+		);
+	});
+
 	it('reports YAML it cannot parse', () => {
 		assert.match(
 			pluginDocsYamlProblems('displayName: [unclosed\n')[0] ?? '',

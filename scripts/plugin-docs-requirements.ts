@@ -44,7 +44,8 @@ export function pluginDocsProblemsIn(pluginPath: string): string[] {
 	);
 }
 
-const PLACEHOLDER = /\b(TODO|TBD|FIXME)\b|lorem ipsum/i;
+// Upper-case markers only, so a real description can still say "todo list".
+const PLACEHOLDER = /\b(TODO|TBD|FIXME)\b|[Ll]orem ipsum/;
 const MIN_DESCRIPTION_LENGTH = 30;
 
 /** What is wrong with a plugin-docs.yaml, or [] when it is good enough to publish. */
