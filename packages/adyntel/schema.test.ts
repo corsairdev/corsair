@@ -105,6 +105,8 @@ describe('output schemas survive a sparse payload', () => {
 			some_future_field: 'kept',
 		});
 
+		// unknown: the point of this test is a field the schema has no type for,
+		// so the read has to widen to one key at a time.
 		expect((parsed as Record<string, unknown>).some_future_field).toBe('kept');
 	});
 });

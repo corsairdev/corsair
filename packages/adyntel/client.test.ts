@@ -296,6 +296,29 @@ describe('makeAdyntelRequest', () => {
 		});
 	});
 
+	it('keeps the structured response body for validation errors', async () => {
+		// A caller needs the provider's own detail, which the message flattens.
+		const structured = {
+			message: 'Validation failed',
+			fields: [{ path: 'country_code', detail: 'Unknown country' }],
+		};
+		respond(structured, 422);
+
+		const error = await failure(
+			makeAdyntelRequest(CREDENTIALS, {
+				path: 'facebook',
+				operation: 'facebookAds',
+				body: {},
+			}),
+		);
+
+		expect(error.body).toEqual(structured);
+		// The body is the API's response, not the request, so it holds neither
+		// credential.
+		expect(JSON.stringify(error.body)).not.toContain(CREDENTIALS.apiKey);
+		expect(JSON.stringify(error.body)).not.toContain(CREDENTIALS.email);
+	});
+
 	it('gives a scrape the longer timeout its 60 second sync limit needs', async () => {
 		// Spy on the timeout factory rather than only asserting the request
 		// resolved: a passing call proves nothing about the configured value, and

@@ -999,7 +999,13 @@ const TikTokAdDetailsResponseSchema = z
 					})
 					.loose()
 					.nullish(),
-				/** Target audience and where the impressions landed. */
+				/**
+				 * Target audience and where the impressions landed. TikTok nests
+				 * age, gender and location objects whose exact shape varies by ad,
+				 * so this stays a pass-through map; modelling it would reject
+				 * legitimate payloads.
+				 */
+				// unknown: each targeting field is a provider-specific nested value.
 				targeting: z.record(z.string(), z.unknown()).nullish(),
 			})
 			.loose()

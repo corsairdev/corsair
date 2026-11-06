@@ -219,6 +219,11 @@ export async function makeAdyntelRequest(
 					status: error.status,
 					retryAfter: error.retryAfter,
 					method: 'POST',
+					// The response body is the API's own error payload, not the
+					// request, so it carries no credential and a caller needs it for
+					// structured validation errors the message cannot express.
+					// unknown: this is that raw payload, as sent by Adyntel.
+					body: error.body,
 					cause: sanitizeApiError(error),
 					operation,
 				},
