@@ -90,15 +90,11 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Get keyword search volume**
+**List Google SERP locations in a country**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.dataforseo.api.keywords.searchVolume({
-	keywords: ['corsair'],
-	location_code: 2840,
-	language_code: 'en',
-});
+await tenant.dataforseo.api.serp.locations({ country: 'us' });
 ```
 
 

@@ -3,13 +3,10 @@ description: SEO data API for SERP results, keyword research, backlinks, Amazon 
 domain: dataforseo.com
 examples:
   read:
-    path: keywords.searchVolume
-    title: Get keyword search volume
+    path: serp.locations
+    title: List Google SERP locations in a country
     args:
-      keywords:
-        - corsair
-      location_code: 2840
-      language_code: en
+      country: us
   write:
     path: serp.googleOrganic
     title: Run a Google search
