@@ -2670,7 +2670,7 @@
                 ]
               },
               {
-                "group": "Pdfco",
+                "group": "PDF.co",
                 "pages": [
                   "plugins/pdfco/overview",
                   "plugins/pdfco/api",
