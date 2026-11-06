@@ -1,0 +1,12 @@
+---
+title: Database
+description: "Veo does not sync a local database. Read generated videos through operations."
+---
+
+Veo has no local database collections. The plugin declares no entities and does not store generated videos in Corsair, so there is no `corsair.veo.db.<entity>.search()`.
+
+Start a generation, then fetch the result with `corsair.veo.api.operations.get` or `corsair.veo.api.operations.wait`.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>

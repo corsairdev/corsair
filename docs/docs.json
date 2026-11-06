@@ -3444,6 +3444,14 @@
                 ]
               },
               {
+                "group": "Veo",
+                "pages": [
+                  "plugins/veo/overview",
+                  "plugins/veo/api",
+                  "plugins/veo/database"
+                ]
+              },
+              {
                 "group": "Vercel",
                 "pages": [
                   "plugins/vercel/overview",

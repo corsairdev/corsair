@@ -1,0 +1,41 @@
+displayName: Veo
+description: Google Veo 3.1 video generation on Gemini Enterprise Agent Platform.
+domain: cloud.google.com
+recommendedAuth: api_key
+overviewNote: |
+  Veo 3.1 preview models on the Gemini API (`veo-3.1-generate-preview`, `veo-3.1-fast-generate-preview`, and `veo-3.1-lite-generate-preview`) were shut down on 22 October 2026. These operations call the current Agent Platform models with `predictLongRunning` and `fetchPredictOperation`.
+
+  The stored API key is a Google access token, sent as `Authorization: Bearer`. Pass `projectId` on the plugin or on each call. Location defaults to `us-central1`. Models are `veo-3.1-generate-001`, `veo-3.1-fast-generate-001`, and preview `veo-3.1-lite-generate-001`. Reference images accept the two GA models.
+
+  The published operation sample returns `videos[].gcsUri` when `storageUri` is set. The guide also says that omitting `storageUri` returns video bytes in the response. This plugin types that inline field as `bytesBase64Encoded` and keeps any other response fields.
+examples:
+  read:
+    path: operations.get
+    title: Fetch an operation
+    args:
+      operationName: projects/my-proj/locations/us-central1/publishers/google/models/veo-3.1-generate-001/operations/op-1
+  write:
+    path: textToVideo.create
+    title: Start a text-to-video generation
+    args:
+      model: veo-3.1-generate-001
+      prompt: a cat reading a book
+      sampleCount: 1
+      storageUri: gs://video-bucket/output/
+# `call` is used below because the docs generator rejects unquoted enum
+# values in args. The overview example above includes `model` directly.
+apiExamples:
+  textToVideo.create:
+    call: "{ model: 'veo-3.1-generate-001', prompt: 'a cat reading a book', aspectRatio: '16:9', sampleCount: 1, storageUri: 'gs://video-bucket/output/' }"
+  imageToVideo.create:
+    call: "{ model: 'veo-3.1-fast-generate-001', image: { mimeType: 'image/png', gcsUri: 'gs://cloud-samples-data/generative-ai/image/flowers.png' }, resizeMode: 'pad' }"
+  frames.create:
+    call: "{ model: 'veo-3.1-generate-001', prompt: 'a hand places a glass of milk next to the plate of cookies', image: { mimeType: 'image/png', gcsUri: 'gs://cloud-samples-data/generative-ai/image/cookies.png' }, lastFrame: { mimeType: 'image/png', gcsUri: 'gs://cloud-samples-data/generative-ai/image/cookies-milk.png' } }"
+  references.create:
+    call: "{ model: 'veo-3.1-generate-001', prompt: 'A person walks in carrying a vase full of flowers', durationSeconds: 8, referenceImages: [{ image: { mimeType: 'image/png', gcsUri: 'gs://cloud-samples-data/generative-ai/image/vase.png' }, referenceType: 'asset' }] }"
+  extend.create:
+    call: "{ model: 'veo-3.1-generate-001', prompt: 'a butterfly flies in and lands on the flower', video: { gcsUri: 'gs://cloud-samples-data/generative-ai/video/flower.mp4', mimeType: 'video/mp4' }, resolution: '720p' }"
+  operations.get:
+    operationName: projects/my-proj/locations/us-central1/publishers/google/models/veo-3.1-generate-001/operations/op-1
+  operations.wait:
+    operationName: projects/my-proj/locations/us-central1/publishers/google/models/veo-3.1-generate-001/operations/op-1
