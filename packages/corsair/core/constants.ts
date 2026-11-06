@@ -300,6 +300,7 @@ export const BaseProviders = [
 	'monday',
 	'mrscraper',
 	'neon',
+	'netsuite',
 	'nextdns',
 	'northflank',
 	'notion',
@@ -735,6 +736,7 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	mrscraper: 'MrScraper',
 	neon: 'Neon',
+	netsuite: 'NetSuite',
 	nextdns: 'NextDNS',
 	northflank: 'Northflank',
 	notion: 'Notion',
@@ -1174,6 +1176,7 @@ export type AllProviders =
 	| 'monday'
 	| 'mrscraper'
 	| 'neon'
+	| 'netsuite'
 	| 'nextdns'
 	| 'northflank'
 	| 'notion'

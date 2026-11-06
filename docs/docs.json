@@ -2531,6 +2531,14 @@
                 ]
               },
               {
+                "group": "NetSuite",
+                "pages": [
+                  "plugins/netsuite/overview",
+                  "plugins/netsuite/api",
+                  "plugins/netsuite/database"
+                ]
+              },
+              {
                 "group": "NextDNS",
                 "pages": [
                   "plugins/nextdns/overview",
