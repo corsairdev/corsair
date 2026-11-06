@@ -54,7 +54,7 @@ pnpm add @corsair-dev/netsuite
 | `journalEntries.updateJournalEntry` | `netsuite.api.journalEntries.updateJournalEntry` | `write` | Update a NetSuite journal entry record |
 | `metadata.getRecordMetadata` | `netsuite.api.metadata.getRecordMetadata` | `read` | Retrieve the metadata schema for a NetSuite record type |
 | `metadata.listMetadataCatalog` | `netsuite.api.metadata.listMetadataCatalog` | `read` | List metadata for all exposed NetSuite record types |
-| `oauth.createJwtClientAssertion` | `netsuite.api.oauth.createJwtClientAssertion` | `read` | Create a signed JWT client assertion for OAuth 2.0 client credentials |
+| `oauth.createJwtClientAssertion` | `netsuite.api.oauth.createJwtClientAssertion` | `write` | Create a signed JWT client assertion for OAuth 2.0 client credentials |
 | `oauth.oauth2AuthorizeAccountDomain` | `netsuite.api.oauth.oauth2AuthorizeAccountDomain` | `read` | Build an OAuth 2.0 authorization URL on the account domain |
 | `oauth.oauth2AuthorizeSystemDomain` | `netsuite.api.oauth.oauth2AuthorizeSystemDomain` | `read` | Build an OAuth 2.0 authorization URL on the system domain |
 | `oauth.oauth2GetJwksKeys` | `netsuite.api.oauth.oauth2GetJwksKeys` | `read` | Retrieve NetSuite OAuth 2.0 JWKS public keys |

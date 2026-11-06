@@ -172,7 +172,9 @@ export const netSuiteSpecs = {
 		method: 'POST',
 		path: '',
 		body: 'none',
-		riskLevel: 'read',
+		// It signs with the plugin's private key and returns a usable credential,
+		// so it needs the same permission as the token exchange.
+		riskLevel: 'write',
 		metaDescription:
 			'Create a signed JWT client assertion for OAuth 2.0 client credentials',
 		custom: 'jwt-client-assertion',
@@ -488,9 +490,14 @@ export const netSuiteSpecs = {
 	oauth2TokenRefresh: {
 		method: 'POST',
 		path: '/auth/oauth2/v1/token',
-		formBody: { grant_type: 'grant_type', refresh_token: 'refresh_token' },
+		formBody: {
+			grant_type: 'grant_type',
+			refresh_token: 'refresh_token',
+			client_id: 'client_id',
+		},
 		staticForm: { grant_type: 'refresh_token' },
 		basicAuth: ['client_id', 'client_secret'],
+		basicAuthIfSecret: true,
 		auth: 'none',
 		riskLevel: 'write',
 		metaDescription: 'Refresh a NetSuite OAuth 2.0 access token',

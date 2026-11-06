@@ -128,9 +128,9 @@ function applyClientCredentialDefaults(
 }
 
 function assertRefreshInputs(input: Record<string, unknown>): void {
+	// A public client (PKCE) has no secret; it sends client_id in the form.
 	for (const [field, label] of [
 		['client_id', 'client_id'],
-		['client_secret', 'client_secret'],
 		['refresh_token', 'refresh_token'],
 	] as const) {
 		const value = read(input, field);
@@ -475,12 +475,33 @@ function idFromLocation(location: string): string | undefined {
 	return id.startsWith('eid:') ? undefined : id;
 }
 
+// Cache updates for one record run one after another: each reads the saved
+// row, merges and writes it back, so two at once could drop each other's
+// fields. Keyed by account, entity and record id; within this process only.
+const cacheLocks = new Map<string, Promise<void>>();
+
+export async function withCacheLock(
+	key: string,
+	fn: () => Promise<void>,
+): Promise<void> {
+	const previous = cacheLocks.get(key) ?? Promise.resolve();
+	const run = previous.then(fn);
+	const tail = run.catch(() => undefined);
+	cacheLocks.set(key, tail);
+	try {
+		await run;
+	} finally {
+		if (cacheLocks.get(key) === tail) cacheLocks.delete(key);
+	}
+}
+
 // Accepts unknown response to sync heterogeneous entity record payloads into local tables.
 async function syncEntityCache(
 	ctx: NetSuiteContext,
 	spec: RouteSpec,
 	input: Record<string, unknown>,
 	response: unknown,
+	accountId: string,
 ): Promise<void> {
 	const entity = entityForSpec(spec, input);
 	if (!entity) return;
@@ -512,12 +533,16 @@ async function syncEntityCache(
 		| undefined;
 	const client = db?.[entity];
 	if (!client) return;
+	const lock = (id: string, fn: () => Promise<void>) =>
+		withCacheLock(`${accountId}:${entity}:${id}`, fn);
 
 	try {
 		if (spec.method === 'DELETE') {
 			const id = read(input, 'id');
 			if (typeof id === 'string' || typeof id === 'number') {
-				await client.deleteByEntityId?.(String(id));
+				await lock(String(id), async () => {
+					await client.deleteByEntityId?.(String(id));
+				});
 			}
 			return;
 		}
@@ -538,15 +563,17 @@ async function syncEntityCache(
 				const id = item.id ?? item.entityId;
 				if (typeof id !== 'string' && typeof id !== 'number') continue;
 				const stringId = String(id);
-				const existing = fullRecord
-					? undefined
-					: await client.findByEntityId?.(stringId);
-				const existingData =
-					existing && isRecord(existing.data) ? existing.data : {};
-				await client.upsertByEntityId(
-					stringId,
-					mergeCacheRecord(existingData, item),
-				);
+				await lock(stringId, async () => {
+					const existing = fullRecord
+						? undefined
+						: await client.findByEntityId?.(stringId);
+					const existingData =
+						existing && isRecord(existing.data) ? existing.data : {};
+					await client.upsertByEntityId?.(
+						stringId,
+						mergeCacheRecord(existingData, item),
+					);
+				});
 			}
 			return;
 		}
@@ -555,13 +582,18 @@ async function syncEntityCache(
 			const id = idFromLocation(location);
 			if (!id) return;
 			const body = buildBody(input, spec);
-			const existing = await client.findByEntityId?.(id);
-			const existingData =
-				existing && isRecord(existing.data) ? existing.data : {};
-			const merged = mergeCacheRecord(existingData, isRecord(body) ? body : {});
-			// `location` here is the HTTP Location header (a URL). Records have their
-			// own `location` field (a reference), so the URL is not stored.
-			await client.upsertByEntityId(id, { ...merged, id });
+			await lock(id, async () => {
+				const existing = await client.findByEntityId?.(id);
+				const existingData =
+					existing && isRecord(existing.data) ? existing.data : {};
+				const merged = mergeCacheRecord(
+					existingData,
+					isRecord(body) ? body : {},
+				);
+				// `location` here is the HTTP Location header (a URL). Records have their
+				// own `location` field (a reference), so the URL is not stored.
+				await client.upsertByEntityId?.(id, { ...merged, id });
+			});
 		}
 	} catch (error) {
 		console.warn(`[netsuite] failed to sync ${entity} cache:`, error);
@@ -771,7 +803,7 @@ export async function runNetSuite<K extends NetSuiteSpecKey>(
 		spec.responseHeader && typeof raw === 'string'
 			? { location: raw }
 			: ((raw ?? {}) as Record<string, unknown>);
-	await syncEntityCache(ctx, spec, resolvedInput, response);
+	await syncEntityCache(ctx, spec, resolvedInput, response, accountId);
 	await logEventFromContext(
 		ctx,
 		`netsuite.${event}`,

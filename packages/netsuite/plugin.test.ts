@@ -597,6 +597,46 @@ describe('endpoint dispatch', () => {
 		);
 	});
 
+	it('refreshes public clients with client_id in the form and no secret', async () => {
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(
+				jsonResponse({ access_token: 'new' }),
+			) as unknown as typeof fetch;
+		const publicCtx = {
+			...mockCtx(),
+			options: { accountId: ACCOUNT, clientId: 'public-client' },
+		};
+		await NetSuite.oauth2TokenRefresh(publicCtx as never, {
+			refresh_token: 'refresh',
+		});
+		await NetSuite.oauth2TokenRefresh(mockCtx() as never, {
+			refresh_token: 'refresh',
+		});
+		const calls = jest.mocked(globalThis.fetch).mock.calls as [
+			string,
+			RequestInit,
+		][];
+		const [, publicInit] = calls[0] as [string, RequestInit];
+		expect(header(publicInit, 'Authorization')).toBeNull();
+		const publicForm = new URLSearchParams(String(publicInit.body));
+		expect(publicForm.get('client_id')).toBe('public-client');
+		expect(publicForm.get('refresh_token')).toBe('refresh');
+		expect(publicForm.get('grant_type')).toBe('refresh_token');
+
+		const [, confidentialInit] = calls[1] as [string, RequestInit];
+		expect(header(confidentialInit, 'Authorization')).toBe(
+			`Basic ${Buffer.from('client-id:client-secret').toString('base64')}`,
+		);
+		const confidentialForm = new URLSearchParams(String(confidentialInit.body));
+		expect(confidentialForm.get('client_id')).toBeNull();
+	});
+
+	it('needs write permission to sign a client assertion', () => {
+		const meta = netsuite({ accountId: ACCOUNT }).endpointMeta;
+		expect(meta?.['oauth.createJwtClientAssertion']?.riskLevel).toBe('write');
+	});
+
 	it('authenticates revoke and code exchange as confidential or public clients', async () => {
 		globalThis.fetch = jest
 			.fn()
@@ -1009,6 +1049,48 @@ describe('endpoint dispatch', () => {
 		expect(upsertMock).toHaveBeenCalledWith('789', {
 			id: '789',
 			companyName: 'Acme Corp',
+		});
+	});
+
+	it('keeps both partial reads when two run at once for the same record', async () => {
+		const rows = new Map<string, Record<string, unknown>>([
+			['789', { id: '789', companyName: 'Acme Corp' }],
+		]);
+		const tick = () => new Promise((resolve) => setTimeout(resolve, 5));
+		const ctx = {
+			...mockCtx(),
+			db: {
+				customers: {
+					findByEntityId: async (id: string) => {
+						const data = rows.get(id);
+						await tick();
+						return data ? { data: { ...data } } : null;
+					},
+					upsertByEntityId: async (
+						id: string,
+						data: Record<string, unknown>,
+					) => {
+						await tick();
+						rows.set(id, data);
+					},
+				},
+			},
+		};
+		globalThis.fetch = jest.fn(async (url: string | URL | Request) =>
+			String(url).includes('fields=email')
+				? jsonResponse({ id: '789', email: 'ap@acme.test' })
+				: jsonResponse({ id: '789', phone: '555-0100' }),
+		) as unknown as typeof fetch;
+
+		await Promise.all([
+			NetSuite.getCustomer(ctx as never, { id: '789', fields: 'email' }),
+			NetSuite.getCustomer(ctx as never, { id: '789', fields: 'phone' }),
+		]);
+		expect(rows.get('789')).toEqual({
+			id: '789',
+			companyName: 'Acme Corp',
+			email: 'ap@acme.test',
+			phone: '555-0100',
 		});
 	});
 
