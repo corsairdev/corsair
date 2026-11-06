@@ -128,7 +128,7 @@ const netSuiteEndpointMeta = Object.fromEntries(
 	}),
 	// Object.fromEntries returns generic key-value pairs; cast to RequiredPluginEndpointMeta
 	// because TypeScript cannot statically correlate the dynamic paths with the nested endpoints.
-) as RequiredPluginEndpointMeta<NetSuiteEndpointsNested>;
+) as RequiredPluginEndpointMeta<NetSuiteEndpointsNested> satisfies RequiredPluginEndpointMeta<NetSuiteEndpointsNested>;
 
 export const netSuiteAuthConfig = {
 	oauth_2: {

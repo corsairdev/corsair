@@ -730,7 +730,7 @@ export async function runNetSuite<K extends NetSuiteSpecKey>(
 	const formBody = buildForm(resolvedInput, spec);
 	// A confidential client authenticates with the Basic header, so client_id
 	// does not also go in the body (public clients send only the body field).
-	if (basicAuth && formBody) delete formBody.client_id;
+	if (basicAuth && formBody) formBody.client_id = undefined;
 	const raw = spec.custom
 		? await customEndpoint(
 				event as NetSuiteSpecKey,

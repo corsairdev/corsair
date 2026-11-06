@@ -26,6 +26,7 @@ describe('NetSuite schema', () => {
 		expect(tokenOutput.safeParse({ expires_in: 'not-a-number' }).success).toBe(
 			false,
 		);
+		expect(tokenOutput.safeParse({ expires_in: '3600' }).success).toBe(true);
 	});
 
 	it('validates entity schemas with structured links, references, and sublists', () => {

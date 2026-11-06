@@ -48,7 +48,7 @@ const passthroughResponse = z
 		id_token: z.string().optional(),
 		token_type: z.string().optional(),
 		// NetSuite sends expires_in as the string "3600".
-		expires_in: z.union([z.number(), z.string()]).optional(),
+		expires_in: z.union([z.number(), z.string().regex(/^\d+$/)]).optional(),
 		expires_at: z.number().optional(),
 		scope: z.string().optional(),
 		authorization_url: z.string().optional(),
