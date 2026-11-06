@@ -1,9 +1,9 @@
 ---
 title: Overview
-description: "Boldsign plugin for Corsair"
+description: "Electronic signature platform. Send and list documents, extend expiry, manage brands and custom fields, create embedded request links, and check API credits."
 ---
 
-Use **Boldsign** through Corsair: one client, typed API calls, local DB sync.
+Use **BoldSign** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
@@ -60,7 +60,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="OAuth 2.0 (Recommended)">
 
-Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Boldsign OAuth app.
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your BoldSign OAuth app.
 
 ```ts
 boldsign()
@@ -90,19 +90,24 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`brands.get`**
+**List documents**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.boldsign.api.brands.get({});
+await tenant.boldsign.api.documents.list({ page: 1 });
 ```
 
 
-**`customFields.create`**
+**Send a document for signature**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.boldsign.api.customFields.create({});
+await tenant.boldsign.api.documents.send({
+	title: 'Service agreement',
+	message: 'Please review and sign.',
+	fileUrls: ['https://example.com/agreement.pdf'],
+	signers: [{ name: 'Octo Cat', emailAddress: 'you@example.com' }],
+});
 ```
 
 
@@ -110,9 +115,17 @@ See the full list on the [API](/plugins/boldsign/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.boldsign.db.<entity>.search()` and `.list()`: `brands`, `custom_fields`, `documents`.
+These tables exist, but BoldSign calls don't fill them yet. This returns only rows you have written yourself.
 
-See [Database](/plugins/boldsign/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.boldsign.db.documents.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `brands`, `custom_fields`, `documents`. See [Database](/plugins/boldsign/database) for filters and operators.
 
 ## What's next
 
