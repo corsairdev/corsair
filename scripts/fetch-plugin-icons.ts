@@ -93,6 +93,11 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// Ticketmaster's App Store icon is the same mark at 180px.
 	ticketmaster:
 		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b6/1c/09/b61c097d-c719-f0a7-9062-d602b89e8161/AppIcon-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/180x180bb.png',
+	// netsuite.com only has a 32px favicon (and blocks scripted fetches), so
+	// twenty-icons returns a blur. Oracle's NetSuite App Store icon is the same
+	// mark at 180px.
+	netsuite:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/19/ca/fb/19cafb9e-8f0b-d237-e0ea-a4b3ed3f88e4/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/180x180bb.png',
 };
 
 type FetchResult =
