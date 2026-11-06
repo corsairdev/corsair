@@ -29,27 +29,9 @@ await corsair.chatbotkit.api.blueprints.create({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | Name of the blueprint template |
 | `description` | `string` | No | Description of the blueprint template |
-| `config` | `object` | No | Configuration dictionary |
+| `config` | `Record<string, any>` | No | Configuration dictionary |
 | `visibility` | `private \| protected \| public` | No | Visibility level |
-| `meta` | `object` | No | Custom metadata |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Custom metadata |
 
 
 
@@ -118,32 +100,14 @@ await corsair.chatbotkit.api.blueprints.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Unique identifier of the blueprint |
-| `alias` | `string` | No | Custom alias for the blueprint |
+| `alias` | `string \| null` | No | Custom alias for the blueprint |
 | `name` | `string` | Yes | Descriptive name of the blueprint |
-| `description` | `string` | No | Brief description of blueprint configuration |
-| `config` | `object` | No | Template configuration settings |
-| `visibility` | `string` | No | Visibility setting |
-| `meta` | `object` | No | Custom metadata |
-| `createdAt` | `number` | No | Creation timestamp in milliseconds |
-| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `description` | `string \| null` | No | Brief description of blueprint configuration |
+| `config` | `Record<string, any> \| null` | No | Template configuration settings |
+| `visibility` | `string \| null` | No | Visibility setting |
+| `meta` | `Record<string, any> \| null` | No | Custom metadata |
+| `createdAt` | `number \| null` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number \| null` | No | Last updated timestamp in milliseconds |
 
 
 
@@ -176,7 +140,7 @@ await corsair.chatbotkit.api.blueprints.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | List of blueprints matching the query |
-| `cursor` | `string` | No | Pagination cursor for the next page of results |
+| `cursor` | `string \| null` | No | Pagination cursor for the next page of results |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -187,11 +151,9 @@ await corsair.chatbotkit.api.blueprints.list({});
   alias?: string | null,
   name: string,
   description?: string | null,
-  config?: {
-  } | null,
+  config?: Record<string, any> | null,
   visibility?: string | null,
-  meta?: {
-  } | null,
+  meta?: Record<string, any> | null,
   createdAt?: number | null,
   updatedAt?: number | null
 }[]
@@ -222,27 +184,9 @@ await corsair.chatbotkit.api.blueprints.update({});
 | `id` | `string` | Yes | ID of the blueprint to update |
 | `name` | `string` | No | Updated name |
 | `description` | `string` | No | Updated description |
-| `config` | `object` | No | Updated configuration |
+| `config` | `Record<string, any>` | No | Updated configuration |
 | `visibility` | `private \| protected \| public` | No | Updated visibility |
-| `meta` | `object` | No | Updated metadata |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Updated metadata |
 
 
 
@@ -284,17 +228,7 @@ await corsair.chatbotkit.api.bots.create({});
 | `privacy` | `boolean` | No | Enable PII protection and anonymization |
 | `moderation` | `boolean` | No | Enable content safety and filtering |
 | `visibility` | `private \| protected \| public` | No | Visibility level of the bot |
-| `meta` | `object` | No | Custom metadata |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Custom metadata |
 
 
 
@@ -393,30 +327,20 @@ await corsair.chatbotkit.api.bots.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Unique identifier of the bot |
-| `alias` | `string` | No | Custom alias for the bot |
+| `alias` | `string \| null` | No | Custom alias for the bot |
 | `name` | `string` | Yes | Descriptive name of the bot |
-| `description` | `string` | No | Brief description of the bot purpose |
-| `blueprintId` | `string` | No | Associated blueprint ID |
-| `datasetId` | `string` | No | Associated dataset ID for knowledge retrieval |
-| `skillsetId` | `string` | No | Associated skillset ID for tools and capabilities |
-| `backstory` | `string` | No | Natural language instructions defining bot personality and behavior |
-| `model` | `string` | No | AI model configured for the bot |
-| `privacy` | `boolean` | No | Whether PII protection and anonymization is enabled |
-| `moderation` | `boolean` | No | Whether content safety and filtering is active |
-| `visibility` | `string` | No | Visibility access setting (e.g. private, protected, public) |
-| `meta` | `object` | No | Custom metadata attached to the bot |
-| `createdAt` | `number` | No | Creation timestamp in milliseconds |
-| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `description` | `string \| null` | No | Brief description of the bot purpose |
+| `blueprintId` | `string \| null` | No | Associated blueprint ID |
+| `datasetId` | `string \| null` | No | Associated dataset ID for knowledge retrieval |
+| `skillsetId` | `string \| null` | No | Associated skillset ID for tools and capabilities |
+| `backstory` | `string \| null` | No | Natural language instructions defining bot personality and behavior |
+| `model` | `string \| null` | No | AI model configured for the bot |
+| `privacy` | `boolean \| null` | No | Whether PII protection and anonymization is enabled |
+| `moderation` | `boolean \| null` | No | Whether content safety and filtering is active |
+| `visibility` | `string \| null` | No | Visibility access setting (e.g. private, protected, public) |
+| `meta` | `Record<string, any> \| null` | No | Custom metadata attached to the bot |
+| `createdAt` | `number \| null` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number \| null` | No | Last updated timestamp in milliseconds |
 
 
 
@@ -449,7 +373,7 @@ await corsair.chatbotkit.api.bots.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | List of bots matching the query |
-| `cursor` | `string` | No | Pagination cursor for the next page of results |
+| `cursor` | `string \| null` | No | Pagination cursor for the next page of results |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -468,8 +392,7 @@ await corsair.chatbotkit.api.bots.list({});
   privacy?: boolean | null,
   moderation?: boolean | null,
   visibility?: string | null,
-  meta?: {
-  } | null,
+  meta?: Record<string, any> | null,
   createdAt?: number | null,
   updatedAt?: number | null
 }[]
@@ -502,21 +425,11 @@ await corsair.chatbotkit.api.bots.update({});
 | `description` | `string` | No | Updated description of the bot |
 | `backstory` | `string` | No | Updated persona instructions |
 | `model` | `string` | No | Updated model |
-| `datasetId` | `string` | No | Updated dataset ID |
-| `skillsetId` | `string` | No | Updated skillset ID |
-| `blueprintId` | `string` | No | Updated blueprint ID |
+| `datasetId` | `string \| null` | No | Updated dataset ID |
+| `skillsetId` | `string \| null` | No | Updated skillset ID |
+| `blueprintId` | `string \| null` | No | Updated blueprint ID |
 | `visibility` | `private \| protected \| public` | No | Updated visibility |
-| `meta` | `object` | No | Updated metadata |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Updated metadata |
 
 
 
@@ -630,17 +543,7 @@ await corsair.chatbotkit.api.conversations.create({});
 | `skillsetId` | `string` | No | Skillset ID override |
 | `blueprintId` | `string` | No | Blueprint template ID |
 | `visibility` | `private \| protected \| public` | No | Visibility level |
-| `meta` | `object` | No | Custom metadata |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Custom metadata |
 
 
 
@@ -709,29 +612,19 @@ await corsair.chatbotkit.api.conversations.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Unique identifier of the conversation |
-| `alias` | `string` | No | Custom alias for the conversation |
-| `name` | `string` | No | Name of the conversation |
-| `description` | `string` | No | Description of the conversation |
-| `botId` | `string` | No | Associated bot ID |
-| `backstory` | `string` | No | Instructions override for the conversation |
-| `model` | `string` | No | Model override |
-| `datasetId` | `string` | No | Dataset ID override |
-| `skillsetId` | `string` | No | Skillset ID override |
-| `blueprintId` | `string` | No | Associated blueprint ID |
-| `visibility` | `string` | No | Visibility setting |
-| `meta` | `object` | No | Custom metadata |
-| `createdAt` | `number` | No | Creation timestamp in milliseconds |
-| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `alias` | `string \| null` | No | Custom alias for the conversation |
+| `name` | `string \| null` | No | Name of the conversation |
+| `description` | `string \| null` | No | Description of the conversation |
+| `botId` | `string \| null` | No | Associated bot ID |
+| `backstory` | `string \| null` | No | Instructions override for the conversation |
+| `model` | `string \| null` | No | Model override |
+| `datasetId` | `string \| null` | No | Dataset ID override |
+| `skillsetId` | `string \| null` | No | Skillset ID override |
+| `blueprintId` | `string \| null` | No | Associated blueprint ID |
+| `visibility` | `string \| null` | No | Visibility setting |
+| `meta` | `Record<string, any> \| null` | No | Custom metadata |
+| `createdAt` | `number \| null` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number \| null` | No | Last updated timestamp in milliseconds |
 
 
 
@@ -764,7 +657,7 @@ await corsair.chatbotkit.api.conversations.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | List of conversations matching the query |
-| `cursor` | `string` | No | Pagination cursor for the next page of results |
+| `cursor` | `string \| null` | No | Pagination cursor for the next page of results |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -782,8 +675,7 @@ await corsair.chatbotkit.api.conversations.list({});
   skillsetId?: string | null,
   blueprintId?: string | null,
   visibility?: string | null,
-  meta?: {
-  } | null,
+  meta?: Record<string, any> | null,
   createdAt?: number | null,
   updatedAt?: number | null
 }[]
@@ -814,19 +706,9 @@ await corsair.chatbotkit.api.conversations.update({});
 | `id` | `string` | Yes | ID of the conversation to update |
 | `name` | `string` | No | Updated name |
 | `description` | `string` | No | Updated description |
-| `botId` | `string` | No | Updated bot ID |
+| `botId` | `string \| null` | No | Updated bot ID |
 | `visibility` | `private \| protected \| public` | No | Updated visibility |
-| `meta` | `object` | No | Updated metadata |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Updated metadata |
 
 
 
@@ -862,17 +744,7 @@ await corsair.chatbotkit.api.datasets.create({});
 | `description` | `string` | No | Description of the dataset |
 | `blueprintId` | `string` | No | ID of blueprint template to connect |
 | `visibility` | `private \| protected \| public` | No | Visibility level |
-| `meta` | `object` | No | Custom metadata |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Custom metadata |
 
 
 
@@ -941,32 +813,22 @@ await corsair.chatbotkit.api.datasets.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Unique identifier of the dataset |
-| `alias` | `string` | No | Custom alias for the dataset |
+| `alias` | `string \| null` | No | Custom alias for the dataset |
 | `name` | `string` | Yes | Descriptive name of the dataset |
-| `description` | `string` | No | Brief description of dataset contents |
-| `blueprintId` | `string` | No | Associated blueprint ID |
-| `reranker` | `string` | No | Configured reranker model |
-| `recordMaxTokens` | `number` | No | Maximum tokens per record |
-| `searchMinScore` | `number` | No | Minimum score for search retrieval |
-| `searchMaxRecords` | `number` | No | Maximum search records returned |
-| `searchMaxTokens` | `number` | No | Maximum search tokens returned |
-| `matchInstruction` | `string` | No | Prompt instruction on search match |
-| `mismatchInstruction` | `string` | No | Prompt instruction on search mismatch |
-| `separators` | `string[]` | No | Text chunk separators |
-| `visibility` | `string` | No | Visibility setting |
-| `meta` | `object` | No | Custom metadata |
-| `createdAt` | `number` | No | Creation timestamp in milliseconds |
-| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `description` | `string \| null` | No | Brief description of dataset contents |
+| `blueprintId` | `string \| null` | No | Associated blueprint ID |
+| `reranker` | `string \| null` | No | Configured reranker model |
+| `recordMaxTokens` | `number \| null` | No | Maximum tokens per record |
+| `searchMinScore` | `number \| null` | No | Minimum score for search retrieval |
+| `searchMaxRecords` | `number \| null` | No | Maximum search records returned |
+| `searchMaxTokens` | `number \| null` | No | Maximum search tokens returned |
+| `matchInstruction` | `string \| null` | No | Prompt instruction on search match |
+| `mismatchInstruction` | `string \| null` | No | Prompt instruction on search mismatch |
+| `separators` | `string[] \| null` | No | Text chunk separators |
+| `visibility` | `string \| null` | No | Visibility setting |
+| `meta` | `Record<string, any> \| null` | No | Custom metadata |
+| `createdAt` | `number \| null` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number \| null` | No | Last updated timestamp in milliseconds |
 
 
 
@@ -999,7 +861,7 @@ await corsair.chatbotkit.api.datasets.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | List of datasets matching the query |
-| `cursor` | `string` | No | Pagination cursor for the next page of results |
+| `cursor` | `string \| null` | No | Pagination cursor for the next page of results |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -1020,8 +882,7 @@ await corsair.chatbotkit.api.datasets.list({});
   mismatchInstruction?: string | null,
   separators?: string[] | null,
   visibility?: string | null,
-  meta?: {
-  } | null,
+  meta?: Record<string, any> | null,
   createdAt?: number | null,
   updatedAt?: number | null
 }[]
@@ -1069,8 +930,7 @@ await corsair.chatbotkit.api.datasets.search({});
   id: string,
   score?: number,
   text: string,
-  meta?: {
-  } | null
+  meta?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1099,19 +959,9 @@ await corsair.chatbotkit.api.datasets.update({});
 | `id` | `string` | Yes | ID of the dataset to update |
 | `name` | `string` | No | Updated name of the dataset |
 | `description` | `string` | No | Updated description of the dataset |
-| `blueprintId` | `string` | No | Updated blueprint ID |
+| `blueprintId` | `string \| null` | No | Updated blueprint ID |
 | `visibility` | `private \| protected \| public` | No | Updated visibility |
-| `meta` | `object` | No | Updated metadata |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Updated metadata |
 
 
 
@@ -1147,17 +997,7 @@ await corsair.chatbotkit.api.files.create({});
 | `description` | `string` | No | Description of the file |
 | `mimeType` | `string` | No | MIME type of the file |
 | `visibility` | `private \| protected \| public` | No | Visibility level |
-| `meta` | `object` | No | Custom metadata |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Custom metadata |
 
 
 
@@ -1227,23 +1067,13 @@ await corsair.chatbotkit.api.files.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Unique identifier of the file resource |
 | `name` | `string` | Yes | File name |
-| `description` | `string` | No | File description |
-| `mimeType` | `string` | No | MIME type of the file |
-| `size` | `number` | No | File size in bytes |
-| `visibility` | `string` | No | Visibility setting |
-| `meta` | `object` | No | Custom metadata |
-| `createdAt` | `number` | No | Creation timestamp in milliseconds |
-| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `description` | `string \| null` | No | File description |
+| `mimeType` | `string \| null` | No | MIME type of the file |
+| `size` | `number \| null` | No | File size in bytes |
+| `visibility` | `string \| null` | No | Visibility setting |
+| `meta` | `Record<string, any> \| null` | No | Custom metadata |
+| `createdAt` | `number \| null` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number \| null` | No | Last updated timestamp in milliseconds |
 
 
 
@@ -1276,7 +1106,7 @@ await corsair.chatbotkit.api.files.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | List of files matching query |
-| `cursor` | `string` | No | Pagination cursor for the next page of results |
+| `cursor` | `string \| null` | No | Pagination cursor for the next page of results |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -1289,8 +1119,7 @@ await corsair.chatbotkit.api.files.list({});
   mimeType?: string | null,
   size?: number | null,
   visibility?: string | null,
-  meta?: {
-  } | null,
+  meta?: Record<string, any> | null,
   createdAt?: number | null,
   updatedAt?: number | null
 }[]
@@ -1324,27 +1153,9 @@ await corsair.chatbotkit.api.secrets.create({});
 | `description` | `string` | No | Description of the secret |
 | `blueprintId` | `string` | No | Blueprint template ID |
 | `type` | `string` | No | Secret type or provider template |
-| `config` | `object` | No | Secret configuration credentials |
+| `config` | `Record<string, any>` | No | Secret configuration credentials |
 | `visibility` | `private \| protected \| public` | No | Visibility level |
-| `meta` | `object` | No | Custom metadata |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Custom metadata |
 
 
 
@@ -1413,35 +1224,17 @@ await corsair.chatbotkit.api.secrets.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Unique identifier of the secret credential |
-| `alias` | `string` | No | Custom alias for the secret |
+| `alias` | `string \| null` | No | Custom alias for the secret |
 | `name` | `string` | Yes | Descriptive name of the secret |
-| `description` | `string` | No | Description of the secret or connected service |
-| `blueprintId` | `string` | No | Associated blueprint ID |
-| `kind` | `string` | No | Kind of secret (e.g. personal, shared) |
-| `type` | `string` | No | Type of credential template |
-| `config` | `object` | No | Credential configuration |
-| `visibility` | `string` | No | Visibility setting |
-| `meta` | `object` | No | Custom metadata |
-| `createdAt` | `number` | No | Creation timestamp in milliseconds |
-| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `description` | `string \| null` | No | Description of the secret or connected service |
+| `blueprintId` | `string \| null` | No | Associated blueprint ID |
+| `kind` | `string \| null` | No | Kind of secret (e.g. personal, shared) |
+| `type` | `string \| null` | No | Type of credential template |
+| `config` | `Record<string, any> \| null` | No | Credential configuration |
+| `visibility` | `string \| null` | No | Visibility setting |
+| `meta` | `Record<string, any> \| null` | No | Custom metadata |
+| `createdAt` | `number \| null` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number \| null` | No | Last updated timestamp in milliseconds |
 
 
 
@@ -1474,7 +1267,7 @@ await corsair.chatbotkit.api.secrets.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | List of secrets matching the query |
-| `cursor` | `string` | No | Pagination cursor for the next page of results |
+| `cursor` | `string \| null` | No | Pagination cursor for the next page of results |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -1488,11 +1281,9 @@ await corsair.chatbotkit.api.secrets.list({});
   blueprintId?: string | null,
   kind?: string | null,
   type?: string | null,
-  config?: {
-  } | null,
+  config?: Record<string, any> | null,
   visibility?: string | null,
-  meta?: {
-  } | null,
+  meta?: Record<string, any> | null,
   createdAt?: number | null,
   updatedAt?: number | null
 }[]
@@ -1523,27 +1314,9 @@ await corsair.chatbotkit.api.secrets.update({});
 | `id` | `string` | Yes | ID of the secret to update |
 | `name` | `string` | No | Updated name |
 | `description` | `string` | No | Updated description |
-| `config` | `object` | No | Updated configuration credentials |
+| `config` | `Record<string, any>` | No | Updated configuration credentials |
 | `visibility` | `private \| protected \| public` | No | Updated visibility |
-| `meta` | `object` | No | Updated metadata |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Updated metadata |
 
 
 
@@ -1579,17 +1352,7 @@ await corsair.chatbotkit.api.skillsets.create({});
 | `description` | `string` | No | Description of the skillset |
 | `blueprintId` | `string` | No | Blueprint template ID |
 | `visibility` | `private \| protected \| public` | No | Visibility level |
-| `meta` | `object` | No | Custom metadata |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Custom metadata |
 
 
 
@@ -1658,25 +1421,15 @@ await corsair.chatbotkit.api.skillsets.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Unique identifier of the skillset |
-| `alias` | `string` | No | Custom alias for the skillset |
+| `alias` | `string \| null` | No | Custom alias for the skillset |
 | `name` | `string` | Yes | Descriptive name of the skillset |
-| `description` | `string` | No | Brief description of skillset capabilities |
-| `blueprintId` | `string` | No | Associated blueprint ID |
-| `visibility` | `string` | No | Visibility setting |
-| `state` | `string` | No | Operational state (e.g. enabled, disabled) |
-| `meta` | `object` | No | Custom metadata |
-| `createdAt` | `number` | No | Creation timestamp in milliseconds |
-| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `description` | `string \| null` | No | Brief description of skillset capabilities |
+| `blueprintId` | `string \| null` | No | Associated blueprint ID |
+| `visibility` | `string \| null` | No | Visibility setting |
+| `state` | `string \| null` | No | Operational state (e.g. enabled, disabled) |
+| `meta` | `Record<string, any> \| null` | No | Custom metadata |
+| `createdAt` | `number \| null` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number \| null` | No | Last updated timestamp in milliseconds |
 
 
 
@@ -1709,7 +1462,7 @@ await corsair.chatbotkit.api.skillsets.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | List of skillsets matching the query |
-| `cursor` | `string` | No | Pagination cursor for the next page of results |
+| `cursor` | `string \| null` | No | Pagination cursor for the next page of results |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -1723,8 +1476,7 @@ await corsair.chatbotkit.api.skillsets.list({});
   blueprintId?: string | null,
   visibility?: string | null,
   state?: string | null,
-  meta?: {
-  } | null,
+  meta?: Record<string, any> | null,
   createdAt?: number | null,
   updatedAt?: number | null
 }[]
@@ -1757,17 +1509,7 @@ await corsair.chatbotkit.api.skillsets.update({});
 | `description` | `string` | No | Updated description of the skillset |
 | `visibility` | `private \| protected \| public` | No | Updated visibility |
 | `state` | `enabled \| disabled` | No | Updated state |
-| `meta` | `object` | No | Updated metadata |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Updated metadata |
 
 
 
@@ -1804,17 +1546,7 @@ await corsair.chatbotkit.api.tasks.create({});
 | `botId` | `string` | No | ID of bot executing the task |
 | `schedule` | `string` | No | Cron schedule expression for recurring runs |
 | `visibility` | `private \| protected \| public` | No | Visibility level |
-| `meta` | `object` | No | Custom metadata |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Custom metadata |
 
 
 
@@ -1884,24 +1616,14 @@ await corsair.chatbotkit.api.tasks.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Unique identifier of the task |
 | `name` | `string` | Yes | Descriptive name of the task |
-| `description` | `string` | No | Brief description of the task |
-| `botId` | `string` | No | Associated bot ID |
-| `schedule` | `string` | No | Cron schedule string |
-| `status` | `string` | No | Task execution status |
-| `visibility` | `string` | No | Visibility setting |
-| `meta` | `object` | No | Custom metadata |
-| `createdAt` | `number` | No | Creation timestamp in milliseconds |
-| `updatedAt` | `number` | No | Last updated timestamp in milliseconds |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `description` | `string \| null` | No | Brief description of the task |
+| `botId` | `string \| null` | No | Associated bot ID |
+| `schedule` | `string \| null` | No | Cron schedule string |
+| `status` | `string \| null` | No | Task execution status |
+| `visibility` | `string \| null` | No | Visibility setting |
+| `meta` | `Record<string, any> \| null` | No | Custom metadata |
+| `createdAt` | `number \| null` | No | Creation timestamp in milliseconds |
+| `updatedAt` | `number \| null` | No | Last updated timestamp in milliseconds |
 
 
 
@@ -1934,7 +1656,7 @@ await corsair.chatbotkit.api.tasks.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | List of tasks matching query |
-| `cursor` | `string` | No | Pagination cursor for next page of results |
+| `cursor` | `string \| null` | No | Pagination cursor for next page of results |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -1948,8 +1670,7 @@ await corsair.chatbotkit.api.tasks.list({});
   schedule?: string | null,
   status?: string | null,
   visibility?: string | null,
-  meta?: {
-  } | null,
+  meta?: Record<string, any> | null,
   createdAt?: number | null,
   updatedAt?: number | null
 }[]
@@ -1980,20 +1701,10 @@ await corsair.chatbotkit.api.tasks.update({});
 | `id` | `string` | Yes | ID of the task to update |
 | `name` | `string` | No | Updated name |
 | `description` | `string` | No | Updated description |
-| `botId` | `string` | No | Updated bot ID |
-| `schedule` | `string` | No | Updated cron schedule |
+| `botId` | `string \| null` | No | Updated bot ID |
+| `schedule` | `string \| null` | No | Updated cron schedule |
 | `visibility` | `private \| protected \| public` | No | Updated visibility |
-| `meta` | `object` | No | Updated metadata |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `meta` | `Record<string, any>` | No | Updated metadata |
 
 
 

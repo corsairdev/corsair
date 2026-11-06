@@ -28,58 +28,14 @@ await corsair.insightoai.api.agency.createAgency({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `org_id` | `string` | Yes | — |
-| `domain` | `object` | No | — |
-| `branding` | `object` | No | — |
-| `user_auth` | `object` | No | — |
-| `billing_plan` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="domain full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="branding full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="user_auth full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="billing_plan full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `domain` | `Record<string, any>` | No | — |
+| `branding` | `Record<string, any>` | No | — |
+| `user_auth` | `Record<string, any>` | No | — |
+| `billing_plan` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -104,17 +60,7 @@ await corsair.insightoai.api.agency.getAgencyBillingPlan({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -139,17 +85,7 @@ await corsair.insightoai.api.agency.getAgencyBrandingById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -170,22 +106,12 @@ await corsair.insightoai.api.agency.getAgentList({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | Yes | — |
-| `size` | `number` | Yes | — |
+| `page` | `number` | No | Defaults to 1. |
+| `size` | `number` | No | Defaults to 50. |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -212,17 +138,7 @@ await corsair.insightoai.api.agency.getPricingForUser({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -248,17 +164,7 @@ await corsair.insightoai.api.agency.retrieveUserMonthlyUsagesAggregation({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -283,17 +189,7 @@ await corsair.insightoai.api.agency.updateUserProfile({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -318,31 +214,11 @@ await corsair.insightoai.api.assistants.addIntentToAssistant({});
 |------|------|----------|-------------|
 | `assistant_id` | `string` | Yes | — |
 | `intent_id` | `string` | Yes | — |
-| `attributes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `attributes` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -365,33 +241,13 @@ await corsair.insightoai.api.assistants.createIntent({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `is_active` | `boolean` | No | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, any>` | No | — |
 | `description` | `string` | No | — |
 | `intent_type` | `string` | No | — |
 
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -419,17 +275,7 @@ await corsair.insightoai.api.assistants.createPrompt({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -454,17 +300,7 @@ await corsair.insightoai.api.assistants.deleteAssistantById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -489,17 +325,7 @@ await corsair.insightoai.api.assistants.deletePromptById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -524,17 +350,7 @@ await corsair.insightoai.api.assistants.getAssistantById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -559,17 +375,7 @@ await corsair.insightoai.api.assistants.getIntentById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -594,17 +400,7 @@ await corsair.insightoai.api.assistants.getPromptById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -630,17 +426,7 @@ await corsair.insightoai.api.assistants.readIntentsList({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -669,17 +455,7 @@ await corsair.insightoai.api.contacts.createContactCustomField({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -704,17 +480,7 @@ await corsair.insightoai.api.contacts.deleteContactsInBulk({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -739,17 +505,7 @@ await corsair.insightoai.api.contacts.getContactById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -775,17 +531,7 @@ await corsair.insightoai.api.contacts.getListOfContacts({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -812,17 +558,7 @@ await corsair.insightoai.api.contacts.readCampaignContactList({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -848,17 +584,7 @@ await corsair.insightoai.api.contacts.readContactCustomFieldList({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -884,17 +610,7 @@ await corsair.insightoai.api.contacts.readContactSyncLogList({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -922,17 +638,7 @@ await corsair.insightoai.api.contacts.sendMessagesToContacts({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -960,17 +666,7 @@ await corsair.insightoai.api.contacts.upsertContactByEmailOrPhoneNumber({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -994,33 +690,13 @@ await corsair.insightoai.api.datasources.createTag({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, any>` | No | — |
 | `color_code` | `string` | Yes | — |
 | `description` | `string` | Yes | — |
 
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1046,17 +722,7 @@ await corsair.insightoai.api.datasources.deleteLinkedAssistantDatasource({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1081,17 +747,7 @@ await corsair.insightoai.api.datasources.deleteLinkTagEntityById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1116,17 +772,7 @@ await corsair.insightoai.api.datasources.deleteTagById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1151,17 +797,7 @@ await corsair.insightoai.api.datasources.getDatasourceById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1187,17 +823,7 @@ await corsair.insightoai.api.datasources.getListOfDatasources({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1224,17 +850,7 @@ await corsair.insightoai.api.datasources.getListOfDataSourcesLinkedToAssistantId
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1260,17 +876,7 @@ await corsair.insightoai.api.datasources.readTagList({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1294,54 +900,18 @@ await corsair.insightoai.api.forms.createForm({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `fields` | `object[]` | No | — |
+| `fields` | `Record<string, any>[]` | No | — |
 | `org_id` | `string` | No | — |
 | `form_type` | `natural \| simple` | Yes | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, any>` | No | — |
 | `webhook_id` | `string` | No | — |
 | `trigger_tools` | `string[]` | No | — |
-| `contact_mapping` | `object` | No | — |
+| `contact_mapping` | `Record<string, any>` | No | — |
 | `trigger_instructions` | `string` | Yes | — |
 
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="contact_mapping full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1366,17 +936,7 @@ await corsair.insightoai.api.forms.deleteBulkFormsByIds({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1401,17 +961,7 @@ await corsair.insightoai.api.forms.deleteFormById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1438,17 +988,7 @@ await corsair.insightoai.api.forms.getCapturedFormByFormId({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1474,33 +1014,13 @@ await corsair.insightoai.api.providers.createProvider({});
 | `name` | `string` | Yes | — |
 | `org_id` | `string` | No | — |
 | `status` | `boolean` | No | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, any>` | No | — |
 | `provider_key` | `string` | Yes | — |
 | `provider_name` | `openai \| elevenlabs \| azure_speech \| cartesia \| playht` | No | — |
 
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1525,17 +1045,7 @@ await corsair.insightoai.api.providers.deleteProviderById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1560,17 +1070,7 @@ await corsair.insightoai.api.providers.getProviderById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1596,17 +1096,7 @@ await corsair.insightoai.api.providers.getSpeechtotextList({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1632,17 +1122,7 @@ await corsair.insightoai.api.providers.retrieveListOfUserCustomVoice({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1666,35 +1146,15 @@ await corsair.insightoai.api.tools.createToolfunction({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `details` | `object` | No | — |
+| `details` | `Record<string, any>` | No | — |
 | `tool_id` | `string` | No | — |
 | `is_enabled` | `boolean` | No | — |
 | `description` | `string` | Yes | — |
 | `tool_function_type` | `sdk \| curl \| query_index` | Yes | — |
 
-<AccordionGroup>
-<Accordion title="details full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1719,17 +1179,7 @@ await corsair.insightoai.api.tools.deleteToolById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1754,17 +1204,7 @@ await corsair.insightoai.api.tools.deleteToolfunctionById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1791,17 +1231,7 @@ await corsair.insightoai.api.tools.readToolFunctionInvokeLogList({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1828,17 +1258,7 @@ await corsair.insightoai.api.tools.readToolToolfunctionList({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1865,17 +1285,7 @@ await corsair.insightoai.api.tools.retrieveLinkedToolAndUser({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1900,40 +1310,12 @@ await corsair.insightoai.api.tools.updateLinkToolUser({});
 | `name` | `string` | No | — |
 | `org_id` | `string` | No | — |
 | `tool_id` | `string` | No | — |
-| `attributes` | `object` | No | — |
-| `credentials` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="credentials full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `attributes` | `Record<string, any>` | No | — |
+| `credentials` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1955,7 +1337,7 @@ await corsair.insightoai.api.tools.updateToolById({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `tool_id` | `string` | Yes | — |
-| `sdk` | `object` | No | — |
+| `sdk` | `Record<string, any>` | No | — |
 | `name` | `string` | No | — |
 | `org_id` | `string` | No | — |
 | `enabled` | `boolean` | No | — |
@@ -1963,50 +1345,14 @@ await corsair.insightoai.api.tools.updateToolById({});
 | `category` | `string` | No | — |
 | `logo_url` | `string` | No | — |
 | `tool_type` | `string` | No | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, any>` | No | — |
 | `description` | `string` | No | — |
 | `tool_provider` | `string` | No | — |
-| `authentication` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="sdk full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="authentication full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `authentication` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2029,35 +1375,15 @@ await corsair.insightoai.api.tools.updateToolfunctionById({});
 |------|------|----------|-------------|
 | `toolfunction_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `details` | `object` | No | — |
+| `details` | `Record<string, any>` | No | — |
 | `tool_id` | `string` | No | — |
 | `is_enabled` | `boolean` | No | — |
 | `description` | `string` | No | — |
 | `tool_function_type` | `sdk \| curl \| query_index` | No | — |
 
-<AccordionGroup>
-<Accordion title="details full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2086,17 +1412,7 @@ await corsair.insightoai.api.webhooksTelephony.createWebhook({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2121,17 +1437,7 @@ await corsair.insightoai.api.webhooksTelephony.deleteTwilioAuthById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2156,17 +1462,7 @@ await corsair.insightoai.api.webhooksTelephony.deleteUserwhatsappById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2191,17 +1487,7 @@ await corsair.insightoai.api.webhooksTelephony.deleteWebhookById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2227,17 +1513,7 @@ await corsair.insightoai.api.webhooksTelephony.readTwilioAuthList({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2264,17 +1540,7 @@ await corsair.insightoai.api.webhooksTelephony.retrieveWebhookLog({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2302,17 +1568,7 @@ await corsair.insightoai.api.webhooksTelephony.updateTwilioAuthById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2342,17 +1598,7 @@ await corsair.insightoai.api.webhooksTelephony.updateUserwhatsappById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2380,17 +1626,7 @@ await corsair.insightoai.api.webhooksTelephony.updateWebhookById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2415,7 +1651,7 @@ await corsair.insightoai.api.widgets.createWidget({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `org_id` | `string` | No | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, any>` | No | — |
 | `bubble_text` | `string` | No | — |
 | `description` | `string` | No | — |
 | `widget_type` | `web_chat \| web_voice \| whatsapp \| sms \| messenger \| instagram \| telegram \| ghl_chat \| ghl_missed_call \| embedded_form \| popup \| inline \| floating_bubble \| voice_widget \| custom` | Yes | — |
@@ -2423,9 +1659,9 @@ await corsair.insightoai.api.widgets.createWidget({});
 | `bubble_color` | `string` | No | — |
 | `display_name` | `string` | No | — |
 | `header_color` | `string` | No | — |
-| `style_params` | `object` | No | — |
+| `style_params` | `Record<string, any>` | No | — |
 | `intro_message` | `string` | No | — |
-| `action_buttons` | `object[]` | Yes | — |
+| `action_buttons` | `Record<string, any>[]` | Yes | — |
 | `bot_icon_color` | `string` | No | — |
 | `ice_break_color` | `string` | No | — |
 | `remove_branding` | `boolean` | No | — |
@@ -2438,45 +1674,9 @@ await corsair.insightoai.api.widgets.createWidget({});
 | `bot_text_message_color` | `string` | No | — |
 | `user_text_message_color` | `string` | No | — |
 
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="style_params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="action_buttons full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2501,17 +1701,7 @@ await corsair.insightoai.api.widgets.deleteWidgetById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2542,17 +1732,7 @@ await corsair.insightoai.api.widgets.getListOfConversations({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2579,17 +1759,7 @@ await corsair.insightoai.api.widgets.getListOfWidgetsLinkedToAssistantId({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2614,17 +1784,7 @@ await corsair.insightoai.api.widgets.getWidgetById({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -2650,17 +1810,7 @@ await corsair.insightoai.api.widgets.listChannels({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---

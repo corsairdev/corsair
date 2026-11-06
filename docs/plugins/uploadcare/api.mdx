@@ -58,17 +58,7 @@ await corsair.uploadcare.api.addons.executeClamav({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `target` | `string` | Yes | — |
-| `params` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `params` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -262,18 +252,10 @@ await corsair.uploadcare.api.files.batchDelete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string` | No | — |
-| `problems` | `object` | No | — |
+| `problems` | `Record<string, string>` | No | — |
 | `result` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="problems full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="result full type">
 
 ```ts
@@ -289,14 +271,10 @@ await corsair.uploadcare.api.files.batchDelete({});
   original_filename?: string,
   size?: number,
   url?: string,
-  variations?: {
-  } | null,
-  content_info?: {
-  },
-  metadata?: {
-  },
-  appdata?: {
-  },
+  variations?: Record<string, string> | null,
+  content_info?: Record<string, JsonValue>,
+  metadata?: Record<string, string>,
+  appdata?: Record<string, JsonValue>,
   tags?: string[]
 }[]
 ```
@@ -332,18 +310,10 @@ await corsair.uploadcare.api.files.batchStore({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string` | No | — |
-| `problems` | `object` | No | — |
+| `problems` | `Record<string, string>` | No | — |
 | `result` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="problems full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="result full type">
 
 ```ts
@@ -359,14 +329,10 @@ await corsair.uploadcare.api.files.batchStore({});
   original_filename?: string,
   size?: number,
   url?: string,
-  variations?: {
-  } | null,
-  content_info?: {
-  },
-  metadata?: {
-  },
-  appdata?: {
-  },
+  variations?: Record<string, string> | null,
+  content_info?: Record<string, JsonValue>,
+  metadata?: Record<string, string>,
+  appdata?: Record<string, JsonValue>,
   tags?: string[]
 }[]
 ```
@@ -395,17 +361,7 @@ await corsair.uploadcare.api.files.copyLocal({});
 |------|------|----------|-------------|
 | `source` | `string` | Yes | — |
 | `store` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -432,14 +388,10 @@ await corsair.uploadcare.api.files.copyLocal({});
   original_filename?: string,
   size?: number,
   url?: string,
-  variations?: {
-  } | null,
-  content_info?: {
-  },
-  metadata?: {
-  },
-  appdata?: {
-  },
+  variations?: Record<string, string> | null,
+  content_info?: Record<string, JsonValue>,
+  metadata?: Record<string, string>,
+  appdata?: Record<string, JsonValue>,
   tags?: string[]
 }
 ```
@@ -476,55 +428,21 @@ await corsair.uploadcare.api.files.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | — |
-| `datetime_removed` | `string` | No | — |
-| `datetime_stored` | `string` | No | — |
+| `datetime_removed` | `string \| null` | No | — |
+| `datetime_stored` | `string \| null` | No | — |
 | `datetime_uploaded` | `string` | No | — |
 | `is_image` | `boolean` | No | — |
 | `is_ready` | `boolean` | No | — |
 | `mime_type` | `string` | No | — |
-| `original_file_url` | `string` | No | — |
+| `original_file_url` | `string \| null` | No | — |
 | `original_filename` | `string` | No | — |
 | `size` | `number` | No | — |
 | `url` | `string` | No | — |
-| `variations` | `object` | No | — |
-| `content_info` | `object` | No | — |
-| `metadata` | `object` | No | — |
-| `appdata` | `object` | No | — |
+| `variations` | `Record<string, string> \| null` | No | — |
+| `content_info` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `appdata` | `Record<string, JsonValue>` | No | — |
 | `tags` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="variations full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="content_info full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="appdata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -587,55 +505,21 @@ await corsair.uploadcare.api.files.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | — |
-| `datetime_removed` | `string` | No | — |
-| `datetime_stored` | `string` | No | — |
+| `datetime_removed` | `string \| null` | No | — |
+| `datetime_stored` | `string \| null` | No | — |
 | `datetime_uploaded` | `string` | No | — |
 | `is_image` | `boolean` | No | — |
 | `is_ready` | `boolean` | No | — |
 | `mime_type` | `string` | No | — |
-| `original_file_url` | `string` | No | — |
+| `original_file_url` | `string \| null` | No | — |
 | `original_filename` | `string` | No | — |
 | `size` | `number` | No | — |
 | `url` | `string` | No | — |
-| `variations` | `object` | No | — |
-| `content_info` | `object` | No | — |
-| `metadata` | `object` | No | — |
-| `appdata` | `object` | No | — |
+| `variations` | `Record<string, string> \| null` | No | — |
+| `content_info` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `appdata` | `Record<string, JsonValue>` | No | — |
 | `tags` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="variations full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="content_info full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="appdata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -661,17 +545,7 @@ await corsair.uploadcare.api.files.getMetadata({});
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, string>`
 
 
 ---
@@ -731,8 +605,8 @@ await corsair.uploadcare.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `total` | `number` | No | — |
 | `totals` | `object` | No | — |
 | `per_page` | `number` | No | — |
@@ -765,14 +639,10 @@ await corsair.uploadcare.api.files.list({});
   original_filename?: string,
   size?: number,
   url?: string,
-  variations?: {
-  } | null,
-  content_info?: {
-  },
-  metadata?: {
-  },
-  appdata?: {
-  },
+  variations?: Record<string, string> | null,
+  content_info?: Record<string, JsonValue>,
+  metadata?: Record<string, string>,
+  appdata?: Record<string, JsonValue>,
   tags?: string[]
 }[]
 ```
@@ -809,55 +679,21 @@ await corsair.uploadcare.api.files.store({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uuid` | `string` | Yes | — |
-| `datetime_removed` | `string` | No | — |
-| `datetime_stored` | `string` | No | — |
+| `datetime_removed` | `string \| null` | No | — |
+| `datetime_stored` | `string \| null` | No | — |
 | `datetime_uploaded` | `string` | No | — |
 | `is_image` | `boolean` | No | — |
 | `is_ready` | `boolean` | No | — |
 | `mime_type` | `string` | No | — |
-| `original_file_url` | `string` | No | — |
+| `original_file_url` | `string \| null` | No | — |
 | `original_filename` | `string` | No | — |
 | `size` | `number` | No | — |
 | `url` | `string` | No | — |
-| `variations` | `object` | No | — |
-| `content_info` | `object` | No | — |
-| `metadata` | `object` | No | — |
-| `appdata` | `object` | No | — |
+| `variations` | `Record<string, string> \| null` | No | — |
+| `content_info` | `Record<string, JsonValue>` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `appdata` | `Record<string, JsonValue>` | No | — |
 | `tags` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="variations full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="content_info full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="appdata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -947,11 +783,11 @@ await corsair.uploadcare.api.groups.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `datetime_created` | `string` | No | — |
+| `datetime_created` | `string \| null` | No | — |
 | `files_count` | `number` | No | — |
 | `cdn_url` | `string` | No | — |
 | `url` | `string` | No | — |
-| `files` | `lazy[]` | No | — |
+| `files` | `JsonValue[] \| null` | No | — |
 
 
 
@@ -983,8 +819,8 @@ await corsair.uploadcare.api.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `total` | `number` | No | — |
 | `per_page` | `number` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -999,7 +835,7 @@ await corsair.uploadcare.api.groups.list({});
   files_count?: number,
   cdn_url?: string,
   url?: string,
-  files?: lazy[] | null
+  files?: JsonValue[] | null
 }[]
 ```
 </Accordion>
@@ -1077,11 +913,11 @@ await corsair.uploadcare.api.upload.createGroup({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `datetime_created` | `string` | No | — |
+| `datetime_created` | `string \| null` | No | — |
 | `files_count` | `number` | No | — |
 | `cdn_url` | `string` | No | — |
 | `url` | `string` | No | — |
-| `files` | `lazy[]` | No | — |
+| `files` | `JsonValue[] \| null` | No | — |
 
 
 
@@ -1219,11 +1055,11 @@ await corsair.uploadcare.api.upload.groupInfo({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `datetime_created` | `string` | No | — |
+| `datetime_created` | `string \| null` | No | — |
 | `files_count` | `number` | No | — |
 | `cdn_url` | `string` | No | — |
 | `url` | `string` | No | — |
-| `files` | `lazy[]` | No | — |
+| `files` | `JsonValue[] \| null` | No | — |
 
 
 
@@ -1299,7 +1135,7 @@ await corsair.uploadcare.api.webhooks.create({});
 | `target_url` | `string` | No | — |
 | `project` | `number` | No | — |
 | `is_active` | `boolean` | No | — |
-| `signing_secret` | `string` | No | — |
+| `signing_secret` | `string \| null` | No | — |
 
 
 
@@ -1438,7 +1274,7 @@ await corsair.uploadcare.api.webhooks.update({});
 | `target_url` | `string` | No | — |
 | `project` | `number` | No | — |
 | `is_active` | `boolean` | No | — |
-| `signing_secret` | `string` | No | — |
+| `signing_secret` | `string \| null` | No | — |
 
 
 

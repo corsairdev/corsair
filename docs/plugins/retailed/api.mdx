@@ -85,7 +85,7 @@ await corsair.retailed.api.products.search({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `sku` | `string` | No | — |
-| `page` | `number` | No | — |
+| `page` | `number` | No | Defaults to 1. |
 | `sort` | `string` | No | — |
 
 
@@ -101,8 +101,8 @@ await corsair.retailed.api.products.search({});
 | `page` | `number` | Yes | — |
 | `hasPrevPage` | `boolean` | Yes | — |
 | `hasNextPage` | `boolean` | Yes | — |
-| `prevPage` | `number` | No | — |
-| `nextPage` | `number` | No | — |
+| `prevPage` | `number \| null` | Yes | — |
+| `nextPage` | `number \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="docs full type">
@@ -158,7 +158,7 @@ await corsair.retailed.api.stockx.product({});
 | `name` | `string` | Yes | — |
 | `url` | `string` | No | — |
 | `domain` | `string` | No | — |
-| `price` | `number` | No | — |
+| `price` | `number \| null` | No | — |
 
 
 

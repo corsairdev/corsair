@@ -55,9 +55,7 @@ await corsair.googlesheets.api.sheets.appendOrUpdateRow({});
 {
   range?: string,
   majorDimension?: ROWS | COLUMNS | DIMENSION_UNSPECIFIED,
-  values?: (
-    string | number | boolean | null
-  )[][]
+  values?: (string | number | boolean | null)[][]
 }[]
 ```
 </Accordion>
@@ -97,23 +95,25 @@ await corsair.googlesheets.api.sheets.appendRow({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `spreadsheetId` | `string` | No | — |
-| `totalUpdatedRows` | `number` | No | — |
-| `totalUpdatedColumns` | `number` | No | — |
-| `totalUpdatedCells` | `number` | No | — |
-| `totalUpdatedSheets` | `number` | No | — |
-| `responses` | `object[]` | No | — |
+| `tableRange` | `string` | No | — |
+| `updates` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="responses full type">
+<Accordion title="updates full type">
 
 ```ts
 {
-  range?: string,
-  majorDimension?: ROWS | COLUMNS | DIMENSION_UNSPECIFIED,
-  values?: (
-    string | number | boolean | null
-  )[][]
-}[]
+  spreadsheetId?: string,
+  updatedRange?: string,
+  updatedRows?: number,
+  updatedColumns?: number,
+  updatedCells?: number,
+  updatedData?: {
+    range?: string,
+    majorDimension?: ROWS | COLUMNS | DIMENSION_UNSPECIFIED,
+    values?: (string | number | boolean | null)[][]
+  }
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -436,9 +436,7 @@ await corsair.googlesheets.api.sheets.updateRow({});
 {
   range?: string,
   majorDimension?: ROWS | COLUMNS | DIMENSION_UNSPECIFIED,
-  values?: (
-    string | number | boolean | null
-  )[][]
+  values?: (string | number | boolean | null)[][]
 }[]
 ```
 </Accordion>

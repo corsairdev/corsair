@@ -46,8 +46,7 @@ await corsair.googlecloudvision.api.files.annotate({});
     maxResults?: number,
     model?: string
   }[],
-  imageContext?: {
-  },
+  imageContext?: Record<string, any>,
   pages?: number[]
 }[]
 ```
@@ -60,17 +59,7 @@ await corsair.googlecloudvision.api.files.annotate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `responses` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="responses full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `responses` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -110,8 +99,7 @@ await corsair.googlecloudvision.api.files.asyncBatchAnnotate({});
     maxResults?: number,
     model?: string
   }[],
-  imageContext?: {
-  },
+  imageContext?: Record<string, any>,
   outputConfig: {
     gcsDestination: {
       uri: string
@@ -130,34 +118,18 @@ await corsair.googlecloudvision.api.files.asyncBatchAnnotate({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `done` | `boolean` | No | — |
 | `error` | `object` | No | — |
-| `response` | `object` | No | — |
+| `response` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="error full type">
 
 ```ts
 {
   code: number,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -204,8 +176,7 @@ await corsair.googlecloudvision.api.images.annotate({});
     maxResults?: number,
     model?: string
   }[],
-  imageContext?: {
-  }
+  imageContext?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -217,17 +188,7 @@ await corsair.googlecloudvision.api.images.annotate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `responses` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="responses full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `responses` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -267,8 +228,7 @@ await corsair.googlecloudvision.api.images.asyncBatchAnnotate({});
     maxResults?: number,
     model?: string
   }[],
-  imageContext?: {
-  }
+  imageContext?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -293,34 +253,18 @@ await corsair.googlecloudvision.api.images.asyncBatchAnnotate({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `done` | `boolean` | No | — |
 | `error` | `object` | No | — |
-| `response` | `object` | No | — |
+| `response` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="error full type">
 
 ```ts
 {
   code: number,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -366,8 +310,7 @@ await corsair.googlecloudvision.api.images.locationAnnotate({});
     maxResults?: number,
     model?: string
   }[],
-  imageContext?: {
-  }
+  imageContext?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -379,17 +322,7 @@ await corsair.googlecloudvision.api.images.locationAnnotate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `responses` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="responses full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `responses` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -435,8 +368,7 @@ await corsair.googlecloudvision.api.locations.list({});
   name: string,
   locationId: string,
   displayName?: string,
-  labels?: {
-  }
+  labels?: Record<string, string>
 }[]
 ```
 </Accordion>
@@ -523,34 +455,18 @@ await corsair.googlecloudvision.api.operations.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `done` | `boolean` | No | — |
 | `error` | `object` | No | — |
-| `response` | `object` | No | — |
+| `response` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="error full type">
 
 ```ts
 {
   code: number,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -596,15 +512,13 @@ await corsair.googlecloudvision.api.operations.list({});
 ```ts
 {
   name: string,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   done?: boolean,
   error?: {
     code: number,
     message: string
   },
-  response?: {
-  }
+  response?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -843,34 +757,18 @@ await corsair.googlecloudvision.api.products.purge({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `done` | `boolean` | No | — |
 | `error` | `object` | No | — |
-| `response` | `object` | No | — |
+| `response` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="error full type">
 
 ```ts
 {
   code: number,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1002,8 +900,7 @@ await corsair.googlecloudvision.api.productSets.create({});
   name?: string,
   displayName: string,
   indexTime?: string,
-  indexError?: {
-  }
+  indexError?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1018,17 +915,7 @@ await corsair.googlecloudvision.api.productSets.create({});
 | `name` | `string` | No | — |
 | `displayName` | `string` | Yes | — |
 | `indexTime` | `string` | No | — |
-| `indexError` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="indexError full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `indexError` | `Record<string, any>` | No | — |
 
 
 
@@ -1086,17 +973,7 @@ await corsair.googlecloudvision.api.productSets.get({});
 | `name` | `string` | No | — |
 | `displayName` | `string` | Yes | — |
 | `indexTime` | `string` | No | — |
-| `indexError` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="indexError full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `indexError` | `Record<string, any>` | No | — |
 
 
 
@@ -1141,34 +1018,18 @@ await corsair.googlecloudvision.api.productSets.import({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `done` | `boolean` | No | — |
 | `error` | `object` | No | — |
-| `response` | `object` | No | — |
+| `response` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="error full type">
 
 ```ts
 {
   code: number,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="response full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1215,8 +1076,7 @@ await corsair.googlecloudvision.api.productSets.list({});
   name?: string,
   displayName: string,
   indexTime?: string,
-  indexError?: {
-  }
+  indexError?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1252,18 +1112,8 @@ await corsair.googlecloudvision.api.productSets.listProducts({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `products` | `object[]` | No | — |
+| `products` | `Record<string, any>[]` | No | — |
 | `nextPageToken` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="products full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1323,8 +1173,7 @@ await corsair.googlecloudvision.api.productSets.update({});
   name?: string,
   displayName: string,
   indexTime?: string,
-  indexError?: {
-  }
+  indexError?: Record<string, any>
 }
 ```
 </Accordion>
@@ -1339,17 +1188,7 @@ await corsair.googlecloudvision.api.productSets.update({});
 | `name` | `string` | No | — |
 | `displayName` | `string` | Yes | — |
 | `indexTime` | `string` | No | — |
-| `indexError` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="indexError full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `indexError` | `Record<string, any>` | No | — |
 
 
 
@@ -1384,8 +1223,7 @@ await corsair.googlecloudvision.api.referenceImages.create({});
 {
   name?: string,
   uri: string,
-  boundingPolys?: {
-  }[]
+  boundingPolys?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -1399,17 +1237,7 @@ await corsair.googlecloudvision.api.referenceImages.create({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `uri` | `string` | Yes | — |
-| `boundingPolys` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="boundingPolys full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `boundingPolys` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1466,17 +1294,7 @@ await corsair.googlecloudvision.api.referenceImages.get({});
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
 | `uri` | `string` | Yes | — |
-| `boundingPolys` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="boundingPolys full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `boundingPolys` | `Record<string, any>[]` | No | — |
 
 
 
@@ -1519,8 +1337,7 @@ await corsair.googlecloudvision.api.referenceImages.list({});
 {
   name?: string,
   uri: string,
-  boundingPolys?: {
-  }[]
+  boundingPolys?: Record<string, any>[]
 }[]
 ```
 </Accordion>

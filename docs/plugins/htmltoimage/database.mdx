@@ -55,10 +55,12 @@ const rows = await corsair.htmltoimage.db.renders.search({
 | Field | Type | Operators |
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `success` | `boolean` | equals |
 | `id` | `string` | equals, contains, startsWith, endsWith, in |
 | `url` | `string` | equals, contains, startsWith, endsWith, in |
 | `credits_remaining` | `number` | equals, gt, gte, lt, lte, in |
 | `expires_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `message` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._

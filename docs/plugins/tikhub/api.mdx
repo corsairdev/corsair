@@ -43,7 +43,7 @@ await corsair.tikhub.api.account.getInfo({});
   api_key_name: string,
   api_key_scopes: string[],
   created_at: string,
-  expires_at?: string | null,
+  expires_at: string | null,
   api_key_status: number
 }
 ```
@@ -95,30 +95,22 @@ await corsair.tikhub.api.instagram.getPostByUrl({ post_url: 'https://www.instagr
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -153,7 +145,7 @@ await corsair.tikhub.api.instagram.getPostByUrl({ post_url: 'https://www.instagr
     full_name?: string | null,
     is_verified?: boolean | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -189,30 +181,22 @@ await corsair.tikhub.api.instagram.getPostComments({ code_or_url: 'DPwhVB-jo9k',
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -245,7 +229,7 @@ await corsair.tikhub.api.instagram.getPostComments({ code_or_url: 'DPwhVB-jo9k',
     } | null
   } | null,
   pagination_token?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -279,30 +263,22 @@ await corsair.tikhub.api.instagram.getUserByUsername({ username: 'instagram' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -339,7 +315,7 @@ await corsair.tikhub.api.instagram.getUserByUsername({ username: 'instagram' });
     } | null
   } | null,
   status?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -375,30 +351,22 @@ await corsair.tikhub.api.instagram.getUserPosts({ user_id: '25025320', count: 12
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -429,7 +397,7 @@ await corsair.tikhub.api.instagram.getUserPosts({ user_id: '25025320', count: 12
   more_available?: boolean | null,
   next_max_id?: string | null,
   num_results?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -465,30 +433,22 @@ await corsair.tikhub.api.instagram.getUserReels({ user_id: '25025320', count: 12
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -522,7 +482,7 @@ await corsair.tikhub.api.instagram.getUserReels({ user_id: '25025320', count: 12
     max_id?: string | null,
     more_available?: boolean | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -566,30 +526,22 @@ await corsair.tikhub.api.reddit.search({ query: 'model context protocol', search
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -602,7 +554,7 @@ await corsair.tikhub.api.reddit.search({ query: 'model context protocol', search
     hasNextPage?: boolean | null,
     hasPreviousPage?: boolean | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -638,30 +590,22 @@ await corsair.tikhub.api.tiktok.getHashtag({ tag_name: 'tiktok' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -679,7 +623,7 @@ await corsair.tikhub.api.tiktok.getHashtag({ tag_name: 'tiktok' });
       viewCount?: number | null
     } | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -716,30 +660,22 @@ await corsair.tikhub.api.tiktok.getHashtagVideos({ ch_id: '7551', count: 10 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -812,7 +748,7 @@ await corsair.tikhub.api.tiktok.getHashtagVideos({ ch_id: '7551', count: 10 });
   max_cursor?: number | string | null,
   min_cursor?: number | string | null,
   cursor?: number | string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -847,30 +783,22 @@ await corsair.tikhub.api.tiktok.getUserProfile({ uniqueId: 'tiktok' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -903,7 +831,7 @@ await corsair.tikhub.api.tiktok.getUserProfile({ uniqueId: 'tiktok' });
       friendCount?: number | null
     } | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -942,30 +870,22 @@ await corsair.tikhub.api.tiktok.getUserVideos({ unique_id: 'tiktok', count: 20, 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1038,7 +958,7 @@ await corsair.tikhub.api.tiktok.getUserVideos({ unique_id: 'tiktok', count: 20, 
   max_cursor?: number | string | null,
   min_cursor?: number | string | null,
   cursor?: number | string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1072,30 +992,22 @@ await corsair.tikhub.api.tiktok.getVideo({ aweme_id: '7350810998023949599' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1226,7 +1138,7 @@ await corsair.tikhub.api.tiktok.getVideo({ aweme_id: '7350810998023949599' });
       hashtag_name?: string | null
     }[] | null
   }[] | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1262,30 +1174,22 @@ await corsair.tikhub.api.tiktok.getVideoComments({ aweme_id: '732615604596806787
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1319,7 +1223,7 @@ await corsair.tikhub.api.tiktok.getVideoComments({ aweme_id: '732615604596806787
   cursor?: number | string | null,
   has_more?: boolean | number | null,
   total?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1358,30 +1262,22 @@ await corsair.tikhub.api.tiktok.searchVideos({ keyword: 'open source ai agents',
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1516,7 +1412,7 @@ await corsair.tikhub.api.tiktok.searchVideos({ keyword: 'open source ai agents',
   }[] | null,
   cursor?: number | string | null,
   has_more?: boolean | number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1552,35 +1448,27 @@ await corsair.tikhub.api.twitter.getTweet({ tweet_id: '1808168603721650364' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1615,35 +1503,27 @@ await corsair.tikhub.api.twitter.getUserProfile({ screen_name: 'elonmusk' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1679,35 +1559,27 @@ await corsair.tikhub.api.twitter.getUserTweets({ screen_name: 'elonmusk' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1743,35 +1615,27 @@ await corsair.tikhub.api.twitter.searchTweets({ keyword: 'corsair', search_type:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1810,30 +1674,22 @@ await corsair.tikhub.api.youtube.getChannelVideos({ channel_id: 'UCJHBJ7F-nAIlMG
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1861,7 +1717,7 @@ await corsair.tikhub.api.youtube.getChannelVideos({ channel_id: 'UCJHBJ7F-nAIlMG
     url?: string | null
   }[] | null,
   continuation_token?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1896,30 +1752,22 @@ await corsair.tikhub.api.youtube.getVideo({ video_id: 'dQw4w9WgXcQ' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -1962,7 +1810,7 @@ await corsair.tikhub.api.youtube.getVideo({ video_id: 'dQw4w9WgXcQ' });
     title?: string | null,
     time_description?: string | null
   }[] | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1991,7 +1839,7 @@ await corsair.tikhub.api.youtube.search({ keyword: 'python tutorial', type: 'vid
 | `continuation_token` | `string` | No | continuation_token from the previous response |
 | `upload_date` | `last_hour \| today \| this_week \| this_month \| this_year` | No | — |
 | `type` | `video \| channel \| playlist \| movie` | No | — |
-| `duration` | `short \| medium \| long` | No | short (<4 min), medium (4-20 min), long (>20 min) |
+| `duration` | `short \| medium \| long` | No | short (&lt;4 min), medium (4-20 min), long (&gt;20 min) |
 | `features` | `string` | No | Comma-separated: live, 4k, hd, subtitles, creative_commons, 360, vr180, 3d, hdr |
 | `sort_by` | `relevance \| upload_date \| view_count \| rating` | No | — |
 
@@ -2002,30 +1850,22 @@ await corsair.tikhub.api.youtube.search({ keyword: 'python tutorial', type: 'vid
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number` | Yes | — |
-| `request_id` | `string` | No | — |
+| `request_id` | `string \| null` | No | — |
 | `message` | `string` | No | — |
 | `message_zh` | `string` | No | — |
 | `support` | `string` | No | — |
 | `time` | `string` | No | — |
 | `time_stamp` | `number` | No | — |
 | `time_zone` | `string` | No | — |
-| `docs` | `string` | No | — |
-| `cache_message` | `string` | No | — |
-| `cache_message_zh` | `string` | No | — |
-| `cache_url` | `string` | No | — |
+| `docs` | `string \| null` | No | — |
+| `cache_message` | `string \| null` | No | — |
+| `cache_message_zh` | `string \| null` | No | — |
+| `cache_url` | `string \| null` | No | — |
 | `router` | `string` | No | — |
-| `params` | `object` | No | — |
-| `data` | `object` | No | — |
+| `params` | `Record<string, any>` | No | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="data full type">
 
 ```ts
@@ -2053,7 +1893,7 @@ await corsair.tikhub.api.youtube.search({ keyword: 'python tutorial', type: 'vid
   playlists?: {
   }[] | null,
   continuation_token?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

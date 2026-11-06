@@ -29,17 +29,7 @@ await corsair.huggingface.api.account.deleteNotifications({});
 |------|------|----------|-------------|
 | `discussionIds` | `string[]` | No | — |
 | `applyToAll` | `boolean` | No | — |
-| `filter` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="filter full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `filter` | `Record<string, any>` | No | — |
 
 
 
@@ -174,7 +164,7 @@ await corsair.huggingface.api.datasets.checkUploadMethod({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `files` | `object[]` | Yes | — |
 | `gitAttributes` | `string` | No | — |
 | `gitIgnore` | `string` | No | — |
@@ -244,7 +234,7 @@ await corsair.huggingface.api.datasets.createBranch({});
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
 | `branch` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `startingPoint` | `string` | No | — |
 | `emptyBranch` | `boolean` | No | — |
 | `overwrite` | `boolean` | No | — |
@@ -273,7 +263,7 @@ await corsair.huggingface.api.datasets.createCommit({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `summary` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `parentCommit` | `string` | No | — |
@@ -344,7 +334,7 @@ await corsair.huggingface.api.datasets.createSqlConsoleEmbed({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `repoType` | `dataset` | Yes | — |
+| `repoType` | `dataset` | No | Defaults to "dataset". |
 | `title` | `string` | No | — |
 | `sql` | `string` | Yes | — |
 | `private` | `boolean` | No | — |
@@ -373,7 +363,7 @@ await corsair.huggingface.api.datasets.createTag({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `tag` | `string` | Yes | — |
 | `message` | `string` | No | — |
 
@@ -670,8 +660,8 @@ await corsair.huggingface.api.datasets.getNotebook({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
-| `path` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
+| `path` | `string` | No | Defaults to "". |
 
 
 
@@ -697,7 +687,7 @@ await corsair.huggingface.api.datasets.getResolve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `path` | `string` | Yes | — |
 | `xetFileInfo` | `boolean` | No | — |
 
@@ -725,7 +715,7 @@ await corsair.huggingface.api.datasets.getResolveCache({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `path` | `string` | Yes | — |
 | `xetFileInfo` | `boolean` | No | — |
 
@@ -755,8 +745,8 @@ await corsair.huggingface.api.datasets.getRows({});
 | `dataset` | `string` | Yes | — |
 | `config` | `string` | Yes | — |
 | `split` | `string` | Yes | — |
-| `offset` | `number` | Yes | — |
-| `length` | `number` | Yes | — |
+| `offset` | `number` | No | Defaults to 0. |
+| `length` | `number` | No | Defaults to 100. |
 
 
 
@@ -886,8 +876,8 @@ await corsair.huggingface.api.datasets.getTreeSize({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
-| `path` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
+| `path` | `string` | No | Defaults to "". |
 
 
 
@@ -913,7 +903,7 @@ await corsair.huggingface.api.datasets.getXetReadToken({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 
 
 
@@ -1000,7 +990,7 @@ await corsair.huggingface.api.datasets.listAccessRequests({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `status` | `pending \| accepted \| rejected` | Yes | — |
+| `status` | `pending \| accepted \| rejected` | No | Defaults to "pending". |
 
 
 
@@ -1026,7 +1016,7 @@ await corsair.huggingface.api.datasets.listCommits({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `limit` | `number` | No | — |
 | `p` | `number` | No | — |
 
@@ -1081,7 +1071,7 @@ await corsair.huggingface.api.datasets.listPathsInfo({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `paths` | `string[]` | Yes | — |
 | `expand` | `boolean` | No | — |
 
@@ -1192,7 +1182,7 @@ await corsair.huggingface.api.datasets.squashCommits({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `message` | `string` | Yes | — |
 
 
@@ -1222,17 +1212,7 @@ await corsair.huggingface.api.datasets.updateSettings({});
 | `private` | `boolean` | No | — |
 | `gated` | `boolean \| string` | No | — |
 | `discussionsDisabled` | `boolean` | No | — |
-| `extra` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="extra full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extra` | `Record<string, any>` | No | — |
 
 
 
@@ -1258,7 +1238,7 @@ await corsair.huggingface.api.datasets.updateSqlConsoleEmbed({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `repoType` | `dataset` | Yes | — |
+| `repoType` | `dataset` | No | Defaults to "dataset". |
 | `embedId` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `sql` | `string` | No | — |
@@ -1638,28 +1618,10 @@ await corsair.huggingface.api.inference.chatCompletion({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `messages` | `object[]` | Yes | — |
+| `messages` | `Record<string, any>[]` | Yes | — |
 | `temperature` | `number` | No | — |
 | `maxTokens` | `number` | No | — |
-| `extra` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="messages full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="extra full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extra` | `Record<string, any>` | No | — |
 
 
 
@@ -1686,17 +1648,7 @@ await corsair.huggingface.api.inference.embeddings({});
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
 | `input` | `string \| string[]` | Yes | — |
-| `extra` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="extra full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extra` | `Record<string, any>` | No | — |
 
 
 
@@ -1746,7 +1698,7 @@ await corsair.huggingface.api.models.checkUploadMethod({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `files` | `object[]` | Yes | — |
 | `gitAttributes` | `string` | No | — |
 | `gitIgnore` | `string` | No | — |
@@ -1789,7 +1741,7 @@ await corsair.huggingface.api.models.createBranch({});
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
 | `branch` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `startingPoint` | `string` | No | — |
 | `emptyBranch` | `boolean` | No | — |
 | `overwrite` | `boolean` | No | — |
@@ -1818,7 +1770,7 @@ await corsair.huggingface.api.models.createCommit({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `summary` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `parentCommit` | `string` | No | — |
@@ -1889,7 +1841,7 @@ await corsair.huggingface.api.models.createTag({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `tag` | `string` | Yes | — |
 | `message` | `string` | No | — |
 
@@ -2049,8 +2001,8 @@ await corsair.huggingface.api.models.getNotebook({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
-| `path` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
+| `path` | `string` | No | Defaults to "". |
 
 
 
@@ -2076,7 +2028,7 @@ await corsair.huggingface.api.models.getResolve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `path` | `string` | Yes | — |
 | `xetFileInfo` | `boolean` | No | — |
 
@@ -2104,7 +2056,7 @@ await corsair.huggingface.api.models.getResolveCache({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `path` | `string` | Yes | — |
 | `xetFileInfo` | `boolean` | No | — |
 
@@ -2182,8 +2134,8 @@ await corsair.huggingface.api.models.getTreeSize({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
-| `path` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
+| `path` | `string` | No | Defaults to "". |
 
 
 
@@ -2209,7 +2161,7 @@ await corsair.huggingface.api.models.getXetReadToken({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 
 
 
@@ -2268,7 +2220,7 @@ await corsair.huggingface.api.models.listCommits({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `limit` | `number` | No | — |
 | `p` | `number` | No | — |
 
@@ -2296,7 +2248,7 @@ await corsair.huggingface.api.models.listPathsInfo({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `paths` | `string[]` | Yes | — |
 | `expand` | `boolean` | No | — |
 
@@ -2353,17 +2305,7 @@ await corsair.huggingface.api.models.updateSettings({});
 | `private` | `boolean` | No | — |
 | `gated` | `boolean \| string` | No | — |
 | `discussionsDisabled` | `boolean` | No | — |
-| `extra` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="extra full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extra` | `Record<string, any>` | No | — |
 
 
 
@@ -2471,17 +2413,7 @@ await corsair.huggingface.api.papers.claimAuthorship({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `paperId` | `string` | Yes | — |
-| `extra` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="extra full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extra` | `Record<string, any>` | No | — |
 
 
 
@@ -2643,17 +2575,7 @@ await corsair.huggingface.api.repos.create({});
 | `sdk` | `string` | No | — |
 | `hardware` | `string` | No | — |
 | `organization` | `string` | No | — |
-| `extra` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="extra full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extra` | `Record<string, any>` | No | — |
 
 
 
@@ -2680,7 +2602,7 @@ await corsair.huggingface.api.repos.getResolve({});
 |------|------|----------|-------------|
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `path` | `string` | Yes | — |
 | `xetFileInfo` | `boolean` | No | — |
 
@@ -2709,8 +2631,8 @@ await corsair.huggingface.api.repos.listFiles({});
 |------|------|----------|-------------|
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
-| `path` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
+| `path` | `string` | No | Defaults to "". |
 | `recursive` | `boolean` | No | — |
 | `expand` | `boolean` | No | — |
 | `cursor` | `string` | No | — |
@@ -2741,17 +2663,7 @@ await corsair.huggingface.api.repos.requestAccess({});
 |------|------|----------|-------------|
 | `repoType` | `model \| dataset \| space` | Yes | — |
 | `repoId` | `string` | Yes | — |
-| `fields` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | No | — |
 
 
 
@@ -2779,28 +2691,10 @@ await corsair.huggingface.api.settings.createWebhook({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | — |
-| `watched` | `object[]` | No | — |
+| `watched` | `Record<string, any>[]` | No | — |
 | `domains` | `string[]` | No | — |
 | `secret` | `string` | No | — |
-| `extra` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="watched full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="extra full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extra` | `Record<string, any>` | No | — |
 
 
 
@@ -2981,17 +2875,7 @@ await corsair.huggingface.api.settings.updateNotifications({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `notifications` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="notifications full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `notifications` | `Record<string, boolean>` | Yes | — |
 
 
 
@@ -3016,26 +2900,8 @@ await corsair.huggingface.api.settings.updateWatch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `add` | `object[]` | No | — |
-| `remove` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="add full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="remove full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `add` | `Record<string, any>[]` | No | — |
+| `remove` | `Record<string, any>[]` | No | — |
 
 
 
@@ -3062,27 +2928,9 @@ await corsair.huggingface.api.settings.updateWebhook({});
 |------|------|----------|-------------|
 | `webhookId` | `string` | Yes | — |
 | `url` | `string` | No | — |
-| `watched` | `object[]` | No | — |
+| `watched` | `Record<string, any>[]` | No | — |
 | `domains` | `string[]` | No | — |
-| `extra` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="watched full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="extra full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extra` | `Record<string, any>` | No | — |
 
 
 
@@ -3136,7 +2984,7 @@ await corsair.huggingface.api.spaces.checkUploadMethod({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `files` | `object[]` | Yes | — |
 | `gitAttributes` | `string` | No | — |
 | `gitIgnore` | `string` | No | — |
@@ -3179,7 +3027,7 @@ await corsair.huggingface.api.spaces.createBranch({});
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
 | `branch` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `startingPoint` | `string` | No | — |
 | `emptyBranch` | `boolean` | No | — |
 | `overwrite` | `boolean` | No | — |
@@ -3208,7 +3056,7 @@ await corsair.huggingface.api.spaces.createCommit({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `summary` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `parentCommit` | `string` | No | — |
@@ -3307,7 +3155,7 @@ await corsair.huggingface.api.spaces.createTag({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `tag` | `string` | Yes | — |
 | `message` | `string` | No | — |
 
@@ -3597,8 +3445,8 @@ await corsair.huggingface.api.spaces.getNotebook({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
-| `path` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
+| `path` | `string` | No | Defaults to "". |
 
 
 
@@ -3624,7 +3472,7 @@ await corsair.huggingface.api.spaces.getResolve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `path` | `string` | Yes | — |
 | `xetFileInfo` | `boolean` | No | — |
 
@@ -3652,7 +3500,7 @@ await corsair.huggingface.api.spaces.getResolveCache({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `path` | `string` | Yes | — |
 | `xetFileInfo` | `boolean` | No | — |
 
@@ -3705,8 +3553,8 @@ await corsair.huggingface.api.spaces.getTreeSize({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
-| `path` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
+| `path` | `string` | No | Defaults to "". |
 
 
 
@@ -3732,7 +3580,7 @@ await corsair.huggingface.api.spaces.getXetReadToken({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 
 
 
@@ -3758,7 +3606,7 @@ await corsair.huggingface.api.spaces.getXetWriteToken({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 
 
 
@@ -3817,7 +3665,7 @@ await corsair.huggingface.api.spaces.listCommits({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `limit` | `number` | No | — |
 | `p` | `number` | No | — |
 
@@ -3892,7 +3740,7 @@ await corsair.huggingface.api.spaces.listPathsInfo({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `paths` | `string[]` | Yes | — |
 | `expand` | `boolean` | No | — |
 
@@ -3946,7 +3794,7 @@ await corsair.huggingface.api.spaces.squashCommits({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `repoId` | `string` | Yes | — |
-| `revision` | `string` | Yes | — |
+| `revision` | `string` | No | Defaults to "main". |
 | `message` | `string` | Yes | — |
 
 
@@ -3976,17 +3824,7 @@ await corsair.huggingface.api.spaces.updateSettings({});
 | `private` | `boolean` | No | — |
 | `gated` | `boolean \| string` | No | — |
 | `discussionsDisabled` | `boolean` | No | — |
-| `extra` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="extra full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `extra` | `Record<string, any>` | No | — |
 
 
 

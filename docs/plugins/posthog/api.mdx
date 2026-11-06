@@ -32,7 +32,7 @@ await corsair.posthog.api.events.aliasCreate({});
 
 
 
-**Output:** `object`
+**Output:** `number \| string \| object \| any`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -67,23 +67,13 @@ await corsair.posthog.api.events.eventCreate({});
 |------|------|----------|-------------|
 | `distinct_id` | `string` | Yes | — |
 | `event` | `string` | Yes | — |
-| `properties` | `object` | No | — |
+| `properties` | `Record<string, any>` | No | — |
 | `timestamp` | `string` | No | — |
 | `uuid` | `string` | No | — |
 
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `number \| string \| object \| any`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -117,21 +107,11 @@ await corsair.posthog.api.events.identityCreate({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `distinct_id` | `string` | Yes | — |
-| `properties` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `properties` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
+**Output:** `number \| string \| object \| any`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -166,23 +146,13 @@ await corsair.posthog.api.events.trackPage({});
 |------|------|----------|-------------|
 | `distinct_id` | `string` | Yes | — |
 | `url` | `string` | Yes | — |
-| `properties` | `object` | No | — |
+| `properties` | `Record<string, any>` | No | — |
 | `timestamp` | `string` | No | — |
 | `uuid` | `string` | No | — |
 
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `number \| string \| object \| any`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -217,23 +187,13 @@ await corsair.posthog.api.events.trackScreen({});
 |------|------|----------|-------------|
 | `distinct_id` | `string` | Yes | — |
 | `screen_name` | `string` | Yes | — |
-| `properties` | `object` | No | — |
+| `properties` | `Record<string, any>` | No | — |
 | `timestamp` | `string` | No | — |
 | `uuid` | `string` | No | — |
 
-<AccordionGroup>
-<Accordion title="properties full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
-
-**Output:** `object`
+**Output:** `number \| string \| object \| any`
 
 <AccordionGroup>
 <Accordion title="Output full type">

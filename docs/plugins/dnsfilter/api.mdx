@@ -3050,8 +3050,7 @@ await corsair.dnsfilter.api.dashboards.available({});
 {
   id?: number,
   name?: string,
-  data?: {
-  },
+  data?: Record<string, any>,
   is_public?: boolean,
   created_at?: string,
   updated_at?: string,
@@ -3091,8 +3090,7 @@ await corsair.dnsfilter.api.dashboards.create({});
 ```ts
 {
   name: string,
-  data: {
-  },
+  data: Record<string, any>,
   is_public?: boolean
 }
 ```
@@ -3107,21 +3105,13 @@ await corsair.dnsfilter.api.dashboards.create({});
 |------|------|----------|-------------|
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
-| `data` | `object` | No | — |
+| `data` | `Record<string, any>` | No | — |
 | `is_public` | `boolean` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 | `user` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="user full type">
 
 ```ts
@@ -3211,8 +3201,7 @@ await corsair.dnsfilter.api.dashboards.list({});
 {
   id?: number,
   name?: string,
-  data?: {
-  },
+  data?: Record<string, any>,
   is_public?: boolean,
   created_at?: string,
   updated_at?: string,
@@ -3302,8 +3291,7 @@ await corsair.dnsfilter.api.dashboards.owned({});
 {
   id?: number,
   name?: string,
-  data?: {
-  },
+  data?: Record<string, any>,
   is_public?: boolean,
   created_at?: string,
   updated_at?: string,
@@ -3369,8 +3357,7 @@ await corsair.dnsfilter.api.dashboards.update({});
 ```ts
 {
   name?: string,
-  data?: {
-  },
+  data?: Record<string, any>,
   is_public?: boolean
 }
 ```
@@ -3385,21 +3372,13 @@ await corsair.dnsfilter.api.dashboards.update({});
 |------|------|----------|-------------|
 | `id` | `number` | No | — |
 | `name` | `string` | No | — |
-| `data` | `object` | No | — |
+| `data` | `Record<string, any>` | No | — |
 | `is_public` | `boolean` | No | — |
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 | `user` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="user full type">
 
 ```ts
@@ -3582,8 +3561,10 @@ await corsair.dnsfilter.api.domainNotes.batchDestroy({});
 <Accordion title="Output full type">
 
 ```ts
-{
-}
+Record<string, {
+  allow_notes?: Record<string, any>,
+  block_notes?: Record<string, any>
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -3635,8 +3616,10 @@ await corsair.dnsfilter.api.domainNotes.batchUpdate({});
 <Accordion title="Output full type">
 
 ```ts
-{
-}
+Record<string, {
+  allow_notes?: Record<string, any>,
+  block_notes?: Record<string, any>
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -3672,8 +3655,10 @@ await corsair.dnsfilter.api.domainNotes.delete({});
 <Accordion title="Output full type">
 
 ```ts
-{
-}
+Record<string, {
+  allow_notes?: Record<string, any>,
+  block_notes?: Record<string, any>
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -3709,8 +3694,10 @@ await corsair.dnsfilter.api.domainNotes.get({});
 <Accordion title="Output full type">
 
 ```ts
-{
-}
+Record<string, {
+  allow_notes?: Record<string, any>,
+  block_notes?: Record<string, any>
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -3760,8 +3747,10 @@ await corsair.dnsfilter.api.domainNotes.update({});
 <Accordion title="Output full type">
 
 ```ts
-{
-}
+Record<string, {
+  allow_notes?: Record<string, any>,
+  block_notes?: Record<string, any>
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -8444,8 +8433,7 @@ await corsair.dnsfilter.api.organizations.create({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: {
-    },
+    metadata?: Record<string, any>,
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -8571,8 +8559,7 @@ await corsair.dnsfilter.api.organizations.get({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: {
-    },
+    metadata?: Record<string, any>,
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -8691,8 +8678,7 @@ await corsair.dnsfilter.api.organizations.list({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: {
-    },
+    metadata?: Record<string, any>,
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -8822,8 +8808,7 @@ await corsair.dnsfilter.api.organizations.listAll({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: {
-    },
+    metadata?: Record<string, any>,
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -8899,31 +8884,11 @@ await corsair.dnsfilter.api.organizations.promoteToMsp({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `plan` | `string` | No | — |
-| `zapier_params` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="zapier_params full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `zapier_params` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+**Output:** `Record<string, any>`
 
 
 ---
@@ -9064,8 +9029,7 @@ await corsair.dnsfilter.api.organizations.update({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: {
-    },
+    metadata?: Record<string, any>,
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -9914,8 +9878,7 @@ await corsair.dnsfilter.api.policies.application({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: {
-    },
+    metadata?: Record<string, any>,
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -10109,8 +10072,7 @@ await corsair.dnsfilter.api.policies.applicationUpdate({});
     first_traffic_sent?: string,
     industry?: string,
     managed_by_msp_id?: number,
-    metadata?: {
-    },
+    metadata?: Record<string, any>,
     msp_feature_flags?: string[],
     name?: string,
     owned_msp_id?: number,
@@ -13208,25 +13170,17 @@ await corsair.dnsfilter.api.trafficReports.queryLogs({});
 ```ts
 {
   organization_id?: number,
-  organization_ids?: (
-    number | string
-  )[],
+  organization_ids?: (number | string)[],
   organization_name?: string,
   organization_names?: string[],
   network_id?: number,
-  network_ids?: (
-    number | string
-  )[],
+  network_ids?: (number | string)[],
   client_id?: string,
   client_ids?: string[],
   user_id?: number,
-  user_ids?: (
-    number | string
-  )[],
+  user_ids?: (number | string)[],
   collection_id?: number,
-  collection_ids?: (
-    number | string
-  )[],
+  collection_ids?: (number | string)[],
   values?: {
     time?: string,
     fqdn?: string,
@@ -15265,9 +15219,7 @@ await corsair.dnsfilter.api.trafficReports.totalRequestsGeo({});
 {
   organization_ids?: number[],
   organization_names?: string[],
-  network_ids?: (
-    number | string
-  )[],
+  network_ids?: (number | string)[],
   network_names?: string[],
   values?: {
     network_id?: number,
@@ -16050,8 +16002,7 @@ await corsair.dnsfilter.api.unblockRequests.list({
 
 ```ts
 {
-  value?: {
-  },
+  value?: Record<string, any>,
   operator?: string
 }
 ```
@@ -16081,8 +16032,7 @@ await corsair.dnsfilter.api.unblockRequests.list({
 
 ```ts
 {
-  value?: {
-  },
+  value?: Record<string, any>,
   operator?: string
 }
 ```
@@ -17236,7 +17186,7 @@ await corsair.dnsfilter.api.userAgents.list({});
 |------|------|----------|-------------|
 | `data` | `object[]` | No | — |
 | `links` | `object` | No | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -17319,14 +17269,6 @@ await corsair.dnsfilter.api.userAgents.list({});
   prev?: string,
   next?: string,
   last?: string
-}
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
 }
 ```
 </Accordion>

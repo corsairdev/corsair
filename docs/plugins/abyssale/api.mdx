@@ -119,9 +119,7 @@ await corsair.abyssale.api.fonts.list({});
   id: string,
   name: string,
   type: google | custom,
-  available_weights: (
-    number | string
-  )[]
+  available_weights: (number | string)[]
 }[]
 ```
 </Accordion>
@@ -165,8 +163,8 @@ await corsair.abyssale.api.generation.batch({});
 <Accordion title="elements full type">
 
 ```ts
-{
-}
+Record<string, {
+}>
 ```
 </Accordion>
 
@@ -215,8 +213,8 @@ await corsair.abyssale.api.generation.batch({});
 <Accordion title="pages full type">
 
 ```ts
-{
-}
+Record<string, {
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -260,8 +258,8 @@ await corsair.abyssale.api.generation.image({});
 <Accordion title="elements full type">
 
 ```ts
-{
-}
+Record<string, {
+}>
 ```
 </Accordion>
 </AccordionGroup>

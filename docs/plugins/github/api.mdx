@@ -71,8 +71,8 @@ await corsair.github.api.comments.get({});
 | `issueUrl` | `string` | No | — |
 | `body` | `string` | No | — |
 | `authorAssociation` | `string` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 
 
 
@@ -211,8 +211,8 @@ await corsair.github.api.comments.update({});
 | `issueUrl` | `string` | No | — |
 | `body` | `string` | No | — |
 | `authorAssociation` | `string` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 
 
 
@@ -250,7 +250,7 @@ await corsair.github.api.discussions.get({});
 | `nodeId` | `string` | No | — |
 | `number` | `number` | Yes | — |
 | `title` | `string` | Yes | — |
-| `body` | `string` | No | — |
+| `body` | `string \| null` | No | — |
 | `htmlUrl` | `string` | No | — |
 | `repositoryUrl` | `string` | No | — |
 | `state` | `string` | No | — |
@@ -258,9 +258,9 @@ await corsair.github.api.discussions.get({});
 | `comments` | `number` | No | — |
 | `authorAssociation` | `string` | No | — |
 | `category` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
-| `answerChosenAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
+| `answerChosenAt` | `Date \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="category full type">
@@ -435,8 +435,7 @@ await corsair.github.api.events.list({});
     starredAt?: Date | null,
     userViewType?: string
   },
-  payload?: {
-  },
+  payload?: Record<string, any>,
   public?: boolean,
   createdAt?: Date | null
 }[]
@@ -532,8 +531,7 @@ await corsair.github.api.events.listForNetwork({});
     starredAt?: Date | null,
     userViewType?: string
   },
-  payload?: {
-  },
+  payload?: Record<string, any>,
   public?: boolean,
   createdAt?: Date | null
 }[]
@@ -628,8 +626,7 @@ await corsair.github.api.events.listForOrg({});
     starredAt?: Date | null,
     userViewType?: string
   },
-  payload?: {
-  },
+  payload?: Record<string, any>,
   public?: boolean,
   createdAt?: Date | null
 }[]
@@ -725,8 +722,7 @@ await corsair.github.api.events.listForRepository({});
     starredAt?: Date | null,
     userViewType?: string
   },
-  payload?: {
-  },
+  payload?: Record<string, any>,
   public?: boolean,
   createdAt?: Date | null
 }[]
@@ -821,8 +817,7 @@ await corsair.github.api.events.listForUser({});
     starredAt?: Date | null,
     userViewType?: string
   },
-  payload?: {
-  },
+  payload?: Record<string, any>,
   public?: boolean,
   createdAt?: Date | null
 }[]
@@ -918,8 +913,7 @@ await corsair.github.api.events.listForUserOrg({});
     starredAt?: Date | null,
     userViewType?: string
   },
-  payload?: {
-  },
+  payload?: Record<string, any>,
   public?: boolean,
   createdAt?: Date | null
 }[]
@@ -1014,8 +1008,7 @@ await corsair.github.api.events.listPublicForUser({});
     starredAt?: Date | null,
     userViewType?: string
   },
-  payload?: {
-  },
+  payload?: Record<string, any>,
   public?: boolean,
   createdAt?: Date | null
 }[]
@@ -1110,8 +1103,7 @@ await corsair.github.api.events.listPublicReceivedForUser({});
     starredAt?: Date | null,
     userViewType?: string
   },
-  payload?: {
-  },
+  payload?: Record<string, any>,
   public?: boolean,
   createdAt?: Date | null
 }[]
@@ -1206,8 +1198,7 @@ await corsair.github.api.events.listReceivedForUser({});
     starredAt?: Date | null,
     userViewType?: string
   },
-  payload?: {
-  },
+  payload?: Record<string, any>,
   public?: boolean,
   createdAt?: Date | null
 }[]
@@ -1254,14 +1245,14 @@ await corsair.github.api.forks.create({});
 | `fullName` | `string` | No | — |
 | `private` | `boolean` | No | — |
 | `htmlUrl` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `fork` | `boolean` | No | — |
 | `url` | `string` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
-| `pushedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
+| `pushedAt` | `Date \| null` | No | — |
 | `defaultBranch` | `string` | No | — |
-| `language` | `string` | No | — |
+| `language` | `string \| null` | No | — |
 | `stargazersCount` | `number` | No | — |
 | `watchersCount` | `number` | No | — |
 | `forksCount` | `number` | No | — |
@@ -1411,8 +1402,8 @@ await corsair.github.api.issues.create({});
 | `repo` | `string` | Yes | — |
 | `title` | `string \| number` | Yes | — |
 | `body` | `string` | No | — |
-| `assignee` | `string` | No | — |
-| `milestone` | `string \| number` | No | — |
+| `assignee` | `string \| null` | No | — |
+| `milestone` | `string \| number \| null` | No | — |
 | `labels` | `object[]` | No | — |
 | `assignees` | `string[]` | No | — |
 
@@ -1420,14 +1411,12 @@ await corsair.github.api.issues.create({});
 <Accordion title="labels full type">
 
 ```ts
-(
-  string | {
-    id?: number,
-    name?: string,
-    description?: string | null,
-    color?: string | null
-  }
-)[]
+(string | {
+  id?: number,
+  name?: string,
+  description?: string | null,
+  color?: string | null
+})[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1448,18 +1437,18 @@ await corsair.github.api.issues.create({});
 | `htmlUrl` | `string` | No | — |
 | `number` | `number` | Yes | — |
 | `state` | `string` | Yes | — |
-| `stateReason` | `completed \| reopened \| not_planned \| duplicate` | No | — |
+| `stateReason` | `completed \| reopened \| not_planned \| duplicate \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `body` | `string` | No | — |
-| `user` | `object` | No | — |
+| `body` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
 | `labels` | `object[]` | No | — |
-| `assignee` | `object` | No | — |
-| `assignees` | `object[]` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `assignees` | `object[] \| null` | No | — |
 | `locked` | `boolean` | No | — |
 | `comments` | `number` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
-| `closedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
+| `closedAt` | `Date \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -1488,24 +1477,22 @@ await corsair.github.api.issues.create({});
   siteAdmin?: boolean,
   starredAt?: Date | null,
   userViewType?: string
-}
+} | null
 ```
 </Accordion>
 
 <Accordion title="labels full type">
 
 ```ts
-(
-  string | {
-    id?: number,
-    nodeId?: string,
-    url?: string,
-    name?: string,
-    description?: string | null,
-    color?: string | null,
-    default?: boolean
-  }
-)[]
+(string | {
+  id?: number,
+  nodeId?: string,
+  url?: string,
+  name?: string,
+  description?: string | null,
+  color?: string | null,
+  default?: boolean
+})[]
 ```
 </Accordion>
 
@@ -1535,7 +1522,7 @@ await corsair.github.api.issues.create({});
   siteAdmin?: boolean,
   starredAt?: Date | null,
   userViewType?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -1565,7 +1552,7 @@ await corsair.github.api.issues.create({});
   siteAdmin?: boolean,
   starredAt?: Date | null,
   userViewType?: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1609,8 +1596,8 @@ await corsair.github.api.issues.createComment({});
 | `bodyHtml` | `string` | No | — |
 | `htmlUrl` | `string` | No | — |
 | `user` | `object` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `issueUrl` | `string` | No | — |
 
 <AccordionGroup>
@@ -1667,18 +1654,18 @@ await corsair.github.api.issues.get({});
 | `htmlUrl` | `string` | No | — |
 | `number` | `number` | Yes | — |
 | `state` | `string` | Yes | — |
-| `stateReason` | `completed \| reopened \| not_planned \| duplicate` | No | — |
+| `stateReason` | `completed \| reopened \| not_planned \| duplicate \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `body` | `string` | No | — |
-| `user` | `object` | No | — |
+| `body` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
 | `labels` | `object[]` | No | — |
-| `assignee` | `object` | No | — |
-| `assignees` | `object[]` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `assignees` | `object[] \| null` | No | — |
 | `locked` | `boolean` | No | — |
 | `comments` | `number` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
-| `closedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
+| `closedAt` | `Date \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -1707,24 +1694,22 @@ await corsair.github.api.issues.get({});
   siteAdmin?: boolean,
   starredAt?: Date | null,
   userViewType?: string
-}
+} | null
 ```
 </Accordion>
 
 <Accordion title="labels full type">
 
 ```ts
-(
-  string | {
-    id?: number,
-    nodeId?: string,
-    url?: string,
-    name?: string,
-    description?: string | null,
-    color?: string | null,
-    default?: boolean
-  }
-)[]
+(string | {
+  id?: number,
+  nodeId?: string,
+  url?: string,
+  name?: string,
+  description?: string | null,
+  color?: string | null,
+  default?: boolean
+})[]
 ```
 </Accordion>
 
@@ -1754,7 +1739,7 @@ await corsair.github.api.issues.get({});
   siteAdmin?: boolean,
   starredAt?: Date | null,
   userViewType?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -1784,7 +1769,7 @@ await corsair.github.api.issues.get({});
   siteAdmin?: boolean,
   starredAt?: Date | null,
   userViewType?: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1869,17 +1854,15 @@ await corsair.github.api.issues.list({});
     starredAt?: Date | null,
     userViewType?: string
   } | null,
-  labels?: (
-    string | {
-      id?: number,
-      nodeId?: string,
-      url?: string,
-      name?: string,
-      description?: string | null,
-      color?: string | null,
-      default?: boolean
-    }
-  )[],
+  labels?: (string | {
+    id?: number,
+    nodeId?: string,
+    url?: string,
+    name?: string,
+    description?: string | null,
+    color?: string | null,
+    default?: boolean
+  })[],
   assignee?: {
     name?: string | null,
     email?: string | null,
@@ -1960,12 +1943,12 @@ await corsair.github.api.issues.update({});
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `issueNumber` | `number` | Yes | — |
-| `title` | `string \| number` | No | — |
-| `body` | `string` | No | — |
-| `assignee` | `string` | No | — |
+| `title` | `string \| number \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `assignee` | `string \| null` | No | — |
 | `state` | `open \| closed` | No | — |
-| `stateReason` | `completed \| not_planned \| duplicate \| reopened` | No | — |
-| `milestone` | `string \| number` | No | — |
+| `stateReason` | `completed \| not_planned \| duplicate \| reopened \| null` | No | — |
+| `milestone` | `string \| number \| null` | No | — |
 | `labels` | `object[]` | No | — |
 | `assignees` | `string[]` | No | — |
 
@@ -1973,14 +1956,12 @@ await corsair.github.api.issues.update({});
 <Accordion title="labels full type">
 
 ```ts
-(
-  string | {
-    id?: number,
-    name?: string,
-    description?: string | null,
-    color?: string | null
-  }
-)[]
+(string | {
+  id?: number,
+  name?: string,
+  description?: string | null,
+  color?: string | null
+})[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -2001,18 +1982,18 @@ await corsair.github.api.issues.update({});
 | `htmlUrl` | `string` | No | — |
 | `number` | `number` | Yes | — |
 | `state` | `string` | Yes | — |
-| `stateReason` | `completed \| reopened \| not_planned \| duplicate` | No | — |
+| `stateReason` | `completed \| reopened \| not_planned \| duplicate \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `body` | `string` | No | — |
-| `user` | `object` | No | — |
+| `body` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
 | `labels` | `object[]` | No | — |
-| `assignee` | `object` | No | — |
-| `assignees` | `object[]` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `assignees` | `object[] \| null` | No | — |
 | `locked` | `boolean` | No | — |
 | `comments` | `number` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
-| `closedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
+| `closedAt` | `Date \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -2041,24 +2022,22 @@ await corsair.github.api.issues.update({});
   siteAdmin?: boolean,
   starredAt?: Date | null,
   userViewType?: string
-}
+} | null
 ```
 </Accordion>
 
 <Accordion title="labels full type">
 
 ```ts
-(
-  string | {
-    id?: number,
-    nodeId?: string,
-    url?: string,
-    name?: string,
-    description?: string | null,
-    color?: string | null,
-    default?: boolean
-  }
-)[]
+(string | {
+  id?: number,
+  nodeId?: string,
+  url?: string,
+  name?: string,
+  description?: string | null,
+  color?: string | null,
+  default?: boolean
+})[]
 ```
 </Accordion>
 
@@ -2088,7 +2067,7 @@ await corsair.github.api.issues.update({});
   siteAdmin?: boolean,
   starredAt?: Date | null,
   userViewType?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -2118,7 +2097,7 @@ await corsair.github.api.issues.update({});
   siteAdmin?: boolean,
   starredAt?: Date | null,
   userViewType?: string
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2183,8 +2162,8 @@ await corsair.github.api.pullRequests.createReview({});
 | `state` | `string` | No | — |
 | `htmlUrl` | `string` | No | — |
 | `pullRequestUrl` | `string` | No | — |
-| `submittedAt` | `Date` | No | — |
-| `commitId` | `string` | No | — |
+| `submittedAt` | `Date \| null` | No | — |
+| `commitId` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -2240,16 +2219,16 @@ await corsair.github.api.pullRequests.get({});
 | `locked` | `boolean` | No | — |
 | `title` | `string` | Yes | — |
 | `user` | `object` | No | — |
-| `body` | `string` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
-| `closedAt` | `Date` | No | — |
-| `mergedAt` | `Date` | No | — |
-| `mergeCommitSha` | `string` | No | — |
-| `assignee` | `object` | No | — |
-| `assignees` | `object[]` | No | — |
+| `body` | `string \| null` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
+| `closedAt` | `Date \| null` | No | — |
+| `mergedAt` | `Date \| null` | No | — |
+| `mergeCommitSha` | `string \| null` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `assignees` | `object[] \| null` | No | — |
 | `labels` | `object[]` | No | — |
-| `milestone` | `object` | No | — |
+| `milestone` | `object \| null` | No | — |
 | `commitsUrl` | `string` | No | — |
 | `reviewCommentsUrl` | `string` | No | — |
 | `reviewCommentUrl` | `string` | No | — |
@@ -2260,7 +2239,7 @@ await corsair.github.api.pullRequests.get({});
 | `authorAssociation` | `string` | No | — |
 | `draft` | `boolean` | No | — |
 | `merged` | `boolean` | No | — |
-| `mergeable` | `boolean` | No | — |
+| `mergeable` | `boolean \| null` | No | — |
 | `comments` | `number` | No | — |
 | `reviewComments` | `number` | No | — |
 | `commits` | `number` | No | — |
@@ -2325,7 +2304,7 @@ await corsair.github.api.pullRequests.get({});
   siteAdmin?: boolean,
   starredAt?: Date | null,
   userViewType?: string
-}
+} | null
 ```
 </Accordion>
 
@@ -2355,7 +2334,7 @@ await corsair.github.api.pullRequests.get({});
   siteAdmin?: boolean,
   starredAt?: Date | null,
   userViewType?: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -2417,7 +2396,7 @@ await corsair.github.api.pullRequests.get({});
   updatedAt?: Date | null,
   closedAt?: Date | null,
   dueOn?: Date | null
-}
+} | null
 ```
 </Accordion>
 
@@ -3024,18 +3003,18 @@ await corsair.github.api.releases.create({});
 | `htmlUrl` | `string` | No | — |
 | `assetsUrl` | `string` | No | — |
 | `uploadUrl` | `string` | No | — |
-| `tarballUrl` | `string` | No | — |
-| `zipballUrl` | `string` | No | — |
+| `tarballUrl` | `string \| null` | No | — |
+| `zipballUrl` | `string \| null` | No | — |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `tagName` | `string` | No | — |
 | `targetCommitish` | `string` | No | — |
-| `name` | `string` | No | — |
-| `body` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
 | `draft` | `boolean` | No | — |
 | `prerelease` | `boolean` | No | — |
-| `createdAt` | `Date` | No | — |
-| `publishedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `publishedAt` | `Date \| null` | No | — |
 | `author` | `object` | No | — |
 | `assets` | `object[]` | No | — |
 
@@ -3079,7 +3058,7 @@ await corsair.github.api.releases.create({});
   id: number,
   nodeId: string,
   name: string,
-  label?: string | null,
+  label: string | null,
   state: uploaded | open,
   contentType: string,
   size: number,
@@ -3125,18 +3104,18 @@ await corsair.github.api.releases.get({});
 | `htmlUrl` | `string` | No | — |
 | `assetsUrl` | `string` | No | — |
 | `uploadUrl` | `string` | No | — |
-| `tarballUrl` | `string` | No | — |
-| `zipballUrl` | `string` | No | — |
+| `tarballUrl` | `string \| null` | No | — |
+| `zipballUrl` | `string \| null` | No | — |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `tagName` | `string` | No | — |
 | `targetCommitish` | `string` | No | — |
-| `name` | `string` | No | — |
-| `body` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
 | `draft` | `boolean` | No | — |
 | `prerelease` | `boolean` | No | — |
-| `createdAt` | `Date` | No | — |
-| `publishedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `publishedAt` | `Date \| null` | No | — |
 | `author` | `object` | No | — |
 | `assets` | `object[]` | No | — |
 
@@ -3180,7 +3159,7 @@ await corsair.github.api.releases.get({});
   id: number,
   nodeId: string,
   name: string,
-  label?: string | null,
+  label: string | null,
   state: uploaded | open,
   contentType: string,
   size: number,
@@ -3272,7 +3251,7 @@ await corsair.github.api.releases.list({});
     id: number,
     nodeId: string,
     name: string,
-    label?: string | null,
+    label: string | null,
     state: uploaded | open,
     contentType: string,
     size: number,
@@ -3324,18 +3303,18 @@ await corsair.github.api.releases.update({});
 | `htmlUrl` | `string` | No | — |
 | `assetsUrl` | `string` | No | — |
 | `uploadUrl` | `string` | No | — |
-| `tarballUrl` | `string` | No | — |
-| `zipballUrl` | `string` | No | — |
+| `tarballUrl` | `string \| null` | No | — |
+| `zipballUrl` | `string \| null` | No | — |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `tagName` | `string` | No | — |
 | `targetCommitish` | `string` | No | — |
-| `name` | `string` | No | — |
-| `body` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
 | `draft` | `boolean` | No | — |
 | `prerelease` | `boolean` | No | — |
-| `createdAt` | `Date` | No | — |
-| `publishedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `publishedAt` | `Date \| null` | No | — |
 | `author` | `object` | No | — |
 | `assets` | `object[]` | No | — |
 
@@ -3379,7 +3358,7 @@ await corsair.github.api.releases.update({});
   id: number,
   nodeId: string,
   name: string,
-  label?: string | null,
+  label: string | null,
   state: uploaded | open,
   contentType: string,
   size: number,
@@ -3459,14 +3438,14 @@ await corsair.github.api.repositories.get({});
 | `fullName` | `string` | No | — |
 | `private` | `boolean` | No | — |
 | `htmlUrl` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `fork` | `boolean` | No | — |
 | `url` | `string` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
-| `pushedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
+| `pushedAt` | `Date \| null` | No | — |
 | `defaultBranch` | `string` | No | — |
-| `language` | `string` | No | — |
+| `language` | `string \| null` | No | — |
 | `stargazersCount` | `number` | No | — |
 | `watchersCount` | `number` | No | — |
 | `forksCount` | `number` | No | — |
@@ -3534,7 +3513,7 @@ await corsair.github.api.repositories.getContent({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -4065,17 +4044,15 @@ await corsair.github.api.search.issues({});
     starredAt?: Date | null,
     userViewType?: string
   } | null,
-  labels?: (
-    string | {
-      id?: number,
-      nodeId?: string,
-      url?: string,
-      name?: string,
-      description?: string | null,
-      color?: string | null,
-      default?: boolean
-    }
-  )[],
+  labels?: (string | {
+    id?: number,
+    nodeId?: string,
+    url?: string,
+    name?: string,
+    description?: string | null,
+    color?: string | null,
+    default?: boolean
+  })[],
   assignee?: {
     name?: string | null,
     email?: string | null,
@@ -4379,13 +4356,13 @@ await corsair.github.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
 | `login` | `string` | Yes | — |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `avatarUrl` | `string` | No | — |
-| `gravatarId` | `string` | No | — |
+| `gravatarId` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `htmlUrl` | `string` | No | — |
 | `followersUrl` | `string` | No | — |
@@ -4399,21 +4376,21 @@ await corsair.github.api.users.get({});
 | `receivedEventsUrl` | `string` | No | — |
 | `type` | `string` | No | — |
 | `siteAdmin` | `boolean` | No | — |
-| `starredAt` | `Date` | No | — |
+| `starredAt` | `Date \| null` | No | — |
 | `userViewType` | `string` | No | — |
-| `company` | `string` | No | — |
-| `blog` | `string` | No | — |
-| `location` | `string` | No | — |
-| `notificationEmail` | `string` | No | — |
-| `hireable` | `boolean` | No | — |
-| `bio` | `string` | No | — |
-| `twitterUsername` | `string` | No | — |
+| `company` | `string \| null` | No | — |
+| `blog` | `string \| null` | No | — |
+| `location` | `string \| null` | No | — |
+| `notificationEmail` | `string \| null` | No | — |
+| `hireable` | `boolean \| null` | No | — |
+| `bio` | `string \| null` | No | — |
+| `twitterUsername` | `string \| null` | No | — |
 | `publicRepos` | `number` | No | — |
 | `publicGists` | `number` | No | — |
 | `followers` | `number` | No | — |
 | `following` | `number` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `privateGists` | `number` | No | — |
 | `totalPrivateRepos` | `number` | No | — |
 | `ownedPrivateRepos` | `number` | No | — |
@@ -4461,13 +4438,13 @@ await corsair.github.api.users.getAuthenticated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
 | `login` | `string` | Yes | — |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `avatarUrl` | `string` | No | — |
-| `gravatarId` | `string` | No | — |
+| `gravatarId` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `htmlUrl` | `string` | No | — |
 | `followersUrl` | `string` | No | — |
@@ -4481,21 +4458,21 @@ await corsair.github.api.users.getAuthenticated({});
 | `receivedEventsUrl` | `string` | No | — |
 | `type` | `string` | No | — |
 | `siteAdmin` | `boolean` | No | — |
-| `starredAt` | `Date` | No | — |
+| `starredAt` | `Date \| null` | No | — |
 | `userViewType` | `string` | No | — |
-| `company` | `string` | No | — |
-| `blog` | `string` | No | — |
-| `location` | `string` | No | — |
-| `notificationEmail` | `string` | No | — |
-| `hireable` | `boolean` | No | — |
-| `bio` | `string` | No | — |
-| `twitterUsername` | `string` | No | — |
+| `company` | `string \| null` | No | — |
+| `blog` | `string \| null` | No | — |
+| `location` | `string \| null` | No | — |
+| `notificationEmail` | `string \| null` | No | — |
+| `hireable` | `boolean \| null` | No | — |
+| `bio` | `string \| null` | No | — |
+| `twitterUsername` | `string \| null` | No | — |
 | `publicRepos` | `number` | No | — |
 | `publicGists` | `number` | No | — |
 | `followers` | `number` | No | — |
 | `following` | `number` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `privateGists` | `number` | No | — |
 | `totalPrivateRepos` | `number` | No | — |
 | `ownedPrivateRepos` | `number` | No | — |
@@ -4548,13 +4525,13 @@ await corsair.github.api.users.getById({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
 | `login` | `string` | Yes | — |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `avatarUrl` | `string` | No | — |
-| `gravatarId` | `string` | No | — |
+| `gravatarId` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `htmlUrl` | `string` | No | — |
 | `followersUrl` | `string` | No | — |
@@ -4568,21 +4545,21 @@ await corsair.github.api.users.getById({});
 | `receivedEventsUrl` | `string` | No | — |
 | `type` | `string` | No | — |
 | `siteAdmin` | `boolean` | No | — |
-| `starredAt` | `Date` | No | — |
+| `starredAt` | `Date \| null` | No | — |
 | `userViewType` | `string` | No | — |
-| `company` | `string` | No | — |
-| `blog` | `string` | No | — |
-| `location` | `string` | No | — |
-| `notificationEmail` | `string` | No | — |
-| `hireable` | `boolean` | No | — |
-| `bio` | `string` | No | — |
-| `twitterUsername` | `string` | No | — |
+| `company` | `string \| null` | No | — |
+| `blog` | `string \| null` | No | — |
+| `location` | `string \| null` | No | — |
+| `notificationEmail` | `string \| null` | No | — |
+| `hireable` | `boolean \| null` | No | — |
+| `bio` | `string \| null` | No | — |
+| `twitterUsername` | `string \| null` | No | — |
 | `publicRepos` | `number` | No | — |
 | `publicGists` | `number` | No | — |
 | `followers` | `number` | No | — |
 | `following` | `number` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `privateGists` | `number` | No | — |
 | `totalPrivateRepos` | `number` | No | — |
 | `ownedPrivateRepos` | `number` | No | — |
@@ -4732,7 +4709,7 @@ await corsair.github.api.users.update({});
 | `name` | `string` | No | — |
 | `email` | `string` | No | — |
 | `blog` | `string` | No | — |
-| `twitterUsername` | `string` | No | — |
+| `twitterUsername` | `string \| null` | No | — |
 | `company` | `string` | No | — |
 | `location` | `string` | No | — |
 | `hireable` | `boolean` | No | — |
@@ -4744,13 +4721,13 @@ await corsair.github.api.users.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | — |
-| `email` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
 | `login` | `string` | Yes | — |
 | `id` | `number` | Yes | — |
 | `nodeId` | `string` | No | — |
 | `avatarUrl` | `string` | No | — |
-| `gravatarId` | `string` | No | — |
+| `gravatarId` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `htmlUrl` | `string` | No | — |
 | `followersUrl` | `string` | No | — |
@@ -4764,21 +4741,21 @@ await corsair.github.api.users.update({});
 | `receivedEventsUrl` | `string` | No | — |
 | `type` | `string` | No | — |
 | `siteAdmin` | `boolean` | No | — |
-| `starredAt` | `Date` | No | — |
+| `starredAt` | `Date \| null` | No | — |
 | `userViewType` | `string` | No | — |
-| `company` | `string` | No | — |
-| `blog` | `string` | No | — |
-| `location` | `string` | No | — |
-| `notificationEmail` | `string` | No | — |
-| `hireable` | `boolean` | No | — |
-| `bio` | `string` | No | — |
-| `twitterUsername` | `string` | No | — |
+| `company` | `string \| null` | No | — |
+| `blog` | `string \| null` | No | — |
+| `location` | `string \| null` | No | — |
+| `notificationEmail` | `string \| null` | No | — |
+| `hireable` | `boolean \| null` | No | — |
+| `bio` | `string \| null` | No | — |
+| `twitterUsername` | `string \| null` | No | — |
 | `publicRepos` | `number` | No | — |
 | `publicGists` | `number` | No | — |
 | `followers` | `number` | No | — |
 | `following` | `number` | No | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `privateGists` | `number` | No | — |
 | `totalPrivateRepos` | `number` | No | — |
 | `ownedPrivateRepos` | `number` | No | — |
@@ -4840,12 +4817,12 @@ await corsair.github.api.workflows.get({});
 | `name` | `string` | Yes | — |
 | `path` | `string` | Yes | — |
 | `state` | `active \| deleted \| disabled_fork \| disabled_inactivity \| disabled_manually` | Yes | — |
-| `createdAt` | `Date` | No | — |
-| `updatedAt` | `Date` | No | — |
+| `createdAt` | `Date \| null` | No | — |
+| `updatedAt` | `Date \| null` | No | — |
 | `url` | `string` | No | — |
 | `htmlUrl` | `string` | No | — |
 | `badgeUrl` | `string` | No | — |
-| `deletedAt` | `Date` | No | — |
+| `deletedAt` | `Date \| null` | No | — |
 
 
 

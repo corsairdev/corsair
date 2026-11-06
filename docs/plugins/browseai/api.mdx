@@ -29,7 +29,7 @@ await corsair.browseai.api.monitors.create({});
 |------|------|----------|-------------|
 | `robotId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `inputParameters` | `object` | Yes | — |
+| `inputParameters` | `Record<string, string \| number \| string[]>` | Yes | — |
 | `notifyOnCapturedScreenshotChange` | `boolean` | Yes | — |
 | `notifyOnCapturedTextChange` | `boolean` | Yes | — |
 | `capturedScreenshotNotificationThreshold` | `number` | Yes | — |
@@ -37,14 +37,6 @@ await corsair.browseai.api.monitors.create({});
 | `schedules` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="inputParameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="schedules full type">
 
 ```ts
@@ -62,9 +54,9 @@ await corsair.browseai.api.monitors.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `statusCode` | `number` | No | — |
-| `messageCode` | `string` | No | — |
-| `monitor` | `object` | No | — |
+| `statusCode` | `number \| null` | No | — |
+| `messageCode` | `string \| null` | No | — |
+| `monitor` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="monitor full type">
@@ -75,8 +67,7 @@ await corsair.browseai.api.monitors.create({});
   name?: string | null,
   status?: string | null,
   pausedReason?: string | null,
-  inputParameters?: {
-  } | null,
+  inputParameters?: Record<string, string | number | string[]> | null,
   schedules?: {
     type?: string | null,
     everyMinutes?: number | null
@@ -88,7 +79,7 @@ await corsair.browseai.api.monitors.create({});
   createdAt?: number | null,
   pausedAt?: number | null,
   updatedAt?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -122,8 +113,8 @@ await corsair.browseai.api.monitors.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `statusCode` | `number` | No | — |
-| `messageCode` | `string` | No | — |
+| `statusCode` | `number \| null` | No | — |
+| `messageCode` | `string \| null` | No | — |
 
 
 
@@ -149,17 +140,7 @@ await corsair.browseai.api.robots.bulkRun({});
 |------|------|----------|-------------|
 | `robotId` | `string` | Yes | — |
 | `title` | `string` | No | — |
-| `inputParameters` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="inputParameters full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `inputParameters` | `Record<string, string \| number \| string[]>[]` | Yes | — |
 
 
 
@@ -167,9 +148,9 @@ await corsair.browseai.api.robots.bulkRun({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `statusCode` | `number` | No | — |
-| `messageCode` | `string` | No | — |
-| `result` | `object` | No | — |
+| `statusCode` | `number \| null` | No | — |
+| `messageCode` | `string \| null` | No | — |
+| `result` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -186,7 +167,7 @@ await corsair.browseai.api.robots.bulkRun({});
     robotId?: string | null,
     createdAt?: number | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -214,9 +195,9 @@ await corsair.browseai.api.robots.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `statusCode` | `number` | No | — |
-| `messageCode` | `string` | No | — |
-| `robots` | `object` | No | — |
+| `statusCode` | `number \| null` | No | — |
+| `messageCode` | `string \| null` | No | — |
+| `robots` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="robots full type">
@@ -245,7 +226,7 @@ await corsair.browseai.api.robots.list({});
       }[] | null
     }[] | null
   }[] | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -272,17 +253,7 @@ await corsair.browseai.api.robots.run({});
 |------|------|----------|-------------|
 | `robotId` | `string` | Yes | — |
 | `recordVideo` | `boolean` | No | — |
-| `inputParameters` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="inputParameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `inputParameters` | `Record<string, string \| number \| string[]>` | No | — |
 
 
 
@@ -290,9 +261,9 @@ await corsair.browseai.api.robots.run({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `statusCode` | `number` | No | — |
-| `messageCode` | `string` | No | — |
-| `result` | `object` | No | — |
+| `statusCode` | `number \| null` | No | — |
+| `messageCode` | `string \| null` | No | — |
+| `result` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -300,8 +271,7 @@ await corsair.browseai.api.robots.run({});
 ```ts
 {
   id?: string | null,
-  inputParameters?: {
-  } | null,
+  inputParameters?: Record<string, string | number | string[]> | null,
   robotId?: string | null,
   status?: string | null,
   runByUserId?: string | null,
@@ -319,13 +289,25 @@ await corsair.browseai.api.robots.run({});
   retriedTaskId?: string | null,
   retriedByTaskId?: string | null,
   capturedDataTemporaryUrl?: string | null,
-  capturedTexts?: {
-  } | null,
-  capturedScreenshots?: {
-  } | null,
-  capturedLists?: {
-  } | null
-}
+  capturedTexts?: Record<string, string | number | boolean | null> | null,
+  capturedScreenshots?: Record<string, {
+    id?: string | null,
+    name?: string | null,
+    src?: string | null,
+    width?: number | null,
+    height?: number | null,
+    x?: number | null,
+    y?: number | null,
+    deviceScaleFactor?: number | null,
+    full?: string | null,
+    comparedToScreenshotId?: string | null,
+    diffImageSrc?: string | null,
+    changePercentage?: number | null,
+    diffThreshold?: number | null,
+    fileRemovedAt?: number | null
+  }> | null,
+  capturedLists?: Record<string, Record<string, string | number | boolean | null>[]> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -355,9 +337,9 @@ await corsair.browseai.api.system.getStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `statusCode` | `number` | No | — |
-| `messageCode` | `string` | No | — |
-| `tasksQueueStatus` | `string` | No | — |
+| `statusCode` | `number \| null` | No | — |
+| `messageCode` | `string \| null` | No | — |
+| `tasksQueueStatus` | `string \| null` | No | — |
 
 
 
@@ -390,9 +372,9 @@ await corsair.browseai.api.tasks.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `statusCode` | `number` | No | — |
-| `messageCode` | `string` | No | — |
-| `result` | `object` | No | — |
+| `statusCode` | `number \| null` | No | — |
+| `messageCode` | `string \| null` | No | — |
+| `result` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -400,8 +382,7 @@ await corsair.browseai.api.tasks.get({});
 ```ts
 {
   id?: string | null,
-  inputParameters?: {
-  } | null,
+  inputParameters?: Record<string, string | number | string[]> | null,
   robotId?: string | null,
   status?: string | null,
   runByUserId?: string | null,
@@ -419,13 +400,25 @@ await corsair.browseai.api.tasks.get({});
   retriedTaskId?: string | null,
   retriedByTaskId?: string | null,
   capturedDataTemporaryUrl?: string | null,
-  capturedTexts?: {
-  } | null,
-  capturedScreenshots?: {
-  } | null,
-  capturedLists?: {
-  } | null
-}
+  capturedTexts?: Record<string, string | number | boolean | null> | null,
+  capturedScreenshots?: Record<string, {
+    id?: string | null,
+    name?: string | null,
+    src?: string | null,
+    width?: number | null,
+    height?: number | null,
+    x?: number | null,
+    y?: number | null,
+    deviceScaleFactor?: number | null,
+    full?: string | null,
+    comparedToScreenshotId?: string | null,
+    diffImageSrc?: string | null,
+    changePercentage?: number | null,
+    diffThreshold?: number | null,
+    fileRemovedAt?: number | null
+  }> | null,
+  capturedLists?: Record<string, Record<string, string | number | boolean | null>[]> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -466,9 +459,9 @@ await corsair.browseai.api.tasks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `statusCode` | `number` | No | — |
-| `messageCode` | `string` | No | — |
-| `result` | `object` | No | — |
+| `statusCode` | `number \| null` | No | — |
+| `messageCode` | `string \| null` | No | — |
+| `result` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -481,8 +474,7 @@ await corsair.browseai.api.tasks.list({});
     hasMore?: boolean | null,
     items?: {
       id?: string | null,
-      inputParameters?: {
-      } | null,
+      inputParameters?: Record<string, string | number | string[]> | null,
       robotId?: string | null,
       status?: string | null,
       runByUserId?: string | null,
@@ -500,15 +492,27 @@ await corsair.browseai.api.tasks.list({});
       retriedTaskId?: string | null,
       retriedByTaskId?: string | null,
       capturedDataTemporaryUrl?: string | null,
-      capturedTexts?: {
-      } | null,
-      capturedScreenshots?: {
-      } | null,
-      capturedLists?: {
-      } | null
+      capturedTexts?: Record<string, string | number | boolean | null> | null,
+      capturedScreenshots?: Record<string, {
+        id?: string | null,
+        name?: string | null,
+        src?: string | null,
+        width?: number | null,
+        height?: number | null,
+        x?: number | null,
+        y?: number | null,
+        deviceScaleFactor?: number | null,
+        full?: string | null,
+        comparedToScreenshotId?: string | null,
+        diffImageSrc?: string | null,
+        changePercentage?: number | null,
+        diffThreshold?: number | null,
+        fileRemovedAt?: number | null
+      }> | null,
+      capturedLists?: Record<string, Record<string, string | number | boolean | null>[]> | null
     }[] | null
   } | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -545,9 +549,9 @@ await corsair.browseai.api.webhooks.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `statusCode` | `number` | No | — |
-| `messageCode` | `string` | No | — |
-| `webhook` | `object` | No | — |
+| `statusCode` | `number \| null` | No | — |
+| `messageCode` | `string \| null` | No | — |
+| `webhook` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhook full type">
@@ -558,7 +562,7 @@ await corsair.browseai.api.webhooks.create({});
   url?: string | null,
   webhookEvent?: string | null,
   createdAt?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -591,9 +595,9 @@ await corsair.browseai.api.webhooks.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `statusCode` | `number` | No | — |
-| `messageCode` | `string` | No | — |
-| `webhooks` | `object` | No | — |
+| `statusCode` | `number \| null` | No | — |
+| `messageCode` | `string \| null` | No | — |
+| `webhooks` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhooks full type">
@@ -607,7 +611,7 @@ await corsair.browseai.api.webhooks.list({});
     webhookEvent?: string | null,
     createdAt?: number | null
   }[] | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

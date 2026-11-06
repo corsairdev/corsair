@@ -31,9 +31,9 @@ await corsair.finerworks.api.account.getCompanyInfo({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `site_id` | `number` | No | — |
-| `address` | `object` | No | — |
-| `lobby_hours` | `string` | No | — |
+| `site_id` | `number \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `lobby_hours` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -68,7 +68,7 @@ await corsair.finerworks.api.account.getCompanyInfo({});
   phone?: string | null,
   email?: string | null,
   address_order_po?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -102,7 +102,7 @@ await corsair.finerworks.api.account.getUser({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `user_account` | `object` | No | — |
+| `user_account` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -169,7 +169,7 @@ await corsair.finerworks.api.account.getUser({});
     id?: string | null,
     data?: string | null
   }[] | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -255,15 +255,15 @@ await corsair.finerworks.api.account.updateUser({ shipping_preferences: [0, 2, 1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `account_key` | `string` | No | — |
-| `billing_info` | `object` | No | — |
-| `business_info` | `object` | No | — |
-| `logo_url` | `string` | No | — |
-| `logo_data` | `string` | No | — |
-| `portrait_data` | `string` | No | — |
-| `payment_profile_id` | `string` | No | — |
-| `shipping_preferences` | `number[]` | No | — |
-| `connections` | `object[]` | No | — |
+| `account_key` | `string \| null` | No | — |
+| `billing_info` | `object \| null` | No | — |
+| `business_info` | `object \| null` | No | — |
+| `logo_url` | `string \| null` | No | — |
+| `logo_data` | `string \| null` | No | — |
+| `portrait_data` | `string \| null` | No | — |
+| `payment_profile_id` | `string \| null` | No | — |
+| `shipping_preferences` | `number[] \| null` | No | — |
+| `connections` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="billing_info full type">
@@ -284,7 +284,7 @@ await corsair.finerworks.api.account.updateUser({ shipping_preferences: [0, 2, 1
   phone?: string | null,
   email?: string | null,
   address_order_po?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -306,7 +306,7 @@ await corsair.finerworks.api.account.updateUser({ shipping_preferences: [0, 2, 1
   phone?: string | null,
   email?: string | null,
   address_order_po?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -317,7 +317,7 @@ await corsair.finerworks.api.account.updateUser({ shipping_preferences: [0, 2, 1
   name?: string | null,
   id?: string | null,
   data?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -378,8 +378,8 @@ await corsair.finerworks.api.framing.getFrameDetails({ id: 131 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `frame` | `object` | No | — |
-| `frame_details` | `object` | No | — |
+| `frame` | `object \| null` | No | — |
+| `frame_details` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -426,7 +426,7 @@ await corsair.finerworks.api.framing.getFrameDetails({ id: 131 });
   starting_price?: number | null,
   type?: string | null,
   type_description?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -460,7 +460,7 @@ await corsair.finerworks.api.framing.getFrameDetails({ id: 131 });
   starting_price?: number | null,
   type?: string | null,
   type_description?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -495,8 +495,8 @@ await corsair.finerworks.api.framing.listCollections({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `collections` | `object[]` | No | — |
-| `frame_collections` | `object[]` | No | — |
+| `collections` | `object[] \| null` | No | — |
+| `frame_collections` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -553,7 +553,7 @@ await corsair.finerworks.api.framing.listCollections({});
     type?: string | null,
     type_description?: string | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -597,7 +597,7 @@ await corsair.finerworks.api.framing.listCollections({});
     type?: string | null,
     type_description?: string | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -632,7 +632,7 @@ await corsair.finerworks.api.framing.listGlazing({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `glazing` | `object[]` | No | — |
+| `glazing` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -659,7 +659,7 @@ await corsair.finerworks.api.framing.listGlazing({});
   composite?: number | null,
   image_1?: string | null,
   starting_price?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -694,7 +694,7 @@ await corsair.finerworks.api.framing.listMats({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `mats` | `object[]` | No | — |
+| `mats` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -726,7 +726,7 @@ await corsair.finerworks.api.framing.listMats({});
   max_height?: number | null,
   composite?: string | null,
   starting_price?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -753,11 +753,11 @@ await corsair.finerworks.api.galleries.addOrUpdateCollection({ name: 'Seascapes'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 | `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `visible` | `boolean` | No | — |
-| `account_key` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `visible` | `boolean \| null` | No | — |
+| `account_key` | `string \| null` | No | — |
 
 
 
@@ -766,7 +766,7 @@ await corsair.finerworks.api.galleries.addOrUpdateCollection({ name: 'Seascapes'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `id` | `number` | No | — |
+| `id` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -804,9 +804,9 @@ await corsair.finerworks.api.galleries.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `account_key` | `string` | No | — |
-| `personal` | `boolean` | No | — |
-| `gallery_ids` | `number[]` | No | — |
+| `account_key` | `string \| null` | No | — |
+| `personal` | `boolean \| null` | No | — |
+| `gallery_ids` | `number[] \| null` | No | — |
 
 
 
@@ -815,7 +815,7 @@ await corsair.finerworks.api.galleries.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `galleries` | `object[]` | No | — |
+| `galleries` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -845,7 +845,7 @@ await corsair.finerworks.api.galleries.list({});
   description?: string | null,
   keywords?: string | null,
   image_count?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -870,7 +870,7 @@ await corsair.finerworks.api.galleries.listThemes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `filter` | `string[]` | No | — |
+| `filter` | `string[] \| null` | No | — |
 
 
 
@@ -879,7 +879,7 @@ await corsair.finerworks.api.galleries.listThemes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `themes` | `object[]` | No | — |
+| `themes` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -910,7 +910,7 @@ await corsair.finerworks.api.galleries.listThemes({});
   surface?: string | null,
   muted?: string | null,
   description?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -982,7 +982,7 @@ await corsair.finerworks.api.images.add({ library: { name: 'inventory' }, images
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `images` | `object[]` | No | — |
+| `images` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -1029,7 +1029,7 @@ await corsair.finerworks.api.images.add({ library: { name: 'inventory' }, images
   account_key?: string | null,
   artistname?: string | null,
   rank?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1055,8 +1055,8 @@ await corsair.finerworks.api.images.delete({ guids: ['<image-guid>'] });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `guids` | `string[]` | Yes | — |
-| `library` | `object` | No | — |
-| `account_key` | `string` | No | — |
+| `library` | `object \| null` | No | — |
+| `account_key` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="library full type">
@@ -1067,7 +1067,7 @@ await corsair.finerworks.api.images.delete({ guids: ['<image-guid>'] });
   session_id?: string | null,
   account_key?: string | null,
   site_id?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1117,18 +1117,18 @@ await corsair.finerworks.api.images.list({ library: { name: 'inventory' }, page_
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `library` | `object` | Yes | — |
-| `search_filter` | `string` | No | — |
-| `guid_filter` | `string[]` | No | — |
-| `personal_gallery_id_filter` | `number[]` | No | — |
-| `public_gallery_id_filter` | `number[]` | No | — |
+| `search_filter` | `string \| null` | No | — |
+| `guid_filter` | `string[] \| null` | No | — |
+| `personal_gallery_id_filter` | `number[] \| null` | No | — |
+| `public_gallery_id_filter` | `number[] \| null` | No | — |
 | `page_number` | `number` | No | — |
 | `per_page` | `number` | No | — |
-| `sort_field` | `string` | No | — |
-| `sort_direction` | `ASC \| DESC` | No | — |
-| `upload_date_from` | `string` | No | — |
-| `upload_date_to` | `string` | No | — |
-| `list_products` | `boolean` | No | — |
-| `active` | `boolean` | No | — |
+| `sort_field` | `string \| null` | No | — |
+| `sort_direction` | `ASC \| DESC \| null` | No | — |
+| `upload_date_from` | `string \| null` | No | — |
+| `upload_date_to` | `string \| null` | No | — |
+| `list_products` | `boolean \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="library full type">
@@ -1151,10 +1151,10 @@ await corsair.finerworks.api.images.list({ library: { name: 'inventory' }, page_
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `images` | `object[]` | No | — |
-| `page_number` | `number` | No | — |
-| `per_page` | `number` | No | — |
-| `count` | `number` | No | — |
+| `images` | `object[] \| null` | No | — |
+| `page_number` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `count` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -1201,7 +1201,7 @@ await corsair.finerworks.api.images.list({ library: { name: 'inventory' }, page_
   account_key?: string | null,
   artistname?: string | null,
   rank?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1235,8 +1235,8 @@ await corsair.finerworks.api.images.listFileSelection({ guid: '<selection-guid>'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `guids` | `string[]` | No | — |
-| `guid` | `string` | No | — |
+| `guids` | `string[] \| null` | No | — |
+| `guid` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -1275,7 +1275,7 @@ await corsair.finerworks.api.images.update({ images: [{ guid: '<image-guid>', ti
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `images` | `object[]` | Yes | — |
-| `account_key` | `string` | No | — |
+| `account_key` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="images full type">
@@ -1301,7 +1301,7 @@ await corsair.finerworks.api.images.update({ images: [{ guid: '<image-guid>', ti
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `images` | `object[]` | No | — |
+| `images` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -1348,7 +1348,7 @@ await corsair.finerworks.api.images.update({ images: [{ guid: '<image-guid>', ti
   account_key?: string | null,
   artistname?: string | null,
   rank?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1383,7 +1383,7 @@ await corsair.finerworks.api.images.updateFileSelection({ guid: '<selection-guid
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `guid` | `string` | No | — |
+| `guid` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -1424,7 +1424,7 @@ await corsair.finerworks.api.inventory.delete({ skus: ['AP1556P79511'] });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `skus` | `string[]` | Yes | — |
-| `account_key` | `string` | No | — |
+| `account_key` | `string \| null` | No | — |
 
 
 
@@ -1471,7 +1471,7 @@ await corsair.finerworks.api.inventory.disconnect({ platform: 'shopify' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `platform` | `string` | Yes | — |
-| `account_key` | `string` | No | — |
+| `account_key` | `string \| null` | No | — |
 
 
 
@@ -1517,19 +1517,19 @@ await corsair.finerworks.api.inventory.list({ per_page: 20 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `search_filter` | `string` | No | — |
-| `third_party_connections_filter` | `string[]` | No | — |
-| `sku_filter` | `string[]` | No | — |
-| `product_code_filter` | `string[]` | No | — |
-| `product_type_ids_filter` | `number[]` | No | — |
-| `guid_filter` | `string[]` | No | — |
+| `search_filter` | `string \| null` | No | — |
+| `third_party_connections_filter` | `string[] \| null` | No | — |
+| `sku_filter` | `string[] \| null` | No | — |
+| `product_code_filter` | `string[] \| null` | No | — |
+| `product_type_ids_filter` | `number[] \| null` | No | — |
+| `guid_filter` | `string[] \| null` | No | — |
 | `page_number` | `number` | No | — |
 | `per_page` | `number` | No | — |
-| `sort_field` | `string` | No | — |
-| `sort_direction` | `ASC \| DESC` | No | — |
-| `created_date_from` | `string` | No | — |
-| `created_date_to` | `string` | No | — |
-| `account_key` | `string` | No | — |
+| `sort_field` | `string \| null` | No | — |
+| `sort_direction` | `ASC \| DESC \| null` | No | — |
+| `created_date_from` | `string \| null` | No | — |
+| `created_date_to` | `string \| null` | No | — |
+| `account_key` | `string \| null` | No | — |
 
 
 
@@ -1538,10 +1538,10 @@ await corsair.finerworks.api.inventory.list({ per_page: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `products` | `object[]` | No | — |
-| `page_number` | `number` | No | — |
-| `per_page` | `number` | No | — |
-| `count` | `number` | No | — |
+| `products` | `object[] \| null` | No | — |
+| `page_number` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+| `count` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -1602,7 +1602,7 @@ await corsair.finerworks.api.inventory.list({ per_page: 20 });
   product_size?: any | null,
   updated?: string | null,
   valid?: boolean | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1628,7 +1628,7 @@ await corsair.finerworks.api.inventory.update({ virtual_inventory: [{ sku: 'AP15
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `virtual_inventory` | `object[]` | Yes | — |
-| `account_key` | `string` | No | — |
+| `account_key` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="virtual_inventory full type">
@@ -1671,7 +1671,7 @@ await corsair.finerworks.api.inventory.update({ virtual_inventory: [{ sku: 'AP15
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `products` | `object[]` | No | — |
+| `products` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -1732,7 +1732,7 @@ await corsair.finerworks.api.inventory.update({ virtual_inventory: [{ sku: 'AP15
   product_size?: any | null,
   updated?: string | null,
   valid?: boolean | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1760,7 +1760,7 @@ await corsair.finerworks.api.orders.deletePending({ ids: [12345] });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `ids` | `number[]` | Yes | — |
-| `account_key` | `string` | No | — |
+| `account_key` | `string \| null` | No | — |
 
 
 
@@ -1806,9 +1806,9 @@ await corsair.finerworks.api.orders.fetchStatus({ order_ids: [12345] });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `order_pos` | `string[]` | No | — |
-| `order_ids` | `number[]` | No | — |
-| `account_key` | `string` | No | — |
+| `order_pos` | `string[] \| null` | No | — |
+| `order_ids` | `number[] \| null` | No | — |
+| `account_key` | `string \| null` | No | — |
 
 
 
@@ -1817,7 +1817,7 @@ await corsair.finerworks.api.orders.fetchStatus({ order_ids: [12345] });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `orders` | `object[]` | No | — |
+| `orders` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -1860,7 +1860,7 @@ await corsair.finerworks.api.orders.fetchStatus({ order_ids: [12345] });
     history?: any | null
   }[] | null,
   processing?: boolean | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1889,7 +1889,7 @@ await corsair.finerworks.api.orders.listStatusDefinitions({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `definitions` | `object[]` | No | — |
+| `definitions` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -1912,7 +1912,7 @@ await corsair.finerworks.api.orders.listStatusDefinitions({});
 {
   order_status_id?: number | null,
   order_status_label?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1939,7 +1939,7 @@ await corsair.finerworks.api.orders.savePending({ source: 'my-storefront', order
 |------|------|----------|-------------|
 | `orders` | `object[]` | Yes | — |
 | `source` | `string` | No | — |
-| `account_key` | `string` | No | — |
+| `account_key` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="orders full type">
@@ -2004,7 +2004,7 @@ await corsair.finerworks.api.orders.savePending({ source: 'my-storefront', order
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `orders` | `object[]` | No | — |
+| `orders` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -2033,7 +2033,7 @@ await corsair.finerworks.api.orders.savePending({ source: 'my-storefront', order
   order_confirmation_datetime?: string | null,
   order_source?: string | null,
   order_status?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2123,7 +2123,7 @@ await corsair.finerworks.api.orders.submit({ orders: [{ order_po: 'PO-1001', tes
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `orders` | `object[]` | No | — |
+| `orders` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -2152,7 +2152,7 @@ await corsair.finerworks.api.orders.submit({ orders: [{ order_po: 'PO-1001', tes
   order_confirmation_datetime?: string | null,
   order_source?: string | null,
   order_status?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2210,7 +2210,7 @@ await corsair.finerworks.api.orders.validateRecipientAddress({ recipient: { firs
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `address` | `object` | No | — |
+| `address` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -2245,7 +2245,7 @@ await corsair.finerworks.api.orders.validateRecipientAddress({ recipient: { firs
   phone?: string | null,
   email?: string | null,
   address_order_po?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2273,7 +2273,7 @@ await corsair.finerworks.api.products.getPrices({ products: [{ product_sku: 'AP1
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `products` | `object[]` | Yes | — |
-| `account_key` | `string` | No | — |
+| `account_key` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="products full type">
@@ -2294,7 +2294,7 @@ await corsair.finerworks.api.products.getPrices({ products: [{ product_sku: 'AP1
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `prices` | `object[]` | No | — |
+| `prices` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -2327,7 +2327,7 @@ await corsair.finerworks.api.products.getPrices({ products: [{ product_sku: 'AP1
   total_price?: number | null,
   geo_price?: number | null,
   info?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2352,8 +2352,8 @@ await corsair.finerworks.api.products.listMediaTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ids` | `number[]` | No | — |
-| `site_id` | `number` | No | — |
+| `ids` | `number[] \| null` | No | — |
+| `site_id` | `number \| null` | No | — |
 
 
 
@@ -2362,7 +2362,7 @@ await corsair.finerworks.api.products.listMediaTypes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `media_types` | `object[]` | No | — |
+| `media_types` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -2389,7 +2389,7 @@ await corsair.finerworks.api.products.listMediaTypes({});
   description?: string | null,
   style_ids?: number[] | null,
   icon_url?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2414,8 +2414,8 @@ await corsair.finerworks.api.products.listProductTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ids` | `number[]` | No | — |
-| `site_id` | `number` | No | — |
+| `ids` | `number[] \| null` | No | — |
+| `site_id` | `number \| null` | No | — |
 
 
 
@@ -2424,7 +2424,7 @@ await corsair.finerworks.api.products.listProductTypes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `product_types` | `object[]` | No | — |
+| `product_types` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -2452,7 +2452,7 @@ await corsair.finerworks.api.products.listProductTypes({});
   printable_ids?: number[] | null,
   icon_url?: string | null,
   color_code?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2477,8 +2477,8 @@ await corsair.finerworks.api.products.listStyleTypes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ids` | `number[]` | No | — |
-| `site_id` | `number` | No | — |
+| `ids` | `number[] \| null` | No | — |
+| `site_id` | `number \| null` | No | — |
 
 
 
@@ -2487,7 +2487,7 @@ await corsair.finerworks.api.products.listStyleTypes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `style_types` | `object[]` | No | — |
+| `style_types` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -2550,7 +2550,7 @@ await corsair.finerworks.api.products.listStyleTypes({});
       height?: number | null
     } | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2586,7 +2586,7 @@ await corsair.finerworks.api.shipping.getOptionIds({ type: 1 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `shipping_options_ids` | `number[]` | No | — |
+| `shipping_options_ids` | `number[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -2625,7 +2625,7 @@ await corsair.finerworks.api.shipping.listOptionsMultiple({ orders: [{ order_po:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `orders` | `object[]` | Yes | — |
-| `account_key` | `string` | No | — |
+| `account_key` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="orders full type">
@@ -2690,7 +2690,7 @@ await corsair.finerworks.api.shipping.listOptionsMultiple({ orders: [{ order_po:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `object` | No | — |
-| `orders` | `object[]` | No | — |
+| `orders` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="status full type">
@@ -2734,7 +2734,7 @@ await corsair.finerworks.api.shipping.listOptionsMultiple({ orders: [{ order_po:
       }[] | null
     } | null
   }[] | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>

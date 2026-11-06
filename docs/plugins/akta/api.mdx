@@ -49,8 +49,7 @@ await corsair.akta.api.company.employeeReviews({});
 {
   uuid: string,
   employee_reviews: {
-    overall_rating?: {
-    },
+    overall_rating?: Record<string, number>,
     other_ratings?: {
       type?: string,
       provider?: string,
@@ -84,8 +83,7 @@ await corsair.akta.api.company.employeeReviews({});
         provider?: string
       }[],
       total?: number,
-      total_by_provider?: {
-      }
+      total_by_provider?: Record<string, number>
     }
   }
 }
@@ -114,7 +112,7 @@ await corsair.akta.api.company.enrich({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `company` | `string` | Yes | Company website (https://canva.com) or Akta uuid from company.search |
-| `sections` | `firmographic \| business_model \| company_assessment \| trust_signal \| company_hierarchy \| digital_presence \| financial_estimate \| location \| management_profile \| product_offering \| strategic_signal \| customer_profile \| industry \| technology \| funding_detail \| mna_and_investment[]` | Yes | — |
+| `sections` | `(firmographic \| business_model \| company_assessment \| trust_signal \| company_hierarchy \| digital_presence \| financial_estimate \| location \| management_profile \| product_offering \| strategic_signal \| customer_profile \| industry \| technology \| funding_detail \| mna_and_investment)[]` | Yes | — |
 
 
 
@@ -751,22 +749,16 @@ await corsair.akta.api.company.productReviews({});
     main_category?: string,
     categories?: string[],
     description?: string,
-    rating?: {
-    },
-    star_distribution?: {
-    },
-    pros_list?: (
-      string | {
-        text: string,
-        count?: string | number
-      }
-    )[],
-    cons_list?: (
-      string | {
-        text: string,
-        count?: string | number
-      }
-    )[],
+    rating?: Record<string, number>,
+    star_distribution?: Record<string, Record<string, number>>,
+    pros_list?: (string | {
+      text: string,
+      count?: string | number
+    })[],
+    cons_list?: (string | {
+      text: string,
+      count?: string | number
+    })[],
     pricing?: {
       package?: string,
       price?: string,
@@ -788,8 +780,7 @@ await corsair.akta.api.company.productReviews({});
         provider?: string
       }[],
       total?: number,
-      total_by_provider?: {
-      }
+      total_by_provider?: Record<string, number>
     }
   }[],
   product?: {
@@ -798,22 +789,16 @@ await corsair.akta.api.company.productReviews({});
     main_category?: string,
     categories?: string[],
     description?: string,
-    rating?: {
-    },
-    star_distribution?: {
-    },
-    pros_list?: (
-      string | {
-        text: string,
-        count?: string | number
-      }
-    )[],
-    cons_list?: (
-      string | {
-        text: string,
-        count?: string | number
-      }
-    )[],
+    rating?: Record<string, number>,
+    star_distribution?: Record<string, Record<string, number>>,
+    pros_list?: (string | {
+      text: string,
+      count?: string | number
+    })[],
+    cons_list?: (string | {
+      text: string,
+      count?: string | number
+    })[],
     pricing?: {
       package?: string,
       price?: string,
@@ -835,8 +820,7 @@ await corsair.akta.api.company.productReviews({});
         provider?: string
       }[],
       total?: number,
-      total_by_provider?: {
-      }
+      total_by_provider?: Record<string, number>
     }
   }[]
 }
@@ -980,7 +964,7 @@ await corsair.akta.api.news.list({});
 | `countries` | `string[]` | No | — |
 | `blacklisted` | `string[]` | No | — |
 | `type_list` | `string[]` | No | — |
-| `sentiment_list` | `positive \| negative \| neutral \| all[]` | No | — |
+| `sentiment_list` | `(positive \| negative \| neutral \| all)[]` | No | — |
 | `entity_person_list` | `string[]` | No | — |
 | `entity_location_list` | `string[]` | No | — |
 | `entity_product_list` | `string[]` | No | — |

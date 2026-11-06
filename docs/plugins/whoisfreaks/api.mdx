@@ -35,17 +35,7 @@ await corsair.whoisfreaks.api.asnWhois.lookup({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `asn` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="asn full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `asn` | `Record<string, any>` | No | — |
 
 
 
@@ -115,8 +105,8 @@ await corsair.whoisfreaks.api.availability.check({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `domain` | `string` | Yes | — |
-| `sug` | `boolean` | Yes | — |
-| `count` | `number` | Yes | — |
+| `sug` | `boolean` | No | Defaults to false. |
+| `count` | `number` | No | Defaults to 5. |
 
 
 
@@ -220,7 +210,7 @@ await corsair.whoisfreaks.api.dns.bulk({});
 |------|------|----------|-------------|
 | `domainNames` | `string[]` | No | — |
 | `ipAddresses` | `string[]` | No | — |
-| `type` | `string` | Yes | — |
+| `type` | `string` | No | Defaults to "all". |
 
 
 
@@ -239,8 +229,7 @@ await corsair.whoisfreaks.api.dns.bulk({});
   ipAddress?: string,
   queryTime?: string,
   status?: boolean,
-  dnsTypes?: {
-  }
+  dnsTypes?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -267,8 +256,8 @@ await corsair.whoisfreaks.api.dns.historical({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `domainName` | `string` | Yes | — |
-| `type` | `string` | Yes | — |
-| `page` | `number` | Yes | — |
+| `type` | `string` | No | Defaults to "all". |
+| `page` | `number` | No | Defaults to 1. |
 
 
 
@@ -290,8 +279,7 @@ await corsair.whoisfreaks.api.dns.historical({});
   ipAddress?: string,
   queryTime?: string,
   status?: boolean,
-  dnsTypes?: {
-  }
+  dnsTypes?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -319,7 +307,7 @@ await corsair.whoisfreaks.api.dns.live({});
 |------|------|----------|-------------|
 | `domainName` | `string` | No | — |
 | `ipAddress` | `string` | No | — |
-| `type` | `string` | Yes | — |
+| `type` | `string` | No | Defaults to "all". |
 
 
 
@@ -331,17 +319,7 @@ await corsair.whoisfreaks.api.dns.live({});
 | `ipAddress` | `string` | No | — |
 | `queryTime` | `string` | No | — |
 | `status` | `boolean` | No | — |
-| `dnsTypes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="dnsTypes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `dnsTypes` | `Record<string, any>` | No | — |
 
 
 
@@ -365,8 +343,8 @@ await corsair.whoisfreaks.api.dns.reverse({});
 |------|------|----------|-------------|
 | `value` | `string` | Yes | — |
 | `type` | `a \| mx \| cname \| ns \| aaaa \| txt \| soa` | Yes | — |
-| `exact` | `boolean` | Yes | — |
-| `page` | `number` | Yes | — |
+| `exact` | `boolean` | No | Defaults to true. |
+| `page` | `number` | No | Defaults to 1. |
 
 
 
@@ -388,8 +366,7 @@ await corsair.whoisfreaks.api.dns.reverse({});
   ipAddress?: string,
   queryTime?: string,
   status?: boolean,
-  dnsTypes?: {
-  }
+  dnsTypes?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -460,26 +437,8 @@ await corsair.whoisfreaks.api.domainReputation.lookup({});
 | `assessed_at` | `string` | No | — |
 | `version` | `string` | No | — |
 | `processing_time_ms` | `number` | No | — |
-| `risk_category` | `object` | No | — |
-| `dga_score` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="risk_category full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="dga_score full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `risk_category` | `Record<string, any>` | No | — |
+| `dga_score` | `Record<string, any>` | No | — |
 
 
 
@@ -515,14 +474,10 @@ await corsair.whoisfreaks.api.geolocation.bulkLookup({});
 ```ts
 {
   ip?: string,
-  location?: {
-  },
-  country_metadata?: {
-  },
-  network?: {
-  },
-  currency?: {
-  }
+  location?: Record<string, any>,
+  country_metadata?: Record<string, any>,
+  network?: Record<string, any>,
+  currency?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -556,44 +511,10 @@ await corsair.whoisfreaks.api.geolocation.lookup({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `ip` | `string` | No | — |
-| `location` | `object` | No | — |
-| `country_metadata` | `object` | No | — |
-| `network` | `object` | No | — |
-| `currency` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="location full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="country_metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="network full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="currency full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `location` | `Record<string, any>` | No | — |
+| `country_metadata` | `Record<string, any>` | No | — |
+| `network` | `Record<string, any>` | No | — |
+| `currency` | `Record<string, any>` | No | — |
 
 
 
@@ -629,14 +550,10 @@ await corsair.whoisfreaks.api.ipReputation.bulkLookup({});
 ```ts
 {
   ip?: string,
-  location?: {
-  },
-  network?: {
-  },
-  asn?: {
-  },
-  security?: {
-  }
+  location?: Record<string, any>,
+  network?: Record<string, any>,
+  asn?: Record<string, any>,
+  security?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -670,44 +587,10 @@ await corsair.whoisfreaks.api.ipReputation.lookup({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `ip` | `string` | No | — |
-| `location` | `object` | No | — |
-| `network` | `object` | No | — |
-| `asn` | `object` | No | — |
-| `security` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="location full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="network full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="asn full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="security full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `location` | `Record<string, any>` | No | — |
+| `network` | `Record<string, any>` | No | — |
+| `asn` | `Record<string, any>` | No | — |
+| `security` | `Record<string, any>` | No | — |
 
 
 
@@ -769,8 +652,8 @@ await corsair.whoisfreaks.api.ssl.lookup({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `domainName` | `string` | Yes | — |
-| `chain` | `boolean` | Yes | — |
-| `sslRaw` | `boolean` | Yes | — |
+| `chain` | `boolean` | No | Defaults to false. |
+| `sslRaw` | `boolean` | No | Defaults to false. |
 
 
 
@@ -780,18 +663,8 @@ await corsair.whoisfreaks.api.ssl.lookup({});
 |------|------|----------|-------------|
 | `domainName` | `string` | No | — |
 | `queryTime` | `string` | No | — |
-| `sslCertificates` | `object[]` | No | — |
+| `sslCertificates` | `Record<string, any>[]` | No | — |
 | `sslRaw` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="sslCertificates full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -819,7 +692,7 @@ await corsair.whoisfreaks.api.subdomains.lookup({});
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 | `status` | `active \| inactive` | No | — |
-| `page` | `number` | Yes | — |
+| `page` | `number` | No | Defaults to 1. |
 
 
 
@@ -833,17 +706,7 @@ await corsair.whoisfreaks.api.subdomains.lookup({});
 | `total_pages` | `number` | No | — |
 | `query_time` | `string` | No | — |
 | `total_records` | `number` | No | — |
-| `subdomains` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="subdomains full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `subdomains` | `Record<string, any>[]` | No | — |
 
 
 

@@ -59,16 +59,14 @@ await corsair.zenserp.api.batches.list({});
 
 
 
-**Output:** `object`
+**Output:** `Record<string, any>[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
-{
-}[] | {
-  data: {
-  }[]
+Record<string, any>[] | {
+  data: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -247,72 +245,14 @@ await corsair.zenserp.api.search.bing({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | Yes | — |
-| `organic` | `object[]` | No | — |
-| `paid` | `object[]` | No | — |
-| `images` | `object[]` | No | — |
-| `related_searches` | `object[]` | No | — |
-| `pagination` | `object` | No | — |
+| `query` | `Record<string, any>` | Yes | — |
+| `organic` | `Record<string, any>[]` | No | — |
+| `paid` | `Record<string, any>[]` | No | — |
+| `images` | `Record<string, any>[]` | No | — |
+| `related_searches` | `Record<string, any>[]` | No | — |
+| `pagination` | `Record<string, any>` | No | — |
 | `number_of_results` | `number` | No | — |
-| `knowledge_graph` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="organic full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="paid full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="images full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="related_searches full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="pagination full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="knowledge_graph full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `knowledge_graph` | `Record<string, any>` | No | — |
 
 
 
@@ -348,72 +288,14 @@ await corsair.zenserp.api.search.google({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | Yes | — |
-| `organic` | `object[]` | No | — |
-| `paid` | `object[]` | No | — |
-| `images` | `object[]` | No | — |
-| `related_searches` | `object[]` | No | — |
-| `pagination` | `object` | No | — |
+| `query` | `Record<string, any>` | Yes | — |
+| `organic` | `Record<string, any>[]` | No | — |
+| `paid` | `Record<string, any>[]` | No | — |
+| `images` | `Record<string, any>[]` | No | — |
+| `related_searches` | `Record<string, any>[]` | No | — |
+| `pagination` | `Record<string, any>` | No | — |
 | `number_of_results` | `number` | No | — |
-| `knowledge_graph` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="organic full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="paid full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="images full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="related_searches full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="pagination full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="knowledge_graph full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `knowledge_graph` | `Record<string, any>` | No | — |
 
 
 
@@ -446,72 +328,14 @@ await corsair.zenserp.api.search.reverseImage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | Yes | — |
-| `organic` | `object[]` | No | — |
-| `paid` | `object[]` | No | — |
-| `images` | `object[]` | No | — |
-| `related_searches` | `object[]` | No | — |
-| `pagination` | `object` | No | — |
+| `query` | `Record<string, any>` | Yes | — |
+| `organic` | `Record<string, any>[]` | No | — |
+| `paid` | `Record<string, any>[]` | No | — |
+| `images` | `Record<string, any>[]` | No | — |
+| `related_searches` | `Record<string, any>[]` | No | — |
+| `pagination` | `Record<string, any>` | No | — |
 | `number_of_results` | `number` | No | — |
-| `knowledge_graph` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="organic full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="paid full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="images full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="related_searches full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="pagination full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="knowledge_graph full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `knowledge_graph` | `Record<string, any>` | No | — |
 
 
 
@@ -547,72 +371,14 @@ await corsair.zenserp.api.search.yandex({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | Yes | — |
-| `organic` | `object[]` | No | — |
-| `paid` | `object[]` | No | — |
-| `images` | `object[]` | No | — |
-| `related_searches` | `object[]` | No | — |
-| `pagination` | `object` | No | — |
+| `query` | `Record<string, any>` | Yes | — |
+| `organic` | `Record<string, any>[]` | No | — |
+| `paid` | `Record<string, any>[]` | No | — |
+| `images` | `Record<string, any>[]` | No | — |
+| `related_searches` | `Record<string, any>[]` | No | — |
+| `pagination` | `Record<string, any>` | No | — |
 | `number_of_results` | `number` | No | — |
-| `knowledge_graph` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="organic full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="paid full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="images full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="related_searches full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="pagination full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="knowledge_graph full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `knowledge_graph` | `Record<string, any>` | No | — |
 
 
 
@@ -647,47 +413,13 @@ await corsair.zenserp.api.shopping.getProduct({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object` | Yes | — |
+| `query` | `Record<string, any>` | Yes | — |
 | `title` | `string` | Yes | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | — |
 | `image` | `string` | No | — |
-| `reviews` | `object[]` | No | — |
-| `specifications` | `object[]` | No | — |
-| `sellers` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="reviews full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="specifications full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="sellers full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `reviews` | `Record<string, any>[]` | No | — |
+| `specifications` | `Record<string, any>[]` | No | — |
+| `sellers` | `Record<string, any>[]` | No | — |
 
 
 
@@ -721,18 +453,8 @@ await corsair.zenserp.api.trends.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `json` | `object` | Yes | — |
+| `json` | `Record<string, any>` | Yes | — |
 | `html` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="json full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 

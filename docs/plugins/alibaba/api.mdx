@@ -47,7 +47,12 @@ await corsair.alibaba.api.image.generate({});
   enable_thinking?: boolean,
   thinking_mode?: boolean,
   enable_sequential?: boolean,
-  bbox_list?: tuple[][],
+  bbox_list?: [
+    number,
+    number,
+    number,
+    number
+  ][][],
   color_palette?: {
     hex: string,
     ratio: string
@@ -64,7 +69,7 @@ await corsair.alibaba.api.image.generate({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `output` | `object` | Yes | — |
-| `usage` | `object` | No | — |
+| `usage` | `object \| null` | No | — |
 | `request_id` | `string` | Yes | — |
 
 <AccordionGroup>
@@ -99,7 +104,7 @@ await corsair.alibaba.api.image.generate({});
   width?: number | null,
   height?: number | null,
   image_count?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -135,7 +140,7 @@ await corsair.alibaba.api.tasks.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `output` | `object` | Yes | — |
-| `usage` | `object` | No | — |
+| `usage` | `object \| null` | No | — |
 | `request_id` | `string` | Yes | — |
 
 <AccordionGroup>
@@ -166,7 +171,7 @@ await corsair.alibaba.api.tasks.get({});
   SR?: number | null,
   ratio?: string | null,
   video_count?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

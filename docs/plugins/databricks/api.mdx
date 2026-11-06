@@ -28,17 +28,7 @@ await corsair.databricks.api.apps.createDatabricksApp({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `spec` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="spec full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `spec` | `Record<string, any>` | No | — |
 
 
 
@@ -240,17 +230,7 @@ await corsair.databricks.api.catalog.createCatalogConnection({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `connection_type` | `string` | Yes | — |
-| `options` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `options` | `Record<string, string>` | Yes | — |
 
 
 
@@ -1940,17 +1920,7 @@ await corsair.databricks.api.marketplace.batchGetMarketplaceConsumerListings({})
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `listings` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="listings full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `listings` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -1980,17 +1950,7 @@ await corsair.databricks.api.marketplace.batchGetMarketplaceConsumerProviders({}
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `providers` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="providers full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `providers` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -2601,17 +2561,7 @@ await corsair.databricks.api.security.createNotificationDestination({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `display_name` | `string` | Yes | — |
-| `config` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `config` | `Record<string, any>` | Yes | — |
 
 
 
@@ -2683,17 +2633,7 @@ await corsair.databricks.api.security.createPersonalAccessToken({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `token_value` | `string` | No | — |
-| `token_info` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="token_info full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `token_info` | `Record<string, any>` | No | — |
 
 
 
@@ -2810,17 +2750,7 @@ await corsair.databricks.api.serving.createProvisionedThroughputEndpoint({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `config` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `config` | `Record<string, any>` | Yes | — |
 
 
 
@@ -3129,17 +3059,7 @@ await corsair.databricks.api.sql.createLegacySqlAlert({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `query_id` | `string` | Yes | — |
-| `options` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `options` | `Record<string, any>` | No | — |
 
 
 
@@ -3204,17 +3124,7 @@ await corsair.databricks.api.sql.createLegacySqlQueryVisualization({});
 | `query_id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `options` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `options` | `Record<string, any>` | No | — |
 
 
 
@@ -3246,17 +3156,7 @@ await corsair.databricks.api.sql.createSqlAlert({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `query_id` | `string` | Yes | — |
-| `options` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `options` | `Record<string, any>` | No | — |
 
 
 
@@ -3321,17 +3221,7 @@ await corsair.databricks.api.sql.createSqlQueryVisualization({});
 | `query_id` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `options` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `options` | `Record<string, any>` | No | — |
 
 
 

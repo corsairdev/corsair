@@ -27,6 +27,7 @@ const rows = await corsair.asticaai.db.audioTranscripts.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `inputFingerprint` | `string` | equals, contains, startsWith, endsWith, in |
+| `inputKind` | `string` | equals, contains, startsWith, endsWith, in |
 | `inputLength` | `number` | equals, gt, gte, lt, lte, in |
 | `modelVersion` | `string` | equals, contains, startsWith, endsWith, in |
 | `text` | `string` | equals, contains, startsWith, endsWith, in |
@@ -55,6 +56,7 @@ const rows = await corsair.asticaai.db.readTextResults.search({
 |-------|------|-----------|
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `inputFingerprint` | `string` | equals, contains, startsWith, endsWith, in |
+| `inputKind` | `string` | equals, contains, startsWith, endsWith, in |
 | `inputLength` | `number` | equals, gt, gte, lt, lte, in |
 | `modelVersion` | `string` | equals, contains, startsWith, endsWith, in |
 | `content` | `string` | equals, contains, startsWith, endsWith, in |

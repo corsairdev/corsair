@@ -69,13 +69,13 @@ await corsair.ticktick.api.projects.create({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `color` | `string` | No | — |
-| `sortOrder` | `number` | No | — |
-| `closed` | `boolean` | No | — |
-| `viewMode` | `list \| kanban \| timeline` | No | — |
-| `kind` | `TASK \| NOTE` | No | — |
-| `groupId` | `string` | No | — |
-| `permission` | `string` | No | — |
+| `color` | `string \| null` | No | — |
+| `sortOrder` | `number \| null` | No | — |
+| `closed` | `boolean \| null` | No | — |
+| `viewMode` | `list \| kanban \| timeline \| null` | No | — |
+| `kind` | `TASK \| NOTE \| null` | No | — |
+| `groupId` | `string \| null` | No | — |
+| `permission` | `string \| null` | No | — |
 
 
 
@@ -137,13 +137,13 @@ await corsair.ticktick.api.projects.get({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `color` | `string` | No | — |
-| `sortOrder` | `number` | No | — |
-| `closed` | `boolean` | No | — |
-| `viewMode` | `list \| kanban \| timeline` | No | — |
-| `kind` | `TASK \| NOTE` | No | — |
-| `groupId` | `string` | No | — |
-| `permission` | `string` | No | — |
+| `color` | `string \| null` | No | — |
+| `sortOrder` | `number \| null` | No | — |
+| `closed` | `boolean \| null` | No | — |
+| `viewMode` | `list \| kanban \| timeline \| null` | No | — |
+| `kind` | `TASK \| NOTE \| null` | No | — |
+| `groupId` | `string \| null` | No | — |
+| `permission` | `string \| null` | No | — |
 
 
 
@@ -314,13 +314,13 @@ await corsair.ticktick.api.projects.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
-| `color` | `string` | No | — |
-| `sortOrder` | `number` | No | — |
-| `closed` | `boolean` | No | — |
-| `viewMode` | `list \| kanban \| timeline` | No | — |
-| `kind` | `TASK \| NOTE` | No | — |
-| `groupId` | `string` | No | — |
-| `permission` | `string` | No | — |
+| `color` | `string \| null` | No | — |
+| `sortOrder` | `number \| null` | No | — |
+| `closed` | `boolean \| null` | No | — |
+| `viewMode` | `list \| kanban \| timeline \| null` | No | — |
+| `kind` | `TASK \| NOTE \| null` | No | — |
+| `groupId` | `string \| null` | No | — |
+| `permission` | `string \| null` | No | — |
 
 
 
@@ -408,24 +408,24 @@ await corsair.ticktick.api.tasks.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `projectId` | `string` | No | — |
+| `projectId` | `string \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `content` | `string` | No | — |
-| `desc` | `string` | No | — |
-| `priority` | `number` | No | 0 (None), 1 (Low), 3 (Medium), 5 (High) |
-| `status` | `-1 \| 0 \| 2` | No | -1 (Abandoned), 0 (Undone), 2 (Completed) |
-| `dueDate` | `string` | No | — |
-| `startDate` | `string` | No | — |
-| `completedTime` | `string` | No | — |
-| `timeZone` | `string` | No | — |
-| `isAllDay` | `boolean` | No | — |
-| `columnId` | `string` | No | — |
-| `parentId` | `string` | No | — |
-| `sortOrder` | `number` | No | — |
-| `reminders` | `string[]` | No | — |
-| `tags` | `string[]` | No | — |
-| `repeatFlag` | `string` | No | — |
-| `items` | `object[]` | No | — |
+| `content` | `string \| null` | No | — |
+| `desc` | `string \| null` | No | — |
+| `priority` | `number \| null` | No | 0 (None), 1 (Low), 3 (Medium), 5 (High) |
+| `status` | `-1 \| 0 \| 2 \| null` | No | -1 (Abandoned), 0 (Undone), 2 (Completed) |
+| `dueDate` | `string \| null` | No | — |
+| `startDate` | `string \| null` | No | — |
+| `completedTime` | `string \| null` | No | — |
+| `timeZone` | `string \| null` | No | — |
+| `isAllDay` | `boolean \| null` | No | — |
+| `columnId` | `string \| null` | No | — |
+| `parentId` | `string \| null` | No | — |
+| `sortOrder` | `number \| null` | No | — |
+| `reminders` | `string[] \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `repeatFlag` | `string \| null` | No | — |
+| `items` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -437,7 +437,7 @@ await corsair.ticktick.api.tasks.create({});
   status: number,
   startDate?: string,
   isAllDay?: boolean
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -503,24 +503,24 @@ await corsair.ticktick.api.tasks.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `projectId` | `string` | No | — |
+| `projectId` | `string \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `content` | `string` | No | — |
-| `desc` | `string` | No | — |
-| `priority` | `number` | No | 0 (None), 1 (Low), 3 (Medium), 5 (High) |
-| `status` | `-1 \| 0 \| 2` | No | -1 (Abandoned), 0 (Undone), 2 (Completed) |
-| `dueDate` | `string` | No | — |
-| `startDate` | `string` | No | — |
-| `completedTime` | `string` | No | — |
-| `timeZone` | `string` | No | — |
-| `isAllDay` | `boolean` | No | — |
-| `columnId` | `string` | No | — |
-| `parentId` | `string` | No | — |
-| `sortOrder` | `number` | No | — |
-| `reminders` | `string[]` | No | — |
-| `tags` | `string[]` | No | — |
-| `repeatFlag` | `string` | No | — |
-| `items` | `object[]` | No | — |
+| `content` | `string \| null` | No | — |
+| `desc` | `string \| null` | No | — |
+| `priority` | `number \| null` | No | 0 (None), 1 (Low), 3 (Medium), 5 (High) |
+| `status` | `-1 \| 0 \| 2 \| null` | No | -1 (Abandoned), 0 (Undone), 2 (Completed) |
+| `dueDate` | `string \| null` | No | — |
+| `startDate` | `string \| null` | No | — |
+| `completedTime` | `string \| null` | No | — |
+| `timeZone` | `string \| null` | No | — |
+| `isAllDay` | `boolean \| null` | No | — |
+| `columnId` | `string \| null` | No | — |
+| `parentId` | `string \| null` | No | — |
+| `sortOrder` | `number \| null` | No | — |
+| `reminders` | `string[] \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `repeatFlag` | `string \| null` | No | — |
+| `items` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -532,7 +532,7 @@ await corsair.ticktick.api.tasks.get({});
   status: number,
   startDate?: string,
   isAllDay?: boolean
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -646,24 +646,24 @@ await corsair.ticktick.api.tasks.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `projectId` | `string` | No | — |
+| `projectId` | `string \| null` | No | — |
 | `title` | `string` | Yes | — |
-| `content` | `string` | No | — |
-| `desc` | `string` | No | — |
-| `priority` | `number` | No | 0 (None), 1 (Low), 3 (Medium), 5 (High) |
-| `status` | `-1 \| 0 \| 2` | No | -1 (Abandoned), 0 (Undone), 2 (Completed) |
-| `dueDate` | `string` | No | — |
-| `startDate` | `string` | No | — |
-| `completedTime` | `string` | No | — |
-| `timeZone` | `string` | No | — |
-| `isAllDay` | `boolean` | No | — |
-| `columnId` | `string` | No | — |
-| `parentId` | `string` | No | — |
-| `sortOrder` | `number` | No | — |
-| `reminders` | `string[]` | No | — |
-| `tags` | `string[]` | No | — |
-| `repeatFlag` | `string` | No | — |
-| `items` | `object[]` | No | — |
+| `content` | `string \| null` | No | — |
+| `desc` | `string \| null` | No | — |
+| `priority` | `number \| null` | No | 0 (None), 1 (Low), 3 (Medium), 5 (High) |
+| `status` | `-1 \| 0 \| 2 \| null` | No | -1 (Abandoned), 0 (Undone), 2 (Completed) |
+| `dueDate` | `string \| null` | No | — |
+| `startDate` | `string \| null` | No | — |
+| `completedTime` | `string \| null` | No | — |
+| `timeZone` | `string \| null` | No | — |
+| `isAllDay` | `boolean \| null` | No | — |
+| `columnId` | `string \| null` | No | — |
+| `parentId` | `string \| null` | No | — |
+| `sortOrder` | `number \| null` | No | — |
+| `reminders` | `string[] \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `repeatFlag` | `string \| null` | No | — |
+| `items` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -675,7 +675,7 @@ await corsair.ticktick.api.tasks.update({});
   status: number,
   startDate?: string,
   isAllDay?: boolean
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>

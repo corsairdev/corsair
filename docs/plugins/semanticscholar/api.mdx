@@ -38,64 +38,64 @@ await corsair.semanticscholar.api.authors.batchGet({});
 <Accordion title="Output full type">
 
 ```ts
-{
-  authorId?: string | null,
-  externalIds?: {
-  } | null,
-  url?: string | null,
-  name?: string | null,
-  affiliations?: string[] | null,
-  homepage?: string | null,
-  paperCount?: number | null,
-  citationCount?: number | null,
-  hIndex?: number | null,
-  papers?: {
-    paperId?: string | null,
-    corpusId?: string | number | null,
-    externalIds?: {
-    } | null,
+(
+  {
+    authorId?: string | null,
+    externalIds?: Record<string, any> | null,
     url?: string | null,
-    title?: string | null,
-    abstract?: string | null,
-    venue?: string | null,
-    publicationVenue?: {
-    } | null,
-    year?: number | null,
-    referenceCount?: number | null,
+    name?: string | null,
+    affiliations?: string[] | null,
+    homepage?: string | null,
+    paperCount?: number | null,
     citationCount?: number | null,
-    influentialCitationCount?: number | null,
-    isOpenAccess?: boolean | null,
-    openAccessPdf?: {
+    hIndex?: number | null,
+    papers?: {
+      paperId?: string | null,
+      corpusId?: string | number | null,
+      externalIds?: Record<string, any> | null,
       url?: string | null,
-      status?: string | null,
-      license?: string | null,
-      disclaimer?: string | null
-    } | null,
-    fieldsOfStudy?: string[] | null,
-    s2FieldsOfStudy?: {
-    }[] | null,
-    publicationTypes?: string[] | null,
-    publicationDate?: string | null,
-    journal?: {
-    } | null,
-    authors?: {
-      authorId?: string | null,
-      name?: string | null
-    }[] | null,
-    citations?: {
-    }[] | null,
-    references?: {
-    }[] | null,
-    embedding?: {
-      model?: string | null,
-      vector?: number[] | null
-    } | null,
-    tldr?: {
-      model?: string | null,
-      text?: string | null
-    } | null
-  }[] | null
-} | null[]
+      title?: string | null,
+      abstract?: string | null,
+      venue?: string | null,
+      publicationVenue?: {
+      } | null,
+      year?: number | null,
+      referenceCount?: number | null,
+      citationCount?: number | null,
+      influentialCitationCount?: number | null,
+      isOpenAccess?: boolean | null,
+      openAccessPdf?: {
+        url?: string | null,
+        status?: string | null,
+        license?: string | null,
+        disclaimer?: string | null
+      } | null,
+      fieldsOfStudy?: string[] | null,
+      s2FieldsOfStudy?: {
+      }[] | null,
+      publicationTypes?: string[] | null,
+      publicationDate?: string | null,
+      journal?: {
+      } | null,
+      authors?: {
+        authorId?: string | null,
+        name?: string | null
+      }[] | null,
+      citations?: {
+      }[] | null,
+      references?: {
+      }[] | null,
+      embedding?: {
+        model?: string | null,
+        vector?: number[] | null
+      } | null,
+      tldr?: {
+        model?: string | null,
+        text?: string | null
+      } | null
+    }[] | null
+  } | null
+)[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -128,34 +128,25 @@ await corsair.semanticscholar.api.authors.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `authorId` | `string` | No | — |
-| `externalIds` | `object` | No | — |
-| `url` | `string` | No | — |
-| `name` | `string` | No | — |
-| `affiliations` | `string[]` | No | — |
-| `homepage` | `string` | No | — |
-| `paperCount` | `number` | No | — |
-| `citationCount` | `number` | No | — |
-| `hIndex` | `number` | No | — |
-| `papers` | `object[]` | No | — |
+| `authorId` | `string \| null` | No | — |
+| `externalIds` | `Record<string, any> \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `affiliations` | `string[] \| null` | No | — |
+| `homepage` | `string \| null` | No | — |
+| `paperCount` | `number \| null` | No | — |
+| `citationCount` | `number \| null` | No | — |
+| `hIndex` | `number \| null` | No | — |
+| `papers` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="externalIds full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="papers full type">
 
 ```ts
 {
   paperId?: string | null,
   corpusId?: string | number | null,
-  externalIds?: {
-  } | null,
+  externalIds?: Record<string, any> | null,
   url?: string | null,
   title?: string | null,
   abstract?: string | null,
@@ -196,7 +187,7 @@ await corsair.semanticscholar.api.authors.get({});
     model?: string | null,
     text?: string | null
   } | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -235,8 +226,8 @@ await corsair.semanticscholar.api.authors.listPapers({});
 |------|------|----------|-------------|
 | `total` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `next` | `number \| string` | No | — |
-| `token` | `string` | No | — |
+| `next` | `number \| string \| null` | No | — |
+| `token` | `string \| null` | No | — |
 | `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -246,8 +237,7 @@ await corsair.semanticscholar.api.authors.listPapers({});
 {
   paperId?: string | null,
   corpusId?: string | number | null,
-  externalIds?: {
-  } | null,
+  externalIds?: Record<string, any> | null,
   url?: string | null,
   title?: string | null,
   abstract?: string | null,
@@ -326,7 +316,7 @@ await corsair.semanticscholar.api.authors.search({});
 |------|------|----------|-------------|
 | `total` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `next` | `number \| string` | No | — |
+| `next` | `number \| string \| null` | No | — |
 | `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -335,8 +325,7 @@ await corsair.semanticscholar.api.authors.search({});
 ```ts
 {
   authorId?: string | null,
-  externalIds?: {
-  } | null,
+  externalIds?: Record<string, any> | null,
   url?: string | null,
   name?: string | null,
   affiliations?: string[] | null,
@@ -347,8 +336,7 @@ await corsair.semanticscholar.api.authors.search({});
   papers?: {
     paperId?: string | null,
     corpusId?: string | number | null,
-    externalIds?: {
-    } | null,
+    externalIds?: Record<string, any> | null,
     url?: string | null,
     title?: string | null,
     abstract?: string | null,
@@ -426,9 +414,9 @@ await corsair.semanticscholar.api.datasets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | No | — |
-| `description` | `string` | No | — |
-| `README` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `README` | `string \| null` | No | — |
 | `files` | `string[]` | No | — |
 
 
@@ -457,7 +445,7 @@ await corsair.semanticscholar.api.datasets.getDiffs({});
 
 
 
-**Output:** `object`
+**Output:** `object[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -507,16 +495,16 @@ await corsair.semanticscholar.api.datasets.getRelease({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `release_id` | `string` | No | — |
-| `releaseId` | `string` | No | — |
-| `datasets` | `object[]` | No | — |
+| `release_id` | `string \| null` | No | — |
+| `releaseId` | `string \| null` | No | — |
+| `datasets` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="datasets full type">
 
 ```ts
 {
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -540,7 +528,7 @@ await corsair.semanticscholar.api.datasets.listReleases({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `string[] \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -628,52 +616,53 @@ await corsair.semanticscholar.api.papers.batchGet({});
 <Accordion title="Output full type">
 
 ```ts
-{
-  paperId?: string | null,
-  corpusId?: string | number | null,
-  externalIds?: {
-  } | null,
-  url?: string | null,
-  title?: string | null,
-  abstract?: string | null,
-  venue?: string | null,
-  publicationVenue?: {
-  } | null,
-  year?: number | null,
-  referenceCount?: number | null,
-  citationCount?: number | null,
-  influentialCitationCount?: number | null,
-  isOpenAccess?: boolean | null,
-  openAccessPdf?: {
+(
+  {
+    paperId?: string | null,
+    corpusId?: string | number | null,
+    externalIds?: Record<string, any> | null,
     url?: string | null,
-    status?: string | null,
-    license?: string | null,
-    disclaimer?: string | null
-  } | null,
-  fieldsOfStudy?: string[] | null,
-  s2FieldsOfStudy?: {
-  }[] | null,
-  publicationTypes?: string[] | null,
-  publicationDate?: string | null,
-  journal?: {
-  } | null,
-  authors?: {
-    authorId?: string | null,
-    name?: string | null
-  }[] | null,
-  citations?: {
-  }[] | null,
-  references?: {
-  }[] | null,
-  embedding?: {
-    model?: string | null,
-    vector?: number[] | null
-  } | null,
-  tldr?: {
-    model?: string | null,
-    text?: string | null
+    title?: string | null,
+    abstract?: string | null,
+    venue?: string | null,
+    publicationVenue?: {
+    } | null,
+    year?: number | null,
+    referenceCount?: number | null,
+    citationCount?: number | null,
+    influentialCitationCount?: number | null,
+    isOpenAccess?: boolean | null,
+    openAccessPdf?: {
+      url?: string | null,
+      status?: string | null,
+      license?: string | null,
+      disclaimer?: string | null
+    } | null,
+    fieldsOfStudy?: string[] | null,
+    s2FieldsOfStudy?: {
+    }[] | null,
+    publicationTypes?: string[] | null,
+    publicationDate?: string | null,
+    journal?: {
+    } | null,
+    authors?: {
+      authorId?: string | null,
+      name?: string | null
+    }[] | null,
+    citations?: {
+    }[] | null,
+    references?: {
+    }[] | null,
+    embedding?: {
+      model?: string | null,
+      vector?: number[] | null
+    } | null,
+    tldr?: {
+      model?: string | null,
+      text?: string | null
+    } | null
   } | null
-} | null[]
+)[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -706,45 +695,37 @@ await corsair.semanticscholar.api.papers.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `paperId` | `string` | No | — |
-| `corpusId` | `string \| number` | No | — |
-| `externalIds` | `object` | No | — |
-| `url` | `string` | No | — |
-| `title` | `string` | No | — |
-| `abstract` | `string` | No | — |
-| `venue` | `string` | No | — |
-| `publicationVenue` | `object` | No | — |
-| `year` | `number` | No | — |
-| `referenceCount` | `number` | No | — |
-| `citationCount` | `number` | No | — |
-| `influentialCitationCount` | `number` | No | — |
-| `isOpenAccess` | `boolean` | No | — |
-| `openAccessPdf` | `object` | No | — |
-| `fieldsOfStudy` | `string[]` | No | — |
-| `s2FieldsOfStudy` | `object[]` | No | — |
-| `publicationTypes` | `string[]` | No | — |
-| `publicationDate` | `string` | No | — |
-| `journal` | `object` | No | — |
-| `authors` | `object[]` | No | — |
-| `citations` | `object[]` | No | — |
-| `references` | `object[]` | No | — |
-| `embedding` | `object` | No | — |
-| `tldr` | `object` | No | — |
+| `paperId` | `string \| null` | No | — |
+| `corpusId` | `string \| number \| null` | No | — |
+| `externalIds` | `Record<string, any> \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `abstract` | `string \| null` | No | — |
+| `venue` | `string \| null` | No | — |
+| `publicationVenue` | `object \| null` | No | — |
+| `year` | `number \| null` | No | — |
+| `referenceCount` | `number \| null` | No | — |
+| `citationCount` | `number \| null` | No | — |
+| `influentialCitationCount` | `number \| null` | No | — |
+| `isOpenAccess` | `boolean \| null` | No | — |
+| `openAccessPdf` | `object \| null` | No | — |
+| `fieldsOfStudy` | `string[] \| null` | No | — |
+| `s2FieldsOfStudy` | `object[] \| null` | No | — |
+| `publicationTypes` | `string[] \| null` | No | — |
+| `publicationDate` | `string \| null` | No | — |
+| `journal` | `object \| null` | No | — |
+| `authors` | `object[] \| null` | No | — |
+| `citations` | `object[] \| null` | No | — |
+| `references` | `object[] \| null` | No | — |
+| `embedding` | `object \| null` | No | — |
+| `tldr` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="externalIds full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="publicationVenue full type">
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 
@@ -756,7 +737,7 @@ await corsair.semanticscholar.api.papers.get({});
   status?: string | null,
   license?: string | null,
   disclaimer?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -764,7 +745,7 @@ await corsair.semanticscholar.api.papers.get({});
 
 ```ts
 {
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -772,7 +753,7 @@ await corsair.semanticscholar.api.papers.get({});
 
 ```ts
 {
-}
+} | null
 ```
 </Accordion>
 
@@ -782,7 +763,7 @@ await corsair.semanticscholar.api.papers.get({});
 {
   authorId?: string | null,
   name?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -790,7 +771,7 @@ await corsair.semanticscholar.api.papers.get({});
 
 ```ts
 {
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -798,7 +779,7 @@ await corsair.semanticscholar.api.papers.get({});
 
 ```ts
 {
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -808,7 +789,7 @@ await corsair.semanticscholar.api.papers.get({});
 {
   model?: string | null,
   vector?: number[] | null
-}
+} | null
 ```
 </Accordion>
 
@@ -818,7 +799,7 @@ await corsair.semanticscholar.api.papers.get({});
 {
   model?: string | null,
   text?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -856,7 +837,7 @@ await corsair.semanticscholar.api.papers.listAuthors({});
 |------|------|----------|-------------|
 | `total` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `next` | `number \| string` | No | — |
+| `next` | `number \| string \| null` | No | — |
 | `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -865,8 +846,7 @@ await corsair.semanticscholar.api.papers.listAuthors({});
 ```ts
 {
   authorId?: string | null,
-  externalIds?: {
-  } | null,
+  externalIds?: Record<string, any> | null,
   url?: string | null,
   name?: string | null,
   affiliations?: string[] | null,
@@ -877,8 +857,7 @@ await corsair.semanticscholar.api.papers.listAuthors({});
   papers?: {
     paperId?: string | null,
     corpusId?: string | number | null,
-    externalIds?: {
-    } | null,
+    externalIds?: Record<string, any> | null,
     url?: string | null,
     title?: string | null,
     abstract?: string | null,
@@ -957,7 +936,7 @@ await corsair.semanticscholar.api.papers.listCitations({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `offset` | `number` | No | — |
-| `next` | `number \| string` | No | — |
+| `next` | `number \| string \| null` | No | — |
 | `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -971,8 +950,7 @@ await corsair.semanticscholar.api.papers.listCitations({});
   citingPaper?: {
     paperId?: string | null,
     corpusId?: string | number | null,
-    externalIds?: {
-    } | null,
+    externalIds?: Record<string, any> | null,
     url?: string | null,
     title?: string | null,
     abstract?: string | null,
@@ -1051,7 +1029,7 @@ await corsair.semanticscholar.api.papers.listReferences({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `offset` | `number` | No | — |
-| `next` | `number \| string` | No | — |
+| `next` | `number \| string \| null` | No | — |
 | `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -1065,8 +1043,7 @@ await corsair.semanticscholar.api.papers.listReferences({});
   citedPaper?: {
     paperId?: string | null,
     corpusId?: string | number | null,
-    externalIds?: {
-    } | null,
+    externalIds?: Record<string, any> | null,
     url?: string | null,
     title?: string | null,
     abstract?: string | null,
@@ -1151,8 +1128,7 @@ await corsair.semanticscholar.api.papers.matchTitle({});
 {
   paperId?: string | null,
   corpusId?: string | number | null,
-  externalIds?: {
-  } | null,
+  externalIds?: Record<string, any> | null,
   url?: string | null,
   title?: string | null,
   abstract?: string | null,
@@ -1239,8 +1215,8 @@ await corsair.semanticscholar.api.papers.relevanceSearch({});
 |------|------|----------|-------------|
 | `total` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `next` | `number \| string` | No | — |
-| `token` | `string` | No | — |
+| `next` | `number \| string \| null` | No | — |
+| `token` | `string \| null` | No | — |
 | `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -1250,8 +1226,7 @@ await corsair.semanticscholar.api.papers.relevanceSearch({});
 {
   paperId?: string | null,
   corpusId?: string | number | null,
-  externalIds?: {
-  } | null,
+  externalIds?: Record<string, any> | null,
   url?: string | null,
   title?: string | null,
   abstract?: string | null,
@@ -1337,8 +1312,8 @@ await corsair.semanticscholar.api.papers.search({});
 |------|------|----------|-------------|
 | `total` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `next` | `number \| string` | No | — |
-| `token` | `string` | No | — |
+| `next` | `number \| string \| null` | No | — |
+| `token` | `string \| null` | No | — |
 | `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -1348,8 +1323,7 @@ await corsair.semanticscholar.api.papers.search({});
 {
   paperId?: string | null,
   corpusId?: string | number | null,
-  externalIds?: {
-  } | null,
+  externalIds?: Record<string, any> | null,
   url?: string | null,
   title?: string | null,
   abstract?: string | null,
@@ -1435,8 +1409,8 @@ await corsair.semanticscholar.api.papers.searchBulk({});
 |------|------|----------|-------------|
 | `total` | `number` | No | — |
 | `offset` | `number` | No | — |
-| `next` | `number \| string` | No | — |
-| `token` | `string` | No | — |
+| `next` | `number \| string \| null` | No | — |
+| `token` | `string \| null` | No | — |
 | `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -1446,8 +1420,7 @@ await corsair.semanticscholar.api.papers.searchBulk({});
 {
   paperId?: string | null,
   corpusId?: string | number | null,
-  externalIds?: {
-  } | null,
+  externalIds?: Record<string, any> | null,
   url?: string | null,
   title?: string | null,
   abstract?: string | null,
@@ -1535,8 +1508,7 @@ await corsair.semanticscholar.api.recommendations.forPaper({});
 {
   paperId?: string | null,
   corpusId?: string | number | null,
-  externalIds?: {
-  } | null,
+  externalIds?: Record<string, any> | null,
   url?: string | null,
   title?: string | null,
   abstract?: string | null,
@@ -1622,8 +1594,7 @@ await corsair.semanticscholar.api.recommendations.fromPaperLists({});
 {
   paperId?: string | null,
   corpusId?: string | number | null,
-  externalIds?: {
-  } | null,
+  externalIds?: Record<string, any> | null,
   url?: string | null,
   title?: string | null,
   abstract?: string | null,

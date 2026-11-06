@@ -45,7 +45,7 @@ A new on-chain payment arrived at a watched address
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `type` | `wallet:addresses:new-payment` | Yes | — |
-| `data` | `object` | No | — |
+| `data` | `Record<string, any>` | No | — |
 | `user` | `object` | No | — |
 | `account` | `object` | No | — |
 | `delivery_attempts` | `number` | No | — |
@@ -54,14 +54,6 @@ A new on-chain payment arrived at a watched address
 | `resource_path` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="user full type">
 
 ```ts
@@ -94,8 +86,7 @@ A new on-chain payment arrived at a watched address
 {
   id?: string,
   type: wallet:addresses:new-payment,
-  data?: {
-  },
+  data?: Record<string, any>,
   user?: {
     id?: string,
     resource?: string,
@@ -147,7 +138,7 @@ Coinbase webhook ping used to verify a notification URL
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `type` | `ping` | Yes | — |
-| `data` | `object` | No | — |
+| `data` | `Record<string, any>` | No | — |
 | `user` | `object` | No | — |
 | `account` | `object` | No | — |
 | `delivery_attempts` | `number` | No | — |
@@ -156,14 +147,6 @@ Coinbase webhook ping used to verify a notification URL
 | `resource_path` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="user full type">
 
 ```ts
@@ -196,8 +179,7 @@ Coinbase webhook ping used to verify a notification URL
 {
   id?: string,
   type: ping,
-  data?: {
-  },
+  data?: Record<string, any>,
   user?: {
     id?: string,
     resource?: string,

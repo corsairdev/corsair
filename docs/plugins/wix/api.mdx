@@ -75,7 +75,7 @@ await corsair.wix.api.automations.bulkUpdateStorageItemTagsByFilter({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
+| `filter` | `Record<string, JsonValue>` | Yes | — |
 | `assignTags` | `string[]` | No | — |
 | `unassignTags` | `string[]` | No | — |
 
@@ -196,7 +196,7 @@ await corsair.wix.api.benefits.bulkDeleteBenefitItemsByFilter({});
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
 | `namespace` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
+| `filter` | `Record<string, JsonValue>` | Yes | — |
 
 
 
@@ -691,7 +691,7 @@ await corsair.wix.api.billing.queryManualTaxMappings({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -789,7 +789,7 @@ await corsair.wix.api.billing.queryTaxGroups({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -1011,7 +1011,7 @@ await corsair.wix.api.bookings.bulkDeleteServicesByFilter({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
+| `filter` | `Record<string, JsonValue>` | Yes | — |
 
 
 
@@ -1067,7 +1067,7 @@ await corsair.wix.api.bookings.countExtendedBookings({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -1212,7 +1212,7 @@ await corsair.wix.api.bookings.queryCategories({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -1301,7 +1301,7 @@ await corsair.wix.api.bookings.queryExtendedBookings({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -1389,7 +1389,7 @@ await corsair.wix.api.bookings.updateStaffMemberTagsByFilter({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
+| `filter` | `Record<string, JsonValue>` | Yes | — |
 | `assignTags` | `string[]` | No | — |
 | `unassignTags` | `string[]` | No | — |
 
@@ -1574,7 +1574,7 @@ await corsair.wix.api.community.bulkUpdateReviewModerationStatus({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `moderationStatus` | `string` | Yes | — |
 
 
@@ -1786,7 +1786,7 @@ await corsair.wix.api.community.queryGroupRequests({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -1883,7 +1883,7 @@ await corsair.wix.api.community.queryModerationRules({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -2119,7 +2119,7 @@ await corsair.wix.api.contacts.bulkUpdate({});
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
 | `info` | `object` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `search` | `string` | No | — |
 | `fieldMask` | `object` | Yes | — |
 
@@ -2303,7 +2303,7 @@ await corsair.wix.api.contacts.query({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -2391,7 +2391,7 @@ await corsair.wix.api.contacts.queryFacets({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -2500,7 +2500,7 @@ await corsair.wix.api.events.bulkDeleteRsvpsByFilter({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
+| `filter` | `Record<string, JsonValue>` | Yes | — |
 
 
 
@@ -2556,7 +2556,7 @@ await corsair.wix.api.events.bulkDeleteTicketDefinitions({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
+| `filter` | `Record<string, JsonValue>` | Yes | — |
 
 
 
@@ -2840,18 +2840,8 @@ await corsair.wix.api.events.queryEventsGraphql({});
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
 | `query` | `string` | Yes | — |
-| `variables` | `object` | No | — |
-| `filter` | `lazy` | No | — |
-
-<AccordionGroup>
-<Accordion title="variables full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `variables` | `Record<string, JsonValue>` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -2859,26 +2849,8 @@ await corsair.wix.api.events.queryEventsGraphql({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | No | — |
-| `errors` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="errors full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `Record<string, JsonValue>` | No | — |
+| `errors` | `Record<string, JsonValue>[]` | No | — |
 
 
 
@@ -2988,7 +2960,7 @@ await corsair.wix.api.forms.queryDeletedForms({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
+| `filter` | `Record<string, JsonValue>` | Yes | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -3076,7 +3048,7 @@ await corsair.wix.api.forms.queryFormsSubmissions({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
+| `filter` | `Record<string, JsonValue>` | Yes | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -3164,7 +3136,7 @@ await corsair.wix.api.forms.querySubmissionsByNamespace({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
+| `filter` | `Record<string, JsonValue>` | Yes | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -3540,7 +3512,7 @@ await corsair.wix.api.marketing.queryLoyaltyCheckoutDiscounts({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -4630,7 +4602,7 @@ await corsair.wix.api.orders.query({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -5312,7 +5284,7 @@ await corsair.wix.api.sites.queryFolders({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -5402,7 +5374,7 @@ await corsair.wix.api.sites.queryLocations({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -5994,7 +5966,7 @@ await corsair.wix.api.stores.bulkRemoveInfoSectionsByFilter({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
+| `filter` | `Record<string, JsonValue>` | Yes | — |
 | `infoSectionIds` | `string[]` | Yes | — |
 
 
@@ -6119,18 +6091,8 @@ await corsair.wix.api.stores.bulkUpdateInventoryItemsByFilter({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
-| `update` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="update full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `filter` | `Record<string, JsonValue>` | Yes | — |
+| `update` | `Record<string, JsonValue>` | No | — |
 
 
 
@@ -6186,19 +6148,9 @@ await corsair.wix.api.stores.bulkUpdateProductsByFilter({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
-| `update` | `object` | No | — |
+| `filter` | `Record<string, JsonValue>` | Yes | — |
+| `update` | `Record<string, JsonValue>` | No | — |
 | `fields` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="update full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -6445,7 +6397,7 @@ await corsair.wix.api.stores.queryCoupons({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -6536,7 +6488,7 @@ await corsair.wix.api.stores.queryInventory({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
@@ -6631,13 +6583,13 @@ await corsair.wix.api.stores.searchProducts({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | No | — |
+| `filter` | `Record<string, JsonValue>` | No | — |
 | `sort` | `object[]` | No | — |
 | `paging` | `object` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `fields` | `string[]` | No | — |
-| `search` | `object` | No | — |
+| `search` | `string \| object` | No | — |
 
 <AccordionGroup>
 <Accordion title="sort full type">
@@ -6668,7 +6620,7 @@ string | {
     expression?: string
   },
   expression?: string,
-  filter?: lazy,
+  filter?: Record<string, JsonValue>,
   sort?: {
     fieldName: string,
     order?: ASC | DESC
@@ -6858,7 +6810,7 @@ await corsair.wix.api.system.bulkDeleteReportsByFilter({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
+| `filter` | `Record<string, JsonValue>` | Yes | — |
 
 
 
@@ -7132,7 +7084,7 @@ await corsair.wix.api.system.updateOperationGroupTagsByFilter({});
 |------|------|----------|-------------|
 | `siteId` | `string` | No | — |
 | `accountId` | `string` | No | — |
-| `filter` | `lazy` | Yes | — |
+| `filter` | `Record<string, JsonValue>` | Yes | — |
 | `assignTags` | `string[]` | No | — |
 | `unassignTags` | `string[]` | No | — |
 

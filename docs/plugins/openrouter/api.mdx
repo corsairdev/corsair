@@ -38,11 +38,11 @@ await corsair.openrouter.api.chatCompletions.create({});
 | `stop` | `string \| string[]` | No | — |
 | `presencePenalty` | `number` | No | — |
 | `frequencyPenalty` | `number` | No | — |
-| `logitBias` | `object` | No | — |
+| `logitBias` | `Record<string, number>` | No | — |
 | `user` | `string` | No | — |
 | `responseFormat` | `object` | No | — |
 | `tools` | `object[]` | No | — |
-| `toolChoice` | `object` | No | — |
+| `toolChoice` | `string \| object` | No | — |
 | `reasoning` | `object` | No | — |
 | `transforms` | `string[]` | No | — |
 | `models` | `string[]` | No | — |
@@ -132,14 +132,6 @@ await corsair.openrouter.api.chatCompletions.create({});
 ```
 </Accordion>
 
-<Accordion title="logitBias full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="responseFormat full type">
 
 ```ts
@@ -148,8 +140,7 @@ await corsair.openrouter.api.chatCompletions.create({});
   json_schema?: {
     name: string,
     strict?: boolean,
-    schema?: {
-    }
+    schema?: Record<string, any>
   }
 }
 ```
@@ -163,8 +154,7 @@ await corsair.openrouter.api.chatCompletions.create({});
   function: {
     name: string,
     description?: string,
-    parameters?: {
-    }
+    parameters?: Record<string, any>
   }
 }[]
 ```
@@ -244,7 +234,7 @@ string | {
   index: number,
   message: {
     role: assistant,
-    content?: string | null,
+    content: string | null,
     tool_calls?: {
       id: string,
       type: function,
@@ -254,10 +244,9 @@ string | {
       }
     }[],
     reasoning?: string | null,
-    reasoning_details?: {
-    }[]
+    reasoning_details?: Record<string, any>[]
   },
-  finish_reason?: string | null
+  finish_reason: string | null
 }[]
 ```
 </Accordion>
@@ -354,7 +343,7 @@ await corsair.openrouter.api.embeddings.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `input` | `object[]` | Yes | — |
+| `input` | `string \| string[] \| number[] \| number[][] \| Record<string, any>[]` | Yes | — |
 | `encodingFormat` | `float \| base64` | No | — |
 | `dimensions` | `number` | No | — |
 | `user` | `string` | No | — |
@@ -362,14 +351,6 @@ await corsair.openrouter.api.embeddings.create({});
 | `provider` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-string | string[] | number[] | number[][] | {
-}[]
-```
-</Accordion>
-
 <Accordion title="provider full type">
 
 ```ts
@@ -469,13 +450,11 @@ await corsair.openrouter.api.generations.get({});
   prompt_tokens?: number,
   completion_tokens?: number,
   total_tokens?: number,
-  usage?: number | {
-  },
+  usage?: number | Record<string, any>,
   tokens_prompt?: number | null,
   tokens_completion?: number | null,
   provider_responses?: any[] | null,
-  provider_response?: {
-  }
+  provider_response?: Record<string, any>
 }
 ```
 </Accordion>
@@ -638,8 +617,7 @@ await corsair.openrouter.api.messages.create({});
       type: tool_use,
       id: string,
       name: string,
-      input: {
-      }
+      input: Record<string, any>
     } | {
       type: tool_result,
       tool_use_id: string,
@@ -664,8 +642,7 @@ await corsair.openrouter.api.messages.create({});
 {
   name: string,
   description?: string,
-  input_schema: {
-  }
+  input_schema: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -705,7 +682,7 @@ await corsair.openrouter.api.messages.create({});
 | `type` | `message` | Yes | — |
 | `role` | `assistant` | Yes | — |
 | `model` | `string` | Yes | — |
-| `stop_reason` | `string` | No | — |
+| `stop_reason` | `string \| null` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `usage` | `object` | Yes | — |
 | `provider` | `string` | No | — |
@@ -730,8 +707,7 @@ await corsair.openrouter.api.messages.create({});
     type: tool_use,
     id: string,
     name: string,
-    input: {
-    }
+    input: Record<string, any>
   }
 )[]
 ```
@@ -795,8 +771,7 @@ await corsair.openrouter.api.modelEndpoints.list({});
   name: string,
   created?: number,
   description?: string,
-  architecture?: {
-  },
+  architecture?: Record<string, any>,
   endpoints: {
     name: string,
     model_id?: string,
@@ -807,8 +782,7 @@ await corsair.openrouter.api.modelEndpoints.list({});
     max_completion_tokens?: number | null,
     max_prompt_tokens?: number | null,
     quantization?: string | null,
-    pricing?: {
-    },
+    pricing?: Record<string, string | number | any[] | Record<string, any>>,
     supported_parameters?: string[],
     status?: number,
     uptime_last_30m?: number | null,
@@ -915,8 +889,7 @@ await corsair.openrouter.api.models.list({});
   created?: number,
   description?: string,
   context_length?: number,
-  pricing?: {
-  },
+  pricing?: Record<string, string | number | any[] | Record<string, any>>,
   architecture?: {
     modality?: string,
     input_modalities?: string[],
@@ -991,8 +964,7 @@ await corsair.openrouter.api.models.listEmbeddings({});
   created?: number,
   description?: string,
   context_length?: number,
-  pricing?: {
-  },
+  pricing?: Record<string, string | number | any[] | Record<string, any>>,
   architecture?: {
     modality?: string,
     input_modalities?: string[],
@@ -1067,8 +1039,7 @@ await corsair.openrouter.api.models.listUser({});
   created?: number,
   description?: string,
   context_length?: number,
-  pricing?: {
-  },
+  pricing?: Record<string, string | number | any[] | Record<string, any>>,
   architecture?: {
     modality?: string,
     input_modalities?: string[],
@@ -1185,8 +1156,7 @@ await corsair.openrouter.api.zdr.list({});
   max_completion_tokens?: number | null,
   max_prompt_tokens?: number | null,
   quantization?: string | null,
-  pricing?: {
-  },
+  pricing?: Record<string, string | number | any[] | Record<string, any>>,
   supported_parameters?: string[],
   status?: number,
   uptime_last_30m?: number | null,

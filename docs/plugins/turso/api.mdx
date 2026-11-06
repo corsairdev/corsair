@@ -30,8 +30,8 @@ await corsair.turso.api.changes.listen({});
 | `databaseUrl` | `string` | Yes | Database-specific URL, e.g. https://mydb-myorg.turso.io — NOT the platform API host |
 | `table` | `string` | Yes | Table to watch for committed changes |
 | `action` | `insert \| update \| delete` | Yes | Which committed action to stream: insert, update or delete |
-| `maxEvents` | `number` | Yes | Stop after this many events have been received |
-| `timeoutMs` | `number` | Yes | Stop listening after this many milliseconds |
+| `maxEvents` | `number` | No | Stop after this many events have been received. Defaults to 10. |
+| `timeoutMs` | `number` | No | Stop listening after this many milliseconds. Defaults to 15000. |
 
 
 
@@ -49,8 +49,7 @@ await corsair.turso.api.changes.listen({});
     table: string,
     action: insert | update | delete,
     receivedAt: string,
-    data?: {
-    }
+    data?: Record<string, any>
   }[],
   stoppedBy: max_events | timeout | stream_closed
 } | {

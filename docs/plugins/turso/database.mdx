@@ -28,6 +28,7 @@ const rows = await corsair.turso.db.changeEvents.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `databaseUrl` | `string` | equals, contains, startsWith, endsWith, in |
 | `table` | `string` | equals, contains, startsWith, endsWith, in |
+| `action` | `string` | equals, contains, startsWith, endsWith, in |
 | `receivedAt` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._

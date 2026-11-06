@@ -28,7 +28,7 @@ await corsair.countdownapi.api.autocomplete.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | — |
-| `ebay_domain` | `string` | Yes | — |
+| `ebay_domain` | `string` | No | Defaults to "ebay.com". |
 
 
 
@@ -118,7 +118,7 @@ await corsair.countdownapi.api.product.get({});
 | `url` | `string` | No | — |
 | `epid` | `string` | No | — |
 | `gtin` | `string` | No | — |
-| `ebay_domain` | `string` | Yes | — |
+| `ebay_domain` | `string` | No | Defaults to "ebay.com". |
 | `include_html` | `boolean` | No | — |
 | `skip_gtin_cache` | `boolean` | No | — |
 | `include_parts_compatibility` | `boolean` | No | — |
@@ -284,7 +284,7 @@ await corsair.countdownapi.api.search.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | No | — |
-| `ebay_domain` | `string` | Yes | — |
+| `ebay_domain` | `string` | No | Defaults to "ebay.com". |
 | `page` | `number` | No | — |
 | `category_id` | `string` | No | — |
 | `listing_type` | `all \| buy_it_now \| auction \| accepts_offers` | No | — |

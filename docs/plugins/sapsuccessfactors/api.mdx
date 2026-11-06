@@ -28,7 +28,7 @@ await corsair.sapsuccessfactors.api.a.createAFeedbackRequest({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `questions` | `object[]` | No | — |
-| `body` | `object` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="questions full type">
@@ -40,19 +40,11 @@ await corsair.sapsuccessfactors.api.a.createAFeedbackRequest({});
 }[]
 ```
 </Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
 
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -149,7 +141,7 @@ await corsair.sapsuccessfactors.api.approve.approveCalibrationSession({});
 
 
 
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -478,21 +470,11 @@ await corsair.sapsuccessfactors.api.calibration.updateCalibrationSubjectRatings(
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `subject_id` | `string` | Yes | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -609,7 +591,7 @@ await corsair.sapsuccessfactors.api.cdp.getCdpLearningMetadata({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `string \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -656,7 +638,7 @@ await corsair.sapsuccessfactors.api.cdp.refreshCdpLearningMetadata({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1731,7 +1713,7 @@ await corsair.sapsuccessfactors.api.give.giveFeedbackOrRespondToAFeedbackRequest
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `questions` | `object[]` | No | — |
-| `body` | `object` | No | — |
+| `body` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
 <Accordion title="questions full type">
@@ -1743,19 +1725,11 @@ await corsair.sapsuccessfactors.api.give.giveFeedbackOrRespondToAFeedbackRequest
 }[]
 ```
 </Accordion>
-
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
 
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -1906,7 +1880,7 @@ await corsair.sapsuccessfactors.api.internal.updateInternalUsernameNewHiresAfter
 
 
 
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2285,21 +2259,11 @@ await corsair.sapsuccessfactors.api.learning.createLearningActivitiesBulk({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2339,7 +2303,7 @@ await corsair.sapsuccessfactors.api.metadata.refreshMetadataContFeedbackService(
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2386,7 +2350,7 @@ await corsair.sapsuccessfactors.api.nomination.deleteNominationPositionTalentPoo
 
 
 
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2426,7 +2390,7 @@ await corsair.sapsuccessfactors.api.odata.getOdataMetadataCalibSessionService({}
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `string \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2473,7 +2437,7 @@ await corsair.sapsuccessfactors.api.odata.getOdataMetadataClockInclockOut({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `string \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2520,7 +2484,7 @@ await corsair.sapsuccessfactors.api.odata.getOdataMetadataForNominationService({
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `string \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2567,7 +2531,7 @@ await corsair.sapsuccessfactors.api.odata.getOdataMetadataOnboardingAddl({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `string \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2614,7 +2578,7 @@ await corsair.sapsuccessfactors.api.odata.getOdataUserMetadata({});
 **Input:** _empty object_
 
 
-**Output:** `object`
+**Output:** `string \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2718,21 +2682,11 @@ await corsair.sapsuccessfactors.api.onboardee.createOnboardee({});
 | `userId` | `string` | No | — |
 | `username` | `string` | No | — |
 | `status` | `string` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -3495,21 +3449,11 @@ await corsair.sapsuccessfactors.api.successor.createUpdateSuccessorNomination({}
 | `userId` | `string` | No | — |
 | `positionCode` | `string` | No | — |
 | `isPoolNomination` | `boolean` | No | — |
-| `body` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="body full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `body` | `Record<string, any>` | No | — |
 
 
 
-**Output:** `object`
+**Output:** `undefined \| null \| object`
 
 <AccordionGroup>
 <Accordion title="Output full type">

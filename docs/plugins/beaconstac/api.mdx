@@ -111,8 +111,8 @@ await corsair.beaconstac.api.bulkQrcodes.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `results` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -169,8 +169,8 @@ await corsair.beaconstac.api.organizations.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `results` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -285,8 +285,8 @@ await corsair.beaconstac.api.places.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `results` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -432,14 +432,14 @@ await corsair.beaconstac.api.qrcodes.get({});
 | `url` | `string` | No | — |
 | `state` | `string` | No | — |
 | `organization` | `number` | No | — |
-| `place` | `number` | No | — |
-| `maintainer` | `number` | No | — |
+| `place` | `number \| null` | No | — |
+| `maintainer` | `number \| null` | No | — |
 | `tags` | `number[]` | No | — |
-| `template` | `number` | No | — |
+| `template` | `number \| null` | No | — |
 | `campaign` | `any` | No | — |
 | `attributes` | `any` | No | — |
 | `fields_data` | `any` | No | — |
-| `view_limit` | `number` | No | — |
+| `view_limit` | `number \| null` | No | — |
 | `domain` | `number` | No | — |
 | `location_enabled` | `boolean` | No | — |
 | `password` | `boolean` | No | — |
@@ -447,7 +447,7 @@ await corsair.beaconstac.api.qrcodes.get({});
 | `additional_params` | `any` | No | — |
 | `created` | `string` | No | — |
 | `updated` | `string` | No | — |
-| `heartbeat` | `string` | No | — |
+| `heartbeat` | `string \| null` | No | — |
 
 
 
@@ -470,49 +470,15 @@ await corsair.beaconstac.api.qrcodes.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `qrcode_id` | `number` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `name` | `string` | No | — |
 | `tags` | `number[]` | No | — |
 | `place` | `number` | No | — |
 | `qr_type` | `number` | No | — |
-| `campaign` | `object` | No | — |
-| `attributes` | `object` | No | — |
-| `fields_data` | `object` | No | — |
+| `campaign` | `Record<string, any>` | No | — |
+| `attributes` | `Record<string, any>` | No | — |
+| `fields_data` | `Record<string, any>` | No | — |
 | `organization` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="campaign full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="fields_data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -526,14 +492,14 @@ await corsair.beaconstac.api.qrcodes.update({});
 | `url` | `string` | No | — |
 | `state` | `string` | No | — |
 | `organization` | `number` | No | — |
-| `place` | `number` | No | — |
-| `maintainer` | `number` | No | — |
+| `place` | `number \| null` | No | — |
+| `maintainer` | `number \| null` | No | — |
 | `tags` | `number[]` | No | — |
-| `template` | `number` | No | — |
+| `template` | `number \| null` | No | — |
 | `campaign` | `any` | No | — |
 | `attributes` | `any` | No | — |
 | `fields_data` | `any` | No | — |
-| `view_limit` | `number` | No | — |
+| `view_limit` | `number \| null` | No | — |
 | `domain` | `number` | No | — |
 | `location_enabled` | `boolean` | No | — |
 | `password` | `boolean` | No | — |
@@ -541,7 +507,7 @@ await corsair.beaconstac.api.qrcodes.update({});
 | `additional_params` | `any` | No | — |
 | `created` | `string` | No | — |
 | `updated` | `string` | No | — |
-| `heartbeat` | `string` | No | — |
+| `heartbeat` | `string \| null` | No | — |
 
 
 
@@ -567,7 +533,7 @@ await corsair.beaconstac.api.qrTemplates.create({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `organization` | `number` | Yes | — |
-| `meta` | `object` | No | — |
+| `meta` | `Record<string, any>` | No | — |
 | `margin` | `number` | No | — |
 | `default` | `boolean` | No | — |
 | `dotScale` | `number` | No | — |
@@ -588,16 +554,6 @@ await corsair.beaconstac.api.qrTemplates.create({});
 | `backgroundColor` | `string` | No | — |
 | `backgroundImage` | `string` | No | — |
 
-<AccordionGroup>
-<Accordion title="meta full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output**
@@ -608,7 +564,7 @@ await corsair.beaconstac.api.qrTemplates.create({});
 | `name` | `string` | No | — |
 | `default` | `boolean` | No | — |
 | `organization` | `number` | No | — |
-| `maintainer` | `number` | No | — |
+| `maintainer` | `number \| null` | No | — |
 | `meta` | `any` | No | — |
 | `margin` | `number` | No | — |
 | `dotScale` | `number` | No | — |
@@ -687,8 +643,8 @@ await corsair.beaconstac.api.qrTemplates.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `results` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -757,7 +713,7 @@ await corsair.beaconstac.api.tags.create({});
 | `name` | `string` | No | — |
 | `color` | `string` | No | — |
 | `organization` | `number` | No | — |
-| `maintainer` | `number` | No | — |
+| `maintainer` | `number \| null` | No | — |
 | `created` | `string` | No | — |
 | `updated` | `string` | No | — |
 
@@ -823,8 +779,8 @@ await corsair.beaconstac.api.tags.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `results` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -878,7 +834,7 @@ await corsair.beaconstac.api.tags.update({});
 | `name` | `string` | No | — |
 | `color` | `string` | No | — |
 | `organization` | `number` | No | — |
-| `maintainer` | `number` | No | — |
+| `maintainer` | `number \| null` | No | — |
 | `created` | `string` | No | — |
 | `updated` | `string` | No | — |
 
@@ -929,10 +885,10 @@ await corsair.beaconstac.api.users.create({});
 | `customer_plan` | `string` | No | — |
 | `subscription_state` | `string` | No | — |
 | `is_active` | `boolean` | No | — |
-| `stripe_id` | `string` | No | — |
+| `stripe_id` | `string \| null` | No | — |
 | `timezone` | `string` | No | — |
 | `organization` | `number` | No | — |
-| `last_login` | `string` | No | — |
+| `last_login` | `string \| null` | No | — |
 | `date_joined` | `string` | No | — |
 | `created` | `string` | No | — |
 | `updated` | `string` | No | — |
@@ -973,10 +929,10 @@ await corsair.beaconstac.api.users.get({});
 | `customer_plan` | `string` | No | — |
 | `subscription_state` | `string` | No | — |
 | `is_active` | `boolean` | No | — |
-| `stripe_id` | `string` | No | — |
+| `stripe_id` | `string \| null` | No | — |
 | `timezone` | `string` | No | — |
 | `organization` | `number` | No | — |
-| `last_login` | `string` | No | — |
+| `last_login` | `string \| null` | No | — |
 | `date_joined` | `string` | No | — |
 | `created` | `string` | No | — |
 | `updated` | `string` | No | — |
@@ -1028,8 +984,8 @@ await corsair.beaconstac.api.users.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `count` | `number` | No | — |
-| `next` | `string` | No | — |
-| `previous` | `string` | No | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
 | `results` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -1097,10 +1053,10 @@ await corsair.beaconstac.api.users.update({});
 | `customer_plan` | `string` | No | — |
 | `subscription_state` | `string` | No | — |
 | `is_active` | `boolean` | No | — |
-| `stripe_id` | `string` | No | — |
+| `stripe_id` | `string \| null` | No | — |
 | `timezone` | `string` | No | — |
 | `organization` | `number` | No | — |
-| `last_login` | `string` | No | — |
+| `last_login` | `string \| null` | No | — |
 | `date_joined` | `string` | No | — |
 | `created` | `string` | No | — |
 | `updated` | `string` | No | — |

@@ -60,21 +60,11 @@ await corsair.cosmic.api.media.find({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `bucketSlug` | `string` | No | — |
-| `query` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
 | `props` | `string` | No | — |
 | `sort` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `skip` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -104,8 +94,7 @@ await corsair.cosmic.api.media.find({});
   type?: string,
   bucket?: string,
   created_at?: string,
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -161,8 +150,7 @@ await corsair.cosmic.api.media.findOne({});
   type?: string,
   bucket?: string,
   created_at?: string,
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }
 ```
 </Accordion>
@@ -194,18 +182,8 @@ await corsair.cosmic.api.media.insert({});
 | `data` | `string` | Yes | — |
 | `folder` | `string` | No | — |
 | `alt_text` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `trigger_webhook` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -233,8 +211,7 @@ await corsair.cosmic.api.media.insert({});
   type?: string,
   bucket?: string,
   created_at?: string,
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }
 ```
 </Accordion>
@@ -264,18 +241,8 @@ await corsair.cosmic.api.media.update({});
 | `id` | `string` | Yes | — |
 | `folder` | `string` | No | — |
 | `alt_text` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `trigger_webhook` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -317,8 +284,7 @@ await corsair.cosmic.api.objects.batch({});
 {
   method: add | edit | delete,
   object_id?: string,
-  object?: {
-  },
+  object?: Record<string, any>,
   trigger_webhook?: boolean
 }[]
 ```
@@ -340,8 +306,7 @@ await corsair.cosmic.api.objects.batch({});
 {
   method: string,
   status: string,
-  object?: {
-  },
+  object?: Record<string, any>,
   message?: string
 }[]
 ```
@@ -402,7 +367,7 @@ await corsair.cosmic.api.objects.find({});
 |------|------|----------|-------------|
 | `bucketSlug` | `string` | No | — |
 | `type` | `string` | No | — |
-| `query` | `object` | No | — |
+| `query` | `Record<string, any>` | No | — |
 | `props` | `string` | No | — |
 | `status` | `published \| draft \| any` | No | — |
 | `sort` | `string` | No | — |
@@ -410,16 +375,6 @@ await corsair.cosmic.api.objects.find({});
 | `skip` | `number` | No | — |
 | `after` | `string` | No | — |
 | `depth` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="query full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -441,8 +396,7 @@ await corsair.cosmic.api.objects.find({});
   title?: string,
   type?: string,
   status?: string,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   created_at?: string,
   modified_at?: string,
   published_at?: string,
@@ -497,8 +451,7 @@ await corsair.cosmic.api.objects.findOne({});
   title?: string,
   type?: string,
   status?: string,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   created_at?: string,
   modified_at?: string,
   published_at?: string,
@@ -552,8 +505,7 @@ await corsair.cosmic.api.objects.getById({});
   title?: string,
   type?: string,
   status?: string,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   created_at?: string,
   modified_at?: string,
   published_at?: string,
@@ -588,18 +540,8 @@ await corsair.cosmic.api.objects.insert({});
 | `type` | `string` | Yes | — |
 | `slug` | `string` | No | — |
 | `status` | `published \| draft` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `trigger_webhook` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -619,8 +561,7 @@ await corsair.cosmic.api.objects.insert({});
   title: string,
   type: string,
   status?: string,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   created_at?: string,
   modified_at?: string,
   published_at?: string,
@@ -655,18 +596,8 @@ await corsair.cosmic.api.objects.update({});
 | `title` | `string` | No | — |
 | `slug` | `string` | No | — |
 | `status` | `published \| draft` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `trigger_webhook` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -686,8 +617,7 @@ await corsair.cosmic.api.objects.update({});
   title: string,
   type: string,
   status?: string,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   created_at?: string,
   modified_at?: string,
   published_at?: string,
@@ -1054,8 +984,7 @@ await corsair.cosmic.api.revisions.find({});
   title: string,
   slug: string,
   status?: string,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   created_at?: string
 }[]
 ```
@@ -1105,8 +1034,7 @@ await corsair.cosmic.api.revisions.findOne({});
   title: string,
   slug: string,
   status?: string,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   created_at?: string
 }
 ```
@@ -1137,18 +1065,8 @@ await corsair.cosmic.api.revisions.insert({});
 | `objectId` | `string` | Yes | — |
 | `title` | `string` | No | — |
 | `slug` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `trigger_webhook` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1168,8 +1086,7 @@ await corsair.cosmic.api.revisions.insert({});
   title: string,
   slug: string,
   status?: string,
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   created_at?: string
 }
 ```

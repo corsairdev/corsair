@@ -30,8 +30,8 @@ await corsair.ollama.api.chat.chat({});
 | `model` | `string` | Yes | Name of the model to use for chat |
 | `messages` | `object[]` | Yes | Conversation history |
 | `tools` | `any[]` | No | List of tools/functions available to the model |
-| `format` | `object` | No | Output format, e.g. "json" or a JSON schema |
-| `options` | `object` | No | Model configuration options (temperature, top_p, etc.) |
+| `format` | `string \| Record<string, any>` | No | Output format, e.g. "json" or a JSON schema |
+| `options` | `Record<string, any>` | No | Model configuration options (temperature, top_p, etc.) |
 | `stream` | `boolean` | No | Whether to stream responses (default false) |
 | `keep_alive` | `string \| number` | No | Duration to keep the model loaded in memory |
 
@@ -45,22 +45,6 @@ await corsair.ollama.api.chat.chat({});
   images?: string[],
   tool_calls?: any[]
 }[]
-```
-</Accordion>
-
-<Accordion title="format full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="options full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -120,31 +104,13 @@ await corsair.ollama.api.chat.generate({});
 | `prompt` | `string` | No | The prompt to generate a response for |
 | `suffix` | `string` | No | Text after the insertion point |
 | `images` | `string[]` | No | Base64-encoded images for multimodal models |
-| `format` | `object` | No | Format of the response |
-| `options` | `object` | No | Model configuration options |
+| `format` | `string \| Record<string, any>` | No | Format of the response |
+| `options` | `Record<string, any>` | No | Model configuration options |
 | `system` | `string` | No | System message to override model default |
 | `template` | `string` | No | Prompt template to override model default |
 | `stream` | `boolean` | No | Whether to stream response |
 | `raw` | `boolean` | No | Bypass prompt template when true |
 | `keep_alive` | `string \| number` | No | Duration to keep the model loaded |
-
-<AccordionGroup>
-<Accordion title="format full type">
-
-```ts
-string | {
-}
-```
-</Accordion>
-
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -237,17 +203,7 @@ await corsair.ollama.api.models.showModel({});
 | `model` | `string` | Yes | Name of the model to show information for |
 | `system` | `string` | No | System prompt override |
 | `template` | `string` | No | Template override |
-| `options` | `object` | No | Options override |
-
-<AccordionGroup>
-<Accordion title="options full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `options` | `Record<string, any>` | No | Options override |
 
 
 
@@ -259,7 +215,7 @@ await corsair.ollama.api.models.showModel({});
 | `parameters` | `string` | No | — |
 | `template` | `string` | No | — |
 | `details` | `object` | No | — |
-| `model_info` | `object` | No | — |
+| `model_info` | `Record<string, any>` | No | — |
 | `modified_at` | `string` | No | — |
 | `license` | `string` | No | — |
 
@@ -274,14 +230,6 @@ await corsair.ollama.api.models.showModel({});
   families?: string[],
   parameter_size?: string,
   quantization_level?: string
-}
-```
-</Accordion>
-
-<Accordion title="model_info full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -426,7 +374,7 @@ await corsair.ollama.api.openai.createOpenAiCompletion({});
 | `top_p` | `number` | No | Nucleus sampling probability |
 | `n` | `number` | No | Number of completions to generate |
 | `stream` | `boolean` | No | Whether to stream responses |
-| `logprobs` | `number` | No | Include log probabilities |
+| `logprobs` | `number \| null` | No | Include log probabilities |
 | `echo` | `boolean` | No | Echo prompt in completion |
 | `stop` | `string \| string[]` | No | Stop sequences |
 | `presence_penalty` | `number` | No | Presence penalty |

@@ -59,6 +59,7 @@ const rows = await corsair.pinecone.db.assistants.search({
 | `status` | `string` | equals, contains, startsWith, endsWith, in |
 | `host` | `string` | equals, contains, startsWith, endsWith, in |
 | `instructions` | `string` | equals, contains, startsWith, endsWith, in |
+| `region` | `string` | equals, contains, startsWith, endsWith, in |
 | `created_at` | `string` | equals, contains, startsWith, endsWith, in |
 | `updated_at` | `string` | equals, contains, startsWith, endsWith, in |
 
@@ -151,6 +152,8 @@ const rows = await corsair.pinecone.db.indexes.search({
 | `host` | `string` | equals, contains, startsWith, endsWith, in |
 | `dimension` | `number` | equals, gt, gte, lt, lte, in |
 | `metric` | `string` | equals, contains, startsWith, endsWith, in |
+| `vector_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `deletion_protection` | `string` | equals, contains, startsWith, endsWith, in |
 
 _Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
@@ -175,6 +178,8 @@ const rows = await corsair.pinecone.db.models.search({
 | `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
 | `model` | `string` | equals, contains, startsWith, endsWith, in |
 | `short_description` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `vector_type` | `string` | equals, contains, startsWith, endsWith, in |
 | `dimension` | `number` | equals, gt, gte, lt, lte, in |
 | `max_sequence_length` | `number` | equals, gt, gte, lt, lte, in |
 

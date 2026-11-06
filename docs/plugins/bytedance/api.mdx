@@ -61,27 +61,27 @@ await corsair.bytedance.api.tasks.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `model` | `string` | No | — |
+| `model` | `string \| null` | No | — |
 | `status` | `queued \| running \| cancelled \| succeeded \| failed \| expired` | Yes | — |
-| `content` | `object` | No | — |
-| `error` | `object` | No | — |
-| `created_at` | `number` | No | — |
-| `updated_at` | `number` | No | — |
-| `duration` | `number` | No | — |
-| `frames` | `number` | No | — |
-| `framespersecond` | `number` | No | — |
-| `generate_audio` | `boolean` | No | — |
-| `output_format` | `string` | No | — |
-| `priority` | `number` | No | — |
-| `ratio` | `string` | No | — |
-| `resolution` | `string` | No | — |
-| `seed` | `number` | No | — |
-| `service_tier` | `string` | No | — |
-| `execution_expires_after` | `number` | No | — |
-| `draft` | `boolean` | No | — |
-| `draft_task_id` | `string` | No | — |
-| `safety_identifier` | `string` | No | — |
-| `usage` | `object` | No | — |
+| `content` | `object \| null` | No | — |
+| `error` | `object \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `updated_at` | `number \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `frames` | `number \| null` | No | — |
+| `framespersecond` | `number \| null` | No | — |
+| `generate_audio` | `boolean \| null` | No | — |
+| `output_format` | `string \| null` | No | — |
+| `priority` | `number \| null` | No | — |
+| `ratio` | `string \| null` | No | — |
+| `resolution` | `string \| null` | No | — |
+| `seed` | `number \| null` | No | — |
+| `service_tier` | `string \| null` | No | — |
+| `execution_expires_after` | `number \| null` | No | — |
+| `draft` | `boolean \| null` | No | — |
+| `draft_task_id` | `string \| null` | No | — |
+| `safety_identifier` | `string \| null` | No | — |
+| `usage` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="content full type">
@@ -90,7 +90,7 @@ await corsair.bytedance.api.tasks.get({});
 {
   video_url?: string | null,
   last_frame_url?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -100,7 +100,7 @@ await corsair.bytedance.api.tasks.get({});
 {
   code: string,
   message: string
-}
+} | null
 ```
 </Accordion>
 
@@ -110,7 +110,7 @@ await corsair.bytedance.api.tasks.get({});
 {
   completion_tokens?: number | null,
   total_tokens?: number | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>

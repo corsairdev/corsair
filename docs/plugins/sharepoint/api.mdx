@@ -79,7 +79,7 @@ await corsair.sharepoint.api.contentTypes.create({});
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `group` | `string` | No | — |
-| `id` | `object` | No | — |
+| `id` | `object \| string` | No | — |
 
 <AccordionGroup>
 <Accordion title="id full type">
@@ -144,7 +144,7 @@ await corsair.sharepoint.api.contentTypes.createListField({});
 | `required` | `boolean` | No | — |
 | `hidden` | `boolean` | No | — |
 | `readOnly` | `boolean` | No | — |
-| `defaultValue` | `string` | No | — |
+| `defaultValue` | `string \| null` | No | — |
 
 
 
@@ -503,10 +503,8 @@ await corsair.sharepoint.api.drive.listRecentItems({});
   webUrl?: string,
   createdDateTime?: string,
   lastModifiedDateTime?: string,
-  file?: {
-  },
-  folder?: {
-  }
+  file?: Record<string, any>,
+  folder?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -594,26 +592,8 @@ await corsair.sharepoint.api.drive.updateItem({});
 | `webUrl` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `file` | `object` | No | — |
-| `folder` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="file full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="folder full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `file` | `Record<string, any>` | No | — |
+| `folder` | `Record<string, any>` | No | — |
 
 
 
@@ -748,35 +728,9 @@ await corsair.sharepoint.api.files.get({});
 | `size` | `number` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `file` | `object` | No | — |
-| `folder` | `object` | No | — |
-| `parentReference` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="file full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="folder full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="parentReference full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `file` | `Record<string, any>` | No | — |
+| `folder` | `Record<string, any>` | No | — |
+| `parentReference` | `Record<string, any>` | No | — |
 
 
 
@@ -821,12 +775,9 @@ await corsair.sharepoint.api.files.listInFolder({});
   size?: number,
   createdDateTime?: string,
   lastModifiedDateTime?: string,
-  file?: {
-  },
-  folder?: {
-  },
-  parentReference?: {
-  }
+  file?: Record<string, any>,
+  folder?: Record<string, any>,
+  parentReference?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -931,35 +882,9 @@ await corsair.sharepoint.api.files.upload({});
 | `size` | `number` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `file` | `object` | No | — |
-| `folder` | `object` | No | — |
-| `parentReference` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="file full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="folder full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="parentReference full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `file` | `Record<string, any>` | No | — |
+| `folder` | `Record<string, any>` | No | — |
+| `parentReference` | `Record<string, any>` | No | — |
 
 
 
@@ -997,35 +922,9 @@ await corsair.sharepoint.api.folders.create({});
 | `size` | `number` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `file` | `object` | No | — |
-| `folder` | `object` | No | — |
-| `parentReference` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="file full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="folder full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="parentReference full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `file` | `Record<string, any>` | No | — |
+| `folder` | `Record<string, any>` | No | — |
+| `parentReference` | `Record<string, any>` | No | — |
 
 
 
@@ -1091,35 +990,9 @@ await corsair.sharepoint.api.folders.get({});
 | `size` | `number` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `file` | `object` | No | — |
-| `folder` | `object` | No | — |
-| `parentReference` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="file full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="folder full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="parentReference full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `file` | `Record<string, any>` | No | — |
+| `folder` | `Record<string, any>` | No | — |
+| `parentReference` | `Record<string, any>` | No | — |
 
 
 
@@ -1163,12 +1036,9 @@ await corsair.sharepoint.api.folders.getAll({});
   size?: number,
   createdDateTime?: string,
   lastModifiedDateTime?: string,
-  file?: {
-  },
-  folder?: {
-  },
-  parentReference?: {
-  }
+  file?: Record<string, any>,
+  folder?: Record<string, any>,
+  parentReference?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1215,12 +1085,9 @@ await corsair.sharepoint.api.folders.listSubfolders({});
   size?: number,
   createdDateTime?: string,
   lastModifiedDateTime?: string,
-  file?: {
-  },
-  folder?: {
-  },
-  parentReference?: {
-  }
+  file?: Record<string, any>,
+  folder?: Record<string, any>,
+  parentReference?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1316,17 +1183,7 @@ await corsair.sharepoint.api.items.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `list_title` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1338,18 +1195,8 @@ await corsair.sharepoint.api.items.create({});
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
 | `webUrl` | `string` | No | — |
-| `fields` | `object` | No | — |
+| `fields` | `Record<string, any>` | No | — |
 | `@odata.etag` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1372,17 +1219,7 @@ await corsair.sharepoint.api.items.createByGuid({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `list_guid` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1394,18 +1231,8 @@ await corsair.sharepoint.api.items.createByGuid({});
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
 | `webUrl` | `string` | No | — |
-| `fields` | `object` | No | — |
+| `fields` | `Record<string, any>` | No | — |
 | `@odata.etag` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1429,17 +1256,7 @@ await corsair.sharepoint.api.items.createInFolder({});
 |------|------|----------|-------------|
 | `list_title` | `string` | Yes | — |
 | `folder_path` | `string` | Yes | — |
-| `fields` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | Yes | — |
 
 
 
@@ -1451,18 +1268,8 @@ await corsair.sharepoint.api.items.createInFolder({});
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
 | `webUrl` | `string` | No | — |
-| `fields` | `object` | No | — |
+| `fields` | `Record<string, any>` | No | — |
 | `@odata.etag` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1530,18 +1337,8 @@ await corsair.sharepoint.api.items.get({});
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
 | `webUrl` | `string` | No | — |
-| `fields` | `object` | No | — |
+| `fields` | `Record<string, any>` | No | — |
 | `@odata.etag` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1639,17 +1436,7 @@ await corsair.sharepoint.api.items.getVersion({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `fields` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `fields` | `Record<string, any>` | No | — |
 
 
 
@@ -1696,8 +1483,7 @@ await corsair.sharepoint.api.items.list({});
   createdDateTime?: string,
   lastModifiedDateTime?: string,
   webUrl?: string,
-  fields?: {
-  },
+  fields?: Record<string, any>,
   @odata.etag?: string
 }[]
 ```
@@ -1790,8 +1576,7 @@ await corsair.sharepoint.api.items.listByGuid({});
   createdDateTime?: string,
   lastModifiedDateTime?: string,
   webUrl?: string,
-  fields?: {
-  },
+  fields?: Record<string, any>,
   @odata.etag?: string
 }[]
 ```
@@ -1851,18 +1636,8 @@ await corsair.sharepoint.api.items.update({});
 |------|------|----------|-------------|
 | `list_title` | `string` | Yes | — |
 | `item_id` | `number` | Yes | — |
-| `fields` | `object` | Yes | — |
+| `fields` | `Record<string, any>` | Yes | — |
 | `etag` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="fields full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2126,8 +1901,7 @@ await corsair.sharepoint.api.lists.getChanges({});
   createdDateTime?: string,
   lastModifiedDateTime?: string,
   webUrl?: string,
-  fields?: {
-  },
+  fields?: Record<string, any>,
   @odata.etag?: string
 }[]
 ```
@@ -2258,21 +2032,11 @@ await corsair.sharepoint.api.lists.renderDataAsStream({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Row` | `object[]` | No | — |
+| `Row` | `Record<string, any>[]` | No | — |
 | `NextHref` | `string` | No | — |
 | `PrevHref` | `string` | No | — |
 | `FirstRow` | `number` | No | — |
 | `LastRow` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="Row full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2654,8 +2418,7 @@ await corsair.sharepoint.api.search.query({});
       hitId?: string,
       rank?: number,
       summary?: string,
-      resource?: {
-      }
+      resource?: Record<string, any>
     }[],
     total?: number,
     moreResultsAvailable?: boolean
@@ -2696,17 +2459,7 @@ await corsair.sharepoint.api.search.suggest({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `value` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="value full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `value` | `Record<string, any>[]` | No | — |
 
 
 
@@ -2901,7 +2654,7 @@ await corsair.sharepoint.api.users.create({});
 | `displayName` | `string` | No | — |
 | `mail` | `string` | No | — |
 | `userPrincipalName` | `string` | No | — |
-| `jobTitle` | `string` | No | — |
+| `jobTitle` | `string \| null` | No | — |
 
 
 
@@ -2935,7 +2688,7 @@ await corsair.sharepoint.api.users.ensure({});
 | `displayName` | `string` | No | — |
 | `mail` | `string` | No | — |
 | `userPrincipalName` | `string` | No | — |
-| `jobTitle` | `string` | No | — |
+| `jobTitle` | `string \| null` | No | — |
 
 
 
@@ -3009,7 +2762,7 @@ await corsair.sharepoint.api.users.getCurrent({});
 | `displayName` | `string` | No | — |
 | `mail` | `string` | No | — |
 | `userPrincipalName` | `string` | No | — |
-| `jobTitle` | `string` | No | — |
+| `jobTitle` | `string \| null` | No | — |
 
 
 
@@ -3043,7 +2796,7 @@ await corsair.sharepoint.api.users.getEffectivePermissions({});
 | `displayName` | `string` | No | — |
 | `mail` | `string` | No | — |
 | `userPrincipalName` | `string` | No | — |
-| `jobTitle` | `string` | No | — |
+| `jobTitle` | `string \| null` | No | — |
 
 
 
@@ -3285,17 +3038,7 @@ await corsair.sharepoint.api.web.createSubsite({});
 | `webUrl` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `siteCollection` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="siteCollection full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `siteCollection` | `Record<string, any>` | No | — |
 
 
 
@@ -3361,26 +3104,8 @@ await corsair.sharepoint.api.web.getDriveItemByPath({});
 | `webUrl` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `file` | `object` | No | — |
-| `folder` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="file full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="folder full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `file` | `Record<string, any>` | No | — |
+| `folder` | `Record<string, any>` | No | — |
 
 
 
@@ -3411,17 +3136,7 @@ await corsair.sharepoint.api.web.getInfo({});
 | `webUrl` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `siteCollection` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="siteCollection full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `siteCollection` | `Record<string, any>` | No | — |
 
 
 
@@ -3452,17 +3167,7 @@ await corsair.sharepoint.api.web.getSiteCollectionInfo({});
 | `webUrl` | `string` | No | — |
 | `createdDateTime` | `string` | No | — |
 | `lastModifiedDateTime` | `string` | No | — |
-| `siteCollection` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="siteCollection full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `siteCollection` | `Record<string, any>` | No | — |
 
 
 
@@ -3592,7 +3297,7 @@ await corsair.sharepoint.api.webhookSubscriptions.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
-| `clientState` | `string` | No | — |
+| `clientState` | `string \| null` | No | — |
 | `expirationDateTime` | `string` | No | — |
 | `notificationUrl` | `string` | No | — |
 | `resource` | `string` | No | — |

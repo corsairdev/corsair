@@ -28,21 +28,21 @@ await corsair.vapi.api.assistants.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `model` | `object` | No | — |
-| `voice` | `object` | No | — |
-| `transcriber` | `object` | No | — |
+| `model` | `Record<string, any>` | No | — |
+| `voice` | `Record<string, any>` | No | — |
+| `transcriber` | `Record<string, any>` | No | — |
 | `firstMessage` | `string` | No | — |
 | `systemPrompt` | `string` | No | — |
 | `endCallMessage` | `string` | No | — |
 | `endCallPhrases` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `serverUrl` | `string` | No | — |
 | `serverUrlSecret` | `string` | No | — |
-| `analysisPlan` | `object` | No | — |
-| `artifactPlan` | `object` | No | — |
-| `messagePlan` | `object` | No | — |
-| `startSpeakingPlan` | `object` | No | — |
-| `stopSpeakingPlan` | `object` | No | — |
+| `analysisPlan` | `Record<string, any>` | No | — |
+| `artifactPlan` | `Record<string, any>` | No | — |
+| `messagePlan` | `Record<string, any>` | No | — |
+| `startSpeakingPlan` | `Record<string, any>` | No | — |
+| `stopSpeakingPlan` | `Record<string, any>` | No | — |
 | `hipaaEnabled` | `boolean` | No | — |
 | `clientMessages` | `string[]` | No | — |
 | `serverMessages` | `string[]` | No | — |
@@ -52,80 +52,6 @@ await corsair.vapi.api.assistants.create({});
 | `backchannelingEnabled` | `boolean` | No | — |
 | `backgroundDenoisingEnabled` | `boolean` | No | — |
 | `modelOutputInMessagesEnabled` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="model full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="voice full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="transcriber full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="analysisPlan full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="artifactPlan full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="messagePlan full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="startSpeakingPlan full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="stopSpeakingPlan full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -137,51 +63,17 @@ await corsair.vapi.api.assistants.create({});
 | `orgId` | `string` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
-| `name` | `string` | No | — |
-| `model` | `object` | No | — |
-| `voice` | `object` | No | — |
-| `transcriber` | `object` | No | — |
-| `firstMessage` | `string` | No | — |
-| `systemPrompt` | `string` | No | — |
-| `endCallMessage` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `model` | `Record<string, any>` | No | — |
+| `voice` | `Record<string, any>` | No | — |
+| `transcriber` | `Record<string, any>` | No | — |
+| `firstMessage` | `string \| null` | No | — |
+| `systemPrompt` | `string \| null` | No | — |
+| `endCallMessage` | `string \| null` | No | — |
 | `endCallPhrases` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
-| `serverUrl` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `serverUrl` | `string \| null` | No | — |
 | `hipaaEnabled` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="model full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="voice full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="transcriber full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -245,51 +137,17 @@ await corsair.vapi.api.assistants.get({});
 | `orgId` | `string` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
-| `name` | `string` | No | — |
-| `model` | `object` | No | — |
-| `voice` | `object` | No | — |
-| `transcriber` | `object` | No | — |
-| `firstMessage` | `string` | No | — |
-| `systemPrompt` | `string` | No | — |
-| `endCallMessage` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `model` | `Record<string, any>` | No | — |
+| `voice` | `Record<string, any>` | No | — |
+| `transcriber` | `Record<string, any>` | No | — |
+| `firstMessage` | `string \| null` | No | — |
+| `systemPrompt` | `string \| null` | No | — |
+| `endCallMessage` | `string \| null` | No | — |
 | `endCallPhrases` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
-| `serverUrl` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `serverUrl` | `string \| null` | No | — |
 | `hipaaEnabled` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="model full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="voice full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="transcriber full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -335,18 +193,14 @@ await corsair.vapi.api.assistants.list({});
   createdAt?: string,
   updatedAt?: string,
   name?: string | null,
-  model?: {
-  },
-  voice?: {
-  },
-  transcriber?: {
-  },
+  model?: Record<string, any>,
+  voice?: Record<string, any>,
+  transcriber?: Record<string, any>,
   firstMessage?: string | null,
   systemPrompt?: string | null,
   endCallMessage?: string | null,
   endCallPhrases?: string[],
-  metadata?: {
-  },
+  metadata?: Record<string, any>,
   serverUrl?: string | null,
   hipaaEnabled?: boolean
 }[]
@@ -374,21 +228,21 @@ await corsair.vapi.api.assistants.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `model` | `object` | No | — |
-| `voice` | `object` | No | — |
-| `transcriber` | `object` | No | — |
+| `model` | `Record<string, any>` | No | — |
+| `voice` | `Record<string, any>` | No | — |
+| `transcriber` | `Record<string, any>` | No | — |
 | `firstMessage` | `string` | No | — |
 | `systemPrompt` | `string` | No | — |
 | `endCallMessage` | `string` | No | — |
 | `endCallPhrases` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `serverUrl` | `string` | No | — |
 | `serverUrlSecret` | `string` | No | — |
-| `analysisPlan` | `object` | No | — |
-| `artifactPlan` | `object` | No | — |
-| `messagePlan` | `object` | No | — |
-| `startSpeakingPlan` | `object` | No | — |
-| `stopSpeakingPlan` | `object` | No | — |
+| `analysisPlan` | `Record<string, any>` | No | — |
+| `artifactPlan` | `Record<string, any>` | No | — |
+| `messagePlan` | `Record<string, any>` | No | — |
+| `startSpeakingPlan` | `Record<string, any>` | No | — |
+| `stopSpeakingPlan` | `Record<string, any>` | No | — |
 | `hipaaEnabled` | `boolean` | No | — |
 | `clientMessages` | `string[]` | No | — |
 | `serverMessages` | `string[]` | No | — |
@@ -400,80 +254,6 @@ await corsair.vapi.api.assistants.update({});
 | `modelOutputInMessagesEnabled` | `boolean` | No | — |
 | `id` | `string` | Yes | — |
 
-<AccordionGroup>
-<Accordion title="model full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="voice full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="transcriber full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="analysisPlan full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="artifactPlan full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="messagePlan full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="startSpeakingPlan full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="stopSpeakingPlan full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
-
 
 
 **Output**
@@ -484,51 +264,17 @@ await corsair.vapi.api.assistants.update({});
 | `orgId` | `string` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
-| `name` | `string` | No | — |
-| `model` | `object` | No | — |
-| `voice` | `object` | No | — |
-| `transcriber` | `object` | No | — |
-| `firstMessage` | `string` | No | — |
-| `systemPrompt` | `string` | No | — |
-| `endCallMessage` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `model` | `Record<string, any>` | No | — |
+| `voice` | `Record<string, any>` | No | — |
+| `transcriber` | `Record<string, any>` | No | — |
+| `firstMessage` | `string \| null` | No | — |
+| `systemPrompt` | `string \| null` | No | — |
+| `endCallMessage` | `string \| null` | No | — |
 | `endCallPhrases` | `string[]` | No | — |
-| `metadata` | `object` | No | — |
-| `serverUrl` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `serverUrl` | `string \| null` | No | — |
 | `hipaaEnabled` | `boolean` | No | — |
-
-<AccordionGroup>
-<Accordion title="model full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="voice full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="transcriber full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -553,67 +299,17 @@ await corsair.vapi.api.calls.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `assistantId` | `string` | No | — |
-| `assistant` | `object` | No | — |
-| `assistantOverrides` | `object` | No | — |
+| `assistant` | `Record<string, any>` | No | — |
+| `assistantOverrides` | `Record<string, any>` | No | — |
 | `squadId` | `string` | No | — |
-| `squad` | `object` | No | — |
+| `squad` | `Record<string, any>` | No | — |
 | `phoneNumberId` | `string` | No | — |
-| `phoneNumber` | `object` | No | — |
+| `phoneNumber` | `Record<string, any>` | No | — |
 | `customerId` | `string` | No | — |
-| `customer` | `object` | No | — |
+| `customer` | `Record<string, any>` | No | — |
 | `name` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `scheduledAt` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="assistant full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="assistantOverrides full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="squad full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="phoneNumber full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="customer full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -627,51 +323,17 @@ await corsair.vapi.api.calls.create({});
 | `updatedAt` | `string` | No | — |
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
-| `endedReason` | `string` | No | — |
-| `assistantId` | `string` | No | — |
-| `phoneNumberId` | `string` | No | — |
-| `squadId` | `string` | No | — |
-| `startedAt` | `string` | No | — |
-| `endedAt` | `string` | No | — |
+| `endedReason` | `string \| null` | No | — |
+| `assistantId` | `string \| null` | No | — |
+| `phoneNumberId` | `string \| null` | No | — |
+| `squadId` | `string \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
 | `cost` | `number` | No | — |
-| `messages` | `object[]` | No | — |
-| `artifact` | `object` | No | — |
-| `analysis` | `object` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="messages full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="artifact full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="analysis full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `messages` | `Record<string, any>[]` | No | — |
+| `artifact` | `Record<string, any>` | No | — |
+| `analysis` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -737,51 +399,17 @@ await corsair.vapi.api.calls.get({});
 | `updatedAt` | `string` | No | — |
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
-| `endedReason` | `string` | No | — |
-| `assistantId` | `string` | No | — |
-| `phoneNumberId` | `string` | No | — |
-| `squadId` | `string` | No | — |
-| `startedAt` | `string` | No | — |
-| `endedAt` | `string` | No | — |
+| `endedReason` | `string \| null` | No | — |
+| `assistantId` | `string \| null` | No | — |
+| `phoneNumberId` | `string \| null` | No | — |
+| `squadId` | `string \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
 | `cost` | `number` | No | — |
-| `messages` | `object[]` | No | — |
-| `artifact` | `object` | No | — |
-| `analysis` | `object` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="messages full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="artifact full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="analysis full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `messages` | `Record<string, any>[]` | No | — |
+| `artifact` | `Record<string, any>` | No | — |
+| `analysis` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -838,14 +466,10 @@ await corsair.vapi.api.calls.list({});
   startedAt?: string | null,
   endedAt?: string | null,
   cost?: number,
-  messages?: {
-  }[],
-  artifact?: {
-  },
-  analysis?: {
-  },
-  metadata?: {
-  }
+  messages?: Record<string, any>[],
+  artifact?: Record<string, any>,
+  analysis?: Record<string, any>,
+  metadata?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -872,26 +496,8 @@ await corsair.vapi.api.calls.update({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `assistantOverrides` | `object` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="assistantOverrides full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `assistantOverrides` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -905,51 +511,17 @@ await corsair.vapi.api.calls.update({});
 | `updatedAt` | `string` | No | — |
 | `type` | `string` | No | — |
 | `status` | `string` | No | — |
-| `endedReason` | `string` | No | — |
-| `assistantId` | `string` | No | — |
-| `phoneNumberId` | `string` | No | — |
-| `squadId` | `string` | No | — |
-| `startedAt` | `string` | No | — |
-| `endedAt` | `string` | No | — |
+| `endedReason` | `string \| null` | No | — |
+| `assistantId` | `string \| null` | No | — |
+| `phoneNumberId` | `string \| null` | No | — |
+| `squadId` | `string \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
 | `cost` | `number` | No | — |
-| `messages` | `object[]` | No | — |
-| `artifact` | `object` | No | — |
-| `analysis` | `object` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="messages full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="artifact full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="analysis full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `messages` | `Record<string, any>[]` | No | — |
+| `artifact` | `Record<string, any>` | No | — |
+| `analysis` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1021,17 +593,7 @@ await corsair.vapi.api.files.get({});
 | `size` | `number` | No | — |
 | `status` | `string` | No | — |
 | `url` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1082,8 +644,7 @@ await corsair.vapi.api.files.list({});
   size?: number,
   status?: string,
   url?: string,
-  metadata?: {
-  }
+  metadata?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1127,17 +688,7 @@ await corsair.vapi.api.files.update({});
 | `size` | `number` | No | — |
 | `status` | `string` | No | — |
 | `url` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1187,18 +738,8 @@ await corsair.vapi.api.knowledgeBases.create({});
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 | `provider` | `string` | No | — |
-| `name` | `string` | No | — |
-| `server` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="server full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `server` | `Record<string, any>` | No | — |
 
 
 
@@ -1263,18 +804,8 @@ await corsair.vapi.api.knowledgeBases.get({});
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 | `provider` | `string` | No | — |
-| `name` | `string` | No | — |
-| `server` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="server full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `server` | `Record<string, any>` | No | — |
 
 
 
@@ -1321,8 +852,7 @@ await corsair.vapi.api.knowledgeBases.list({});
   updatedAt?: string,
   provider?: string,
   name?: string | null,
-  server?: {
-  }
+  server?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1360,18 +890,8 @@ await corsair.vapi.api.knowledgeBases.update({});
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 | `provider` | `string` | No | — |
-| `name` | `string` | No | — |
-| `server` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="server full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `server` | `Record<string, any>` | No | — |
 
 
 
@@ -1419,10 +939,10 @@ await corsair.vapi.api.phoneNumbers.create({});
 | `updatedAt` | `string` | No | — |
 | `provider` | `string` | No | — |
 | `number` | `string` | No | — |
-| `name` | `string` | No | — |
-| `assistantId` | `string` | No | — |
-| `squadId` | `string` | No | — |
-| `serverUrl` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `assistantId` | `string \| null` | No | — |
+| `squadId` | `string \| null` | No | — |
+| `serverUrl` | `string \| null` | No | — |
 
 
 
@@ -1488,10 +1008,10 @@ await corsair.vapi.api.phoneNumbers.get({});
 | `updatedAt` | `string` | No | — |
 | `provider` | `string` | No | — |
 | `number` | `string` | No | — |
-| `name` | `string` | No | — |
-| `assistantId` | `string` | No | — |
-| `squadId` | `string` | No | — |
-| `serverUrl` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `assistantId` | `string \| null` | No | — |
+| `squadId` | `string \| null` | No | — |
+| `serverUrl` | `string \| null` | No | — |
 
 
 
@@ -1585,10 +1105,10 @@ await corsair.vapi.api.phoneNumbers.update({});
 | `updatedAt` | `string` | No | — |
 | `provider` | `string` | No | — |
 | `number` | `string` | No | — |
-| `name` | `string` | No | — |
-| `assistantId` | `string` | No | — |
-| `squadId` | `string` | No | — |
-| `serverUrl` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `assistantId` | `string \| null` | No | — |
+| `squadId` | `string \| null` | No | — |
+| `serverUrl` | `string \| null` | No | — |
 
 
 
@@ -1613,35 +1133,9 @@ await corsair.vapi.api.squads.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `members` | `object[]` | No | — |
-| `membersOverrides` | `object` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="members full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="membersOverrides full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `members` | `Record<string, any>[]` | No | — |
+| `membersOverrides` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1653,27 +1147,9 @@ await corsair.vapi.api.squads.create({});
 | `orgId` | `string` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
-| `name` | `string` | No | — |
-| `members` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="members full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `members` | `Record<string, any>[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1737,27 +1213,9 @@ await corsair.vapi.api.squads.get({});
 | `orgId` | `string` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
-| `name` | `string` | No | — |
-| `members` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="members full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `members` | `Record<string, any>[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1803,10 +1261,8 @@ await corsair.vapi.api.squads.list({});
   createdAt?: string,
   updatedAt?: string,
   name?: string | null,
-  members?: {
-  }[],
-  metadata?: {
-  }
+  members?: Record<string, any>[],
+  metadata?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1832,36 +1288,10 @@ await corsair.vapi.api.squads.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `members` | `object[]` | No | — |
-| `membersOverrides` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `members` | `Record<string, any>[]` | No | — |
+| `membersOverrides` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `id` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="members full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="membersOverrides full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1873,27 +1303,9 @@ await corsair.vapi.api.squads.update({});
 | `orgId` | `string` | No | — |
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
-| `name` | `string` | No | — |
-| `members` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="members full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `name` | `string \| null` | No | — |
+| `members` | `Record<string, any>[]` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1919,44 +1331,10 @@ await corsair.vapi.api.tools.create({});
 |------|------|----------|-------------|
 | `type` | `string` | No | — |
 | `async` | `boolean` | No | — |
-| `messages` | `object[]` | No | — |
-| `function` | `object` | No | — |
-| `server` | `object` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="messages full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="function full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="server full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `messages` | `Record<string, any>[]` | No | — |
+| `function` | `Record<string, any>` | No | — |
+| `server` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -1969,35 +1347,9 @@ await corsair.vapi.api.tools.create({});
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 | `type` | `string` | No | — |
-| `function` | `object` | No | — |
-| `server` | `object` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="function full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="server full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `function` | `Record<string, any>` | No | — |
+| `server` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -2062,35 +1414,9 @@ await corsair.vapi.api.tools.get({});
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 | `type` | `string` | No | — |
-| `function` | `object` | No | — |
-| `server` | `object` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="function full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="server full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `function` | `Record<string, any>` | No | — |
+| `server` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 
@@ -2136,12 +1462,9 @@ await corsair.vapi.api.tools.list({});
   createdAt?: string,
   updatedAt?: string,
   type?: string,
-  function?: {
-  },
-  server?: {
-  },
-  metadata?: {
-  }
+  function?: Record<string, any>,
+  server?: Record<string, any>,
+  metadata?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -2168,45 +1491,11 @@ await corsair.vapi.api.tools.update({});
 |------|------|----------|-------------|
 | `type` | `string` | No | — |
 | `async` | `boolean` | No | — |
-| `messages` | `object[]` | No | — |
-| `function` | `object` | No | — |
-| `server` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `messages` | `Record<string, any>[]` | No | — |
+| `function` | `Record<string, any>` | No | — |
+| `server` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 | `id` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="messages full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="function full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="server full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2219,35 +1508,9 @@ await corsair.vapi.api.tools.update({});
 | `createdAt` | `string` | No | — |
 | `updatedAt` | `string` | No | — |
 | `type` | `string` | No | — |
-| `function` | `object` | No | — |
-| `server` | `object` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="function full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="server full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `function` | `Record<string, any>` | No | — |
+| `server` | `Record<string, any>` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
 
 
 

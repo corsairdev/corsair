@@ -67,21 +67,11 @@ await corsair.firecrawl.api.agent.get({});
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
 | `status` | `processing \| completed \| failed` | No | — |
-| `data` | `object` | No | — |
+| `data` | `Record<string, any>` | No | — |
 | `model` | `spark-1-pro \| spark-1-mini` | No | — |
 | `error` | `string` | No | — |
 | `expiresAt` | `string` | No | — |
 | `creditsUsed` | `number` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -105,20 +95,10 @@ await corsair.firecrawl.api.agent.start({});
 |------|------|----------|-------------|
 | `prompt` | `string` | Yes | — |
 | `urls` | `string[]` | No | — |
-| `schema` | `object` | No | — |
+| `schema` | `Record<string, any>` | No | — |
 | `maxCredits` | `number` | No | — |
 | `strictConstrainToURLs` | `boolean` | No | — |
 | `model` | `spark-1-mini \| spark-1-pro` | No | — |
-
-<AccordionGroup>
-<Accordion title="schema full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -196,7 +176,7 @@ await corsair.firecrawl.api.crawl.get({});
 | `completed` | `number` | No | — |
 | `creditsUsed` | `number` | No | — |
 | `expiresAt` | `string` | No | — |
-| `next` | `string` | No | — |
+| `next` | `string \| null` | No | — |
 | `data` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -273,11 +253,9 @@ await corsair.firecrawl.api.crawl.start({});
 ```ts
 {
   url: string,
-  headers?: {
-  },
-  metadata?: {
-  },
-  events?: completed | page | failed | started[]
+  headers?: Record<string, string>,
+  metadata?: Record<string, any>,
+  events?: (completed | page | failed | started)[]
 }
 ```
 </Accordion>
@@ -286,52 +264,47 @@ await corsair.firecrawl.api.crawl.start({});
 
 ```ts
 {
-  formats?: (
-    markdown | summary | html | rawHtml | links | images | audio | {
-      type: markdown
-    } | {
-      type: summary
-    } | {
-      type: html
-    } | {
-      type: rawHtml
-    } | {
-      type: links
-    } | {
-      type: images
-    } | {
-      type: audio
-    } | {
-      type: screenshot,
-      fullPage?: boolean,
-      quality?: number,
-      viewport?: {
-        width: number,
-        height: number
-      }
-    } | {
-      type: json,
-      schema?: {
-      },
-      prompt?: string
-    } | {
-      type: changeTracking,
-      modes?: git-diff | json[],
-      schema?: {
-      },
-      prompt?: string,
-      tag?: string | null
-    } | {
-      type: branding
+  formats?: (markdown | summary | html | rawHtml | links | images | audio | {
+    type: markdown
+  } | {
+    type: summary
+  } | {
+    type: html
+  } | {
+    type: rawHtml
+  } | {
+    type: links
+  } | {
+    type: images
+  } | {
+    type: audio
+  } | {
+    type: screenshot,
+    fullPage?: boolean,
+    quality?: number,
+    viewport?: {
+      width: number,
+      height: number
     }
-  )[],
+  } | {
+    type: json,
+    schema?: Record<string, any>,
+    prompt?: string
+  } | {
+    type: changeTracking,
+    modes?: (git-diff | json)[],
+    schema?: Record<string, any>,
+    prompt?: string,
+    tag?: string | null
+  } | {
+    type: branding
+  })[],
   onlyMainContent?: boolean,
   includeTags?: string[],
   excludeTags?: string[],
   maxAge?: number,
   minAge?: number,
-  headers?: {
-  },
+  headers?: Record<string, string>,
   waitFor?: number,
   mobile?: boolean,
   skipTlsVerification?: boolean,
@@ -504,7 +477,7 @@ await corsair.firecrawl.api.scrape.run({});
 | `excludeTags` | `string[]` | No | — |
 | `maxAge` | `number` | No | — |
 | `minAge` | `number` | No | — |
-| `headers` | `object` | No | — |
+| `headers` | `Record<string, string>` | No | — |
 | `waitFor` | `number` | No | — |
 | `mobile` | `boolean` | No | — |
 | `skipTlsVerification` | `boolean` | No | — |
@@ -523,53 +496,41 @@ await corsair.firecrawl.api.scrape.run({});
 <Accordion title="formats full type">
 
 ```ts
-(
-  markdown | summary | html | rawHtml | links | images | audio | {
-    type: markdown
-  } | {
-    type: summary
-  } | {
-    type: html
-  } | {
-    type: rawHtml
-  } | {
-    type: links
-  } | {
-    type: images
-  } | {
-    type: audio
-  } | {
-    type: screenshot,
-    fullPage?: boolean,
-    quality?: number,
-    viewport?: {
-      width: number,
-      height: number
-    }
-  } | {
-    type: json,
-    schema?: {
-    },
-    prompt?: string
-  } | {
-    type: changeTracking,
-    modes?: git-diff | json[],
-    schema?: {
-    },
-    prompt?: string,
-    tag?: string | null
-  } | {
-    type: branding
+(markdown | summary | html | rawHtml | links | images | audio | {
+  type: markdown
+} | {
+  type: summary
+} | {
+  type: html
+} | {
+  type: rawHtml
+} | {
+  type: links
+} | {
+  type: images
+} | {
+  type: audio
+} | {
+  type: screenshot,
+  fullPage?: boolean,
+  quality?: number,
+  viewport?: {
+    width: number,
+    height: number
   }
-)[]
-```
-</Accordion>
-
-<Accordion title="headers full type">
-
-```ts
-{
-}
+} | {
+  type: json,
+  schema?: Record<string, any>,
+  prompt?: string
+} | {
+  type: changeTracking,
+  modes?: (git-diff | json)[],
+  schema?: Record<string, any>,
+  prompt?: string,
+  tag?: string | null
+} | {
+  type: branding
+})[]
 ```
 </Accordion>
 
@@ -706,14 +667,11 @@ await corsair.firecrawl.api.scrape.run({});
     changeStatus?: new | same | changed | removed,
     visibility?: visible | hidden,
     diff?: string | null,
-    json?: {
-    } | null
+    json?: Record<string, any> | null
   } | null,
-  branding?: {
-  } | null,
+  branding?: Record<string, any> | null,
   json?: any,
-  images?: {
-  }[]
+  images?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -750,7 +708,7 @@ await corsair.firecrawl.api.search.run({});
 | `country` | `string` | No | — |
 | `timeout` | `number` | No | — |
 | `ignoreInvalidURLs` | `boolean` | No | — |
-| `enterprise` | `anon \| zdr[]` | No | — |
+| `enterprise` | `(anon \| zdr)[]` | No | — |
 | `scrapeOptions` | `object` | No | — |
 
 <AccordionGroup>
@@ -790,52 +748,47 @@ await corsair.firecrawl.api.search.run({});
 
 ```ts
 {
-  formats?: (
-    markdown | summary | html | rawHtml | links | images | audio | {
-      type: markdown
-    } | {
-      type: summary
-    } | {
-      type: html
-    } | {
-      type: rawHtml
-    } | {
-      type: links
-    } | {
-      type: images
-    } | {
-      type: audio
-    } | {
-      type: screenshot,
-      fullPage?: boolean,
-      quality?: number,
-      viewport?: {
-        width: number,
-        height: number
-      }
-    } | {
-      type: json,
-      schema?: {
-      },
-      prompt?: string
-    } | {
-      type: changeTracking,
-      modes?: git-diff | json[],
-      schema?: {
-      },
-      prompt?: string,
-      tag?: string | null
-    } | {
-      type: branding
+  formats?: (markdown | summary | html | rawHtml | links | images | audio | {
+    type: markdown
+  } | {
+    type: summary
+  } | {
+    type: html
+  } | {
+    type: rawHtml
+  } | {
+    type: links
+  } | {
+    type: images
+  } | {
+    type: audio
+  } | {
+    type: screenshot,
+    fullPage?: boolean,
+    quality?: number,
+    viewport?: {
+      width: number,
+      height: number
     }
-  )[],
+  } | {
+    type: json,
+    schema?: Record<string, any>,
+    prompt?: string
+  } | {
+    type: changeTracking,
+    modes?: (git-diff | json)[],
+    schema?: Record<string, any>,
+    prompt?: string,
+    tag?: string | null
+  } | {
+    type: branding
+  })[],
   onlyMainContent?: boolean,
   includeTags?: string[],
   excludeTags?: string[],
   maxAge?: number,
   minAge?: number,
-  headers?: {
-  },
+  headers?: Record<string, string>,
   waitFor?: number,
   mobile?: boolean,
   skipTlsVerification?: boolean,
@@ -911,7 +864,7 @@ await corsair.firecrawl.api.search.run({});
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
 | `data` | `object` | No | — |
-| `warning` | `string` | No | — |
+| `warning` | `string \| null` | No | — |
 | `id` | `string` | No | — |
 | `creditsUsed` | `number` | No | — |
 
