@@ -1,5 +1,5 @@
 displayName: Follow Up Boss
-description: Real-estate CRM with Follow Up Boss - manage people, deals, appointments, calls, texts, notes and tasks, push lead events into its routing, read smart lists and automations data, and manage webhook subscriptions.
+description: Real-estate CRM with Follow Up Boss - manage people, deals, appointments, calls, texts, notes and tasks, push lead events into its routing, read smart lists and automations data, manage webhook subscriptions, and read delivered webhook events by ID.
 domain: followupboss.com
 recommendedAuth: api_key
 overviewNote: |
@@ -13,7 +13,7 @@ overviewNote: |
   - **Deleting.** Most deletes answer 200 (the plugin returns the echoed resource when FUB sends one). `appointments.delete` and `people.ignoreUnclaimed` answer 204. Deleting an appointment type requires `assignTypeId`: the type its existing appointments move to.
   - **`people.claim` and `people.ignoreUnclaimed`** work on unclaimed leads only, and a claim of a lead that is no longer unclaimed answers 409.
   - **Text messages are logged, not sent.** `textMessages.create` records a message on a person; FUB does not send SMS through the API.
-  - **Webhooks.** The plugin manages webhook subscriptions (`/webhooks`) and reads webhook event types; it does not receive webhook deliveries.
+  - **Webhooks.** The plugin manages webhook subscriptions (`/webhooks`) and reads a webhook's delivered events by ID with `webhookEvents.get`; it does not receive webhook deliveries.
 examples:
   read:
     path: people.list

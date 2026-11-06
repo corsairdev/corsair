@@ -220,8 +220,13 @@ describe('webhooks', () => {
 });
 
 describe('webhookEvents', () => {
-	it('get uses the normalized /webhookEvents/{id} path for the numeric webhook id', async () => {
-		respond(webhookEvent);
+	it('get uses the normalized /webhookEvents/{id} path and returns the delivery-event list', async () => {
+		respond({
+			webhookEvents: [
+				webhookEvent,
+				{ ...webhookEvent, id: 'ff'.padEnd(32, '0') },
+			],
+		});
 
 		const result = await invoke(webhookEventsGet, { id: 123 });
 
@@ -233,7 +238,26 @@ describe('webhookEvents', () => {
 			path: '/v1/webhookEvents/123',
 			body: undefined,
 		});
-		expect(result).toEqual(webhookEvent);
+		expect(result).toEqual([
+			webhookEvent,
+			{ ...webhookEvent, id: 'ff'.padEnd(32, '0') },
+		]);
+	});
+
+	it('get wraps a bare single-event 200 body into the list', async () => {
+		respond(webhookEvent);
+
+		const result = await invoke(webhookEventsGet, { id: 123 });
+
+		expect(result).toEqual([webhookEvent]);
+	});
+
+	it('get preserves an empty delivery-event list', async () => {
+		respond({ webhookEvents: [] });
+
+		const result = await invoke(webhookEventsGet, { id: 123 });
+
+		expect(result).toEqual([]);
 	});
 
 	it('get accepts a string id spelling as well', async () => {

@@ -1724,7 +1724,8 @@ const followUpBossEndpointMeta = {
 	},
 	'webhookEvents.get': {
 		riskLevel: 'read',
-		description: 'Get one delivered webhook event payload by ID',
+		description:
+			'List the delivery events recorded for one webhook subscription',
 	},
 	'inboxApps.deactivate': {
 		riskLevel: 'write',

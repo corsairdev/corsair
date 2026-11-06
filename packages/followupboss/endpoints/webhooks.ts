@@ -137,8 +137,18 @@ export const webhookEventsGet: FollowUpBossEndpoints['webhookEventsGet'] = (
 		input,
 		({ id }) => ({ method: 'GET', path: `/webhookEvents/${segment(id)}` }),
 		{
-			// A single fetch arrives as `{ webhookEvents: [event] }` or bare.
-			shape: (raw) => envelopeOne(raw, 'webhookEvents'),
+			// The delivery events arrive as the `webhookEvents` list (or a bare
+			// array); the full list is preserved, including an empty one.
+			shape: (raw) => {
+				const record = asRecord(raw);
+				// The documented envelope wins, even when its list is empty.
+				if (record && Array.isArray(record.webhookEvents)) {
+					return record.webhookEvents;
+				}
+				if (Array.isArray(raw)) return raw;
+				// A bare single-event 200 body still parses, wrapped as a list.
+				return record ? [raw] : [];
+			},
 			log: ({ id }) => ({ webhookId: id }),
 		},
 	);

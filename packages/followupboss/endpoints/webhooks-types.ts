@@ -240,7 +240,9 @@ const WebhookEventsGetInputSchema = z.object({
 
 export type WebhookEventsGetInput = z.infer<typeof WebhookEventsGetInputSchema>;
 
-const WebhookEventsGetResponseSchema = WebhookEventSchema;
+// GET /webhookEvents/:id returns the delivery-event list for the webhook,
+// possibly empty; the full list is preserved instead of unwrapping one event.
+const WebhookEventsGetResponseSchema = z.array(WebhookEventSchema);
 
 export type WebhookEventsGetResponse = z.infer<
 	typeof WebhookEventsGetResponseSchema
