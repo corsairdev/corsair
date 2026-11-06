@@ -13,7 +13,7 @@ zohodesk({ region: 'eu' })
 
 One plugin instance serves one data center, because the OAuth token URL is fixed when the plugin is created. Zoho's UK data center is not supported yet: the Zoho Desk API reference lists no host for it.
 
-**Organization.** Zoho Desk calls carry an `orgId` header. You rarely need to set it. After OAuth the plugin stores the ID of your organization, and if that step did not run it looks the ID up on the first call and keeps it. If your Zoho user belongs to several organizations it cannot tell which one you picked on the consent screen, so it sends no header and Zoho uses the one the token was issued for. To name one yourself, pass `orgId` to the factory, or call `corsair.zohodesk.keys.set_tenant_external_id(orgId)`. List them with `organizations.list`. A mismatch fails with `OAUTH_ORG_MISMATCH`.
+**Organization.** Zoho Desk calls carry an `orgId` header. You rarely need to set it. After OAuth the plugin stores the ID of your organization, and if that step did not run it looks the ID up on the first call and keeps it. If your Zoho user belongs to several organizations it cannot tell which one you picked on the consent screen, so it sends no header and Zoho uses the one the token was issued for. To name one yourself, pass `orgId` to the factory, or call `corsair.zohodesk.keys.set_tenant_external_id(orgId)` (with `multiTenancy: true`, `corsair.withTenant(id).zohodesk.keys.set_tenant_external_id(orgId)`). List them with `organizations.list`. A mismatch fails with `OAUTH_ORG_MISMATCH`.
 
 **OAuth setup.** Create a Server-based Application in the [Zoho API Console](https://api-console.zoho.com) and add your redirect URL. If the app serves users in several data centers, turn on Multi-DC support there. The plugin requests these scopes:
 
@@ -84,6 +84,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -91,7 +92,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
