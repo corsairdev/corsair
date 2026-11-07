@@ -67,6 +67,8 @@ describe('HappyScribe 429 retries through the bound client', () => {
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 
 			await jest.advanceTimersByTimeAsync(1);
+			// unknown: the rejection is typed loosely to assert on the parsed
+			// page shape through the bound client.
 			const done = (await pending) as { results: unknown[] };
 			expect(done.results).toHaveLength(2);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
@@ -127,6 +129,7 @@ describe('HappyScribe 429 retries through the bound client', () => {
 				organizationId: 123,
 			});
 			await jest.advanceTimersByTimeAsync(4_000);
+			// unknown: same loose assertion through the bound client.
 			const done = (await pending) as { results: unknown[] };
 			expect(done.results).toHaveLength(2);
 			expect(fetchMock).toHaveBeenCalledTimes(2);

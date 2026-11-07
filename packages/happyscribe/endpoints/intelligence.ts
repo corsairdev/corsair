@@ -10,6 +10,8 @@ import {
 // Intelligence lists answer `{ results, _links: { next: { url } } }`; flatten
 // the cursor for the caller. A 404 here usually means the organization is
 // not enrolled in the Intelligence API.
+// unknown: the raw body is the list envelope until the output schema
+// validates it.
 function intelList(raw: unknown): unknown {
 	const record = asRecord(raw);
 	if (!record) return raw;

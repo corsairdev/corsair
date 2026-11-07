@@ -43,6 +43,8 @@ function handlerFor<S extends z.ZodType<HappyScribeWebhookPayload>>(
 			}
 
 			const data = parsed.data;
+			// unknown: the embedded Meeting varies by state; only the id and
+			// status are logged.
 			const meeting = data.data.object as Record<string, unknown>;
 			await safeLog(ctx, `happyscribe.webhook.${event}`, () => ({
 				eventId: data.id,
