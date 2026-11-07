@@ -71,7 +71,11 @@
               },
               {
                 "group": "Clients",
-                "pages": ["clients/python", "clients/go", "clients/swift"]
+                "pages": [
+                  "clients/python",
+                  "clients/go",
+                  "clients/swift"
+                ]
               }
             ]
           },
@@ -144,7 +148,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -1422,14 +1429,6 @@
                   "plugins/coinmarketcal/overview",
                   "plugins/coinmarketcal/api",
                   "plugins/coinmarketcal/database"
-                ]
-              },
-              {
-                "group": "CommCare",
-                "pages": [
-                  "plugins/commcare/overview",
-                  "plugins/commcare/api",
-                  "plugins/commcare/database"
                 ]
               },
               {

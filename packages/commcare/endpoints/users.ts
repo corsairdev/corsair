@@ -98,7 +98,7 @@ export const create: CommCareEndpoints['usersCreate'] = (ctx, input) =>
 		{
 			log: (parsed, result) => ({
 				userId: result.id ?? undefined,
-				username: parsed.username,
+				username: parsed.workerUsername,
 			}),
 		},
 	);

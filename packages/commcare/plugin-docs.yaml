@@ -30,66 +30,66 @@ examples:
       lastName: Lee
 apiExamples:
   forms.list:
-    call: "{ domain: 'my-project', limit: 100, offset: 0 }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', limit: 100, offset: 0 }"
   forms.get:
-    call: "{ domain: 'my-project', formId: '66d7a362-18a2-4f45-bd84-06f19b408d64' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', formId: '66d7a362-18a2-4f45-bd84-06f19b408d64' }"
   forms.bulkAction:
-    call: "{ domain: 'my-project', action: 'archive', formIds: ['3a1b...', '9c4d...'] }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', action: 'archive', formIds: ['3a1b...', '9c4d...'] }"
   forms.bulkActionStatus:
-    call: "{ domain: 'my-project', actionId: '0f3a9c' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', actionId: '0f3a9c' }"
   cases.list:
-    call: "{ domain: 'my-project', caseType: 'patient', closed: false }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', caseType: 'patient', closed: false }"
   cases.get:
-    call: "{ domain: 'my-project', caseId: '8f8fd909-684f-402d-a892-f50e607fffef' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', caseId: '8f8fd909-684f-402d-a892-f50e607fffef' }"
   cases.bulkFetch:
-    call: "{ domain: 'my-project', caseIds: ['abc123', 'def456'], fields: ['case_id'] }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', caseIds: ['abc123', 'def456'], fields: ['case_id'] }"
   cases.getByExternalId:
-    call: "{ domain: 'my-project', externalId: '1', caseType: 'patient' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', externalId: '1', caseType: 'patient' }"
   users.list:
-    call: "{ domain: 'my-project', limit: 50 }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', limit: 50 }"
   users.get:
-    call: "{ domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339' }"
   users.create:
     call: "{ domain: 'my-project', username: 'new.worker@my-project.commcarehq.org', password: 'change-me-1', firstName: 'Jordan', lastName: 'Lee' }"
   users.update:
-    call: "{ domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339', phoneNumber: '+15551234567' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339', phoneNumber: '+15551234567' }"
   users.delete:
-    call: "{ domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339' }"
   users.sendPasswordReset:
-    call: "{ domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339' }"
   groups.list:
-    call: "{ domain: 'my-project' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' }"
   groups.get:
-    call: "{ domain: 'my-project', groupId: '91da6b1c78699adfb8679b741caf9f00' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', groupId: '91da6b1c78699adfb8679b741caf9f00' }"
   groups.create:
-    call: "{ domain: 'my-project', name: 'Field team A' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', name: 'Field team A' }"
   groups.update:
-    call: "{ domain: 'my-project', groupId: '91da6b1c78699adfb8679b741caf9f00', reporting: true }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', groupId: '91da6b1c78699adfb8679b741caf9f00', reporting: true }"
   webUsers.list:
-    call: "{ domain: 'my-project' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' }"
   locations.list:
-    call: "{ domain: 'my-project', locationTypeCode: 'clinic' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', locationTypeCode: 'clinic' }"
   locations.get:
-    call: "{ domain: 'my-project', locationId: '68e65fbc2dc840ff8bf03849e57aca88' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', locationId: '68e65fbc2dc840ff8bf03849e57aca88' }"
   locationTypes.list:
-    call: "{ domain: 'my-project' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' }"
   locationTypes.get:
-    call: "{ domain: 'my-project', typeId: 1 }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', typeId: 1 }"
   fixtures.list:
-    call: "{ domain: 'my-project', fixtureType: 'city' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', fixtureType: 'city' }"
   fixtures.getItem:
-    call: "{ domain: 'my-project', itemId: '1J9NF7B4FT' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', itemId: '1J9NF7B4FT' }"
   lookupTables.list:
-    call: "{ domain: 'my-project' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' }"
   lookupTables.get:
-    call: "{ domain: 'my-project', tableId: 'tbl_01' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', tableId: 'tbl_01' }"
   reports.list:
-    call: "{ domain: 'my-project' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' }"
   reports.getData:
-    call: "{ domain: 'my-project', reportId: '9aab0eeb88555a7b4568676883e7379a', offset: 0, limit: 50 }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', reportId: '9aab0eeb88555a7b4568676883e7379a', offset: 0, limit: 50 }"
   ota.restore:
-    call: "{ domain: 'my-project' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' }"
   submissions.submit:
-    call: "{ domain: 'my-project', appId: '952a0b480c7c10dde777b2485375d2237', xml: '<xform>...</xform>' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', appId: '952a0b480c7c10dde777b2485375d2237', xml: '<xform>...</xform>' }"
   detExports.list:
-    call: "{ domain: 'my-project' }"
+    call: "{ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' }"

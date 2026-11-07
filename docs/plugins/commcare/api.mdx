@@ -20,14 +20,14 @@ Fetch many cases by ID in one call, optionally limited to specific fields and pr
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.cases.bulkFetch({ domain: 'my-project', caseIds: ['abc123', 'def456'], fields: ['case_id'] });
+await corsair.commcare.api.cases.bulkFetch({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', caseIds: ['abc123', 'def456'], fields: ['case_id'] });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `caseIds` | `string[]` | Yes | Case IDs to fetch in one call. |
 | `fields` | `string[]` | No | Top-level case fields to include, e.g. `case_id`. |
@@ -79,14 +79,14 @@ Read one case with its properties and indices
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.cases.get({ domain: 'my-project', caseId: '8f8fd909-684f-402d-a892-f50e607fffef' });
+await corsair.commcare.api.cases.get({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', caseId: '8f8fd909-684f-402d-a892-f50e607fffef' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `caseId` | `string` | Yes | Case ID (UUID). |
 
@@ -123,14 +123,14 @@ Look up a case by the external id the application assigned it
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.cases.getByExternalId({ domain: 'my-project', externalId: '1', caseType: 'patient' });
+await corsair.commcare.api.cases.getByExternalId({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', externalId: '1', caseType: 'patient' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `externalId` | `string` | Yes | External id the application assigned to the case. |
 | `caseType` | `string` | No | Case type to disambiguate the lookup. |
@@ -168,14 +168,14 @@ List cases (Case Data API v2) with cursor paging and filters for case type, owne
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.cases.list({ domain: 'my-project', caseType: 'patient', closed: false });
+await corsair.commcare.api.cases.list({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', caseType: 'patient', closed: false });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `cursor` | `string` | No | Cursor from the previous page's `next` link; omit for the oldest page. |
 | `limit` | `number` | No | Page size, up to 5000; the default is 20. |
@@ -235,13 +235,14 @@ List the Data Export Tool export instances in the project
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.detExports.list({ domain: 'my-project' });
+await corsair.commcare.api.detExports.list({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `limit` | `number` | No | Page size; the default is 20. |
 | `offset` | `number` | No | Records to skip before this page. |
@@ -283,14 +284,14 @@ Read one fixture item by id
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.fixtures.getItem({ domain: 'my-project', itemId: '1J9NF7B4FT' });
+await corsair.commcare.api.fixtures.getItem({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', itemId: '1J9NF7B4FT' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `itemId` | `string` | Yes | Fixture item ID to retrieve. |
 
@@ -317,14 +318,14 @@ List lookup-table fixture items, optionally filtered by fixture type
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.fixtures.list({ domain: 'my-project', fixtureType: 'city' });
+await corsair.commcare.api.fixtures.list({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', fixtureType: 'city' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `limit` | `number` | No | Page size; the default is 20. |
 | `offset` | `number` | No | Records to skip before this page. |
@@ -381,14 +382,14 @@ Archive, unarchive, or permanently delete up to 5000 forms in one background job
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.commcare.api.forms.bulkAction({ domain: 'my-project', action: 'archive', formIds: ['3a1b...', '9c4d...'] });
+await corsair.commcare.api.forms.bulkAction({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', action: 'archive', formIds: ['3a1b...', '9c4d...'] });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `action` | `archive \| unarchive \| delete` | Yes | What to do to the listed forms; delete is permanent. |
 | `formIds` | `string[]` | Yes | Up to 5000 form IDs per request; duplicate ids are collapsed. |
@@ -426,14 +427,14 @@ Where a bulk form action stands: pending, complete, or failed, with processed an
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.forms.bulkActionStatus({ domain: 'my-project', actionId: '0f3a9c' });
+await corsair.commcare.api.forms.bulkActionStatus({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', actionId: '0f3a9c' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `actionId` | `string` | Yes | Bulk action ID from a bulk action creation. |
 
@@ -470,14 +471,14 @@ Read one submitted form, including its XForm content and metadata
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.forms.get({ domain: 'my-project', formId: '66d7a362-18a2-4f45-bd84-06f19b408d64' });
+await corsair.commcare.api.forms.get({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', formId: '66d7a362-18a2-4f45-bd84-06f19b408d64' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `formId` | `string` | Yes | Form ID (UUID) of the submitted form. |
 
@@ -504,14 +505,14 @@ List submitted forms with paging and time-window or xmlns filters
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.forms.list({ domain: 'my-project', limit: 100, offset: 0 });
+await corsair.commcare.api.forms.list({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', limit: 100, offset: 0 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `limit` | `number` | No | Page size, 1-1000; the default is 20. |
 | `offset` | `number` | No | Records to skip before this page. |
@@ -570,14 +571,14 @@ Create a group, optionally with an initial member list
 **Risk:** `write`
 
 ```ts
-await corsair.commcare.api.groups.create({ domain: 'my-project', name: 'Field team A' });
+await corsair.commcare.api.groups.create({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', name: 'Field team A' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `name` | `string` | Yes | Name of the new group. |
 | `reporting` | `boolean` | No | Include the group in reporting. |
@@ -608,14 +609,14 @@ Read one group: name, reporting flag and member user ids
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.groups.get({ domain: 'my-project', groupId: '91da6b1c78699adfb8679b741caf9f00' });
+await corsair.commcare.api.groups.get({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', groupId: '91da6b1c78699adfb8679b741caf9f00' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `groupId` | `string` | Yes | Group ID (UUID). |
 
@@ -644,14 +645,14 @@ List the reporting and case-sharing groups in the project with their members
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.groups.list({ domain: 'my-project' });
+await corsair.commcare.api.groups.list({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `limit` | `number` | No | Page size; the default is 20. |
 | `offset` | `number` | No | Records to skip before this page. |
@@ -707,14 +708,14 @@ Rename a group, toggle reporting, or replace its member list
 **Risk:** `write`
 
 ```ts
-await corsair.commcare.api.groups.update({ domain: 'my-project', groupId: '91da6b1c78699adfb8679b741caf9f00', reporting: true });
+await corsair.commcare.api.groups.update({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', groupId: '91da6b1c78699adfb8679b741caf9f00', reporting: true });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `groupId` | `string` | Yes | Group ID to update. |
 | `name` | `string` | No | New name for the group. |
@@ -748,14 +749,14 @@ Read one location with its type and parent
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.locations.get({ domain: 'my-project', locationId: '68e65fbc2dc840ff8bf03849e57aca88' });
+await corsair.commcare.api.locations.get({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', locationId: '68e65fbc2dc840ff8bf03849e57aca88' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `locationId` | `string` | Yes | Location ID to retrieve. |
 
@@ -787,14 +788,14 @@ List project locations with site code, name and location type filters
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.locations.list({ domain: 'my-project', locationTypeCode: 'clinic' });
+await corsair.commcare.api.locations.list({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', locationTypeCode: 'clinic' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `limit` | `number` | No | Page size; the default is 20. |
 | `offset` | `number` | No | Records to skip before this page. |
@@ -858,14 +859,14 @@ Read one location type by id
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.locationTypes.get({ domain: 'my-project', typeId: 1 });
+await corsair.commcare.api.locationTypes.get({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', typeId: 1 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `typeId` | `number` | Yes | Location type ID to retrieve. |
 
@@ -895,13 +896,14 @@ List the location types defined in the project
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.locationTypes.list({ domain: 'my-project' });
+await corsair.commcare.api.locationTypes.list({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `limit` | `number` | No | Page size; the default is 20. |
 | `offset` | `number` | No | Records to skip before this page. |
@@ -960,14 +962,14 @@ Read one lookup table with its field definitions
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.lookupTables.get({ domain: 'my-project', tableId: 'tbl_01' });
+await corsair.commcare.api.lookupTables.get({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', tableId: 'tbl_01' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `tableId` | `string` | Yes | Lookup table ID to retrieve. |
 
@@ -1008,13 +1010,14 @@ List the lookup tables defined in the project
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.lookupTables.list({ domain: 'my-project' });
+await corsair.commcare.api.lookupTables.list({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `limit` | `number` | No | Page size; the default is 20. |
 | `offset` | `number` | No | Records to skip before this page. |
@@ -1075,13 +1078,14 @@ Pull the full OTA restore XML for the domain (user registration plus case blocks
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.ota.restore({ domain: 'my-project' });
+await corsair.commcare.api.ota.restore({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 
 
@@ -1107,14 +1111,14 @@ Run a configurable report and read its rows, with offset, limit (max 50) and the
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.reports.getData({ domain: 'my-project', reportId: '9aab0eeb88555a7b4568676883e7379a', offset: 0, limit: 50 });
+await corsair.commcare.api.reports.getData({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', reportId: '9aab0eeb88555a7b4568676883e7379a', offset: 0, limit: 50 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `reportId` | `string` | Yes | Report ID from `reports.list` (the configurable report configuration id). |
 | `offset` | `number` | No | Records to skip before this page. |
@@ -1145,13 +1149,14 @@ List the configurable reports defined in the project, with their ids
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.reports.list({ domain: 'my-project' });
+await corsair.commcare.api.reports.list({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 
 
@@ -1189,14 +1194,14 @@ Submit a complete XForm XML document to the OpenRosa receiver; 201 means receive
 **Risk:** `write`
 
 ```ts
-await corsair.commcare.api.submissions.submit({ domain: 'my-project', appId: '952a0b480c7c10dde777b2485375d2237', xml: '<xform>...</xform>' });
+await corsair.commcare.api.submissions.submit({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', appId: '952a0b480c7c10dde777b2485375d2237', xml: '<xform>...</xform>' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `appId` | `string` | Yes | Application ID the form belongs to. |
 | `xml` | `string` | Yes | The complete XForm XML document to submit, as `xml_submission_file`. |
@@ -1232,8 +1237,8 @@ await corsair.commcare.api.users.create({ domain: 'my-project', username: 'new.w
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
 | `workerUsername` | `string` | Yes | Login name for the new worker, including the domain suffix, e.g. `jdoe@my-project.commcarehq.org`. |
 | `password` | `string` | Yes | Initial password for the worker. |
 | `firstName` | `string` | Yes | First name of the worker. |
@@ -1271,14 +1276,14 @@ Permanently delete a mobile worker account
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.commcare.api.users.delete({ domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339' });
+await corsair.commcare.api.users.delete({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `userId` | `string` | Yes | Mobile worker ID (UUID). |
 
@@ -1298,14 +1303,14 @@ Read one mobile worker: username, names, email, phones and user data
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.users.get({ domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339' });
+await corsair.commcare.api.users.get({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `userId` | `string` | Yes | Mobile worker ID (UUID). |
 
@@ -1338,14 +1343,14 @@ List the mobile workers in the project with paging
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.users.list({ domain: 'my-project', limit: 50 });
+await corsair.commcare.api.users.list({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', limit: 50 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `limit` | `number` | No | Page size; the default is 20. |
 | `offset` | `number` | No | Records to skip before this page. |
@@ -1405,14 +1410,14 @@ Email a password reset link to the mobile worker
 **Risk:** `write`
 
 ```ts
-await corsair.commcare.api.users.sendPasswordReset({ domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339' });
+await corsair.commcare.api.users.sendPasswordReset({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `userId` | `string` | Yes | Mobile worker ID (UUID). |
 
@@ -1432,14 +1437,14 @@ Change a mobile worker: names, email, phone number or custom user data
 **Risk:** `write`
 
 ```ts
-await corsair.commcare.api.users.update({ domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339', phoneNumber: '+15551234567' });
+await corsair.commcare.api.users.update({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project', userId: '3c5a623af057e23a32ae4000cf291339', phoneNumber: '+15551234567' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `username` | `string` | Yes | CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`. |
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `userId` | `string` | Yes | Mobile worker ID (UUID). |
 | `firstName` | `string` | No | First name of the worker. |
@@ -1479,13 +1484,14 @@ List the web users (dashboard accounts) in the project with their roles
 **Risk:** `read`
 
 ```ts
-await corsair.commcare.api.webUsers.list({ domain: 'my-project' });
+await corsair.commcare.api.webUsers.list({ username: 'jdoe@my-project.commcarehq.org', domain: 'my-project' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `username` | `string` | Yes | CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. |
 | `domain` | `string` | Yes | CommCare project domain (HQ domain), e.g. `my-project`. |
 | `limit` | `number` | No | Page size; the default is 20. |
 | `offset` | `number` | No | Records to skip before this page. |
