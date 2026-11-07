@@ -46,7 +46,15 @@ export const messagesCreate: MixmaxEndpoints['messagesCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.messages.create',
-		{ ...input },
+		{
+			// Recipient addresses and bodies are private; the event history
+			// records only their shape, never the values.
+			recipients:
+				(input.to?.length ?? 0) +
+				(input.cc?.length ?? 0) +
+				(input.bcc?.length ?? 0),
+			hasBody: input.body !== undefined,
+		},
 		'completed',
 	);
 	return result;
@@ -86,7 +94,15 @@ export const messagesUpdate: MixmaxEndpoints['messagesUpdate'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.messages.update',
-		{ ...input },
+		{
+			// Same redaction as create: shape only, no addresses or bodies.
+			id: input.id,
+			recipients:
+				(input.to?.length ?? 0) +
+				(input.cc?.length ?? 0) +
+				(input.bcc?.length ?? 0),
+			hasBody: input.body !== undefined,
+		},
 		'completed',
 	);
 	return result;
@@ -112,7 +128,10 @@ export const messagesSend: MixmaxEndpoints['messagesSend'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.messages.send',
-		{ ...input },
+		{
+			// The optional `data` payload carries message fields; log the id only.
+			id: input.id,
+		},
 		'completed',
 	);
 	return result;
@@ -136,7 +155,10 @@ export const messagesSchedule: MixmaxEndpoints['messagesSchedule'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.messages.schedule',
-		{ ...input },
+		{
+			// The optional `data` payload carries message fields; log the id only.
+			id: input.id,
+		},
 		'completed',
 	);
 	return result;
@@ -183,7 +205,10 @@ export const messagesTest: MixmaxEndpoints['messagesTest'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.messages.test',
-		{ ...input },
+		{
+			// The body may contain private content; log its presence only.
+			hasBody: input.body !== undefined,
+		},
 		'completed',
 	);
 	return result;
@@ -205,7 +230,11 @@ export const messagesSendPlain: MixmaxEndpoints['messagesSendPlain'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.messages.sendPlain',
-		{ ...input },
+		{
+			// The html body and recipient addresses are private; log the
+			// html presence only.
+			hasHtml: input.message.html !== undefined,
+		},
 		'completed',
 	);
 	return result;

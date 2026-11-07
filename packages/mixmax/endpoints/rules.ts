@@ -47,7 +47,11 @@ export const rulesCreate: MixmaxEndpoints['rulesCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.rules.create',
-		{ ...input },
+		{
+			// The trigger's webhook variant carries `webhookSecret`; the event
+			// history records the rule name only, never the trigger payload.
+			name: input.name,
+		},
 		'completed',
 	);
 	return result;
@@ -86,7 +90,11 @@ export const rulesUpdate: MixmaxEndpoints['rulesUpdate'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.rules.update',
-		{ ...input },
+		{
+			// Same redaction as create: the trigger payload is never logged.
+			id: input.id,
+			name: input.name,
+		},
 		'completed',
 	);
 	return result;
@@ -172,7 +180,12 @@ export const rulesCreateAction: MixmaxEndpoints['rulesCreateAction'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.rules.actions.create',
-		{ ...input },
+		{
+			// Webhook actions carry `signingSecret` and credential pairs in
+			// `httpHeaders`; the event history records the action type only.
+			id: input.id,
+			type: input.type,
+		},
 		'completed',
 	);
 	return result;
@@ -201,7 +214,11 @@ export const rulesUpdateAction: MixmaxEndpoints['rulesUpdateAction'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.rules.actions.update',
-		{ ...input },
+		{
+			// Same redaction as create: no secrets or header credentials.
+			id: input.id,
+			actionId: input.actionId,
+		},
 		'completed',
 	);
 	return result;

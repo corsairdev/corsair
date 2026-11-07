@@ -81,7 +81,11 @@ export const snippetsUpdate: MixmaxEndpoints['snippetsUpdate'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.snippets.update',
-		{ ...input },
+		{
+			// Template content is private email content; the event history
+			// records the template id only.
+			id: input.id,
+		},
 		'completed',
 	);
 	return result;
@@ -126,7 +130,13 @@ export const snippetsSend: MixmaxEndpoints['snippetsSend'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.snippets.send',
-		{ ...input },
+		{
+			// Recipient addresses, variables, and the rendered body are
+			// private; the event history records only their shape.
+			id: input.id,
+			recipients: input.to.length,
+			scheduled: input.scheduledAt !== undefined,
+		},
 		'completed',
 	);
 	return result;
