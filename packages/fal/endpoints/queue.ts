@@ -7,17 +7,24 @@ import {
 	requestBasePath,
 } from '../client';
 import type { FalEndpoints } from '../index';
-import type { QueueStatusResponse } from './types';
+import type {
+	QueueStatusResponse,
+	QueueSubmitInput,
+	QueueSubmitResponse,
+} from './types';
 import {
 	FalEndpointInputSchemas,
 	FalEndpointOutputSchemas,
 	QUEUE_CANCEL_STATUSES,
 } from './types';
 
-export const submit: FalEndpoints['queueSubmit'] = async (ctx, rawInput) => {
-	const input = FalEndpointInputSchemas.queueSubmit.parse(rawInput);
-	const response = FalEndpointOutputSchemas.queueSubmit.parse(
-		await makeFalRequest('queue', endpointPath(input.endpointId), ctx.key, {
+/** Puts a model run on fal's queue; shared by queue.submit and models.run. */
+export async function submitToQueue(
+	key: string,
+	input: QueueSubmitInput,
+): Promise<QueueSubmitResponse> {
+	return FalEndpointOutputSchemas.queueSubmit.parse(
+		await makeFalRequest('queue', endpointPath(input.endpointId), key, {
 			method: 'POST',
 			body: input.input,
 			query: {
@@ -35,6 +42,11 @@ export const submit: FalEndpoints['queueSubmit'] = async (ctx, rawInput) => {
 			},
 		}),
 	);
+}
+
+export const submit: FalEndpoints['queueSubmit'] = async (ctx, rawInput) => {
+	const input = FalEndpointInputSchemas.queueSubmit.parse(rawInput);
+	const response = await submitToQueue(ctx.key, input);
 	await logEventFromContext(
 		ctx,
 		'fal.queue.submit',
@@ -73,16 +85,17 @@ function isRequestFailure(error: unknown): error is ApiError {
  * COMPLETED this reads the result too and answers SUCCEEDED with the output
  * or FAILED with the error.
  */
-export const status: FalEndpoints['queueStatus'] = async (ctx, rawInput) => {
-	const input = FalEndpointInputSchemas.queueStatus.parse(rawInput);
-	const { basePath, requestId } = requestBasePath(input);
-
+export async function readQueueStatus(
+	key: string,
+	basePath: string,
+	logs = false,
+): Promise<QueueStatusResponse> {
 	// unknown: the raw status before the schema parses it; only status and error are read here.
 	const raw = await makeFalRequest<Record<string, unknown>>(
 		'queue',
 		`${basePath}/status`,
-		ctx.key,
-		{ method: 'GET', query: { logs: input.logs ? '1' : undefined } },
+		key,
+		{ method: 'GET', query: { logs: logs ? '1' : undefined } },
 	);
 
 	let extra: Pick<QueueStatusResponse, 'state' | 'output' | 'error'>;
@@ -95,7 +108,7 @@ export const status: FalEndpoints['queueStatus'] = async (ctx, rawInput) => {
 	} else {
 		try {
 			const output = FalEndpointOutputSchemas.queueResult.parse(
-				await makeFalRequest('queue', basePath, ctx.key, { method: 'GET' }),
+				await makeFalRequest('queue', basePath, key, { method: 'GET' }),
 			);
 			extra = { state: 'SUCCEEDED', output };
 		} catch (error) {
@@ -104,10 +117,13 @@ export const status: FalEndpoints['queueStatus'] = async (ctx, rawInput) => {
 		}
 	}
 
-	const response = FalEndpointOutputSchemas.queueStatus.parse({
-		...raw,
-		...extra,
-	});
+	return FalEndpointOutputSchemas.queueStatus.parse({ ...raw, ...extra });
+}
+
+export const status: FalEndpoints['queueStatus'] = async (ctx, rawInput) => {
+	const input = FalEndpointInputSchemas.queueStatus.parse(rawInput);
+	const { basePath, requestId } = requestBasePath(input);
+	const response = await readQueueStatus(ctx.key, basePath, input.logs);
 	await logEventFromContext(
 		ctx,
 		'fal.queue.status',

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { makeFalRequest, putToSignedUrl } from './client';
+import { makeFalRequest, putToSignedUrl, waitOnStatusStream } from './client';
 import { billing as accountBilling } from './endpoints/account';
 import { upload as filesUpload } from './endpoints/files';
 import {
@@ -28,6 +28,7 @@ jest.mock('./client', () => ({
 	...jest.requireActual('./client'),
 	makeFalRequest: jest.fn(),
 	putToSignedUrl: jest.fn().mockResolvedValue(undefined),
+	waitOnStatusStream: jest.fn().mockResolvedValue('completed'),
 }));
 
 jest.mock('corsair/core', () => ({
@@ -39,6 +40,9 @@ const mockRequest = makeFalRequest as jest.MockedFunction<
 	typeof makeFalRequest
 >;
 const mockPut = putToSignedUrl as jest.MockedFunction<typeof putToSignedUrl>;
+const mockStream = waitOnStatusStream as jest.MockedFunction<
+	typeof waitOnStatusStream
+>;
 const mockLog = logEventFromContext as jest.MockedFunction<
 	typeof logEventFromContext
 >;
@@ -311,22 +315,88 @@ describe('queue.cancel', () => {
 });
 
 describe('models', () => {
-	it('run posts to the sync host and returns the output', async () => {
-		mockRequest.mockResolvedValueOnce(output);
+	it('run waits on the status stream and answers SUCCEEDED with the output', async () => {
+		mockStream.mockResolvedValueOnce('completed');
+		mockRequest
+			.mockResolvedValueOnce(queued)
+			.mockResolvedValueOnce({ ...queued, status: 'COMPLETED' })
+			.mockResolvedValueOnce(output);
 		const response = await modelsRun(ctx, {
 			endpointId: 'fal-ai/flux/schnell',
 			input: { prompt: 'a lighthouse' },
+			waitSeconds: 5,
 		});
-		expect(mockRequest).toHaveBeenCalledWith(
-			'run',
-			'/fal-ai/flux/schnell',
+		expect(mockStream).toHaveBeenCalledWith(
 			'fal-test-key',
-			expect.objectContaining({
-				method: 'POST',
-				body: { prompt: 'a lighthouse' },
-			}),
+			BASE,
+			expect.any(Number),
 		);
-		expect(response).toEqual(output);
+		expect(
+			mockRequest.mock.calls.map(([host, path]) => `${host} ${path}`),
+		).toEqual([
+			'queue /fal-ai/flux/schnell',
+			`queue ${BASE}/status`,
+			`queue ${BASE}`,
+		]);
+		expect(response).toMatchObject({
+			state: 'SUCCEEDED',
+			output,
+			request_id: REQUEST_ID,
+			response_url: RESPONSE_URL,
+		});
+	});
+
+	it('run polls the status when the stream is unavailable', async () => {
+		mockStream.mockResolvedValueOnce('unavailable');
+		mockRequest
+			.mockResolvedValueOnce(queued)
+			.mockResolvedValueOnce({ ...queued, status: 'IN_QUEUE' })
+			.mockResolvedValueOnce({ ...queued, status: 'COMPLETED' })
+			.mockResolvedValueOnce(output);
+		const response = await modelsRun(ctx, {
+			endpointId: 'fal-ai/flux/schnell',
+			input: { prompt: 'a lighthouse' },
+			waitSeconds: 5,
+		});
+		expect(
+			mockRequest.mock.calls.map(([host, path]) => `${host} ${path}`),
+		).toEqual([
+			'queue /fal-ai/flux/schnell',
+			`queue ${BASE}/status`,
+			`queue ${BASE}/status`,
+			`queue ${BASE}`,
+		]);
+		expect(response).toMatchObject({ state: 'SUCCEEDED', output });
+	});
+
+	it('run hands back a video still rendering as a job, not a timeout', async () => {
+		mockStream.mockResolvedValueOnce('waiting');
+		mockRequest
+			.mockResolvedValueOnce(queued)
+			.mockResolvedValueOnce({ ...queued, status: 'IN_PROGRESS' });
+		const response = await modelsRun(ctx, {
+			endpointId: 'fal-ai/minimax/hailuo-02/standard/text-to-video',
+			input: { prompt: 'a red kite over a beach' },
+			waitSeconds: 0,
+		});
+		expect(mockRequest).toHaveBeenCalledTimes(2);
+		expect(response).toMatchObject({
+			state: 'IN_PROGRESS',
+			request_id: REQUEST_ID,
+			response_url: RESPONSE_URL,
+		});
+		expect(response.output).toBeUndefined();
+	});
+
+	it('run refuses a wait longer than a script can hold', async () => {
+		await expect(
+			modelsRun(ctx, {
+				endpointId: 'fal-ai/flux/schnell',
+				input: {},
+				waitSeconds: 120,
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('search maps filters to the Platform API query', async () => {

@@ -3,7 +3,9 @@ displayName: fal
 description: Generative media platform with hundreds of image, video, audio and 3D models; queue or run models, follow requests, look up models and prices, track usage and upload input files.
 domain: fal.ai
 overviewNote: |
-  Every model on fal takes its own input fields. Look them up with `models.search({ endpointIds: ['<endpoint id>'], includeOpenApi: true })`, then pass them as `input`. Use `models.run` for models that answer in seconds and `queue.submit` for video, audio or anything slower.
+  Every model on fal takes its own input fields. Look them up with `models.search({ endpointIds: ['<endpoint id>'], includeOpenApi: true })`, then pass them as `input`.
+
+  Video, audio and training runs take minutes. `models.run` waits up to 10 seconds (at most 20) and answers `state` SUCCEEDED with `output` when the model is quick; otherwise it answers IN_QUEUE or IN_PROGRESS with a `response_url`, and the run carries on at fal. Both `models.run` and `queue.submit` are declared jobs: follow one with `queue.status({ responseUrl })` until `state` is SUCCEEDED or FAILED, or pass `webhookUrl` and let fal post the result.
 examples:
   read:
     path: models.search
@@ -24,6 +26,7 @@ exampleWebhook:
   note: Pass `webhookUrl` to `queue.submit` and fal POSTs the result there when the request finishes. Hand `processWebhook` the raw body text (`await request.text()`), not parsed JSON. fal signs the exact bytes it sent; a parsed body is rebuilt as a best effort, which fails for outputs with whole-number floats or integers past 2^53. To hold deliveries to one fal account, store its fal user id (the `x-fal-webhook-user-id` header) as the account's `user_id`.
   after: "if (result.data?.status === 'OK') console.log(result.data.request_id, result.data.payload);"
 apiNotes:
+  models.run: Goes through fal's queue, so a run that outlasts `waitSeconds` is not lost. It answers with the same fields as `queue.status`; when `state` is still IN_QUEUE or IN_PROGRESS, follow `response_url` with `queue.status`.
   queue.status: Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` returned. fal marks failed requests COMPLETED as well, so once it does this reads the result and answers `state` SUCCEEDED with `output`, or FAILED with `error`.
   queue.result: Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` returned. Errors with the model's own error (422 for bad input) when the request failed.
   queue.cancel: Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` returned. A request that already finished answers ALREADY_COMPLETED instead of an error.
@@ -41,7 +44,7 @@ apiExamples:
   queue.cancel:
     call: "{ endpointId: 'fal-ai/flux/schnell', requestId: '<request id>' }"
   models.run:
-    call: "{ endpointId: 'fal-ai/flux/schnell', input: { prompt: 'A paper boat on a pond', image_size: 'square' } }"
+    call: "{ endpointId: 'fal-ai/flux/schnell', input: { prompt: 'A paper boat on a pond', image_size: 'square' }, waitSeconds: 10 }"
   models.search:
     call: "{ query: 'upscale', category: 'image-to-image', limit: 10 }"
   models.pricing:

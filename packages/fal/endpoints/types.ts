@@ -227,19 +227,30 @@ export type QueueCancelResponse = z.infer<typeof QueueCancelResponseSchema>;
 
 // ── models.run ──────────────────────────────────────────────────────────────
 
-const ModelsRunInputSchema = z.object({
-	endpointId: EndpointIdSchema,
-	input: ModelInputSchema,
-	startTimeout: z
+/** Default and longest wait in models.run; a Corsair script has about 20 s. */
+export const MODELS_RUN_DEFAULT_WAIT_S = 10;
+export const MODELS_RUN_MAX_WAIT_S = 20;
+
+const ModelsRunInputSchema = QueueSubmitInputSchema.extend({
+	waitSeconds: z
 		.number()
-		.positive()
+		.min(0)
+		.max(MODELS_RUN_MAX_WAIT_S)
 		.optional()
-		.describe('Seconds fal may wait for a runner before giving up.'),
+		.describe(
+			'How long to wait for the output, default 10 and at most 20 seconds. Image models usually finish inside it; video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job to follow with queue.status.',
+		),
 });
 
 export type ModelsRunInput = z.infer<typeof ModelsRunInputSchema>;
 
-const ModelsRunResponseSchema = ModelOutputSchema;
+const ModelsRunResponseSchema = QueueStatusResponseSchema.extend({
+	response_url: z
+		.string()
+		.describe(
+			'Pass to queue.status as responseUrl to follow a run still going.',
+		),
+});
 
 export type ModelsRunResponse = z.infer<typeof ModelsRunResponseSchema>;
 

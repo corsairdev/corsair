@@ -184,12 +184,12 @@ await corsair.fal.api.models.pricing({ endpointIds: ['fal-ai/flux/schnell', 'fal
 
 `models.run`
 
-Run a model and wait for its output; spends fal credits. For fast models (most image models); use queue.submit for video, audio or anything slow.
+Run a model and wait up to waitSeconds (default 10) for its output; spends fal credits. Image models usually answer with state SUCCEEDED and output. Video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job: follow it with queue.status until SUCCEEDED or FAILED.
 
 **Risk:** `write`
 
 ```ts
-await corsair.fal.api.models.run({ endpointId: 'fal-ai/flux/schnell', input: { prompt: 'A paper boat on a pond', image_size: 'square' } });
+await corsair.fal.api.models.run({ endpointId: 'fal-ai/flux/schnell', input: { prompt: 'A paper boat on a pond', image_size: 'square' }, waitSeconds: 10 });
 ```
 
 **Input**
@@ -198,11 +198,58 @@ await corsair.fal.api.models.run({ endpointId: 'fal-ai/flux/schnell', input: { p
 |------|------|----------|-------------|
 | `endpointId` | `string` | Yes | fal model endpoint id, for example fal-ai/flux/schnell or fal-ai/kling-video/v2.1/master/text-to-video. Find ids with models.search. |
 | `input` | `Record<string, any>` | Yes | The model's input fields, for example &#123; prompt: 'a lighthouse at dawn' &#125;. Each model has its own; read them with models.search(&#123; endpointIds: [id], includeOpenApi: true &#125;). |
-| `startTimeout` | `number` | No | Seconds fal may wait for a runner before giving up. |
+| `webhookUrl` | `string` | No | An https URL fal POSTs the result to when the request completes (signed; see the requests.completed webhook). |
+| `priority` | `normal \| low` | No | low puts it behind your other requests to this endpoint. |
+| `startTimeout` | `number` | No | Seconds fal may wait for a runner before giving up (504). Does not limit run time. |
+| `hint` | `string` | No | Routing hint: requests with the same hint go to the same runner. |
+| `noRetry` | `boolean` | No | true turns off fal’s automatic retries for this request. |
+| `maxQueueLength` | `number` | No | Reject with 429 if this many requests are already queued. |
+| `waitSeconds` | `number` | No | How long to wait for the output, default 10 and at most 20 seconds. Image models usually finish inside it; video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job to follow with queue.status. |
+
+Goes through fal's queue, so a run that outlasts `waitSeconds` is not lost. It answers with the same fields as `queue.status`; when `state` is still IN_QUEUE or IN_PROGRESS, follow `response_url` with `queue.status`.
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | fal's queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too. |
+| `request_id` | `string` | Yes | — |
+| `response_url` | `string` | Yes | Pass to queue.status as responseUrl to follow a run still going. |
+| `status_url` | `string \| null` | No | — |
+| `cancel_url` | `string \| null` | No | — |
+| `queue_position` | `number \| null` | No | — |
+| `logs` | `object[] \| null` | No | — |
+| `metrics` | `object \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `error_type` | `string \| null` | No | — |
+| `state` | `IN_QUEUE \| IN_PROGRESS \| SUCCEEDED \| FAILED` | Yes | IN_QUEUE or IN_PROGRESS while it runs; SUCCEEDED with output, or FAILED with error, once it is done. |
+| `output` | `Record<string, any>` | No | The model output. Its shape is model-specific: image models return images[].url, video models video.url, audio models audio.url. fal media URLs expire, so save files you want to keep. |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  message: string,
+  timestamp: string,
+  level?: string,
+  labels?: Record<string, any>
+}[] | null
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+  inference_time?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -411,7 +458,7 @@ Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` retu
 
 `queue.submit`
 
-Queue a model run (image, video, audio, 3D…) and get a request id back at once; spends fal credits. Follow it with queue.status until state is SUCCEEDED or FAILED, or pass webhookUrl.
+Queue a model run (image, video, audio, 3D…) and get a request id back at once; spends fal credits. Video runs take minutes: follow it with queue.status until state is SUCCEEDED or FAILED, or pass webhookUrl.
 
 **Risk:** `write`
 

@@ -210,7 +210,7 @@ const falEndpointMeta = {
 	'queue.submit': {
 		riskLevel: 'write',
 		description:
-			'Queue a model run (image, video, audio, 3D…) and get a request id back at once; spends fal credits. Follow it with queue.status until state is SUCCEEDED or FAILED, or pass webhookUrl.',
+			'Queue a model run (image, video, audio, 3D…) and get a request id back at once; spends fal credits. Video runs take minutes: follow it with queue.status until state is SUCCEEDED or FAILED, or pass webhookUrl.',
 		job: QUEUE_JOB,
 	},
 	'queue.status': {
@@ -230,7 +230,8 @@ const falEndpointMeta = {
 	'models.run': {
 		riskLevel: 'write',
 		description:
-			'Run a model and wait for its output; spends fal credits. For fast models (most image models); use queue.submit for video, audio or anything slow.',
+			'Run a model and wait up to waitSeconds (default 10) for its output; spends fal credits. Image models usually answer with state SUCCEEDED and output. Video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job: follow it with queue.status until SUCCEEDED or FAILED.',
+		job: QUEUE_JOB,
 	},
 	'models.search': {
 		riskLevel: 'read',

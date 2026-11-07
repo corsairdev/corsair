@@ -114,20 +114,37 @@ describe('fal plugin through createCorsair', () => {
 		}
 	});
 
-	it('does not retry a 422 from a sync run', async () => {
+	it('reports a bad input to models.run as FAILED, read once', async () => {
 		const { corsair, testDb } = await createClient({ key: 'fal-key' });
 		try {
+			respond(queued);
+			// fal's status stream: one event, then it closes.
+			fetchMock.mockImplementationOnce(
+				async () =>
+					new Response('data: {"status":"COMPLETED"}\n\n', {
+						status: 200,
+						headers: { 'Content-Type': 'text/event-stream' },
+					}),
+			);
+			respond({ ...queued, status: 'COMPLETED' });
 			respond(
 				{ detail: [{ loc: ['body', 'prompt'], msg: 'Field required' }] },
 				422,
 			);
-			await expect(
-				corsair.fal.api.models.run({
-					endpointId: 'fal-ai/flux/schnell',
-					input: {},
-				}),
-			).rejects.toMatchObject({ status: 422 });
-			expect(fetchMock).toHaveBeenCalledTimes(1);
+			const response = await corsair.fal.api.models.run({
+				endpointId: 'fal-ai/flux/schnell',
+				input: {},
+			});
+			expect(response).toMatchObject({
+				state: 'FAILED',
+				error: '422: body.prompt: Field required',
+			});
+			expect(fetchMock.mock.calls.map(([url]) => String(url))).toEqual([
+				'https://queue.fal.run/fal-ai/flux/schnell',
+				`https://queue.fal.run/fal-ai/flux/requests/${REQUEST_ID}/status/stream`,
+				`https://queue.fal.run/fal-ai/flux/requests/${REQUEST_ID}/status`,
+				`https://queue.fal.run/fal-ai/flux/requests/${REQUEST_ID}`,
+			]);
 		} finally {
 			testDb.cleanup();
 		}

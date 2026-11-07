@@ -4,6 +4,7 @@ import {
 	falErrorMessage,
 	parseEndpointId,
 	requestBasePath,
+	waitOnStatusStream,
 } from './client';
 import { errorHandlers } from './error-handlers';
 
@@ -161,5 +162,93 @@ describe('error handlers', () => {
 		expect(errorHandlers.AUTH_ERROR.match(apiErr(500, 'Server Error'))).toBe(
 			false,
 		);
+	});
+});
+
+describe('waitOnStatusStream', () => {
+	const realFetch = global.fetch;
+	const BASE = `/fal-ai/flux/requests/${REQUEST_ID}`;
+	let fetchMock: jest.Mock;
+
+	// A response whose body sends these chunks, then stays open unless `end`.
+	const sse = (chunks: string[], end = true) =>
+		new Response(
+			new ReadableStream({
+				start(controller) {
+					for (const chunk of chunks) {
+						controller.enqueue(new TextEncoder().encode(chunk));
+					}
+					if (end) controller.close();
+				},
+			}),
+			{ status: 200, headers: { 'content-type': 'text/event-stream' } },
+		);
+
+	beforeEach(() => {
+		fetchMock = jest.fn();
+		global.fetch = fetchMock as unknown as typeof fetch;
+	});
+	afterEach(() => {
+		global.fetch = realFetch;
+	});
+
+	it('ends when fal sends COMPLETED, through keep-alive comments and split chunks', async () => {
+		fetchMock.mockResolvedValueOnce(
+			sse(
+				[
+					': ping\n\n',
+					'data: {"status":"IN_QUEUE","queue_position":1}\n\n',
+					'data: {"status":"IN_PRO',
+					'GRESS"}\n\ndata: {"status":"COMPLETED","metrics":{}}\n\n',
+				],
+				false,
+			),
+		);
+		await expect(waitOnStatusStream('k', BASE, 5_000)).resolves.toBe(
+			'completed',
+		);
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(url).toBe(`https://queue.fal.run${BASE}/status/stream`);
+		expect(new Headers(init.headers).get('authorization')).toBe('Key k');
+	});
+
+	it('answers waiting when the time runs out first', async () => {
+		fetchMock.mockImplementationOnce(
+			async (_url: string, init: RequestInit) =>
+				new Response(
+					new ReadableStream({
+						start(controller) {
+							controller.enqueue(
+								new TextEncoder().encode('data: {"status":"IN_PROGRESS"}\n\n'),
+							);
+							init.signal?.addEventListener('abort', () =>
+								controller.error(new Error('aborted')),
+							);
+						},
+					}),
+					{ status: 200 },
+				),
+		);
+		await expect(waitOnStatusStream('k', BASE, 200)).resolves.toBe('waiting');
+	});
+
+	it('answers unavailable when the stream does not open or ends early', async () => {
+		fetchMock.mockResolvedValueOnce(new Response('nope', { status: 405 }));
+		await expect(waitOnStatusStream('k', BASE, 5_000)).resolves.toBe(
+			'unavailable',
+		);
+		fetchMock.mockResolvedValueOnce(sse(['data: {"status":"IN_QUEUE"}\n\n']));
+		await expect(waitOnStatusStream('k', BASE, 5_000)).resolves.toBe(
+			'unavailable',
+		);
+		fetchMock.mockRejectedValueOnce(new Error('ECONNRESET'));
+		await expect(waitOnStatusStream('k', BASE, 5_000)).resolves.toBe(
+			'unavailable',
+		);
+	});
+
+	it('does not open a stream for a zero wait', async () => {
+		await expect(waitOnStatusStream('k', BASE, 0)).resolves.toBe('waiting');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });

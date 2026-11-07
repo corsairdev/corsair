@@ -177,7 +177,9 @@ describeLive('fal live API', () => {
 				endpointId: MODEL,
 				input: { prompt: 'a paper boat on a pond', ...SMALL },
 			});
-			const url = (output.images as { url: string }[] | undefined)?.[0]?.url;
+			expect(output.state).toBe('SUCCEEDED');
+			const url = (output.output?.images as { url: string }[] | undefined)?.[0]
+				?.url;
 			expect(url).toMatch(/^https:\/\//);
 			expect((await fetch(url!)).status).toBe(200);
 

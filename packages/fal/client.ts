@@ -102,6 +102,63 @@ export async function makeFalRequest<T>(
 }
 
 /**
+ * Waits on fal's status stream (server-sent events) until the request
+ * completes or `waitMs` passes: one open connection instead of repeated
+ * status reads, and the end is seen the moment fal sends it. Answers
+ * `completed`, `waiting` (the time ran out first) or `unavailable` (the stream
+ * did not open or broke), in which case the caller reads the status itself.
+ * `basePath` comes from requestBasePath, so the key only goes to fal's queue.
+ */
+export async function waitOnStatusStream(
+	apiKey: string,
+	basePath: string,
+	waitMs: number,
+): Promise<'completed' | 'waiting' | 'unavailable'> {
+	if (waitMs <= 0) return 'waiting';
+	const signal = AbortSignal.timeout(waitMs);
+	let response: Response;
+	try {
+		response = await fetch(`${FAL_HOSTS.queue}${basePath}/status/stream`, {
+			headers: { Authorization: `Key ${apiKey}`, Accept: 'text/event-stream' },
+			signal,
+		});
+	} catch {
+		return signal.aborted ? 'waiting' : 'unavailable';
+	}
+	if (!response.ok || !response.body) {
+		await response.body?.cancel().catch(() => undefined);
+		return 'unavailable';
+	}
+
+	const reader = response.body.getReader();
+	const decoder = new TextDecoder();
+	let buffered = '';
+	try {
+		while (true) {
+			const { done, value } = await reader.read();
+			if (done) return 'unavailable';
+			buffered += decoder.decode(value, { stream: true });
+			const lines = buffered.split('\n');
+			buffered = lines.pop() ?? '';
+			for (const line of lines) {
+				// Comment lines (": ping") keep the connection open; events are `data: {...}`.
+				if (!line.startsWith('data:')) continue;
+				try {
+					const event = JSON.parse(line.slice(5).trim()) as { status?: string };
+					if (event.status === 'COMPLETED') return 'completed';
+				} catch {
+					// A malformed event says nothing about the request; keep reading.
+				}
+			}
+		}
+	} catch {
+		return signal.aborted ? 'waiting' : 'unavailable';
+	} finally {
+		await reader.cancel().catch(() => undefined);
+	}
+}
+
+/**
  * PUT bytes to a signed storage URL that `storage/upload/initiate` returned.
  * The URL carries its own signature, so the fal key is never sent with it.
  */

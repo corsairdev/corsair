@@ -1,26 +1,64 @@
 import { logEventFromContext } from 'corsair/core';
-import { endpointPath, makeFalRequest } from '../client';
+import { makeFalRequest, requestBasePath, waitOnStatusStream } from '../client';
 import type { FalEndpoints } from '../index';
-import { FalEndpointInputSchemas, FalEndpointOutputSchemas } from './types';
+import { readQueueStatus, submitToQueue } from './queue';
+import type { QueueStatusResponse } from './types';
+import {
+	FalEndpointInputSchemas,
+	FalEndpointOutputSchemas,
+	MODELS_RUN_DEFAULT_WAIT_S,
+} from './types';
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const stillRunning = (status: QueueStatusResponse) =>
+	status.state === 'IN_QUEUE' || status.state === 'IN_PROGRESS';
+
+/**
+ * Runs a model through fal's queue and waits a little for the output. A
+ * blocking call would outlast the caller for a video that takes minutes, and
+ * fal would bill for an output nobody receives; through the queue, a run
+ * still going comes back with its response_url, a job the caller follows.
+ */
 export const run: FalEndpoints['modelsRun'] = async (ctx, rawInput) => {
-	const input = FalEndpointInputSchemas.modelsRun.parse(rawInput);
-	const response = FalEndpointOutputSchemas.modelsRun.parse(
-		await makeFalRequest('run', endpointPath(input.endpointId), ctx.key, {
-			method: 'POST',
-			body: input.input,
-			headers: {
-				'X-Fal-Request-Start-Timeout':
-					input.startTimeout !== undefined
-						? String(input.startTimeout)
-						: undefined,
-			},
-		}),
+	const { waitSeconds = MODELS_RUN_DEFAULT_WAIT_S, ...input } =
+		FalEndpointInputSchemas.modelsRun.parse(rawInput);
+	const submitted = await submitToQueue(ctx.key, input);
+	const { basePath } = requestBasePath({ responseUrl: submitted.response_url });
+
+	// fal pushes status changes over its status stream and ends it on
+	// COMPLETED, so the wait ends the moment the run does. Where the stream
+	// can't be used, the status is polled instead.
+	const deadline = Date.now() + waitSeconds * 1000;
+	const streamed = await waitOnStatusStream(
+		ctx.key,
+		basePath,
+		deadline - Date.now(),
 	);
+	let current = await readQueueStatus(ctx.key, basePath);
+	if (streamed === 'unavailable') {
+		let interval = 500;
+		while (stillRunning(current) && Date.now() + interval < deadline) {
+			await sleep(interval);
+			interval = Math.min(interval * 1.5, 2000);
+			current = await readQueueStatus(ctx.key, basePath);
+		}
+	}
+
+	const response = FalEndpointOutputSchemas.modelsRun.parse({
+		...current,
+		request_id: submitted.request_id,
+		response_url: submitted.response_url,
+		status_url: submitted.status_url ?? current.status_url,
+		cancel_url: submitted.cancel_url ?? current.cancel_url,
+	});
 	await logEventFromContext(
 		ctx,
 		'fal.models.run',
-		{ endpointId: input.endpointId },
+		{
+			endpointId: input.endpointId,
+			requestId: response.request_id,
+			state: response.state,
+		},
 		'completed',
 	);
 	return response;

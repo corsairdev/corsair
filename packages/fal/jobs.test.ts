@@ -9,6 +9,7 @@ const meta = fal().endpointMeta as Record<
 >;
 
 const OUTPUT_FOR: Record<string, keyof typeof FalEndpointOutputSchemas> = {
+	'models.run': 'modelsRun',
 	'queue.submit': 'queueSubmit',
 	'queue.status': 'queueStatus',
 };
@@ -25,8 +26,11 @@ const jobs = Object.entries(meta).filter(
 );
 
 describe('fal jobs', () => {
-	it('declares a job on the one operation that starts a request in the background', () => {
-		expect(jobs.map(([op]) => op)).toEqual(['queue.submit']);
+	it('declares a job on both operations that can leave a request running', () => {
+		expect(jobs.map(([op]) => op).sort()).toEqual([
+			'models.run',
+			'queue.submit',
+		]);
 	});
 
 	it.each(jobs)(
