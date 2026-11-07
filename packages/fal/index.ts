@@ -230,7 +230,7 @@ const falEndpointMeta = {
 	'models.run': {
 		riskLevel: 'write',
 		description:
-			'Run a model and wait up to waitSeconds (default 10) for its output; spends fal credits. Image models usually answer with state SUCCEEDED and output. Video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job: follow it with queue.status until SUCCEEDED or FAILED.',
+			'Run a model and wait up to waitSeconds (default 10) for its output; spends fal credits. A run that ends inside the wait answers SUCCEEDED with output or FAILED with error, both final. Video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job: follow it with queue.status until SUCCEEDED or FAILED.',
 		job: QUEUE_JOB,
 	},
 	'models.search': {

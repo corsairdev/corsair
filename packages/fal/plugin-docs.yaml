@@ -5,7 +5,7 @@ domain: fal.ai
 overviewNote: |
   Every model on fal takes its own input fields. Look them up with `models.search({ endpointIds: ['<endpoint id>'], includeOpenApi: true })`, then pass them as `input`.
 
-  Video, audio and training runs take minutes. `models.run` waits up to 10 seconds (at most 15) and answers `state` SUCCEEDED with `output` when the model is quick. Otherwise it answers with the run's `response_url` and a `state` that isn't final yet: IN_PROGRESS, or IN_QUEUE (also when no status read finished in time, even if fal has started). The run carries on at fal either way. For any state other than SUCCEEDED or FAILED, follow it with `queue.status({ responseUrl })`, or pass `webhookUrl` and let fal post the result. On Corsair's cloud, `get_job` and the job card do the following for you.
+  Video, audio and training runs take minutes. `models.run` waits up to 10 seconds (at most 15). When the run ends inside the wait, it answers with a final `state`: SUCCEEDED with `output`, or FAILED with `error` (bad input or a model error), and there is nothing to follow. Otherwise it answers with the run's `response_url` and a `state` that isn't final yet: IN_PROGRESS, or IN_QUEUE (also when no status read finished in time, even if fal has started), and the run carries on at fal. Only those two states need following: call `queue.status({ responseUrl })` until it says SUCCEEDED or FAILED, or pass `webhookUrl` and let fal post the result. On Corsair's cloud, `get_job` and the job card do the following for you.
 examples:
   read:
     path: models.search
@@ -26,7 +26,7 @@ exampleWebhook:
   note: Pass `webhookUrl` to `queue.submit` and fal POSTs the result there when the request finishes. Hand `processWebhook` the raw body text (`await request.text()`), not parsed JSON. fal signs the exact bytes it sent; a parsed body is rebuilt as a best effort, which fails for outputs with whole-number floats or integers past 2^53. To hold deliveries to one fal account, store its fal user id (the `x-fal-webhook-user-id` header) as the account's `user_id`.
   after: "if (result.data?.status === 'OK') console.log(result.data.request_id, result.data.payload);"
 apiNotes:
-  models.run: Goes through fal's queue, so a run that outlasts `waitSeconds` is not lost. It answers with the same fields as `queue.status`; when `state` is still IN_QUEUE or IN_PROGRESS, follow `response_url` with `queue.status`.
+  models.run: Goes through fal's queue, so a run that outlasts `waitSeconds` is not lost. It answers with the same fields as `queue.status`. SUCCEEDED and FAILED are final; only IN_QUEUE or IN_PROGRESS need following, with `queue.status({ responseUrl })`.
   queue.status: Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` returned. fal marks failed requests COMPLETED as well, so once it does this reads the result and answers `state` SUCCEEDED with `output`, or FAILED with `error`.
   queue.result: Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` returned. Errors with the model's own error (422 for bad input) when the request failed.
   queue.cancel: Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` returned. A request that already finished answers ALREADY_COMPLETED instead of an error.
