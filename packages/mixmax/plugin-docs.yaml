@@ -1,27 +1,21 @@
-﻿displayName: Mixmax
-description: Email productivity platform for Gmail and Outlook with sequences, templates, and automation.
-recommendedAuth: managed
+displayName: Mixmax
+description: "Send and manage Mixmax emails, run sequences with recipients and folders, organize templates and template folders, track unsubscribes, and read the live engagement feed."
+domain: mixmax.com
+recommendedAuth: api_key
 examples:
   read:
     path: messages.list
     title: List messages
+    args:
+      limit: 20
+      fields: subject,created
   write:
     path: messages.create
     title: Create a draft message
     args:
       to:
         - email: customer@example.com
+          name: Customer Example
       subject: Hello from Corsair
-      body: <p>This is a test email sent via Mixmax.</p>
-dbExample:
-  entity: messages
-  note: Search synced messages without hitting Mixmax's API.
-  data:
-    state: draft
-  limit: 50
-exampleWebhook:
-  path: example.example
-  note: React to Mixmax webhook events.
-  after: |
-    const data = result.data?.data;
-    console.log('Mixmax event:', data);
+      body: <p>This is a draft created via Mixmax.</p>
+      trackingEnabled: true
