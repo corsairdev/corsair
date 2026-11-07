@@ -40,17 +40,12 @@ afterEach(() => {
 });
 
 describe('verifyHappyScribeWebhook', () => {
-	it('accepts a valid raw-body signature', () => {
+	it('accepts both valid signatures', () => {
 		const result = verifyHappyScribeWebhook(
-			request({ 'x-webhook-signature': `sha256=${sign(rawBody)}` }),
-			SECRET,
-		);
-		expect(result.valid).toBe(true);
-	});
-
-	it('accepts a fresh timestamp-bound signature', () => {
-		const result = verifyHappyScribeWebhook(
-			request({ 'x-happyscribe-signature': stamped() }),
+			request({
+				'x-webhook-signature': `sha256=${sign(rawBody)}`,
+				'x-happyscribe-signature': stamped(),
+			}),
 			SECRET,
 		);
 		expect(result.valid).toBe(true);
@@ -64,10 +59,35 @@ describe('verifyHappyScribeWebhook', () => {
 		expect(result.valid).toBe(true);
 	});
 
+	// The plain signature covers only the body and carries no timestamp, so
+	// a delivery accepted on it alone could be replayed forever.
+	it('rejects a delivery with only the plain signature', () => {
+		const result = verifyHappyScribeWebhook(
+			request({ 'x-webhook-signature': `sha256=${sign(rawBody)}` }),
+			SECRET,
+		);
+		expect(result.valid).toBe(false);
+		expect(result.error).toContain('Missing');
+	});
+
+	it('rejects a delivery with only the stamped signature', () => {
+		const result = verifyHappyScribeWebhook(
+			request({ 'x-happyscribe-signature': stamped() }),
+			SECRET,
+		);
+		expect(result.valid).toBe(false);
+	});
+
 	it('rejects a body that was re-serialized', () => {
 		const mutated = JSON.stringify({ ...webhookEvent, created_at: 'nope' });
 		const result = verifyHappyScribeWebhook(
-			request({ 'x-webhook-signature': `sha256=${sign(rawBody)}` }, mutated),
+			request(
+				{
+					'x-webhook-signature': `sha256=${sign(rawBody)}`,
+					'x-happyscribe-signature': stamped(),
+				},
+				mutated,
+			),
 			SECRET,
 		);
 		expect(result.valid).toBe(false);
@@ -76,6 +96,7 @@ describe('verifyHappyScribeWebhook', () => {
 	it('rejects a stale timestamp-bound signature', () => {
 		const result = verifyHappyScribeWebhook(
 			request({
+				'x-webhook-signature': `sha256=${sign(rawBody)}`,
 				'x-happyscribe-signature': stamped(
 					HAPPYSCRIBE_SIGNATURE_MAX_AGE_SECONDS + 10,
 				),
@@ -83,11 +104,15 @@ describe('verifyHappyScribeWebhook', () => {
 			SECRET,
 		);
 		expect(result.valid).toBe(false);
+		expect(result.error).toContain('Stale');
 	});
 
 	it('rejects a wrong secret', () => {
 		const result = verifyHappyScribeWebhook(
-			request({ 'x-webhook-signature': `sha256=${sign(rawBody)}` }),
+			request({
+				'x-webhook-signature': `sha256=${sign(rawBody)}`,
+				'x-happyscribe-signature': stamped(),
+			}),
 			'whsec_other',
 		);
 		expect(result.valid).toBe(false);

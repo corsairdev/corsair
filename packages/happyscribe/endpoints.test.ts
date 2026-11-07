@@ -45,9 +45,14 @@ jest.mock('corsair/core', () => ({
 const mockLog = jest.mocked(logEventFromContext);
 const API_KEY = 'hs-test-key';
 
+// unknown: every concrete endpoint satisfies this because parameters are
+// contravariant, while each endpoint returns its own output type, so the
+// shared return can only be unknown.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
-// unknown: negative cases pass values no schema accepts.
+// unknown: raw caller input and the result stay unknown until the
+// operation's zod schemas have run; negative cases pass values no schema
+// accepts.
 async function invoke<T = unknown>(
 	endpoint: AnyEndpoint,
 	input: unknown,
@@ -418,6 +423,16 @@ describe('orders', () => {
 				glossary_ids: undefined,
 			},
 		});
+	});
+
+	it('reads one order by id', async () => {
+		respond(order);
+		const result = await invoke<{ id: string; state?: string }>(Orders.get, {
+			orderId: order.id,
+		});
+		expect(result.id).toBe(order.id);
+		expectAuthenticated();
+		expect(lastRequest().path).toBe(`/api/v1/orders/${order.id}`);
 	});
 
 	it('confirms an order', async () => {

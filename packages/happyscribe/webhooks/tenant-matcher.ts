@@ -8,6 +8,8 @@ export function matchHappyScribeTenantWebhook(
 	request: RawWebhookRequest,
 ): WebhookTenantMatch | null {
 	const body = readBodyRecord(request);
+	// unknown: the delivery body is parsed JSON of unknown shape until
+	// narrowed field by field; the embedded Meeting is read the same way.
 	const object = body?.data;
 	const meeting =
 		object && typeof object === 'object' && !Array.isArray(object)

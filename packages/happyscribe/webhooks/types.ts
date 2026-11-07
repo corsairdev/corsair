@@ -51,10 +51,12 @@ function signedBody(request: WebhookRequest<unknown>): string {
 }
 
 /**
- * Verifies both signature headers. Returns the first failure found, so a
- * caller can answer 401 with the reason. A delivery without either header,
- * or with no secret configured, is invalid: the plugin never accepts
- * unsigned deliveries.
+ * Verifies both signature headers and requires both to pass: the plain
+ * body signature proves authenticity but carries no timestamp, so a
+ * delivery accepted on it alone could be replayed forever. Returns the
+ * first failure found, so a caller can answer 401 with the reason. A
+ * delivery without either header, or with no secret configured, is
+ * invalid: the plugin never accepts unsigned deliveries.
  */
 export function verifyHappyScribeWebhook(
 	// WebhookRequest.rawBody is the signed input; the adapters supply it.
@@ -74,29 +76,41 @@ export function verifyHappyScribeWebhook(
 
 	const body = signedBody(request);
 	const plain = headerValue(request.headers, 'x-webhook-signature');
-	const expectedPlain = `sha256=${hexDigest(body, key)}`;
-	const plainOk = plain !== undefined && safeEqual(plain.trim(), expectedPlain);
+	const plainOk =
+		plain !== undefined &&
+		safeEqual(plain.trim(), `sha256=${hexDigest(body, key)}`);
 
 	const stamped = headerValue(request.headers, 'x-happyscribe-signature');
 	let stampedOk = false;
+	let stampedStale = false;
 	if (stamped !== undefined) {
 		const match = /^t=(\d+),v1=([0-9a-f]+)$/.exec(stamped.trim());
 		const [, timestamp, digest] = match ?? [];
 		if (timestamp !== undefined && digest !== undefined) {
 			const age = now - Number(timestamp);
 			const fresh = age >= 0 && age <= HAPPYSCRIBE_SIGNATURE_MAX_AGE_SECONDS;
+			stampedStale = !fresh;
 			stampedOk =
 				fresh && safeEqual(digest, hexDigest(`${timestamp}.${body}`, key));
 		}
 	}
 
-	if (!plainOk && !stampedOk) {
+	if (plain === undefined || stamped === undefined) {
 		return {
 			valid: false,
 			error:
-				plain === undefined && stamped === undefined
-					? 'Missing X-Webhook-Signature and X-HappyScribe-Signature headers'
-					: 'Invalid webhook signature',
+				'Missing X-Webhook-Signature or X-HappyScribe-Signature header; HappyScribe signs deliveries with both',
+		};
+	}
+	if (!plainOk) {
+		return { valid: false, error: 'Invalid X-Webhook-Signature' };
+	}
+	if (!stampedOk) {
+		return {
+			valid: false,
+			error: stampedStale
+				? `Stale X-HappyScribe-Signature timestamp; deliveries older than ${HAPPYSCRIBE_SIGNATURE_MAX_AGE_SECONDS}s are rejected as replays`
+				: 'Invalid X-HappyScribe-Signature',
 		};
 	}
 	return { valid: true };

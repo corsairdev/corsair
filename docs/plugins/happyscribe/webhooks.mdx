@@ -28,10 +28,12 @@ import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
+    // Signature verification needs the exact bytes Happy Scribe signed;
+    // request.json() would re-serialize them and break valid deliveries.
+    const rawBody = await request.text();
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
-    const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    const result = await processWebhook(corsair, headers, rawBody);
+    return Response.json(result.response);
 }
 ```
 
