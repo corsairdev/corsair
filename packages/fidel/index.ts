@@ -4,12 +4,14 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
+	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	createBrand,
 	deleteBrand,
@@ -130,6 +132,8 @@ export type FidelContext = CorsairPluginContext<
 	typeof FidelSchema,
 	FidelPluginOptions
 >;
+
+export type FidelKeyBuilderContext = KeyBuilderContext<FidelPluginOptions>;
 
 export type FidelEndpoints = {
 	[K in keyof FidelEndpointInputs]: CorsairEndpoint<
@@ -731,10 +735,23 @@ export function fidel<const T extends FidelPluginOptions>(
 		id: 'fidel',
 		authConfig: fidelAuthConfig,
 		schema: FidelSchema,
+		options,
+		hooks: options.hooks,
 		endpoints: validatedFidelEndpointsNested,
-		endpointSchemas: fidelEndpointSchemas,
+		webhooks: {},
 		endpointMeta: fidelEndpointMeta,
-		errorHandlers,
-		options: options as never,
-	};
+		endpointSchemas: fidelEndpointSchemas,
+		errorHandlers: {
+			...errorHandlers,
+			...options.errorHandlers,
+		},
+		keyBuilder: async (ctx: FidelKeyBuilderContext, source) => {
+			if (source === 'endpoint' && options.key) return options.key;
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
+				const res = await ctx.keys.get_api_key();
+				if (res) return res;
+			}
+			throw new AuthMissingError('fidel', 'api_key');
+		},
+	} satisfies InternalFidelPlugin;
 }

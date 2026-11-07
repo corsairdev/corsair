@@ -722,4 +722,42 @@ describe('Fidel schema', () => {
 		expect(invokedOperations).toBe(Object.keys(fidelEndpointSchemas).length);
 		expect(request).toHaveBeenCalledTimes(invokedOperations);
 	});
+
+	it('exposes the key builder and forwards hooks and error handlers', async () => {
+		const plugin = fidel({ key: 'sk_test_fidel' });
+		// unknown: the factory contract is exercised structurally; the plugin
+		// type derives from the core CorsairPlugin mapping.
+		const wired = plugin as unknown as {
+			keyBuilder: (ctx: unknown, source: string) => Promise<string | undefined>;
+			hooks: unknown;
+			errorHandlers: Record<string, unknown>;
+		};
+		expect(typeof wired.keyBuilder).toBe('function');
+		const key = await wired.keyBuilder({ authType: 'api_key' }, 'endpoint');
+		expect(key).toBe('sk_test_fidel');
+		const unkeyed = fidel({}) as unknown as {
+			keyBuilder: (ctx: unknown, source: string) => Promise<string | undefined>;
+		};
+		await expect(
+			unkeyed.keyBuilder(
+				{ authType: 'api_key', keys: { get_api_key: async () => undefined } },
+				'endpoint',
+			),
+		).rejects.toThrow();
+		const hooks = { operation: {} };
+		const hooked = fidel({ hooks: hooks as never });
+		expect((hooked as unknown as { hooks: unknown }).hooks).toBe(hooks);
+		const customDefault = {
+			match: () => true,
+			handler: async () => ({ maxRetries: 0 }),
+		};
+		const merged = fidel({ errorHandlers: { DEFAULT: customDefault } });
+		const mergedHandlers = (
+			merged as unknown as {
+				errorHandlers: Record<string, unknown>;
+			}
+		).errorHandlers;
+		expect(mergedHandlers.DEFAULT).toBe(customDefault);
+		expect(mergedHandlers.RATE_LIMIT_ERROR).toBeDefined();
+	});
 });
