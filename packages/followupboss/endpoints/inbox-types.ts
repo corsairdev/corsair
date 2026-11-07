@@ -1,5 +1,10 @@
 import { z } from 'zod';
-import { FubMetadataSchema, IdSchema, ListQuerySchema } from './types';
+import {
+	FubFlagSchema,
+	FubMetadataSchema,
+	IdSchema,
+	ListQuerySchema,
+} from './types';
 
 // The inbox family: inbox apps (conversations, participants, messages, notes,
 // installs), team inboxes, reactions and threaded replies. Inputs use Follow
@@ -96,7 +101,7 @@ export const InboxParticipantSchema = z
 		name: z.string().nullish(),
 		email: z.string().nullish(),
 		phone: z.string().nullish(),
-		isAutomation: z.boolean().nullish(),
+		isAutomation: FubFlagSchema.nullish(),
 	})
 	.loose();
 
@@ -127,7 +132,7 @@ export const InboxConversationSchema = z
 		assignedUserId: z.number().nullish(),
 		assignedSharedInboxId: z.number().nullish(),
 		subject: z.string().nullish(),
-		archived: z.boolean().nullish(),
+		archived: FubFlagSchema.nullish(),
 		person: InboxConversationPersonSchema.nullish(),
 		conversationDeepLinkUrl: z.string().nullish(),
 	})
@@ -167,8 +172,8 @@ export const InboxMessageSchema = z
 		deliveryStatusErrorMessage: z.string().nullish(),
 		createdById: IdSchema.nullish(),
 		updatedById: IdSchema.nullish(),
-		isIncoming: z.boolean().nullish(),
-		isSystem: z.boolean().nullish(),
+		isIncoming: FubFlagSchema.nullish(),
+		isSystem: FubFlagSchema.nullish(),
 		systemType: z.string().nullish(),
 		message: z.string().nullish(),
 		userId: z.number().nullish(),
@@ -192,7 +197,7 @@ export const InboxNoteSchema = z
 		updatedBy: z.string().nullish(),
 		conversationId: IdSchema.nullish(),
 		body: z.string().nullish(),
-		isHtml: z.boolean().nullish(),
+		isHtml: FubFlagSchema.nullish(),
 		type: z.string().nullish(),
 		conversationDeepLinkUrl: z.string().nullish(),
 	})
@@ -211,7 +216,7 @@ export const InstalledInboxAppSchema = z
 		name: z.string().nullish(),
 		publishedInboxAppId: IdSchema.nullish(),
 		userId: z.number().nullish(),
-		canReply: z.boolean().nullish(),
+		canReply: FubFlagSchema.nullish(),
 	})
 	.loose();
 

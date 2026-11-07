@@ -165,3 +165,57 @@ describe('followupboss catalog', () => {
 		},
 	);
 });
+
+// Replies shaped like the examples on FUB's reference pages, which send flags
+// as 0/1 and the custom field list total as a numeric string.
+describe('followupboss documented replies', () => {
+	const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints>;
+	const ctx = { key: 'fub-test-key', options: {} } as never;
+	let fetchMock: jest.SpyInstance;
+
+	// unknown: the reply body is whatever FUB documents.
+	function reply(body: unknown) {
+		fetchMock = jest.spyOn(global, 'fetch').mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	}
+
+	afterEach(() => fetchMock.mockRestore());
+
+	it('accepts 0/1 flags on people', async () => {
+		reply({
+			_metadata: { collection: 'people', offset: 0, limit: 10, total: 1 },
+			people: [{ id: 14412, contacted: 0, emails: [{ isPrimary: 1 }] }],
+		});
+		const result = await endpoints.people.list(ctx, {});
+		expect(result.people[0]?.contacted).toBe(0);
+	});
+
+	it('accepts 0/1 flags on tasks and notes', async () => {
+		reply({ id: 4066, isCompleted: 1 });
+		await expect(endpoints.tasks.get(ctx, { id: 4066 })).resolves.toMatchObject(
+			{ isCompleted: 1 },
+		);
+		reply({ id: 12345, isHtml: 0 });
+		await expect(
+			endpoints.notes.update(ctx, { id: 12345, body: 'Called back' }),
+		).resolves.toMatchObject({ isHtml: 0 });
+	});
+
+	it('accepts a numeric-string total on custom field lists', async () => {
+		reply({
+			_metadata: {
+				collection: 'customfields',
+				offset: 0,
+				limit: 10,
+				total: '3',
+			},
+			customfields: [],
+		});
+		const result = await endpoints.customFields.list(ctx, {});
+		expect(result._metadata?.total).toBe('3');
+	});
+});

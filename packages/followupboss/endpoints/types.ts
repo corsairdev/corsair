@@ -10,14 +10,23 @@ export const IdSchema = z.number().int().positive();
 
 // ── shared provider shapes ─────────────────────────────────────────────────
 
+// FUB's documented replies send many flags as 0/1 rather than JSON booleans
+// (`"contacted": 0`, `"isCompleted": 1`, `"isHtml": 0`), and as true/false on
+// other pages. Output flags accept both, so a real reply never fails the
+// call; callers can test them for truthiness.
+export const FubFlagSchema = z.union([z.boolean(), z.number()]);
+
+// The custom field pages document `_metadata.total` as a numeric string.
+const FubCountSchema = z.union([z.number(), z.string()]);
+
 // _metadata block documented on the Pagination guide, present on list
 // responses. `next` is the keyset cursor FUB enforces for deep pagination.
 export const FubMetadataSchema = z
 	.object({
 		collection: z.string().nullish(),
-		offset: z.number().nullish(),
-		limit: z.number().nullish(),
-		total: z.number().nullish(),
+		offset: FubCountSchema.nullish(),
+		limit: FubCountSchema.nullish(),
+		total: FubCountSchema.nullish(),
 		next: z.string().nullish(),
 		nextLink: z.string().nullish(),
 	})
@@ -98,7 +107,7 @@ export const PersonSchema = z
 		sourceUrl: z.string().nullish(),
 		lastActivity: z.string().nullish(),
 		lastCommunication: z.string().nullish(),
-		contacted: z.boolean().nullish(),
+		contacted: FubFlagSchema.nullish(),
 		price: z.number().nullish(),
 		emails: z.array(EmailSchema).nullish(),
 		phones: z.array(PhoneSchema).nullish(),
@@ -561,7 +570,7 @@ export const CallSchema = z
 		id: IdSchema.nullish(),
 		personId: IdSchema.nullish(),
 		phone: z.string().nullish(),
-		isIncoming: z.boolean().nullish(),
+		isIncoming: FubFlagSchema.nullish(),
 		duration: z.number().nullish(),
 		note: z.string().nullish(),
 		outcome: z.string().nullish(),
@@ -654,7 +663,7 @@ export const TextMessageSchema = z
 		id: IdSchema.nullish(),
 		personId: IdSchema.nullish(),
 		message: z.string().nullish(),
-		isIncoming: z.boolean().nullish(),
+		isIncoming: FubFlagSchema.nullish(),
 		toNumber: z.string().nullish(),
 		fromNumber: z.string().nullish(),
 		status: z.string().nullish(),
@@ -738,7 +747,7 @@ export const NoteSchema = z
 		personId: IdSchema.nullish(),
 		subject: z.string().nullish(),
 		body: z.string().nullish(),
-		isHtml: z.boolean().nullish(),
+		isHtml: FubFlagSchema.nullish(),
 		user: z.record(z.string(), z.unknown()).nullish(),
 		created: z.string().nullish(),
 		updated: z.string().nullish(),
@@ -932,7 +941,7 @@ export const TaskSchema = z
 		personId: IdSchema.nullish(),
 		name: z.string().nullish(),
 		type: z.string().nullish(),
-		isCompleted: z.boolean().nullish(),
+		isCompleted: FubFlagSchema.nullish(),
 		dueDate: z.string().nullish(),
 		dueDateTime: z.string().nullish(),
 		completed: z.string().nullish(),
@@ -1035,7 +1044,7 @@ export const AppointmentSchema = z
 		description: z.string().nullish(),
 		startDateTime: z.string().nullish(),
 		endDateTime: z.string().nullish(),
-		allDay: z.boolean().nullish(),
+		allDay: FubFlagSchema.nullish(),
 		location: z.string().nullish(),
 		typeId: IdSchema.nullish(),
 		persons: z.array(z.record(z.string(), z.unknown())).nullish(),

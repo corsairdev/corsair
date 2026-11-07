@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import {
 	DeletedResponseSchema,
+	FubFlagSchema,
 	FubMetadataSchema,
 	IdSchema,
 	ListQuerySchema,
@@ -31,12 +32,12 @@ export const TemplateSchema = z
 		// The published examples carry this 0/1 flag as an integer, not a boolean.
 		isMobile: z.number().nullish(),
 		imported: z.number().nullish(),
-		isShared: z.boolean().nullish(),
+		isShared: FubFlagSchema.nullish(),
 		body: z.string().nullish(),
 		subject: z.string().nullish(),
-		isEditable: z.boolean().nullish(),
-		isDeletable: z.boolean().nullish(),
-		isShareable: z.boolean().nullish(),
+		isEditable: FubFlagSchema.nullish(),
+		isDeletable: FubFlagSchema.nullish(),
+		isShareable: FubFlagSchema.nullish(),
 		actionPlans: z.array(TemplateActionPlanSchema).nullish(),
 		// unknown: the categories payload is provider defined and empty in the
 		// published examples, so it passes through as sent.
@@ -177,12 +178,12 @@ export const TextMessageTemplateSchema = z
 		message: z.string().nullish(),
 		totalSent: z.number().nullish(),
 		totalReplies: z.number().nullish(),
-		isShared: z.boolean().nullish(),
+		isShared: FubFlagSchema.nullish(),
 		// -1 marks the templates FUB ships by default.
 		createdBy: z.number().nullish(),
-		isEditable: z.boolean().nullish(),
-		isDeletable: z.boolean().nullish(),
-		isShareable: z.boolean().nullish(),
+		isEditable: FubFlagSchema.nullish(),
+		isDeletable: FubFlagSchema.nullish(),
+		isShareable: FubFlagSchema.nullish(),
 		sentPeopleIds: z.array(IdSchema).nullish(),
 		sentPeopleCount: z.number().nullish(),
 		// unknown: the categories and actionPlans payloads are provider defined,

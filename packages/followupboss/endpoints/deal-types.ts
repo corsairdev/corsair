@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import {
 	DeletedResponseSchema,
+	FubFlagSchema,
 	FubMetadataSchema,
 	IdSchema,
 	ListQuerySchema,
@@ -82,8 +83,8 @@ export const StageSchema = z
 		description: z.string().nullish(),
 		orderWeight: z.number().nullish(),
 		color: z.string().nullish(),
-		closedStage: z.boolean().nullish(),
-		isProtected: z.boolean().nullish(),
+		closedStage: FubFlagSchema.nullish(),
+		isProtected: FubFlagSchema.nullish(),
 		peopleCount: z.number().nullish(),
 	})
 	.loose();
@@ -109,10 +110,10 @@ export const DealCustomFieldSchema = z
 		name: z.string().nullish(),
 		type: z.string().nullish(),
 		choices: z.array(z.string()).nullish(),
-		isRecurring: z.boolean().nullish(),
+		isRecurring: FubFlagSchema.nullish(),
 		orderWeight: z.number().nullish(),
-		hideIfEmpty: z.boolean().nullish(),
-		readOnly: z.boolean().nullish(),
+		hideIfEmpty: FubFlagSchema.nullish(),
+		readOnly: FubFlagSchema.nullish(),
 	})
 	.loose();
 

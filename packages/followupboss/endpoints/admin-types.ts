@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import {
 	DeletedResponseSchema,
+	FubFlagSchema,
 	FubMetadataSchema,
 	IdSchema,
 	ListQuerySchema,
@@ -27,7 +28,7 @@ const GroupUserSchema = z
 		firstName: z.string().nullish(),
 		lastName: z.string().nullish(),
 		role: z.string().nullish(),
-		pauseLeadDistribution: z.boolean().nullish(),
+		pauseLeadDistribution: FubFlagSchema.nullish(),
 	})
 	.loose();
 
@@ -55,17 +56,17 @@ export const UserSchema = z
 		role: z.string().nullish(),
 		status: z.string().nullish(),
 		timezone: z.string().nullish(),
-		beta: z.boolean().nullish(),
+		beta: FubFlagSchema.nullish(),
 		// unknown: the docs example shows `picture` as an empty array, so its
 		// shape is provider defined and passes through as sent.
 		picture: z.unknown().nullish(),
-		pauseLeadDistribution: z.boolean().nullish(),
+		pauseLeadDistribution: FubFlagSchema.nullish(),
 		lastSeenIos: z.string().nullish(),
 		lastSeenAndroid: z.string().nullish(),
 		lastSeenFub2: z.string().nullish(),
-		canExport: z.boolean().nullish(),
-		canCreateApiKeys: z.boolean().nullish(),
-		isOwner: z.boolean().nullish(),
+		canExport: FubFlagSchema.nullish(),
+		canCreateApiKeys: FubFlagSchema.nullish(),
+		isOwner: FubFlagSchema.nullish(),
 		groups: z.array(UserGroupMembershipSchema).nullish(),
 		teamIds: z.array(z.number()).nullish(),
 		teamLeaderOf: z.array(z.number()).nullish(),
@@ -237,7 +238,7 @@ export const GroupSchema = z
 		distribution: z.string().nullish(),
 		claimWindow: z.number().nullish(),
 		nextRoundRobinUser: z.number().nullish(),
-		isPrimary: z.boolean().nullish(),
+		isPrimary: FubFlagSchema.nullish(),
 		defaultUserId: z.number().nullish(),
 		defaultPondId: z.number().nullish(),
 		defaultGroupId: z.number().nullish(),

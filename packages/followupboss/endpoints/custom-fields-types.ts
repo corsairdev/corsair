@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import {
 	DeletedResponseSchema,
+	FubFlagSchema,
 	FubMetadataSchema,
 	IdSchema,
 	ListQuerySchema,
@@ -26,8 +27,8 @@ export const CustomFieldSchema = z
 		label: z.string().nullish(),
 		name: z.string().nullish(),
 		type: z.string().nullish(),
-		isRecurring: z.boolean().nullish(),
-		hideIfEmpty: z.boolean().nullish(),
+		isRecurring: FubFlagSchema.nullish(),
+		hideIfEmpty: FubFlagSchema.nullish(),
 		orderWeight: z.number().nullish(),
 		choices: z.array(z.string()).nullish(),
 	})
