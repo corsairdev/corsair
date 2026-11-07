@@ -212,6 +212,7 @@ const FilesUploadInputSchema = z.object({
 		.describe('Name the file gets in the media library, e.g. photo.jpg.'),
 	folder: z
 		.string()
+		.min(1)
 		.optional()
 		.describe('Destination folder path, e.g. `/products/`.'),
 	tags: TagsSchema.optional().describe('Tags to attach to the uploaded file.'),
@@ -243,6 +244,7 @@ const FilesUploadInputSchema = z.object({
 	customMetadata: CustomMetadataSchema.optional(),
 	description: z
 		.string()
+		.min(1)
 		.optional()
 		.describe('Short human-readable description stored with the file.'),
 });
@@ -255,9 +257,9 @@ const FilesUploadResponseSchema = ImageKitUploadSchema;
 
 const FilesListInputSchema = z.object({
 	type: z
-		.string()
+		.enum(['file', 'file-version', 'folder', 'all'])
 		.optional()
-		.describe('Only `file` returns files; the default also returns folders.'),
+		.describe('Asset kind to list; the default `file` lists only files.'),
 	path: z
 		.string()
 		.optional()
@@ -269,15 +271,28 @@ const FilesListInputSchema = z.object({
 			'Search filter expression over name, tags, type, size and createdAt, e.g. `name = "summer"`.',
 		),
 	fileType: z
-		.enum(['image', 'video'])
+		.enum(['all', 'image', 'non-image'])
 		.optional()
-		.describe('Only files of this kind.'),
+		.describe('All files, images only, or non-image files (video and others).'),
 	sort: z
-		.string()
+		.enum([
+			'ASC_NAME',
+			'DESC_NAME',
+			'ASC_CREATED',
+			'DESC_CREATED',
+			'ASC_UPDATED',
+			'DESC_UPDATED',
+			'ASC_HEIGHT',
+			'DESC_HEIGHT',
+			'ASC_WIDTH',
+			'DESC_WIDTH',
+			'ASC_SIZE',
+			'DESC_SIZE',
+			'ASC_RELEVANCE',
+			'DESC_RELEVANCE',
+		])
 		.optional()
-		.describe(
-			'Sort as `field ascOrDesc`, e.g. `createdAt ASC` or `name DESC`.',
-		),
+		.describe('Sort token, e.g. ASC_CREATED (the default) or DESC_SIZE.'),
 	limit: z
 		.number()
 		.int()
@@ -315,20 +330,24 @@ const FilesUpdateDetailsInputSchema = z.object({
 	customCoordinates: z
 		.string()
 		.optional()
-		.describe('Custom coordinates string, e.g. `w-100,h-100,x-0,y-0`.'),
+		.describe('Custom coordinates string, e.g. `10,10,100,100`.'),
 	customMetadata: CustomMetadataSchema.optional(),
-	isPrivateFile: z
-		.boolean()
+	description: z
+		.string()
 		.optional()
-		.describe('Serve the file only through signed URLs.'),
+		.describe('Short human-readable description stored with the file.'),
+	removeAITags: z
+		.union([TagsSchema, z.literal('all')])
+		.optional()
+		.describe(
+			'AI tag names to remove, or the string `all` to remove every AI tag.',
+		),
 	isPublished: z
 		.boolean()
 		.optional()
-		.describe('Publish or unpublish the file.'),
-	removeAITags: z
-		.boolean()
-		.optional()
-		.describe('Remove all AI tags from the file.'),
+		.describe(
+			'Publish or unpublish the file. Send this alone: ImageKit rejects it mixed with the other fields.',
+		),
 });
 
 export type FilesUpdateDetailsInput = z.input<

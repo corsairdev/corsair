@@ -92,9 +92,8 @@ export const list: ImageKitEndpoints['filesList'] = (ctx, input) =>
 			replaySafe: true,
 		}),
 		{
-			// The list is a bare array; an error body must not parse as an
-			// empty page.
-			shape: (raw) => raw ?? [],
+			// The list is a bare array; a 200 with a missing or truncated
+			// body must fail loudly, not parse as an empty page.
 			log: (_, result) => ({ count: result.length }),
 		},
 	);
@@ -127,10 +126,27 @@ export const updateDetails: ImageKitEndpoints['filesUpdateDetails'] = (
 			output: Outputs.filesUpdateDetails,
 		},
 		input,
-		({ fileId, ...body }) => ({
+		({
+			fileId,
+			tags,
+			customCoordinates,
+			customMetadata,
+			description,
+			removeAITags,
+			isPublished,
+		}) => ({
 			method: 'PATCH',
 			path: `/v1/files/${segment(fileId)}/details`,
-			body,
+			// ImageKit's update body is a oneOf: publication status is the
+			// nested `publish` object and cannot mix with the detail fields.
+			body: {
+				...(tags !== undefined ? { tags } : {}),
+				...(customCoordinates !== undefined ? { customCoordinates } : {}),
+				...(customMetadata !== undefined ? { customMetadata } : {}),
+				...(description !== undefined ? { description } : {}),
+				...(removeAITags !== undefined ? { removeAITags } : {}),
+				...(isPublished !== undefined ? { publish: { isPublished } } : {}),
+			},
 		}),
 	);
 

@@ -1,4 +1,5 @@
 import type { ImageKitEndpoints } from '..';
+import { segment } from '../client';
 import { call } from './call';
 import {
 	ImageKitEndpointInputSchemas as Inputs,
@@ -134,7 +135,7 @@ export const getJobStatus: ImageKitEndpoints['foldersGetJobStatus'] = (
 		input,
 		({ jobId }) => ({
 			method: 'GET',
-			path: `/v1/bulkJobs/${jobId}`,
+			path: `/v1/bulkJobs/${segment(jobId)}`,
 			replaySafe: true,
 		}),
 	);

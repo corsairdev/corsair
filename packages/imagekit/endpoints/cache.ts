@@ -1,4 +1,5 @@
 import type { ImageKitEndpoints } from '..';
+import { segment } from '../client';
 import { call } from './call';
 import {
 	ImageKitEndpointInputSchemas as Inputs,
@@ -38,7 +39,7 @@ export const getPurgeStatus: ImageKitEndpoints['cacheGetPurgeStatus'] = (
 		input,
 		({ requestId }) => ({
 			method: 'GET',
-			path: `/v1/files/purge/${requestId}`,
+			path: `/v1/files/purge/${segment(requestId)}`,
 			replaySafe: true,
 		}),
 	);

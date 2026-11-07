@@ -132,6 +132,17 @@ describe('files.upload', () => {
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
+
+	it('rejects an empty folder string, which would silently target the root', async () => {
+		await expect(
+			invoke(Files.upload, {
+				file: 'https://example.com/photo.jpg',
+				fileName: 'photo.jpg',
+				folder: '',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 });
 
 describe('files.list', () => {
@@ -143,7 +154,7 @@ describe('files.list', () => {
 			limit: 25,
 			skip: 25,
 			fileType: 'image',
-			sort: 'createdAt ASC',
+			sort: 'ASC_CREATED',
 		});
 
 		expect(result).toHaveLength(2);
@@ -165,6 +176,16 @@ describe('files.list', () => {
 		respond([folder]);
 		const result = await invoke<unknown[]>(Files.list, {});
 		expect(result[0]).toMatchObject({ folderId: folder.folderId });
+	});
+
+	it('rejects a 200 with a missing body instead of an empty page', async () => {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 200 }));
+		await expect(invoke(Files.list, {})).rejects.toThrow();
+	});
+
+	it('rejects the fileType value the API does not know', async () => {
+		await expect(invoke(Files.list, { fileType: 'video' })).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
@@ -191,14 +212,35 @@ describe('files.getDetails and files.updateDetails', () => {
 		await invoke(Files.updateDetails, {
 			fileId: file.fileId,
 			tags: ['spring'],
-			isPublished: false,
 		});
 
 		expectAuthenticated();
 		const sent = lastRequest();
 		expect(sent.method).toBe('PATCH');
 		expect(sent.path).toBe(`/v1/files/${file.fileId}/details`);
-		expect(sent.body).toEqual({ tags: ['spring'], isPublished: false });
+		expect(sent.body).toEqual({ tags: ['spring'] });
+	});
+
+	it('sends removal of every AI tag as the string all', async () => {
+		respond(file);
+
+		await invoke(Files.updateDetails, {
+			fileId: file.fileId,
+			removeAITags: 'all',
+		});
+
+		expect(lastRequest().body).toEqual({ removeAITags: 'all' });
+	});
+
+	it('wraps a publish call in the publish object ImageKit expects', async () => {
+		respond(file);
+
+		await invoke(Files.updateDetails, {
+			fileId: file.fileId,
+			isPublished: true,
+		});
+
+		expect(lastRequest().body).toEqual({ publish: { isPublished: true } });
 	});
 
 	it('rejects details without a fileId', async () => {

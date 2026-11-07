@@ -305,8 +305,8 @@ await corsair.imagekit.api.files.list({ path: '/products/', limit: 25, skip: 25 
 | `type` | `string` | No | Only `file` returns files; the default also returns folders. |
 | `path` | `string` | No | Only assets inside this folder path, e.g. `/products/`. |
 | `searchQuery` | `string` | No | Search filter expression over name, tags, type, size and createdAt, e.g. `name = "summer"`. |
-| `fileType` | `'image' \| 'video'` | No | Only files of this kind. |
-| `sort` | `string` | No | Sort as `field ascOrDesc`, e.g. `createdAt ASC` or `name DESC`. |
+| `fileType` | `'all' \| 'image' \| 'non-image'` | No | All files, images only, or non-image files (video and others). |
+| `sort` | `'ASC_NAME' \| 'DESC_NAME' \| 'ASC_CREATED' \| 'DESC_CREATED' \| 'ASC_UPDATED' \| 'DESC_UPDATED' \| 'ASC_HEIGHT' \| 'DESC_HEIGHT' \| 'ASC_WIDTH' \| 'DESC_WIDTH' \| 'ASC_SIZE' \| 'DESC_SIZE' \| 'ASC_RELEVANCE' \| 'DESC_RELEVANCE'` | No | Sort token, e.g. ASC_CREATED (the default) or DESC_SIZE. |
 | `limit` | `number` | No | Page size, 1-1000; the default is 1000. |
 | `skip` | `number` | No | Assets to skip before this page; combine with limit to page. |
 
@@ -532,11 +532,11 @@ await corsair.imagekit.api.files.updateDetails({ fileId: '598821f949c0a938d57563
 |------|------|----------|-------------|
 | `fileId` | `string` | Yes | Unique identifier of the asset. |
 | `tags` | `string[]` | No | Full replacement tag list for the file. |
-| `customCoordinates` | `string` | No | Custom coordinates string, e.g. `w-100,h-100,x-0,y-0`. |
+| `customCoordinates` | `string` | No | Custom coordinates string, e.g. `10,10,100,100`. |
 | `customMetadata` | `Record<string, unknown>` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
-| `isPrivateFile` | `boolean` | No | Serve the file only through signed URLs. |
-| `isPublished` | `boolean` | No | Publish or unpublish the file. |
-| `removeAITags` | `boolean` | No | Remove all AI tags from the file. |
+| `description` | `string` | No | Short human-readable description stored with the file. |
+| `removeAITags` | `string[] \| 'all'` | No | AI tag names to remove, or the string `all` to remove every AI tag. |
+| `isPublished` | `boolean` | No | Publish or unpublish the file. Send this alone: ImageKit rejects it mixed with the other fields. |
 
 
 

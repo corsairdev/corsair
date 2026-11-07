@@ -24,7 +24,7 @@ pnpm add @corsair-dev/imagekit
 | `files.removeAITags` | `imagekit.api.files.removeAITags` | `write` | Remove AI-generated tags from up to 50 files at once |
 | `files.removeTags` | `imagekit.api.files.removeTags` | `write` | Remove tags from up to 50 files at once |
 | `files.rename` | `imagekit.api.files.rename` | `write` | Rename a file in place; with purgeCache the old URL stops resolving from CDN cache, reported by purgeRequestId |
-| `files.updateDetails` | `imagekit.api.files.updateDetails` | `write` | Change a file: replace tags, set custom metadata or coordinates, publish, or make it private |
+| `files.updateDetails` | `imagekit.api.files.updateDetails` | `write` | Change a file: replace tags, set custom metadata, coordinates or description, remove AI tags (names or all), or publish or unpublish it (that call alone) |
 | `files.upload` | `imagekit.api.files.upload` | `write` | Upload a file from an https URL or base64 content into the media library, optionally into a folder and with tags |
 | `fileVersions.delete` | `imagekit.api.fileVersions.delete` | `destructive` | Permanently delete one non-current version of a file; the current version cannot be deleted |
 | `fileVersions.getDetails` | `imagekit.api.fileVersions.getDetails` | `read` | Read one stored version of a file |

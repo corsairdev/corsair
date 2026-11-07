@@ -22,7 +22,7 @@ function apiError(
 	status: number,
 	// unknown: each case passes one of ImageKit's error bodies.
 	body: unknown = {},
-	options: { method?: string; replaySafe?: boolean } = {},
+	options: { retryAfter?: number; replaySafe?: boolean } = {},
 ) {
 	return new ImageKitAPIError(`ImageKit ${status}: failed`, {
 		status,
@@ -32,12 +32,26 @@ function apiError(
 }
 
 describe('ImageKit error handlers', () => {
-	it('retries a 429 with a 1s first backoff', async () => {
+	it('retries a 429 on the 1s, 2s, 4s backoff', async () => {
 		const error = apiError(429, rateLimited);
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
+		// No fixed delay: core gives headersRetryAfterMs precedence, which
+		// would flatten the backoff.
 		expect(await strategy(error)).toEqual({
 			maxRetries: 3,
-			headersRetryAfterMs: 1000,
+			headersRetryAfterMs: undefined,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('honours a Retry-After when one ever arrives', async () => {
+		const error = new ImageKitAPIError('ImageKit 429: failed', {
+			status: 429,
+			retryAfter: 2000,
+		});
+		expect(await strategy(error)).toEqual({
+			maxRetries: 3,
+			headersRetryAfterMs: 2000,
 			retryStrategy: 'exponential_backoff',
 		});
 	});
@@ -82,17 +96,8 @@ describe('ImageKit error handlers', () => {
 		},
 	);
 
-	it.each(['POST', 'DELETE', 'PUT'])(
-		'does not replay a failed %s',
-		async (method) => {
-			const error = apiError(503, {}, { method });
-			expect(classify(error)).toBe('DEFAULT');
-			expect(await strategy(error)).toEqual({ maxRetries: 0 });
-		},
-	);
-
-	it('does not replay an unflagged GET that got a 5xx', async () => {
-		const error = apiError(503, {}, { method: 'GET' });
+	it('does not replay an unflagged request that got a 5xx', async () => {
+		const error = apiError(503);
 		expect(classify(error)).toBe('DEFAULT');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
@@ -100,10 +105,7 @@ describe('ImageKit error handlers', () => {
 	it('does not retry a timeout, whose effect is unknown', async () => {
 		const timeout = new Error('The operation timed out');
 		timeout.name = 'TimeoutError';
-		const error = new ImageKitAPIError(timeout.message, {
-			cause: timeout,
-			method: 'POST',
-		});
+		const error = new ImageKitAPIError(timeout.message, { cause: timeout });
 		expect(classify(error)).toBe('DEFAULT');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});

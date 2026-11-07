@@ -273,7 +273,7 @@ const imageKitEndpointMeta = {
 	'files.updateDetails': {
 		riskLevel: 'write',
 		description:
-			'Change a file: replace tags, set custom metadata or coordinates, publish, or make it private',
+			'Change a file: replace tags, set custom metadata, coordinates or description, remove AI tags (names or all), or publish or unpublish it (that call alone)',
 	},
 	'files.delete': {
 		riskLevel: 'destructive',

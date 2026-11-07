@@ -21,9 +21,8 @@ export const list: ImageKitEndpoints['fileVersionsList'] = (ctx, input) =>
 			replaySafe: true,
 		}),
 		{
-			// The list is a bare array; an error body must not parse as an
-			// empty page.
-			shape: (raw) => raw ?? [],
+			// The list is a bare array; a 200 with a missing or truncated
+			// body must fail loudly, not parse as an empty page.
 			log: (_, result) => ({ count: result.length }),
 		},
 	);

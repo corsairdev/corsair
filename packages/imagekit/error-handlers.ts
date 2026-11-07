@@ -18,9 +18,12 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
-			// A real Retry-After would override the documented 1s fallback.
+			// A fixed delay would disable the backoff below (core gives
+			// headersRetryAfterMs precedence), so set it only when a real
+			// header arrived; ImageKit sends none and bursts clear on the
+			// documented 1s, 2s, 4s scale.
 			headersRetryAfterMs:
-				error instanceof ImageKitAPIError ? (error.retryAfter ?? 1000) : 1000,
+				error instanceof ImageKitAPIError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
