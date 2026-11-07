@@ -773,20 +773,17 @@ describe('Salesflare endpoint request seams', () => {
 		);
 		await updateCustomField(ctx, {
 			itemClass: 'itemClass-1',
-			id: 'id-1',
+			id: '42',
 			type: 1,
 			name: 'name-1',
 			enabled: true,
 			archived: true,
 		} as never);
-		expect(request).toHaveBeenCalledWith(
-			ctx,
-			'/customfields/itemClass-1/id-1',
-			{
-				method: 'PUT',
-				body: { type: 1, name: 'name-1', enabled: true, archived: true },
-			},
-		);
+		// The provider requires the id in the body too (live 400 without it).
+		expect(request).toHaveBeenCalledWith(ctx, '/customfields/itemClass-1/42', {
+			method: 'PUT',
+			body: { id: 42, type: 1, name: 'name-1', enabled: true, archived: true },
+		});
 		await deleteCustomField(ctx, {
 			itemClass: 'itemClass-1',
 			id: 'id-1',

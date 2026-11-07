@@ -108,7 +108,9 @@ export const updateCustomField: SalesflareEndpoints['updateCustomField'] =
 				'id',
 				input.id,
 			),
-			{ method: 'PUT', body: body },
+			// The provider requires the id in the body as well as the path
+			// (400 '"id" is required' without it).
+			{ method: 'PUT', body: { id: Number(id), ...body } },
 		);
 		await logEventFromContext(
 			ctx,
