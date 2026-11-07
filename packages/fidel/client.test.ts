@@ -62,6 +62,32 @@ describe('Fidel client', () => {
 		expect((error as FidelAPIError).retryAfter).toBe(30000);
 	});
 
+	it('preserves the provider error code and message from the body', async () => {
+		const badRequest: ApiResult = {
+			url: 'https://api.fidel.uk/v1/brands',
+			ok: false,
+			status: 400,
+			statusText: 'Bad Request',
+			body: {
+				error: {
+					code: 'item-save',
+					message: 'Item already exists',
+					date: '2024-01-01T00:00:00.000Z',
+				},
+			},
+		};
+		requestMock.mockRejectedValue(
+			new ApiError(apiRequest, badRequest, 'Bad Request'),
+		);
+		const error = await makeFidelRequest({ key: 'secret' }, '/v1/brands', {
+			method: 'POST',
+		}).catch((caught: unknown) => caught); // unknown: the rejection value is opaque; narrowed by the assertions below
+		expect(error).toBeInstanceOf(FidelAPIError);
+		expect((error as FidelAPIError).status).toBe(400);
+		expect((error as FidelAPIError).code).toBe('item-save');
+		expect((error as FidelAPIError).message).toBe('Item already exists');
+	});
+
 	it('sends the provider Fidel-Key header without a Bearer rewrite', async () => {
 		requestMock.mockResolvedValue({ items: [] });
 		await makeFidelRequest({ key: 'sk_test_key' }, '/v1/brands', {

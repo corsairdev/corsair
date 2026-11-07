@@ -81,10 +81,17 @@ export async function makeFidelRequest<T>(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// Fidel errors carry { error: { code, message } } in the body; the
+			// shared transport message loses the provider explanation.
+			// unknown: the provider error body is documented only for known
+			// failure modes, so the shape is read structurally.
+			const body = error.body as
+				| { error?: { code?: string; message?: string } }
+				| undefined;
 			throw new FidelAPIError(
-				error.message,
+				body?.error?.message || error.message,
 				error.status,
-				undefined,
+				body?.error?.code,
 				error.retryAfter,
 			);
 		}
