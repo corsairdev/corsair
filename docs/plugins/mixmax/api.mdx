@@ -1,0 +1,8031 @@
+---
+title: API
+description: "API reference for Mixmax: every `mixmax.api.*` operation with input and output types."
+---
+
+Every `mixmax.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Appointment Links
+
+### getMe
+
+`appointmentLinks.getMe`
+
+Get the user’s default Mixmax appointment link.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.appointmentLinks.getMe({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`appointmentLinks.list`
+
+Search the user’s Mixmax appointment links by name.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.appointmentLinks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateMe
+
+`appointmentLinks.updateMe`
+
+Rename the user’s default Mixmax appointment link.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.appointmentLinks.updateMe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Code Snippets
+
+### create
+
+`codeSnippets.create`
+
+Create a Mixmax code snippet.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.codeSnippets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `html` | `string` | No | — |
+| `code` | `string` | No | — |
+| `background` | `string` | No | — |
+| `theme` | `string` | No | — |
+| `language` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`codeSnippets.get`
+
+Retrieve one Mixmax code snippet by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.codeSnippets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `title` | `string` | No | — |
+| `html` | `string` | No | — |
+| `code` | `string` | No | — |
+| `background` | `string` | No | — |
+| `theme` | `string` | No | — |
+| `language` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`codeSnippets.list`
+
+List the user’s Mixmax code snippets.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.codeSnippets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  userId?: string,
+  createdAt?: string,
+  title?: string,
+  html?: string,
+  code?: string,
+  background?: string,
+  theme?: string,
+  language?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## File Requests
+
+### get
+
+`fileRequests.get`
+
+Retrieve one Mixmax file request by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.fileRequests.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `timestamp` | `string` | No | — |
+| `uploads` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="uploads full type">
+
+```ts
+{
+  timestamp?: string,
+  email?: string,
+  name?: string,
+  ipAddress?: string,
+  downloadUrl?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`fileRequests.list`
+
+List the Mixmax file requests the user has access to.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.fileRequests.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  userId?: string,
+  timestamp?: string,
+  uploads?: {
+    timestamp?: string,
+    email?: string,
+    name?: string,
+    ipAddress?: string,
+    downloadUrl?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Insights Reports
+
+### create
+
+`insightsReports.create`
+
+Create a saved Mixmax insights report from a query.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.insightsReports.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `type` | `messages \| meetings \| sequences \| tasks \| calls` | Yes | — |
+| `query` | `string` | Yes | — |
+| `fields` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `type` | `string` | No | — |
+| `query` | `string` | No | — |
+| `fields` | `string[]` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`insightsReports.delete`
+
+Delete a saved Mixmax insights report permanently.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.insightsReports.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`insightsReports.list`
+
+List the user’s saved Mixmax insights reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.insightsReports.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `accessThrough` | `string` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id: string,
+  userId: string,
+  title?: string,
+  type?: string,
+  query?: string,
+  fields?: string[],
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`insightsReports.update`
+
+Update a saved Mixmax insights report.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.insightsReports.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `type` | `string` | No | — |
+| `query` | `string` | No | — |
+| `fields` | `string[]` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `type` | `string` | No | — |
+| `query` | `string` | No | — |
+| `fields` | `string[]` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+
+
+---
+
+## Integrations
+
+### commands.create
+
+`integrations.commands.create`
+
+Create a Mixmax slash command integration.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.integrations.commands.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `commands` | `string[]` | No | — |
+| `parameterPlaceholder` | `string` | Yes | — |
+| `commandParameterHintsUrl` | `string` | Yes | — |
+| `commandResolverUrl` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `commands` | `string[]` | No | — |
+| `parameterPlaceholder` | `string` | No | — |
+| `commandParameterHintsUrl` | `string` | No | — |
+| `commandResolverUrl` | `string` | No | — |
+
+
+
+---
+
+### commands.delete
+
+`integrations.commands.delete`
+
+Delete a Mixmax slash command integration.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.integrations.commands.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### commands.list
+
+`integrations.commands.list`
+
+List the user’s Mixmax slash command integrations.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.integrations.commands.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  id?: string,
+  userId?: string,
+  name?: string,
+  createdAt?: string,
+  commands?: string[],
+  parameterPlaceholder?: string,
+  commandParameterHintsUrl?: string,
+  commandResolverUrl?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enhancements.create
+
+`integrations.enhancements.create`
+
+Create a Mixmax enhance-menu integration.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.integrations.enhancements.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `icon` | `string` | Yes | — |
+| `iconTooltip` | `string` | Yes | — |
+| `editorUrl` | `string` | Yes | — |
+| `resolverUrl` | `string` | Yes | — |
+| `activateUrl` | `string` | No | — |
+| `editorHeight` | `number` | No | — |
+| `editorWidth` | `number` | No | — |
+| `commands` | `string[]` | No | — |
+| `category` | `string` | No | — |
+| `isEditable` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `iconTooltip` | `string` | No | — |
+| `editorUrl` | `string` | No | — |
+| `resolverUrl` | `string` | No | — |
+| `activateUrl` | `string` | No | — |
+| `editorHeight` | `number` | No | — |
+| `editorWidth` | `number` | No | — |
+| `commands` | `string[]` | No | — |
+| `category` | `string` | No | — |
+| `isEditable` | `boolean` | No | — |
+
+
+
+---
+
+### enhancements.delete
+
+`integrations.enhancements.delete`
+
+Delete a Mixmax enhance-menu integration.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.integrations.enhancements.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### enhancements.list
+
+`integrations.enhancements.list`
+
+List the user’s Mixmax enhance-menu integrations.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.integrations.enhancements.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  id?: string,
+  userId?: string,
+  name?: string,
+  createdAt?: string,
+  icon?: string,
+  iconTooltip?: string,
+  editorUrl?: string,
+  resolverUrl?: string,
+  activateUrl?: string,
+  editorHeight?: number,
+  editorWidth?: number,
+  commands?: string[],
+  category?: string,
+  isEditable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### linkResolvers.create
+
+`integrations.linkResolvers.create`
+
+Create a Mixmax link resolver integration.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.integrations.linkResolvers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | Yes | — |
+| `regex` | `string` | Yes | — |
+| `resolverUrl` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `description` | `string` | No | — |
+| `regex` | `string` | No | — |
+| `resolverUrl` | `string` | No | — |
+| `order` | `number` | No | — |
+
+
+
+---
+
+### linkResolvers.delete
+
+`integrations.linkResolvers.delete`
+
+Delete a Mixmax link resolver integration.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.integrations.linkResolvers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### linkResolvers.list
+
+`integrations.linkResolvers.list`
+
+List the user’s Mixmax link resolver integrations.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.integrations.linkResolvers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  id?: string,
+  userId?: string,
+  name?: string,
+  createdAt?: string,
+  description?: string,
+  regex?: string,
+  resolverUrl?: string,
+  order?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sidebars.create
+
+`integrations.sidebars.create`
+
+Create a Mixmax sidebar integration.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.integrations.sidebars.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `iconImage` | `string` | No | — |
+| `iconName` | `string` | No | — |
+| `iconColor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `url` | `string` | No | — |
+| `iconImage` | `string` | No | — |
+| `iconName` | `string` | No | — |
+| `iconColor` | `string` | No | — |
+
+
+
+---
+
+### sidebars.delete
+
+`integrations.sidebars.delete`
+
+Delete a Mixmax sidebar integration.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.integrations.sidebars.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### sidebars.list
+
+`integrations.sidebars.list`
+
+List the user’s Mixmax sidebar integrations.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.integrations.sidebars.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  id?: string,
+  userId?: string,
+  name?: string,
+  createdAt?: string,
+  url?: string,
+  iconImage?: string,
+  iconName?: string,
+  iconColor?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Livefeed
+
+### events
+
+`livefeed.events`
+
+List individual Mixmax live feed events such as opens, clicks, and replies.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.livefeed.events({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageId` | `string` | No | — |
+| `wasSentViaMixmax` | `boolean` | No | — |
+| `contactEmail` | `string` | No | — |
+| `includeGroupMembers` | `boolean` | No | — |
+| `includeTeammates` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  type?: string,
+  recipientEmail?: string,
+  recipientName?: string,
+  subject?: string,
+  serviceThreadId?: string,
+  country?: string,
+  region?: string,
+  city?: string,
+  os?: string,
+  program?: string,
+  linkUrl?: string,
+  linkText?: string,
+  fileName?: string,
+  activityType?: string,
+  timestamp?: number,
+  isMobile?: number,
+  location?: {
+    country?: string,
+    region?: string,
+    city?: string
+  },
+  device?: {
+    os?: string,
+    program?: string,
+    isMobile?: number
+  },
+  metadata?: {
+    linkUrl?: string,
+    linkText?: string,
+    fileName?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`livefeed.list`
+
+List the user’s Mixmax live feed of tracked email activity, with optional stats.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.livefeed.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `stats` | `boolean` | No | — |
+| `showOnlySyncedToMixmax` | `boolean` | No | — |
+| `messageIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `stats` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  userId?: string,
+  fromEmail?: string,
+  fromName?: string,
+  delegatorEmail?: string,
+  delegatorName?: string,
+  subject?: string,
+  service?: string,
+  serviceMessageId?: string,
+  serviceThreadId?: string,
+  lastEventType?: string,
+  lastEventByEmail?: string,
+  lastEventByName?: string,
+  sent?: number,
+  wasSentViaMixmax?: number,
+  includeInTeamLiveFeed?: number,
+  showContentTeamFeed?: number,
+  trackingMuted?: number,
+  wasDeliveredWithTrackedOpens?: number,
+  wasDeliveredWithTrackedLinks?: number,
+  wasDeliveredWithTrackedFiles?: number,
+  numOpens?: number,
+  numClicks?: number,
+  numDownloads?: number,
+  wasReplied?: number,
+  wasAccepted?: number,
+  wasDeclined?: number,
+  wasTentative?: number,
+  wasBounced?: number,
+  lastEventAt?: number,
+  recipients?: {
+    email?: string,
+    name?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  sent?: number,
+  delivered?: number,
+  recipients?: number,
+  opened?: number,
+  clicked?: number,
+  downloaded?: number,
+  replied?: number,
+  accepted?: number,
+  declined?: number,
+  tentative?: number,
+  bounced?: number,
+  percentages?: {
+    opened?: number,
+    clicked?: number,
+    downloaded?: number,
+    replied?: number,
+    accepted?: number,
+    declined?: number,
+    tentative?: number,
+    bounced?: number,
+    unsubscribed?: number,
+    delivered?: number,
+    tasksCompleted?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Meeting Invites
+
+### get
+
+`meetingInvites.get`
+
+Retrieve one Mixmax meeting invite by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.meetingInvites.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `creationDate` | `number` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `location` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `lng` | `string` | No | — |
+| `calendarId` | `string` | No | — |
+| `calendarName` | `string` | No | — |
+| `timeslots` | `object[]` | No | — |
+| `guestsCanModify` | `boolean` | No | — |
+| `allowDoubleBookings` | `boolean` | No | — |
+| `additionalGuests` | `object[]` | No | — |
+| `roomsAndResources` | `object[]` | No | — |
+| `anyRoomInBuilding` | `object` | No | — |
+| `includeMessagePermaLink` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="timeslots full type">
+
+```ts
+{
+  start?: number,
+  end?: number,
+  events?: {
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="additionalGuests full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="roomsAndResources full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="anyRoomInBuilding full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`meetingInvites.list`
+
+List the Mixmax meeting invites sent to the user.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.meetingInvites.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  userId?: string,
+  creationDate?: number,
+  title?: string,
+  description?: string,
+  location?: string,
+  timezone?: string,
+  lng?: string,
+  calendarId?: string,
+  calendarName?: string,
+  timeslots?: {
+    start?: number,
+    end?: number,
+    events?: {
+    }[]
+  }[],
+  guestsCanModify?: boolean,
+  allowDoubleBookings?: boolean,
+  additionalGuests?: {
+  }[],
+  roomsAndResources?: {
+  }[],
+  anyRoomInBuilding?: {
+  },
+  includeMessagePermaLink?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Meetings
+
+### getTranscript
+
+`meetings.getTranscript`
+
+Retrieve the transcript of one Mixmax meeting.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.meetings.getTranscript({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `meetingId` | `string` | Yes | — |
+| `transcript` | `object[]` | Yes | — |
+| `cleanedTranscript` | `object[]` | No | — |
+| `participantNames` | `string[]` | Yes | — |
+| `actualParticipantNames` | `string[]` | No | — |
+| `deletedAt` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="transcript full type">
+
+```ts
+{
+  name: string,
+  message: string,
+  timestamp: number,
+  relativeTimestamp?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="cleanedTranscript full type">
+
+```ts
+{
+  name: string,
+  message: string,
+  timestamp: number,
+  relativeTimestamp?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchSummaries
+
+`meetings.searchSummaries`
+
+Search Mixmax meeting summaries by attendee, title, and date range.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.meetings.searchSummaries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `isExternal` | `boolean` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `attendee` | `string` | No | — |
+| `title` | `string` | No | — |
+| `skip` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `owner` | `me \| shared \| workspace` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetings` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+| `hasMore` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="meetings full type">
+
+```ts
+{
+  id: string,
+  calendarId: string | null,
+  title: string | null,
+  startTime: string | null,
+  endTime: string | null,
+  actionItemsCount: number,
+  participants: {
+    email: string | null,
+    name: string | null
+  }[],
+  llmParticipants?: (string | {
+    fullName: string,
+    displayName: string,
+    company?: string | null,
+    role?: string | null,
+    originalLabel?: string | null
+  })[],
+  calendarAttendees?: {
+    email?: string,
+    name?: string,
+    responseStatus?: string,
+    isExternalToWorkspaceDomains?: boolean,
+    isWorkspaceMember?: boolean,
+    isExpandedFromGroup?: boolean,
+    originalGroupEmail?: string
+  }[],
+  owner?: {
+    email: string,
+    name: string
+  } | null,
+  ownershipLevel: owner | sharedWith,
+  isExternalMeeting: boolean,
+  meetingCreatedAt: string,
+  sharedWithCount: number,
+  status?: processing | completed,
+  syncedTo?: {
+    crm: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Meeting Types
+
+### create
+
+`meetingTypes.create`
+
+Create a Mixmax meeting template.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.meetingTypes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `link` | `string` | Yes | — |
+| `durationMin` | `number` | Yes | — |
+| `type` | `Personal \| Round Robin` | Yes | — |
+| `calendarIds` | `string[]` | Yes | — |
+| `daysFromNow` | `object` | Yes | — |
+| `day0` | `object` | Yes | — |
+| `day1` | `object` | Yes | — |
+| `day2` | `object` | Yes | — |
+| `day3` | `object` | Yes | — |
+| `day4` | `object` | Yes | — |
+| `day5` | `object` | Yes | — |
+| `day6` | `object` | Yes | — |
+| `buffer` | `number` | Yes | — |
+| `minNoticeDuration` | `object` | No | — |
+| `preventDoubleBooking` | `string[]` | Yes | — |
+| `defaults` | `object` | Yes | — |
+| `defaultGuests` | `object[]` | Yes | — |
+| `customFields` | `object[]` | Yes | — |
+| `roundRobinQueue` | `number[]` | Yes | — |
+| `includeMessagePermaLink` | `boolean` | Yes | — |
+| `guestsCanModifyInvites` | `boolean` | Yes | — |
+| `roomsAndResources` | `object[]` | Yes | — |
+| `anyRoomInBuilding` | `string[]` | Yes | — |
+| `integrations` | `object` | Yes | — |
+| `reducedInterval` | `boolean` | Yes | — |
+| `ruleIds` | `string[]` | Yes | — |
+| `useSpecificDates` | `boolean` | No | — |
+| `setDateRange` | `object` | No | — |
+| `pageTitle` | `string` | No | — |
+| `userId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="daysFromNow full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="day0 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day1 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day2 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day3 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day4 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day5 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day6 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="minNoticeDuration full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="defaults full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="defaultGuests full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="roomsAndResources full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="integrations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="setDateRange full type">
+
+```ts
+{
+  startDate: number,
+  endDate: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `link` | `string` | No | — |
+| `durationMin` | `number` | No | — |
+| `type` | `Personal \| Round Robin` | No | — |
+| `calendarIds` | `string[]` | No | — |
+| `daysFromNow` | `object` | No | — |
+| `day0` | `object` | No | — |
+| `day1` | `object` | No | — |
+| `day2` | `object` | No | — |
+| `day3` | `object` | No | — |
+| `day4` | `object` | No | — |
+| `day5` | `object` | No | — |
+| `day6` | `object` | No | — |
+| `buffer` | `number` | No | — |
+| `minNoticeDuration` | `object` | No | — |
+| `preventDoubleBooking` | `string[]` | No | — |
+| `defaults` | `object` | No | — |
+| `defaultGuests` | `object[]` | No | — |
+| `customFields` | `object[]` | No | — |
+| `roundRobinQueue` | `number[]` | No | — |
+| `includeMessagePermaLink` | `boolean` | No | — |
+| `guestsCanModifyInvites` | `boolean` | No | — |
+| `roomsAndResources` | `object[]` | No | — |
+| `anyRoomInBuilding` | `string[]` | No | — |
+| `integrations` | `object` | No | — |
+| `reducedInterval` | `boolean` | No | — |
+| `ruleIds` | `string[]` | No | — |
+| `useSpecificDates` | `boolean` | No | — |
+| `setDateRange` | `object` | No | — |
+| `pageTitle` | `string` | No | — |
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `copyOf` | `string \| null` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `copies` | `Record<string, string>` | No | — |
+
+<AccordionGroup>
+<Accordion title="daysFromNow full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="day0 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day1 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day2 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day3 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day4 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day5 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day6 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="minNoticeDuration full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="defaults full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="defaultGuests full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="roomsAndResources full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="integrations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="setDateRange full type">
+
+```ts
+{
+  startDate: number,
+  endDate: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`meetingTypes.delete`
+
+Delete a Mixmax meeting template permanently.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.meetingTypes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`meetingTypes.get`
+
+Retrieve one Mixmax meeting template by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.meetingTypes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `copies` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `link` | `string` | No | — |
+| `durationMin` | `number` | No | — |
+| `type` | `Personal \| Round Robin` | No | — |
+| `calendarIds` | `string[]` | No | — |
+| `daysFromNow` | `object` | No | — |
+| `day0` | `object` | No | — |
+| `day1` | `object` | No | — |
+| `day2` | `object` | No | — |
+| `day3` | `object` | No | — |
+| `day4` | `object` | No | — |
+| `day5` | `object` | No | — |
+| `day6` | `object` | No | — |
+| `buffer` | `number` | No | — |
+| `minNoticeDuration` | `object` | No | — |
+| `preventDoubleBooking` | `string[]` | No | — |
+| `defaults` | `object` | No | — |
+| `defaultGuests` | `object[]` | No | — |
+| `customFields` | `object[]` | No | — |
+| `roundRobinQueue` | `number[]` | No | — |
+| `includeMessagePermaLink` | `boolean` | No | — |
+| `guestsCanModifyInvites` | `boolean` | No | — |
+| `roomsAndResources` | `object[]` | No | — |
+| `anyRoomInBuilding` | `string[]` | No | — |
+| `integrations` | `object` | No | — |
+| `reducedInterval` | `boolean` | No | — |
+| `ruleIds` | `string[]` | No | — |
+| `useSpecificDates` | `boolean` | No | — |
+| `setDateRange` | `object` | No | — |
+| `pageTitle` | `string` | No | — |
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `copyOf` | `string \| null` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `copies` | `Record<string, string>` | No | — |
+
+<AccordionGroup>
+<Accordion title="daysFromNow full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="day0 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day1 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day2 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day3 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day4 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day5 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day6 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="minNoticeDuration full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="defaults full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="defaultGuests full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="roomsAndResources full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="integrations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="setDateRange full type">
+
+```ts
+{
+  startDate: number,
+  endDate: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`meetingTypes.list`
+
+List the user’s Mixmax meeting templates.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.meetingTypes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `access` | `mine \| shared` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  name?: string,
+  link?: string,
+  durationMin?: number,
+  type?: Personal | Round Robin,
+  calendarIds?: string[],
+  daysFromNow?: {
+  },
+  day0?: {
+    enabled?: boolean,
+    timeslots?: {
+      startTime?: string,
+      endTime?: string
+    }[]
+  },
+  day1?: {
+    enabled?: boolean,
+    timeslots?: {
+      startTime?: string,
+      endTime?: string
+    }[]
+  },
+  day2?: {
+    enabled?: boolean,
+    timeslots?: {
+      startTime?: string,
+      endTime?: string
+    }[]
+  },
+  day3?: {
+    enabled?: boolean,
+    timeslots?: {
+      startTime?: string,
+      endTime?: string
+    }[]
+  },
+  day4?: {
+    enabled?: boolean,
+    timeslots?: {
+      startTime?: string,
+      endTime?: string
+    }[]
+  },
+  day5?: {
+    enabled?: boolean,
+    timeslots?: {
+      startTime?: string,
+      endTime?: string
+    }[]
+  },
+  day6?: {
+    enabled?: boolean,
+    timeslots?: {
+      startTime?: string,
+      endTime?: string
+    }[]
+  },
+  buffer?: number,
+  minNoticeDuration?: {
+  },
+  preventDoubleBooking?: string[],
+  defaults?: {
+  },
+  defaultGuests?: {
+  }[],
+  customFields?: {
+  }[],
+  roundRobinQueue?: number[],
+  includeMessagePermaLink?: boolean,
+  guestsCanModifyInvites?: boolean,
+  roomsAndResources?: {
+  }[],
+  anyRoomInBuilding?: string[],
+  integrations?: {
+  },
+  reducedInterval?: boolean,
+  ruleIds?: string[],
+  useSpecificDates?: boolean,
+  setDateRange?: {
+    startDate: number,
+    endDate: number
+  },
+  pageTitle?: string,
+  _id?: string,
+  userId?: string,
+  copyOf?: string | null,
+  createdAt?: string,
+  updatedAt?: string,
+  copies?: Record<string, string>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`meetingTypes.update`
+
+Update a Mixmax meeting template.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.meetingTypes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `link` | `string` | No | — |
+| `durationMin` | `number` | No | — |
+| `type` | `Personal \| Round Robin` | No | — |
+| `calendarIds` | `string[]` | No | — |
+| `daysFromNow` | `object` | No | — |
+| `day0` | `object` | No | — |
+| `day1` | `object` | No | — |
+| `day2` | `object` | No | — |
+| `day3` | `object` | No | — |
+| `day4` | `object` | No | — |
+| `day5` | `object` | No | — |
+| `day6` | `object` | No | — |
+| `buffer` | `number` | No | — |
+| `minNoticeDuration` | `object` | No | — |
+| `preventDoubleBooking` | `string[]` | No | — |
+| `defaults` | `object` | No | — |
+| `defaultGuests` | `object[]` | No | — |
+| `customFields` | `object[]` | No | — |
+| `roundRobinQueue` | `number[]` | No | — |
+| `includeMessagePermaLink` | `boolean` | No | — |
+| `guestsCanModifyInvites` | `boolean` | No | — |
+| `roomsAndResources` | `object[]` | No | — |
+| `anyRoomInBuilding` | `string[]` | No | — |
+| `integrations` | `object` | No | — |
+| `reducedInterval` | `boolean` | No | — |
+| `ruleIds` | `string[]` | No | — |
+| `useSpecificDates` | `boolean` | No | — |
+| `setDateRange` | `object` | No | — |
+| `pageTitle` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="daysFromNow full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="day0 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day1 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day2 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day3 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day4 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day5 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="day6 full type">
+
+```ts
+{
+  enabled?: boolean,
+  timeslots?: {
+    startTime?: string,
+    endTime?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="minNoticeDuration full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="defaults full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="defaultGuests full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="roomsAndResources full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="integrations full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="setDateRange full type">
+
+```ts
+{
+  startDate: number,
+  endDate: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Messages
+
+### create
+
+`messages.create`
+
+Create a Mixmax draft message without sending it.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.messages.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to` | `object[]` | No | — |
+| `cc` | `object[]` | No | — |
+| `bcc` | `object[]` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `from` | `object` | No | — |
+| `trackingEnabled` | `boolean` | No | — |
+| `linkTrackingEnabled` | `boolean` | No | — |
+| `fileTrackingEnabled` | `boolean` | No | — |
+| `notificationsEnabled` | `boolean` | No | — |
+| `smartFollowupsEnabled` | `boolean` | No | — |
+| `showContentTeamFeed` | `boolean` | No | — |
+| `syncToOrg` | `boolean` | No | — |
+| `inReplyTo` | `string` | No | — |
+| `followUp` | `object` | No | — |
+| `attachments` | `object[]` | No | — |
+| `snippetIds` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+{
+  email: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="cc full type">
+
+```ts
+{
+  email: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="bcc full type">
+
+```ts
+{
+  email: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  email?: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="followUp full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `from` | `object` | No | — |
+| `to` | `object[]` | No | — |
+| `cc` | `object[]` | No | — |
+| `bcc` | `object[]` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `created` | `number` | No | — |
+| `updatedAt` | `number` | No | — |
+| `trackingEnabled` | `boolean` | No | — |
+| `linkTrackingEnabled` | `boolean` | No | — |
+| `fileTrackingEnabled` | `boolean` | No | — |
+| `notificationsEnabled` | `boolean` | No | — |
+| `smartFollowupsEnabled` | `boolean` | No | — |
+| `showContentTeamFeed` | `boolean` | No | — |
+| `syncToOrg` | `boolean` | No | — |
+| `snippetIds` | `string[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `followUp` | `object` | No | — |
+| `sequence` | `object` | No | — |
+| `scheduled` | `number` | No | — |
+| `sent` | `number` | No | — |
+| `sendingError` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  email?: string,
+  name?: string,
+  isDelegated?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="to full type">
+
+```ts
+{
+  email: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="cc full type">
+
+```ts
+{
+  email: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="bcc full type">
+
+```ts
+{
+  email: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  name?: string,
+  type?: string,
+  size?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="followUp full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="sequence full type">
+
+```ts
+{
+  id?: string,
+  stageId?: string,
+  recipientId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`messages.get`
+
+Retrieve one Mixmax message by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `from` | `object` | No | — |
+| `to` | `object[]` | No | — |
+| `cc` | `object[]` | No | — |
+| `bcc` | `object[]` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `created` | `number` | No | — |
+| `updatedAt` | `number` | No | — |
+| `trackingEnabled` | `boolean` | No | — |
+| `linkTrackingEnabled` | `boolean` | No | — |
+| `fileTrackingEnabled` | `boolean` | No | — |
+| `notificationsEnabled` | `boolean` | No | — |
+| `smartFollowupsEnabled` | `boolean` | No | — |
+| `showContentTeamFeed` | `boolean` | No | — |
+| `syncToOrg` | `boolean` | No | — |
+| `snippetIds` | `string[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `followUp` | `object` | No | — |
+| `sequence` | `object` | No | — |
+| `scheduled` | `number` | No | — |
+| `sent` | `number` | No | — |
+| `sendingError` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  email?: string,
+  name?: string,
+  isDelegated?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="to full type">
+
+```ts
+{
+  email: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="cc full type">
+
+```ts
+{
+  email: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="bcc full type">
+
+```ts
+{
+  email: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  name?: string,
+  type?: string,
+  size?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="followUp full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="sequence full type">
+
+```ts
+{
+  id?: string,
+  stageId?: string,
+  recipientId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List Mixmax messages (drafts, scheduled, sent, or failed), newest first.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  userId?: string,
+  from?: {
+    email?: string,
+    name?: string,
+    isDelegated?: boolean
+  },
+  to?: {
+    email: string,
+    name?: string | null
+  }[],
+  cc?: {
+    email: string,
+    name?: string | null
+  }[],
+  bcc?: {
+    email: string,
+    name?: string | null
+  }[],
+  subject?: string,
+  body?: string,
+  created?: number,
+  updatedAt?: number,
+  trackingEnabled?: boolean,
+  linkTrackingEnabled?: boolean,
+  fileTrackingEnabled?: boolean,
+  notificationsEnabled?: boolean,
+  smartFollowupsEnabled?: boolean,
+  showContentTeamFeed?: boolean,
+  syncToOrg?: boolean,
+  snippetIds?: string[],
+  attachments?: {
+    name?: string,
+    type?: string,
+    size?: number
+  }[],
+  followUp?: {
+  },
+  sequence?: {
+    id?: string,
+    stageId?: string,
+    recipientId?: string
+  },
+  scheduled?: number,
+  sent?: number,
+  sendingError?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### schedule
+
+`messages.schedule`
+
+Schedule a saved Mixmax draft to send at a Unix-millisecond timestamp.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.messages.schedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `options` | `object` | Yes | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  scheduledDate: number
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  to?: {
+    email: string,
+    name?: string | null
+  }[],
+  cc?: {
+    email: string,
+    name?: string | null
+  }[],
+  bcc?: {
+    email: string,
+    name?: string | null
+  }[],
+  subject?: string,
+  body?: string,
+  from?: {
+    email?: string,
+    name?: string
+  },
+  trackingEnabled?: boolean,
+  linkTrackingEnabled?: boolean,
+  fileTrackingEnabled?: boolean,
+  notificationsEnabled?: boolean,
+  smartFollowupsEnabled?: boolean,
+  showContentTeamFeed?: boolean,
+  syncToOrg?: boolean,
+  inReplyTo?: string,
+  followUp?: {
+  },
+  attachments?: {
+  }[],
+  snippetIds?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `string \| undefined`
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a saved Mixmax draft. Delivery is asynchronous and cannot be undone.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `data` | `object` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  to?: {
+    email: string,
+    name?: string | null
+  }[],
+  cc?: {
+    email: string,
+    name?: string | null
+  }[],
+  bcc?: {
+    email: string,
+    name?: string | null
+  }[],
+  subject?: string,
+  body?: string,
+  from?: {
+    email?: string,
+    name?: string
+  },
+  trackingEnabled?: boolean,
+  linkTrackingEnabled?: boolean,
+  fileTrackingEnabled?: boolean,
+  notificationsEnabled?: boolean,
+  smartFollowupsEnabled?: boolean,
+  showContentTeamFeed?: boolean,
+  syncToOrg?: boolean,
+  inReplyTo?: string,
+  followUp?: {
+  },
+  attachments?: {
+  }[],
+  snippetIds?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### sendPlain
+
+`messages.sendPlain`
+
+Send a plain email from the user’s mailbox immediately, outside Mixmax tracking.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.messages.sendPlain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  to: {
+    address: string,
+    name?: string
+  },
+  from?: {
+    address: string,
+    name?: string
+  },
+  cc?: {
+    address: string,
+    name?: string
+  }[],
+  bcc?: {
+    address: string,
+    name?: string
+  }[],
+  subject: string,
+  html: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### test
+
+`messages.test`
+
+Send a Mixmax test email to the calling user’s own account.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.messages.test({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `meetingTypeId` | `string` | No | — |
+| `meetingTimeMs` | `number` | No | — |
+| `primaryTimeZone` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### unschedule
+
+`messages.unschedule`
+
+Cancel a scheduled Mixmax send and return the message to draft.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.messages.unschedule({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `string \| undefined`
+
+
+---
+
+### update
+
+`messages.update`
+
+Update the fields of a sent Mixmax message; each included field replaces the stored value.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.messages.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to` | `object[]` | No | — |
+| `cc` | `object[]` | No | — |
+| `bcc` | `object[]` | No | — |
+| `subject` | `string` | No | — |
+| `body` | `string` | No | — |
+| `from` | `object` | No | — |
+| `trackingEnabled` | `boolean` | No | — |
+| `linkTrackingEnabled` | `boolean` | No | — |
+| `fileTrackingEnabled` | `boolean` | No | — |
+| `notificationsEnabled` | `boolean` | No | — |
+| `smartFollowupsEnabled` | `boolean` | No | — |
+| `showContentTeamFeed` | `boolean` | No | — |
+| `syncToOrg` | `boolean` | No | — |
+| `inReplyTo` | `string` | No | — |
+| `followUp` | `object` | No | — |
+| `attachments` | `object[]` | No | — |
+| `snippetIds` | `string[]` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+{
+  email: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="cc full type">
+
+```ts
+{
+  email: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="bcc full type">
+
+```ts
+{
+  email: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+{
+  email?: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="followUp full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Polls
+
+### get
+
+`polls.get`
+
+Retrieve one Mixmax poll by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.polls.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `createdAt` | `number` | No | — |
+| `question` | `string` | No | — |
+| `livePoll` | `boolean` | No | — |
+| `options` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  text?: string,
+  respondents?: {
+    email?: string,
+    name?: string,
+    respondedAt?: number,
+    messageId?: string,
+    sequenceId?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`polls.list`
+
+List the user’s Mixmax polls with their response counts.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.polls.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  userId?: string,
+  createdAt?: number,
+  question?: string,
+  livePoll?: boolean,
+  options?: {
+    text?: string,
+    respondents?: {
+      email?: string,
+      name?: string,
+      respondedAt?: number,
+      messageId?: string,
+      sequenceId?: string
+    }[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Qa
+
+### get
+
+`qa.get`
+
+Retrieve one Mixmax Q&A form by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.qa.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `creatorId` | `string` | No | — |
+| `creationDate` | `number` | No | — |
+| `title` | `string` | No | — |
+| `questions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+  type?: string,
+  content?: string,
+  answers?: {
+    recipientEmail?: string,
+    recipientName?: string,
+    answer?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`qa.list`
+
+List the user’s Mixmax Q&A forms with their answers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.qa.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  creatorId?: string,
+  creationDate?: number,
+  title?: string,
+  questions?: {
+    type?: string,
+    content?: string,
+    answers?: {
+      recipientEmail?: string,
+      recipientName?: string,
+      answer?: string
+    }[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### runDataTable
+
+`reports.runDataTable`
+
+Run a Mixmax reporting query and return the aggregated data table buckets.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.reports.runDataTable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `groupBy` | `string` | No | — |
+| `query` | `string` | No | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortDesc` | `boolean` | No | — |
+| `timezone` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buckets` | `object[]` | Yes | — |
+| `totals` | `object` | No | — |
+| `aggs` | `object` | No | — |
+| `extra` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="buckets full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="totals full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="aggs full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="extra full type">
+
+```ts
+{
+  total?: number,
+  hasNext?: boolean,
+  interval?: string,
+  trend?: number | null,
+  dateRange?: {
+    lower?: number,
+    upper?: number,
+    trend?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Rules
+
+### actions.create
+
+`rules.actions.create`
+
+Add an action to a Mixmax rule.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.rules.actions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `isPaused` | `boolean` | No | — |
+| `webhookUrl` | `string` | No | — |
+| `httpHeaders` | `[string, string][]` | No | — |
+| `signingSecret` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `ruleId` | `string` | No | — |
+| `type` | `string` | No | — |
+| `isPaused` | `boolean` | No | — |
+| `webhookUrl` | `string` | No | — |
+| `httpHeaders` | `[string, string][]` | No | — |
+| `signingSecret` | `string` | No | — |
+| `signingSecretLastFour` | `string` | No | — |
+| `signingSecretCreatedAt` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `modifiedAt` | `string` | No | — |
+
+
+
+---
+
+### actions.delete
+
+`rules.actions.delete`
+
+Remove one action from a Mixmax rule.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.rules.actions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `actionId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### actions.list
+
+`rules.actions.list`
+
+List the actions of one Mixmax rule.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.rules.actions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  ruleId?: string,
+  type?: string,
+  isPaused?: boolean,
+  webhookUrl?: string,
+  httpHeaders?: [
+    string,
+    string
+  ][],
+  signingSecret?: string,
+  signingSecretLastFour?: string,
+  signingSecretCreatedAt?: string,
+  createdAt?: string,
+  modifiedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### actions.update
+
+`rules.actions.update`
+
+Update one action of a Mixmax rule.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.rules.actions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `actionId` | `string` | Yes | — |
+| `type` | `string` | No | — |
+| `isPaused` | `boolean` | No | — |
+| `webhookUrl` | `string` | No | — |
+| `httpHeaders` | `[string, string][]` | No | — |
+| `rotateSigningSecret` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `ruleId` | `string` | No | — |
+| `type` | `string` | No | — |
+| `isPaused` | `boolean` | No | — |
+| `webhookUrl` | `string` | No | — |
+| `httpHeaders` | `[string, string][]` | No | — |
+| `signingSecret` | `string` | No | — |
+| `signingSecretLastFour` | `string` | No | — |
+| `signingSecretCreatedAt` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `modifiedAt` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`rules.create`
+
+Create a Mixmax rule with a trigger and actions.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.rules.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `trigger` | `object` | Yes | — |
+| `filter` | `string` | No | — |
+| `isPaused` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="trigger full type">
+
+```ts
+{
+  type: event,
+  eventName: string,
+  objectType?: string,
+  relationshipField?: string
+} | {
+  type: recurring,
+  rrule: string,
+  subtype?: string | null,
+  entity?: string,
+  interval?: {
+  }
+} | {
+  type: webhook,
+  webhookId: string,
+  transforms?: [
+    string,
+    string
+  ][],
+  options?: {
+    preserveDots?: boolean
+  },
+  transformConfig?: string,
+  webhookSecret?: string
+} | {
+  type: salesforceDateInterval,
+  objectType: string,
+  relationshipField?: string,
+  interval: {
+    value: number,
+    before: boolean,
+    field: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `orgId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `trigger` | `object \| null` | No | — |
+| `filter` | `string` | No | — |
+| `isPaused` | `boolean` | No | — |
+| `createdAt` | `string` | No | — |
+| `modifiedAt` | `string` | No | — |
+| `actions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="trigger full type">
+
+```ts
+{
+  type: event,
+  eventName: string,
+  objectType?: string,
+  relationshipField?: string
+} | {
+  type: recurring,
+  rrule: string,
+  subtype?: string | null,
+  entity?: string,
+  interval?: {
+  }
+} | {
+  type: webhook,
+  webhookId: string,
+  transforms?: [
+    string,
+    string
+  ][],
+  options?: {
+    preserveDots?: boolean
+  },
+  transformConfig?: string,
+  webhookSecret?: string
+} | {
+  type: salesforceDateInterval,
+  objectType: string,
+  relationshipField?: string,
+  interval: {
+    value: number,
+    before: boolean,
+    field: string
+  }
+} | null
+```
+</Accordion>
+
+<Accordion title="actions full type">
+
+```ts
+{
+  _id?: string,
+  ruleId?: string,
+  type?: string,
+  isPaused?: boolean,
+  webhookUrl?: string,
+  httpHeaders?: [
+    string,
+    string
+  ][],
+  signingSecret?: string,
+  signingSecretLastFour?: string,
+  signingSecretCreatedAt?: string,
+  createdAt?: string,
+  modifiedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`rules.delete`
+
+Delete a Mixmax rule permanently.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.rules.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### deleteBulk
+
+`rules.deleteBulk`
+
+Delete several Mixmax rules at once by their ids.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.rules.deleteBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### events.get
+
+`rules.events.get`
+
+Retrieve one Mixmax rule event by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.rules.events.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `date` | `string` | No | — |
+| `type` | `rules` | No | — |
+| `userId` | `string` | No | — |
+| `email` | `string` | No | — |
+| `status` | `success \| filtered \| pending \| error` | No | — |
+| `message` | `string` | No | — |
+| `payload` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  ruleId?: string,
+  ruleName?: string,
+  hidden?: boolean,
+  actionType?: string,
+  recipientEmail?: string,
+  recipientName?: string,
+  orgId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### events.list
+
+`rules.events.list`
+
+List Mixmax rule events with their status, filterable by rule and outcome.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.rules.events.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `getWorkspaceEvents` | `boolean` | No | — |
+| `ruleId` | `string` | No | — |
+| `status` | `success \| filtered \| pending \| error` | No | — |
+| `text` | `string` | No | — |
+| `aggregate` | `boolean` | No | — |
+| `fields` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `number \| null` | No | — |
+| `since` | `string` | No | — |
+| `statuses` | `Record<string, number>` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  _id?: string,
+  date?: string,
+  type?: rules,
+  userId?: string,
+  email?: string,
+  status?: success | filtered | pending | error,
+  message?: string,
+  payload?: {
+  },
+  metadata?: {
+    ruleId?: string,
+    ruleName?: string,
+    hidden?: boolean,
+    actionType?: string,
+    recipientEmail?: string,
+    recipientName?: string,
+    orgId?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`rules.get`
+
+Retrieve one Mixmax rule by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.rules.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `actions` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `orgId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `trigger` | `object \| null` | No | — |
+| `filter` | `string` | No | — |
+| `isPaused` | `boolean` | No | — |
+| `createdAt` | `string` | No | — |
+| `modifiedAt` | `string` | No | — |
+| `actions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="trigger full type">
+
+```ts
+{
+  type: event,
+  eventName: string,
+  objectType?: string,
+  relationshipField?: string
+} | {
+  type: recurring,
+  rrule: string,
+  subtype?: string | null,
+  entity?: string,
+  interval?: {
+  }
+} | {
+  type: webhook,
+  webhookId: string,
+  transforms?: [
+    string,
+    string
+  ][],
+  options?: {
+    preserveDots?: boolean
+  },
+  transformConfig?: string,
+  webhookSecret?: string
+} | {
+  type: salesforceDateInterval,
+  objectType: string,
+  relationshipField?: string,
+  interval: {
+    value: number,
+    before: boolean,
+    field: string
+  }
+} | null
+```
+</Accordion>
+
+<Accordion title="actions full type">
+
+```ts
+{
+  _id?: string,
+  ruleId?: string,
+  type?: string,
+  isPaused?: boolean,
+  webhookUrl?: string,
+  httpHeaders?: [
+    string,
+    string
+  ][],
+  signingSecret?: string,
+  signingSecretLastFour?: string,
+  signingSecretCreatedAt?: string,
+  createdAt?: string,
+  modifiedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`rules.list`
+
+List the user’s Mixmax rules, optionally with their actions.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.rules.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expand` | `actions` | No | — |
+| `owner` | `string` | No | — |
+| `hidden` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  userId?: string,
+  orgId?: string,
+  name?: string,
+  trigger?: {
+    type: event,
+    eventName: string,
+    objectType?: string,
+    relationshipField?: string
+  } | {
+    type: recurring,
+    rrule: string,
+    subtype?: string | null,
+    entity?: string,
+    interval?: {
+    }
+  } | {
+    type: webhook,
+    webhookId: string,
+    transforms?: [
+      string,
+      string
+    ][],
+    options?: {
+      preserveDots?: boolean
+    },
+    transformConfig?: string,
+    webhookSecret?: string
+  } | {
+    type: salesforceDateInterval,
+    objectType: string,
+    relationshipField?: string,
+    interval: {
+      value: number,
+      before: boolean,
+      field: string
+    }
+  } | null,
+  filter?: string,
+  isPaused?: boolean,
+  createdAt?: string,
+  modifiedAt?: string,
+  actions?: {
+    _id?: string,
+    ruleId?: string,
+    type?: string,
+    isPaused?: boolean,
+    webhookUrl?: string,
+    httpHeaders?: [
+      string,
+      string
+    ][],
+    signingSecret?: string,
+    signingSecretLastFour?: string,
+    signingSecretCreatedAt?: string,
+    createdAt?: string,
+    modifiedAt?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`rules.update`
+
+Update the trigger or fields of a Mixmax rule.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.rules.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `trigger` | `object` | No | — |
+| `filter` | `string` | No | — |
+| `isPaused` | `boolean` | No | — |
+| `id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="trigger full type">
+
+```ts
+{
+  type: event,
+  eventName: string,
+  objectType?: string,
+  relationshipField?: string
+} | {
+  type: recurring,
+  rrule: string,
+  subtype?: string | null,
+  entity?: string,
+  interval?: {
+  }
+} | {
+  type: webhook,
+  webhookId: string,
+  transforms?: [
+    string,
+    string
+  ][],
+  options?: {
+    preserveDots?: boolean
+  },
+  transformConfig?: string,
+  webhookSecret?: string
+} | {
+  type: salesforceDateInterval,
+  objectType: string,
+  relationshipField?: string,
+  interval: {
+    value: number,
+    before: boolean,
+    field: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `modifiedAt` | `string` | No | — |
+
+
+
+---
+
+## Salesforce
+
+### createAccount
+
+`salesforce.createAccount`
+
+Create a Salesforce account through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.createAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createContact
+
+`salesforce.createContact`
+
+Create a Salesforce contact through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.createContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createLead
+
+`salesforce.createLead`
+
+Create a Salesforce lead through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.createLead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `LastName` | `string` | Yes | — |
+| `Company` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createOpportunity
+
+`salesforce.createOpportunity`
+
+Create a Salesforce opportunity through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.createOpportunity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `ContactId` | `string` | Yes | — |
+| `AccountId` | `string` | No | — |
+| `mm_IsPrimaryContactRole` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createTask
+
+`salesforce.createTask`
+
+Create a Salesforce task through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.createTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteOpportunity
+
+`salesforce.deleteOpportunity`
+
+Delete a Salesforce opportunity through Mixmax.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.salesforce.deleteOpportunity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### deleteTask
+
+`salesforce.deleteTask`
+
+Delete a Salesforce task through Mixmax.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.salesforce.deleteTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAccount
+
+`salesforce.getAccount`
+
+Retrieve one Salesforce account synced to Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAccountImplicit
+
+`salesforce.getAccountImplicit`
+
+Look up the Salesforce account matching an email domain.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getAccountImplicit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailDomain` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  account?: {
+    Id?: string,
+    salesforceURL?: string
+  }
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getContact
+
+`salesforce.getContact`
+
+Retrieve one Salesforce contact synced to Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getContactOrLead
+
+`salesforce.getContactOrLead`
+
+Look up the Salesforce contact or lead matching an email address.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getContactOrLead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `withRelatedObjects` | `true \| false` | No | — |
+| `fetch` | `string` | No | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  contact?: {
+    Id?: string,
+    salesforceURL?: string
+  },
+  lead?: {
+    Id?: string,
+    salesforceURL?: string
+  },
+  account?: {
+    Id?: string,
+    salesforceURL?: string
+  } | null,
+  opportunities?: {
+    Id?: string,
+    salesforceURL?: string
+  }[],
+  events?: {
+    tasks?: {
+      Id?: string,
+      salesforceURL?: string
+    }[],
+    events?: {
+      Id?: string,
+      salesforceURL?: string
+    }[],
+    hasMore?: boolean,
+    listLink?: string
+  },
+  openTasks?: {
+    tasks?: {
+      Id?: string,
+      salesforceURL?: string
+    }[],
+    events?: {
+      Id?: string,
+      salesforceURL?: string
+    }[],
+    hasMore?: boolean,
+    listLink?: string
+  },
+  closedTasks?: {
+    tasks?: {
+      Id?: string,
+      salesforceURL?: string
+    }[],
+    events?: {
+      Id?: string,
+      salesforceURL?: string
+    }[],
+    hasMore?: boolean,
+    listLink?: string
+  }
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getLead
+
+`salesforce.getLead`
+
+Retrieve one Salesforce lead synced to Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getLead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getOpportunity
+
+`salesforce.getOpportunity`
+
+Retrieve one Salesforce opportunity synced to Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getOpportunity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTask
+
+`salesforce.getTask`
+
+Retrieve one Salesforce task synced to Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getWhat
+
+`salesforce.getWhat`
+
+Resolve any Salesforce record id to its related “what” object.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getWhat({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getWho
+
+`salesforce.getWho`
+
+Resolve any Salesforce record id to its related “who” object.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getWho({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listAccounts
+
+`salesforce.listAccounts`
+
+List the Salesforce accounts synced to the user’s Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.listAccounts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listContactTasks
+
+`salesforce.listContactTasks`
+
+List the Salesforce tasks of one contact.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.listContactTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLeadTasks
+
+`salesforce.listLeadTasks`
+
+List the Salesforce tasks of one lead.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.listLeadTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`salesforce.search`
+
+Search Salesforce records of one object type through Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `Account \| Campaign \| Contact \| Lead \| Opportunity \| User` | Yes | — |
+| `q` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### syncedFields
+
+`salesforce.syncedFields`
+
+List the Salesforce fields Mixmax syncs for each object type.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.syncedFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | Yes | — |
+| `useSyncUser` | `true \| false` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+Record<string, {
+  fieldName?: string,
+  fieldLabel?: string,
+  objectName?: string,
+  fieldType?: string,
+  required?: boolean,
+  createable?: boolean,
+  isDefault?: boolean,
+  picklistValues?: {
+    label?: string,
+    value?: string,
+    active?: boolean,
+    defaultValue?: boolean
+  }[]
+}[]>
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateAccount
+
+`salesforce.updateAccount`
+
+Update a Salesforce account through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.updateAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `Id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateContact
+
+`salesforce.updateContact`
+
+Update a Salesforce contact through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.updateContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `Id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateLead
+
+`salesforce.updateLead`
+
+Update a Salesforce lead through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.updateLead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `Id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateOpportunity
+
+`salesforce.updateOpportunity`
+
+Update a Salesforce opportunity through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.updateOpportunity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `Id` | `string` | Yes | — |
+| `CloseDate` | `string` | Yes | — |
+| `ContactId` | `string` | No | — |
+| `mm_IsPrimaryContactRole` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateTask
+
+`salesforce.updateTask`
+
+Update a Salesforce task through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.updateTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `Id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sequence Folders
+
+### addSequences
+
+`sequenceFolders.addSequences`
+
+Move one or more Mixmax sequences into a sequence folder.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.sequenceFolders.addSequences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `sequenceIds` | `string[]` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  results: {
+    id?: string,
+    success?: boolean,
+    message?: string
+  }[]
+} | {
+  id?: string,
+  success?: boolean,
+  message?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`sequenceFolders.create`
+
+Create a Mixmax sequence folder.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.sequenceFolders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  enforceNameUniqueness?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `sequenceIds` | `string[]` | No | — |
+| `shared` | `object` | No | — |
+| `createdAt` | `string` | No | — |
+| `savedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="shared full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sequenceFolders.delete`
+
+Delete a Mixmax sequence folder; its sequences are kept but left without a folder.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.sequenceFolders.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`sequenceFolders.get`
+
+Retrieve one Mixmax sequence folder by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.sequenceFolders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `sequenceIds` | `string[]` | No | — |
+| `shared` | `object` | No | — |
+| `createdAt` | `string` | No | — |
+| `savedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="shared full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sequenceFolders.list`
+
+List the Mixmax sequence folders the user can access.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.sequenceFolders.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  userId?: string,
+  name?: string,
+  sequenceIds?: string[],
+  shared?: {
+  },
+  createdAt?: string,
+  savedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rename
+
+`sequenceFolders.rename`
+
+Rename a Mixmax sequence folder.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.sequenceFolders.rename({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  enforceNameUniqueness?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `sequenceIds` | `string[]` | No | — |
+| `shared` | `object` | No | — |
+| `createdAt` | `string` | No | — |
+| `savedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="shared full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sequences
+
+### cancel
+
+`sequences.cancel`
+
+Stop recipients of one Mixmax sequence; cancellation is one-way and deletes their open tasks.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.sequences.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `emails` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipients` | `string[]` | Yes | — |
+
+
+
+---
+
+### cancelAll
+
+`sequences.cancelAll`
+
+Stop the user’s recipients across every Mixmax sequence at once; cancelled recipients cannot be resumed.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.sequences.cancelAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | No | — |
+| `reason` | `string` | No | — |
+| `orgId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipients` | `string[]` | No | — |
+
+
+
+---
+
+### list
+
+`sequences.list`
+
+List the Mixmax sequences the user can access, including shared ones.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.sequences.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `folder` | `string` | No | — |
+| `expand` | `string` | No | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  userId?: string,
+  name?: string,
+  createdAt?: string,
+  stages?: any[],
+  variables?: string[],
+  cc?: {
+    email: string,
+    name?: string
+  }[],
+  bcc?: {
+    email: string,
+    name?: string
+  }[],
+  sendStagesAsReplies?: boolean,
+  linkTrackingEnabled?: boolean,
+  fileTrackingEnabled?: boolean,
+  notificationsEnabled?: boolean,
+  timezone?: string,
+  pausedBy?: string,
+  syncToOrg?: boolean,
+  folder?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### recipients.add
+
+`sequences.recipients.add`
+
+Add recipients to a Mixmax sequence, starting their sequence emails unless kept as drafts.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.sequences.recipients.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recipients` | `object[]` | Yes | — |
+| `scheduledAt` | `number` | No | — |
+| `enrich` | `boolean` | No | — |
+| `allowMissingVariables` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  email: string,
+  variables?: {
+  },
+  scheduledAt?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipients` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  id?: string,
+  email?: string,
+  stages?: string[],
+  status?: string,
+  errors?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### recipients.list
+
+`sequences.recipients.list`
+
+List the recipients of one Mixmax sequence with their per-stage activity.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.sequences.recipients.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortDesc` | `boolean` | No | — |
+| `query` | `string` | No | — |
+| `analyticsFrom` | `string` | No | — |
+| `includeVariables` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id?: string,
+  sequenceId?: string,
+  userId?: string,
+  sequence?: {
+    _id?: string
+  },
+  to?: {
+    email?: string,
+    name?: string
+  },
+  state?: string,
+  completedReason?: string,
+  createdAt?: number,
+  lastStageSentOrdinal?: number,
+  analytics?: {
+    events?: {
+      opens?: number,
+      clicks?: number,
+      downloads?: number
+    }
+  },
+  stages?: {
+  }[],
+  variables?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### search
+
+`sequences.search`
+
+Search sequence recipients across every accessible Mixmax sequence with their status and activity.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.sequences.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `recipients` | `string` | No | — |
+| `sequenceId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortDesc` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sequences` | `object` | No | — |
+| `recipients` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sequences full type">
+
+```ts
+{
+  total?: number,
+  results?: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="recipients full type">
+
+```ts
+{
+  total?: number,
+  results?: {
+    _id?: string,
+    recipientId?: string,
+    userId?: string,
+    sequenceId?: string,
+    email?: string,
+    domain?: string,
+    name?: string,
+    state?: string,
+    completedReason?: string,
+    createdAt?: number,
+    completedAt?: number,
+    lastStageProcessedAt?: number,
+    lastStageSentAt?: number,
+    lastStageSentOrdinal?: number,
+    nextStageScheduledAt?: number,
+    isActive?: number,
+    isPaused?: number,
+    isCompleted?: number,
+    wasSent?: number,
+    wasOpened?: number,
+    wasReplied?: number,
+    wasBounced?: number,
+    numOpens?: number,
+    numClicks?: number,
+    numDownloads?: number,
+    numDelivered?: number,
+    stages?: {
+    }[],
+    to?: {
+      email?: string,
+      name?: string
+    },
+    lastStageSent?: {
+      ordinal?: number,
+      processedAt?: number
+    },
+    sequence?: {
+      _id?: string,
+      name?: string
+    },
+    user?: {
+      email?: string,
+      name?: string
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Snippets
+
+### delete
+
+`snippets.delete`
+
+Move a Mixmax template to the trash, or archive it, removing it from its folders.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.snippets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `archive` | `boolean` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`snippets.get`
+
+Retrieve one Mixmax template by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.snippets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `includeDeleted` | `boolean` | No | — |
+| `expand` | `string` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string \| number` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `source` | `string` | No | — |
+| `cc` | `object[]` | No | — |
+| `bcc` | `object[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `shared` | `object` | No | — |
+| `isInline` | `boolean` | No | — |
+| `createdAt` | `number` | No | — |
+| `savedAt` | `number` | No | — |
+| `deletedAt` | `number` | No | — |
+| `archivedAt` | `number` | No | — |
+| `savedBy` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="cc full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bcc full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="shared full type">
+
+```ts
+{
+  users?: {
+  }[],
+  teams?: {
+  }[],
+  orgs?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`snippets.list`
+
+List the Mixmax templates (snippets) the user can access, including shared ones.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.snippets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `isInline` | `boolean` | No | — |
+| `deletedOnly` | `boolean` | No | — |
+| `archivedOnly` | `boolean` | No | — |
+| `sort` | `string` | No | — |
+| `sortAscending` | `boolean` | No | — |
+| `expand` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string | number,
+  userId?: string,
+  name?: string,
+  title?: string,
+  source?: string,
+  cc?: {
+    email: string,
+    name?: string
+  }[],
+  bcc?: {
+    email: string,
+    name?: string
+  }[],
+  attachments?: {
+  }[],
+  shared?: {
+    users?: {
+    }[],
+    teams?: {
+    }[],
+    orgs?: {
+    }[]
+  },
+  isInline?: boolean,
+  createdAt?: number,
+  savedAt?: number,
+  deletedAt?: number,
+  archivedAt?: number,
+  savedBy?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`snippets.send`
+
+Send an email built from a Mixmax template, immediately or at a scheduled time.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.snippets.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `to` | `object[]` | Yes | — |
+| `cc` | `object[]` | No | — |
+| `bcc` | `object[]` | No | — |
+| `subject` | `string` | No | — |
+| `variables` | `object` | No | — |
+| `scheduledAt` | `number` | No | — |
+| `trackingEnabled` | `boolean` | No | — |
+| `linkTrackingEnabled` | `boolean` | No | — |
+| `fileTrackingEnabled` | `boolean` | No | — |
+| `notificationsEnabled` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="cc full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bcc full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="variables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### update
+
+`snippets.update`
+
+Update the fields of a Mixmax template; only the fields sent change.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.snippets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `source` | `string` | No | — |
+| `cc` | `object[]` | No | — |
+| `bcc` | `object[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `options` | `object` | No | — |
+| `expand` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="cc full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bcc full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  enforceNameUniqueness?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string \| number` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `source` | `string` | No | — |
+| `cc` | `object[]` | No | — |
+| `bcc` | `object[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `shared` | `object` | No | — |
+| `isInline` | `boolean` | No | — |
+| `createdAt` | `number` | No | — |
+| `savedAt` | `number` | No | — |
+| `deletedAt` | `number` | No | — |
+| `archivedAt` | `number` | No | — |
+| `savedBy` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="cc full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bcc full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="shared full type">
+
+```ts
+{
+  users?: {
+  }[],
+  teams?: {
+  }[],
+  orgs?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Snippet Tags
+
+### addSnippets
+
+`snippetTags.addSnippets`
+
+Add a template to a Mixmax template folder.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.snippetTags.addSnippets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `_id` | `string` | No | — |
+| `isInline` | `string` | No | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `source` | `string` | No | — |
+| `cc` | `object[]` | No | — |
+| `bcc` | `object[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="cc full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bcc full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  enforceNameUniqueness?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string \| number` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `source` | `string` | No | — |
+| `cc` | `object[]` | No | — |
+| `bcc` | `object[]` | No | — |
+| `attachments` | `object[]` | No | — |
+| `shared` | `object` | No | — |
+| `isInline` | `boolean` | No | — |
+| `createdAt` | `number` | No | — |
+| `savedAt` | `number` | No | — |
+| `deletedAt` | `number` | No | — |
+| `archivedAt` | `number` | No | — |
+| `savedBy` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="cc full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="bcc full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="shared full type">
+
+```ts
+{
+  users?: {
+  }[],
+  teams?: {
+  }[],
+  orgs?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`snippetTags.create`
+
+Create a Mixmax template folder.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.snippetTags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `options` | `object` | No | — |
+| `isInline` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  enforceNameUniqueness?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `shared` | `object` | No | — |
+| `isInline` | `boolean` | No | — |
+| `count` | `number` | No | — |
+| `createdAt` | `number` | No | — |
+| `savedAt` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="shared full type">
+
+```ts
+{
+  users?: {
+  }[],
+  teams?: {
+  }[],
+  orgs?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`snippetTags.delete`
+
+Delete a Mixmax template folder and move every template inside it to the trash.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.snippetTags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`snippetTags.get`
+
+Retrieve one Mixmax template folder by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.snippetTags.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `shared` | `object` | No | — |
+| `isInline` | `boolean` | No | — |
+| `count` | `number` | No | — |
+| `createdAt` | `number` | No | — |
+| `savedAt` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="shared full type">
+
+```ts
+{
+  users?: {
+  }[],
+  teams?: {
+  }[],
+  orgs?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`snippetTags.list`
+
+List the Mixmax template folders (snippet tags) the user can access.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.snippetTags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `isInline` | `boolean` | No | — |
+| `sort` | `string` | No | — |
+| `sortAscending` | `boolean` | No | — |
+| `expand` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  userId?: string,
+  name?: string,
+  shared?: {
+    users?: {
+    }[],
+    teams?: {
+    }[],
+    orgs?: {
+    }[]
+  },
+  isInline?: boolean,
+  count?: number,
+  createdAt?: number,
+  savedAt?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSnippets
+
+`snippetTags.listSnippets`
+
+List the templates contained in one Mixmax template folder.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.snippetTags.listSnippets({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `search` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `sortAscending` | `boolean` | No | — |
+| `expand` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string | number,
+  userId?: string,
+  name?: string,
+  title?: string,
+  source?: string,
+  cc?: {
+    email: string,
+    name?: string
+  }[],
+  bcc?: {
+    email: string,
+    name?: string
+  }[],
+  attachments?: {
+  }[],
+  shared?: {
+    users?: {
+    }[],
+    teams?: {
+    }[],
+    orgs?: {
+    }[]
+  },
+  isInline?: boolean,
+  createdAt?: number,
+  savedAt?: number,
+  deletedAt?: number,
+  archivedAt?: number,
+  savedBy?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`snippetTags.update`
+
+Rename a Mixmax template folder.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.snippetTags.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  enforceNameUniqueness?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `shared` | `object` | No | — |
+| `isInline` | `boolean` | No | — |
+| `count` | `number` | No | — |
+| `createdAt` | `number` | No | — |
+| `savedAt` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="shared full type">
+
+```ts
+{
+  users?: {
+  }[],
+  teams?: {
+  }[],
+  orgs?: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### list
+
+`tasks.list`
+
+List the user’s open Mixmax tasks.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `query` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `tz` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `hasNext` | `boolean` | Yes | — |
+| `hasPrevious` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id: string,
+  type: email | call | linkedin | todo,
+  subject?: string,
+  description?: string,
+  status: string,
+  isCompleted?: boolean,
+  due?: string,
+  priority?: string,
+  assignee?: string | {
+    id?: string,
+    name?: string,
+    email?: string
+  },
+  phoneTo?: string | null,
+  sequence?: {
+    id?: string,
+    name?: string,
+    stage?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Teams
+
+### create
+
+`teams.create`
+
+Create a Mixmax team.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.teams.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `members` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  email: string,
+  role?: admin | member
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `modifiedAt` | `string` | Yes | — |
+| `members` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  memberId: string,
+  userId?: string,
+  email?: string,
+  name?: string,
+  role: admin | member,
+  accepted?: boolean,
+  acceptedAt?: string,
+  createdAt?: string,
+  invitedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`teams.delete`
+
+Delete a Mixmax team permanently.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.teams.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`teams.get`
+
+Retrieve one Mixmax team by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.teams.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `modifiedAt` | `string` | Yes | — |
+| `members` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  memberId: string,
+  userId?: string,
+  email?: string,
+  name?: string,
+  role: admin | member,
+  accepted?: boolean,
+  acceptedAt?: string,
+  createdAt?: string,
+  invitedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List the user’s Mixmax teams.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expand` | `string` | No | — |
+| `accessThrough` | `myself` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  createdAt: string,
+  modifiedAt: string,
+  members?: {
+    memberId: string,
+    userId?: string,
+    email?: string,
+    name?: string,
+    role: admin | member,
+    accepted?: boolean,
+    acceptedAt?: string,
+    createdAt?: string,
+    invitedAt: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### members.add
+
+`teams.members.add`
+
+Invite members to a Mixmax team.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.teams.members.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `members` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  email: string,
+  role?: admin | member
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  memberId: string,
+  userId?: string,
+  email?: string,
+  name?: string,
+  role: admin | member,
+  accepted?: boolean,
+  acceptedAt?: string,
+  createdAt?: string,
+  invitedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### members.list
+
+`teams.members.list`
+
+List the members of one Mixmax team.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.teams.members.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `members.userId` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  memberId: string,
+  userId?: string,
+  email?: string,
+  name?: string,
+  role: admin | member,
+  accepted?: boolean,
+  acceptedAt?: string,
+  createdAt?: string,
+  invitedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### members.remove
+
+`teams.members.remove`
+
+Remove one member from a Mixmax team.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.teams.members.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `memberId` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### members.update
+
+`teams.members.update`
+
+Change a Mixmax team member’s role.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.teams.members.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `memberId` | `string` | Yes | — |
+| `role` | `admin \| member` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### update
+
+`teams.update`
+
+Rename a Mixmax team.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.teams.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+## Unsubscribes
+
+### create
+
+`unsubscribes.create`
+
+Add one or more email addresses to the Mixmax unsubscribe list.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.unsubscribes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `emails` | `string[]` | No | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`unsubscribes.list`
+
+List the email addresses unsubscribed from the user’s Mixmax sends.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.unsubscribes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `sort` | `string` | No | — |
+| `sortAscending` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `expand` | `sequence` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `hasNext` | `boolean` | No | — |
+| `next` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  email?: string,
+  name?: string,
+  userId?: string,
+  orgId?: string,
+  messageId?: string,
+  sequenceId?: string,
+  sequence?: {
+    _id?: string,
+    name?: string
+  },
+  createdAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`unsubscribes.remove`
+
+Remove one email address from the Mixmax unsubscribe list.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.unsubscribes.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Users
+
+### getMe
+
+`users.getMe`
+
+Get the current Mixmax user.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.users.getMe({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+
+
+
+---
+
+### preferences.autoBccExcludedEmails.add
+
+`users.preferences.autoBccExcludedEmails.add`
+
+Add email addresses to the user’s Mixmax auto BCC exclusion list.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.users.preferences.autoBccExcludedEmails.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `emails` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  email?: string,
+  success: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### preferences.autoBccExcludedEmails.exists
+
+`users.preferences.autoBccExcludedEmails.exists`
+
+Check exactly which email addresses are excluded from the user’s Mixmax auto BCC list, including role exclusions.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.users.preferences.autoBccExcludedEmails.exists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  email: string,
+  exists: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### preferences.autoBccExcludedEmails.list
+
+`users.preferences.autoBccExcludedEmails.list`
+
+Check whether one email address is excluded from the user’s Mixmax auto BCC list.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.users.preferences.autoBccExcludedEmails.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `string \| undefined`
+
+
+---
+
+### preferences.get
+
+`users.preferences.get`
+
+Get the calling user’s Mixmax preferences.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.users.preferences.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | — |
+| `includeFinalDefaultCalendarUrl` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### preferences.update
+
+`users.preferences.update`
+
+Update the calling user’s Mixmax preferences.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.users.preferences.update({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Yesno
+
+### get
+
+`yesno.get`
+
+Retrieve one Mixmax yes/no question by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.yesno.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `created` | `number` | No | — |
+| `text` | `string` | No | — |
+| `answers` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="answers full type">
+
+```ts
+{
+  text?: string,
+  respondents?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`yesno.list`
+
+List the user’s Mixmax yes/no questions with their answers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.yesno.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  userId?: string,
+  created?: number,
+  text?: string,
+  answers?: {
+    text?: string,
+    respondents?: string[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
