@@ -150,6 +150,7 @@ describe('requests.completed', () => {
 			ok: true,
 			json: async () => ({ keys: JWKS }),
 		});
+		// unknown: a jest mock standing in for fetch.
 		global.fetch = fetchMock as unknown as typeof fetch;
 	});
 
@@ -158,7 +159,14 @@ describe('requests.completed', () => {
 	});
 
 	// The handler only reads ctx for logging, which is mocked.
+	// unknown: the handler reads ctx only for logging (mocked) and keys.
 	const ctx = { key: '' } as unknown as Parameters<typeof completed.handler>[0];
+	const withUserId = (userId: string) =>
+		// unknown: a context whose key manager stores a fal user id for the account.
+		({
+			key: '',
+			keys: { get_user_id: async () => userId },
+		}) as unknown as Parameters<typeof completed.handler>[0];
 
 	it('matches fal webhooks only', () => {
 		const request = sign();
@@ -214,13 +222,28 @@ describe('requests.completed', () => {
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 
-	it('answers 401 when the JWKS cannot be loaded', async () => {
+	it('throws when the JWKS cannot be loaded, so fal delivers again', async () => {
 		fetchMock.mockResolvedValueOnce({ ok: false, status: 503 });
-		const result = await completed.handler(ctx, {
+		await expect(
+			completed.handler(ctx, { ...sign(), payload: completedBody as never }),
+		).rejects.toThrow("Could not load fal's signing keys");
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('accepts a delivery for the fal user stored on the account', async () => {
+		const result = await completed.handler(withUserId(USER_ID), {
 			...sign(),
 			payload: completedBody as never,
 		});
-		expect(result).toMatchObject({ success: false, statusCode: 401 });
-		expect((result as { error?: string }).error).toMatch('signing keys');
+		expect(result).toEqual({ success: true, data: completedBody });
+	});
+
+	it('refuses a delivery made for a different fal account', async () => {
+		const result = await completed.handler(withUserId('github|someone-else'), {
+			...sign(),
+			payload: completedBody as never,
+		});
+		expect(result).toMatchObject({ success: false, statusCode: 403 });
+		expect(mockLog).not.toHaveBeenCalled();
 	});
 });

@@ -115,7 +115,7 @@ See the full list on the [API](/plugins/fal/api) page.
 
 ## Webhooks
 
-Pass `webhookUrl` to `queue.submit` and fal POSTs the result there when the request finishes. Hand `processWebhook` the raw body text (`await req.text()`), not parsed JSON, so the Ed25519 signature can be checked.
+Pass `webhookUrl` to `queue.submit` and fal POSTs the result there when the request finishes. Hand `processWebhook` the raw body text (`await request.text()`), not parsed JSON. fal signs the exact bytes it sent; a parsed body is rebuilt as a best effort, which fails for outputs with whole-number floats or integers past 2^53. To hold deliveries to one fal account, store its fal user id (the `x-fal-webhook-user-id` header) as the account's `user_id`.
 
 ```ts
 fal({

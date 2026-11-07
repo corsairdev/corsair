@@ -4,7 +4,11 @@ import { createCorsairOrm } from 'corsair/orm';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { fal } from './index';
 import { completedBody, createFalSigner, REQUEST_ID } from './test-fixtures';
-import { FAL_JWKS_URL, resetFalJwksCache } from './webhooks/types';
+import {
+	FAL_JWKS_URL,
+	RequestCompletedEventSchema,
+	resetFalJwksCache,
+} from './webhooks/types';
 
 async function createClient(options: Parameters<typeof fal>[0]) {
 	const testDb = createTestDatabase();
@@ -173,6 +177,7 @@ describe('fal webhooks through processWebhook', () => {
 			const result = await processWebhook(
 				corsair,
 				delivery.headers,
+				// unknown: the parsed webhook body, as a JSON route handler would pass it.
 				delivery.body as Record<string, unknown>,
 			);
 
@@ -181,6 +186,32 @@ describe('fal webhooks through processWebhook', () => {
 				where: { event_type: 'fal.webhook.requests.completed' },
 			});
 			expect(events).toHaveLength(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('refuses a delivery made for a different fal account than the one stored', async () => {
+		const { corsair, testDb } = await createClient({});
+		try {
+			serveJwks();
+			await corsair.fal.keys.issue_new_dek();
+			await corsair.fal.keys.set_api_key('fal-key');
+			// unknown: set_user_id comes from falAuthConfig's account fields, which
+			// the generic key manager type does not list.
+			const keys = corsair.fal.keys as unknown as {
+				set_user_id: (value: string) => Promise<void>;
+			};
+			await keys.set_user_id('github|someone-else');
+			const delivery = sign();
+
+			const response = await corsair.fal.webhooks.requests.completed.handler({
+				payload: RequestCompletedEventSchema.parse(delivery.body),
+				headers: delivery.headers,
+				rawBody: delivery.rawBody,
+			});
+
+			expect(response).toMatchObject({ success: false, statusCode: 403 });
 		} finally {
 			testDb.cleanup();
 		}

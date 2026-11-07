@@ -15,12 +15,14 @@ const EndpointIdsSchema = z
 	.max(50)
 	.describe('1 to 50 fal endpoint ids, for example ["fal-ai/flux/dev"].');
 
+// unknown: every fal model defines its own input fields (models.search with includeOpenApi lists them).
 const ModelInputSchema = z
 	.record(z.string(), z.unknown())
 	.describe(
 		"The model's input fields, for example { prompt: 'a lighthouse at dawn' }. Each model has its own; read them with models.search({ endpointIds: [id], includeOpenApi: true }).",
 	);
 
+// unknown: every fal model defines its own output fields.
 const ModelOutputSchema = z
 	.record(z.string(), z.unknown())
 	.describe(
@@ -73,6 +75,7 @@ const LogEntrySchema = z
 		message: z.string(),
 		timestamp: z.string(),
 		level: z.string().optional(),
+		// unknown: free-form labels the runner attaches.
 		labels: z.record(z.string(), z.unknown()).optional(),
 	})
 	.loose();
@@ -291,6 +294,7 @@ const ModelSchema = z
 			.optional(),
 		retires_at: z.string().nullish(),
 		replacement: z.string().nullish(),
+		// unknown: a whole OpenAPI document for the model.
 		openapi: z.record(z.string(), z.unknown()).optional(),
 	})
 	.loose();
@@ -376,6 +380,7 @@ const RequestRecordSchema = z
 		ended_at: z.string().nullish(),
 		status_code: z.number().int().nullish(),
 		duration: z.number().nullish(),
+		// unknown: the request's model-specific input and output.
 		json_input: z.unknown().optional(),
 		json_output: z.unknown().optional(),
 	})

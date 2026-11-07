@@ -1,7 +1,8 @@
 /**
  * Live tests against fal. They run when FAL_KEY is set (CI has none, so
  * they skip). Reads are free; the generation tests run only with
- * FAL_LIVE_GENERATE=1 and cost about $0.001 (two 256px FLUX schnell images).
+ * FAL_LIVE_GENERATE=1 and cost about $0.001 (three 256px FLUX schnell images).
+ * Usage, billing and deletePayloads need a full-access key; others get 403.
  */
 import { z } from 'zod';
 import { billing as accountBilling } from './endpoints/account';
@@ -18,7 +19,10 @@ import {
 	status as queueStatus,
 	submit as queueSubmit,
 } from './endpoints/queue';
-import { list as requestsList } from './endpoints/requests';
+import {
+	deletePayloads as requestsDeletePayloads,
+	list as requestsList,
+} from './endpoints/requests';
 import {
 	billingEvents as usageBillingEvents,
 	get as usageGet,
@@ -34,6 +38,7 @@ const describeLive = KEY.success ? describe : describe.skip;
 const generate = KEY.success && process.env.FAL_LIVE_GENERATE === '1';
 const itGenerate = generate ? it : it.skip;
 
+// unknown: endpoints read only ctx.key; the rest of the context is the runtime's.
 const ctx = { key: KEY.data ?? '' } as unknown as Parameters<
 	typeof queueSubmit
 >[0];
@@ -165,13 +170,41 @@ describeLive('fal live API', () => {
 		},
 	);
 
-	itGenerate('models.run returns the output directly', async () => {
-		const output = await modelsRun(ctx, {
-			endpointId: MODEL,
-			input: { prompt: 'a paper boat on a pond', ...SMALL },
-		});
-		expect(output.images).toBeDefined();
-	});
+	itGenerate(
+		'models.run returns the output; deletePayloads removes its files',
+		async () => {
+			const output = await modelsRun(ctx, {
+				endpointId: MODEL,
+				input: { prompt: 'a paper boat on a pond', ...SMALL },
+			});
+			const url = (output.images as { url: string }[] | undefined)?.[0]?.url;
+			expect(url).toMatch(/^https:\/\//);
+			expect((await fetch(url!)).status).toBe(200);
+
+			// Needs a key that may delete request payloads (inference-only keys get 403).
+			await sleep(3000);
+			const [latest] = (
+				await requestsList(ctx, {
+					endpointIds: [MODEL],
+					limit: 1,
+					includePayloads: true,
+				})
+			).items;
+			expect(JSON.stringify(latest?.json_output)).toContain(url);
+			try {
+				const deleted = await requestsDeletePayloads(ctx, {
+					requestId: latest!.request_id,
+				});
+				expect(deleted.cdn_delete_results.some((r) => r.link === url)).toBe(
+					true,
+				);
+				await sleep(2000);
+				expect((await fetch(url!)).status).toBe(404);
+			} catch (error) {
+				expect((error as { status?: number }).status).toBe(403);
+			}
+		},
+	);
 
 	itGenerate(
 		'files.upload returns a fal CDN URL serving the bytes',

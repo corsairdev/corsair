@@ -23,6 +23,7 @@ export const RequestCompletedEventSchema = z
 			.describe(
 				'OK: payload is the model output. ERROR: payload is the error body.',
 			),
+		// unknown: the model output (status OK) or the error body (ERROR), both model-specific.
 		payload: z.record(z.string(), z.unknown()).nullable(),
 		error: z.string().nullish(),
 		payload_error: z
@@ -64,6 +65,7 @@ export function headerValue(
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+// unknown: a webhook body arrives as a string or already-parsed JSON of any shape.
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
@@ -163,12 +165,17 @@ export type FalVerifyOptions = {
 };
 
 /**
+ * Best effort only; pass the raw body text whenever you can.
+ *
  * fal serialises webhook bodies with Python's `json.dumps(body, sort_keys=True)`:
  * sorted keys, `", "` and `": "` separators, non-ASCII escaped. When a caller
  * hands processWebhook parsed JSON, the raw body Corsair sees is JS's compact
  * re-serialisation, which never hashes the same; rebuilding fal's form lets
- * those deliveries verify. Integers past 2^53 cannot be rebuilt, so give up.
+ * most of those deliveries verify. Parsing loses what cannot come back: a
+ * whole-number float (`5.0` parses to `5`) or an integer past 2^53 (returns
+ * null here). Those deliveries verify only from the raw body.
  */
+// unknown: any JSON value, walked recursively.
 export function falJsonDumps(value: unknown): string | null {
 	if (value === null) return 'null';
 	if (typeof value === 'boolean') return value ? 'true' : 'false';
@@ -216,9 +223,15 @@ function candidateBodies(rawBody: string): string[] {
  * received (`await req.text()`); parsed JSON is rebuilt in fal's form.
  */
 export async function verifyFalWebhookSignature(
+	// unknown: only the headers and raw body are read, never the parsed payload.
 	request: Pick<WebhookRequest<unknown>, 'headers' | 'rawBody' | 'hubVerified'>,
 	options: FalVerifyOptions = {},
-): Promise<{ valid: boolean; error?: string }> {
+): Promise<{
+	valid: boolean;
+	error?: string;
+	/** True when the check could not run (fal's keys did not load); retry later. */
+	retryable?: boolean;
+}> {
 	// Hub checked the signature before forwarding the delivery.
 	if (request.hubVerified) return { valid: true };
 
@@ -276,6 +289,7 @@ export async function verifyFalWebhookSignature(
 	} catch (error) {
 		return {
 			valid: false,
+			retryable: true,
 			error: `Could not load fal's signing keys: ${error instanceof Error ? error.message : 'unknown error'}`,
 		};
 	}

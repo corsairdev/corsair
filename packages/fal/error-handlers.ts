@@ -7,7 +7,9 @@ export const errorHandlers = {
 	// retry is safe.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			// An HTTP answer is classified by its status alone: a 422 whose text
+			// mentions a rate limit is still a bad request.
+			if (error instanceof ApiError) return error.status === 429;
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate limit') || msg.includes('too many requests');
 		},

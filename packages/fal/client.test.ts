@@ -5,6 +5,7 @@ import {
 	parseEndpointId,
 	requestBasePath,
 } from './client';
+import { errorHandlers } from './error-handlers';
 
 const REQUEST_ID = '019a1b2c-3d4e-7f80-9a1b-2c3d4e5f6a7b';
 
@@ -85,6 +86,7 @@ describe('requestBasePath', () => {
 });
 
 describe('falErrorMessage', () => {
+	// unknown: error bodies are arbitrary JSON.
 	const error = (status: number, body: unknown) =>
 		new ApiError(
 			{ method: 'GET', url: '/x' },
@@ -126,5 +128,38 @@ describe('falErrorMessage', () => {
 	it('falls back to the error message', () => {
 		expect(falErrorMessage(new Error('boom'))).toBe('boom');
 		expect(falErrorMessage(error(502, undefined))).toBe('502: Request failed');
+	});
+});
+
+describe('error handlers', () => {
+	const apiErr = (status: number, message: string) =>
+		new ApiError(
+			{ method: 'GET', url: '/x' },
+			{ url: 'https://fal.run/x', ok: false, status, statusText: '', body: {} },
+			message,
+		);
+
+	it('retries a 429 and nothing else that mentions a rate limit', () => {
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(apiErr(429, 'Too Many Requests')),
+		).toBe(true);
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(
+				apiErr(422, 'prompt mentions a rate limit'),
+			),
+		).toBe(false);
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(new Error('rate limit hit')),
+		).toBe(true);
+	});
+
+	it('does not retry auth failures', () => {
+		expect(errorHandlers.AUTH_ERROR.match(apiErr(401, 'Unauthorized'))).toBe(
+			true,
+		);
+		expect(errorHandlers.AUTH_ERROR.match(apiErr(403, 'Forbidden'))).toBe(true);
+		expect(errorHandlers.AUTH_ERROR.match(apiErr(500, 'Server Error'))).toBe(
+			false,
+		);
 	});
 });

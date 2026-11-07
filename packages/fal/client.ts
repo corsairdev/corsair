@@ -49,6 +49,7 @@ export type FalRequestInit = {
 		string,
 		string | number | boolean | readonly string[] | undefined
 	>;
+	// unknown: the JSON body is whatever the endpoint takes (each model has its own input); the transport only serialises it.
 	body?: unknown;
 	headers?: Record<string, string | undefined>;
 };
@@ -109,10 +110,14 @@ export async function putToSignedUrl(
 	bytes: Uint8Array,
 	contentType: string,
 ): Promise<void> {
+	// A stalled storage server must not hold the call open forever. One
+	// minute, plus a second for every 512 KB (90 MB gets about four minutes).
+	const timeoutMs = 60_000 + Math.ceil(bytes.byteLength / (512 * 1024)) * 1000;
 	const response = await fetch(uploadUrl, {
 		method: 'PUT',
 		body: bytes,
 		headers: { 'Content-Type': contentType },
+		signal: AbortSignal.timeout(timeoutMs),
 	});
 	if (!response.ok) {
 		throw new FalAPIError(
@@ -203,12 +208,7 @@ export function requestBasePath(ref: {
 				'responseUrl must be the response_url a fal queue submit returned, for example https://queue.fal.run/fal-ai/flux/requests/<request id>.',
 			);
 		}
-		const [, rawOwner, rawApp, rawRequestId] = match as unknown as [
-			string,
-			string,
-			string,
-			string,
-		];
+		const [, rawOwner = '', rawApp = '', rawRequestId = ''] = match;
 		return requestBasePath({
 			endpointId: `${decodeURIComponent(rawOwner)}/${decodeURIComponent(rawApp)}`,
 			requestId: decodeURIComponent(rawRequestId),
@@ -221,8 +221,10 @@ export function requestBasePath(ref: {
 }
 
 /** A readable message from a fal error body (`detail` string or validation list). */
+// unknown: callers pass whatever a catch block caught.
 export function falErrorMessage(error: unknown): string {
 	if (error instanceof ApiError) {
+		// unknown: ApiError.body is the provider's error body, shaped differently by each fal host.
 		const body = error.body as Record<string, unknown> | string | undefined;
 		if (typeof body === 'string' && body.trim()) {
 			return `${error.status}: ${body.trim()}`;
@@ -232,6 +234,7 @@ export function falErrorMessage(error: unknown): string {
 			if (typeof detail === 'string') return `${error.status}: ${detail}`;
 			if (Array.isArray(detail)) {
 				const parts = detail.map((item) => {
+					// unknown: loc mixes field names and list indexes.
 					const entry = item as { loc?: unknown[]; msg?: string };
 					const loc = Array.isArray(entry.loc) ? entry.loc.join('.') : '';
 					return loc ? `${loc}: ${entry.msg ?? 'invalid'}` : (entry.msg ?? '');

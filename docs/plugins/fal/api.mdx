@@ -498,6 +498,8 @@ await corsair.fal.api.requests.deletePayloads({ requestId: '<request id>' });
 |------|------|----------|-------------|
 | `requestId` | `string` | Yes | — |
 
+Needs a full-access fal key; inference-only keys get 403. Deletes the stored input, output and generated files for good.
+
 
 
 **Output**

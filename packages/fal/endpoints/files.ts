@@ -10,12 +10,38 @@ import {
 // One-shot uploads only; fal's own client switches to multipart above ~90 MB.
 const MAX_UPLOAD_BYTES = 90 * 1024 * 1024;
 
-function decodeBase64(content: string): Uint8Array {
-	const data = content.replace(/^data:[^,]*;base64,/, '').replace(/\s+/g, '');
-	if (!/^[A-Za-z0-9+/_-]*={0,2}$/.test(data)) {
+/**
+ * Decodes standard or URL-safe base64, padded or not, after checking the
+ * decoded size. Node's decoder silently drops an incomplete last group
+ * (`YWJjA` decodes to `abc`), so a length that leaves one spare character, or
+ * padding that does not complete the last group, is refused.
+ */
+function decodeBase64(content: string): Buffer {
+	const data = content
+		.replace(/^data:[^,]*;base64,/, '')
+		.replace(/\s+/g, '')
+		.replace(/-/g, '+')
+		.replace(/_/g, '/');
+	const unpadded = data.replace(/={1,2}$/, '');
+	const padded = data.length !== unpadded.length;
+	if (
+		!/^[A-Za-z0-9+/]*$/.test(unpadded) ||
+		unpadded.length % 4 === 1 ||
+		(padded && data.length % 4 !== 0)
+	) {
 		throw new FalAPIError('contentBase64 is not valid base64.');
 	}
-	return new Uint8Array(Buffer.from(data, 'base64'));
+
+	const size = Math.floor((unpadded.length * 3) / 4);
+	if (size === 0) {
+		throw new FalAPIError('contentBase64 decodes to an empty file.');
+	}
+	if (size > MAX_UPLOAD_BYTES) {
+		throw new FalAPIError(
+			`The file is ${size} bytes; files.upload takes up to ${MAX_UPLOAD_BYTES}.`,
+		);
+	}
+	return Buffer.from(unpadded, 'base64');
 }
 
 function extensionFor(contentType: string): string {
@@ -26,14 +52,6 @@ function extensionFor(contentType: string): string {
 export const upload: FalEndpoints['filesUpload'] = async (ctx, rawInput) => {
 	const input = FalEndpointInputSchemas.filesUpload.parse(rawInput);
 	const bytes = decodeBase64(input.contentBase64);
-	if (bytes.byteLength === 0) {
-		throw new FalAPIError('contentBase64 decodes to an empty file.');
-	}
-	if (bytes.byteLength > MAX_UPLOAD_BYTES) {
-		throw new FalAPIError(
-			`The file is ${bytes.byteLength} bytes; files.upload takes up to ${MAX_UPLOAD_BYTES}.`,
-		);
-	}
 
 	const fileName =
 		input.fileName ?? `${Date.now()}.${extensionFor(input.contentType)}`;

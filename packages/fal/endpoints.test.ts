@@ -44,6 +44,7 @@ const mockLog = logEventFromContext as jest.MockedFunction<
 >;
 
 // Endpoints only read ctx.key; the rest of the context is the runtime's.
+// unknown: endpoints read only ctx.key; the rest of the context is the runtime's.
 const ctx = { key: 'fal-test-key' } as unknown as Parameters<
 	typeof queueSubmit
 >[0];
@@ -75,6 +76,7 @@ const output = {
 	seed: 35683856,
 };
 
+// unknown: error bodies are arbitrary JSON.
 function apiError(status: number, body: unknown): ApiError {
 	return new ApiError(
 		{ method: 'GET', url: '/x' },
@@ -221,6 +223,18 @@ describe('queue.status', () => {
 		expect(response.state).toBe('FAILED');
 		expect(response.error).toBe('Request timed out');
 	});
+
+	it.each([401, 403, 404])(
+		'raises a %s on the result read instead of calling the run FAILED',
+		async (code) => {
+			mockRequest
+				.mockResolvedValueOnce({ ...queued, status: 'COMPLETED' })
+				.mockRejectedValueOnce(apiError(code, { detail: 'no access' }));
+			await expect(
+				queueStatus(ctx, { responseUrl: RESPONSE_URL }),
+			).rejects.toMatchObject({ status: code });
+		},
+	);
 
 	it('rethrows a passing server fault on the result read so it is asked again', async () => {
 		mockRequest
@@ -593,6 +607,31 @@ describe('files.upload', () => {
 			content_type: 'image/png',
 			size: 8,
 		});
+	});
+
+	it('accepts unpadded and URL-safe base64', async () => {
+		mockRequest.mockResolvedValueOnce({
+			upload_url: 'https://storage.example/signed',
+			file_url: 'https://v3b.fal.media/files/b/x/f.bin',
+		});
+		const response = await filesUpload(ctx, {
+			// "ab?" in URL-safe base64 without padding.
+			contentBase64: 'YWI_',
+			contentType: 'application/octet-stream',
+		});
+		expect(response.size).toBe(3);
+		expect(Buffer.from(mockPut.mock.calls[0]![1]).toString()).toBe('ab?');
+	});
+
+	it.each([
+		['an incomplete last group', 'YWJjA'],
+		['padding that does not complete a group', 'YWJj='],
+		['padding in the middle', 'YW=Jj'],
+	])('refuses %s instead of uploading fewer bytes', async (_case, content) => {
+		await expect(
+			filesUpload(ctx, { contentBase64: content, contentType: 'text/plain' }),
+		).rejects.toThrow('not valid base64');
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('refuses content that is not base64', async () => {

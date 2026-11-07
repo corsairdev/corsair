@@ -21,7 +21,7 @@ examples:
         image_size: square_hd
 exampleWebhook:
   path: requests.completed
-  note: Pass `webhookUrl` to `queue.submit` and fal POSTs the result there when the request finishes. Hand `processWebhook` the raw body text (`await req.text()`), not parsed JSON, so the Ed25519 signature can be checked.
+  note: Pass `webhookUrl` to `queue.submit` and fal POSTs the result there when the request finishes. Hand `processWebhook` the raw body text (`await request.text()`), not parsed JSON. fal signs the exact bytes it sent; a parsed body is rebuilt as a best effort, which fails for outputs with whole-number floats or integers past 2^53. To hold deliveries to one fal account, store its fal user id (the `x-fal-webhook-user-id` header) as the account's `user_id`.
   after: "if (result.data?.status === 'OK') console.log(result.data.request_id, result.data.payload);"
 apiNotes:
   queue.status: Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` returned. fal marks failed requests COMPLETED as well, so once it does this reads the result and answers `state` SUCCEEDED with `output`, or FAILED with `error`.
@@ -30,6 +30,7 @@ apiNotes:
   usage.get: Needs a fal key with billing read access (the BILLING, READONLY or FULL preset); other keys get 403.
   usage.billingEvents: Needs a fal key with billing read access (the BILLING, READONLY or FULL preset); other keys get 403.
   account.billing: Needs a fal key with billing read access (the BILLING, READONLY or FULL preset); other keys get 403.
+  requests.deletePayloads: Needs a full-access fal key; inference-only keys get 403. Deletes the stored input, output and generated files for good.
 apiExamples:
   queue.submit:
     call: "{ endpointId: 'fal-ai/kling-video/v2.1/master/text-to-video', input: { prompt: 'A red kite over a beach at sunset', duration: '5' }, webhookUrl: 'https://example.com/webhooks/fal' }"

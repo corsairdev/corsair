@@ -43,6 +43,7 @@ export function createFalSigner() {
 
 	function sign(
 		options: {
+			// unknown: any JSON body to sign.
 			body?: unknown;
 			rawBody?: string;
 			timestampSeconds?: number;
@@ -76,6 +77,7 @@ export function createFalSigner() {
 		return {
 			headers,
 			rawBody,
+			// unknown: the signed body parsed back, any JSON object.
 			body: JSON.parse(rawBody) as Record<string, unknown>,
 		};
 	}

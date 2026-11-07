@@ -84,7 +84,7 @@ export type FalWebhooks = {
 	requestCompleted: FalWebhook<'requestCompleted', RequestCompletedEvent>;
 };
 
-export type FalBoundWebhooks = BindWebhooks<FalWebhooks>;
+export type FalBoundWebhooks = BindWebhooks<typeof falWebhooksNested>;
 
 const falEndpointsNested = {
 	queue: {
