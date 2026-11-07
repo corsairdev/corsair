@@ -647,6 +647,12 @@ const CallsCreateInputSchema = z.object({
 		.describe('Length of the call in seconds.'),
 	toNumber: z.string().optional(),
 	fromNumber: z.string().optional(),
+	userId: z
+		.number()
+		.int()
+		.optional()
+		.describe('User who made or took the call; only admins can set it.'),
+	recordingUrl: z.string().optional(),
 });
 
 export type CallsCreateInput = z.infer<typeof CallsCreateInputSchema>;
@@ -674,6 +680,12 @@ const CallsUpdateInputSchema = z.object({
 	duration: z.number().int().optional(),
 	toNumber: z.string().optional(),
 	fromNumber: z.string().optional(),
+	userId: z
+		.number()
+		.int()
+		.optional()
+		.describe('User who made or took the call; only admins can set it.'),
+	recordingUrl: z.string().optional(),
 });
 
 export type CallsUpdateInput = z.infer<typeof CallsUpdateInputSchema>;
@@ -1086,6 +1098,13 @@ const TasksCreateInputSchema = z.object({
 	isCompleted: z.boolean().optional(),
 	dueDate: z.string().optional().describe('Due date in YYYY-MM-DD format.'),
 	dueDateTime: z.string().optional(),
+	remindSecondsBefore: z
+		.number()
+		.int()
+		.optional()
+		.describe(
+			'Seconds before the due time to send a reminder; needs dueDateTime.',
+		),
 });
 
 export type TasksCreateInput = z.infer<typeof TasksCreateInputSchema>;
@@ -1111,6 +1130,12 @@ const TasksUpdateInputSchema = z.object({
 	isCompleted: z.boolean().optional(),
 	dueDate: z.string().optional(),
 	dueDateTime: z.string().optional(),
+	personId: z.number().int().optional(),
+	assignedTo: z
+		.string()
+		.optional()
+		.describe('Full name of the agent to assign the task to.'),
+	assignedUserId: z.number().int().optional(),
 });
 
 export type TasksUpdateInput = z.infer<typeof TasksUpdateInputSchema>;
@@ -1200,6 +1225,9 @@ const AppointmentsCreateInputSchema = z.object({
 		.boolean()
 		.optional()
 		.describe('Send an invitation email to the invitees.'),
+	outcomeId: IdSchema.optional().describe(
+		'Outcome ID from appointmentOutcomes.list.',
+	),
 });
 
 export type AppointmentsCreateInput = z.infer<
@@ -1235,6 +1263,9 @@ const AppointmentsUpdateInputSchema = z.object({
 	location: z.string().optional(),
 	typeId: IdSchema.optional(),
 	sendInvitation: z.boolean().optional(),
+	outcomeId: IdSchema.optional().describe(
+		'Outcome ID from appointmentOutcomes.list.',
+	),
 });
 
 export type AppointmentsUpdateInput = z.infer<

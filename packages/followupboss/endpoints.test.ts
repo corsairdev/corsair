@@ -755,6 +755,60 @@ describe('notes', () => {
 	});
 });
 
+describe('documented write fields', () => {
+	it.each([
+		[
+			'calls.create',
+			Calls.create,
+			{
+				personId: 950,
+				phone: '+1 555-0142',
+				isIncoming: false,
+				userId: 21,
+				recordingUrl: 'https://rec.example/88.mp3',
+			},
+		],
+		[
+			'calls.update',
+			Calls.update,
+			{ id: 88, userId: 21, recordingUrl: 'https://rec.example/88.mp3' },
+		],
+		[
+			'tasks.create',
+			Tasks.create,
+			{
+				personId: 950,
+				name: 'Call back',
+				dueDateTime: '2026-05-15T17:00:00Z',
+				remindSecondsBefore: 900,
+			},
+		],
+		[
+			'tasks.update',
+			Tasks.update,
+			{ id: 301, personId: 950, assignedTo: 'Maya Chen', assignedUserId: 21 },
+		],
+		[
+			'appointments.create',
+			Appointments.create,
+			{
+				title: 'Showing',
+				start: '2026-05-21T17:00:00Z',
+				end: '2026-05-21T18:00:00Z',
+				outcomeId: 3,
+			},
+		],
+		['appointments.update', Appointments.update, { id: 402, outcomeId: 3 }],
+	] as const)('%s sends every documented field', async (_, endpoint, input) => {
+		respond({ id: 1 });
+
+		await invoke(endpoint, input);
+
+		const { id: _id, ...body } = input as Record<string, unknown>;
+		expect(lastRequest().body).toEqual(body);
+	});
+});
+
 describe('events', () => {
 	it('create sends the page, campaign, search and history fields', async () => {
 		respond({}, 201);
