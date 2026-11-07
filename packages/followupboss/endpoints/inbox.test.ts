@@ -504,6 +504,29 @@ describe('reactions', () => {
 		expect(result).toEqual([reaction]);
 	});
 
+	it.each(['oops', null])(
+		'create rejects a %p reply instead of returning an empty list',
+		async (body) => {
+			respond(body, 201);
+
+			await expect(
+				invoke(reactionsCreate, { refType: 'Note', refId: 2144705, body: 'x' }),
+			).rejects.toMatchObject({ name: 'ZodError' });
+		},
+	);
+
+	it('create reads a bodyless reply as an empty list', async () => {
+		respondEmpty(201);
+
+		const result = await invoke(reactionsCreate, {
+			refType: 'Note',
+			refId: 2144705,
+			body: 'x',
+		});
+
+		expect(result).toEqual([]);
+	});
+
 	it('delete forwards both the path and the DELETE body', async () => {
 		respondEmpty(204);
 

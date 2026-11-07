@@ -337,6 +337,14 @@ describe('deals', () => {
 		expect(lastRequest().body).not.toHaveProperty('customFields');
 	});
 
+	it('list rejects a non-object reply instead of reading it as no deals', async () => {
+		respond('oops');
+
+		await expect(invoke(dealsList, {})).rejects.toMatchObject({
+			name: 'ZodError',
+		});
+	});
+
 	it('refuses custom field keys that could overwrite deal fields', async () => {
 		await expect(
 			invoke(dealsCreate, {

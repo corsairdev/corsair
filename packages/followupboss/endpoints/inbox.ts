@@ -306,7 +306,16 @@ export const reactionsCreate: FollowUpBossEndpoints['reactionsCreate'] = (
 		{
 			// Reacting answers 201 with the entity's reaction list, documented as
 			// an array; a bare reaction object is accepted as a one-element list.
-			shape: (raw) => (Array.isArray(raw) ? raw : asRecord(raw) ? [raw] : []),
+			// A bodyless reply is an empty list and a bare reaction a list of one;
+			// anything else (a string, null) goes to output validation and fails.
+			shape: (raw) =>
+				raw === undefined
+					? []
+					: Array.isArray(raw)
+						? raw
+						: asRecord(raw)
+							? [raw]
+							: raw,
 			log: ({ refType, refId }) => ({ refType, refId }),
 		},
 	);

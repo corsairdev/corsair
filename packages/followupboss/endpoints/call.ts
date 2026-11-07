@@ -67,8 +67,12 @@ export function envelopeOne(
 // be rejected there, instead of being coerced into an empty-looking list.
 // unknown: raw is the response body until asRecord narrows it.
 export function envelopeMany(raw: unknown, key: string): unknown {
-	const record = raw === undefined ? null : asRecord(raw);
-	const collection = record?.[key];
+	if (raw === undefined) return [];
+	const record = asRecord(raw);
+	// A non-object body (a string, null) is malformed: hand it to output
+	// validation so it fails instead of reading as an empty list.
+	if (!record) return raw;
+	const collection = record[key];
 	return collection === undefined ? [] : collection;
 }
 
