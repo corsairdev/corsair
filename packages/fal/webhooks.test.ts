@@ -319,6 +319,36 @@ describe('fal key rotation', () => {
 		await verifyFalWebhookSignature(forged, { now: NOW_MS + 10_000 });
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
+
+	it('asks for a retry when fal rotates within a minute of a load', async () => {
+		resetFalJwksCache();
+		const { jwks: oldKeys } = createFalSigner();
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce({
+				ok: true,
+				json: async () => ({ keys: oldKeys }),
+			})
+			.mockResolvedValue({ ok: true, json: async () => ({ keys: JWKS }) });
+		global.fetch = fetchMock as unknown as typeof fetch;
+		await fetchFalJwks(NOW_MS - 30_000);
+
+		// Signed with the rotated key 30 s after the load: no refetch allowed yet.
+		const soon = await verifyFalWebhookSignature(
+			sign({ timestampSeconds: NOW_S }),
+			{ now: NOW_MS },
+		);
+		expect(soon).toMatchObject({ valid: false, retryable: true });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+
+		// fal's retry after the minute refetches and verifies.
+		const retried = await verifyFalWebhookSignature(
+			sign({ timestampSeconds: NOW_S + 40 }),
+			{ now: NOW_MS + 40_000 },
+		);
+		expect(retried).toEqual({ valid: true });
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
 });
 
 describe('falJsonDumps', () => {
@@ -409,7 +439,9 @@ describe('requests.completed', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
-	it('answers 401 when the signature does not verify', async () => {
+	it('answers 401 when the signature does not verify against keys just refetched', async () => {
+		// Keys loaded two minutes ago: the miss may refetch, and still fails.
+		await fetchFalJwks(Date.now() - 120_000);
 		const request = sign();
 		const result = await completed.handler(ctx, {
 			...request,

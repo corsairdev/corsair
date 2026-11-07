@@ -25,7 +25,11 @@ export async function POST(request: Request) {
     // The raw text: fal signs the exact bytes it sent, so don't parse it first.
     const body = await request.text();
     const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // Answer non-2xx when processing failed (fal's signing keys didn't load),
+    // so fal delivers again.
+    return Response.json(result.response ?? { success: false }, {
+        status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
+    });
 }
 ```
 

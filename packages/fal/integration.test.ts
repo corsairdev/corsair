@@ -6,6 +6,7 @@ import { fal } from './index';
 import { completedBody, createFalSigner, REQUEST_ID } from './test-fixtures';
 import {
 	FAL_JWKS_URL,
+	fetchFalJwks,
 	RequestCompletedEventSchema,
 	resetFalJwksCache,
 } from './webhooks/types';
@@ -263,6 +264,9 @@ describe('fal webhooks through processWebhook', () => {
 			});
 			expect(events).toHaveLength(0);
 
+			// Keys loaded over a minute ago, so the miss refetches and is final.
+			resetFalJwksCache();
+			await fetchFalJwks(Date.now() - 120_000);
 			const response = await corsair.fal.webhooks.requests.completed.handler({
 				payload: JSON.parse(tampered),
 				headers: delivery.headers,

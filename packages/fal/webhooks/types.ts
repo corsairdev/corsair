@@ -155,9 +155,10 @@ async function loadFalJwks(now: number): Promise<FalJwk[]> {
 
 /**
  * fal's signing keys. A plain read answers from a fresh cache without waiting
- * on anything; `refresh` (after a signature miss) fetches again unless the
- * keys were loaded under a minute ago. While the last attempt has failed it
- * throws, so a miss is reported as "try later", not as a bad signature.
+ * on anything; `refresh` (after a signature miss) fetches again, at most once
+ * a minute. When it can't fetch again yet it throws, so a miss is reported as
+ * "try later" rather than as a bad signature: a key fal rotated in since the
+ * last load still gets its delivery verified on the retry.
  */
 export async function fetchFalJwks(
 	now = Date.now(),
@@ -168,10 +169,14 @@ export async function fetchFalJwks(
 	if (pendingFetch) return pendingFetch;
 
 	if (now - lastFetchAttemptAt < JWKS_FETCH_MIN_INTERVAL_MS) {
-		// Loaded under a minute ago: these are fal's current keys.
-		if (jwksCache && fresh && !lastFetchFailed) return jwksCache.keys;
-		// The last attempt failed: the keys may be missing or out of date.
-		throw new Error('fal JWKS fetch failed under a minute ago');
+		// Can't load again yet, so the keys can't be confirmed current: the
+		// last attempt failed, or fal may have rotated since the last load.
+		// Either way the caller is told to try later, not that it's forged.
+		throw new Error(
+			lastFetchFailed
+				? 'fal JWKS fetch failed under a minute ago'
+				: 'fal JWKS was loaded under a minute ago; try again later',
+		);
 	}
 
 	lastFetchAttemptAt = now;
