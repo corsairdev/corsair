@@ -35,6 +35,57 @@ const ctx = {
 	$getAccountId: async () => 'account-1',
 } as never;
 
+// unknown: zod v4 field internals are read structurally to derive
+// type-appropriate fixture values; stricter typing would couple the test to
+// zod internals, and every access is guarded because wrapper types differ.
+type ZodField = {
+	isOptional?: () => boolean;
+	safeParse: (value: unknown) => { success: boolean };
+	_zod: {
+		def: {
+			type: string;
+			innerType?: ZodField;
+			element?: ZodField;
+			shape?: Record<string, ZodField>;
+			options?: ZodField[];
+			values?: unknown[];
+			entrytype?: ZodField;
+		};
+	};
+};
+
+// Builds a minimal fixture that satisfies the schema: cheap scalars first,
+// then the required fields of an object shape, then the first workable union
+// branch. Returns undefined when nothing applies (valid for z.undefined
+// output contracts of 204/no-body operations).
+function buildOutputFixture(schema: ZodField, depth = 0): unknown {
+	if (depth > 8) return undefined;
+	for (const candidate of [undefined, {}, [], 1, true]) {
+		if (schema.safeParse(candidate).success) return candidate;
+	}
+	const def = schema._zod.def;
+	if (def.innerType) return buildOutputFixture(def.innerType, depth + 1);
+	if (def.type === 'string') return 'mixmax-test';
+	if (def.type === 'literal') return def.values?.[0];
+	if (def.type === 'enum' || def.type === 'record') return 'mixmax-test';
+	if (def.shape) {
+		const fixture: Record<string, unknown> = {};
+		for (const [key, field] of Object.entries(def.shape)) {
+			if (field.isOptional?.()) continue;
+			fixture[key] = buildOutputFixture(field, depth + 1);
+		}
+		return fixture;
+	}
+	if (def.type === 'array') return [];
+	if (def.options) {
+		for (const option of def.options) {
+			const fixture = buildOutputFixture(option, depth + 1);
+			if (schema.safeParse(fixture).success) return fixture;
+		}
+	}
+	return undefined;
+}
+
 describe('Mixmax schema', () => {
 	it('declares a semver version', () => {
 		expect(MixmaxSchema.version).toBeDefined();
@@ -80,27 +131,18 @@ describe('Mixmax schema', () => {
 			request.mockReset();
 			// A mock response that already satisfies the operation's output
 			// contract, so the wrapper's output parse observes a legal value.
-			// If none of these simple envelopes parses, the output schema is
-			// over-restrictive and this test fails by design.
-			const outputCandidates = [
-				undefined,
-				{},
-				{ _id: 'mixmax-test' },
-				{ results: [] },
-				{ recipients: [] },
-				[],
-			];
-			// findIndex, not find: a valid `undefined` envelope (204/no-body
-			// operations) is indistinguishable from "no candidate matched".
-			const validOutputIndex = outputCandidates.findIndex(
-				(candidate) => schemas.output.safeParse(candidate).success,
+			// unknown: the fixture builder reads zod v4 internals structurally;
+			// the narrowest possible assertion bridges the concrete zod schema
+			// to that structural view without weakening production types.
+			const mockResponse = buildOutputFixture(
+				schemas.output as unknown as ZodField,
 			);
-			expect(validOutputIndex).toBeGreaterThanOrEqual(0);
-			request.mockResolvedValue(
-				// unknown: the candidate list is heterogeneous (undefined,
-				// objects, arrays), which no single narrower type can express.
-				outputCandidates[validOutputIndex],
-			);
+			if (!schemas.output.safeParse(mockResponse).success) {
+				throw new Error(
+					`output schema of ${operation} rejects every generated fixture`,
+				);
+			}
+			request.mockResolvedValue(mockResponse);
 
 			const acceptsEmpty = schemas.input.safeParse({}).success;
 
