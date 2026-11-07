@@ -13,14 +13,27 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
+	AppointmentLinks,
+	CodeSnippets,
+	FileRequests,
+	InsightsReports,
 	Livefeed,
+	MeetingInvites,
+	Meetings,
+	MeetingTypes,
 	Messages,
+	Polls,
+	Qa,
+	Reports,
+	Rules,
 	SequenceFolders,
 	Sequences,
 	Snippets,
 	SnippetTags,
+	Tasks,
 	Unsubscribes,
 	Users,
+	YesNo,
 } from './endpoints';
 import type {
 	MixmaxEndpointInputs,
@@ -101,6 +114,47 @@ export type MixmaxEndpoints = {
 	sequenceFoldersRename: MixmaxEndpoint<'sequenceFoldersRename'>;
 	sequenceFoldersDelete: MixmaxEndpoint<'sequenceFoldersDelete'>;
 	sequenceFoldersAddSequences: MixmaxEndpoint<'sequenceFoldersAddSequences'>;
+	rulesList: MixmaxEndpoint<'rulesList'>;
+	rulesCreate: MixmaxEndpoint<'rulesCreate'>;
+	rulesGet: MixmaxEndpoint<'rulesGet'>;
+	rulesUpdate: MixmaxEndpoint<'rulesUpdate'>;
+	rulesDelete: MixmaxEndpoint<'rulesDelete'>;
+	rulesDeleteBulk: MixmaxEndpoint<'rulesDeleteBulk'>;
+	rulesListActions: MixmaxEndpoint<'rulesListActions'>;
+	rulesCreateAction: MixmaxEndpoint<'rulesCreateAction'>;
+	rulesUpdateAction: MixmaxEndpoint<'rulesUpdateAction'>;
+	rulesDeleteAction: MixmaxEndpoint<'rulesDeleteAction'>;
+	rulesListEvents: MixmaxEndpoint<'rulesListEvents'>;
+	rulesGetEvent: MixmaxEndpoint<'rulesGetEvent'>;
+	codeSnippetsList: MixmaxEndpoint<'codeSnippetsList'>;
+	codeSnippetsCreate: MixmaxEndpoint<'codeSnippetsCreate'>;
+	codeSnippetsGet: MixmaxEndpoint<'codeSnippetsGet'>;
+	qaList: MixmaxEndpoint<'qaList'>;
+	qaGet: MixmaxEndpoint<'qaGet'>;
+	yesnoList: MixmaxEndpoint<'yesnoList'>;
+	yesnoGet: MixmaxEndpoint<'yesnoGet'>;
+	pollsList: MixmaxEndpoint<'pollsList'>;
+	pollsGet: MixmaxEndpoint<'pollsGet'>;
+	appointmentLinksList: MixmaxEndpoint<'appointmentLinksList'>;
+	appointmentLinksGetMe: MixmaxEndpoint<'appointmentLinksGetMe'>;
+	appointmentLinksUpdateMe: MixmaxEndpoint<'appointmentLinksUpdateMe'>;
+	meetingTypesList: MixmaxEndpoint<'meetingTypesList'>;
+	meetingTypesCreate: MixmaxEndpoint<'meetingTypesCreate'>;
+	meetingTypesGet: MixmaxEndpoint<'meetingTypesGet'>;
+	meetingTypesUpdate: MixmaxEndpoint<'meetingTypesUpdate'>;
+	meetingTypesDelete: MixmaxEndpoint<'meetingTypesDelete'>;
+	meetingInvitesList: MixmaxEndpoint<'meetingInvitesList'>;
+	meetingInvitesGet: MixmaxEndpoint<'meetingInvitesGet'>;
+	meetingsSearchSummaries: MixmaxEndpoint<'meetingsSearchSummaries'>;
+	meetingsGetTranscript: MixmaxEndpoint<'meetingsGetTranscript'>;
+	tasksList: MixmaxEndpoint<'tasksList'>;
+	fileRequestsList: MixmaxEndpoint<'fileRequestsList'>;
+	fileRequestsGet: MixmaxEndpoint<'fileRequestsGet'>;
+	insightsReportsList: MixmaxEndpoint<'insightsReportsList'>;
+	insightsReportsCreate: MixmaxEndpoint<'insightsReportsCreate'>;
+	insightsReportsUpdate: MixmaxEndpoint<'insightsReportsUpdate'>;
+	insightsReportsDelete: MixmaxEndpoint<'insightsReportsDelete'>;
+	reportsRunDataTable: MixmaxEndpoint<'reportsRunDataTable'>;
 };
 
 const mixmaxEndpointsNested = {
@@ -169,6 +223,77 @@ const mixmaxEndpointsNested = {
 		rename: SequenceFolders.rename,
 		delete: SequenceFolders.delete,
 		addSequences: SequenceFolders.addSequences,
+	},
+	rules: {
+		list: Rules.list,
+		create: Rules.create,
+		get: Rules.get,
+		update: Rules.update,
+		delete: Rules.delete,
+		deleteBulk: Rules.deleteBulk,
+		actions: {
+			list: Rules.actions.list,
+			create: Rules.actions.create,
+			update: Rules.actions.update,
+			delete: Rules.actions.delete,
+		},
+		events: {
+			list: Rules.events.list,
+			get: Rules.events.get,
+		},
+	},
+	codeSnippets: {
+		list: CodeSnippets.list,
+		create: CodeSnippets.create,
+		get: CodeSnippets.get,
+	},
+	qa: {
+		list: Qa.list,
+		get: Qa.get,
+	},
+	yesno: {
+		list: YesNo.list,
+		get: YesNo.get,
+	},
+	polls: {
+		list: Polls.list,
+		get: Polls.get,
+	},
+	appointmentLinks: {
+		list: AppointmentLinks.list,
+		getMe: AppointmentLinks.getMe,
+		updateMe: AppointmentLinks.updateMe,
+	},
+	meetingTypes: {
+		list: MeetingTypes.list,
+		create: MeetingTypes.create,
+		get: MeetingTypes.get,
+		update: MeetingTypes.update,
+		delete: MeetingTypes.delete,
+	},
+	meetingInvites: {
+		list: MeetingInvites.list,
+		get: MeetingInvites.get,
+	},
+	meetings: {
+		searchSummaries: Meetings.searchSummaries,
+		getTranscript: Meetings.getTranscript,
+	},
+	tasks: {
+		list: Tasks.list,
+	},
+	fileRequests: {
+		list: FileRequests.list,
+		get: FileRequests.get,
+	},
+	insightsReports: {
+		list: InsightsReports.list,
+		create: InsightsReports.create,
+		update: InsightsReports.update,
+		delete: InsightsReports.delete,
+	},
+	reports: {
+		runDataTable: Reports.runDataTable,
 	},
 } as const;
 
@@ -348,6 +473,171 @@ export const mixmaxEndpointSchemas = {
 	'sequenceFolders.addSequences': {
 		input: MixmaxEndpointInputSchemas.sequenceFoldersAddSequences,
 		output: MixmaxEndpointOutputSchemas.sequenceFoldersAddSequences,
+	},
+	'rules.list': {
+		input: MixmaxEndpointInputSchemas.rulesList,
+		output: MixmaxEndpointOutputSchemas.rulesList,
+	},
+	'rules.create': {
+		input: MixmaxEndpointInputSchemas.rulesCreate,
+		output: MixmaxEndpointOutputSchemas.rulesCreate,
+	},
+	'rules.get': {
+		input: MixmaxEndpointInputSchemas.rulesGet,
+		output: MixmaxEndpointOutputSchemas.rulesGet,
+	},
+	'rules.update': {
+		input: MixmaxEndpointInputSchemas.rulesUpdate,
+		output: MixmaxEndpointOutputSchemas.rulesUpdate,
+	},
+	'rules.delete': {
+		input: MixmaxEndpointInputSchemas.rulesDelete,
+		output: MixmaxEndpointOutputSchemas.rulesDelete,
+	},
+	'rules.deleteBulk': {
+		input: MixmaxEndpointInputSchemas.rulesDeleteBulk,
+		output: MixmaxEndpointOutputSchemas.rulesDeleteBulk,
+	},
+	'rules.actions.list': {
+		input: MixmaxEndpointInputSchemas.rulesListActions,
+		output: MixmaxEndpointOutputSchemas.rulesListActions,
+	},
+	'rules.actions.create': {
+		input: MixmaxEndpointInputSchemas.rulesCreateAction,
+		output: MixmaxEndpointOutputSchemas.rulesCreateAction,
+	},
+	'rules.actions.update': {
+		input: MixmaxEndpointInputSchemas.rulesUpdateAction,
+		output: MixmaxEndpointOutputSchemas.rulesUpdateAction,
+	},
+	'rules.actions.delete': {
+		input: MixmaxEndpointInputSchemas.rulesDeleteAction,
+		output: MixmaxEndpointOutputSchemas.rulesDeleteAction,
+	},
+	'rules.events.list': {
+		input: MixmaxEndpointInputSchemas.rulesListEvents,
+		output: MixmaxEndpointOutputSchemas.rulesListEvents,
+	},
+	'rules.events.get': {
+		input: MixmaxEndpointInputSchemas.rulesGetEvent,
+		output: MixmaxEndpointOutputSchemas.rulesGetEvent,
+	},
+	'codeSnippets.list': {
+		input: MixmaxEndpointInputSchemas.codeSnippetsList,
+		output: MixmaxEndpointOutputSchemas.codeSnippetsList,
+	},
+	'codeSnippets.create': {
+		input: MixmaxEndpointInputSchemas.codeSnippetsCreate,
+		output: MixmaxEndpointOutputSchemas.codeSnippetsCreate,
+	},
+	'codeSnippets.get': {
+		input: MixmaxEndpointInputSchemas.codeSnippetsGet,
+		output: MixmaxEndpointOutputSchemas.codeSnippetsGet,
+	},
+	'qa.list': {
+		input: MixmaxEndpointInputSchemas.qaList,
+		output: MixmaxEndpointOutputSchemas.qaList,
+	},
+	'qa.get': {
+		input: MixmaxEndpointInputSchemas.qaGet,
+		output: MixmaxEndpointOutputSchemas.qaGet,
+	},
+	'yesno.list': {
+		input: MixmaxEndpointInputSchemas.yesnoList,
+		output: MixmaxEndpointOutputSchemas.yesnoList,
+	},
+	'yesno.get': {
+		input: MixmaxEndpointInputSchemas.yesnoGet,
+		output: MixmaxEndpointOutputSchemas.yesnoGet,
+	},
+	'polls.list': {
+		input: MixmaxEndpointInputSchemas.pollsList,
+		output: MixmaxEndpointOutputSchemas.pollsList,
+	},
+	'polls.get': {
+		input: MixmaxEndpointInputSchemas.pollsGet,
+		output: MixmaxEndpointOutputSchemas.pollsGet,
+	},
+
+	'appointmentLinks.list': {
+		input: MixmaxEndpointInputSchemas.appointmentLinksList,
+		output: MixmaxEndpointOutputSchemas.appointmentLinksList,
+	},
+	'appointmentLinks.getMe': {
+		input: MixmaxEndpointInputSchemas.appointmentLinksGetMe,
+		output: MixmaxEndpointOutputSchemas.appointmentLinksGetMe,
+	},
+	'appointmentLinks.updateMe': {
+		input: MixmaxEndpointInputSchemas.appointmentLinksUpdateMe,
+		output: MixmaxEndpointOutputSchemas.appointmentLinksUpdateMe,
+	},
+	'meetingTypes.list': {
+		input: MixmaxEndpointInputSchemas.meetingTypesList,
+		output: MixmaxEndpointOutputSchemas.meetingTypesList,
+	},
+	'meetingTypes.create': {
+		input: MixmaxEndpointInputSchemas.meetingTypesCreate,
+		output: MixmaxEndpointOutputSchemas.meetingTypesCreate,
+	},
+	'meetingTypes.get': {
+		input: MixmaxEndpointInputSchemas.meetingTypesGet,
+		output: MixmaxEndpointOutputSchemas.meetingTypesGet,
+	},
+	'meetingTypes.update': {
+		input: MixmaxEndpointInputSchemas.meetingTypesUpdate,
+		output: MixmaxEndpointOutputSchemas.meetingTypesUpdate,
+	},
+	'meetingTypes.delete': {
+		input: MixmaxEndpointInputSchemas.meetingTypesDelete,
+		output: MixmaxEndpointOutputSchemas.meetingTypesDelete,
+	},
+	'meetingInvites.list': {
+		input: MixmaxEndpointInputSchemas.meetingInvitesList,
+		output: MixmaxEndpointOutputSchemas.meetingInvitesList,
+	},
+	'meetingInvites.get': {
+		input: MixmaxEndpointInputSchemas.meetingInvitesGet,
+		output: MixmaxEndpointOutputSchemas.meetingInvitesGet,
+	},
+	'meetings.searchSummaries': {
+		input: MixmaxEndpointInputSchemas.meetingsSearchSummaries,
+		output: MixmaxEndpointOutputSchemas.meetingsSearchSummaries,
+	},
+	'meetings.getTranscript': {
+		input: MixmaxEndpointInputSchemas.meetingsGetTranscript,
+		output: MixmaxEndpointOutputSchemas.meetingsGetTranscript,
+	},
+	'tasks.list': {
+		input: MixmaxEndpointInputSchemas.tasksList,
+		output: MixmaxEndpointOutputSchemas.tasksList,
+	},
+	'fileRequests.list': {
+		input: MixmaxEndpointInputSchemas.fileRequestsList,
+		output: MixmaxEndpointOutputSchemas.fileRequestsList,
+	},
+	'fileRequests.get': {
+		input: MixmaxEndpointInputSchemas.fileRequestsGet,
+		output: MixmaxEndpointOutputSchemas.fileRequestsGet,
+	},
+	'insightsReports.list': {
+		input: MixmaxEndpointInputSchemas.insightsReportsList,
+		output: MixmaxEndpointOutputSchemas.insightsReportsList,
+	},
+	'insightsReports.create': {
+		input: MixmaxEndpointInputSchemas.insightsReportsCreate,
+		output: MixmaxEndpointOutputSchemas.insightsReportsCreate,
+	},
+	'insightsReports.update': {
+		input: MixmaxEndpointInputSchemas.insightsReportsUpdate,
+		output: MixmaxEndpointOutputSchemas.insightsReportsUpdate,
+	},
+	'insightsReports.delete': {
+		input: MixmaxEndpointInputSchemas.insightsReportsDelete,
+		output: MixmaxEndpointOutputSchemas.insightsReportsDelete,
+	},
+	'reports.runDataTable': {
+		input: MixmaxEndpointInputSchemas.reportsRunDataTable,
+		output: MixmaxEndpointOutputSchemas.reportsRunDataTable,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof mixmaxEndpointsNested
@@ -555,6 +845,174 @@ export const mixmaxEndpointMeta = {
 	'sequenceFolders.addSequences': {
 		riskLevel: 'write',
 		description: 'Move one or more Mixmax sequences into a sequence folder.',
+	},
+	'rules.list': {
+		riskLevel: 'read',
+		description: 'List the user’s Mixmax rules, optionally with their actions.',
+	},
+	'rules.create': {
+		riskLevel: 'write',
+		description: 'Create a Mixmax rule with a trigger and actions.',
+	},
+	'rules.get': {
+		riskLevel: 'read',
+		description: 'Retrieve one Mixmax rule by id.',
+	},
+	'rules.update': {
+		riskLevel: 'write',
+		description: 'Update the trigger or fields of a Mixmax rule.',
+	},
+	'rules.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Mixmax rule permanently.',
+	},
+	'rules.deleteBulk': {
+		riskLevel: 'destructive',
+		description: 'Delete several Mixmax rules at once by their ids.',
+	},
+	'rules.actions.list': {
+		riskLevel: 'read',
+		description: 'List the actions of one Mixmax rule.',
+	},
+	'rules.actions.create': {
+		riskLevel: 'write',
+		description: 'Add an action to a Mixmax rule.',
+	},
+	'rules.actions.update': {
+		riskLevel: 'write',
+		description: 'Update one action of a Mixmax rule.',
+	},
+	'rules.actions.delete': {
+		riskLevel: 'destructive',
+		description: 'Remove one action from a Mixmax rule.',
+	},
+	'rules.events.list': {
+		riskLevel: 'read',
+		description:
+			'List Mixmax rule events with their status, filterable by rule and outcome.',
+	},
+	'rules.events.get': {
+		riskLevel: 'read',
+		description: 'Retrieve one Mixmax rule event by id.',
+	},
+	'codeSnippets.list': {
+		riskLevel: 'read',
+		description: 'List the user’s Mixmax code snippets.',
+	},
+	'codeSnippets.create': {
+		riskLevel: 'write',
+		description: 'Create a Mixmax code snippet.',
+	},
+	'codeSnippets.get': {
+		riskLevel: 'read',
+		description: 'Retrieve one Mixmax code snippet by id.',
+	},
+	'qa.list': {
+		riskLevel: 'read',
+		description: 'List the user’s Mixmax Q&A forms with their answers.',
+	},
+	'qa.get': {
+		riskLevel: 'read',
+		description: 'Retrieve one Mixmax Q&A form by id.',
+	},
+	'yesno.list': {
+		riskLevel: 'read',
+		description: 'List the user’s Mixmax yes/no questions with their answers.',
+	},
+	'yesno.get': {
+		riskLevel: 'read',
+		description: 'Retrieve one Mixmax yes/no question by id.',
+	},
+	'polls.list': {
+		riskLevel: 'read',
+		description: 'List the user’s Mixmax polls with their response counts.',
+	},
+	'polls.get': {
+		riskLevel: 'read',
+		description: 'Retrieve one Mixmax poll by id.',
+	},
+
+	'appointmentLinks.list': {
+		riskLevel: 'read',
+		description: 'Search the user’s Mixmax appointment links by name.',
+	},
+	'appointmentLinks.getMe': {
+		riskLevel: 'read',
+		description: 'Get the user’s default Mixmax appointment link.',
+	},
+	'appointmentLinks.updateMe': {
+		riskLevel: 'write',
+		description: 'Rename the user’s default Mixmax appointment link.',
+	},
+	'meetingTypes.list': {
+		riskLevel: 'read',
+		description: 'List the user’s Mixmax meeting templates.',
+	},
+	'meetingTypes.create': {
+		riskLevel: 'write',
+		description: 'Create a Mixmax meeting template.',
+	},
+	'meetingTypes.get': {
+		riskLevel: 'read',
+		description: 'Retrieve one Mixmax meeting template by id.',
+	},
+	'meetingTypes.update': {
+		riskLevel: 'write',
+		description: 'Update a Mixmax meeting template.',
+	},
+	'meetingTypes.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Mixmax meeting template permanently.',
+	},
+	'meetingInvites.list': {
+		riskLevel: 'read',
+		description: 'List the Mixmax meeting invites sent to the user.',
+	},
+	'meetingInvites.get': {
+		riskLevel: 'read',
+		description: 'Retrieve one Mixmax meeting invite by id.',
+	},
+	'meetings.searchSummaries': {
+		riskLevel: 'read',
+		description:
+			'Search Mixmax meeting summaries by attendee, title, and date range.',
+	},
+	'meetings.getTranscript': {
+		riskLevel: 'read',
+		description: 'Retrieve the transcript of one Mixmax meeting.',
+	},
+	'tasks.list': {
+		riskLevel: 'read',
+		description: 'List the user’s open Mixmax tasks.',
+	},
+	'fileRequests.list': {
+		riskLevel: 'read',
+		description: 'List the Mixmax file requests the user has access to.',
+	},
+	'fileRequests.get': {
+		riskLevel: 'read',
+		description: 'Retrieve one Mixmax file request by id.',
+	},
+	'insightsReports.list': {
+		riskLevel: 'read',
+		description: 'List the user’s saved Mixmax insights reports.',
+	},
+	'insightsReports.create': {
+		riskLevel: 'write',
+		description: 'Create a saved Mixmax insights report from a query.',
+	},
+	'insightsReports.update': {
+		riskLevel: 'write',
+		description: 'Update a saved Mixmax insights report.',
+	},
+	'insightsReports.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a saved Mixmax insights report permanently.',
+	},
+	'reports.runDataTable': {
+		riskLevel: 'read',
+		description:
+			'Run a Mixmax reporting query and return the aggregated data table buckets.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof mixmaxEndpointsNested>;
 
