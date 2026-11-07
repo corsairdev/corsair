@@ -272,9 +272,18 @@ const PeopleUpdateInputSchema = z.object({
 	assignedLenderId: z.number().int().optional(),
 	background: z.string().optional(),
 	emails: z.array(EmailSchema).min(1).optional(),
-	phones: z.array(PhoneSchema).min(1).optional(),
+	phones: z
+		.array(PhoneSchema)
+		.min(1)
+		.optional()
+		.describe(
+			'Replaces all existing phone numbers, including relationship numbers. Include every number to keep.',
+		),
 	addresses: z.array(AddressSchema).optional(),
-	tags: z.array(z.string()).optional(),
+	tags: z
+		.array(z.string())
+		.optional()
+		.describe('Replaces the existing tags unless mergeTags is true.'),
 	timeframeId: z
 		.number()
 		.int()

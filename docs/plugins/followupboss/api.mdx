@@ -2084,6 +2084,7 @@ await corsair.followupboss.api.deals.create({ name: '812 Oak Street', stageId: 7
 | `name` | `string` | Yes | Name of the deal. |
 | `stageId` | `number` | Yes | The stage that this deal should be assigned to. |
 | `description` | `string` | No | — |
+| `customFields` | `Record<string, any>` | No | Deal custom field values keyed by their `custom…` name (e.g. `{ customClosingDate: "2026-12-01" }`); sent as top-level fields. |
 | `peopleIds` | `number[]` | No | Person ids that should be part of this deal. |
 | `userIds` | `number[]` | No | User ids that should be part of this deal. |
 | `price` | `number` | No | — |
@@ -2377,6 +2378,7 @@ await corsair.followupboss.api.deals.update({ id: 55, price: 535000 });
 | `name` | `string` | No | — |
 | `stageId` | `number` | No | — |
 | `description` | `string` | No | — |
+| `customFields` | `Record<string, any>` | No | Deal custom field values keyed by their `custom…` name (e.g. `{ customClosingDate: "2026-12-01" }`); sent as top-level fields. |
 | `peopleIds` | `number[]` | No | — |
 | `userIds` | `number[]` | No | — |
 | `price` | `number` | No | — |
@@ -4904,9 +4906,9 @@ await corsair.followupboss.api.people.update({ id: 123, stage: 'Working', mergeT
 | `assignedLenderId` | `number` | No | — |
 | `background` | `string` | No | — |
 | `emails` | `object[]` | No | — |
-| `phones` | `object[]` | No | — |
+| `phones` | `object[]` | No | Replaces all existing phone numbers, including relationship numbers. Include every number to keep. |
 | `addresses` | `object[]` | No | — |
-| `tags` | `string[]` | No | — |
+| `tags` | `string[]` | No | Replaces the existing tags unless mergeTags is true. |
 | `timeframeId` | `number` | No | Buying timeframe ID from timeframes.list. |
 | `customFields` | `Record<string, any>` | No | — |
 | `mergeTags` | `boolean` | No | When true, sent tags are merged into the existing tags instead of replacing them. |
