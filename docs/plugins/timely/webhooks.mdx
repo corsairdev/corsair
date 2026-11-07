@@ -1,0 +1,942 @@
+---
+title: Webhooks
+description: "Timely incoming webhooks: event paths, payloads, and response data."
+---
+
+The Timely plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/timely/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `projects`
+  - `created` (`projects.created`)
+  - `deleted` (`projects.deleted`)
+  - `updated` (`projects.updated`)
+- `tags`
+  - `created` (`tags.created`)
+  - `deleted` (`tags.deleted`)
+  - `updated` (`tags.updated`)
+- `tasks`
+  - `created` (`tasks.created`)
+  - `deleted` (`tasks.deleted`)
+  - `updated` (`tasks.updated`)
+- `timeEntries`
+  - `created` (`timeEntries.created`)
+  - `deleted` (`timeEntries.deleted`)
+  - `updated` (`timeEntries.updated`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Projects
+
+### Created
+
+`projects.created`
+
+A project was created
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  entity_id: number | string,
+  entity_type: string,
+  entity_path?: string | null,
+  entity_external_id?: string | null,
+  updated_from?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  payload: {
+    entity_id: number | string,
+    entity_type: string,
+    entity_path?: string | null,
+    entity_external_id?: string | null,
+    updated_from?: string | null,
+    updated_at?: string | null,
+    status?: string | null,
+    date?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+timely({
+    webhookHooks: {
+        projects: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`projects.deleted`
+
+A project was deleted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  entity_id: number | string,
+  entity_type: string,
+  entity_path?: string | null,
+  entity_external_id?: string | null,
+  updated_from?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  payload: {
+    entity_id: number | string,
+    entity_type: string,
+    entity_path?: string | null,
+    entity_external_id?: string | null,
+    updated_from?: string | null,
+    updated_at?: string | null,
+    status?: string | null,
+    date?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+timely({
+    webhookHooks: {
+        projects: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`projects.updated`
+
+A project changed
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  entity_id: number | string,
+  entity_type: string,
+  entity_path?: string | null,
+  entity_external_id?: string | null,
+  updated_from?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  payload: {
+    entity_id: number | string,
+    entity_type: string,
+    entity_path?: string | null,
+    entity_external_id?: string | null,
+    updated_from?: string | null,
+    updated_at?: string | null,
+    status?: string | null,
+    date?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+timely({
+    webhookHooks: {
+        projects: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Tags
+
+### Created
+
+`tags.created`
+
+A tag was created (Timely event labels:created)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  entity_id: number | string,
+  entity_type: string,
+  entity_path?: string | null,
+  entity_external_id?: string | null,
+  updated_from?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  payload: {
+    entity_id: number | string,
+    entity_type: string,
+    entity_path?: string | null,
+    entity_external_id?: string | null,
+    updated_from?: string | null,
+    updated_at?: string | null,
+    status?: string | null,
+    date?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+timely({
+    webhookHooks: {
+        tags: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`tags.deleted`
+
+A tag was deleted (Timely event labels:deleted)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  entity_id: number | string,
+  entity_type: string,
+  entity_path?: string | null,
+  entity_external_id?: string | null,
+  updated_from?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  payload: {
+    entity_id: number | string,
+    entity_type: string,
+    entity_path?: string | null,
+    entity_external_id?: string | null,
+    updated_from?: string | null,
+    updated_at?: string | null,
+    status?: string | null,
+    date?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+timely({
+    webhookHooks: {
+        tags: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`tags.updated`
+
+A tag changed (Timely event labels:updated)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  entity_id: number | string,
+  entity_type: string,
+  entity_path?: string | null,
+  entity_external_id?: string | null,
+  updated_from?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  payload: {
+    entity_id: number | string,
+    entity_type: string,
+    entity_path?: string | null,
+    entity_external_id?: string | null,
+    updated_from?: string | null,
+    updated_at?: string | null,
+    status?: string | null,
+    date?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+timely({
+    webhookHooks: {
+        tags: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Tasks
+
+### Created
+
+`tasks.created`
+
+A task was created (Timely event forecasts:created)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  entity_id: number | string,
+  entity_type: string,
+  entity_path?: string | null,
+  entity_external_id?: string | null,
+  updated_from?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  payload: {
+    entity_id: number | string,
+    entity_type: string,
+    entity_path?: string | null,
+    entity_external_id?: string | null,
+    updated_from?: string | null,
+    updated_at?: string | null,
+    status?: string | null,
+    date?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+timely({
+    webhookHooks: {
+        tasks: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`tasks.deleted`
+
+A task was deleted (Timely event forecasts:deleted)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  entity_id: number | string,
+  entity_type: string,
+  entity_path?: string | null,
+  entity_external_id?: string | null,
+  updated_from?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  payload: {
+    entity_id: number | string,
+    entity_type: string,
+    entity_path?: string | null,
+    entity_external_id?: string | null,
+    updated_from?: string | null,
+    updated_at?: string | null,
+    status?: string | null,
+    date?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+timely({
+    webhookHooks: {
+        tasks: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`tasks.updated`
+
+A task changed (Timely event forecasts:updated)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  entity_id: number | string,
+  entity_type: string,
+  entity_path?: string | null,
+  entity_external_id?: string | null,
+  updated_from?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  payload: {
+    entity_id: number | string,
+    entity_type: string,
+    entity_path?: string | null,
+    entity_external_id?: string | null,
+    updated_from?: string | null,
+    updated_at?: string | null,
+    status?: string | null,
+    date?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+timely({
+    webhookHooks: {
+        tasks: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Time Entries
+
+### Created
+
+`timeEntries.created`
+
+A time entry was logged (Timely event hours:created)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  entity_id: number | string,
+  entity_type: string,
+  entity_path?: string | null,
+  entity_external_id?: string | null,
+  updated_from?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  payload: {
+    entity_id: number | string,
+    entity_type: string,
+    entity_path?: string | null,
+    entity_external_id?: string | null,
+    updated_from?: string | null,
+    updated_at?: string | null,
+    status?: string | null,
+    date?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+timely({
+    webhookHooks: {
+        timeEntries: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`timeEntries.deleted`
+
+A time entry was deleted (Timely event hours:deleted)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  entity_id: number | string,
+  entity_type: string,
+  entity_path?: string | null,
+  entity_external_id?: string | null,
+  updated_from?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  payload: {
+    entity_id: number | string,
+    entity_type: string,
+    entity_path?: string | null,
+    entity_external_id?: string | null,
+    updated_from?: string | null,
+    updated_at?: string | null,
+    status?: string | null,
+    date?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+timely({
+    webhookHooks: {
+        timeEntries: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`timeEntries.updated`
+
+A time entry changed (Timely event hours:updated)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `payload` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  entity_id: number | string,
+  entity_type: string,
+  entity_path?: string | null,
+  entity_external_id?: string | null,
+  updated_from?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  payload: {
+    entity_id: number | string,
+    entity_type: string,
+    entity_path?: string | null,
+    entity_external_id?: string | null,
+    updated_from?: string | null,
+    updated_at?: string | null,
+    status?: string | null,
+    date?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+timely({
+    webhookHooks: {
+        timeEntries: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

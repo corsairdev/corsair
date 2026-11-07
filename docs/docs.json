@@ -3238,6 +3238,15 @@
                 ]
               },
               {
+                "group": "Timely",
+                "pages": [
+                  "plugins/timely/overview",
+                  "plugins/timely/api",
+                  "plugins/timely/database",
+                  "plugins/timely/webhooks"
+                ]
+              },
+              {
                 "group": "TinyFish",
                 "pages": [
                   "plugins/tinyfish/overview",

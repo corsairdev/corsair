@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T11:16:28.741Z",
+  "generatedAt": "2026-11-06T18:22:39.573Z",
   "corsairVersion": "0.1.157",
   "catalogVersion": 2,
   "plugins": [
@@ -4329,6 +4329,21 @@
         "api": 110,
         "webhooks": 0,
         "db": 8
+      }
+    },
+    {
+      "id": "netsuite",
+      "displayName": "NetSuite",
+      "description": "Create, read, update, and delete NetSuite records, run SuiteQL, and manage OAuth 2.0 tokens.",
+      "npmPackageName": "@corsair-dev/netsuite",
+      "authTypes": [
+        "oauth_2"
+      ],
+      "defaultAuthType": "oauth_2",
+      "counts": {
+        "api": 84,
+        "webhooks": 0,
+        "db": 13
       }
     },
     {
@@ -75261,6 +75276,510 @@
       "kind": "api",
       "shortPath": "vpc.listProjectVPCEndpoints",
       "haystack": "vpc.listprojectvpcendpoints neon.api.vpc.listprojectvpcendpoints list vpc endpoint restrictions read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "asyncJobs.asyncGetJobStatus",
+      "haystack": "asyncjobs.asyncgetjobstatus netsuite.api.asyncjobs.asyncgetjobstatus retrieve the status of an asynchronous netsuite rest job read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "asyncJobs.asyncGetJobTask",
+      "haystack": "asyncjobs.asyncgetjobtask netsuite.api.asyncjobs.asyncgetjobtask retrieve the task reference and status for an asynchronous job read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "asyncJobs.asyncGetJobTaskResult",
+      "haystack": "asyncjobs.asyncgetjobtaskresult netsuite.api.asyncjobs.asyncgetjobtaskresult retrieve the result of an asynchronous job task read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "customerPayments.createCustomerPayment",
+      "haystack": "customerpayments.createcustomerpayment netsuite.api.customerpayments.createcustomerpayment create a netsuite customer payment record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "customerPayments.deleteCustomerPayment",
+      "haystack": "customerpayments.deletecustomerpayment netsuite.api.customerpayments.deletecustomerpayment delete a netsuite customer payment record destructive"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "customerPayments.getCustomerPayment",
+      "haystack": "customerpayments.getcustomerpayment netsuite.api.customerpayments.getcustomerpayment get a netsuite customer payment record by id read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "customerPayments.listCustomerPayments",
+      "haystack": "customerpayments.listcustomerpayments netsuite.api.customerpayments.listcustomerpayments list netsuite customer payment records read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "customerPayments.updateCustomerPayment",
+      "haystack": "customerpayments.updatecustomerpayment netsuite.api.customerpayments.updatecustomerpayment update a netsuite customer payment record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "customers.createCustomer",
+      "haystack": "customers.createcustomer netsuite.api.customers.createcustomer create a netsuite customer record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "customers.deleteCustomer",
+      "haystack": "customers.deletecustomer netsuite.api.customers.deletecustomer delete a netsuite customer record destructive"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "customers.getCustomer",
+      "haystack": "customers.getcustomer netsuite.api.customers.getcustomer get a netsuite customer record by internal id read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "customers.updateCustomer",
+      "haystack": "customers.updatecustomer netsuite.api.customers.updatecustomer update a netsuite customer record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "employees.createEmployee",
+      "haystack": "employees.createemployee netsuite.api.employees.createemployee create a netsuite employee record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "employees.deleteEmployee",
+      "haystack": "employees.deleteemployee netsuite.api.employees.deleteemployee delete a netsuite employee record destructive"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "employees.getEmployee",
+      "haystack": "employees.getemployee netsuite.api.employees.getemployee get a netsuite employee record by internal id read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "employees.listEmployees",
+      "haystack": "employees.listemployees netsuite.api.employees.listemployees list netsuite employee records read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "employees.updateEmployee",
+      "haystack": "employees.updateemployee netsuite.api.employees.updateemployee update a netsuite employee record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "invoices.createInvoice",
+      "haystack": "invoices.createinvoice netsuite.api.invoices.createinvoice create a netsuite invoice record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "invoices.deleteInvoice",
+      "haystack": "invoices.deleteinvoice netsuite.api.invoices.deleteinvoice delete a netsuite invoice record destructive"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "invoices.getInvoice",
+      "haystack": "invoices.getinvoice netsuite.api.invoices.getinvoice get a netsuite invoice record by internal id read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "invoices.listInvoices",
+      "haystack": "invoices.listinvoices netsuite.api.invoices.listinvoices list netsuite invoice records read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "invoices.updateInvoice",
+      "haystack": "invoices.updateinvoice netsuite.api.invoices.updateinvoice update a netsuite invoice record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "itemFulfillments.deleteItemFulfillment",
+      "haystack": "itemfulfillments.deleteitemfulfillment netsuite.api.itemfulfillments.deleteitemfulfillment delete a netsuite item fulfillment record destructive"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "itemFulfillments.getItemFulfillment",
+      "haystack": "itemfulfillments.getitemfulfillment netsuite.api.itemfulfillments.getitemfulfillment get a netsuite item fulfillment record by id read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "itemFulfillments.listItemFulfillments",
+      "haystack": "itemfulfillments.listitemfulfillments netsuite.api.itemfulfillments.listitemfulfillments list netsuite item fulfillment records read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "itemFulfillments.updateItemFulfillment",
+      "haystack": "itemfulfillments.updateitemfulfillment netsuite.api.itemfulfillments.updateitemfulfillment update a netsuite item fulfillment record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "itemReceipts.deleteItemReceipt",
+      "haystack": "itemreceipts.deleteitemreceipt netsuite.api.itemreceipts.deleteitemreceipt delete a netsuite item receipt record destructive"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "itemReceipts.getItemReceipt",
+      "haystack": "itemreceipts.getitemreceipt netsuite.api.itemreceipts.getitemreceipt get a netsuite item receipt record by internal id read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "itemReceipts.listItemReceipts",
+      "haystack": "itemreceipts.listitemreceipts netsuite.api.itemreceipts.listitemreceipts list netsuite item receipt records read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "itemReceipts.updateItemReceipt",
+      "haystack": "itemreceipts.updateitemreceipt netsuite.api.itemreceipts.updateitemreceipt update a netsuite item receipt record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "items.createItem",
+      "haystack": "items.createitem netsuite.api.items.createitem create a netsuite item record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "items.deleteItem",
+      "haystack": "items.deleteitem netsuite.api.items.deleteitem delete a netsuite item record destructive"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "items.getItem",
+      "haystack": "items.getitem netsuite.api.items.getitem get a netsuite item record by internal id read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "items.updateItem",
+      "haystack": "items.updateitem netsuite.api.items.updateitem update a netsuite item record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "journalEntries.createJournalEntry",
+      "haystack": "journalentries.createjournalentry netsuite.api.journalentries.createjournalentry create a netsuite journal entry record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "journalEntries.deleteJournalEntry",
+      "haystack": "journalentries.deletejournalentry netsuite.api.journalentries.deletejournalentry delete a netsuite journal entry record destructive"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "journalEntries.getJournalEntry",
+      "haystack": "journalentries.getjournalentry netsuite.api.journalentries.getjournalentry get a netsuite journal entry record by internal id read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "journalEntries.listJournalEntries",
+      "haystack": "journalentries.listjournalentries netsuite.api.journalentries.listjournalentries list netsuite journal entry records read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "journalEntries.updateJournalEntry",
+      "haystack": "journalentries.updatejournalentry netsuite.api.journalentries.updatejournalentry update a netsuite journal entry record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "metadata.getRecordMetadata",
+      "haystack": "metadata.getrecordmetadata netsuite.api.metadata.getrecordmetadata retrieve the metadata schema for a netsuite record type read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "metadata.listMetadataCatalog",
+      "haystack": "metadata.listmetadatacatalog netsuite.api.metadata.listmetadatacatalog list metadata for all exposed netsuite record types read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "oauth.createJwtClientAssertion",
+      "haystack": "oauth.createjwtclientassertion netsuite.api.oauth.createjwtclientassertion create a signed jwt client assertion for oauth 2.0 client credentials write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "oauth.oauth2AuthorizeAccountDomain",
+      "haystack": "oauth.oauth2authorizeaccountdomain netsuite.api.oauth.oauth2authorizeaccountdomain build an oauth 2.0 authorization url on the account domain read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "oauth.oauth2AuthorizeSystemDomain",
+      "haystack": "oauth.oauth2authorizesystemdomain netsuite.api.oauth.oauth2authorizesystemdomain build an oauth 2.0 authorization url on the system domain read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "oauth.oauth2GetJwksKeys",
+      "haystack": "oauth.oauth2getjwkskeys netsuite.api.oauth.oauth2getjwkskeys retrieve netsuite oauth 2.0 jwks public keys read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "oauth.oauth2Logout",
+      "haystack": "oauth.oauth2logout netsuite.api.oauth.oauth2logout log out an oauth 2.0 session using an id token hint write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "oauth.oauth2RevokeRefreshToken",
+      "haystack": "oauth.oauth2revokerefreshtoken netsuite.api.oauth.oauth2revokerefreshtoken revoke a netsuite oauth 2.0 refresh token destructive"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "oauth.oauth2TokenAuthorizationCode",
+      "haystack": "oauth.oauth2tokenauthorizationcode netsuite.api.oauth.oauth2tokenauthorizationcode exchange an oauth 2.0 authorization code for tokens write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "oauth.oauth2TokenClientCredentials",
+      "haystack": "oauth.oauth2tokenclientcredentials netsuite.api.oauth.oauth2tokenclientcredentials exchange a jwt client assertion for an oauth 2.0 access token write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "oauth.oauth2TokenRefresh",
+      "haystack": "oauth.oauth2tokenrefresh netsuite.api.oauth.oauth2tokenrefresh refresh a netsuite oauth 2.0 access token write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "purchaseOrders.createPurchaseOrder",
+      "haystack": "purchaseorders.createpurchaseorder netsuite.api.purchaseorders.createpurchaseorder create a netsuite purchase order write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "purchaseOrders.deletePurchaseOrder",
+      "haystack": "purchaseorders.deletepurchaseorder netsuite.api.purchaseorders.deletepurchaseorder delete a netsuite purchase order record destructive"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "purchaseOrders.getPurchaseOrder",
+      "haystack": "purchaseorders.getpurchaseorder netsuite.api.purchaseorders.getpurchaseorder get a netsuite purchase order by internal id read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "purchaseOrders.listPurchaseOrders",
+      "haystack": "purchaseorders.listpurchaseorders netsuite.api.purchaseorders.listpurchaseorders list netsuite purchase order records read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "purchaseOrders.updatePurchaseOrder",
+      "haystack": "purchaseorders.updatepurchaseorder netsuite.api.purchaseorders.updatepurchaseorder update a netsuite purchase order record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "query.executeDataset",
+      "haystack": "query.executedataset netsuite.api.query.executedataset execute a suiteanalytics workbook dataset read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "query.listDatasets",
+      "haystack": "query.listdatasets netsuite.api.query.listdatasets list suiteanalytics workbook datasets read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "query.runSuiteqlQuery",
+      "haystack": "query.runsuiteqlquery netsuite.api.query.runsuiteqlquery run a suiteql query against netsuite data read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "records.createRecord",
+      "haystack": "records.createrecord netsuite.api.records.createrecord create a record of any exposed netsuite type write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "records.getReferenceSelectField",
+      "haystack": "records.getreferenceselectfield netsuite.api.records.getreferenceselectfield retrieve the record referenced by a select-type field read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "records.getSublistCollection",
+      "haystack": "records.getsublistcollection netsuite.api.records.getsublistcollection retrieve a sublist collection from a netsuite record read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "records.getSublistLine",
+      "haystack": "records.getsublistline netsuite.api.records.getsublistline retrieve a specific line from a netsuite sublist read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "records.getSubrecord",
+      "haystack": "records.getsubrecord netsuite.api.records.getsubrecord retrieve a subrecord from a netsuite parent record read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "records.listRecords",
+      "haystack": "records.listrecords netsuite.api.records.listrecords list records of any exposed netsuite type read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "records.transformRecord",
+      "haystack": "records.transformrecord netsuite.api.records.transformrecord transform a netsuite record into another record type destructive"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "records.upsertRecordByExternalId",
+      "haystack": "records.upsertrecordbyexternalid netsuite.api.records.upsertrecordbyexternalid upsert a netsuite record by external id write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "salesOrders.createSalesOrder",
+      "haystack": "salesorders.createsalesorder netsuite.api.salesorders.createsalesorder create a netsuite sales order write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "salesOrders.deleteSalesOrder",
+      "haystack": "salesorders.deletesalesorder netsuite.api.salesorders.deletesalesorder delete a netsuite sales order record destructive"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "salesOrders.getSalesOrder",
+      "haystack": "salesorders.getsalesorder netsuite.api.salesorders.getsalesorder get a netsuite sales order record by internal id read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "salesOrders.listSalesOrders",
+      "haystack": "salesorders.listsalesorders netsuite.api.salesorders.listsalesorders list netsuite sales order records read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "salesOrders.updateSalesOrder",
+      "haystack": "salesorders.updatesalesorder netsuite.api.salesorders.updatesalesorder update a netsuite sales order record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "system.getDatacenterUrls",
+      "haystack": "system.getdatacenterurls netsuite.api.system.getdatacenterurls discover account-specific netsuite service domains read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "system.getGovernanceLimits",
+      "haystack": "system.getgovernancelimits netsuite.api.system.getgovernancelimits retrieve netsuite account and integration concurrency limits read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "system.getServerTime",
+      "haystack": "system.getservertime netsuite.api.system.getservertime retrieve the current netsuite server time in utc read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "vendorBills.createVendorBill",
+      "haystack": "vendorbills.createvendorbill netsuite.api.vendorbills.createvendorbill create a netsuite vendor bill record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "vendorBills.getVendorBill",
+      "haystack": "vendorbills.getvendorbill netsuite.api.vendorbills.getvendorbill retrieve a netsuite vendor bill by internal id read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "vendorBills.updateVendorBill",
+      "haystack": "vendorbills.updatevendorbill netsuite.api.vendorbills.updatevendorbill update a netsuite vendor bill record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "vendorPayments.deleteVendorPayment",
+      "haystack": "vendorpayments.deletevendorpayment netsuite.api.vendorpayments.deletevendorpayment delete a netsuite vendor payment record destructive"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "vendorPayments.getVendorPayment",
+      "haystack": "vendorpayments.getvendorpayment netsuite.api.vendorpayments.getvendorpayment retrieve a netsuite vendor payment by internal id read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "vendorPayments.listVendorPayments",
+      "haystack": "vendorpayments.listvendorpayments netsuite.api.vendorpayments.listvendorpayments list netsuite vendor payment records read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "vendorPayments.updateVendorPayment",
+      "haystack": "vendorpayments.updatevendorpayment netsuite.api.vendorpayments.updatevendorpayment update a netsuite vendor payment record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "vendors.createVendor",
+      "haystack": "vendors.createvendor netsuite.api.vendors.createvendor create a netsuite vendor record write"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "vendors.getVendor",
+      "haystack": "vendors.getvendor netsuite.api.vendors.getvendor get a single netsuite vendor record by internal id read"
+    },
+    {
+      "pluginId": "netsuite",
+      "kind": "api",
+      "shortPath": "vendors.updateVendor",
+      "haystack": "vendors.updatevendor netsuite.api.vendors.updatevendor update a netsuite vendor record write"
     },
     {
       "pluginId": "nextdns",
