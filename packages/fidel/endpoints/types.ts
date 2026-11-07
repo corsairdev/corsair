@@ -160,6 +160,166 @@ const DeleteLocationInputSchema = z.object({
 	locationId: z.string().min(1),
 });
 
+const CreateCardInputSchema = z.object({
+	programId: z.string().min(1),
+	countryCode: z.enum([
+		'CAN',
+		'DNK',
+		'FIN',
+		'GBR',
+		'IRL',
+		'JPN',
+		'NOR',
+		'SWE',
+		'USA',
+	]),
+	expMonth: z.number(),
+	expYear: z.number(),
+	number: z.string(),
+	termsOfUse: z.boolean(),
+	// unknown: the provider documents metadata as an open shape; values pass through as-is
+	metadata: z.record(z.string(), z.unknown()).optional(),
+});
+
+const RetrieveCardInputSchema = z.object({
+	cardId: z.string().min(1),
+});
+
+const ListCardsInputSchema = z.object({
+	programId: z.string().min(1),
+	limit: z.string().optional(),
+	start: z.string().optional(),
+	order: z.string().optional(),
+});
+
+const ListCardsFromMetadataIdInputSchema = z.object({
+	metadataId: z.string().min(1),
+	limit: z.string().optional(),
+	start: z.string().optional(),
+	order: z.string().optional(),
+});
+
+const DeleteCardInputSchema = z.object({
+	cardId: z.string().min(1),
+});
+
+const UpdateCardMetadataInputSchema = z.object({
+	cardId: z.string().min(1),
+	RAW_BODY: z.string(),
+});
+
+const CreateOfferInputSchema = z.object({
+	brandId: z.string(),
+	countryCode: z.string(),
+	name: z.string(),
+	startDate: z.string(),
+	// unknown: the provider documents type as an open shape; values pass through as-is
+	type: z.record(z.string(), z.unknown()).optional(),
+	// unknown: the provider documents daysOfWeek as an open shape; values pass through as-is
+	daysOfWeek: z.array(z.unknown()).optional(),
+	endDate: z.string().optional(),
+	minTransactionAmount: z.number().optional(),
+	returnPeriod: z.number().optional(),
+	schemes: z.enum(['visa', 'mastercard', 'amex']).optional(),
+	// unknown: the provider documents activation as an open shape; values pass through as-is
+	activation: z.record(z.string(), z.unknown()).optional(),
+	// unknown: the provider documents metadata as an open shape; values pass through as-is
+	metadata: z.record(z.string(), z.unknown()).optional(),
+	feeSplit: z.number().optional(),
+	channels: z.enum(['in-store', 'online']).optional(),
+	shortDescription: z.string().optional(),
+	longDescription: z.string().optional(),
+	requiresApproval: z.boolean().optional(),
+	// unknown: the provider documents customerRecency as an open shape; values pass through as-is
+	customerRecency: z.record(z.string(), z.unknown()).optional(),
+});
+
+const UpdateOfferInputSchema = z.object({
+	offerId: z.string().min(1),
+	name: z.string().optional(),
+	startDate: z.string().optional(),
+	endDate: z.string().optional(),
+	// unknown: the provider documents type as an open shape; values pass through as-is
+	type: z.record(z.string(), z.unknown()).optional(),
+	// unknown: the provider documents activation as an open shape; values pass through as-is
+	activation: z.record(z.string(), z.unknown()).optional(),
+	// unknown: the provider documents daysOfWeek as an open shape; values pass through as-is
+	daysOfWeek: z.array(z.unknown()).optional(),
+	minTransactionAmount: z.number().optional(),
+	returnPeriod: z.number().optional(),
+	schemes: z.enum(['visa', 'mastercard', 'amex']).optional(),
+	// unknown: the provider documents metadata as an open shape; values pass through as-is
+	metadata: z.record(z.string(), z.unknown()).optional(),
+});
+
+const RetrieveOfferInputSchema = z.object({
+	offerId: z.string().min(1),
+});
+
+const ListOffersInputSchema = z.object({
+	limit: z.string().optional(),
+	start: z.string().optional(),
+	sort: z.string().optional(),
+	order: z.string().optional(),
+	status: z.string().optional(),
+	activation: z.string().optional(),
+	approval: z.string().optional(),
+	brandId: z.string().optional(),
+	contentProviderId: z.string().optional(),
+	programId: z.string().optional(),
+	countryCode: z.string().optional(),
+	customerRecency: z.string().optional(),
+	network: z.string().optional(),
+	returnPeriod: z.string().optional(),
+	channel: z.string().optional(),
+	endDate: z.string().optional(),
+});
+
+const DeleteOfferInputSchema = z.object({
+	offerId: z.string().min(1),
+});
+
+const LinkLocationToOfferInputSchema = z.object({
+	offerId: z.string().min(1),
+	locationId: z.string().min(1),
+});
+
+const LinkAllBrandLocationsToOfferInputSchema = z.object({
+	offerId: z.string().min(1),
+	programId: z.string().min(1),
+});
+
+const UnlinkLocationToOfferInputSchema = z.object({
+	offerId: z.string().min(1),
+	locationId: z.string().min(1),
+});
+
+const SendOfferToBrandInputSchema = z.object({
+	offerId: z.string().min(1),
+});
+
+const ActivateOfferOnCardInputSchema = z.object({
+	offerId: z.string().min(1),
+	cardId: z.string().min(1),
+});
+
+const UnlinkCardFromOfferInputSchema = z.object({
+	offerId: z.string().min(1),
+	cardId: z.string().min(1),
+});
+
+const RetrieveActiveOfferOnCardInputSchema = z.object({
+	offerId: z.string().min(1),
+	cardId: z.string().min(1),
+});
+
+const ListCardsWithActiveOfferInputSchema = z.object({
+	offerId: z.string().min(1),
+	limit: z.string().optional(),
+	order: z.string().optional(),
+	start: z.string().optional(),
+});
+
 export const FidelEndpointInputSchemas = {
 	createBrand: CreateBrandInputSchema,
 	retrieveBrand: RetrieveBrandInputSchema,
@@ -177,6 +337,25 @@ export const FidelEndpointInputSchemas = {
 	listLocationsByBrand: ListLocationsByBrandInputSchema,
 	listLocationsByOffer: ListLocationsByOfferInputSchema,
 	deleteLocation: DeleteLocationInputSchema,
+	createCard: CreateCardInputSchema,
+	retrieveCard: RetrieveCardInputSchema,
+	listCards: ListCardsInputSchema,
+	listCardsFromMetadataId: ListCardsFromMetadataIdInputSchema,
+	deleteCard: DeleteCardInputSchema,
+	updateCardMetadata: UpdateCardMetadataInputSchema,
+	createOffer: CreateOfferInputSchema,
+	updateOffer: UpdateOfferInputSchema,
+	retrieveOffer: RetrieveOfferInputSchema,
+	listOffers: ListOffersInputSchema,
+	deleteOffer: DeleteOfferInputSchema,
+	linkLocationToOffer: LinkLocationToOfferInputSchema,
+	linkAllBrandLocationsToOffer: LinkAllBrandLocationsToOfferInputSchema,
+	unlinkLocationToOffer: UnlinkLocationToOfferInputSchema,
+	sendOfferToBrand: SendOfferToBrandInputSchema,
+	activateOfferOnCard: ActivateOfferOnCardInputSchema,
+	unlinkCardFromOffer: UnlinkCardFromOfferInputSchema,
+	retrieveActiveOfferOnCard: RetrieveActiveOfferOnCardInputSchema,
+	listCardsWithActiveOffer: ListCardsWithActiveOfferInputSchema,
 } as const;
 
 export const FidelEndpointOutputSchemas = {
@@ -196,6 +375,25 @@ export const FidelEndpointOutputSchemas = {
 	listLocationsByBrand: FidelItemsOutputSchema,
 	listLocationsByOffer: FidelItemsOutputSchema,
 	deleteLocation: FidelEmptyOutputSchema,
+	createCard: FidelItemsOutputSchema,
+	retrieveCard: FidelItemsOutputSchema,
+	listCards: FidelItemsOutputSchema,
+	listCardsFromMetadataId: FidelItemsOutputSchema,
+	deleteCard: FidelEmptyOutputSchema,
+	updateCardMetadata: FidelItemsOutputSchema,
+	createOffer: FidelItemsOutputSchema,
+	updateOffer: FidelItemsOutputSchema,
+	retrieveOffer: FidelItemsOutputSchema,
+	listOffers: FidelItemsOutputSchema,
+	deleteOffer: FidelEmptyOutputSchema,
+	linkLocationToOffer: FidelItemsOutputSchema,
+	linkAllBrandLocationsToOffer: FidelAckOutputSchema,
+	unlinkLocationToOffer: FidelEmptyOutputSchema,
+	sendOfferToBrand: FidelItemsOutputSchema,
+	activateOfferOnCard: FidelItemsOutputSchema,
+	unlinkCardFromOffer: FidelEmptyOutputSchema,
+	retrieveActiveOfferOnCard: FidelItemsOutputSchema,
+	listCardsWithActiveOffer: FidelItemsOutputSchema,
 } as const;
 
 export type FidelEndpointInputs = {

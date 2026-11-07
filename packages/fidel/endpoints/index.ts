@@ -6,6 +6,14 @@ export {
 	updateBrand,
 } from './brands';
 export {
+	createCard,
+	deleteCard,
+	listCards,
+	listCardsFromMetadataId,
+	retrieveCard,
+	updateCardMetadata,
+} from './cards';
+export {
 	createLocation,
 	deleteLocation,
 	listLocations,
@@ -14,6 +22,21 @@ export {
 	retrieveLocation,
 	updateLocation,
 } from './locations';
+export {
+	activateOfferOnCard,
+	createOffer,
+	deleteOffer,
+	linkAllBrandLocationsToOffer,
+	linkLocationToOffer,
+	listCardsWithActiveOffer,
+	listOffers,
+	retrieveActiveOfferOnCard,
+	retrieveOffer,
+	sendOfferToBrand,
+	unlinkCardFromOffer,
+	unlinkLocationToOffer,
+	updateOffer,
+} from './offers';
 export {
 	createProgram,
 	listPrograms,

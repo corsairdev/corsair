@@ -20,6 +20,14 @@ import {
 	updateBrand,
 } from './endpoints/brands';
 import {
+	createCard,
+	deleteCard,
+	listCards,
+	listCardsFromMetadataId,
+	retrieveCard,
+	updateCardMetadata,
+} from './endpoints/cards';
+import {
 	createLocation,
 	deleteLocation,
 	listLocations,
@@ -28,6 +36,21 @@ import {
 	retrieveLocation,
 	updateLocation,
 } from './endpoints/locations';
+import {
+	activateOfferOnCard,
+	createOffer,
+	deleteOffer,
+	linkAllBrandLocationsToOffer,
+	linkLocationToOffer,
+	listCardsWithActiveOffer,
+	listOffers,
+	retrieveActiveOfferOnCard,
+	retrieveOffer,
+	sendOfferToBrand,
+	unlinkCardFromOffer,
+	unlinkLocationToOffer,
+	updateOffer,
+} from './endpoints/offers';
 import {
 	createProgram,
 	listPrograms,
@@ -161,6 +184,29 @@ const fidelEndpointsNested = {
 		listLocationsByOffer: listLocationsByOffer,
 		deleteLocation: deleteLocation,
 	},
+	cards: {
+		createCard: createCard,
+		retrieveCard: retrieveCard,
+		listCards: listCards,
+		listCardsFromMetadataId: listCardsFromMetadataId,
+		deleteCard: deleteCard,
+		updateCardMetadata: updateCardMetadata,
+	},
+	offers: {
+		createOffer: createOffer,
+		updateOffer: updateOffer,
+		retrieveOffer: retrieveOffer,
+		listOffers: listOffers,
+		deleteOffer: deleteOffer,
+		linkLocationToOffer: linkLocationToOffer,
+		linkAllBrandLocationsToOffer: linkAllBrandLocationsToOffer,
+		unlinkLocationToOffer: unlinkLocationToOffer,
+		sendOfferToBrand: sendOfferToBrand,
+		activateOfferOnCard: activateOfferOnCard,
+		unlinkCardFromOffer: unlinkCardFromOffer,
+		retrieveActiveOfferOnCard: retrieveActiveOfferOnCard,
+		listCardsWithActiveOffer: listCardsWithActiveOffer,
+	},
 } as const;
 
 export const fidelEndpointMeta = {
@@ -228,6 +274,82 @@ export const fidelEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Delete a location from a program',
 	},
+	'cards.createCard': {
+		riskLevel: 'write',
+		description: 'Link a payment card to a program on Fidel',
+	},
+	'cards.retrieveCard': {
+		riskLevel: 'read',
+		description: 'Retrieve a linked card by ID',
+	},
+	'cards.listCards': {
+		riskLevel: 'read',
+		description: 'List the linked cards of a program',
+	},
+	'cards.listCardsFromMetadataId': {
+		riskLevel: 'read',
+		description: 'List the linked cards matching a metadata identifier',
+	},
+	'cards.deleteCard': {
+		riskLevel: 'destructive',
+		description: 'Remove a linked card from a program',
+	},
+	'cards.updateCardMetadata': {
+		riskLevel: 'write',
+		description: 'Replace the metadata of a linked card',
+	},
+	'offers.createOffer': {
+		riskLevel: 'write',
+		description: 'Create an offer on Fidel',
+	},
+	'offers.updateOffer': {
+		riskLevel: 'write',
+		description: 'Update the details of an offer',
+	},
+	'offers.retrieveOffer': {
+		riskLevel: 'read',
+		description: 'Retrieve an offer by ID',
+	},
+	'offers.listOffers': {
+		riskLevel: 'read',
+		description: 'List the offers of a program',
+	},
+	'offers.deleteOffer': {
+		riskLevel: 'destructive',
+		description: 'Delete an offer from Fidel',
+	},
+	'offers.linkLocationToOffer': {
+		riskLevel: 'write',
+		description: 'Link a location to an offer',
+	},
+	'offers.linkAllBrandLocationsToOffer': {
+		riskLevel: 'write',
+		description: 'Link every location of a brand in a program to an offer',
+	},
+	'offers.unlinkLocationToOffer': {
+		riskLevel: 'destructive',
+		description: 'Unlink a location from an offer',
+	},
+	'offers.sendOfferToBrand': {
+		riskLevel: 'destructive',
+		description: 'Notify a brand about an offer on the live environment',
+	},
+	'offers.activateOfferOnCard': {
+		riskLevel: 'write',
+		description: 'Activate an offer on a linked card',
+	},
+	'offers.unlinkCardFromOffer': {
+		riskLevel: 'destructive',
+		description: 'Deactivate an offer on a linked card and reset its usage',
+	},
+	'offers.retrieveActiveOfferOnCard': {
+		riskLevel: 'read',
+		description: 'Check whether an offer is active on a linked card',
+	},
+	'offers.listCardsWithActiveOffer': {
+		riskLevel: 'read',
+		description: 'List the linked cards with an active offer',
+	},
 } as const satisfies RequiredPluginEndpointMeta<typeof fidelEndpointsNested>;
 
 export const fidelEndpointSchemas = {
@@ -294,6 +416,82 @@ export const fidelEndpointSchemas = {
 	'locations.deleteLocation': {
 		input: FidelEndpointInputSchemas.deleteLocation,
 		output: FidelEndpointOutputSchemas.deleteLocation,
+	},
+	'cards.createCard': {
+		input: FidelEndpointInputSchemas.createCard,
+		output: FidelEndpointOutputSchemas.createCard,
+	},
+	'cards.retrieveCard': {
+		input: FidelEndpointInputSchemas.retrieveCard,
+		output: FidelEndpointOutputSchemas.retrieveCard,
+	},
+	'cards.listCards': {
+		input: FidelEndpointInputSchemas.listCards,
+		output: FidelEndpointOutputSchemas.listCards,
+	},
+	'cards.listCardsFromMetadataId': {
+		input: FidelEndpointInputSchemas.listCardsFromMetadataId,
+		output: FidelEndpointOutputSchemas.listCardsFromMetadataId,
+	},
+	'cards.deleteCard': {
+		input: FidelEndpointInputSchemas.deleteCard,
+		output: FidelEndpointOutputSchemas.deleteCard,
+	},
+	'cards.updateCardMetadata': {
+		input: FidelEndpointInputSchemas.updateCardMetadata,
+		output: FidelEndpointOutputSchemas.updateCardMetadata,
+	},
+	'offers.createOffer': {
+		input: FidelEndpointInputSchemas.createOffer,
+		output: FidelEndpointOutputSchemas.createOffer,
+	},
+	'offers.updateOffer': {
+		input: FidelEndpointInputSchemas.updateOffer,
+		output: FidelEndpointOutputSchemas.updateOffer,
+	},
+	'offers.retrieveOffer': {
+		input: FidelEndpointInputSchemas.retrieveOffer,
+		output: FidelEndpointOutputSchemas.retrieveOffer,
+	},
+	'offers.listOffers': {
+		input: FidelEndpointInputSchemas.listOffers,
+		output: FidelEndpointOutputSchemas.listOffers,
+	},
+	'offers.deleteOffer': {
+		input: FidelEndpointInputSchemas.deleteOffer,
+		output: FidelEndpointOutputSchemas.deleteOffer,
+	},
+	'offers.linkLocationToOffer': {
+		input: FidelEndpointInputSchemas.linkLocationToOffer,
+		output: FidelEndpointOutputSchemas.linkLocationToOffer,
+	},
+	'offers.linkAllBrandLocationsToOffer': {
+		input: FidelEndpointInputSchemas.linkAllBrandLocationsToOffer,
+		output: FidelEndpointOutputSchemas.linkAllBrandLocationsToOffer,
+	},
+	'offers.unlinkLocationToOffer': {
+		input: FidelEndpointInputSchemas.unlinkLocationToOffer,
+		output: FidelEndpointOutputSchemas.unlinkLocationToOffer,
+	},
+	'offers.sendOfferToBrand': {
+		input: FidelEndpointInputSchemas.sendOfferToBrand,
+		output: FidelEndpointOutputSchemas.sendOfferToBrand,
+	},
+	'offers.activateOfferOnCard': {
+		input: FidelEndpointInputSchemas.activateOfferOnCard,
+		output: FidelEndpointOutputSchemas.activateOfferOnCard,
+	},
+	'offers.unlinkCardFromOffer': {
+		input: FidelEndpointInputSchemas.unlinkCardFromOffer,
+		output: FidelEndpointOutputSchemas.unlinkCardFromOffer,
+	},
+	'offers.retrieveActiveOfferOnCard': {
+		input: FidelEndpointInputSchemas.retrieveActiveOfferOnCard,
+		output: FidelEndpointOutputSchemas.retrieveActiveOfferOnCard,
+	},
+	'offers.listCardsWithActiveOffer': {
+		input: FidelEndpointInputSchemas.listCardsWithActiveOffer,
+		output: FidelEndpointOutputSchemas.listCardsWithActiveOffer,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof fidelEndpointsNested>;
 
