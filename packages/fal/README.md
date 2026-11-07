@@ -16,7 +16,7 @@ pnpm add @corsair-dev/fal
 | `files.upload` | `fal.api.files.upload` | `write` | Upload a file to fal storage and get a public URL to pass as a model input |
 | `models.estimateCost` | `fal.api.models.estimateCost` | `read` | Estimate what a number of calls or output units will cost |
 | `models.pricing` | `fal.api.models.pricing` | `read` | Unit price of fal models (per image, megapixel, second…) |
-| `models.run` | `fal.api.models.run` | `write` | Run a model and wait up to waitSeconds (default 10) for its output; spends fal credits. A run that ends inside the wait answers SUCCEEDED with output or FAILED with error, both final. Video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job: follow it with queue.status until SUCCEEDED or FAILED. |
+| `models.run` | `fal.api.models.run` | `write` | Run a model and wait up to waitSeconds (default 10) for its output; spends fal credits. When it sees the run end in time it answers SUCCEEDED with output or FAILED with error, both final; any other answer, even for a run that may have finished, is IN_QUEUE or IN_PROGRESS to follow. Video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job: follow it with queue.status until SUCCEEDED or FAILED. |
 | `models.search` | `fal.api.models.search` | `read` | Find fal models by text, category or endpoint id; includeOpenApi returns their input and output fields |
 | `queue.cancel` | `fal.api.queue.cancel` | `write` | Cancel a queued request: removed if still waiting, asked to stop if running |
 | `queue.result` | `fal.api.queue.result` | `read` | The output of a completed queued request |
