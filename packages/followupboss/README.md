@@ -76,22 +76,22 @@ pnpm add @corsair-dev/followupboss
 | `groups.list` | `followupboss.api.groups.list` | `read` | List the routing groups with their distribution strategy |
 | `groups.roundRobin` | `followupboss.api.groups.roundRobin` | `read` | Read the round-robin rotation state of the routing groups |
 | `groups.update` | `followupboss.api.groups.update` | `write` | Update a routing group's name, members or distribution |
-| `inboxApps.addMessage` | `followupboss.api.inboxApps.addMessage` | `read` | Deliver a message from your system into an inbox app conversation |
-| `inboxApps.addNote` | `followupboss.api.inboxApps.addNote` | `read` | Add an internal note to an inbox app conversation |
-| `inboxApps.addSystemConfirmationMessage` | `followupboss.api.inboxApps.addSystemConfirmationMessage` | `read` | Add a system confirmation message to an inbox app conversation |
-| `inboxApps.createParticipant` | `followupboss.api.inboxApps.createParticipant` | `read` | Add a participant to an inbox app conversation |
-| `inboxApps.deactivate` | `followupboss.api.inboxApps.deactivate` | `write` | Deactivate an inbox app so it stops receiving conversations |
-| `inboxApps.deleteParticipant` | `followupboss.api.inboxApps.deleteParticipant` | `write` | Remove a participant from an inbox app conversation |
+| `inboxApps.addMessage` | `followupboss.api.inboxApps.addMessage` | `write` | Deliver a message from your system into an inbox app conversation |
+| `inboxApps.addNote` | `followupboss.api.inboxApps.addNote` | `write` | Add an internal note to an inbox app conversation |
+| `inboxApps.addSystemConfirmationMessage` | `followupboss.api.inboxApps.addSystemConfirmationMessage` | `write` | Add a system confirmation message to an inbox app conversation |
+| `inboxApps.createParticipant` | `followupboss.api.inboxApps.createParticipant` | `write` | Add a participant to an inbox app conversation |
+| `inboxApps.deactivate` | `followupboss.api.inboxApps.deactivate` | `destructive` | Deactivate an inbox app so it stops receiving conversations |
+| `inboxApps.deleteParticipant` | `followupboss.api.inboxApps.deleteParticipant` | `destructive` | Remove a participant from an inbox app conversation |
 | `inboxApps.getParticipants` | `followupboss.api.inboxApps.getParticipants` | `read` | List the participants of an inbox app conversation |
 | `inboxApps.install` | `followupboss.api.inboxApps.install` | `write` | Install a published inbox app for a user with a subscription URL |
 | `inboxApps.installedApp` | `followupboss.api.inboxApps.installedApp` | `read` | Read the installation details of a published inbox app |
-| `inboxApps.updateConversation` | `followupboss.api.inboxApps.updateConversation` | `read` | Update an inbox app conversation's subject or state |
-| `inboxApps.updateMessage` | `followupboss.api.inboxApps.updateMessage` | `read` | Update a message previously delivered to an inbox app conversation |
+| `inboxApps.updateConversation` | `followupboss.api.inboxApps.updateConversation` | `write` | Update an inbox app conversation's subject or state |
+| `inboxApps.updateMessage` | `followupboss.api.inboxApps.updateMessage` | `write` | Update a message previously delivered to an inbox app conversation |
 | `notes.create` | `followupboss.api.notes.create` | `write` | Add a note to a person |
 | `notes.delete` | `followupboss.api.notes.delete` | `destructive` | Permanently delete a note |
 | `notes.get` | `followupboss.api.notes.get` | `read` | Get one note by ID, optionally with its threaded replies and reactions |
 | `notes.update` | `followupboss.api.notes.update` | `write` | Update a note's subject, body or person |
-| `people.checkDuplicate` | `followupboss.api.people.checkDuplicate` | `read` | Find existing people matching an email address or phone number before creating a new lead |
+| `people.checkDuplicate` | `followupboss.api.people.checkDuplicate` | `read` | Check whether a person with this email address or phone number already exists, and who they are assigned to, before creating a new lead |
 | `people.claim` | `followupboss.api.people.claim` | `write` | Claim an unclaimed lead so it becomes the user's contact |
 | `people.create` | `followupboss.api.people.create` | `write` | Create a person, optionally merging into an existing duplicate instead of creating a new lead |
 | `people.delete` | `followupboss.api.people.delete` | `destructive` | Permanently delete a person from the account |
@@ -162,7 +162,7 @@ pnpm add @corsair-dev/followupboss
 | `users.delete` | `followupboss.api.users.delete` | `destructive` | Permanently remove a user from the account |
 | `users.get` | `followupboss.api.users.get` | `read` | Get one user by ID with their role and contact details |
 | `users.list` | `followupboss.api.users.list` | `read` | List the users of the account with their roles |
-| `webhookEvents.get` | `followupboss.api.webhookEvents.get` | `read` | Get one delivered webhook event payload by ID |
+| `webhookEvents.get` | `followupboss.api.webhookEvents.get` | `read` | List the delivery events recorded for one webhook subscription |
 | `webhooks.create` | `followupboss.api.webhooks.create` | `write` | Subscribe a URL to one Follow Up Boss event |
 | `webhooks.delete` | `followupboss.api.webhooks.delete` | `destructive` | Permanently delete a webhook subscription |
 | `webhooks.get` | `followupboss.api.webhooks.get` | `read` | Get one webhook subscription by ID |

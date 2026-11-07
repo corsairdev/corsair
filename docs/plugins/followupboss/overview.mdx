@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Real-estate CRM with Follow Up Boss - manage people, deals, appointments, calls, texts, notes and tasks, push lead events into its routing, read smart lists and automations data, and manage webhook subscriptions and read delivered webhook events through webhookEvents.get."
+description: "Real-estate CRM with Follow Up Boss - manage people, deals, appointments, calls, texts, notes and tasks, push lead events into its routing, read smart lists and automations data, manage webhook subscriptions, and read delivered webhook events by ID."
 ---
 
 Use **Follow Up Boss** through Corsair: one client, typed API calls.
@@ -15,7 +15,7 @@ Create a key in Follow Up Boss under Admin, API. Things to know before you call:
 - **Deleting.** Most deletes answer 200 (the plugin returns the echoed resource when FUB sends one). `appointments.delete` and `people.ignoreUnclaimed` answer 204. Deleting an appointment type requires `assignTypeId`: the type its existing appointments move to.
 - **`people.claim` and `people.ignoreUnclaimed`** work on unclaimed leads only, and a claim of a lead that is no longer unclaimed answers 409.
 - **Text messages are logged, not sent.** `textMessages.create` records a message on a person; FUB does not send SMS through the API.
-- **Webhooks.** The plugin manages webhook subscriptions (`/webhooks`) and reads webhook event types; it does not receive webhook deliveries.
+- **Webhooks.** The plugin manages webhook subscriptions (`/webhooks`) and reads a webhook's delivered events by ID with `webhookEvents.get`; it does not receive webhook deliveries.
 
 **What you get:**
 
@@ -55,6 +55,7 @@ export const corsair = createCorsair({
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
 	hub: {
 		projectApiKey: process.env.CORSAIR_API_KEY!,
 		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
@@ -62,7 +63,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
