@@ -191,7 +191,12 @@ describe('Salesflare schema', () => {
 			accounts: { addAccountContacts: Leaf };
 		};
 
-		// POST /contacts documents its response as an array of created ids.
+		// POST /contacts: live single-object create returns { id }; the spec
+		// documents [{ id }] (the array-body form). Both must parse.
+		request.mockResolvedValueOnce({ id: 42 });
+		await expect(
+			endpoints.contacts.createContact(ctx, { email: 'a@example.com' }),
+		).resolves.toEqual({ id: 42 });
 		request.mockResolvedValueOnce([{ id: 42 }]);
 		await expect(
 			endpoints.contacts.createContact(ctx, { email: 'a@example.com' }),
@@ -253,8 +258,8 @@ describe('Salesflare schema', () => {
 					updated: '2024-01-01T00:00:00.000Z',
 				},
 			],
-			// POST /contacts documents an array of created ids.
-			'contacts.createContact': [{ id: 1 }],
+			// Live single-object create returns { id }; the spec says [{ id }].
+			'contacts.createContact': { id: 1 },
 			'currencies.listCurrencies': [
 				{
 					id: 1,
@@ -548,21 +553,11 @@ describe('Salesflare schema', () => {
 				created: '2024-01-01T00:00:00.000Z',
 				updated: '2024-01-01T00:00:00.000Z',
 			},
-			'customfields.updateCustomField': {
-				id: 1,
-				name: 'Real record',
-				created: '2024-01-01T00:00:00.000Z',
-				updated: '2024-01-01T00:00:00.000Z',
-			},
+			// Live response: the bare custom field id.
+			'customfields.updateCustomField': 99544,
 			'customfields.deleteCustomField': undefined,
-			'tags.listTagUsage': [
-				{
-					id: 1,
-					name: 'Real record',
-					created: '2024-01-01T00:00:00.000Z',
-					updated: '2024-01-01T00:00:00.000Z',
-				},
-			],
+			// Live response shape (2026-11-07 trial).
+			'tags.listTagUsage': { workflows: [], savedFilters: [], reports: [] },
 			'customfields.listCustomFieldOptions': [
 				{
 					id: 1,

@@ -6,12 +6,10 @@ import { z } from 'zod';
 const SalesflareRecordSchema = z.object({}).passthrough();
 const SalesflareListOutputSchema = z.array(SalesflareRecordSchema);
 const SalesflareResourceOutputSchema = SalesflareRecordSchema;
-// POST /contacts takes an array body (a single object is accepted too) and
-// the spec documents its response as an array of created ids: [{ id }].
-const SalesflareCreatedListOutputSchema = z.array(SalesflareRecordSchema);
-// The other array-bodied writes (calls, meetings, account users/contacts)
-// leave their response undocumented; accept a record or a list of records so
-// a successful write is never reported as a parse failure.
+// Array-bodied writes (contacts, calls, meetings, account users/contacts)
+// also take a single object. Live, a single-object POST /contacts returns
+// { id } although the spec documents [{ id }], so accept a record or a list
+// of records and never report a successful write as a parse failure.
 const SalesflareBatchWriteOutputSchema = z.union([
 	SalesflareRecordSchema,
 	z.array(SalesflareRecordSchema),
@@ -1193,7 +1191,7 @@ export const SalesflareEndpointOutputSchemas = {
 	listAccounts: SalesflareListOutputSchema,
 	createAccount: SalesflareResourceOutputSchema,
 	listContacts: SalesflareListOutputSchema,
-	createContact: SalesflareCreatedListOutputSchema,
+	createContact: SalesflareBatchWriteOutputSchema,
 	listCurrencies: SalesflareListOutputSchema,
 	listGroups: SalesflareListOutputSchema,
 	retrieveCurrentUser: SalesflareResourceOutputSchema,
@@ -1241,9 +1239,11 @@ export const SalesflareEndpointOutputSchemas = {
 	listAccountMessages: SalesflareListOutputSchema,
 	listAccountFeed: SalesflareListOutputSchema,
 	retrieveCustomField: SalesflareResourceOutputSchema,
-	updateCustomField: SalesflareResourceOutputSchema,
+	// Live: PUT /customfields/{itemClass}/{id} answers with the bare id (a number).
+	updateCustomField: z.union([SalesflareRecordSchema, z.number()]),
 	deleteCustomField: SalesflareEmptyOutputSchema,
-	listTagUsage: SalesflareListOutputSchema,
+	// Live: { workflows, savedFilters, reports }, one object, not a list.
+	listTagUsage: SalesflareResourceOutputSchema,
 	listCustomFieldOptions: SalesflareListOutputSchema,
 	createCall: SalesflareBatchWriteOutputSchema,
 	createMeeting: SalesflareBatchWriteOutputSchema,
