@@ -13,10 +13,12 @@ export const NANONETS_API_BASE = 'https://app.nanonets.com/api/v2';
 // generous timeout.
 const NANONETS_TIMEOUT_MS = 120_000;
 
+// unknown: body.code is either a number or anything else the API sends.
 function isCode(value: unknown): value is number {
 	return typeof value === 'number';
 }
 
+// unknown: the body is the documented error object or plain text.
 function readErrorText(body: unknown): string | undefined {
 	const record = asRecord(body);
 	const message = record?.message;
@@ -81,6 +83,7 @@ export class NanonetsAPIError extends Error {
 // unknown: see NanonetsAPIError.
 export function describeNanonetsError(
 	status: number | undefined,
+	// unknown: the error body shape varies per endpoint.
 	body: unknown,
 	fallback: string,
 ): string {
@@ -163,6 +166,7 @@ export async function makeNanonetsRequest(
 	};
 
 	try {
+		// unknown: the endpoint's zod output schema parses the raw body.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: NANONETS_RATE_LIMIT_CONFIG,
 		});

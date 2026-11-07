@@ -558,7 +558,7 @@ await corsair.nanonets.api.predictions.createFromFile({ model_id: 'd4d3beec-1029
   day_since_epoch?: number | null,
   url?: string | null,
   file_metadata?: Record<string, unknown> | null,
-  raw_ocr_api_response?: any | null
+  raw_ocr_api_response?: unknown | null
 }[] | null
 ```
 </Accordion>
@@ -722,7 +722,7 @@ await corsair.nanonets.api.predictions.createFromUrls({ model_id: 'd4d3beec-1029
   day_since_epoch?: number | null,
   url?: string | null,
   file_metadata?: Record<string, unknown> | null,
-  raw_ocr_api_response?: any | null
+  raw_ocr_api_response?: unknown | null
 }[] | null
 ```
 </Accordion>
@@ -882,7 +882,7 @@ await corsair.nanonets.api.predictions.getFileByFileId({ model_id: 'd4d3beec-102
   day_since_epoch?: number | null,
   url?: string | null,
   file_metadata?: Record<string, unknown> | null,
-  raw_ocr_api_response?: any | null
+  raw_ocr_api_response?: unknown | null
 }[] | null
 ```
 </Accordion>
@@ -1042,7 +1042,7 @@ await corsair.nanonets.api.predictions.getFileByPageId({ model_id: 'd4d3beec-102
   day_since_epoch?: number | null,
   url?: string | null,
   file_metadata?: Record<string, unknown> | null,
-  raw_ocr_api_response?: any | null
+  raw_ocr_api_response?: unknown | null
 }[] | null
 ```
 </Accordion>
