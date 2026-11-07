@@ -1,0 +1,1193 @@
+---
+title: API
+description: "API reference for ImageKit: every `imagekit.api.*` operation with input and output types."
+---
+
+Every `imagekit.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Cache
+
+### getPurgeStatus
+
+`cache.getPurgeStatus`
+
+Where a cache purge stands; status Pending or Completed
+
+**Risk:** `read`
+
+```ts
+await corsair.imagekit.api.cache.getPurgeStatus({ requestId: '5d5b1a9b4c8c4c0001f3e4a2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | Request ID from a cache purge call. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### purge
+
+`cache.purge`
+
+Purge the CDN cache of one delivered file URL; follow with cache.getPurgeStatus until status is Completed
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.cache.purge({ url: 'https://ik.imagekit.io/your_id/photo.jpg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Full https URL of the delivered file whose CDN cache to purge. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+
+
+
+---
+
+## Files
+
+### addTags
+
+`files.addTags`
+
+Add tags to up to 50 files at once; the answer splits successes from per-file errors
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.files.addTags({ fileIds: ['598821f949c0a938d57563bd'], tags: ['summer'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileIds` | `string[]` | Yes | Up to 50 file IDs to update in one call. |
+| `tags` | `string[]` | Yes | Tags to add to every listed file. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `successfullyUpdatedFileIds` | `string[]` | Yes | — |
+| `errors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  fileId: string,
+  error: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkDelete
+
+`files.bulkDelete`
+
+Permanently delete up to 100 files by ID; a 207 answer lists per-file failures in errors
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.imagekit.api.files.bulkDelete({ fileIds: ['598821f949c0a938d57563bd', '598821f949c0a938d57563be'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileIds` | `string[]` | Yes | File IDs to delete permanently; a 207 answer reports per-file failures. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `successfullyDeletedFileIds` | `string[]` | Yes | — |
+| `errors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  fileId: string,
+  error: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### copy
+
+`files.copy`
+
+Copy a file to another folder, optionally with all of its versions
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.files.copy({ sourceFilePath: '/products/photo.jpg', destinationPath: '/archive/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceFilePath` | `string` | Yes | Path of the file to copy. |
+| `destinationPath` | `string` | Yes | Folder path to copy the file into, e.g. `/archive/`. |
+| `includeFileVersions` | `boolean` | No | Copy the file with all of its versions. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`files.delete`
+
+Permanently delete a file and all of its versions; there is no trash and no restore
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.imagekit.api.files.delete({ fileId: '598821f949c0a938d57563bd' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | Unique identifier of the asset. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getDetails
+
+`files.getDetails`
+
+Read one file by ID: path, URL, tags, AI tags, size, versions and custom metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.imagekit.api.files.getDetails({ fileId: '598821f949c0a938d57563bd' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | Unique identifier of the asset. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `filePath` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `fileType` | `string \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `AITags` | `object[] \| null` | No | — |
+| `versionInfo` | `object \| null` | No | — |
+| `isPrivateFile` | `boolean \| null` | No | — |
+| `isPublished` | `boolean \| null` | No | — |
+| `customCoordinates` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `customMetadata` | `Record<string, unknown> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `extensionStatus` | `Record<string, unknown> \| null` | No | — |
+| `embeddedMetadata` | `Record<string, unknown> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="AITags full type">
+
+```ts
+{
+  name: string,
+  source?: string | null,
+  confidence?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="versionInfo full type">
+
+```ts
+{
+  id: string,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`files.list`
+
+List and search files and folders with paging (limit and skip), a folder path filter, file type and a searchQuery expression
+
+**Risk:** `read`
+
+```ts
+await corsair.imagekit.api.files.list({ path: '/products/', limit: 25, skip: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | Only `file` returns files; the default also returns folders. |
+| `path` | `string` | No | Only assets inside this folder path, e.g. `/products/`. |
+| `searchQuery` | `string` | No | Search filter expression over name, tags, type, size and createdAt, e.g. `name = "summer"`. |
+| `fileType` | `'all' \| 'image' \| 'non-image'` | No | All files, images only, or non-image files (video and others). |
+| `sort` | `'ASC_NAME' \| 'DESC_NAME' \| 'ASC_CREATED' \| 'DESC_CREATED' \| 'ASC_UPDATED' \| 'DESC_UPDATED' \| 'ASC_HEIGHT' \| 'DESC_HEIGHT' \| 'ASC_WIDTH' \| 'DESC_WIDTH' \| 'ASC_SIZE' \| 'DESC_SIZE' \| 'ASC_RELEVANCE' \| 'DESC_RELEVANCE'` | No | Sort token, e.g. ASC_CREATED (the default) or DESC_SIZE. |
+| `limit` | `number` | No | Page size, 1-1000; the default is 1000. |
+| `skip` | `number` | No | Assets to skip before this page; combine with limit to page. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(
+  {
+    fileId: string,
+    type?: string | null,
+    name?: string | null,
+    filePath?: string | null,
+    url?: string | null,
+    thumbnail?: string | null,
+    fileType?: string | null,
+    size?: number | null,
+    width?: number | null,
+    height?: number | null,
+    tags?: string[] | null,
+    AITags?: {
+      name: string,
+      source?: string | null,
+      confidence?: number | null
+    }[] | null,
+    versionInfo?: {
+      id: string,
+      name?: string | null
+    } | null,
+    isPrivateFile?: boolean | null,
+    isPublished?: boolean | null,
+    customCoordinates?: string | null,
+    description?: string | null,
+    customMetadata?: Record<string, unknown> | null,
+    extensionStatus?: Record<string, unknown> | null,
+    embeddedMetadata?: Record<string, unknown> | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  } | {
+    type?: string | null,
+    folderId: string,
+    name?: string | null,
+    folderPath?: string | null,
+    customMetadata?: Record<string, unknown> | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### move
+
+`files.move`
+
+Move a file to another folder
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.files.move({ sourceFilePath: '/products/photo.jpg', destinationPath: '/archive/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceFilePath` | `string` | Yes | Path of the file to move. |
+| `destinationPath` | `string` | Yes | Folder path to move the file into. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### removeAITags
+
+`files.removeAITags`
+
+Remove AI-generated tags from up to 50 files at once
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.files.removeAITags({ fileIds: ['598821f949c0a938d57563bd'], AITags: ['blurry'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileIds` | `string[]` | Yes | Up to 50 file IDs to update in one call. |
+| `AITags` | `string[]` | Yes | AI tag names to remove from every listed file. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `successfullyUpdatedFileIds` | `string[]` | Yes | — |
+| `errors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  fileId: string,
+  error: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeTags
+
+`files.removeTags`
+
+Remove tags from up to 50 files at once
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.files.removeTags({ fileIds: ['598821f949c0a938d57563bd'], tags: ['draft'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileIds` | `string[]` | Yes | Up to 50 file IDs to update in one call. |
+| `tags` | `string[]` | Yes | Tags to remove from every listed file. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `successfullyUpdatedFileIds` | `string[]` | Yes | — |
+| `errors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  fileId: string,
+  error: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rename
+
+`files.rename`
+
+Rename a file in place; with purgeCache the old URL stops resolving from CDN cache, reported by purgeRequestId
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.files.rename({ filePath: '/products/old.jpg', newFileName: 'new.jpg', purgeCache: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filePath` | `string` | Yes | Path of the file to rename. |
+| `newFileName` | `string` | Yes | New file name, without the folder. |
+| `purgeCache` | `boolean` | No | Also purge the CDN cache for the file; adds purgeRequestId to the answer. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `purgeRequestId` | `string \| null` | No | — |
+| `reason` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### updateDetails
+
+`files.updateDetails`
+
+Change a file: replace tags, set custom metadata, coordinates or description, remove AI tags, or publish or unpublish it
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.files.updateDetails({ fileId: '598821f949c0a938d57563bd', tags: ['summer', 'sale'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | Unique identifier of the asset. |
+| `tags` | `string[]` | No | Full replacement tag list for the file. |
+| `customCoordinates` | `string` | No | Custom coordinates string, e.g. `10,10,100,100`. |
+| `customMetadata` | `Record<string, unknown>` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `description` | `string` | No | Short human-readable description stored with the file. |
+| `removeAITags` | `string[] \| 'all'` | No | AI tag names to remove, or the string `all` to remove every AI tag. |
+| `isPublished` | `boolean` | No | Publish or unpublish the file. Send this alone: ImageKit rejects it mixed with the other fields. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `filePath` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `fileType` | `string \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `AITags` | `object[] \| null` | No | — |
+| `versionInfo` | `object \| null` | No | — |
+| `isPrivateFile` | `boolean \| null` | No | — |
+| `isPublished` | `boolean \| null` | No | — |
+| `customCoordinates` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `customMetadata` | `Record<string, unknown> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `extensionStatus` | `Record<string, unknown> \| null` | No | — |
+| `embeddedMetadata` | `Record<string, unknown> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="AITags full type">
+
+```ts
+{
+  name: string,
+  source?: string | null,
+  confidence?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="versionInfo full type">
+
+```ts
+{
+  id: string,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload a file from an https URL or base64 content into the media library, optionally into a folder and with tags
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.files.upload({ file: 'https://example.com/photo.jpg', fileName: 'photo.jpg', folder: '/products/', tags: ['summer'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | The file to upload: an https URL ImageKit can fetch, or base64-encoded content. |
+| `fileName` | `string` | Yes | Name the file gets in the media library, e.g. photo.jpg. |
+| `folder` | `string` | No | Destination folder path, e.g. `/products/`. |
+| `tags` | `string[]` | No | Tags to attach to the uploaded file. |
+| `isPrivateFile` | `boolean` | No | Serve the file only through signed URLs. |
+| `isPublished` | `boolean` | No | Publish the file immediately. |
+| `useUniqueFileName` | `boolean` | No | Add a random suffix to fileName when true (the default). |
+| `overwriteFile` | `boolean` | No | Replace an existing file at the same path. |
+| `overwriteTags` | `boolean` | No | Replace existing tags instead of merging. |
+| `overwriteAITags` | `boolean` | No | Replace existing AI tags instead of merging. |
+| `overwriteCustomMetadata` | `boolean` | No | Replace existing custom metadata instead of merging. |
+| `customMetadata` | `Record<string, unknown>` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `description` | `string` | No | Short human-readable description stored with the file. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `filePath` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `thumbnailUrl` | `string \| null` | No | — |
+| `fileType` | `string \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `bitRate` | `number \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `audioCodec` | `string \| null` | No | — |
+| `videoCodec` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `AITags` | `object[] \| null` | No | — |
+| `versionInfo` | `object \| null` | No | — |
+| `isPrivateFile` | `boolean \| null` | No | — |
+| `isPublished` | `boolean \| null` | No | — |
+| `customCoordinates` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `customMetadata` | `Record<string, unknown> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `metadata` | `Record<string, unknown> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="AITags full type">
+
+```ts
+{
+  name: string,
+  source?: string | null,
+  confidence?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="versionInfo full type">
+
+```ts
+{
+  id: string,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## File Versions
+
+### delete
+
+`fileVersions.delete`
+
+Permanently delete one non-current version of a file; the current version cannot be deleted
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.imagekit.api.fileVersions.delete({ fileId: '598821f949c0a938d57563bd', versionId: '598821f949c0a938d57563bf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | Unique identifier of the asset. |
+| `versionId` | `string` | Yes | Version ID, the `versionInfo.id` of a version entry. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getDetails
+
+`fileVersions.getDetails`
+
+Read one stored version of a file
+
+**Risk:** `read`
+
+```ts
+await corsair.imagekit.api.fileVersions.getDetails({ fileId: '598821f949c0a938d57563bd', versionId: '598821f949c0a938d57563bf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | Unique identifier of the asset. |
+| `versionId` | `string` | Yes | Version ID, the `versionInfo.id` of a version entry. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `filePath` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `fileType` | `string \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `AITags` | `object[] \| null` | No | — |
+| `versionInfo` | `object \| null` | No | — |
+| `isPrivateFile` | `boolean \| null` | No | — |
+| `isPublished` | `boolean \| null` | No | — |
+| `customCoordinates` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `customMetadata` | `Record<string, unknown> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `extensionStatus` | `Record<string, unknown> \| null` | No | — |
+| `embeddedMetadata` | `Record<string, unknown> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="AITags full type">
+
+```ts
+{
+  name: string,
+  source?: string | null,
+  confidence?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="versionInfo full type">
+
+```ts
+{
+  id: string,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`fileVersions.list`
+
+List every stored version of a file, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.imagekit.api.fileVersions.list({ fileId: '598821f949c0a938d57563bd' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | Unique identifier of the asset. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  fileId: string,
+  type?: string | null,
+  name?: string | null,
+  filePath?: string | null,
+  url?: string | null,
+  thumbnail?: string | null,
+  fileType?: string | null,
+  size?: number | null,
+  width?: number | null,
+  height?: number | null,
+  tags?: string[] | null,
+  AITags?: {
+    name: string,
+    source?: string | null,
+    confidence?: number | null
+  }[] | null,
+  versionInfo?: {
+    id: string,
+    name?: string | null
+  } | null,
+  isPrivateFile?: boolean | null,
+  isPublished?: boolean | null,
+  customCoordinates?: string | null,
+  description?: string | null,
+  customMetadata?: Record<string, unknown> | null,
+  extensionStatus?: Record<string, unknown> | null,
+  embeddedMetadata?: Record<string, unknown> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### restore
+
+`fileVersions.restore`
+
+Make a stored version the current version of a file
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.fileVersions.restore({ fileId: '598821f949c0a938d57563bd', versionId: '598821f949c0a938d57563bf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | Unique identifier of the asset. |
+| `versionId` | `string` | Yes | Version ID, the `versionInfo.id` of a version entry. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `filePath` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `fileType` | `string \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `AITags` | `object[] \| null` | No | — |
+| `versionInfo` | `object \| null` | No | — |
+| `isPrivateFile` | `boolean \| null` | No | — |
+| `isPublished` | `boolean \| null` | No | — |
+| `customCoordinates` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `customMetadata` | `Record<string, unknown> \| null` | No | Custom metadata to set, keyed by field label, identifier or UUID. |
+| `extensionStatus` | `Record<string, unknown> \| null` | No | — |
+| `embeddedMetadata` | `Record<string, unknown> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="AITags full type">
+
+```ts
+{
+  name: string,
+  source?: string | null,
+  confidence?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="versionInfo full type">
+
+```ts
+{
+  id: string,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Folders
+
+### copy
+
+`folders.copy`
+
+Copy a folder subtree into another folder as a background job; follow with folders.getJobStatus until status is Completed
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.folders.copy({ sourceFolderPath: '/products/spring', destinationPath: '/archive/', includeVersions: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceFolderPath` | `string` | Yes | Path of the folder to copy. |
+| `destinationPath` | `string` | Yes | Folder path to copy the source folder into. |
+| `includeVersions` | `boolean` | No | Copy folder contents with all file versions. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+---
+
+### create
+
+`folders.create`
+
+Create a folder in a parent folder path
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.folders.create({ folderName: 'spring', parentFolderPath: '/products/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderName` | `string` | Yes | Name of the new folder; characters outside letters and digits become underscores. |
+| `parentFolderPath` | `string` | Yes | Folder path to create the new folder in, e.g. `/` for the library root. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`folders.delete`
+
+Permanently delete a folder and everything inside it; there is no trash and no restore
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.imagekit.api.folders.delete({ folderPath: '/products/spring/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderPath` | `string` | Yes | Full path of the folder to delete, contents included. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getJobStatus
+
+`folders.getJobStatus`
+
+Where a folder bulk job stands; status Pending or Completed
+
+**Risk:** `read`
+
+```ts
+await corsair.imagekit.api.folders.getJobStatus({ jobId: '5d5b1a9b4c8c4c0001f3e4a2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | Job ID from a folder copy, move or rename call. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string` | Yes | — |
+| `purgeRequestId` | `string \| null` | No | — |
+
+
+
+---
+
+### move
+
+`folders.move`
+
+Move a folder subtree into another folder as a background job; follow with folders.getJobStatus
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.folders.move({ sourceFolderPath: '/products/spring', destinationPath: '/archive/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceFolderPath` | `string` | Yes | Path of the folder to move. |
+| `destinationPath` | `string` | Yes | Folder path to move the source folder into. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+---
+
+### rename
+
+`folders.rename`
+
+Rename a folder as a background job; follow with folders.getJobStatus. purgeCache also purges old CDN paths
+
+**Risk:** `write`
+
+```ts
+await corsair.imagekit.api.folders.rename({ folderPath: '/products/spring', newFolderName: 'summer', purgeCache: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderPath` | `string` | Yes | Path of the folder to rename. |
+| `newFolderName` | `string` | Yes | New folder name; characters outside letters, digits and `-` become underscores. |
+| `purgeCache` | `boolean` | No | Also purge the CDN cache for the moved paths; adds purgeRequestId to the job status. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+---
+
+## Metadata
+
+### getByFileId
+
+`metadata.getByFileId`
+
+Read image or video metadata of a stored file: dimensions, format, pHash, EXIF
+
+**Risk:** `read`
+
+```ts
+await corsair.imagekit.api.metadata.getByFileId({ fileId: '598821f949c0a938d57563bd' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | Unique identifier of the asset. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `height` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `format` | `string \| null` | No | — |
+| `hasColorProfile` | `boolean \| null` | No | — |
+| `quality` | `number \| null` | No | — |
+| `density` | `number \| null` | No | — |
+| `hasTransparency` | `boolean \| null` | No | — |
+| `pHash` | `string \| null` | No | — |
+| `bitRate` | `number \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `audioCodec` | `string \| null` | No | — |
+| `videoCodec` | `string \| null` | No | — |
+| `exif` | `Record<string, unknown> \| null` | No | — |
+
+
+
+---
+
+### getByUrl
+
+`metadata.getByUrl`
+
+Read metadata of any delivered file URL, including transformed variants
+
+**Risk:** `read`
+
+```ts
+await corsair.imagekit.api.metadata.getByUrl({ url: 'https://ik.imagekit.io/your_id/photo.jpg?tr=w-200' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Full https URL of the delivered file, transformation parameters allowed. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `height` | `number \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `format` | `string \| null` | No | — |
+| `hasColorProfile` | `boolean \| null` | No | — |
+| `quality` | `number \| null` | No | — |
+| `density` | `number \| null` | No | — |
+| `hasTransparency` | `boolean \| null` | No | — |
+| `pHash` | `string \| null` | No | — |
+| `bitRate` | `number \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `audioCodec` | `string \| null` | No | — |
+| `videoCodec` | `string \| null` | No | — |
+| `exif` | `Record<string, unknown> \| null` | No | — |
+
+
+
+---
+
