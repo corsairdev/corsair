@@ -125,35 +125,47 @@ const JWKS_FETCH_MIN_INTERVAL_MS = 60 * 1000;
 
 let jwksCache: { keys: FalJwk[]; fetchedAt: number } | null = null;
 let lastFetchAttemptAt = Number.NEGATIVE_INFINITY;
+let lastFetchFailed = false;
 // Deliveries that need the keys while a fetch is under way share it.
 let pendingFetch: Promise<FalJwk[]> | null = null;
 
 async function loadFalJwks(now: number): Promise<FalJwk[]> {
-	const response = await fetch(FAL_JWKS_URL, {
-		signal: AbortSignal.timeout(10_000),
-	});
-	if (!response.ok) {
-		throw new Error(`fal JWKS fetch failed with HTTP ${response.status}`);
+	try {
+		const response = await fetch(FAL_JWKS_URL, {
+			signal: AbortSignal.timeout(10_000),
+		});
+		if (!response.ok) {
+			throw new Error(`fal JWKS fetch failed with HTTP ${response.status}`);
+		}
+		const body = (await response.json()) as { keys?: FalJwk[] };
+		const keys = Array.isArray(body.keys) ? body.keys : [];
+		jwksCache = { keys, fetchedAt: now };
+		lastFetchFailed = false;
+		return keys;
+	} catch (error) {
+		lastFetchFailed = true;
+		throw error;
 	}
-	const body = (await response.json()) as { keys?: FalJwk[] };
-	const keys = Array.isArray(body.keys) ? body.keys : [];
-	jwksCache = { keys, fetchedAt: now };
-	return keys;
 }
 
+/**
+ * fal's signing keys. A plain read answers from a fresh cache without waiting
+ * on anything; `refresh` (after a signature miss) fetches again unless the
+ * keys were loaded under a minute ago. While the last attempt has failed it
+ * throws, so a miss is reported as "try later", not as a bad signature.
+ */
 export async function fetchFalJwks(
 	now = Date.now(),
 	options: { refresh?: boolean } = {},
 ): Promise<FalJwk[]> {
+	const fresh = jwksCache !== null && now - jwksCache.fetchedAt < JWKS_CACHE_MS;
+	if (jwksCache && fresh && !options.refresh) return jwksCache.keys;
 	if (pendingFetch) return pendingFetch;
 
-	const fresh = jwksCache !== null && now - jwksCache.fetchedAt < JWKS_CACHE_MS;
-	const mayFetch = now - lastFetchAttemptAt >= JWKS_FETCH_MIN_INTERVAL_MS;
-	if (jwksCache && fresh && !(options.refresh && mayFetch)) {
-		return jwksCache.keys;
-	}
-	if (!mayFetch) {
-		// No usable keys and the last attempt, under a minute ago, failed.
+	if (now - lastFetchAttemptAt < JWKS_FETCH_MIN_INTERVAL_MS) {
+		// Loaded under a minute ago: these are fal's current keys.
+		if (jwksCache && fresh && !lastFetchFailed) return jwksCache.keys;
+		// The last attempt failed: the keys may be missing or out of date.
 		throw new Error('fal JWKS fetch failed under a minute ago');
 	}
 
@@ -168,6 +180,7 @@ export async function fetchFalJwks(
 export function resetFalJwksCache(): void {
 	jwksCache = null;
 	lastFetchAttemptAt = Number.NEGATIVE_INFINITY;
+	lastFetchFailed = false;
 	pendingFetch = null;
 }
 

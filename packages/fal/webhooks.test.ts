@@ -204,6 +204,62 @@ describe('fal key rotation', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});
 
+	it('verifies with cached keys while a refresh is failing', async () => {
+		resetFalJwksCache();
+		let failRefresh: (value: unknown) => void = () => undefined;
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce({ ok: true, json: async () => ({ keys: JWKS }) })
+			.mockReturnValueOnce(
+				new Promise((resolve) => {
+					failRefresh = resolve;
+				}),
+			);
+		global.fetch = fetchMock as unknown as typeof fetch;
+		await fetchFalJwks(NOW_MS - 120_000);
+
+		// A forged delivery starts a refresh; a real one arrives meanwhile.
+		const stranger = crypto.generateKeyPairSync('ed25519');
+		const forged = verifyFalWebhookSignature(
+			sign({ timestampSeconds: NOW_S, privateKey: stranger.privateKey }),
+			{ now: NOW_MS },
+		);
+		const real = await verifyFalWebhookSignature(
+			sign({ timestampSeconds: NOW_S }),
+			{ now: NOW_MS },
+		);
+		failRefresh({ ok: false, status: 503 });
+
+		expect(real).toEqual({ valid: true });
+		expect(await forged).toMatchObject({ valid: false, retryable: true });
+	});
+
+	it('asks for a retry, not a refusal, for a rotated key after a failed refresh', async () => {
+		resetFalJwksCache();
+		const { jwks: oldKeys } = createFalSigner();
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce({
+				ok: true,
+				json: async () => ({ keys: oldKeys }),
+			})
+			.mockResolvedValue({ ok: false, status: 503 });
+		global.fetch = fetchMock as unknown as typeof fetch;
+		await fetchFalJwks(NOW_MS - 120_000);
+
+		const first = await verifyFalWebhookSignature(
+			sign({ timestampSeconds: NOW_S }),
+			{ now: NOW_MS },
+		);
+		const duringCooldown = await verifyFalWebhookSignature(
+			sign({ timestampSeconds: NOW_S + 30 }),
+			{ now: NOW_MS + 30_000 },
+		);
+		expect(first).toMatchObject({ valid: false, retryable: true });
+		expect(duringCooldown).toMatchObject({ valid: false, retryable: true });
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
 	it('does not refetch more than once a minute for bad signatures', async () => {
 		resetFalJwksCache();
 		const fetchMock = jest
