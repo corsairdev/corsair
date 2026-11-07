@@ -268,8 +268,9 @@ describe('people', () => {
 		expect(result).toEqual({ id: 950, resource: person });
 	});
 
-	it('checkDuplicate filters by email and answers the matching people', async () => {
-		respond({ people: [person] });
+	it('checkDuplicate filters by email and answers the match summary', async () => {
+		const match = { found: true, matchedBy: 'email', assignedTo: 'Maya Chen' };
+		respond(match);
 
 		const result = await invoke(People.checkDuplicate, {
 			email: 'ava.reyes@example.com',
@@ -281,7 +282,15 @@ describe('people', () => {
 			path: '/v1/people/checkDuplicate',
 		});
 		expect(lastRequest().query).toEqual({ email: 'ava.reyes@example.com' });
-		expect(result).toEqual({ people: [person] });
+		expect(result).toEqual(match);
+	});
+
+	it('checkDuplicate answers found: false when nobody matches', async () => {
+		respond({ found: false });
+
+		await expect(
+			invoke(People.checkDuplicate, { phone: '+1 555-0199' }),
+		).resolves.toEqual({ found: false });
 	});
 
 	it('unclaimed lists the offered leads behind the paging params', async () => {

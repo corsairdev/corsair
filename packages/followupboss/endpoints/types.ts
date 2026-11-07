@@ -298,8 +298,17 @@ export type PeopleCheckDuplicateInput = z.infer<
 	typeof PeopleCheckDuplicateInputSchema
 >;
 
-// checkDuplicate answers 200 with the matching people.
-const PeopleCheckDuplicateResponseSchema = PersonEnvelopeSchema;
+// checkDuplicate answers 200 with a match summary, not the people:
+// `{ found: true, matchedBy: 'email', assignedTo: 'Agent Smith' }`, or
+// `{ found: false }` when nobody matches.
+// https://docs.followupboss.com/reference/people-checkduplicate
+const PeopleCheckDuplicateResponseSchema = z
+	.object({
+		found: z.boolean(),
+		matchedBy: z.string().nullish(),
+		assignedTo: z.string().nullish(),
+	})
+	.loose();
 
 export type PeopleCheckDuplicateResponse = z.infer<
 	typeof PeopleCheckDuplicateResponseSchema

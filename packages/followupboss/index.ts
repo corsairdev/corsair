@@ -1156,7 +1156,7 @@ const followUpBossEndpointMeta = {
 	'people.checkDuplicate': {
 		riskLevel: 'read',
 		description:
-			'Find existing people matching an email address or phone number before creating a new lead',
+			'Check whether a person with this email address or phone number already exists, and who they are assigned to, before creating a new lead',
 	},
 	'people.unclaimed': {
 		riskLevel: 'read',

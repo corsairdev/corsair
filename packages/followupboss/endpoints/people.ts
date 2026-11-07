@@ -136,11 +136,7 @@ export const checkDuplicate: FollowUpBossEndpoints['peopleCheckDuplicate'] = (
 			query: { email, phone },
 		}),
 		{
-			shape: (raw) => ({
-				people: envelopeMany(raw, 'people'),
-				_metadata: envelopeMeta(raw),
-			}),
-			log: (_, result) => ({ count: result.people.length }),
+			log: (_, result) => ({ found: result.found }),
 		},
 	);
 
