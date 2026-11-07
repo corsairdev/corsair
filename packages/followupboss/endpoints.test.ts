@@ -171,6 +171,49 @@ describe('people', () => {
 		expect(result).toEqual(person);
 	});
 
+	it('get sends fields and reads the documented picture object', async () => {
+		const documented = {
+			...person,
+			picture: { small: 'https://p.example/a.jpg' },
+		};
+		respond(documented);
+
+		const result = await invoke(People.get, { id: 950, fields: 'allFields' });
+
+		expect(lastRequest().query).toEqual({ fields: 'allFields' });
+		expect(result).toEqual(documented);
+	});
+
+	it('create sends timeframeId, collaborators and createdAt as documented', async () => {
+		respond(person, 201);
+
+		await invoke(People.create, {
+			firstName: 'Ava',
+			timeframeId: 1,
+			collaborators: [21, 22],
+			createdAt: '2026-01-15',
+		});
+
+		expect(lastRequest().body).toEqual({
+			firstName: 'Ava',
+			timeframeId: 1,
+			collaborators: [21, 22],
+			createdAt: '2026-01-15',
+		});
+	});
+
+	it('update sends timeframeId', async () => {
+		respond(person);
+
+		await invoke(People.update, { id: 950, timeframeId: 2 });
+
+		expect(lastRequest()).toMatchObject({
+			method: 'PUT',
+			path: '/v1/people/950',
+		});
+		expect(lastRequest().body).toEqual({ timeframeId: 2 });
+	});
+
 	it('create POSTs the body without deduplicate and sends it as the query', async () => {
 		const created = { ...person, id: 955 };
 		respond(created, 201);
@@ -713,6 +756,32 @@ describe('notes', () => {
 });
 
 describe('events', () => {
+	it('create sends the page, campaign, search and history fields', async () => {
+		respond({}, 201);
+		const input = {
+			type: 'Viewed Page',
+			source: 'cedarlane.example',
+			person: { firstName: 'Ava' },
+			occurredAt: '2026-05-01T10:00:00Z',
+			pageTitle: 'Cedar Lane',
+			pageUrl: 'https://cedarlane.example/82-cedar',
+			pageReferrer: 'https://www.google.com',
+			pageDuration: 45,
+			campaign: { source: 'Google', medium: 'organic' },
+			property: { street: '82 Cedar Lane', code: '83702', price: 475000 },
+			propertySearch: {
+				city: 'Boise',
+				code: ['83702', '83706'],
+				maxPrice: 500000,
+			},
+		};
+
+		await invoke(Events.create, input);
+
+		expect(lastRequest()).toMatchObject({ method: 'POST', path: '/v1/events' });
+		expect(lastRequest().body).toEqual(input);
+	});
+
 	it('list joins the type filter with commas and passes the cursor through', async () => {
 		respond({ events: [event] });
 

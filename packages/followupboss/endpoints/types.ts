@@ -919,6 +919,49 @@ const EventPersonSchema = z
 	})
 	.loose();
 
+// The property, search and campaign objects of POST /events, field for field
+// from https://docs.followupboss.com/reference/events-post
+const EventPropertySchema = z.object({
+	street: z.string().optional(),
+	city: z.string().optional(),
+	state: z.string().optional(),
+	code: z.string().optional().describe('Zip code, as a string.'),
+	mlsNumber: z.string().optional(),
+	price: z.number().int().optional(),
+	forRent: z.boolean().optional(),
+	url: z.string().optional(),
+	type: z.string().optional(),
+	bedrooms: z.string().optional(),
+	bathrooms: z.string().optional(),
+	area: z.string().optional().describe('Square feet.'),
+	lot: z.string().optional().describe('Acres.'),
+});
+
+const EventPropertySearchSchema = z.object({
+	type: z.string().optional(),
+	neighborhood: z.string().optional(),
+	city: z.string().optional(),
+	state: z.string().optional(),
+	code: z
+		.union([z.string(), z.array(z.string())])
+		.optional()
+		.describe('One zip code or a list of them.'),
+	minPrice: z.number().int().optional(),
+	maxPrice: z.number().int().optional(),
+	minBedrooms: z.number().int().optional(),
+	maxBedrooms: z.number().int().optional(),
+	minBathrooms: z.number().optional(),
+	maxBathrooms: z.number().optional(),
+});
+
+const EventCampaignSchema = z.object({
+	source: z.string(),
+	medium: z.string().optional(),
+	term: z.string().optional(),
+	content: z.string().optional(),
+	campaign: z.string().optional(),
+});
+
 const EventsCreateInputSchema = z.object({
 	system: z
 		.string()
@@ -934,7 +977,32 @@ const EventsCreateInputSchema = z.object({
 	message: z.string().optional(),
 	description: z.string().optional(),
 	person: EventPersonSchema.optional(),
-	property: z.record(z.string(), z.unknown()).optional(),
+	property: EventPropertySchema.optional(),
+	propertySearch: EventPropertySearchSchema.optional(),
+	campaign: EventCampaignSchema.optional(),
+	occurredAt: z
+		.string()
+		.optional()
+		.describe(
+			'When the event happened. Events more than a day old count as historical and do not trigger automations.',
+		),
+	pageTitle: z
+		.string()
+		.optional()
+		.describe('Viewed Page events: title of the page.'),
+	pageUrl: z
+		.string()
+		.optional()
+		.describe('Viewed Page events: URL of the page.'),
+	pageReferrer: z
+		.string()
+		.optional()
+		.describe('Viewed Page events: referring URL; send pageUrl with it.'),
+	pageDuration: z
+		.number()
+		.int()
+		.optional()
+		.describe('Viewed Page events: seconds spent on the page.'),
 });
 
 export type EventsCreateInput = z.infer<typeof EventsCreateInputSchema>;
