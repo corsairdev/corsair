@@ -1891,6 +1891,15 @@
                 ]
               },
               {
+                "group": "fal",
+                "pages": [
+                  "plugins/fal/overview",
+                  "plugins/fal/api",
+                  "plugins/fal/database",
+                  "plugins/fal/webhooks"
+                ]
+              },
+              {
                 "group": "Faraday",
                 "pages": [
                   "plugins/faraday/overview",
@@ -1973,6 +1982,14 @@
                   "plugins/flutterwave/overview",
                   "plugins/flutterwave/api",
                   "plugins/flutterwave/database"
+                ]
+              },
+              {
+                "group": "Follow Up Boss",
+                "pages": [
+                  "plugins/followupboss/overview",
+                  "plugins/followupboss/api",
+                  "plugins/followupboss/database"
                 ]
               },
               {
@@ -2914,6 +2931,14 @@
                   "plugins/runpod/overview",
                   "plugins/runpod/api",
                   "plugins/runpod/database"
+                ]
+              },
+              {
+                "group": "Salesflare",
+                "pages": [
+                  "plugins/salesflare/overview",
+                  "plugins/salesflare/api",
+                  "plugins/salesflare/database"
                 ]
               },
               {

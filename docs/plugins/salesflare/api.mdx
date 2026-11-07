@@ -1,0 +1,3049 @@
+---
+title: API
+description: "API reference for Salesflare: every `salesflare.api.*` operation with input and output types."
+---
+
+Every `salesflare.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### addAccountContacts
+
+`accounts.addAccountContacts`
+
+Link contacts to an account
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.accounts.addAccountContacts({ accountId: '1234567', id: 3001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `id` | `number` | No | — |
+| `_dirty` | `boolean` | No | — |
+| `_deleted` | `boolean` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### addAccountUsers
+
+`accounts.addAccountUsers`
+
+Add users to an account
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.accounts.addAccountUsers({ accountId: '1234567', id: 2001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `id` | `number` | No | — |
+| `_dirty` | `boolean` | No | — |
+| `_deleted` | `boolean` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createAccount
+
+`accounts.createAccount`
+
+Create a new account
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.accounts.createAccount({ name: 'Acme Inc', domain: 'acme.example.com', website: 'https://acme.example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `update_if_exists` | `boolean` | No | — |
+| `owner` | `number` | No | — |
+| `name` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `picture` | `string` | No | — |
+| `size` | `number` | No | — |
+| `website` | `string` | No | — |
+| `description` | `string` | No | — |
+| `address` | `Record<string, any>` | No | — |
+| `addresses` | `object[]` | No | — |
+| `email` | `string` | No | — |
+| `email_addresses` | `object[]` | No | — |
+| `phone_number` | `string` | No | — |
+| `phone_numbers` | `object[]` | No | — |
+| `social_profiles` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `links` | `string` | No | — |
+| `customers` | `object[]` | No | — |
+| `_dirty` | `boolean` | No | — |
+| `parent_account` | `number \| object` | No | — |
+| `custom` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  city?: string,
+  country?: string,
+  region?: string,
+  state_region?: string,
+  street?: string,
+  zip?: string,
+  _dirty?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="email_addresses full type">
+
+```ts
+{
+  email: string,
+  _dirty?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="phone_numbers full type">
+
+```ts
+{
+  number: string,
+  type?: string,
+  _dirty?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="customers full type">
+
+```ts
+{
+  id: number,
+  email?: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="parent_account full type">
+
+```ts
+number | {
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteAccount
+
+`accounts.deleteAccount`
+
+Delete a account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.salesflare.api.accounts.deleteAccount({ accountId: '1234567' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| string \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | string | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listAccountFeed
+
+`accounts.listAccountFeed`
+
+List the activity feed of an account
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.accounts.listAccountFeed({
+	accountId: '1234567',
+	limit: 20,
+	types: ['email', 'meeting-live'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `types` | `(email \| message \| meeting-live \| meeting-phone \| forward \| webpage \| user_added \| user_removed \| account_created)[]` | No | — |
+| `contacts` | `number[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listAccountMessages
+
+`accounts.listAccountMessages`
+
+List messages on an account
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.accounts.listAccountMessages({ accountId: '1234567', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listAccounts
+
+`accounts.listAccounts`
+
+List Accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.accounts.listAccounts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number[]` | No | — |
+| `details` | `boolean` | No | — |
+| `search` | `string` | No | — |
+| `name` | `string` | No | — |
+| `creation_after` | `string` | No | — |
+| `creation_before` | `string` | No | — |
+| `min_size` | `number` | No | — |
+| `max_size` | `number` | No | — |
+| `domain` | `string[]` | No | — |
+| `tag` | `number[]` | No | — |
+| `tag.name` | `string[]` | No | — |
+| `address.country` | `string[]` | No | — |
+| `address.city` | `string[]` | No | — |
+| `address.state_region` | `string[]` | No | — |
+| `hotness` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `custom` | `string` | No | — |
+| `order_by` | `string[]` | No | — |
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `export` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveAccount
+
+`accounts.retrieveAccount`
+
+Retrieve a single account by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.accounts.retrieveAccount({ accountId: '1234567' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateAccount
+
+`accounts.updateAccount`
+
+Update a account
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.accounts.updateAccount({ accountId: '1234567', name: 'Acme Inc', website: 'https://acme.example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `picture` | `string` | No | — |
+| `size` | `number` | No | — |
+| `website` | `string` | No | — |
+| `description` | `string` | No | — |
+| `address` | `object` | No | — |
+| `addresses` | `object[]` | No | — |
+| `email` | `string` | No | — |
+| `email_addresses` | `object[]` | No | — |
+| `phone_number` | `string` | No | — |
+| `phone_numbers` | `object[]` | No | — |
+| `social_profiles` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `links` | `string` | No | — |
+| `_dirty` | `boolean` | No | — |
+| `parent_account` | `number \| object` | No | — |
+| `custom` | `Record<string, any>` | No | — |
+| `q` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  id?: number,
+  city?: string,
+  country?: string,
+  region?: string,
+  state_region?: string,
+  street?: string,
+  zip?: string,
+  archived?: boolean,
+  _dirty?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  id?: number,
+  city?: string,
+  country?: string,
+  region?: string,
+  state_region?: string,
+  street?: string,
+  zip?: string,
+  archived?: boolean,
+  _dirty?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="email_addresses full type">
+
+```ts
+{
+  id?: number,
+  email?: string,
+  archived?: boolean,
+  _dirty?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="phone_numbers full type">
+
+```ts
+{
+  id?: number,
+  number?: string,
+  type?: string,
+  archived?: boolean,
+  _dirty?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="parent_account full type">
+
+```ts
+number | {
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="q full type">
+
+```ts
+{
+  condition: AND | OR,
+  rules: Record<string, any>[],
+  order_by?: string,
+  not?: boolean,
+  valid?: boolean,
+  search?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateAccountContacts
+
+`accounts.updateAccountContacts`
+
+Update the contact links of an account
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.accounts.updateAccountContacts({
+	accountId: '1234567',
+	id: 3001,
+	_dirty: true,
+	_deleted: true,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `id` | `number` | No | — |
+| `_dirty` | `boolean` | No | — |
+| `_deleted` | `boolean` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateAccountUsers
+
+`accounts.updateAccountUsers`
+
+Update the users assigned to an account
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.accounts.updateAccountUsers({
+	accountId: '1234567',
+	id: 2001,
+	_dirty: true,
+	_deleted: true,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `id` | `number` | No | — |
+| `_dirty` | `boolean` | No | — |
+| `_deleted` | `boolean` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Calls
+
+### createCall
+
+`calls.createCall`
+
+Create a new call
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.calls.createCall({
+	date: '2026-12-01T15:00:00Z',
+	participants: [3001],
+	notes: 'Left a voicemail',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | Yes | — |
+| `end_date` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `description` | `string` | No | — |
+| `minutes` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `phone_type` | `string` | No | — |
+| `phone_number_hash` | `string` | No | — |
+| `participants` | `number[]` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateCall
+
+`calls.updateCall`
+
+Update a logged call
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.calls.updateCall({ meetingId: '7002', type: 'meeting-phone', participants: [3001], notes: 'Called back, renewal confirmed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+| `calendar_id` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `description` | `string` | No | — |
+| `minutes` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `edited_by` | `number` | No | — |
+| `type` | `meeting-live \| meeting-phone` | No | — |
+| `phone_type` | `string` | No | — |
+| `participants` | `number[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Campaigns
+
+### listCampaignMergeFields
+
+`campaigns.listCampaignMergeFields`
+
+List the merge fields available for campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.campaigns.listCampaignMergeFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contacts
+
+### createContact
+
+`contacts.createContact`
+
+Create a new contact
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.contacts.createContact({
+	email: 'jane@acme.example.com',
+	firstname: 'Jane',
+	lastname: 'Doe',
+	account: 1234567,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `force` | `boolean` | No | — |
+| `owner` | `number` | No | — |
+| `domain` | `string` | No | — |
+| `email` | `string` | No | — |
+| `prefix` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `middle` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `suffix` | `string` | No | — |
+| `name` | `string` | No | — |
+| `picture` | `string` | No | — |
+| `account` | `number` | No | — |
+| `birth_date` | `string` | No | — |
+| `opt-out` | `boolean` | No | — |
+| `opt-out_date` | `string` | No | — |
+| `opt-out_campaign` | `string` | No | — |
+| `bounced` | `boolean` | No | — |
+| `bounced_date` | `string` | No | — |
+| `files` | `Record<string, any>[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `address` | `object` | No | — |
+| `addresses` | `object[]` | No | — |
+| `phone_number` | `string` | No | — |
+| `mobile_phone_number` | `string` | No | — |
+| `home_phone_number` | `string` | No | — |
+| `fax_number` | `string` | No | — |
+| `phone_numbers` | `object[]` | No | — |
+| `position` | `object` | No | — |
+| `positions` | `object[]` | No | — |
+| `social_profiles` | `string[]` | No | — |
+| `custom` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  city?: string,
+  country?: string,
+  region?: string,
+  state_region?: string,
+  street?: string,
+  type?: string,
+  zip?: string
+}
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  city?: string,
+  country?: string,
+  region?: string,
+  state_region?: string,
+  street?: string,
+  type?: string,
+  zip?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="phone_numbers full type">
+
+```ts
+{
+  number: string,
+  type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="position full type">
+
+```ts
+{
+  organisation?: string,
+  role?: string
+}
+```
+</Accordion>
+
+<Accordion title="positions full type">
+
+```ts
+{
+  end_date?: string,
+  start_date?: string,
+  current?: boolean,
+  primary?: boolean,
+  organisation?: string,
+  role?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteContact
+
+`contacts.deleteContact`
+
+Delete a contact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.salesflare.api.contacts.deleteContact({ contactId: '3001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| string \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | string | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listContacts
+
+`contacts.listContacts`
+
+List Contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.contacts.listContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number[]` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `modification_after` | `string` | No | — |
+| `modification_before` | `string` | No | — |
+| `creation_after` | `string` | No | — |
+| `creation_before` | `string` | No | — |
+| `account` | `number[]` | No | — |
+| `tag` | `number[]` | No | — |
+| `tag.name` | `string[]` | No | — |
+| `position.role` | `string[]` | No | — |
+| `address.country` | `string[]` | No | — |
+| `address.state_region` | `string[]` | No | — |
+| `address.city` | `string[]` | No | — |
+| `includeArchived` | `boolean` | No | — |
+| `search` | `string` | No | — |
+| `type` | `customer \| mycontacts` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `custom` | `string` | No | — |
+| `order_by` | `string[]` | No | — |
+| `export` | `string` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveContact
+
+`contacts.retrieveContact`
+
+Retrieve a single contact by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.contacts.retrieveContact({ contactId: '3001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateContact
+
+`contacts.updateContact`
+
+Update a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.contacts.updateContact({ contactId: '3001', firstname: 'Jane', lastname: 'Doe' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+| `force` | `boolean` | No | — |
+| `prefix` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `middle` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `suffix` | `string` | No | — |
+| `email` | `string` | No | — |
+| `role` | `string` | No | — |
+| `name` | `string` | No | — |
+| `owner` | `number` | No | — |
+| `picture` | `string` | No | — |
+| `account` | `number \| null` | No | — |
+| `birth_date` | `string` | No | — |
+| `opt-out` | `boolean` | No | — |
+| `opt-out_date` | `string` | No | — |
+| `opt-out_campaign` | `string` | No | — |
+| `bounced` | `boolean` | No | — |
+| `bounced_date` | `string` | No | — |
+| `files` | `Record<string, any>[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `address` | `object` | No | — |
+| `addresses` | `object[]` | No | — |
+| `phone_number` | `string` | No | — |
+| `mobile_phone_number` | `string` | No | — |
+| `home_phone_number` | `string` | No | — |
+| `fax_number` | `string` | No | — |
+| `phone_numbers` | `object[]` | No | — |
+| `position` | `object` | No | — |
+| `positions` | `object[]` | No | — |
+| `social_profiles` | `string[]` | No | — |
+| `custom` | `Record<string, any>` | No | — |
+| `_dirty` | `boolean` | No | — |
+| `archived` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  id?: number,
+  city?: string,
+  country?: string,
+  region?: string,
+  state_region?: string,
+  street?: string,
+  type?: string,
+  zip?: string,
+  archived?: boolean,
+  _dirty?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+  id?: number,
+  city?: string,
+  country?: string,
+  region?: string,
+  state_region?: string,
+  street?: string,
+  type?: string,
+  zip?: string,
+  archived?: boolean,
+  _dirty?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="phone_numbers full type">
+
+```ts
+{
+  id?: number,
+  number?: string,
+  type?: string,
+  archived?: boolean,
+  _dirty?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="position full type">
+
+```ts
+{
+  id?: number,
+  organisation?: string,
+  role?: string,
+  archived?: boolean,
+  _dirty?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="positions full type">
+
+```ts
+{
+  id?: number,
+  organisation?: string,
+  role?: string,
+  archived?: boolean,
+  _dirty?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Currencies
+
+### listCurrencies
+
+`currencies.listCurrencies`
+
+List Currencies
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.currencies.listCurrencies({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Customfields
+
+### createCustomFieldSub
+
+`customfields.createCustomFieldSub`
+
+Create a new customField sub-resource
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.customfields.createCustomFieldSub({ itemClass: 'accounts', name: 'Contract tier', type: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `itemClass` | `string` | Yes | — |
+| `type` | `number` | No | — |
+| `name` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `archived` | `boolean` | No | — |
+| `required` | `boolean` | No | — |
+| `pipeline` | `number` | No | — |
+| `predefined_customfield` | `number` | No | — |
+| `users_can_add_options` | `boolean` | No | — |
+| `options` | `object[]` | No | — |
+| `order_alphabetically` | `boolean` | No | — |
+| `min_number` | `number` | No | — |
+| `max_number` | `number` | No | — |
+| `min_date` | `string` | No | — |
+| `max_date` | `string` | No | — |
+| `default_boolean_value` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  id?: number,
+  order?: number,
+  archived?: boolean,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteCustomField
+
+`customfields.deleteCustomField`
+
+Delete a customField
+
+**Risk:** `destructive`
+
+```ts
+await corsair.salesflare.api.customfields.deleteCustomField({ itemClass: 'accounts', id: '9001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `itemClass` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object \| string \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | string | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listCustomFieldOptions
+
+`customfields.listCustomFieldOptions`
+
+List the options of a custom field
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.customfields.listCustomFieldOptions({ itemClass: 'accounts', customFieldApiField: 'contract_tier' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `itemClass` | `string` | Yes | — |
+| `customFieldApiField` | `string` | Yes | — |
+| `searchString` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listCustomFields
+
+`customfields.listCustomFields`
+
+List the custom fields of an item class
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.customfields.listCustomFields({ itemClass: 'accounts' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `itemClass` | `string` | Yes | — |
+| `includeDisabled` | `boolean` | No | — |
+| `pipeline` | `number` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listCustomFieldTypes
+
+`customfields.listCustomFieldTypes`
+
+List the custom field types supported by Salesflare
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.customfields.listCustomFieldTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveCustomField
+
+`customfields.retrieveCustomField`
+
+Retrieve a single customField by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.customfields.retrieveCustomField({ itemClass: 'accounts', id: '9001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `itemClass` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateCustomField
+
+`customfields.updateCustomField`
+
+Update a customField
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.customfields.updateCustomField({ itemClass: 'accounts', id: '9001', name: 'Contract plan' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `itemClass` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `type` | `number` | No | — |
+| `name` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `archived` | `boolean` | No | — |
+| `required` | `boolean` | No | — |
+| `pipeline` | `number` | No | — |
+| `pipelineName` | `string` | No | — |
+| `order` | `number` | No | — |
+| `predefined_customfield` | `number` | No | — |
+| `users_can_add_options` | `boolean` | No | — |
+| `options` | `object[]` | No | — |
+| `order_alphabetically` | `boolean` | No | — |
+| `min_number` | `number` | No | — |
+| `max_number` | `number` | No | — |
+| `min_date` | `string` | No | — |
+| `max_date` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  id?: number,
+  order?: number,
+  archived?: boolean,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object \| number`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | number
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Datasources
+
+### listEmailDataSources
+
+`datasources.listEmailDataSources`
+
+List the connected email data sources
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.datasources.listEmailDataSources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `includeTeamDataSources` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateEmailDataSource
+
+`datasources.updateEmailDataSource`
+
+Update a connected email data source
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.datasources.updateEmailDataSource({ id: '401', max_emails_day: 200, max_emails_hour: 40 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email_signature` | `string` | No | — |
+| `add_signature_to_campaign` | `boolean` | No | — |
+| `add_signature_to_replies` | `boolean` | No | — |
+| `max_emails_day` | `number` | No | — |
+| `max_emails_hour` | `number` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Filterfields
+
+### listFilterFields
+
+`filterfields.listFilterFields`
+
+List the filter fields available for an entity
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.filterfields.listFilterFields({ entity: 'account' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `string` | Yes | — |
+| `pipeline` | `number` | No | — |
+| `includePipelineSpecificPredefinedFilterFields` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Groups
+
+### listGroups
+
+`groups.listGroups`
+
+List Groups
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.groups.listGroups({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveGroup
+
+`groups.retrieveGroup`
+
+Retrieve a single group by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.groups.retrieveGroup({ id: '101' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Me
+
+### listMyContacts
+
+`me.listMyContacts`
+
+List contacts assigned to the current user
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.me.listMyContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number[]` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `modification_after` | `string` | No | — |
+| `modification_before` | `string` | No | — |
+| `creation_after` | `string` | No | — |
+| `creation_before` | `string` | No | — |
+| `account` | `number[]` | No | — |
+| `tag` | `number[]` | No | — |
+| `tag.name` | `string[]` | No | — |
+| `position.role` | `string[]` | No | — |
+| `address.country` | `string[]` | No | — |
+| `address.state_region` | `string[]` | No | — |
+| `address.city` | `string[]` | No | — |
+| `includeArchived` | `boolean` | No | — |
+| `search` | `string` | No | — |
+| `type` | `customer \| mycontacts` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `custom` | `string` | No | — |
+| `order_by` | `string[]` | No | — |
+| `export` | `string` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveCurrentUser
+
+`me.retrieveCurrentUser`
+
+Retrieve the currently authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.me.retrieveCurrentUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+## Meetings
+
+### createMeeting
+
+`meetings.createMeeting`
+
+Create a new meeting
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.meetings.createMeeting({
+	date: '2026-12-01T15:00:00Z',
+	end_date: '2026-12-01T15:30:00Z',
+	subject: 'Renewal call',
+	participants: [3001],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | Yes | — |
+| `end_date` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `description` | `string` | No | — |
+| `minutes` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `phone_type` | `string` | No | — |
+| `phone_number_hash` | `string` | No | — |
+| `participants` | `number[]` | Yes | — |
+| `type` | `meeting-live \| meeting-phone` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteMeeting
+
+`meetings.deleteMeeting`
+
+Delete a meeting
+
+**Risk:** `destructive`
+
+```ts
+await corsair.salesflare.api.meetings.deleteMeeting({ meetingId: '7001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| string \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | string | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveMeeting
+
+`meetings.retrieveMeeting`
+
+Retrieve a single meeting by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.meetings.retrieveMeeting({ meetingId: '7001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateMeeting
+
+`meetings.updateMeeting`
+
+Update a meeting
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.meetings.updateMeeting({ meetingId: '7001', type: 'meeting-live', participants: [3001], notes: 'Agreed on a 12-month renewal' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | — |
+| `calendar_id` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `description` | `string` | No | — |
+| `minutes` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `edited_by` | `number` | No | — |
+| `type` | `meeting-live \| meeting-phone` | No | Send 'meeting-live' when updating a logged live meeting; without it the API answers 422. |
+| `phone_type` | `string` | No | — |
+| `participants` | `number[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Messages
+
+### createMessage
+
+`messages.createMessage`
+
+Create a new message
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.messages.createMessage({ account: 1234567, body: 'Renewal confirmed for next year.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+| `mentions` | `number[]` | No | — |
+| `date` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### createMessageFeedback
+
+`messages.createMessageFeedback`
+
+Submit feedback for a message
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.messages.createMessageFeedback({ messageId: '8001', feedback: 'The suggested reply was useful' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageId` | `string` | Yes | — |
+| `feedback` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteMessage
+
+`messages.deleteMessage`
+
+Delete a message
+
+**Risk:** `destructive`
+
+```ts
+await corsair.salesflare.api.messages.deleteMessage({ messageId: '8001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| string \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | string | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateMessage
+
+`messages.updateMessage`
+
+Update a message
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.messages.updateMessage({ messageId: '8001', account: 1234567, body: 'Renewal confirmed for 12 months.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageId` | `string` | Yes | — |
+| `account` | `number` | Yes | — |
+| `body` | `string` | Yes | — |
+| `mentions` | `number[]` | No | — |
+| `date` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Opportunities
+
+### createOpportunity
+
+`opportunities.createOpportunity`
+
+Create a new opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.opportunities.createOpportunity({ account: 1234567, name: 'Acme renewal', value: 12000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `number` | No | — |
+| `account` | `number` | Yes | — |
+| `stage` | `number` | No | — |
+| `lost_reason` | `number` | No | — |
+| `files` | `Record<string, any>[]` | No | — |
+| `lead_source` | `number` | No | — |
+| `start_date` | `string` | No | — |
+| `probability` | `number` | No | — |
+| `assignee` | `number` | No | — |
+| `creator` | `number` | No | — |
+| `status` | `string` | No | — |
+| `name` | `string` | No | — |
+| `value` | `number` | No | — |
+| `currency` | `number` | No | — |
+| `status_date` | `string` | No | — |
+| `close_date` | `string` | No | — |
+| `closed` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `recurring_price_per_unit` | `number` | No | — |
+| `frequency` | `annually \| weekly \| monthly \| daily` | No | — |
+| `units` | `number` | No | — |
+| `contract_start_date` | `string` | No | — |
+| `contract_end_date` | `string` | No | — |
+| `main_contact` | `number` | No | — |
+| `custom` | `Record<string, any>` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteOpportunity
+
+`opportunities.deleteOpportunity`
+
+Delete a opportunity
+
+**Risk:** `destructive`
+
+```ts
+await corsair.salesflare.api.opportunities.deleteOpportunity({ id: '4001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object \| string \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | string | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listOpportunities
+
+`opportunities.listOpportunities`
+
+List Opportunities
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.opportunities.listOpportunities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `id` | `number \| number[]` | No | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `stage` | `number \| number[]` | No | — |
+| `stage.name` | `string \| string[]` | No | — |
+| `owner` | `number` | No | — |
+| `team_member` | `number` | No | — |
+| `owner_group` | `number` | No | — |
+| `assignee_group` | `number` | No | — |
+| `team_member_group` | `number` | No | — |
+| `account` | `number` | No | — |
+| `assignee` | `number` | No | — |
+| `min_value` | `number` | No | — |
+| `max_value` | `number` | No | — |
+| `close_after` | `string` | No | — |
+| `close_before` | `string` | No | — |
+| `creation_after` | `string` | No | — |
+| `creation_before` | `string` | No | — |
+| `closed` | `boolean` | No | — |
+| `done` | `boolean` | No | — |
+| `tag` | `number[]` | No | — |
+| `tag.name` | `string \| string[]` | No | — |
+| `hotness` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order_by` | `string[]` | No | — |
+| `pipeline` | `number` | No | — |
+| `custom` | `string` | No | — |
+| `details` | `boolean` | No | — |
+| `export` | `string` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveOpportunity
+
+`opportunities.retrieveOpportunity`
+
+Retrieve a single opportunity by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.opportunities.retrieveOpportunity({ id: '4001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateOpportunity
+
+`opportunities.updateOpportunity`
+
+Update a opportunity
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.opportunities.updateOpportunity({ id: '4001', value: 15000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `owner` | `number` | No | — |
+| `account` | `number` | No | — |
+| `stage` | `number` | No | — |
+| `lost_reason` | `number` | No | — |
+| `files` | `Record<string, any>[]` | No | — |
+| `lead_source` | `number` | No | — |
+| `start_date` | `string` | No | — |
+| `probability` | `number` | No | — |
+| `assignee` | `number` | No | — |
+| `creator` | `number` | No | — |
+| `name` | `string` | No | — |
+| `value` | `number` | No | — |
+| `close_date` | `string` | No | — |
+| `closed` | `boolean` | No | — |
+| `done` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `recurring_price_per_unit` | `number` | No | — |
+| `frequency` | `annually \| weekly \| monthly \| daily` | No | — |
+| `units` | `number` | No | — |
+| `contract_start_date` | `string` | No | — |
+| `contract_end_date` | `string` | No | — |
+| `main_contact` | `number` | No | — |
+| `custom` | `Record<string, any>` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Persons
+
+### listPersons
+
+`persons.listPersons`
+
+List persons resolved from email addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.persons.listPersons({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number[]` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Pipelines
+
+### listPipelines
+
+`pipelines.listPipelines`
+
+List Pipelines
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.pipelines.listPipelines({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `order_by` | `string[]` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Settings
+
+### retrieveAiSettings
+
+`settings.retrieveAiSettings`
+
+Retrieve the workspace's AI settings
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.settings.retrieveAiSettings({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateAiSettings
+
+`settings.updateAiSettings`
+
+Update the workspace's AI settings
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.settings.updateAiSettings({
+	company: { name: 'Acme Inc', summary: 'B2B software for logistics teams' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `object` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  name?: string,
+  summary?: string,
+  generated?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  name?: string,
+  summary?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Stages
+
+### listStages
+
+`stages.listStages`
+
+List Stages
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.stages.listStages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `pipeline.id` | `number` | No | — |
+| `pipeline.name` | `string` | No | — |
+| `order_by` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveStage
+
+`stages.retrieveStage`
+
+Retrieve a single stage by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.stages.retrieveStage({ stageId: '201' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stageId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Tags
+
+### createTag
+
+`tags.createTag`
+
+Create a new tag
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.tags.createTag({ name: 'Enterprise' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteTag
+
+`tags.deleteTag`
+
+Delete a tag
+
+**Risk:** `destructive`
+
+```ts
+await corsair.salesflare.api.tags.deleteTag({ tagId: '5001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tagId` | `string` | Yes | — |
+
+
+
+**Output:** `object \| string \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | string | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listTags
+
+`tags.listTags`
+
+List Tags
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.tags.listTags({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number[]` | No | — |
+| `name` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order_by` | `string[]` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listTagUsage
+
+`tags.listTagUsage`
+
+List the usage statistics of a tag
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.tags.listTagUsage({ tagId: '5001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tagId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### retrieveTag
+
+`tags.retrieveTag`
+
+Retrieve a single tag by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.tags.retrieveTag({ tagId: '5001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tagId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateTag
+
+`tags.updateTag`
+
+Update a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.tags.updateTag({ tagId: '5001', name: 'Enterprise plan' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tagId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Tasks
+
+### createTask
+
+`tasks.createTask`
+
+Create a new task
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.tasks.createTask({ description: 'Send the renewal proposal', account: 1234567, reminder_date: '2026-12-01T09:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `number` | No | — |
+| `description` | `string` | Yes | — |
+| `reminder_date` | `string` | No | — |
+| `assignees` | `number[]` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteTask
+
+`tasks.deleteTask`
+
+Delete a task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.salesflare.api.tasks.deleteTask({ id: '6001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object \| string \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | string | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listTasks
+
+`tasks.listTasks`
+
+List Tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.tasks.listTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number[]` | No | — |
+| `search` | `string` | No | — |
+| `assignees` | `number[]` | No | — |
+| `type` | `number[]` | No | — |
+| `account` | `number[]` | No | — |
+| `order_by` | `string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `export` | `string` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateTask
+
+`tasks.updateTask`
+
+Update a task
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.tasks.updateTask({ id: '6001', completed: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `account` | `number` | No | — |
+| `description` | `string` | No | — |
+| `reminder_date` | `string` | No | — |
+| `assignees` | `number[]` | No | — |
+| `completed` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Users
+
+### listUsers
+
+`users.listUsers`
+
+List Users
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.users.listUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number[]` | No | — |
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `search` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order_by` | `string[]` | No | — |
+| `onlyEnabled` | `boolean` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveUser
+
+`users.retrieveUser`
+
+Retrieve a single user by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.users.retrieveUser({ id: '2001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Workflows
+
+### createWorkflow
+
+`workflows.createWorkflow`
+
+Create a new workflow
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.workflows.createWorkflow({ name: 'Renewal follow-up' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `filter` | `object` | No | — |
+| `individual_record_filter` | `object` | No | — |
+| `status` | `live \| paused \| scheduled \| draft` | No | — |
+| `status_message` | `string` | No | — |
+| `record_type` | `contact` | No | — |
+| `goal` | `opened \| clicked \| replied` | No | — |
+| `continuous` | `boolean` | No | — |
+| `exit_after_days` | `number` | No | — |
+| `schedule_date` | `string` | No | — |
+| `schedule_time_start` | `string` | No | — |
+| `schedule_time_end` | `string` | No | — |
+| `schedule_days` | `number[]` | No | — |
+| `steps` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  ids?: number[]
+}
+```
+</Accordion>
+
+<Accordion title="individual_record_filter full type">
+
+```ts
+{
+  condition: AND | OR,
+  rules: Record<string, any>[],
+  order_by?: string,
+  not?: boolean,
+  valid?: boolean,
+  search?: string
+}
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  order: number,
+  filter?: Record<string, any>,
+  trigger_step?: number,
+  trigger_step_index?: number,
+  trigger_after_days?: number,
+  trigger?: sent | opened | clicked | replied | not_opened | not_replied | not_clicked,
+  action_type?: send_email,
+  action_config?: Record<string, any>,
+  action_status?: string,
+  action_source?: number,
+  action_source_email?: string,
+  analytics?: Record<string, any>,
+  metrics_data?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### listWorkflows
+
+`workflows.listWorkflows`
+
+List Workflows
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.workflows.listWorkflows({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order_by` | `string[]` | No | — |
+| `search` | `string` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveWorkflow
+
+`workflows.retrieveWorkflow`
+
+Retrieve a single workflow by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.salesflare.api.workflows.retrieveWorkflow({ id: '301' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateWorkflow
+
+`workflows.updateWorkflow`
+
+Update a workflow
+
+**Risk:** `write`
+
+```ts
+await corsair.salesflare.api.workflows.updateWorkflow({ id: '301', name: 'Renewal follow-up (Q1)' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `filter` | `object` | No | — |
+| `individual_record_filter` | `object` | No | — |
+| `status` | `live \| paused \| scheduled \| draft` | No | — |
+| `status_message` | `string` | No | — |
+| `record_type` | `contact` | No | — |
+| `goal` | `opened \| clicked \| replied` | No | — |
+| `continuous` | `boolean` | No | — |
+| `exit_after_days` | `number` | No | — |
+| `schedule_date` | `string` | No | — |
+| `schedule_time_start` | `string` | No | — |
+| `schedule_time_end` | `string` | No | — |
+| `schedule_days` | `number[]` | No | — |
+| `steps` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  ids?: number[]
+}
+```
+</Accordion>
+
+<Accordion title="individual_record_filter full type">
+
+```ts
+{
+  condition: AND | OR,
+  rules: Record<string, any>[],
+  order_by?: string,
+  not?: boolean,
+  valid?: boolean,
+  search?: string
+}
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  order: number,
+  filter?: Record<string, any>,
+  trigger_step?: number,
+  trigger_step_index?: number,
+  trigger_after_days?: number,
+  trigger?: sent | opened | clicked | replied | not_opened | not_replied | not_clicked,
+  action_type?: send_email,
+  action_config?: Record<string, any>,
+  action_status?: string,
+  action_source?: number,
+  action_source_email?: string,
+  analytics?: Record<string, any>,
+  metrics_data?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateWorkflowAudience
+
+`workflows.updateWorkflowAudience`
+
+Update the audience record of a workflow
+
+**Risk:** `destructive`
+
+```ts
+await corsair.salesflare.api.workflows.updateWorkflowAudience({ id: '301', recordId: '3001', exited: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recordId` | `string` | Yes | — |
+| `exited` | `boolean` | No | — |
+| `met_goal` | `boolean` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+

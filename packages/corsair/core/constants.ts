@@ -224,6 +224,7 @@ export const BaseProviders = [
 	'exist',
 	'extractaai',
 	'facebook',
+	'fal',
 	'faraday',
 	'fidel',
 	'figma',
@@ -235,6 +236,7 @@ export const BaseProviders = [
 	'fixer',
 	'flexisign',
 	'flutterwave',
+	'followupboss',
 	'formbricks',
 	'fundable',
 	'gemini',
@@ -348,6 +350,7 @@ export const BaseProviders = [
 	'revai',
 	'rootly',
 	'runpod',
+	'salesflare',
 	'salesforce',
 	'saperly',
 	'sapsuccessfactors',
@@ -662,6 +665,7 @@ export const ProviderDisplayNames = {
 	exist: 'Exist',
 	extractaai: 'Extracta.ai',
 	facebook: 'Facebook',
+	fal: 'fal',
 	faraday: 'Faraday',
 	fidel: 'Fidel',
 	figma: 'Figma',
@@ -673,6 +677,7 @@ export const ProviderDisplayNames = {
 	fixer: 'Fixer',
 	flexisign: 'Flexisign',
 	flutterwave: 'Flutterwave',
+	followupboss: 'Follow Up Boss',
 	formbricks: 'Formbricks',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
@@ -785,6 +790,7 @@ export const ProviderDisplayNames = {
 	revai: 'RevAI',
 	rootly: 'Rootly',
 	runpod: 'RunPod',
+	salesflare: 'Salesflare',
 	salesforce: 'Salesforce',
 	saperly: 'Saperly',
 	sapsuccessfactors: 'SAP SuccessFactors',
@@ -1104,6 +1110,7 @@ export type AllProviders =
 	| 'exist'
 	| 'extractaai'
 	| 'facebook'
+	| 'fal'
 	| 'faraday'
 	| 'fidel'
 	| 'figma'
@@ -1115,6 +1122,7 @@ export type AllProviders =
 	| 'fixer'
 	| 'flexisign'
 	| 'flutterwave'
+	| 'followupboss'
 	| 'formbricks'
 	| 'fundable'
 	| 'gemini'
@@ -1228,6 +1236,7 @@ export type AllProviders =
 	| 'revai'
 	| 'rootly'
 	| 'runpod'
+	| 'salesflare'
 	| 'salesforce'
 	| 'saperly'
 	| 'sapsuccessfactors'

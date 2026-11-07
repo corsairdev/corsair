@@ -12,6 +12,12 @@ permissions:
   contents: read
   id-token: write
 
+# One publish at a time; a newer pending run replaces an older one, and every
+# run publishes whatever npm is missing.
+concurrency:
+  group: deploy-npm
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-24.04

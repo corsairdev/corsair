@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-06T18:22:39.573Z",
+  "generatedAt": "2026-11-07T11:55:43.011Z",
   "corsairVersion": "0.1.157",
   "catalogVersion": 2,
   "plugins": [
@@ -3180,6 +3180,21 @@
       }
     },
     {
+      "id": "fal",
+      "displayName": "fal",
+      "description": "Generative media platform with hundreds of image, video, audio and 3D models; queue or run models, follow requests, look up models and prices, track usage and upload input files.",
+      "npmPackageName": "@corsair-dev/fal",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 14,
+        "webhooks": 1,
+        "db": 0
+      }
+    },
+    {
       "id": "faraday",
       "displayName": "Faraday",
       "description": "Customer prediction platform for propensity scores, personas, and marketing intelligence.",
@@ -3327,6 +3342,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 53,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "followupboss",
+      "displayName": "Follow Up Boss",
+      "description": "Real-estate CRM with Follow Up Boss - manage people, deals, appointments, calls, texts, notes and tasks, push lead events into its routing, read smart lists and automations data, manage webhook subscriptions, and read delivered webhook events by ID.",
+      "npmPackageName": "@corsair-dev/followupboss",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 156,
         "webhooks": 0,
         "db": 0
       }
@@ -5028,6 +5058,21 @@
       }
     },
     {
+      "id": "salesflare",
+      "displayName": "Salesflare",
+      "description": "CRM for small-to-medium B2B companies with automated data entry, pipeline management, and customer relationships.",
+      "npmPackageName": "@corsair-dev/salesflare",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 70,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "salesforce",
       "displayName": "Salesforce",
       "description": "Enterprise CRM for leads, accounts, opportunities, service cases, and sales automation.",
@@ -5631,6 +5676,21 @@
       "counts": {
         "api": 1,
         "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "timely",
+      "displayName": "Timely",
+      "description": "Log, edit and report time in Timely: time entries, timers, projects, clients, tags, people and signed webhooks.",
+      "npmPackageName": "@corsair-dev/timely",
+      "authTypes": [
+        "oauth_2"
+      ],
+      "defaultAuthType": "oauth_2",
+      "counts": {
+        "api": 36,
+        "webhooks": 12,
         "db": 0
       }
     },
@@ -56360,6 +56420,96 @@
       "haystack": "videos.upload facebook.api.videos.upload publish a page video from file_url (same edge as createpost; not resumable/chunked). write"
     },
     {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "account.billing",
+      "haystack": "account.billing fal.api.account.billing the account's credit balance (needs a key with billing read access) read"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "files.upload",
+      "haystack": "files.upload fal.api.files.upload upload a file to fal storage and get a public url to pass as a model input write"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "models.estimateCost",
+      "haystack": "models.estimatecost fal.api.models.estimatecost estimate what a number of calls or output units will cost read"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "models.pricing",
+      "haystack": "models.pricing fal.api.models.pricing unit price of fal models (per image, megapixel, second…) read"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "models.run",
+      "haystack": "models.run fal.api.models.run run a model and wait up to waitseconds (default 10) for its output; spends fal credits. succeeded and failed are final. in_queue or in_progress is a job to follow with queue.status; video, audio and training usually take longer than the wait. write"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "models.search",
+      "haystack": "models.search fal.api.models.search find fal models by text, category or endpoint id; includeopenapi returns their input and output fields read"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "queue.cancel",
+      "haystack": "queue.cancel fal.api.queue.cancel cancel a queued request: removed if still waiting, asked to stop if running write"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "queue.result",
+      "haystack": "queue.result fal.api.queue.result the output of a completed queued request read"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "queue.status",
+      "haystack": "queue.status fal.api.queue.status where a queued request stands. once done it returns state succeeded with the output, or failed with the error. read"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "queue.submit",
+      "haystack": "queue.submit fal.api.queue.submit queue a model run (image, video, audio, 3d…) and get a request id back at once; spends fal credits. follow it with queue.status until state is succeeded or failed, or pass webhookurl. write"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "requests.deletePayloads",
+      "haystack": "requests.deletepayloads fal.api.requests.deletepayloads delete a request's stored input and output payloads and the files it generated on fal's cdn (files it took as input stay) destructive"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "requests.list",
+      "haystack": "requests.list fal.api.requests.list past requests to given endpoints, with timing and status; optionally their inputs and outputs read"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "usage.billingEvents",
+      "haystack": "usage.billingevents fal.api.usage.billingevents billed requests one by one, with their cost read"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "api",
+      "shortPath": "usage.get",
+      "haystack": "usage.get fal.api.usage.get usage and cost by endpoint over a date range read"
+    },
+    {
+      "pluginId": "fal",
+      "kind": "webhook",
+      "shortPath": "requests.completed",
+      "haystack": "requests.completed fal.webhooks.requests.completed a queued request finished: status ok with the model output, or error with the error. signed by fal (ed25519)."
+    },
+    {
       "pluginId": "faraday",
       "kind": "api",
       "shortPath": "accounts.create",
@@ -58530,6 +58680,942 @@
       "kind": "api",
       "shortPath": "wallets.listBalances",
       "haystack": "wallets.listbalances flutterwave.api.wallets.listbalances get wallet balances across currencies. read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "account.identity",
+      "haystack": "account.identity followupboss.api.account.identity get the account identity information behind the authenticated api key read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "account.me",
+      "haystack": "account.me followupboss.api.account.me get the authenticated user's profile and role read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "actionPlans.list",
+      "haystack": "actionplans.list followupboss.api.actionplans.list list the account's action plans read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "actionPlansPeople.create",
+      "haystack": "actionplanspeople.create followupboss.api.actionplanspeople.create enroll a person into an action plan write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "actionPlansPeople.list",
+      "haystack": "actionplanspeople.list followupboss.api.actionplanspeople.list list the people enrolled in action plans, filtered by person read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "actionPlansPeople.update",
+      "haystack": "actionplanspeople.update followupboss.api.actionplanspeople.update update an action plan enrollment, such as finishing it write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointmentOutcomes.create",
+      "haystack": "appointmentoutcomes.create followupboss.api.appointmentoutcomes.create create an appointment outcome with an optional sort order write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointmentOutcomes.delete",
+      "haystack": "appointmentoutcomes.delete followupboss.api.appointmentoutcomes.delete delete an appointment outcome after reassigning its appointments to another outcome destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointmentOutcomes.get",
+      "haystack": "appointmentoutcomes.get followupboss.api.appointmentoutcomes.get get one appointment outcome by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointmentOutcomes.list",
+      "haystack": "appointmentoutcomes.list followupboss.api.appointmentoutcomes.list list the outcomes that appointments can be closed with read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointmentOutcomes.update",
+      "haystack": "appointmentoutcomes.update followupboss.api.appointmentoutcomes.update update an appointment outcome's name or sort order write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointments.create",
+      "haystack": "appointments.create followupboss.api.appointments.create create an appointment with invitees, optionally sending them invitations write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointments.delete",
+      "haystack": "appointments.delete followupboss.api.appointments.delete permanently delete an appointment destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointments.get",
+      "haystack": "appointments.get followupboss.api.appointments.get get one appointment by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointments.list",
+      "haystack": "appointments.list followupboss.api.appointments.list list appointments, filtered by person, user or date range, paged read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointments.update",
+      "haystack": "appointments.update followupboss.api.appointments.update update an appointment's time, place, type or invitees write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointmentTypes.create",
+      "haystack": "appointmenttypes.create followupboss.api.appointmenttypes.create create an appointment type with an optional sort order write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointmentTypes.delete",
+      "haystack": "appointmenttypes.delete followupboss.api.appointmenttypes.delete delete an appointment type after reassigning its appointments to another type destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointmentTypes.get",
+      "haystack": "appointmenttypes.get followupboss.api.appointmenttypes.get get one appointment type by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointmentTypes.list",
+      "haystack": "appointmenttypes.list followupboss.api.appointmenttypes.list list the appointment types, sorted and paged read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "appointmentTypes.update",
+      "haystack": "appointmenttypes.update followupboss.api.appointmenttypes.update update an appointment type's name or sort order write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "automations.get",
+      "haystack": "automations.get followupboss.api.automations.get get one automation by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "automations.list",
+      "haystack": "automations.list followupboss.api.automations.list list the account's automations read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "automationsPeople.create",
+      "haystack": "automationspeople.create followupboss.api.automationspeople.create enroll a person into an automation write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "automationsPeople.get",
+      "haystack": "automationspeople.get followupboss.api.automationspeople.get get one automation enrollment by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "automationsPeople.list",
+      "haystack": "automationspeople.list followupboss.api.automationspeople.list list the people enrolled in automations, filtered by automation read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "automationsPeople.update",
+      "haystack": "automationspeople.update followupboss.api.automationspeople.update update an automation enrollment, such as finishing it write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "calls.create",
+      "haystack": "calls.create followupboss.api.calls.create log a call on a person with its direction, duration, outcome and note write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "calls.get",
+      "haystack": "calls.get followupboss.api.calls.get get one logged call by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "calls.list",
+      "haystack": "calls.list followupboss.api.calls.list list logged calls, filtered by person or phone number, paged read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "calls.update",
+      "haystack": "calls.update followupboss.api.calls.update update a logged call's note, outcome or duration write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "customFields.create",
+      "haystack": "customfields.create followupboss.api.customfields.create create a custom field definition for people, with choices for dropdown types write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "customFields.delete",
+      "haystack": "customfields.delete followupboss.api.customfields.delete permanently delete a person custom field definition destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "customFields.get",
+      "haystack": "customfields.get followupboss.api.customfields.get get one person custom field definition by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "customFields.list",
+      "haystack": "customfields.list followupboss.api.customfields.list list the custom fields available on people read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "customFields.update",
+      "haystack": "customfields.update followupboss.api.customfields.update update a person custom field's label, choices or visibility write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "dealAttachments.create",
+      "haystack": "dealattachments.create followupboss.api.dealattachments.create attach an externally hosted file to a deal write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "dealAttachments.delete",
+      "haystack": "dealattachments.delete followupboss.api.dealattachments.delete permanently delete a file attachment from a deal destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "dealAttachments.get",
+      "haystack": "dealattachments.get followupboss.api.dealattachments.get get one file attachment of a deal by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "dealAttachments.update",
+      "haystack": "dealattachments.update followupboss.api.dealattachments.update update the file uri, name or size of a deal attachment write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "dealCustomFields.create",
+      "haystack": "dealcustomfields.create followupboss.api.dealcustomfields.create create a custom field definition for deals, with choices for dropdown types write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "dealCustomFields.delete",
+      "haystack": "dealcustomfields.delete followupboss.api.dealcustomfields.delete permanently delete a deal custom field definition destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "dealCustomFields.get",
+      "haystack": "dealcustomfields.get followupboss.api.dealcustomfields.get get one deal custom field definition by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "dealCustomFields.list",
+      "haystack": "dealcustomfields.list followupboss.api.dealcustomfields.list list the custom fields available on deals read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "dealCustomFields.update",
+      "haystack": "dealcustomfields.update followupboss.api.dealcustomfields.update update a deal custom field's label, choices or visibility write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "deals.create",
+      "haystack": "deals.create followupboss.api.deals.create create a deal on a pipeline stage with a value and description write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "deals.delete",
+      "haystack": "deals.delete followupboss.api.deals.delete permanently delete a deal destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "deals.get",
+      "haystack": "deals.get followupboss.api.deals.get get one deal by id with its stage, value and associated people read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "deals.list",
+      "haystack": "deals.list followupboss.api.deals.list list deals with their stage, price and people, sorted and paged read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "deals.update",
+      "haystack": "deals.update followupboss.api.deals.update update a deal's stage, value, commission or associated people write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "emCampaigns.create",
+      "haystack": "emcampaigns.create followupboss.api.emcampaigns.create create an email marketing campaign with subject and html body write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "emCampaigns.list",
+      "haystack": "emcampaigns.list followupboss.api.emcampaigns.list list the email marketing campaigns, filtered by origin read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "emCampaigns.update",
+      "haystack": "emcampaigns.update followupboss.api.emcampaigns.update update an email marketing campaign's name, subject or body write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "emEvents.create",
+      "haystack": "emevents.create followupboss.api.emevents.create record email marketing events against subscriber email addresses write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "emEvents.list",
+      "haystack": "emevents.list followupboss.api.emevents.list list email marketing events such as sends, opens and clicks read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "events.create",
+      "haystack": "events.create followupboss.api.events.create push a lead event into follow up boss's routing, which creates or matches the person and runs their action plans write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "events.get",
+      "haystack": "events.get followupboss.api.events.get get one lead event by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "events.list",
+      "haystack": "events.list followupboss.api.events.list list lead events, filtered by person, type or property, paged with the keyset cursor fub enforces on deep pages read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "groups.create",
+      "haystack": "groups.create followupboss.api.groups.create create a routing group of users with a distribution strategy write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "groups.delete",
+      "haystack": "groups.delete followupboss.api.groups.delete permanently delete a routing group destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "groups.get",
+      "haystack": "groups.get followupboss.api.groups.get get one routing group by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "groups.list",
+      "haystack": "groups.list followupboss.api.groups.list list the routing groups with their distribution strategy read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "groups.roundRobin",
+      "haystack": "groups.roundrobin followupboss.api.groups.roundrobin read the round-robin rotation state of the routing groups read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "groups.update",
+      "haystack": "groups.update followupboss.api.groups.update update a routing group's name, members or distribution write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "inboxApps.addMessage",
+      "haystack": "inboxapps.addmessage followupboss.api.inboxapps.addmessage deliver a message from your system into an inbox app conversation write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "inboxApps.addNote",
+      "haystack": "inboxapps.addnote followupboss.api.inboxapps.addnote add an internal note to an inbox app conversation write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "inboxApps.addSystemConfirmationMessage",
+      "haystack": "inboxapps.addsystemconfirmationmessage followupboss.api.inboxapps.addsystemconfirmationmessage add a system confirmation message to an inbox app conversation write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "inboxApps.createParticipant",
+      "haystack": "inboxapps.createparticipant followupboss.api.inboxapps.createparticipant add a participant to an inbox app conversation write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "inboxApps.deactivate",
+      "haystack": "inboxapps.deactivate followupboss.api.inboxapps.deactivate deactivate an inbox app so it stops receiving conversations destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "inboxApps.deleteParticipant",
+      "haystack": "inboxapps.deleteparticipant followupboss.api.inboxapps.deleteparticipant remove a participant from an inbox app conversation destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "inboxApps.getParticipants",
+      "haystack": "inboxapps.getparticipants followupboss.api.inboxapps.getparticipants list the participants of an inbox app conversation read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "inboxApps.install",
+      "haystack": "inboxapps.install followupboss.api.inboxapps.install install a published inbox app for a user with a subscription url write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "inboxApps.installedApp",
+      "haystack": "inboxapps.installedapp followupboss.api.inboxapps.installedapp read the installation details of a published inbox app read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "inboxApps.updateConversation",
+      "haystack": "inboxapps.updateconversation followupboss.api.inboxapps.updateconversation update an inbox app conversation's subject or state write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "inboxApps.updateMessage",
+      "haystack": "inboxapps.updatemessage followupboss.api.inboxapps.updatemessage update a message previously delivered to an inbox app conversation write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "notes.create",
+      "haystack": "notes.create followupboss.api.notes.create add a note to a person write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "notes.delete",
+      "haystack": "notes.delete followupboss.api.notes.delete permanently delete a note destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "notes.get",
+      "haystack": "notes.get followupboss.api.notes.get get one note by id, optionally with its threaded replies and reactions read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "notes.update",
+      "haystack": "notes.update followupboss.api.notes.update update a note's subject, body or person write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "people.checkDuplicate",
+      "haystack": "people.checkduplicate followupboss.api.people.checkduplicate check whether a person with this email address or phone number already exists, and who they are assigned to, before creating a new lead read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "people.claim",
+      "haystack": "people.claim followupboss.api.people.claim claim an unclaimed lead so it becomes the user's contact write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "people.create",
+      "haystack": "people.create followupboss.api.people.create create a person, optionally merging into an existing duplicate instead of creating a new lead write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "people.delete",
+      "haystack": "people.delete followupboss.api.people.delete permanently delete a person from the account destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "people.get",
+      "haystack": "people.get followupboss.api.people.get get one person by id with their contact details, stage, source, tags and timeframes read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "people.ignoreUnclaimed",
+      "haystack": "people.ignoreunclaimed followupboss.api.people.ignoreunclaimed ignore an unclaimed lead so it is no longer offered to the user; the lead answers 204 and is not deleted write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "people.list",
+      "haystack": "people.list followupboss.api.people.list list people with filters such as name, email, phone, stage, source, tags or assignment, sorted and paged read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "people.unclaimed",
+      "haystack": "people.unclaimed followupboss.api.people.unclaimed list the unclaimed leads currently offered to the user read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "people.update",
+      "haystack": "people.update followupboss.api.people.update update one person's contact details, stage, price, assignment, tags, timeframes or custom fields write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "peopleRelationships.create",
+      "haystack": "peoplerelationships.create followupboss.api.peoplerelationships.create create a partner relationship attached to a person write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "peopleRelationships.delete",
+      "haystack": "peoplerelationships.delete followupboss.api.peoplerelationships.delete permanently delete a partner relationship destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "peopleRelationships.get",
+      "haystack": "peoplerelationships.get followupboss.api.peoplerelationships.get get one partner relationship by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "peopleRelationships.list",
+      "haystack": "peoplerelationships.list followupboss.api.peoplerelationships.list list the partner relationships of people, filtered by person or name read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "peopleRelationships.update",
+      "haystack": "peoplerelationships.update followupboss.api.peoplerelationships.update update the name, type or contact details of a relationship write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "personAttachments.create",
+      "haystack": "personattachments.create followupboss.api.personattachments.create attach an externally hosted file to a person write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "personAttachments.delete",
+      "haystack": "personattachments.delete followupboss.api.personattachments.delete permanently delete a file attachment from a person destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "personAttachments.get",
+      "haystack": "personattachments.get followupboss.api.personattachments.get get one file attachment of a person by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "personAttachments.update",
+      "haystack": "personattachments.update followupboss.api.personattachments.update update the file uri, name or size of a person attachment write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "pipelines.create",
+      "haystack": "pipelines.create followupboss.api.pipelines.create create a deal pipeline with an optional stage list write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "pipelines.delete",
+      "haystack": "pipelines.delete followupboss.api.pipelines.delete permanently delete a deal pipeline destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "pipelines.get",
+      "haystack": "pipelines.get followupboss.api.pipelines.get get one deal pipeline by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "pipelines.list",
+      "haystack": "pipelines.list followupboss.api.pipelines.list list the deal pipelines with their stages and order read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "pipelines.update",
+      "haystack": "pipelines.update followupboss.api.pipelines.update update a pipeline's name, description or stage order write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "ponds.create",
+      "haystack": "ponds.create followupboss.api.ponds.create create a pond with the users whose leads land in it write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "ponds.delete",
+      "haystack": "ponds.delete followupboss.api.ponds.delete permanently delete a pond destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "ponds.get",
+      "haystack": "ponds.get followupboss.api.ponds.get get one pond by id with its assigned users read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "ponds.list",
+      "haystack": "ponds.list followupboss.api.ponds.list list the ponds, the lead pools that distribute new contacts to agents read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "ponds.update",
+      "haystack": "ponds.update followupboss.api.ponds.update update a pond's name or assigned users write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "rateLimit.limits",
+      "haystack": "ratelimit.limits followupboss.api.ratelimit.limits read the rate-limit levels currently configured for this system read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "rateLimit.usage",
+      "haystack": "ratelimit.usage followupboss.api.ratelimit.usage read this system's 24-hour api usage totals and rate-limit statistics read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "reactions.create",
+      "haystack": "reactions.create followupboss.api.reactions.create add a reaction to a note or other reference write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "reactions.delete",
+      "haystack": "reactions.delete followupboss.api.reactions.delete remove a reaction, sending the documented delete body destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "reactions.get",
+      "haystack": "reactions.get followupboss.api.reactions.get get the reactions attached to a note read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "smartLists.get",
+      "haystack": "smartlists.get followupboss.api.smartlists.get get one smart list by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "smartLists.list",
+      "haystack": "smartlists.list followupboss.api.smartlists.list list the account smart lists, paged read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "stages.create",
+      "haystack": "stages.create followupboss.api.stages.create create a deal stage with an optional sort order write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "stages.delete",
+      "haystack": "stages.delete followupboss.api.stages.delete delete a deal stage after reassigning its action plans to another stage destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "stages.get",
+      "haystack": "stages.get followupboss.api.stages.get get one deal stage by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "stages.list",
+      "haystack": "stages.list followupboss.api.stages.list list the deal stages across pipelines with their order weight read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "stages.update",
+      "haystack": "stages.update followupboss.api.stages.update update a deal stage's name or sort order write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "tasks.create",
+      "haystack": "tasks.create followupboss.api.tasks.create create a task such as a follow-up on a person write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "tasks.delete",
+      "haystack": "tasks.delete followupboss.api.tasks.delete permanently delete a task destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "tasks.get",
+      "haystack": "tasks.get followupboss.api.tasks.get get one task by id with its type, due date and completion status read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "tasks.list",
+      "haystack": "tasks.list followupboss.api.tasks.list list tasks, filtered by person, assignee, type or due range, paged read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "tasks.update",
+      "haystack": "tasks.update followupboss.api.tasks.update update a task's name, type, due date or completion write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "teamInboxes.list",
+      "haystack": "teaminboxes.list followupboss.api.teaminboxes.list list the team inboxes available in the account read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "teams.create",
+      "haystack": "teams.create followupboss.api.teams.create create a team with members and leaders write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "teams.delete",
+      "haystack": "teams.delete followupboss.api.teams.delete permanently delete a team destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "teams.get",
+      "haystack": "teams.get followupboss.api.teams.get get one team by id with its members and leaders read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "teams.list",
+      "haystack": "teams.list followupboss.api.teams.list list the teams in the account with their members read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "teams.update",
+      "haystack": "teams.update followupboss.api.teams.update update a team's name, members or leaders write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "templates.create",
+      "haystack": "templates.create followupboss.api.templates.create create an email template with subject and body, optionally shared write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "templates.delete",
+      "haystack": "templates.delete followupboss.api.templates.delete permanently delete an email template destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "templates.get",
+      "haystack": "templates.get followupboss.api.templates.get get one email template by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "templates.list",
+      "haystack": "templates.list followupboss.api.templates.list list the email message templates, paged read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "templates.merge",
+      "haystack": "templates.merge followupboss.api.templates.merge render an email template for a person, merging their fields into the body write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "templates.update",
+      "haystack": "templates.update followupboss.api.templates.update replace an email template's name, subject and body write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "textMessages.create",
+      "haystack": "textmessages.create followupboss.api.textmessages.create log a text message on a person with its direction and byline details write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "textMessages.get",
+      "haystack": "textmessages.get followupboss.api.textmessages.get get one text message by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "textMessages.list",
+      "haystack": "textmessages.list followupboss.api.textmessages.list list text messages, filtered by person or phone number, paged read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "textMessageTemplates.create",
+      "haystack": "textmessagetemplates.create followupboss.api.textmessagetemplates.create create a text message template, optionally shared write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "textMessageTemplates.delete",
+      "haystack": "textmessagetemplates.delete followupboss.api.textmessagetemplates.delete permanently delete a text message template destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "textMessageTemplates.get",
+      "haystack": "textmessagetemplates.get followupboss.api.textmessagetemplates.get get one text message template by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "textMessageTemplates.list",
+      "haystack": "textmessagetemplates.list followupboss.api.textmessagetemplates.list list the text message templates, paged read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "textMessageTemplates.merge",
+      "haystack": "textmessagetemplates.merge followupboss.api.textmessagetemplates.merge render a text message template for a person, merging their fields into the message write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "textMessageTemplates.update",
+      "haystack": "textmessagetemplates.update followupboss.api.textmessagetemplates.update update a text message template's name or message write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "threadedReplies.get",
+      "haystack": "threadedreplies.get followupboss.api.threadedreplies.get get the threaded replies of a note read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "timeframes.list",
+      "haystack": "timeframes.list followupboss.api.timeframes.list list the named timeframes available for people read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "users.delete",
+      "haystack": "users.delete followupboss.api.users.delete permanently remove a user from the account destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get followupboss.api.users.get get one user by id with their role and contact details read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list followupboss.api.users.list list the users of the account with their roles read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "webhookEvents.get",
+      "haystack": "webhookevents.get followupboss.api.webhookevents.get list the delivery events recorded for one webhook subscription read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create followupboss.api.webhooks.create subscribe a url to one follow up boss event write"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete followupboss.api.webhooks.delete permanently delete a webhook subscription destructive"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "webhooks.get",
+      "haystack": "webhooks.get followupboss.api.webhooks.get get one webhook subscription by id read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list followupboss.api.webhooks.list list the webhook subscriptions of the account read"
+    },
+    {
+      "pluginId": "followupboss",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update followupboss.api.webhooks.update update a webhook subscription's url or event type write"
     },
     {
       "pluginId": "formbricks",
@@ -84488,6 +85574,426 @@
       "haystack": "templates.save runpod.api.templates.save create or update a reusable pod or serverless template write"
     },
     {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "accounts.addAccountContacts",
+      "haystack": "accounts.addaccountcontacts salesflare.api.accounts.addaccountcontacts link contacts to an account write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "accounts.addAccountUsers",
+      "haystack": "accounts.addaccountusers salesflare.api.accounts.addaccountusers add users to an account write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "accounts.createAccount",
+      "haystack": "accounts.createaccount salesflare.api.accounts.createaccount create a new account write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "accounts.deleteAccount",
+      "haystack": "accounts.deleteaccount salesflare.api.accounts.deleteaccount delete a account destructive"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "accounts.listAccountFeed",
+      "haystack": "accounts.listaccountfeed salesflare.api.accounts.listaccountfeed list the activity feed of an account read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "accounts.listAccountMessages",
+      "haystack": "accounts.listaccountmessages salesflare.api.accounts.listaccountmessages list messages on an account read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "accounts.listAccounts",
+      "haystack": "accounts.listaccounts salesflare.api.accounts.listaccounts list accounts read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "accounts.retrieveAccount",
+      "haystack": "accounts.retrieveaccount salesflare.api.accounts.retrieveaccount retrieve a single account by id read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "accounts.updateAccount",
+      "haystack": "accounts.updateaccount salesflare.api.accounts.updateaccount update a account write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "accounts.updateAccountContacts",
+      "haystack": "accounts.updateaccountcontacts salesflare.api.accounts.updateaccountcontacts update the contact links of an account write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "accounts.updateAccountUsers",
+      "haystack": "accounts.updateaccountusers salesflare.api.accounts.updateaccountusers update the users assigned to an account write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "calls.createCall",
+      "haystack": "calls.createcall salesflare.api.calls.createcall create a new call write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "calls.updateCall",
+      "haystack": "calls.updatecall salesflare.api.calls.updatecall update a logged call write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "campaigns.listCampaignMergeFields",
+      "haystack": "campaigns.listcampaignmergefields salesflare.api.campaigns.listcampaignmergefields list the merge fields available for campaigns read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "contacts.createContact",
+      "haystack": "contacts.createcontact salesflare.api.contacts.createcontact create a new contact write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "contacts.deleteContact",
+      "haystack": "contacts.deletecontact salesflare.api.contacts.deletecontact delete a contact destructive"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "contacts.listContacts",
+      "haystack": "contacts.listcontacts salesflare.api.contacts.listcontacts list contacts read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "contacts.retrieveContact",
+      "haystack": "contacts.retrievecontact salesflare.api.contacts.retrievecontact retrieve a single contact by id read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "contacts.updateContact",
+      "haystack": "contacts.updatecontact salesflare.api.contacts.updatecontact update a contact write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "currencies.listCurrencies",
+      "haystack": "currencies.listcurrencies salesflare.api.currencies.listcurrencies list currencies read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "customfields.createCustomFieldSub",
+      "haystack": "customfields.createcustomfieldsub salesflare.api.customfields.createcustomfieldsub create a new customfield sub-resource write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "customfields.deleteCustomField",
+      "haystack": "customfields.deletecustomfield salesflare.api.customfields.deletecustomfield delete a customfield destructive"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "customfields.listCustomFieldOptions",
+      "haystack": "customfields.listcustomfieldoptions salesflare.api.customfields.listcustomfieldoptions list the options of a custom field read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "customfields.listCustomFields",
+      "haystack": "customfields.listcustomfields salesflare.api.customfields.listcustomfields list the custom fields of an item class read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "customfields.listCustomFieldTypes",
+      "haystack": "customfields.listcustomfieldtypes salesflare.api.customfields.listcustomfieldtypes list the custom field types supported by salesflare read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "customfields.retrieveCustomField",
+      "haystack": "customfields.retrievecustomfield salesflare.api.customfields.retrievecustomfield retrieve a single customfield by id read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "customfields.updateCustomField",
+      "haystack": "customfields.updatecustomfield salesflare.api.customfields.updatecustomfield update a customfield write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "datasources.listEmailDataSources",
+      "haystack": "datasources.listemaildatasources salesflare.api.datasources.listemaildatasources list the connected email data sources read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "datasources.updateEmailDataSource",
+      "haystack": "datasources.updateemaildatasource salesflare.api.datasources.updateemaildatasource update a connected email data source write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "filterfields.listFilterFields",
+      "haystack": "filterfields.listfilterfields salesflare.api.filterfields.listfilterfields list the filter fields available for an entity read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "groups.listGroups",
+      "haystack": "groups.listgroups salesflare.api.groups.listgroups list groups read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "groups.retrieveGroup",
+      "haystack": "groups.retrievegroup salesflare.api.groups.retrievegroup retrieve a single group by id read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "me.listMyContacts",
+      "haystack": "me.listmycontacts salesflare.api.me.listmycontacts list contacts assigned to the current user read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "me.retrieveCurrentUser",
+      "haystack": "me.retrievecurrentuser salesflare.api.me.retrievecurrentuser retrieve the currently authenticated user read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "meetings.createMeeting",
+      "haystack": "meetings.createmeeting salesflare.api.meetings.createmeeting create a new meeting write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "meetings.deleteMeeting",
+      "haystack": "meetings.deletemeeting salesflare.api.meetings.deletemeeting delete a meeting destructive"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "meetings.retrieveMeeting",
+      "haystack": "meetings.retrievemeeting salesflare.api.meetings.retrievemeeting retrieve a single meeting by id read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "meetings.updateMeeting",
+      "haystack": "meetings.updatemeeting salesflare.api.meetings.updatemeeting update a meeting write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "messages.createMessage",
+      "haystack": "messages.createmessage salesflare.api.messages.createmessage create a new message write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "messages.createMessageFeedback",
+      "haystack": "messages.createmessagefeedback salesflare.api.messages.createmessagefeedback submit feedback for a message write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "messages.deleteMessage",
+      "haystack": "messages.deletemessage salesflare.api.messages.deletemessage delete a message destructive"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "messages.updateMessage",
+      "haystack": "messages.updatemessage salesflare.api.messages.updatemessage update a message write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "opportunities.createOpportunity",
+      "haystack": "opportunities.createopportunity salesflare.api.opportunities.createopportunity create a new opportunity write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "opportunities.deleteOpportunity",
+      "haystack": "opportunities.deleteopportunity salesflare.api.opportunities.deleteopportunity delete a opportunity destructive"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "opportunities.listOpportunities",
+      "haystack": "opportunities.listopportunities salesflare.api.opportunities.listopportunities list opportunities read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "opportunities.retrieveOpportunity",
+      "haystack": "opportunities.retrieveopportunity salesflare.api.opportunities.retrieveopportunity retrieve a single opportunity by id read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "opportunities.updateOpportunity",
+      "haystack": "opportunities.updateopportunity salesflare.api.opportunities.updateopportunity update a opportunity write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "persons.listPersons",
+      "haystack": "persons.listpersons salesflare.api.persons.listpersons list persons resolved from email addresses read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "pipelines.listPipelines",
+      "haystack": "pipelines.listpipelines salesflare.api.pipelines.listpipelines list pipelines read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "settings.retrieveAiSettings",
+      "haystack": "settings.retrieveaisettings salesflare.api.settings.retrieveaisettings retrieve the workspace's ai settings read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "settings.updateAiSettings",
+      "haystack": "settings.updateaisettings salesflare.api.settings.updateaisettings update the workspace's ai settings write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "stages.listStages",
+      "haystack": "stages.liststages salesflare.api.stages.liststages list stages read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "stages.retrieveStage",
+      "haystack": "stages.retrievestage salesflare.api.stages.retrievestage retrieve a single stage by id read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "tags.createTag",
+      "haystack": "tags.createtag salesflare.api.tags.createtag create a new tag write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "tags.deleteTag",
+      "haystack": "tags.deletetag salesflare.api.tags.deletetag delete a tag destructive"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "tags.listTags",
+      "haystack": "tags.listtags salesflare.api.tags.listtags list tags read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "tags.listTagUsage",
+      "haystack": "tags.listtagusage salesflare.api.tags.listtagusage list the usage statistics of a tag read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "tags.retrieveTag",
+      "haystack": "tags.retrievetag salesflare.api.tags.retrievetag retrieve a single tag by id read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "tags.updateTag",
+      "haystack": "tags.updatetag salesflare.api.tags.updatetag update a tag write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "tasks.createTask",
+      "haystack": "tasks.createtask salesflare.api.tasks.createtask create a new task write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "tasks.deleteTask",
+      "haystack": "tasks.deletetask salesflare.api.tasks.deletetask delete a task destructive"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "tasks.listTasks",
+      "haystack": "tasks.listtasks salesflare.api.tasks.listtasks list tasks read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "tasks.updateTask",
+      "haystack": "tasks.updatetask salesflare.api.tasks.updatetask update a task write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "users.listUsers",
+      "haystack": "users.listusers salesflare.api.users.listusers list users read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "users.retrieveUser",
+      "haystack": "users.retrieveuser salesflare.api.users.retrieveuser retrieve a single user by id read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "workflows.createWorkflow",
+      "haystack": "workflows.createworkflow salesflare.api.workflows.createworkflow create a new workflow write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "workflows.listWorkflows",
+      "haystack": "workflows.listworkflows salesflare.api.workflows.listworkflows list workflows read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "workflows.retrieveWorkflow",
+      "haystack": "workflows.retrieveworkflow salesflare.api.workflows.retrieveworkflow retrieve a single workflow by id read"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "workflows.updateWorkflow",
+      "haystack": "workflows.updateworkflow salesflare.api.workflows.updateworkflow update a workflow write"
+    },
+    {
+      "pluginId": "salesflare",
+      "kind": "api",
+      "shortPath": "workflows.updateWorkflowAudience",
+      "haystack": "workflows.updateworkflowaudience salesflare.api.workflows.updateworkflowaudience update the audience record of a workflow destructive"
+    },
+    {
       "pluginId": "salesforce",
       "kind": "api",
       "shortPath": "accounts.accountCreationWithContentTypeOption",
@@ -94422,6 +95928,294 @@
       "kind": "api",
       "shortPath": "deletePerson.delete",
       "haystack": "deleteperson.delete timelink.api.deleteperson.delete delete a person record by their unique identifier. destructive"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "accounts.get",
+      "haystack": "accounts.get timely.api.accounts.get get a timely workspace (account) by id read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "accounts.list",
+      "haystack": "accounts.list timely.api.accounts.list list the timely workspaces (accounts) the user can reach read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "clients.create",
+      "haystack": "clients.create timely.api.clients.create create a client write"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "clients.get",
+      "haystack": "clients.get timely.api.clients.get get a client by id read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "clients.list",
+      "haystack": "clients.list timely.api.clients.list list clients read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "clients.update",
+      "haystack": "clients.update timely.api.clients.update update a client (active: false archives it) write"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "projects.create",
+      "haystack": "projects.create timely.api.projects.create create a project under a client write"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "projects.delete",
+      "haystack": "projects.delete timely.api.projects.delete delete a project destructive"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "projects.get",
+      "haystack": "projects.get timely.api.projects.get get a project by id read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list timely.api.projects.list list projects read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "projects.update",
+      "haystack": "projects.update timely.api.projects.update update a project; passing `users` replaces who may log time on it write"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "reports.filter",
+      "haystack": "reports.filter timely.api.reports.filter totals grouped by clients, users, tags, days and teams, or the matching time entries read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "reports.totals",
+      "haystack": "reports.totals timely.api.reports.totals logged time and cost per client and project for a period read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "tags.create",
+      "haystack": "tags.create timely.api.tags.create create a tag write"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "tags.delete",
+      "haystack": "tags.delete timely.api.tags.delete delete a tag destructive"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "tags.get",
+      "haystack": "tags.get timely.api.tags.get get a tag by id read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "tags.list",
+      "haystack": "tags.list timely.api.tags.list list tags (labels) read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "tags.update",
+      "haystack": "tags.update timely.api.tags.update update a tag write"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "teams.get",
+      "haystack": "teams.get timely.api.teams.get get a team by id read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "teams.list",
+      "haystack": "teams.list timely.api.teams.list list teams read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "timeEntries.bulk",
+      "haystack": "timeentries.bulk timely.api.timeentries.bulk create, update and delete up to 100 time entries in one request destructive"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "timeEntries.create",
+      "haystack": "timeentries.create timely.api.timeentries.create log time on a project write"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "timeEntries.delete",
+      "haystack": "timeentries.delete timely.api.timeentries.delete delete a time entry destructive"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "timeEntries.get",
+      "haystack": "timeentries.get timely.api.timeentries.get get a time entry by id read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "timeEntries.list",
+      "haystack": "timeentries.list timely.api.timeentries.list list time entries for a day or a since/upto date range read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "timeEntries.startTimer",
+      "haystack": "timeentries.starttimer timely.api.timeentries.starttimer start the timer on a time entry write"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "timeEntries.stopTimer",
+      "haystack": "timeentries.stoptimer timely.api.timeentries.stoptimer stop the timer on a time entry write"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "timeEntries.update",
+      "haystack": "timeentries.update timely.api.timeentries.update update a time entry write"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "users.current",
+      "haystack": "users.current timely.api.users.current get the connected user in a workspace read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get timely.api.users.get get a person by id read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list timely.api.users.list list people read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create timely.api.webhooks.create create a signed webhook subscription write"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete timely.api.webhooks.delete delete a webhook destructive"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "webhooks.get",
+      "haystack": "webhooks.get timely.api.webhooks.get get a webhook by id read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list timely.api.webhooks.list list webhooks read"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update timely.api.webhooks.update update a webhook write"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "webhook",
+      "shortPath": "projects.created",
+      "haystack": "projects.created timely.webhooks.projects.created a project was created"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "webhook",
+      "shortPath": "projects.deleted",
+      "haystack": "projects.deleted timely.webhooks.projects.deleted a project was deleted"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "webhook",
+      "shortPath": "projects.updated",
+      "haystack": "projects.updated timely.webhooks.projects.updated a project changed"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "webhook",
+      "shortPath": "tags.created",
+      "haystack": "tags.created timely.webhooks.tags.created a tag was created (timely event labels:created)"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "webhook",
+      "shortPath": "tags.deleted",
+      "haystack": "tags.deleted timely.webhooks.tags.deleted a tag was deleted (timely event labels:deleted)"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "webhook",
+      "shortPath": "tags.updated",
+      "haystack": "tags.updated timely.webhooks.tags.updated a tag changed (timely event labels:updated)"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "webhook",
+      "shortPath": "tasks.created",
+      "haystack": "tasks.created timely.webhooks.tasks.created a task was created (timely event forecasts:created)"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "webhook",
+      "shortPath": "tasks.deleted",
+      "haystack": "tasks.deleted timely.webhooks.tasks.deleted a task was deleted (timely event forecasts:deleted)"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "webhook",
+      "shortPath": "tasks.updated",
+      "haystack": "tasks.updated timely.webhooks.tasks.updated a task changed (timely event forecasts:updated)"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "webhook",
+      "shortPath": "timeEntries.created",
+      "haystack": "timeentries.created timely.webhooks.timeentries.created a time entry was logged (timely event hours:created)"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "webhook",
+      "shortPath": "timeEntries.deleted",
+      "haystack": "timeentries.deleted timely.webhooks.timeentries.deleted a time entry was deleted (timely event hours:deleted)"
+    },
+    {
+      "pluginId": "timely",
+      "kind": "webhook",
+      "shortPath": "timeEntries.updated",
+      "haystack": "timeentries.updated timely.webhooks.timeentries.updated a time entry changed (timely event hours:updated)"
     },
     {
       "pluginId": "tinyfish",

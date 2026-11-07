@@ -1,0 +1,153 @@
+---
+title: Overview
+description: "Generative media platform with hundreds of image, video, audio and 3D models; queue or run models, follow requests, look up models and prices, track usage and upload input files."
+---
+
+Use **fal** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Every model on fal takes its own input fields. Look them up with `models.search({ endpointIds: ['<endpoint id>'], includeOpenApi: true })`, then pass them as `input`.
+
+Video, audio and training runs usually take minutes. After submitting, `models.run` waits up to 10 seconds (at most 15). When it sees the run end within the wait, it answers a final `state`: SUCCEEDED with `output`, or FAILED with `error` (bad input or a model error), and there is nothing to follow. Any other answer carries the run's `response_url` and IN_PROGRESS or IN_QUEUE. IN_QUEUE also covers a read that failed or ran out of time, so the run may already have started or even finished at fal. Follow every IN_QUEUE or IN_PROGRESS answer with `queue.status({ responseUrl })` until it says SUCCEEDED or FAILED, or pass `webhookUrl` and let fal post the result. On Corsair's cloud, `get_job` and the job card do the following for you.
+
+**What you get:**
+
+- 14 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/fal
+```
+```bash yarn
+yarn add corsair @corsair-dev/fal
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/fal
+```
+```bash bun
+bun add corsair @corsair-dev/fal
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { fal } from '@corsair-dev/fal';
+
+export const corsair = createCorsair({
+	plugins: [
+		fal(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+fal()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'fal',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Find text-to-video models**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.fal.api.models.search({ category: 'text-to-video', limit: 5 });
+```
+
+
+**Generate an image**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.fal.api.queue.submit({
+	endpointId: 'fal-ai/flux/schnell',
+	input: { prompt: 'A watercolor lighthouse on a cliff at dawn', image_size: 'square_hd' },
+});
+```
+
+
+See the full list on the [API](/plugins/fal/api) page.
+
+## Webhooks
+
+Pass `webhookUrl` to `queue.submit` and fal POSTs the result there when the request finishes. Hand `processWebhook` the raw body text (`await request.text()`), not parsed JSON. fal signs the exact bytes it sent; a parsed body is rebuilt as a best effort, which fails for outputs with whole-number floats or integers past 2^53. To hold deliveries to one fal account, store its fal user id (the `x-fal-webhook-user-id` header) as the account's `user_id`.
+
+```ts
+fal({
+    webhookHooks: {
+        requests: {
+            completed: {
+                after: async (ctx, result) => {
+                    if (result.data?.status === 'OK') console.log(result.data.request_id, result.data.payload);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/fal/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/fal/api">
+    Every `fal.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/fal/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
