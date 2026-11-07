@@ -636,11 +636,18 @@ await corsair.salesflare.api.calls.updateCall({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `meetingId` | `string` | Yes | — |
-| `calendar_id` | `string` | Yes | — |
-| `external_id` | `string` | Yes | — |
+| `calendar_id` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `description` | `string` | No | — |
 | `minutes` | `string` | No | — |
-| `notes` | `string` | Yes | — |
+| `notes` | `string` | No | — |
 | `edited_by` | `number` | No | — |
+| `type` | `meeting-live \| meeting-phone` | No | — |
+| `phone_type` | `string` | No | — |
+| `participants` | `number[]` | No | — |
 
 
 
@@ -799,13 +806,14 @@ await corsair.salesflare.api.contacts.createContact({});
 
 
 
-**Output:** `object[]`
+**Output:** `object \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
+} | {
 }[]
 ```
 </Accordion>
@@ -1374,7 +1382,17 @@ await corsair.salesflare.api.customfields.updateCustomField({});
 
 
 
-**Output:** _empty object_
+**Output:** `object \| number`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | number
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -1747,11 +1765,18 @@ await corsair.salesflare.api.meetings.updateMeeting({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `meetingId` | `string` | Yes | — |
-| `calendar_id` | `string` | Yes | — |
-| `external_id` | `string` | Yes | — |
+| `calendar_id` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `description` | `string` | No | — |
 | `minutes` | `string` | No | — |
-| `notes` | `string` | Yes | — |
+| `notes` | `string` | No | — |
 | `edited_by` | `number` | No | — |
+| `type` | `meeting-live \| meeting-phone` | No | Send 'meeting-live' when updating a logged live meeting; without it the API answers 422. |
+| `phone_type` | `string` | No | — |
+| `participants` | `number[]` | No | — |
 
 
 
@@ -2443,17 +2468,7 @@ await corsair.salesflare.api.tags.listTagUsage({});
 
 
 
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+**Output:** _empty object_
 
 
 ---
