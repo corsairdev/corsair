@@ -1,91 +1,74 @@
-﻿# Mixmax Plugin
+# @corsair-dev/mixmax
 
-Email productivity platform for Gmail and Outlook with sequences, templates, and automation.
+Mixmax plugin for Corsair.
 
-## Types of Integrations
+## Install
 
-Mixmax offers three ways to integrate your application with the Mixmax compose window:
+```bash
+pnpm add @corsair-dev/mixmax
+```
 
-- **Enhancements** - Show up as icons in the Mixmax Enhance menu. Includes Availability, SMS, and Poll integrations with a picker UI.
-- **Slash Commands** - Accessed using the Mixmax command menu (typing "/"). Includes Google Search and Giphy search streamed as you type.
-- **Link Resolvers** - Convert URLs into rich previews when pasted. Includes LinkedIn and Instagram link previews.
+## Endpoints
 
-## API Operations
+| Operation | Operation ID | Risk | Description |
+|-----------|--------------|------|-------------|
+| `livefeed.events` | `mixmax.api.livefeed.events` | `read` | List individual Mixmax live feed events such as opens, clicks, and replies. |
+| `livefeed.list` | `mixmax.api.livefeed.list` | `read` | List the user’s Mixmax live feed of tracked email activity, with optional stats. |
+| `messages.create` | `mixmax.api.messages.create` | `write` | Create a Mixmax draft message without sending it. |
+| `messages.get` | `mixmax.api.messages.get` | `read` | Retrieve one Mixmax message by id. |
+| `messages.list` | `mixmax.api.messages.list` | `read` | List Mixmax messages (drafts, scheduled, sent, or failed), newest first. |
+| `messages.schedule` | `mixmax.api.messages.schedule` | `write` | Schedule a saved Mixmax draft to send at a Unix-millisecond timestamp. |
+| `messages.send` | `mixmax.api.messages.send` | `destructive` | Send a saved Mixmax draft. Delivery is asynchronous and cannot be undone. |
+| `messages.sendPlain` | `mixmax.api.messages.sendPlain` | `destructive` | Send a plain email from the user’s mailbox immediately, outside Mixmax tracking. |
+| `messages.test` | `mixmax.api.messages.test` | `write` | Send a Mixmax test email to the calling user’s own account. |
+| `messages.unschedule` | `mixmax.api.messages.unschedule` | `write` | Cancel a scheduled Mixmax send and return the message to draft. |
+| `messages.update` | `mixmax.api.messages.update` | `write` | Update the fields of a sent Mixmax message; each included field replaces the stored value. |
+| `sequenceFolders.addSequences` | `mixmax.api.sequenceFolders.addSequences` | `write` | Move one or more Mixmax sequences into a sequence folder. |
+| `sequenceFolders.create` | `mixmax.api.sequenceFolders.create` | `write` | Create a Mixmax sequence folder. |
+| `sequenceFolders.delete` | `mixmax.api.sequenceFolders.delete` | `destructive` | Delete a Mixmax sequence folder; its sequences are kept but left without a folder. |
+| `sequenceFolders.get` | `mixmax.api.sequenceFolders.get` | `read` | Retrieve one Mixmax sequence folder by id. |
+| `sequenceFolders.list` | `mixmax.api.sequenceFolders.list` | `read` | List the Mixmax sequence folders the user can access. |
+| `sequenceFolders.rename` | `mixmax.api.sequenceFolders.rename` | `write` | Rename a Mixmax sequence folder. |
+| `sequences.cancel` | `mixmax.api.sequences.cancel` | `destructive` | Stop recipients of one Mixmax sequence; cancellation is one-way and deletes their open tasks. |
+| `sequences.cancelAll` | `mixmax.api.sequences.cancelAll` | `destructive` | Stop the user’s recipients across every Mixmax sequence at once; cancelled recipients cannot be resumed. |
+| `sequences.list` | `mixmax.api.sequences.list` | `read` | List the Mixmax sequences the user can access, including shared ones. |
+| `sequences.recipients.add` | `mixmax.api.sequences.recipients.add` | `write` | Add recipients to a Mixmax sequence, starting their sequence emails unless kept as drafts. |
+| `sequences.recipients.list` | `mixmax.api.sequences.recipients.list` | `read` | List the recipients of one Mixmax sequence with their per-stage activity. |
+| `sequences.search` | `mixmax.api.sequences.search` | `read` | Search sequence recipients across every accessible Mixmax sequence with their status and activity. |
+| `snippets.delete` | `mixmax.api.snippets.delete` | `destructive` | Move a Mixmax template to the trash, or archive it, removing it from its folders. |
+| `snippets.get` | `mixmax.api.snippets.get` | `read` | Retrieve one Mixmax template by id. |
+| `snippets.list` | `mixmax.api.snippets.list` | `read` | List the Mixmax templates (snippets) the user can access, including shared ones. |
+| `snippets.send` | `mixmax.api.snippets.send` | `destructive` | Send an email built from a Mixmax template, immediately or at a scheduled time. |
+| `snippets.update` | `mixmax.api.snippets.update` | `write` | Update the fields of a Mixmax template; only the fields sent change. |
+| `snippetTags.addSnippets` | `mixmax.api.snippetTags.addSnippets` | `write` | Add a template to a Mixmax template folder. |
+| `snippetTags.create` | `mixmax.api.snippetTags.create` | `write` | Create a Mixmax template folder. |
+| `snippetTags.delete` | `mixmax.api.snippetTags.delete` | `destructive` | Delete a Mixmax template folder and move every template inside it to the trash. |
+| `snippetTags.get` | `mixmax.api.snippetTags.get` | `read` | Retrieve one Mixmax template folder by id. |
+| `snippetTags.list` | `mixmax.api.snippetTags.list` | `read` | List the Mixmax template folders (snippet tags) the user can access. |
+| `snippetTags.listSnippets` | `mixmax.api.snippetTags.listSnippets` | `read` | List the templates contained in one Mixmax template folder. |
+| `snippetTags.update` | `mixmax.api.snippetTags.update` | `write` | Rename a Mixmax template folder. |
+| `unsubscribes.create` | `mixmax.api.unsubscribes.create` | `write` | Add one or more email addresses to the Mixmax unsubscribe list. |
+| `unsubscribes.list` | `mixmax.api.unsubscribes.list` | `read` | List the email addresses unsubscribed from the user’s Mixmax sends. |
+| `unsubscribes.remove` | `mixmax.api.unsubscribes.remove` | `destructive` | Remove one email address from the Mixmax unsubscribe list. |
+| `users.getMe` | `mixmax.api.users.getMe` | `read` | Get the current Mixmax user. |
+| `users.preferences.autoBccExcludedEmails.add` | `mixmax.api.users.preferences.autoBccExcludedEmails.add` | `write` | Add email addresses to the user’s Mixmax auto BCC exclusion list. |
+| `users.preferences.autoBccExcludedEmails.exists` | `mixmax.api.users.preferences.autoBccExcludedEmails.exists` | `read` | Check exactly which email addresses are excluded from the user’s Mixmax auto BCC list, including role exclusions. |
+| `users.preferences.autoBccExcludedEmails.list` | `mixmax.api.users.preferences.autoBccExcludedEmails.list` | `read` | Check whether one email address is excluded from the user’s Mixmax auto BCC list. |
+| `users.preferences.get` | `mixmax.api.users.preferences.get` | `read` | Get the calling user’s Mixmax preferences. |
+| `users.preferences.update` | `mixmax.api.users.preferences.update` | `write` | Update the calling user’s Mixmax preferences. |
 
-### Messages
-- list - List your messages (emails) that are drafts, scheduled, sent, or failed to send
-- create - Create a draft message (email does not send)
-- get - Retrieve a message by ID
-- update - Update a saved message
-- send - Send a saved draft message (returns 202, delivery async)
-- schedule - Schedule a message to send later
-- unschedule - Cancel a scheduled send
-- 	est - Send a test email to yourself
-- sendPlain - Send a plain email from your mailbox
-- envVars.list - List env vars for a service
-- envVars.retrieve - Retrieve an env var value
-- envVars.upsert - Update or create an env var
-- envVars.delete - Delete an env var
-- headers.list - List headers for a service
-- headers.add - Add a header
-- headers.update - Update a header
-- headers.delete - Delete a header
-- customDomains.list - List custom domains
-- customDomains.create - Create a custom domain
-- customDomains.retrieve - Retrieve a custom domain
-- customDomains.verify - Verify a custom domain
-- customDomains.delete - Delete a custom domain
-- secretFiles.list - List secret files
-- secretFiles.retrieve - Retrieve a secret file
-- secretFiles.upsert - Upsert a secret file
-- secretFiles.delete - Delete a secret file
+## Auth
 
-### Sequences
-- list - List sequences you can access
-- getRecipients - Get recipients of a sequence
-- ddRecipients - Add recipients to a sequence
-
-### Snippets
-- list - List templates (snippets)
-- get - Get a template by ID
-
-### Users
-- getMe - Get the current Mixmax user
-- userPreferences - Get and update user preferences (auto BCC, signature)
-
-## Authentication
-
-This plugin supports two auth types:
-
-- **pi_key** - Use your Mixmax API token with 	enant_external_id
-- **oauth_2** - OAuth 2.0 flow with tenant external ID routing
+Auth: API key. Corsair prompts your tenant for credentials on first use.
 
 ## Webhooks
 
-The plugin includes a webhook handler for example.example events that verifies the X-Mixmax-Signature header and logs events to the Corsair event database.
+No webhooks.
 
-## Usage
+## Reference
 
-`	ypescript
-import { mixmax } from '@corsair-dev/mixmax';
+Full docs, types, and examples: https://docs.corsair.dev/plugins/mixmax
 
-const plugin = mixmax({
-  key: 'your_mixmax_api_key',
-  authType: 'api_key',
-});
+## License
 
-// List messages
-const messages = await plugin.endpoints.messages.list({ limit: 50 });
-
-// Create a draft
-await plugin.endpoints.messages.create({
-  to: [{ email: 'customer@example.com' }],
-  subject: 'Hello',
-  body: '<p>Test</p>',
-});
-
-// List env vars
-const envVars = await plugin.endpoints.messages.envVars.list({ serviceId: 'srv-1' });
-
-// Add a header
-await plugin.endpoints.messages.headers.add({ serviceId: 'srv-1', name: 'Cache-Control' });
+Apache-2.0

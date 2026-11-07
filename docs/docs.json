@@ -71,7 +71,11 @@
               },
               {
                 "group": "Clients",
-                "pages": ["clients/python", "clients/go", "clients/swift"]
+                "pages": [
+                  "clients/python",
+                  "clients/go",
+                  "clients/swift"
+                ]
               }
             ]
           },
@@ -144,7 +148,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -2527,6 +2534,22 @@
                   "plugins/minimax/overview",
                   "plugins/minimax/api",
                   "plugins/minimax/database"
+                ]
+              },
+              {
+                "group": "Mixmax",
+                "pages": [
+                  "plugins/mixmax/overview",
+                  "plugins/mixmax/api",
+                  "plugins/mixmax/database"
+                ]
+              },
+              {
+                "group": "Mixmax",
+                "pages": [
+                  "plugins/mixmax/overview",
+                  "plugins/mixmax/api",
+                  "plugins/mixmax/database"
                 ]
               },
               {
