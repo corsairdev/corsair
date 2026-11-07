@@ -594,6 +594,14 @@ describe('integrations.list', () => {
 			'completed',
 		);
 	});
+
+	it('rejects a wrapped payload instead of reading it as an empty list', async () => {
+		respond({ data: integrationsArray });
+
+		await expect(invoke(Integrations.list, {})).rejects.toBeInstanceOf(
+			Error,
+		);
+	});
 });
 
 describe('integrations.executeQuery', () => {
@@ -619,6 +627,28 @@ describe('integrations.executeQuery', () => {
 			passport_number: 'N8734459',
 			nationality: 'ITA',
 		});
+	});
+
+	it('rejects a wrapped rows payload instead of reading it as none', async () => {
+		respond({ data: queryRows });
+
+		await expect(
+			invoke(Integrations.executeQuery, {
+				external_integration_id: '5c1f8b2e-9a4d-4e67-8b3c-2f6d0a9e7b41',
+				query: 'select * from passports',
+			}),
+		).rejects.toBeInstanceOf(Error);
+	});
+
+	it('treats an empty body as zero rows', async () => {
+		respondEmpty();
+
+		await expect(
+			invoke(Integrations.executeQuery, {
+				external_integration_id: '5c1f8b2e-9a4d-4e67-8b3c-2f6d0a9e7b41',
+				query: 'select * from passports',
+			}),
+		).resolves.toEqual({ rows: [] });
 	});
 
 	it('surfaces a 404 for an unknown integration', async () => {

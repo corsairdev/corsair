@@ -20,7 +20,9 @@ export const list: NanonetsEndpoints['integrationsList'] = (ctx, input) =>
 			replaySafe: true,
 		}),
 		{
-			shape: (raw) => ({ integrations: Array.isArray(raw) ? raw : [] }),
+			// A changed or wrapped payload must fail the array parse instead of
+			// reading as an empty list; only a genuinely empty body falls back.
+			shape: (raw) => ({ integrations: raw ?? [] }),
 			log: (_, result) => ({ count: result.integrations.length }),
 		},
 	);
@@ -43,7 +45,8 @@ export const executeQuery: NanonetsEndpoints['integrationsExecuteQuery'] = (
 			body: { query },
 		}),
 		{
-			shape: (raw) => ({ rows: Array.isArray(raw) ? raw : [] }),
+			// See integrations.list: only an empty body falls back to no rows.
+			shape: (raw) => ({ rows: raw ?? [] }),
 			log: ({ external_integration_id }, result) => ({
 				external_integration_id,
 				rows: result.rows.length,
