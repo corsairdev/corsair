@@ -12,6 +12,14 @@ assert.equal(
 	isAlreadyPublished('EPUBLISHCONFLICT: cannot modify pre-existing version'),
 	true,
 );
+// The 409 npm returned when two deploy runs raced to publish the same new
+// package (corsair 7d0035a90, 11-07).
+assert.equal(
+	isAlreadyPublished(
+		'npm error code E409\nnpm error 409 Conflict - PUT https://registry.npmjs.org/@corsair-dev%2fsalesflare - Cannot publish over previously staged version "0.1.0".',
+	),
+	true,
+);
 
 // Real failures must NOT be swallowed — the deploy has to go red on these.
 // A bare 409 is ambiguous (e.g. rate-limit), not proof of a duplicate.
