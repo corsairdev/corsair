@@ -254,7 +254,7 @@ const falEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			"Delete a request's stored input, output and generated files from fal's CDN",
+			"Delete a request's stored input and output payloads and the files it generated on fal's CDN (files it took as input stay)",
 	},
 	'usage.get': {
 		riskLevel: 'read',

@@ -22,7 +22,7 @@ pnpm add @corsair-dev/fal
 | `queue.result` | `fal.api.queue.result` | `read` | The output of a completed queued request |
 | `queue.status` | `fal.api.queue.status` | `read` | Where a queued request stands. Once done it returns state SUCCEEDED with the output, or FAILED with the error. |
 | `queue.submit` | `fal.api.queue.submit` | `write` | Queue a model run (image, video, audio, 3D…) and get a request id back at once; spends fal credits. Follow it with queue.status until state is SUCCEEDED or FAILED, or pass webhookUrl. |
-| `requests.deletePayloads` | `fal.api.requests.deletePayloads` | `destructive` | Delete a request's stored input, output and generated files from fal's CDN |
+| `requests.deletePayloads` | `fal.api.requests.deletePayloads` | `destructive` | Delete a request's stored input and output payloads and the files it generated on fal's CDN (files it took as input stay) |
 | `requests.list` | `fal.api.requests.list` | `read` | Past requests to given endpoints, with timing and status; optionally their inputs and outputs |
 | `usage.billingEvents` | `fal.api.usage.billingEvents` | `read` | Billed requests one by one, with their cost |
 | `usage.get` | `fal.api.usage.get` | `read` | Usage and cost by endpoint over a date range |

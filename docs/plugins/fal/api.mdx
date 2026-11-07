@@ -484,7 +484,7 @@ await corsair.fal.api.queue.submit({ endpointId: 'fal-ai/kling-video/v2.1/master
 
 `requests.deletePayloads`
 
-Delete a request's stored input, output and generated files from fal's CDN
+Delete a request's stored input and output payloads and the files it generated on fal's CDN (files it took as input stay)
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -498,7 +498,7 @@ await corsair.fal.api.requests.deletePayloads({ requestId: '<request id>' });
 |------|------|----------|-------------|
 | `requestId` | `string` | Yes | — |
 
-Needs a full-access fal key; inference-only keys get 403. Deletes the stored input, output and generated files for good.
+Needs a full-access fal key; inference-only keys get 403. Deletes the request's stored input and output payloads and the files it generated, for good. Files the request took as input (uploads, shared URLs) stay on fal's CDN.
 
 
 

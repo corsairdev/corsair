@@ -212,6 +212,19 @@ describe('fal webhooks through processWebhook', () => {
 			});
 
 			expect(response).toMatchObject({ success: false, statusCode: 403 });
+
+			// Through processWebhook the refusal shows only as nothing logged:
+			// it answers the sender the same either way.
+			const routed = await processWebhook(
+				corsair,
+				delivery.headers,
+				delivery.rawBody,
+			);
+			expect(routed.action).toBe('requests.completed');
+			const events = await createCorsairOrm(testDb.database).events.findMany({
+				where: { event_type: 'fal.webhook.requests.completed' },
+			});
+			expect(events).toHaveLength(0);
 		} finally {
 			testDb.cleanup();
 		}

@@ -12,6 +12,7 @@ import { matchFalTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	FAL_JWKS_URL,
 	falJsonDumps,
+	fetchFalJwks,
 	matchRequestCompleted,
 	resetFalJwksCache,
 	verifyFalWebhookSignature,
@@ -120,6 +121,54 @@ describe('verifyFalWebhookSignature', () => {
 				)
 			).error,
 		).toBe('Missing raw body for fal signature verification');
+	});
+});
+
+describe('fal key rotation', () => {
+	const realFetch = global.fetch;
+	afterEach(() => {
+		global.fetch = realFetch;
+		resetFalJwksCache();
+	});
+
+	it('refetches the keys once when a cached set misses a new key', async () => {
+		resetFalJwksCache();
+		const { jwks: oldKeys } = createFalSigner();
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce({
+				ok: true,
+				json: async () => ({ keys: oldKeys }),
+			})
+			.mockResolvedValueOnce({ ok: true, json: async () => ({ keys: JWKS }) });
+		global.fetch = fetchMock as unknown as typeof fetch;
+
+		// Cache the old keys, then a delivery signed with the rotated key arrives
+		// two minutes later.
+		await fetchFalJwks(NOW_MS - 120_000);
+		const result = await verifyFalWebhookSignature(
+			sign({ timestampSeconds: NOW_S }),
+			{ now: NOW_MS },
+		);
+		expect(result).toEqual({ valid: true });
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it('does not refetch more than once a minute for bad signatures', async () => {
+		resetFalJwksCache();
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValue({ ok: true, json: async () => ({ keys: JWKS }) });
+		global.fetch = fetchMock as unknown as typeof fetch;
+		const stranger = crypto.generateKeyPairSync('ed25519');
+		const forged = sign({
+			timestampSeconds: NOW_S,
+			privateKey: stranger.privateKey,
+		});
+
+		await verifyFalWebhookSignature(forged, { now: NOW_MS });
+		await verifyFalWebhookSignature(forged, { now: NOW_MS + 10_000 });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 });
 
@@ -232,6 +281,29 @@ describe('requests.completed', () => {
 
 	it('accepts a delivery for the fal user stored on the account', async () => {
 		const result = await completed.handler(withUserId(USER_ID), {
+			...sign(),
+			payload: completedBody as never,
+		});
+		expect(result).toEqual({ success: true, data: completedBody });
+	});
+
+	it.each([
+		['no stored id (null)', async () => null],
+		['no stored id (undefined)', async () => undefined],
+		['an empty stored id', async () => ''],
+		[
+			'an account without stored keys (getter throws)',
+			async () => {
+				throw new Error('No DEK found for account');
+			},
+		],
+	])('accepts a delivery when the account has %s', async (_case, getUserId) => {
+		// unknown: a context whose key manager answers get_user_id as given.
+		const context = {
+			key: '',
+			keys: { get_user_id: getUserId },
+		} as unknown as Parameters<typeof completed.handler>[0];
+		const result = await completed.handler(context, {
 			...sign(),
 			payload: completedBody as never,
 		});

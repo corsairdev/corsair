@@ -116,10 +116,21 @@ const TIMESTAMP_LEEWAY_SECONDS = 300;
 
 export type FalJwk = { kty?: string; crv?: string; kid?: string; x?: string };
 
+/** A signature miss refetches the keys (fal may have rotated), at most once a minute. */
+const JWKS_REFRESH_MIN_MS = 60 * 1000;
+
 let jwksCache: { keys: FalJwk[]; fetchedAt: number } | null = null;
 
-export async function fetchFalJwks(now = Date.now()): Promise<FalJwk[]> {
-	if (jwksCache && now - jwksCache.fetchedAt < JWKS_CACHE_MS) {
+export async function fetchFalJwks(
+	now = Date.now(),
+	options: { refresh?: boolean } = {},
+): Promise<FalJwk[]> {
+	const age = jwksCache ? now - jwksCache.fetchedAt : Number.POSITIVE_INFINITY;
+	if (
+		jwksCache &&
+		age < JWKS_CACHE_MS &&
+		!(options.refresh && age >= JWKS_REFRESH_MIN_MS)
+	) {
 		return jwksCache.keys;
 	}
 	const response = await fetch(FAL_JWKS_URL, {
@@ -283,25 +294,34 @@ export async function verifyFalWebhookSignature(
 	);
 	const signatureBytes = Buffer.from(signature, 'hex');
 
-	let keys: FalJwk[];
+	const signedByOneOf = (keys: FalJwk[]) =>
+		keys.some((jwk) => {
+			const key = ed25519KeyFromJwk(jwk);
+			return (
+				key !== null &&
+				messages.some((message) =>
+					crypto.verify(null, message, key, signatureBytes),
+				)
+			);
+		});
+
 	try {
-		keys = options.jwks ?? (await fetchFalJwks(now));
+		if (options.jwks) {
+			return signedByOneOf(options.jwks)
+				? { valid: true }
+				: { valid: false, error: 'Invalid fal webhook signature' };
+		}
+		if (signedByOneOf(await fetchFalJwks(now))) return { valid: true };
+		// Keys cached before a rotation miss a new key; look once more.
+		if (signedByOneOf(await fetchFalJwks(now, { refresh: true }))) {
+			return { valid: true };
+		}
 	} catch (error) {
 		return {
 			valid: false,
 			retryable: true,
 			error: `Could not load fal's signing keys: ${error instanceof Error ? error.message : 'unknown error'}`,
 		};
-	}
-
-	for (const jwk of keys) {
-		const key = ed25519KeyFromJwk(jwk);
-		if (!key) continue;
-		for (const message of messages) {
-			if (crypto.verify(null, message, key, signatureBytes)) {
-				return { valid: true };
-			}
-		}
 	}
 	return { valid: false, error: 'Invalid fal webhook signature' };
 }

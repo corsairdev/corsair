@@ -191,18 +191,18 @@ describeLive('fal live API', () => {
 				})
 			).items;
 			expect(JSON.stringify(latest?.json_output)).toContain(url);
+			let deleted: Awaited<ReturnType<typeof requestsDeletePayloads>>;
 			try {
-				const deleted = await requestsDeletePayloads(ctx, {
+				deleted = await requestsDeletePayloads(ctx, {
 					requestId: latest!.request_id,
 				});
-				expect(deleted.cdn_delete_results.some((r) => r.link === url)).toBe(
-					true,
-				);
-				await sleep(2000);
-				expect((await fetch(url!)).status).toBe(404);
 			} catch (error) {
 				expect((error as { status?: number }).status).toBe(403);
+				return;
 			}
+			expect(deleted.cdn_delete_results.some((r) => r.link === url)).toBe(true);
+			await sleep(2000);
+			expect((await fetch(url!)).status).toBe(404);
 		},
 	);
 

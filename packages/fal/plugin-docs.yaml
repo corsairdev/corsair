@@ -30,7 +30,7 @@ apiNotes:
   usage.get: Needs a fal key with billing read access (the BILLING, READONLY or FULL preset); other keys get 403.
   usage.billingEvents: Needs a fal key with billing read access (the BILLING, READONLY or FULL preset); other keys get 403.
   account.billing: Needs a fal key with billing read access (the BILLING, READONLY or FULL preset); other keys get 403.
-  requests.deletePayloads: Needs a full-access fal key; inference-only keys get 403. Deletes the stored input, output and generated files for good.
+  requests.deletePayloads: Needs a full-access fal key; inference-only keys get 403. Deletes the request's stored input and output payloads and the files it generated, for good. Files the request took as input (uploads, shared URLs) stay on fal's CDN.
 apiExamples:
   queue.submit:
     call: "{ endpointId: 'fal-ai/kling-video/v2.1/master/text-to-video', input: { prompt: 'A red kite over a beach at sunset', duration: '5' }, webhookUrl: 'https://example.com/webhooks/fal' }"
