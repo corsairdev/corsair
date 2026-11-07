@@ -30,6 +30,16 @@ pnpm add @corsair-dev/fidel
 | `locations.listLocationsByOffer` | `fidel.api.locations.listLocationsByOffer` | `read` | List the locations linked to an offer |
 | `locations.retrieveLocation` | `fidel.api.locations.retrieveLocation` | `read` | Retrieve a location by ID |
 | `locations.updateLocation` | `fidel.api.locations.updateLocation` | `write` | Update the details of a location |
+| `marketplace.createOfferFromMarketplaceOffer` | `fidel.api.marketplace.createOfferFromMarketplaceOffer` | `write` | Create an offer from a marketplace offer |
+| `marketplace.listMarketplaceOffers` | `fidel.api.marketplace.listMarketplaceOffers` | `read` | List the offers available in the Fidel marketplace |
+| `mid-insights.listMidInsights` | `fidel.api.mid-insights.listMidInsights` | `read` | List the MID insights of a program |
+| `mid-requests.createMidRequest` | `fidel.api.mid-requests.createMidRequest` | `write` | Create a MID request for a program |
+| `mid-requests.listMidRequests` | `fidel.api.mid-requests.listMidRequests` | `read` | List the MID requests of a program |
+| `mid-requests.retrieveMidRequest` | `fidel.api.mid-requests.retrieveMidRequest` | `read` | Retrieve a MID request by ID |
+| `mids.listMids` | `fidel.api.mids.listMids` | `read` | List the merchant IDs of a program |
+| `missing-transaction-requests.createMissingTransactionRequest` | `fidel.api.missing-transaction-requests.createMissingTransactionRequest` | `write` | Create a missing transaction request for a linked card |
+| `missing-transaction-requests.listMissingTransactionRequests` | `fidel.api.missing-transaction-requests.listMissingTransactionRequests` | `read` | List the missing transaction requests of a program |
+| `missing-transaction-requests.retrieveMissingTransactionRequest` | `fidel.api.missing-transaction-requests.retrieveMissingTransactionRequest` | `read` | Retrieve a missing transaction request by ID |
 | `offers.activateOfferOnCard` | `fidel.api.offers.activateOfferOnCard` | `write` | Activate an offer on a linked card |
 | `offers.createOffer` | `fidel.api.offers.createOffer` | `write` | Create an offer on Fidel |
 | `offers.deleteOffer` | `fidel.api.offers.deleteOffer` | `destructive` | Delete an offer from Fidel |
@@ -47,6 +57,16 @@ pnpm add @corsair-dev/fidel
 | `programs.listPrograms` | `fidel.api.programs.listPrograms` | `read` | List the programs on the Fidel account |
 | `programs.retrieveProgram` | `fidel.api.programs.retrieveProgram` | `read` | Retrieve a program by ID |
 | `programs.updateProgram` | `fidel.api.programs.updateProgram` | `write` | Update the details of a program |
+| `transactions.createTransactionTest` | `fidel.api.transactions.createTransactionTest` | `write` | Create a test transaction in the test environment |
+| `transactions.listTransactions` | `fidel.api.transactions.listTransactions` | `read` | List the transactions of a program |
+| `transactions.listTransactionsByCard` | `fidel.api.transactions.listTransactionsByCard` | `read` | List the transactions of a linked card |
+| `transactions.retrieveTransaction` | `fidel.api.transactions.retrieveTransaction` | `read` | Retrieve a transaction by ID |
+| `webhooks.createBrandWebhook` | `fidel.api.webhooks.createBrandWebhook` | `write` | Create a webhook for brand events on Fidel |
+| `webhooks.createProgramWebhook` | `fidel.api.webhooks.createProgramWebhook` | `write` | Create a webhook for program events on Fidel |
+| `webhooks.deleteWebhook` | `fidel.api.webhooks.deleteWebhook` | `destructive` | Delete a webhook from a program |
+| `webhooks.listWebhooks` | `fidel.api.webhooks.listWebhooks` | `read` | List the webhooks of a program |
+| `webhooks.retrieveWebhook` | `fidel.api.webhooks.retrieveWebhook` | `read` | Retrieve a webhook by ID |
+| `webhooks.updateWebhook` | `fidel.api.webhooks.updateWebhook` | `write` | Update the details of a webhook |
 
 ## Auth
 
