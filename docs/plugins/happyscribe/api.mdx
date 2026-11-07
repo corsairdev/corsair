@@ -1,0 +1,1417 @@
+---
+title: API
+description: "API reference for Happy Scribe: every `happyscribe.api.*` operation with input and output types."
+---
+
+Every `happyscribe.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Companies
+
+### get
+
+`companies.get`
+
+Read one discovered company with its enriched firmographics (Intelligence API)
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.companies.get({ companyId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `number` | Yes | Company ID to retrieve. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `primaryDomain` | `string \| null` | No | — |
+| `domains` | `string[] \| null` | No | — |
+| `industry` | `string \| null` | No | — |
+| `employeeCount` | `number \| null` | No | — |
+| `foundedYear` | `number \| null` | No | — |
+| `shortDescription` | `string \| null` | No | — |
+| `keywords` | `string[] \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `websiteUrl` | `string \| null` | No | — |
+| `linkedinUrl` | `string \| null` | No | — |
+| `logoUrl` | `string \| null` | No | — |
+| `totalFunding` | `number \| null` | No | — |
+| `annualRevenue` | `number \| null` | No | — |
+| `latestFundingStage` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`companies.list`
+
+List companies discovered from meeting transcripts (Intelligence API; 404 when the organization is not enrolled)
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.companies.list({ organizationId: 123, domain: 'acme.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `search` | `string` | No | Case-insensitive substring match on company name. |
+| `domain` | `string` | No | Exact match on the primary domain or any known domain. |
+| `page` | `number` | No | Page to retrieve; companies count from 1. |
+| `perPage` | `number` | No | Results per page, up to 100; the default is 5. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `nextPageUrl` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  primaryDomain?: string | null,
+  domains?: string[] | null,
+  industry?: string | null,
+  employeeCount?: number | null,
+  foundedYear?: number | null,
+  shortDescription?: string | null,
+  keywords?: string[] | null,
+  city?: string | null,
+  country?: string | null,
+  websiteUrl?: string | null,
+  linkedinUrl?: string | null,
+  logoUrl?: string | null,
+  totalFunding?: number | null,
+  annualRevenue?: number | null,
+  latestFundingStage?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Exports
+
+### create
+
+`exports.create`
+
+Start exporting one or more transcriptions to a format (txt, srt, vtt, docx, pdf, json). Follow with exports.get until state is ready
+
+**Risk:** `write`
+
+```ts
+await corsair.happyscribe.api.exports.create({ format: 'txt', transcriptionIds: ['9josdjdfo09j309omsldknslkjndfjknsdfs'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `format` | `txt \| srt \| vtt \| docx \| pdf \| json \| mp3 \| tsv \| html` | Yes | Export format, e.g. `txt`, `srt`, `vtt`, `docx`, `json`. |
+| `transcriptionIds` | `string[]` | Yes | Transcription IDs to include in the export. |
+| `showTimestamps` | `boolean` | No | Include timestamps in the exported file. |
+| `showSpeakers` | `boolean` | No | Include speaker names. |
+| `showComments` | `boolean` | No | Include comments. |
+| `showHighlights` | `boolean` | No | Include highlights. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `state` | `string \| null` | No | — |
+| `format` | `string \| null` | No | — |
+| `show_timestamps` | `boolean \| null` | No | — |
+| `show_speakers` | `boolean \| null` | No | — |
+| `show_comments` | `boolean \| null` | No | — |
+| `show_highlights` | `boolean \| null` | No | — |
+| `transcription_ids` | `string[] \| null` | No | — |
+| `download_link` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`exports.get`
+
+Where an export stands; once state is ready the answer carries its download_link
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.exports.get({ exportId: '5d5b1a9b4c8c4c0001f3e4a2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exportId` | `string` | Yes | Export ID from an export creation. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `state` | `string \| null` | No | — |
+| `format` | `string \| null` | No | — |
+| `show_timestamps` | `boolean \| null` | No | — |
+| `show_speakers` | `boolean \| null` | No | — |
+| `show_comments` | `boolean \| null` | No | — |
+| `show_highlights` | `boolean \| null` | No | — |
+| `transcription_ids` | `string[] \| null` | No | — |
+| `download_link` | `string \| null` | No | — |
+
+
+
+---
+
+## Glossaries
+
+### list
+
+`glossaries.list`
+
+List the glossaries an organization can attach to human orders
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.glossaries.list({ organizationId: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `glossaries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="glossaries full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  source_language?: string | null,
+  target_languages?: string[] | null,
+  organization_default?: boolean | null,
+  imported?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Meetings
+
+### create
+
+`meetings.create`
+
+Send the HappyScribe notetaker bot to a meeting URL at join_at; it records and transcribes. Follow with meetings.get until status is completed
+
+**Risk:** `write`
+
+```ts
+await corsair.happyscribe.api.meetings.create({ organizationId: 413, meetingUrl: 'https://zoom.us/j/123456789', joinAt: '2026-07-20T14:00:00Z', language: 'en' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `meetingUrl` | `string` | Yes | Meeting room URL the notetaker joins, e.g. a Zoom or Meet link. |
+| `joinAt` | `string` | Yes | ISO 8601 moment for the notetaker to join the call. |
+| `language` | `string` | Yes | Spoken language code, e.g. `en`. |
+| `participants` | `object[]` | No | People on the call; the notetaker greets them by name. |
+| `metadata` | `Record<string, unknown>` | No | Free-form metadata echoed on the meeting and its webhooks. |
+| `botName` | `string` | No | Display name of the notetaker bot. |
+| `recordingMode` | `audio_only \| audio_and_video` | No | What the notetaker records. |
+| `summaryTemplate` | `string` | No | Summary template slug, e.g. `sales_call`. |
+| `accessLevel` | `private \| organization` | No | Who can open the resulting transcript. |
+
+<AccordionGroup>
+<Accordion title="participants full type">
+
+```ts
+{
+  email: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `meeting_url` | `string \| null` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `participants` | `object[] \| null` | No | — |
+| `metadata` | `Record<string, unknown> \| null` | No | — |
+| `settings` | `Record<string, unknown> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="participants full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`meetings.get`
+
+Read one meeting: notetaker status (queued, joining, in_call, processing, completed, failed) and settings
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.meetings.get({ meetingId: 'mtg_01k0h4r9s8x7c2dvq3m5n6p4ab' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meetingId` | `string` | Yes | Meeting ID, e.g. `mtg_01k0h4r9s8x7c2dvq3m5n6p4ab`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `meeting_url` | `string \| null` | No | — |
+| `join_at` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `participants` | `object[] \| null` | No | — |
+| `metadata` | `Record<string, unknown> \| null` | No | — |
+| `settings` | `Record<string, unknown> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="participants full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Memberships
+
+### add
+
+`memberships.add`
+
+Add a user to an organization as admin or member, by email
+
+**Risk:** `write`
+
+```ts
+await corsair.happyscribe.api.memberships.add({ organizationId: 123, email: 'new-hire@acme.com', role: 'member' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `email` | `string` | Yes | Email of the user to add. |
+| `role` | `admin \| member` | Yes | Role the member gets. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `organizationId` | `number \| null` | No | — |
+| `organizationName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `role` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`memberships.list`
+
+List the members of an organization with their roles
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.memberships.list({ organizationId: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  id: number,
+  organizationId?: number | null,
+  organizationName?: string | null,
+  email?: string | null,
+  name?: string | null,
+  role?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`memberships.remove`
+
+Remove a user from the organization; their existing transcripts stay
+
+**Risk:** `destructive`
+
+```ts
+await corsair.happyscribe.api.memberships.remove({ membershipId: 9002 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `membershipId` | `number` | Yes | Membership ID to remove. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### updateRole
+
+`memberships.updateRole`
+
+Change a member's role between admin and member
+
+**Risk:** `write`
+
+```ts
+await corsair.happyscribe.api.memberships.updateRole({ membershipId: 9002, role: 'admin' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `membershipId` | `number` | Yes | Membership ID to change. |
+| `role` | `admin \| member` | Yes | New role for the member. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `organizationId` | `number \| null` | No | — |
+| `organizationName` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `role` | `string \| null` | No | — |
+
+
+
+---
+
+## Orders
+
+### confirm
+
+`orders.confirm`
+
+Confirm an incomplete order, which charges the organization and starts the human work; irreversible
+
+**Risk:** `write`
+
+```ts
+await corsair.happyscribe.api.orders.confirm({ orderId: '10b1edd9381d4a00a3d0db1ca1b3d0cf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderId` | `string` | Yes | Incomplete order to confirm and pay for. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `folder_id` | `number \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `operations` | `Record<string, unknown>[] \| null` | No | — |
+
+
+
+---
+
+### create
+
+`orders.create`
+
+Create a human transcription or subtitling order for media at a URL. It stays incomplete and unpaid until orders.confirm or an explicit confirm flag
+
+**Risk:** `write`
+
+```ts
+await corsair.happyscribe.api.orders.create({ url: 'https://example.com/media.mp3', language: 'es', service: 'pro', organizationId: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public URL of the media to transcribe or subtitle. |
+| `language` | `string` | Yes | Spoken language code of the media. |
+| `service` | `pro \| standard` | No | Human service tier; omit for the default. |
+| `confirm` | `boolean` | No | Confirm and pay immediately instead of leaving the order incomplete. |
+| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `folderId` | `number` | No | Folder ID for the result. |
+| `folder` | `string` | No | Folder path for the result, e.g. `my_project`. |
+| `name` | `string` | No | Name of the ordered transcription. |
+| `tags` | `string[]` | No | Tags to attach. |
+| `boost` | `boolean` | No | Pay for faster delivery. |
+| `isSubtitle` | `boolean` | No | Order subtitling instead of transcription. |
+| `webhookUrl` | `string` | No | URL notified when the order finishes. |
+| `glossaryIds` | `number[]` | No | Glossaries the human translators use. |
+| `styleGuideId` | `number` | No | Style guide the human translators use. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `folder_id` | `number \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `operations` | `Record<string, unknown>[] \| null` | No | — |
+
+
+
+---
+
+### createTranslation
+
+`orders.createTranslation`
+
+Create a human translation order for an existing transcription; incomplete and unpaid until confirmed
+
+**Risk:** `write`
+
+```ts
+await corsair.happyscribe.api.orders.createTranslation({ sourceTranscriptionId: '9josdjdfo09j309omsldknslkjndfjknsdfs', targetLanguages: ['es'], organizationId: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceTranscriptionId` | `string` | Yes | Transcription to translate. |
+| `targetLanguages` | `string[]` | Yes | Languages to translate into. |
+| `confirm` | `boolean` | No | Confirm and pay immediately. |
+| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `glossaryIds` | `number[]` | No | Glossaries for the translators. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `folder_id` | `number \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `operations` | `Record<string, unknown>[] \| null` | No | — |
+
+
+
+---
+
+### get
+
+`orders.get`
+
+Read one human-service order: state, operations, languages and pricing
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.orders.get({ orderId: '10b1edd9381d4a00a3d0db1ca1b3d0cf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderId` | `string` | Yes | Order ID from an order creation. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `folder_id` | `number \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `operations` | `Record<string, unknown>[] \| null` | No | — |
+
+
+
+---
+
+## Organizations
+
+### list
+
+`organizations.list`
+
+List the organizations the API token belongs to, with the caller role and human-service availability
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.organizations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="organizations full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  role?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  ownerEmail?: string | null,
+  membersCount?: number | null,
+  isHumanTranscriptionAllowed?: boolean | null,
+  isHumanTranslationAllowed?: boolean | null,
+  emailDomains?: string[] | null,
+  idpCompanyNames?: string[] | null,
+  currency?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## People
+
+### get
+
+`people.get`
+
+Read one discovered contact with company linkage (Intelligence API)
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.people.get({ personId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `personId` | `number` | Yes | Person ID to retrieve. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `fullName` | `string \| null` | No | — |
+| `emails` | `string[] \| null` | No | — |
+| `primaryEmail` | `string \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `seniority` | `string \| null` | No | — |
+| `headline` | `string \| null` | No | — |
+| `linkedinUrl` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `photoUrl` | `string \| null` | No | — |
+| `avatarUrl` | `string \| null` | No | — |
+| `enrichedAt` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  primaryDomain?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`people.list`
+
+List contacts discovered from meeting transcripts (Intelligence API; 404 when not enrolled)
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.people.list({ organizationId: 123, search: 'Jane' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `search` | `string` | No | Full-text match over name and email fields. |
+| `email` | `string` | No | Exact email match, case-insensitive. |
+| `companyId` | `number` | No | Only people of this company. |
+| `page` | `number` | No | Page to retrieve; people count from 1. |
+| `perPage` | `number` | No | Results per page, up to 100; the default is 5. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `nextPageUrl` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  fullName?: string | null,
+  emails?: string[] | null,
+  primaryEmail?: string | null,
+  company?: {
+    id: number,
+    name?: string | null,
+    primaryDomain?: string | null
+  } | null,
+  jobTitle?: string | null,
+  seniority?: string | null,
+  headline?: string | null,
+  linkedinUrl?: string | null,
+  city?: string | null,
+  country?: string | null,
+  photoUrl?: string | null,
+  avatarUrl?: string | null,
+  enrichedAt?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Style Guides
+
+### list
+
+`styleGuides.list`
+
+List the style guides an organization can attach to human orders
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.styleGuides.list({ organizationId: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `styleGuides` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="styleGuides full type">
+
+```ts
+{
+  id: number,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transcriptions
+
+### create
+
+`transcriptions.create`
+
+Start transcribing media from a public URL; spends transcription credits. Follow with transcriptions.getDetails until state is automatic_done
+
+**Risk:** `write`
+
+```ts
+await corsair.happyscribe.api.transcriptions.create({ organizationId: 123, name: 'My Interview', language: 'en-GB', tmpUrl: 'https://example.com/my_media.mp3', tags: ['To do'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `name` | `string` | Yes | Name of the transcription. |
+| `language` | `string` | Yes | BCP-47 language code the media is spoken in, e.g. `en-GB`. |
+| `tmpUrl` | `string` | Yes | Public https URL of the media file to transcribe. |
+| `isSubtitle` | `boolean` | No | Create a subtitle file instead of a transcript. |
+| `folderId` | `number` | No | Folder to create the transcription in. |
+| `tags` | `string[]` | No | Tags to attach. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `folder` | `object \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `sharingEnabled` | `boolean \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `failureReason` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `publicUrl` | `string \| null` | No | — |
+| `audioLengthInSeconds` | `number \| null` | No | — |
+| `costInCents` | `number \| null` | No | — |
+| `refunded` | `boolean \| null` | No | — |
+| `soundwaveUrl` | `string \| null` | No | — |
+| `audioUrl` | `string \| null` | No | — |
+| `videoUrl` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `people` | `object[] \| null` | No | — |
+| `companies` | `object[] \| null` | No | — |
+| `links` | `Record<string, unknown> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="folder full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="people full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  primaryEmail?: string | null,
+  company?: {
+    id: number,
+    name?: string | null,
+    primaryDomain?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="companies full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  primaryDomain?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`transcriptions.delete`
+
+Permanently delete a transcription and its media; there is no restore
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.happyscribe.api.transcriptions.delete({ fileId: '9josdjdfo09j309omsldknslkjndfjknsdfs' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | Transcription ID, e.g. `9josdjdfo09j309omsldknslkjndfjknsdfs`. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getDetails
+
+`transcriptions.getDetails`
+
+Read one transcription: processing state, language, duration, cost, media URLs and download links
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.transcriptions.getDetails({ fileId: '9josdjdfo09j309omsldknslkjndfjknsdfs' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | Transcription ID, e.g. `9josdjdfo09j309omsldknslkjndfjknsdfs`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `folder` | `object \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `sharingEnabled` | `boolean \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `failureReason` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `publicUrl` | `string \| null` | No | — |
+| `audioLengthInSeconds` | `number \| null` | No | — |
+| `costInCents` | `number \| null` | No | — |
+| `refunded` | `boolean \| null` | No | — |
+| `soundwaveUrl` | `string \| null` | No | — |
+| `audioUrl` | `string \| null` | No | — |
+| `videoUrl` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `people` | `object[] \| null` | No | — |
+| `companies` | `object[] \| null` | No | — |
+| `links` | `Record<string, unknown> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="folder full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="people full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  primaryEmail?: string | null,
+  company?: {
+    id: number,
+    name?: string | null,
+    primaryDomain?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="companies full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  primaryDomain?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSummary
+
+`transcriptions.getSummary`
+
+Read the AI-generated meeting summary of a notetaker recording
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.transcriptions.getSummary({ fileId: '9josdjdfo09j309omsldknslkjndfjknsdfs' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | Transcription ID, e.g. `9josdjdfo09j309omsldknslkjndfjknsdfs`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summary` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`transcriptions.list`
+
+List transcriptions in an organization with paging, folder filter and, for Intelligence-enrolled organizations, person and company filters
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.transcriptions.list({ organizationId: 123, page: 0, perPage: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `number` | Yes | Organization to list transcriptions from. |
+| `folderId` | `number` | No | Only transcriptions inside this folder or its subfolders. |
+| `page` | `number` | No | Page to retrieve; transcriptions count from 0. |
+| `perPage` | `number` | No | Results per page. |
+| `personId` | `number` | No | Intelligence API: transcriptions where this person was linked. |
+| `personEmail` | `string` | No | Intelligence API: same, resolved by email. |
+| `companyId` | `number` | No | Intelligence API: transcriptions with a participant from this company. |
+| `companyDomain` | `string` | No | Intelligence API: same, resolved by domain. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `nextPageUrl` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  folder?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  sharingEnabled?: boolean | null,
+  state?: string | null,
+  failureReason?: string | null,
+  language?: string | null,
+  publicUrl?: string | null,
+  audioLengthInSeconds?: number | null,
+  costInCents?: number | null,
+  refunded?: boolean | null,
+  soundwaveUrl?: string | null,
+  audioUrl?: string | null,
+  videoUrl?: string | null,
+  tags?: string[] | null,
+  people?: {
+    id: number,
+    name?: string | null,
+    primaryEmail?: string | null,
+    company?: {
+      id: number,
+      name?: string | null,
+      primaryDomain?: string | null
+    } | null
+  }[] | null,
+  companies?: {
+    id: number,
+    name?: string | null,
+    primaryDomain?: string | null
+  }[] | null,
+  links?: Record<string, unknown> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDetails
+
+`transcriptions.updateDetails`
+
+Change a transcription: move it between organizations or toggle its public sharing link
+
+**Risk:** `write`
+
+```ts
+await corsair.happyscribe.api.transcriptions.updateDetails({ fileId: '9josdjdfo09j309omsldknslkjndfjknsdfs', organizationId: 123, sharingEnabled: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | Transcription ID, e.g. `9josdjdfo09j309omsldknslkjndfjknsdfs`. |
+| `organizationId` | `number` | Yes | Numeric ID of the organization to act on. |
+| `sharingEnabled` | `boolean` | No | Turn the public sharing link on or off. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `folder` | `object \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `sharingEnabled` | `boolean \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `failureReason` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `publicUrl` | `string \| null` | No | — |
+| `audioLengthInSeconds` | `number \| null` | No | — |
+| `costInCents` | `number \| null` | No | — |
+| `refunded` | `boolean \| null` | No | — |
+| `soundwaveUrl` | `string \| null` | No | — |
+| `audioUrl` | `string \| null` | No | — |
+| `videoUrl` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `people` | `object[] \| null` | No | — |
+| `companies` | `object[] \| null` | No | — |
+| `links` | `Record<string, unknown> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="folder full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="people full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  primaryEmail?: string | null,
+  company?: {
+    id: number,
+    name?: string | null,
+    primaryDomain?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="companies full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  primaryDomain?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Translations
+
+### createTask
+
+`translations.createTask`
+
+Start machine-translating a transcript into a target language; spends credits. Follow with translations.getTask until state is done
+
+**Risk:** `write`
+
+```ts
+await corsair.happyscribe.api.translations.createTask({ sourceTranscriptionId: '9josdjdfo09j309omsldknslkjndfjknsdfs', targetLanguage: 'es' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceTranscriptionId` | `string` | Yes | Transcription to translate. |
+| `targetLanguage` | `string` | Yes | BCP-47 code of the language to translate into, e.g. `es`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `state` | `string \| null` | No | — |
+| `failureReason` | `string \| null` | No | — |
+| `progressPercent` | `number \| null` | No | — |
+| `targetLanguage` | `string \| null` | No | — |
+| `translatedTranscriptionId` | `string \| null` | No | — |
+
+
+
+---
+
+### getTask
+
+`translations.getTask`
+
+Where a translation task stands: progress percent, failure reason and the translated transcription id once done
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.translations.getTask({ taskId: '054fe9f3aa0b446baea730fba688f96c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | Translation task ID from a creation call. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `state` | `string \| null` | No | — |
+| `failureReason` | `string \| null` | No | — |
+| `progressPercent` | `number \| null` | No | — |
+| `targetLanguage` | `string \| null` | No | — |
+| `translatedTranscriptionId` | `string \| null` | No | — |
+
+
+
+---
+
+## Uploads
+
+### getSignedUrl
+
+`uploads.getSignedUrl`
+
+Get a pre-signed S3 URL for a filename; upload the file bytes there yourself, then create a transcription from it
+
+**Risk:** `read`
+
+```ts
+await corsair.happyscribe.api.uploads.getSignedUrl({ filename: 'my_media.mp3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | File name the upload gets in storage, e.g. `my_media.mp3`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signedUrl` | `string` | Yes | — |
+
+
+
+---
+

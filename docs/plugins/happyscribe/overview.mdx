@@ -1,0 +1,152 @@
+---
+title: Overview
+description: "Transcription, subtitle and meeting-notetaker platform with Happy Scribe - start transcriptions and translations, send the notetaker to meetings, export transcripts, read discovered contacts, and manage human-service orders."
+---
+
+Use **Happy Scribe** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Create an API key in Happy Scribe under My workspace, API access. Things to know before you call:
+
+- **Credit-spending creates.** `transcriptions.create`, `translations.createTask` and `meetings.create` spend Happy Scribe credits. `orders.create` stays incomplete (unpaid) until `orders.confirm` or an explicit `confirm: true`; human orders are then irreversible.
+- **Four async lifecycles.** Transcriptions report `state` until `automatic_done`; exports `state` until `ready` with a `download_link`; translation tasks `state` until `done`; meetings report `status` (a different field) until `completed`. The plugin declares jobs for all four, so the agent's get_job follows them.
+- **Rate limits.** The transcription-creation endpoint allows about 200 requests per user per hour; a 429 carries `retry_in_seconds` in the body and the plugin waits exactly that before retrying.
+- **Pagination is inconsistent.** `transcriptions.list` pages from 0 with `perPage` default 5; `companies.list` and `people.list` page from 1 with `perPage` up to 100. Both return `nextPageUrl` when another page exists.
+- **Intelligence API is enrollment-gated.** `companies`, `people` and the person/company filters on `transcriptions.list` answer 404 until the organization is enrolled; contact Happy Scribe support to enroll.
+- **Local files.** `uploads.getSignedUrl` returns a pre-signed S3 URL; upload the file bytes there yourself, then pass a `tmpUrl` to `transcriptions.create`.
+- **Webhooks.** Configure a meeting webhook in Settings, Webhooks and set its signing secret (`whsec_...`) as the plugin's `webhookSecret`. Deliveries are HMAC-signed twice; unsigned or stale deliveries are rejected.
+- **Languages.** Language codes are BCP-47 (`en-GB`, `es`); human services are available only for some of them.
+
+**What you get:**
+
+- 28 typed API operations
+- 7 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/happyscribe better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/happyscribe better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/happyscribe better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/happyscribe better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { happyscribe } from '@corsair-dev/happyscribe';
+
+export const corsair = createCorsair({
+	plugins: [
+		happyscribe(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. A call with no saved key throws `AuthMissingError`, which may carry a `connectUrl`.
+
+```ts
+happyscribe()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'happyscribe',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List transcriptions in an organization**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.happyscribe.api.transcriptions.list({ organizationId: 123, perPage: 25 });
+```
+
+
+**Transcribe media from a URL**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.happyscribe.api.transcriptions.create({
+	organizationId: 123,
+	name: 'My Interview',
+	language: 'en-GB',
+	tmpUrl: 'https://example.com/my_media.mp3',
+});
+```
+
+
+See the full list on the [API](/plugins/happyscribe/api) page.
+
+## Webhooks
+
+This plugin registers **7** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/happyscribe/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/happyscribe/api">
+    Every `happyscribe.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/happyscribe/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
