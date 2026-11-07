@@ -1,23 +1,26 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeMixmaxRequest } from '../client';
 import type { MixmaxEndpoints } from '../index';
+import { mixmaxPathParameter } from './path';
 import type { MixmaxEndpointOutputs } from './types';
 
 export const messagesList: MixmaxEndpoints['messagesList'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeMixmaxRequest<
-		MixmaxEndpointOutputs['messagesList']
-	>('/v1/messages', ctx.key, {
-		method: 'GET',
-		query: {
-			limit: input.limit,
-			next: input.next,
-			previous: input.previous,
-			fields: input.fields,
+	const result = await makeMixmaxRequest<MixmaxEndpointOutputs['messagesList']>(
+		ctx,
+		'/v1/messages',
+		{
+			method: 'GET',
+			query: {
+				limit: input.limit,
+				next: input.next,
+				previous: input.previous,
+				fields: input.fields,
+			},
 		},
-	});
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -32,20 +35,12 @@ export const messagesCreate: MixmaxEndpoints['messagesCreate'] = async (
 	ctx,
 	input,
 ) => {
+	const { ...message } = input;
 	const result = await makeMixmaxRequest<
 		MixmaxEndpointOutputs['messagesCreate']
-	>('/v1/messages', ctx.key, {
+	>(ctx, '/v1/messages', {
 		method: 'POST',
-		body: {
-			from: input.from,
-			to: input.to,
-			cc: input.cc,
-			bcc: input.bcc,
-			subject: input.subject,
-			body: input.body,
-			trackingEnabled: input.trackingEnabled,
-			smartFollowupsEnabled: input.smartFollowupsEnabled,
-		},
+		body: message,
 	});
 
 	await logEventFromContext(
@@ -57,12 +52,15 @@ export const messagesCreate: MixmaxEndpoints['messagesCreate'] = async (
 	return result;
 };
 
-export const messagesGet: MixmaxEndpoints['messagesGet'] = async (ctx, input) => {
-	const result = await makeMixmaxRequest<
-		MixmaxEndpointOutputs['messagesGet']
-	>(`/v1/messages/${input.id}`, ctx.key, {
-		method: 'GET',
-	});
+export const messagesGet: MixmaxEndpoints['messagesGet'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeMixmaxRequest<MixmaxEndpointOutputs['messagesGet']>(
+		ctx,
+		mixmaxPathParameter('/v1/messages/{id}', 'id', input.id),
+		{ method: 'GET' },
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -77,12 +75,12 @@ export const messagesUpdate: MixmaxEndpoints['messagesUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	const { id, ...updateFields } = input;
+	const { id, ...update } = input;
 	const result = await makeMixmaxRequest<
 		MixmaxEndpointOutputs['messagesUpdate']
-	>(`/v1/messages/${id}`, ctx.key, {
+	>(ctx, mixmaxPathParameter('/v1/messages/{id}', 'id', id), {
 		method: 'PATCH',
-		body: updateFields,
+		body: update,
 	});
 
 	await logEventFromContext(
@@ -94,12 +92,22 @@ export const messagesUpdate: MixmaxEndpoints['messagesUpdate'] = async (
 	return result;
 };
 
-export const messagesSend: MixmaxEndpoints['messagesSend'] = async (ctx, input) => {
-	const result = await makeMixmaxRequest<
-		MixmaxEndpointOutputs['messagesSend']
-	>(`/v1/messages/${input.id}/send`, ctx.key, {
-		method: 'POST',
-	});
+export const messagesSend: MixmaxEndpoints['messagesSend'] = async (
+	ctx,
+	input,
+) => {
+	const { id, data, options } = input;
+	const result = await makeMixmaxRequest<MixmaxEndpointOutputs['messagesSend']>(
+		ctx,
+		mixmaxPathParameter('/v1/messages/{id}/send', 'id', id),
+		{
+			method: 'POST',
+			body: {
+				data,
+				options,
+			},
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -114,12 +122,14 @@ export const messagesSchedule: MixmaxEndpoints['messagesSchedule'] = async (
 	ctx,
 	input,
 ) => {
+	const { id, options, data } = input;
 	const result = await makeMixmaxRequest<
 		MixmaxEndpointOutputs['messagesSchedule']
-	>(`/v1/messages/${input.id}/schedule`, ctx.key, {
+	>(ctx, mixmaxPathParameter('/v1/messages/{id}/schedule', 'id', id), {
 		method: 'POST',
 		body: {
-			sendAt: input.sendAt,
+			options,
+			data,
 		},
 	});
 
@@ -138,7 +148,7 @@ export const messagesUnschedule: MixmaxEndpoints['messagesUnschedule'] = async (
 ) => {
 	const result = await makeMixmaxRequest<
 		MixmaxEndpointOutputs['messagesUnschedule']
-	>(`/v1/messages/${input.id}/schedule`, ctx.key, {
+	>(ctx, mixmaxPathParameter('/v1/messages/{id}/schedule', 'id', input.id), {
 		method: 'DELETE',
 	});
 
@@ -155,16 +165,20 @@ export const messagesTest: MixmaxEndpoints['messagesTest'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeMixmaxRequest<
-		MixmaxEndpointOutputs['messagesTest']
-	>('/v1/messages/test', ctx.key, {
-		method: 'POST',
-		body: {
-			subject: input.subject,
-			body: input.body,
-			meetingTypeId: input.meetingTypeId,
+	const result = await makeMixmaxRequest<MixmaxEndpointOutputs['messagesTest']>(
+		ctx,
+		'/v1/messages/test',
+		{
+			method: 'POST',
+			body: {
+				subject: input.subject,
+				body: input.body,
+				meetingTypeId: input.meetingTypeId,
+				meetingTimeMs: input.meetingTimeMs,
+				primaryTimeZone: input.primaryTimeZone,
+			},
 		},
-	});
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -181,13 +195,10 @@ export const messagesSendPlain: MixmaxEndpoints['messagesSendPlain'] = async (
 ) => {
 	const result = await makeMixmaxRequest<
 		MixmaxEndpointOutputs['messagesSendPlain']
-	>('/v1/send', ctx.key, {
+	>(ctx, '/v1/send', {
 		method: 'POST',
 		body: {
-			to: input.to,
-			subject: input.subject,
-			body: input.body,
-			from: input.from,
+			message: input.message,
 		},
 	});
 
@@ -197,17 +208,5 @@ export const messagesSendPlain: MixmaxEndpoints['messagesSendPlain'] = async (
 		{ ...input },
 		'completed',
 	);
-	return result;
-};
-
-export const envVarsList: MixmaxEndpoints['envVarsList'] = async (ctx, input) => {
-	const result = await makeMixmaxRequest<MixmaxEndpointOutputs['envVarsList']>(/v1/services/env-vars, ctx.key, {
-		method: 'GET',
-		query: {
-		cursor: input.cursor,
-		limit: input.limit,
-		},
-	});
-	await logEventFromContext(ctx, 'mixmax.envVars.list', { ...input }, 'completed');
 	return result;
 };
