@@ -125,12 +125,14 @@ describeIfKey('live ImageKit', () => {
 		}
 	});
 
-	it('rejects a bad key with a 401 from the live API', async () => {
+	// The docs table names 401 for a bad key, but the live API answers 403
+	// when it cannot authenticate the account with the keys provided.
+	it('rejects a bad key with a 403 from the live API', async () => {
 		const { corsair, testDb } = await createClient({ key: 'wrong-key' });
 		try {
 			await expect(
 				corsair.imagekit.api.files.list({ limit: 5 }),
-			).rejects.toMatchObject({ status: 401 });
+			).rejects.toMatchObject({ status: 403 });
 		} finally {
 			testDb.cleanup();
 		}
