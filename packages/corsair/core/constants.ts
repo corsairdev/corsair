@@ -311,6 +311,7 @@ export const BaseProviders = [
 	'onedrive',
 	'onepassword',
 	'openai',
+	'opengraph',
 	'openrouter',
 	'openweathermap',
 	'orbit',
@@ -748,6 +749,7 @@ export const ProviderDisplayNames = {
 	onedrive: 'OneDrive',
 	onepassword: '1Password',
 	openai: 'OpenAI',
+	opengraph: 'OpenGraph.io',
 	openrouter: 'OpenRouter',
 	openweathermap: 'OpenWeatherMap',
 	orbit: 'Orbit',
@@ -1189,6 +1191,7 @@ export type AllProviders =
 	| 'onedrive'
 	| 'onepassword'
 	| 'openai'
+	| 'opengraph'
 	| 'openrouter'
 	| 'openweathermap'
 	| 'orbit'
