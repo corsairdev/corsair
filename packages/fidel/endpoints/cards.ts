@@ -15,7 +15,17 @@ export const createCard: FidelEndpoints['createCard'] = async (ctx, input) => {
 		),
 		{ method: 'POST', body: rest },
 	);
-	await logEventFromContext(ctx, 'fidel.cards.createCard', input, 'completed');
+	await logEventFromContext(
+		ctx,
+		'fidel.cards.createCard',
+		{
+			...input,
+			number: '[redacted]',
+			expMonth: '[redacted]',
+			expYear: '[redacted]',
+		},
+		'completed',
+	);
 	return response;
 };
 

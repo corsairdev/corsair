@@ -60,6 +60,10 @@ import {
 jest.mock('./client', () => ({
 	makeFidelRequest: jest.fn(),
 }));
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: jest.fn(),
+}));
 
 const request = jest.mocked(makeFidelRequest);
 
@@ -845,5 +849,32 @@ describe('Fidel endpoint request seams', () => {
 				},
 			},
 		);
+	});
+
+	it('redacts card credentials from the endpoint event log', async () => {
+		const ctx = {
+			key: 'secret',
+			options: {},
+			$getAccountId: jest.fn().mockResolvedValue('account-1'),
+		} as never;
+		const logMock = jest.requireMock('corsair/core')
+			.logEventFromContext as jest.Mock;
+		logMock.mockClear();
+		await createCard(ctx, {
+			programId: 'program-1',
+			countryCode: 'USA',
+			expMonth: 12,
+			expYear: 2030,
+			number: '4111111111111111',
+			termsOfUse: true,
+		} as never);
+		const calls = logMock.mock.calls as Array<
+			[unknown, string, Record<string, unknown>, string]
+		>;
+		const payload = calls[calls.length - 1]?.[2];
+		expect(payload?.number).toBe('[redacted]');
+		expect(payload?.expMonth).toBe('[redacted]');
+		expect(payload?.expYear).toBe('[redacted]');
+		expect(payload?.programId).toBe('program-1');
 	});
 });
