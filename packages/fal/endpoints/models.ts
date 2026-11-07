@@ -13,11 +13,40 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const stillRunning = (status: QueueStatusResponse) =>
 	status.state === 'IN_QUEUE' || status.state === 'IN_PROGRESS';
 
+// Time kept back from the stream for the closing status (and result) read.
+const READ_RESERVE_MS = 2_500;
+
+/**
+ * Reads the run's status if that finishes by `deadline`; null when it
+ * doesn't, or fails. After fal has accepted a paid run, a read problem must
+ * not throw: the caller (or its retry handler) would lose the run or submit
+ * it again. The run is answered as the job it is instead.
+ */
+async function readBy(
+	key: string,
+	basePath: string,
+	deadline: number,
+): Promise<QueueStatusResponse | null> {
+	const left = deadline - Date.now();
+	if (left <= 0) return null;
+	const read = readQueueStatus(key, basePath).catch(() => null);
+	let timer: ReturnType<typeof setTimeout> | undefined;
+	const late = new Promise<null>((resolve) => {
+		timer = setTimeout(() => resolve(null), left);
+	});
+	try {
+		return await Promise.race([read, late]);
+	} finally {
+		clearTimeout(timer);
+	}
+}
+
 /**
  * Runs a model through fal's queue and waits a little for the output. A
  * blocking call would outlast the caller for a video that takes minutes, and
  * fal would bill for an output nobody receives; through the queue, a run
  * still going comes back with its response_url, a job the caller follows.
+ * Everything after the submit fits inside `waitSeconds`.
  */
 export const run: FalEndpoints['modelsRun'] = async (ctx, rawInput) => {
 	const { waitSeconds = MODELS_RUN_DEFAULT_WAIT_S, ...input } =
@@ -28,28 +57,36 @@ export const run: FalEndpoints['modelsRun'] = async (ctx, rawInput) => {
 	// fal pushes status changes over its status stream and ends it on
 	// COMPLETED, so the wait ends the moment the run does. Where the stream
 	// can't be used, the status is polled instead.
-	const deadline = Date.now() + waitSeconds * 1000;
+	const budget = waitSeconds * 1000;
+	const deadline = Date.now() + budget;
+	const reserve = Math.min(READ_RESERVE_MS, budget / 2);
 	const streamed = await waitOnStatusStream(
 		ctx.key,
 		basePath,
-		deadline - Date.now(),
+		deadline - reserve - Date.now(),
 	);
-	let current = await readQueueStatus(ctx.key, basePath);
+	let current = await readBy(ctx.key, basePath, deadline);
 	if (streamed === 'unavailable') {
 		let interval = 500;
-		while (stillRunning(current) && Date.now() + interval < deadline) {
+		while (
+			current &&
+			stillRunning(current) &&
+			Date.now() + interval + reserve < deadline
+		) {
 			await sleep(interval);
 			interval = Math.min(interval * 1.5, 2000);
-			current = await readQueueStatus(ctx.key, basePath);
+			current = (await readBy(ctx.key, basePath, deadline)) ?? current;
 		}
 	}
 
+	// Without a read in time, the run is answered where the submit left it.
+	const known = current ?? { ...submitted, state: 'IN_QUEUE' as const };
 	const response = FalEndpointOutputSchemas.modelsRun.parse({
-		...current,
+		...known,
 		request_id: submitted.request_id,
 		response_url: submitted.response_url,
-		status_url: submitted.status_url ?? current.status_url,
-		cancel_url: submitted.cancel_url ?? current.cancel_url,
+		status_url: submitted.status_url ?? known.status_url,
+		cancel_url: submitted.cancel_url ?? known.cancel_url,
 	});
 	await logEventFromContext(
 		ctx,

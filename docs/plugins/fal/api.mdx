@@ -204,7 +204,7 @@ await corsair.fal.api.models.run({ endpointId: 'fal-ai/flux/schnell', input: { p
 | `hint` | `string` | No | Routing hint: requests with the same hint go to the same runner. |
 | `noRetry` | `boolean` | No | true turns off fal’s automatic retries for this request. |
 | `maxQueueLength` | `number` | No | Reject with 429 if this many requests are already queued. |
-| `waitSeconds` | `number` | No | How long to wait for the output, default 10 and at most 20 seconds. Image models usually finish inside it; video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job to follow with queue.status. |
+| `waitSeconds` | `number` | No | How long to wait for the output, default 10 and at most 15 seconds; every read fits inside it. Image models usually finish in time; video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job to follow with queue.status. |
 
 Goes through fal's queue, so a run that outlasts `waitSeconds` is not lost. It answers with the same fields as `queue.status`; when `state` is still IN_QUEUE or IN_PROGRESS, follow `response_url` with `queue.status`.
 

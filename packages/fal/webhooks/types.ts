@@ -139,6 +139,11 @@ async function loadFalJwks(now: number): Promise<FalJwk[]> {
 		}
 		const body = (await response.json()) as { keys?: FalJwk[] };
 		const keys = Array.isArray(body.keys) ? body.keys : [];
+		// A set with no usable key can verify nothing: a failed load, not keys
+		// to hold on to, so deliveries are retried instead of refused.
+		if (!keys.some((jwk) => ed25519KeyFromJwk(jwk) !== null)) {
+			throw new Error('fal JWKS answered without a usable Ed25519 key');
+		}
 		jwksCache = { keys, fetchedAt: now };
 		lastFetchFailed = false;
 		return keys;

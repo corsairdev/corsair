@@ -154,6 +154,33 @@ describe('fal key rotation', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});
 
+	it.each([
+		['an empty key list', { keys: [] }],
+		['no keys field', {}],
+		['keys that are not Ed25519', { keys: [{ kty: 'RSA', n: 'abc' }] }],
+	])('treats %s as a failed load and asks for a retry', async (_case, body) => {
+		resetFalJwksCache();
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce({ ok: true, json: async () => body })
+			.mockResolvedValue({ ok: true, json: async () => ({ keys: JWKS }) });
+		global.fetch = fetchMock as unknown as typeof fetch;
+
+		const first = await verifyFalWebhookSignature(
+			sign({ timestampSeconds: NOW_S }),
+			{ now: NOW_MS },
+		);
+		expect(first).toMatchObject({ valid: false, retryable: true });
+		expect((first as { error?: string }).error).toMatch('usable Ed25519 key');
+
+		// Nothing was cached: after the minute, the keys load and it verifies.
+		const later = await verifyFalWebhookSignature(
+			sign({ timestampSeconds: NOW_S + 61 }),
+			{ now: NOW_MS + 61_000 },
+		);
+		expect(later).toEqual({ valid: true });
+	});
+
 	it('shares one fetch between deliveries that arrive together', async () => {
 		resetFalJwksCache();
 		const fetchMock = jest

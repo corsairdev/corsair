@@ -227,9 +227,12 @@ export type QueueCancelResponse = z.infer<typeof QueueCancelResponseSchema>;
 
 // ── models.run ──────────────────────────────────────────────────────────────
 
-/** Default and longest wait in models.run; a Corsair script has about 20 s. */
+/**
+ * Default and longest wait in models.run. A Corsair script has about 22 s,
+ * and the runtime keeps a few of them to wait on the job itself.
+ */
 export const MODELS_RUN_DEFAULT_WAIT_S = 10;
-export const MODELS_RUN_MAX_WAIT_S = 20;
+export const MODELS_RUN_MAX_WAIT_S = 15;
 
 const ModelsRunInputSchema = QueueSubmitInputSchema.extend({
 	waitSeconds: z
@@ -238,7 +241,7 @@ const ModelsRunInputSchema = QueueSubmitInputSchema.extend({
 		.max(MODELS_RUN_MAX_WAIT_S)
 		.optional()
 		.describe(
-			'How long to wait for the output, default 10 and at most 20 seconds. Image models usually finish inside it; video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job to follow with queue.status.',
+			'How long to wait for the output, default 10 and at most 15 seconds; every read fits inside it. Image models usually finish in time; video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job to follow with queue.status.',
 		),
 });
 

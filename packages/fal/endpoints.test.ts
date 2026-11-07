@@ -92,6 +92,7 @@ function apiError(status: number, body: unknown): ApiError {
 beforeEach(() => {
 	mockRequest.mockReset();
 	mockPut.mockClear();
+	mockStream.mockClear();
 	mockLog.mockClear();
 });
 
@@ -377,7 +378,7 @@ describe('models', () => {
 		const response = await modelsRun(ctx, {
 			endpointId: 'fal-ai/minimax/hailuo-02/standard/text-to-video',
 			input: { prompt: 'a red kite over a beach' },
-			waitSeconds: 0,
+			waitSeconds: 1,
 		});
 		expect(mockRequest).toHaveBeenCalledTimes(2);
 		expect(response).toMatchObject({
@@ -388,12 +389,88 @@ describe('models', () => {
 		expect(response.output).toBeUndefined();
 	});
 
+	it('run with no wait answers the queued job without reading it', async () => {
+		mockRequest.mockResolvedValueOnce(queued);
+		const response = await modelsRun(ctx, {
+			endpointId: 'fal-ai/flux/schnell',
+			input: { prompt: 'a lighthouse' },
+			waitSeconds: 0,
+		});
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(response).toMatchObject({
+			state: 'IN_QUEUE',
+			response_url: RESPONSE_URL,
+		});
+	});
+
+	it.each([
+		['a 429', () => apiError(429, { detail: 'Too many requests' })],
+		['a network error', () => new Error('ECONNRESET')],
+	])(
+		'run answers the accepted job, not an error, when a read hits %s',
+		async (_case, failure) => {
+			mockStream.mockResolvedValueOnce('completed');
+			mockRequest
+				.mockResolvedValueOnce(queued)
+				.mockRejectedValueOnce(failure());
+			const response = await modelsRun(ctx, {
+				endpointId: 'fal-ai/flux/schnell',
+				input: { prompt: 'a lighthouse' },
+				waitSeconds: 2,
+			});
+			// One submit only: a thrown 429 would make the rate-limit handler
+			// run the whole operation, and pay for the run, again.
+			expect(
+				mockRequest.mock.calls.filter(
+					([, path]) => path === '/fal-ai/flux/schnell',
+				),
+			).toHaveLength(1);
+			expect(response).toMatchObject({
+				state: 'IN_QUEUE',
+				response_url: RESPONSE_URL,
+			});
+		},
+	);
+
+	it('run returns the job when a read is slower than the wait', async () => {
+		mockStream.mockResolvedValueOnce('waiting');
+		mockRequest
+			.mockResolvedValueOnce(queued)
+			.mockReturnValueOnce(new Promise(() => undefined));
+		const started = Date.now();
+		const response = await modelsRun(ctx, {
+			endpointId: 'fal-ai/minimax/hailuo-02/standard/text-to-video',
+			input: { prompt: 'a red kite over a beach' },
+			waitSeconds: 1,
+		});
+		expect(Date.now() - started).toBeLessThan(1_500);
+		expect(response).toMatchObject({
+			state: 'IN_QUEUE',
+			response_url: RESPONSE_URL,
+		});
+	});
+
+	it('run gives the stream the wait minus time for the closing read', async () => {
+		mockStream.mockResolvedValueOnce('waiting');
+		mockRequest
+			.mockResolvedValueOnce(queued)
+			.mockResolvedValueOnce({ ...queued, status: 'IN_PROGRESS' });
+		await modelsRun(ctx, {
+			endpointId: 'fal-ai/flux/schnell',
+			input: {},
+			waitSeconds: 10,
+		});
+		const streamMs = mockStream.mock.calls[0]![2];
+		expect(streamMs).toBeLessThanOrEqual(7_500);
+		expect(streamMs).toBeGreaterThan(7_000);
+	});
+
 	it('run refuses a wait longer than a script can hold', async () => {
 		await expect(
 			modelsRun(ctx, {
 				endpointId: 'fal-ai/flux/schnell',
 				input: {},
-				waitSeconds: 120,
+				waitSeconds: 16,
 			}),
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
