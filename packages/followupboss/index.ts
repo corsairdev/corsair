@@ -1728,11 +1728,11 @@ const followUpBossEndpointMeta = {
 			'List the delivery events recorded for one webhook subscription',
 	},
 	'inboxApps.deactivate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Deactivate an inbox app so it stops receiving conversations',
 	},
 	'inboxApps.deleteParticipant': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Remove a participant from an inbox app conversation',
 	},
 	'inboxApps.getParticipants': {
