@@ -598,9 +598,7 @@ describe('integrations.list', () => {
 	it('rejects a wrapped payload instead of reading it as an empty list', async () => {
 		respond({ data: integrationsArray });
 
-		await expect(invoke(Integrations.list, {})).rejects.toBeInstanceOf(
-			Error,
-		);
+		await expect(invoke(Integrations.list, {})).rejects.toBeInstanceOf(Error);
 	});
 });
 
