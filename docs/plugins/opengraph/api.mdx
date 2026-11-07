@@ -1,0 +1,843 @@
+---
+title: API
+description: "API reference for OpenGraph.io: every `opengraph.api.*` operation with input and output types."
+---
+
+Every `opengraph.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Brand
+
+### analyze
+
+`brand.analyze`
+
+Analyze the brand behind a website: identity, products, audiences, positioning, messaging, voice, visual style and links
+
+**Risk:** `read`
+
+```ts
+await corsair.opengraph.api.brand.analyze({ url: 'https://asana.com', sections: { visual: false } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The target URL. It is percent-encoded into the request path. |
+| `sections` | `Record<string, boolean>` | No | Set a section to false to skip it, e.g. &#123; visual: false &#125;. |
+| `questions` | `object[]` | No | Up to 3 custom questions; answers come back under custom.&lt;key&gt;. |
+| `include_meta` | `boolean` | No | Add a _meta object with the source pages behind each field. |
+| `cache_ok` | `boolean` | No | Reuse a cached analysis up to 7 days old. Default true. |
+
+<AccordionGroup>
+<Accordion title="questions full type">
+
+```ts
+{
+  key: string,
+  question: string,
+  type?: 'string' | 'boolean' | 'number' | 'string[]' | 'object'
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brand` | `object \| null` | No | — |
+| `identity` | `object \| null` | No | — |
+| `products` | `object[] \| null` | No | — |
+| `audiences` | `object[] \| null` | No | — |
+| `positioning` | `object \| null` | No | — |
+| `messaging` | `object \| null` | No | — |
+| `voice` | `object \| null` | No | — |
+| `visual` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `custom` | `Record<string, any> \| null` | No | — |
+| `_meta` | `Record<string, any> \| null` | No | — |
+| `is_cache` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="brand full type">
+
+```ts
+{
+  domain?: string | null,
+  name?: string | null,
+  description?: string | null,
+  tagline?: string | null,
+  category?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="identity full type">
+
+```ts
+{
+  logos?: {
+    url?: string | null,
+    type?: string | null,
+    theme?: string | null,
+    format?: string | null
+  }[] | null,
+  logo_svg?: {
+    svg?: string | null,
+    type?: string | null,
+    theme?: string | null
+  } | null,
+  icon?: {
+    url?: string | null,
+    format?: string | null
+  } | null,
+  colors?: {
+    hex?: string | null,
+    role?: string | null
+  }[] | null,
+  fonts?: {
+    family?: string | null,
+    role?: string | null,
+    weights?: number[] | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="products full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null,
+  url?: string | null,
+  category?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="audiences full type">
+
+```ts
+{
+  name?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="positioning full type">
+
+```ts
+{
+  value_proposition?: string | null,
+  market_position?: string | null,
+  differentiators?: string[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="messaging full type">
+
+```ts
+{
+  key_messages?: string[] | null,
+  themes?: string[] | null,
+  claims?: string[] | null,
+  common_phrases?: string[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="voice full type">
+
+```ts
+{
+  traits?: string[] | null,
+  description?: string | null,
+  formality?: number | null,
+  technicality?: number | null,
+  energy?: number | null,
+  do?: string[] | null,
+  avoid?: string[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="visual full type">
+
+```ts
+{
+  style?: string | null,
+  imagery?: string | null,
+  ui_style?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  website?: string | null,
+  about?: string | null,
+  socials?: Record<string, string> | null,
+  brand_assets?: string | string[] | null,
+  pricing?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Extract
+
+### run
+
+`extract.run`
+
+Extract chosen HTML elements as structured data plus concatenated clean text from a URL, ready for LLM pipelines
+
+**Risk:** `read`
+
+```ts
+await corsair.opengraph.api.extract.run({ site: 'https://example.com', selectors: { heading: { selector: 'h1' }, links: { selector: 'a', multiple: true, type: 'attr', attr: 'href' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site` | `string` | Yes | The URL to extract from. |
+| `selectors` | `object` | No | CSS selectors to pull as structured data, keyed by your own names. |
+| `html_elements` | `string` | No | Comma-separated tags behind concatenatedText. Default title,h1,h2,h3,h4,h5,p. |
+| `wait_for_selector` | `string` | No | Wait for this CSS selector before capturing. Enables JavaScript rendering. |
+| `scroll_to_bottom` | `boolean` | No | Scroll the page to trigger lazy-loaded content. Enables JavaScript rendering. |
+| `load_more_selector` | `string` | No | A load-more button to click before capturing. Enables JavaScript rendering. |
+| `load_more_clicks` | `number` | No | How many times to click the load-more button. Default 3. |
+| `load_more_wait` | `number` | No | Milliseconds to wait after each click. Default 1500. |
+| `cache_ok` | `boolean` | No | Allow a cached result. OpenGraph.io defaults this to true. |
+| `max_cache_age` | `number` | No | Maximum age of an acceptable cached result, in seconds. |
+| `full_render` | `boolean` | No | Render the page in a headless browser before extracting. |
+| `use_proxy` | `boolean` | No | Fetch through the standard datacenter proxy (10 credits). |
+| `use_premium` | `boolean` | No | Fetch through the residential proxy (20 credits). |
+| `use_superior` | `boolean` | No | Fetch through the mobile proxy for heavily protected sites (30 credits). |
+| `auto_proxy` | `boolean` | No | Let OpenGraph.io pick the proxy for the domain. v3.0 default: true. |
+| `auto_render` | `boolean` | No | Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true. |
+| `retry` | `boolean` | No | Retry a failed fetch with a stronger proxy tier. v3.0 default: true. |
+| `ai_sanitize` | `boolean` | No | Scan the extracted text for prompt injection (1 extra credit). |
+| `ai_sanitize_mode` | `'sanitize' \| 'warn' \| 'block'` | No | What to do on detected injection risk. Default sanitize. |
+
+<AccordionGroup>
+<Accordion title="selectors full type">
+
+```ts
+Record<string, {
+  selector: string,
+  multiple?: boolean,
+  type?: 'text' | 'attr',
+  attr?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string \| null` | No | — |
+| `concatenatedText` | `string \| null` | No | — |
+| `data` | `Record<string, any> \| null` | No | — |
+| `ai_safety` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="ai_safety full type">
+
+```ts
+{
+  risk_score?: number | null,
+  risk_level?: string | null,
+  action_taken?: string | null,
+  signals?: string[] | null,
+  recommendation?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Markdown
+
+### get
+
+`markdown.get`
+
+Convert a URL to clean Markdown with optional heading-aware chunking, keyword passage search and structure extraction
+
+**Risk:** `read`
+
+```ts
+await corsair.opengraph.api.markdown.get({ url: 'https://en.wikipedia.org/wiki/Web_scraping', chunking: true, chunk_size: 1200, query: 'legal issues' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The target URL. It is percent-encoded into the request path. |
+| `only_main_content` | `boolean` | No | Strip navigation, sidebars and footers. Default true. |
+| `include_tags` | `string` | No | Comma-separated CSS selectors to keep, e.g. article,main. |
+| `exclude_tags` | `string` | No | Comma-separated CSS selectors to drop, e.g. nav,.sidebar,footer. |
+| `max_chars` | `number` | No | Cap the Markdown at this many characters. |
+| `chunking` | `boolean` | No | Split the document into chunks sized for embedding. Default false. |
+| `chunk_size` | `number` | No | Target chunk size in characters. Default 2000. |
+| `chunk_overlap` | `number` | No | Characters repeated from the end of the previous chunk. Default 0. |
+| `heading_aware` | `boolean` | No | Start a new chunk at each section heading. Default true. |
+| `heading_aware_level` | `number` | No | Which heading level starts a new chunk. Default 2. |
+| `max_chunks` | `number` | No | Most chunks to return. Default 500. |
+| `query` | `string` | No | Return only passages matching these keywords, with relevance scores. Implies chunking. |
+| `query_top_k` | `number` | No | How many matching passages to return. Default 5. |
+| `include_markdown` | `boolean` | No | Include the document itself. Default true. |
+| `include_metadata` | `boolean` | No | Include the page metadata block. Default true. |
+| `include_chunks` | `boolean` | No | Include the chunk texts. Default true. |
+| `include_headings` | `boolean` | No | Return the heading outline and table and code block counts. Default false. |
+| `include_links` | `boolean` | No | Return every link from the main content as an absolute URL. Default false. |
+| `include_images` | `boolean` | No | Return every image with its source and alt text. Default false. |
+| `ai_sanitize` | `boolean` | No | Scan the page for prompt injection (1 extra credit). |
+| `ai_sanitize_mode` | `'sanitize' \| 'warn' \| 'block'` | No | What to do on detected injection risk. Default sanitize. |
+| `cache_ok` | `boolean` | No | Allow a cached result. OpenGraph.io defaults this to true. |
+| `max_cache_age` | `number` | No | Maximum age of an acceptable cached result, in milliseconds. |
+| `full_render` | `boolean` | No | Always render in a browser first. Adds 5-10 seconds and is billed. |
+| `wait_for_selector` | `string` | No | Wait for this CSS selector before reading. Enables rendering. |
+| `scroll_to_bottom` | `boolean` | No | Scroll the page to trigger lazy-loaded content. Enables rendering. |
+| `load_more_selector` | `string` | No | A load-more button to click before reading. Enables rendering. |
+| `use_proxy` | `boolean` | No | Fetch through the standard datacenter proxy (10 credits). |
+| `use_premium` | `boolean` | No | Fetch through the residential proxy (20 credits). |
+| `use_superior` | `boolean` | No | Fetch through the mobile proxy for heavily protected sites (30 credits). |
+| `proxy_country` | `string` | No | Two-letter country code to fetch from, e.g. US. |
+| `accept_lang` | `string` | No | Accept-Language header sent to the page, e.g. en-US. |
+| `auto_render` | `boolean` | No | Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true. |
+| `auto_proxy` | `boolean` | No | Let OpenGraph.io pick the proxy for the domain. v3.0 default: true. |
+| `retry` | `boolean` | No | Retry a failed fetch with a stronger proxy tier. v3.0 default: true. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `string \| null` | No | — |
+| `metadata` | `object \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `debug` | `object \| null` | No | — |
+| `request_id` | `string \| null` | No | — |
+| `chunks` | `object[] \| null` | No | — |
+| `headings` | `object[] \| null` | No | — |
+| `links` | `object[] \| null` | No | — |
+| `images` | `object[] \| null` | No | — |
+| `tables_detected` | `number \| null` | No | — |
+| `code_blocks_detected` | `number \| null` | No | — |
+| `ai_safety` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  title?: string | null,
+  description?: string | null,
+  canonical_url?: string | null,
+  site_name?: string | null,
+  image?: string | null,
+  language?: string | null,
+  final_url?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  character_count?: number | null,
+  estimated_token_count?: number | null,
+  truncated?: boolean | null,
+  truncation_reason?: string | null,
+  max_chars?: number | null,
+  chunk_count?: number | null,
+  chunks_truncated?: boolean | null,
+  chunk_error?: string | null,
+  structure_error?: string | null,
+  headings_truncated?: boolean | null,
+  links_truncated?: boolean | null,
+  images_truncated?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="debug full type">
+
+```ts
+{
+  full_render_used?: boolean | null,
+  auto_render_triggered?: boolean | null,
+  proxy_used?: string | null,
+  retry_used?: boolean | null,
+  retry_attempts?: number | null,
+  final_status_code?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="chunks full type">
+
+```ts
+{
+  index?: number | null,
+  text?: string | null,
+  heading_path?: string[] | null,
+  character_count?: number | null,
+  estimated_token_count?: number | null,
+  start_offset?: number | null,
+  end_offset?: number | null,
+  overlap_character_count?: number | null,
+  split_mid_block?: boolean | null,
+  relevance_score?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="headings full type">
+
+```ts
+{
+  level?: number | null,
+  text?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  url?: string | null,
+  text?: string | null,
+  rel?: string | null,
+  internal?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  url?: string | null,
+  alt?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="ai_safety full type">
+
+```ts
+{
+  risk_score?: number | null,
+  risk_level?: string | null,
+  action_taken?: string | null,
+  signals?: string[] | null,
+  recommendation?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Oembed
+
+### get
+
+`oembed.get`
+
+Resolve embeddable HTML for a URL: a native provider embed, an oEmbed discovery link, or a hosted fallback card
+
+**Risk:** `read`
+
+```ts
+await corsair.opengraph.api.oembed.get({ url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', maxwidth: 640 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The target URL. It is percent-encoded into the request path. |
+| `orientation` | `'vertical' \| 'horizontal'` | No | Fallback frame orientation: vertical 800x600 (default) or horizontal 400x150. |
+| `always_og_frame` | `boolean` | No | Force a hosted OpenGraph.io card even when a native embed exists. |
+| `maxwidth` | `number` | No | Maximum embed width in pixels. |
+| `maxheight` | `number` | No | Maximum embed height in pixels. |
+| `theme` | `'light' \| 'dark' \| 'auto'` | No | Color scheme for hosted fallback cards. Default auto. |
+| `template` | `'default' \| 'compact' \| 'horizontal'` | No | Layout preset for fallback cards; overrides orientation when set. |
+| `cache_ok` | `boolean` | No | Allow cached page metadata for fallback cards. Default true. |
+| `max_cache_age` | `number` | No | Maximum age of acceptable cached metadata, in milliseconds. Default 432000000. |
+| `full_render` | `boolean` | No | Render the target page before reading metadata for a fallback card. |
+| `use_proxy` | `boolean` | No | Fetch through the standard datacenter proxy (10 credits). |
+| `use_premium` | `boolean` | No | Fetch through the residential proxy (20 credits). |
+| `use_superior` | `boolean` | No | Fetch through the mobile proxy for heavily protected sites (30 credits). |
+| `proxy_country` | `string` | No | Two-letter country code to fetch from, e.g. US. |
+| `auto_proxy` | `boolean` | No | Let OpenGraph.io pick the proxy for the domain. v3.0 default: true. |
+| `auto_render` | `boolean` | No | Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true. |
+| `retry` | `boolean` | No | Retry a failed fetch with a stronger proxy tier. v3.0 default: true. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `provider_name` | `string \| null` | No | — |
+| `width` | `number \| null` | No | — |
+| `height` | `number \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `embed_id` | `string \| null` | No | — |
+| `frame_url` | `string \| null` | No | — |
+| `html` | `string \| null` | No | — |
+
+
+
+---
+
+## Query
+
+### run
+
+`query.run`
+
+Ask an AI question about a URL and get an answer shaped by a requested structure, from a nano or mini model
+
+**Risk:** `read`
+
+```ts
+await corsair.opengraph.api.query.run({ url: 'https://example.com', query: 'What does this page sell?', responseStructure: { products: ['string'] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The target URL. It is percent-encoded into the request path. |
+| `query` | `string` | Yes | The question to answer from the page. |
+| `responseStructure` | `Record<string, any>` | No | Shape the answer should take, e.g. &#123; products: ["string"] &#125;. |
+| `modelSize` | `'nano' \| 'mini'` | No | AI model size. nano (default) costs 100 credits, mini 200; a cached answer costs 1. |
+| `cache_ok` | `boolean` | No | Allow a cached result. OpenGraph.io defaults this to true. |
+| `full_render` | `boolean` | No | Render the page in a headless browser before answering. |
+| `use_proxy` | `boolean` | No | Fetch through the standard datacenter proxy (10 credits). |
+| `use_premium` | `boolean` | No | Fetch through the residential proxy (20 credits). |
+| `use_superior` | `boolean` | No | Fetch through the mobile proxy for heavily protected sites (30 credits). |
+| `auto_proxy` | `boolean` | No | Let OpenGraph.io pick the proxy for the domain. v3.0 default: true. |
+| `auto_render` | `boolean` | No | Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true. |
+| `retry` | `boolean` | No | Retry a failed fetch with a stronger proxy tier. v3.0 default: true. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `answer` | `Record<string, any> \| null` | No | — |
+| `requestInfo` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="requestInfo full type">
+
+```ts
+{
+  redirects?: number | null,
+  host?: string | null,
+  responseCode?: number | null,
+  responseContentType?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Scrape
+
+### fetch
+
+`scrape.fetch`
+
+Fetch the raw HTML of a URL, with optional JavaScript rendering and proxy tiers for protected sites
+
+**Risk:** `read`
+
+```ts
+await corsair.opengraph.api.scrape.fetch({ url: 'https://example.com', full_render: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The target URL. It is percent-encoded into the request path. |
+| `full_render` | `boolean` | No | Render the page in a headless browser, required for JavaScript apps. |
+| `cache_ok` | `boolean` | No | Allow a cached result. OpenGraph.io defaults this to true. |
+| `use_proxy` | `boolean` | No | Fetch through the standard datacenter proxy (10 credits). |
+| `use_premium` | `boolean` | No | Fetch through the residential proxy (20 credits). |
+| `use_superior` | `boolean` | No | Fetch through the mobile proxy for heavily protected sites (30 credits). |
+| `accept_lang` | `string` | No | Accept-Language header sent to the page, e.g. en-US. |
+| `auto_proxy` | `boolean` | No | Let OpenGraph.io pick the proxy for the domain. v3.0 default: true. |
+| `auto_render` | `boolean` | No | Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true. |
+| `retry` | `boolean` | No | Retry a failed fetch with a stronger proxy tier. v3.0 default: true. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `htmlContent` | `string \| null` | No | — |
+| `requestInfo` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="requestInfo full type">
+
+```ts
+{
+  redirects?: number | null,
+  host?: string | null,
+  responseCode?: number | null,
+  responseContentType?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Screenshot
+
+### capture
+
+`screenshot.capture`
+
+Capture a screenshot of a URL and get a CDN link that expires after 24 hours, with viewport, format and selector controls
+
+**Risk:** `read`
+
+```ts
+await corsair.opengraph.api.screenshot.capture({ url: 'https://example.com', full_page: true, quality: 80 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The target URL. It is percent-encoded into the request path. |
+| `format` | `'jpeg' \| 'png' \| 'webp'` | No | Image format. Default jpeg. |
+| `quality` | `number` | No | Image quality, rounded to the nearest 10. Default 80. |
+| `full_page` | `boolean` | No | Capture the entire scrollable page instead of the viewport. |
+| `dimensions` | `'xs' \| 'sm' \| 'md' \| 'lg'` | No | Viewport size: xs 375x812, sm 1024x768, md 1366x768 (default), lg 1920x1080. |
+| `selector` | `string` | No | CSS selector to capture only that element. |
+| `exclude_selectors` | `string` | No | Comma-separated CSS selectors to hide, e.g. .header,.footer. |
+| `block_cookie_banner` | `boolean` | No | Auto-block known cookie consent banners. Default true. |
+| `dark_mode` | `boolean` | No | Set the browser preference to dark mode. |
+| `cache_ok` | `boolean` | No | Allow a cached result. OpenGraph.io defaults this to true. |
+| `use_proxy` | `boolean` | No | Fetch through a proxy for protected sites (20 credits for a screenshot). |
+| `capture_delay` | `number` | No | Milliseconds to wait before the capture. |
+| `navigationTimeout` | `number` | No | Navigation timeout in milliseconds. Default 30000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `screenshotUrl` | `string \| null` | No | — |
+| `dimensions` | `object \| null` | No | — |
+| `requestInfo` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="dimensions full type">
+
+```ts
+{
+  width?: number | null,
+  height?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="requestInfo full type">
+
+```ts
+{
+  redirects?: number | null,
+  host?: string | null,
+  responseCode?: number | null,
+  responseContentType?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Site
+
+### get
+
+`site.get`
+
+Extract OpenGraph, Twitter Card and HTML meta tags from a URL as a merged hybrid graph for link previews
+
+**Risk:** `read`
+
+```ts
+await corsair.opengraph.api.site.get({ url: 'https://github.com', use_proxy: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The target URL. It is percent-encoded into the request path. |
+| `cache_ok` | `boolean` | No | Allow a cached result. OpenGraph.io defaults this to true. |
+| `max_cache_age` | `number` | No | Maximum age of an acceptable cached result, in seconds. Default 432000 (5 days). |
+| `full_render` | `boolean` | No | Render the page in a headless browser before reading tags. |
+| `use_proxy` | `boolean` | No | Fetch through the standard datacenter proxy (10 credits). |
+| `use_premium` | `boolean` | No | Fetch through the residential proxy (20 credits). |
+| `use_superior` | `boolean` | No | Fetch through the mobile proxy for heavily protected sites (30 credits). |
+| `use_ai` | `boolean` | No | Let AI improve the extracted metadata when tags are missing. |
+| `accept_lang` | `string` | No | Accept-Language header sent to the page, e.g. en-US. |
+| `proxy_country` | `string` | No | Two-letter country code to fetch from, e.g. US. |
+| `auto_proxy` | `boolean` | No | Let OpenGraph.io pick the proxy for the domain. v3.0 default: true. |
+| `auto_render` | `boolean` | No | Let OpenGraph.io render JavaScript when the page needs it. v3.0 default: true. |
+| `retry` | `boolean` | No | Retry a failed fetch with a stronger proxy tier. v3.0 default: true. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hybridGraph` | `object \| null` | No | — |
+| `openGraph` | `object \| null` | No | — |
+| `twitterCard` | `object \| null` | No | — |
+| `htmlInferred` | `object \| null` | No | — |
+| `requestInfo` | `object \| null` | No | — |
+| `retryInfo` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="hybridGraph full type">
+
+```ts
+{
+  title?: string | null,
+  description?: string | null,
+  image?: string | {
+    url?: string | null,
+    width?: number | null,
+    height?: number | null
+  } | null,
+  url?: string | null,
+  site_name?: string | null,
+  type?: string | null,
+  favicon?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="openGraph full type">
+
+```ts
+{
+  title?: string | null,
+  description?: string | null,
+  type?: string | null,
+  url?: string | null,
+  site_name?: string | null,
+  image?: string | {
+    url?: string | null,
+    width?: number | null,
+    height?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="twitterCard full type">
+
+```ts
+{
+  card?: string | null,
+  site?: string | null,
+  title?: string | null,
+  description?: string | null,
+  image?: string | {
+    url?: string | null,
+    width?: number | null,
+    height?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="htmlInferred full type">
+
+```ts
+{
+  title?: string | null,
+  description?: string | null,
+  favicon?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="requestInfo full type">
+
+```ts
+{
+  redirects?: number | null,
+  host?: string | null,
+  responseCode?: number | null,
+  responseContentType?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
