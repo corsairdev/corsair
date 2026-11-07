@@ -247,3 +247,9 @@ When you open a pull request:
 - call out any schema, webhook, or infrastructure decisions that reviewers should pay attention to
 
 Small docs fixes can be straightforward, but anything larger should have issue context first.
+
+## Versions and Releases
+
+You don't need to change a package's version. Every merge to `main` releases the packages it changed: when a package's shipped files differ from its last release, `.github/workflows/release-on-merge.yml` moves it to the next patch version, and `deploy.yml` publishes it to npm. Changes to tests, READMEs, `plugin-docs.yaml` and devDependencies don't release anything.
+
+For a minor or major release, raise the version in your pull request. That version is published as it is.
