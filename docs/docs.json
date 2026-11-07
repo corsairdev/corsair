@@ -2288,6 +2288,14 @@
                 ]
               },
               {
+                "group": "ImageKit",
+                "pages": [
+                  "plugins/imagekit/overview",
+                  "plugins/imagekit/api",
+                  "plugins/imagekit/database"
+                ]
+              },
+              {
                 "group": "Imagior",
                 "pages": [
                   "plugins/imagior/overview",
