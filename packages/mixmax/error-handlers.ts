@@ -1,35 +1,27 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { MixmaxAPIError } from './client';
+
+type StatusError = ApiError | MixmaxAPIError;
+
+const isStatusError = (error: Error): error is StatusError =>
+	error instanceof ApiError || error instanceof MixmaxAPIError;
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limit') || msg.includes('429');
-		},
+		match: (error: Error) => isStatusError(error) && error.status === 429,
+		// Single retry owner for 429s: the transport stays single-attempt
+		// (see client.ts) and only this policy retries, honoring Retry-After.
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
+			if (isStatusError(error) && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_token');
-		},
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	NOT_FOUND_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 404) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('not_found') || msg.includes('not found');
-		},
+		match: (error: Error) => isStatusError(error) && error.status === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {

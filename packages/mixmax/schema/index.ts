@@ -1,4 +1,4 @@
-﻿export const MixmaxSchema = {
+export const MixmaxSchema = {
 	version: '1.0.0',
 	entities: {},
 } as const;

@@ -24,12 +24,12 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
-    "corsair": "0.1.0",
+    "corsair": "workspace:*",
     "jest": "^29.7.0",
     "ts-jest": "^29.4.9",
     "tsup": "^8.0.1",
-    "typescript": "5.9.3",
-    "zod": "^4.6.7"
+    "typescript": "catalog:",
+    "zod": "^4.1.13"
   },
   "keywords": [
     "corsair",
@@ -46,8 +46,5 @@
     "url": "git+https://github.com/corsairdev/corsair.git",
     "directory": "packages/mixmax"
   },
-  "homepage": "https://docs.corsair.dev/plugins/mixmax",
-  "dependencies": {
-    "@types/node": "^20.19.43"
-  }
+  "homepage": "https://docs.corsair.dev/plugins/mixmax"
 }
