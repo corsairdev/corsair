@@ -24,6 +24,18 @@ pnpm add @corsair-dev/mixmax
 | `insightsReports.delete` | `mixmax.api.insightsReports.delete` | `destructive` | Delete a saved Mixmax insights report permanently. |
 | `insightsReports.list` | `mixmax.api.insightsReports.list` | `read` | List the user’s saved Mixmax insights reports. |
 | `insightsReports.update` | `mixmax.api.insightsReports.update` | `write` | Update a saved Mixmax insights report. |
+| `integrations.commands.create` | `mixmax.api.integrations.commands.create` | `write` | Create a Mixmax slash command integration. |
+| `integrations.commands.delete` | `mixmax.api.integrations.commands.delete` | `destructive` | Delete a Mixmax slash command integration. |
+| `integrations.commands.list` | `mixmax.api.integrations.commands.list` | `read` | List the user’s Mixmax slash command integrations. |
+| `integrations.enhancements.create` | `mixmax.api.integrations.enhancements.create` | `write` | Create a Mixmax enhance-menu integration. |
+| `integrations.enhancements.delete` | `mixmax.api.integrations.enhancements.delete` | `destructive` | Delete a Mixmax enhance-menu integration. |
+| `integrations.enhancements.list` | `mixmax.api.integrations.enhancements.list` | `read` | List the user’s Mixmax enhance-menu integrations. |
+| `integrations.linkResolvers.create` | `mixmax.api.integrations.linkResolvers.create` | `write` | Create a Mixmax link resolver integration. |
+| `integrations.linkResolvers.delete` | `mixmax.api.integrations.linkResolvers.delete` | `destructive` | Delete a Mixmax link resolver integration. |
+| `integrations.linkResolvers.list` | `mixmax.api.integrations.linkResolvers.list` | `read` | List the user’s Mixmax link resolver integrations. |
+| `integrations.sidebars.create` | `mixmax.api.integrations.sidebars.create` | `write` | Create a Mixmax sidebar integration. |
+| `integrations.sidebars.delete` | `mixmax.api.integrations.sidebars.delete` | `destructive` | Delete a Mixmax sidebar integration. |
+| `integrations.sidebars.list` | `mixmax.api.integrations.sidebars.list` | `read` | List the user’s Mixmax sidebar integrations. |
 | `livefeed.events` | `mixmax.api.livefeed.events` | `read` | List individual Mixmax live feed events such as opens, clicks, and replies. |
 | `livefeed.list` | `mixmax.api.livefeed.list` | `read` | List the user’s Mixmax live feed of tracked email activity, with optional stats. |
 | `meetingInvites.get` | `mixmax.api.meetingInvites.get` | `read` | Retrieve one Mixmax meeting invite by id. |
@@ -61,6 +73,32 @@ pnpm add @corsair-dev/mixmax
 | `rules.get` | `mixmax.api.rules.get` | `read` | Retrieve one Mixmax rule by id. |
 | `rules.list` | `mixmax.api.rules.list` | `read` | List the user’s Mixmax rules, optionally with their actions. |
 | `rules.update` | `mixmax.api.rules.update` | `write` | Update the trigger or fields of a Mixmax rule. |
+| `salesforce.createAccount` | `mixmax.api.salesforce.createAccount` | `write` | Create a Salesforce account through Mixmax. |
+| `salesforce.createContact` | `mixmax.api.salesforce.createContact` | `write` | Create a Salesforce contact through Mixmax. |
+| `salesforce.createLead` | `mixmax.api.salesforce.createLead` | `write` | Create a Salesforce lead through Mixmax. |
+| `salesforce.createOpportunity` | `mixmax.api.salesforce.createOpportunity` | `write` | Create a Salesforce opportunity through Mixmax. |
+| `salesforce.createTask` | `mixmax.api.salesforce.createTask` | `write` | Create a Salesforce task through Mixmax. |
+| `salesforce.deleteOpportunity` | `mixmax.api.salesforce.deleteOpportunity` | `destructive` | Delete a Salesforce opportunity through Mixmax. |
+| `salesforce.deleteTask` | `mixmax.api.salesforce.deleteTask` | `destructive` | Delete a Salesforce task through Mixmax. |
+| `salesforce.getAccount` | `mixmax.api.salesforce.getAccount` | `read` | Retrieve one Salesforce account synced to Mixmax. |
+| `salesforce.getAccountImplicit` | `mixmax.api.salesforce.getAccountImplicit` | `read` | Look up the Salesforce account matching an email domain. |
+| `salesforce.getContact` | `mixmax.api.salesforce.getContact` | `read` | Retrieve one Salesforce contact synced to Mixmax. |
+| `salesforce.getContactOrLead` | `mixmax.api.salesforce.getContactOrLead` | `read` | Look up the Salesforce contact or lead matching an email address. |
+| `salesforce.getLead` | `mixmax.api.salesforce.getLead` | `read` | Retrieve one Salesforce lead synced to Mixmax. |
+| `salesforce.getOpportunity` | `mixmax.api.salesforce.getOpportunity` | `read` | Retrieve one Salesforce opportunity synced to Mixmax. |
+| `salesforce.getTask` | `mixmax.api.salesforce.getTask` | `read` | Retrieve one Salesforce task synced to Mixmax. |
+| `salesforce.getWhat` | `mixmax.api.salesforce.getWhat` | `read` | Resolve any Salesforce record id to its related “what” object. |
+| `salesforce.getWho` | `mixmax.api.salesforce.getWho` | `read` | Resolve any Salesforce record id to its related “who” object. |
+| `salesforce.listAccounts` | `mixmax.api.salesforce.listAccounts` | `read` | List the Salesforce accounts synced to the user’s Mixmax. |
+| `salesforce.listContactTasks` | `mixmax.api.salesforce.listContactTasks` | `read` | List the Salesforce tasks of one contact. |
+| `salesforce.listLeadTasks` | `mixmax.api.salesforce.listLeadTasks` | `read` | List the Salesforce tasks of one lead. |
+| `salesforce.search` | `mixmax.api.salesforce.search` | `read` | Search Salesforce records of one object type through Mixmax. |
+| `salesforce.syncedFields` | `mixmax.api.salesforce.syncedFields` | `read` | List the Salesforce fields Mixmax syncs for each object type. |
+| `salesforce.updateAccount` | `mixmax.api.salesforce.updateAccount` | `write` | Update a Salesforce account through Mixmax. |
+| `salesforce.updateContact` | `mixmax.api.salesforce.updateContact` | `write` | Update a Salesforce contact through Mixmax. |
+| `salesforce.updateLead` | `mixmax.api.salesforce.updateLead` | `write` | Update a Salesforce lead through Mixmax. |
+| `salesforce.updateOpportunity` | `mixmax.api.salesforce.updateOpportunity` | `write` | Update a Salesforce opportunity through Mixmax. |
+| `salesforce.updateTask` | `mixmax.api.salesforce.updateTask` | `write` | Update a Salesforce task through Mixmax. |
 | `sequenceFolders.addSequences` | `mixmax.api.sequenceFolders.addSequences` | `write` | Move one or more Mixmax sequences into a sequence folder. |
 | `sequenceFolders.create` | `mixmax.api.sequenceFolders.create` | `write` | Create a Mixmax sequence folder. |
 | `sequenceFolders.delete` | `mixmax.api.sequenceFolders.delete` | `destructive` | Delete a Mixmax sequence folder; its sequences are kept but left without a folder. |
@@ -86,6 +124,15 @@ pnpm add @corsair-dev/mixmax
 | `snippetTags.listSnippets` | `mixmax.api.snippetTags.listSnippets` | `read` | List the templates contained in one Mixmax template folder. |
 | `snippetTags.update` | `mixmax.api.snippetTags.update` | `write` | Rename a Mixmax template folder. |
 | `tasks.list` | `mixmax.api.tasks.list` | `read` | List the user’s open Mixmax tasks. |
+| `teams.create` | `mixmax.api.teams.create` | `write` | Create a Mixmax team. |
+| `teams.delete` | `mixmax.api.teams.delete` | `destructive` | Delete a Mixmax team permanently. |
+| `teams.get` | `mixmax.api.teams.get` | `read` | Retrieve one Mixmax team by id. |
+| `teams.list` | `mixmax.api.teams.list` | `read` | List the user’s Mixmax teams. |
+| `teams.members.add` | `mixmax.api.teams.members.add` | `write` | Invite members to a Mixmax team. |
+| `teams.members.list` | `mixmax.api.teams.members.list` | `read` | List the members of one Mixmax team. |
+| `teams.members.remove` | `mixmax.api.teams.members.remove` | `destructive` | Remove one member from a Mixmax team. |
+| `teams.members.update` | `mixmax.api.teams.members.update` | `write` | Change a Mixmax team member’s role. |
+| `teams.update` | `mixmax.api.teams.update` | `write` | Rename a Mixmax team. |
 | `unsubscribes.create` | `mixmax.api.unsubscribes.create` | `write` | Add one or more email addresses to the Mixmax unsubscribe list. |
 | `unsubscribes.list` | `mixmax.api.unsubscribes.list` | `read` | List the email addresses unsubscribed from the user’s Mixmax sends. |
 | `unsubscribes.remove` | `mixmax.api.unsubscribes.remove` | `destructive` | Remove one email address from the Mixmax unsubscribe list. |

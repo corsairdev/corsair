@@ -498,6 +498,505 @@ await corsair.mixmax.api.insightsReports.update({});
 
 ---
 
+## Integrations
+
+### commands.create
+
+`integrations.commands.create`
+
+Create a Mixmax slash command integration.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.integrations.commands.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `commands` | `string[]` | No | — |
+| `parameterPlaceholder` | `string` | Yes | — |
+| `commandParameterHintsUrl` | `string` | Yes | — |
+| `commandResolverUrl` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `commands` | `string[]` | No | — |
+| `parameterPlaceholder` | `string` | No | — |
+| `commandParameterHintsUrl` | `string` | No | — |
+| `commandResolverUrl` | `string` | No | — |
+
+
+
+---
+
+### commands.delete
+
+`integrations.commands.delete`
+
+Delete a Mixmax slash command integration.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.integrations.commands.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### commands.list
+
+`integrations.commands.list`
+
+List the user’s Mixmax slash command integrations.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.integrations.commands.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  id?: string,
+  userId?: string,
+  name?: string,
+  createdAt?: string,
+  commands?: string[],
+  parameterPlaceholder?: string,
+  commandParameterHintsUrl?: string,
+  commandResolverUrl?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enhancements.create
+
+`integrations.enhancements.create`
+
+Create a Mixmax enhance-menu integration.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.integrations.enhancements.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `icon` | `string` | Yes | — |
+| `iconTooltip` | `string` | Yes | — |
+| `editorUrl` | `string` | Yes | — |
+| `resolverUrl` | `string` | Yes | — |
+| `activateUrl` | `string` | No | — |
+| `editorHeight` | `number` | No | — |
+| `editorWidth` | `number` | No | — |
+| `commands` | `string[]` | No | — |
+| `category` | `string` | No | — |
+| `isEditable` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `icon` | `string` | No | — |
+| `iconTooltip` | `string` | No | — |
+| `editorUrl` | `string` | No | — |
+| `resolverUrl` | `string` | No | — |
+| `activateUrl` | `string` | No | — |
+| `editorHeight` | `number` | No | — |
+| `editorWidth` | `number` | No | — |
+| `commands` | `string[]` | No | — |
+| `category` | `string` | No | — |
+| `isEditable` | `boolean` | No | — |
+
+
+
+---
+
+### enhancements.delete
+
+`integrations.enhancements.delete`
+
+Delete a Mixmax enhance-menu integration.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.integrations.enhancements.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### enhancements.list
+
+`integrations.enhancements.list`
+
+List the user’s Mixmax enhance-menu integrations.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.integrations.enhancements.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  id?: string,
+  userId?: string,
+  name?: string,
+  createdAt?: string,
+  icon?: string,
+  iconTooltip?: string,
+  editorUrl?: string,
+  resolverUrl?: string,
+  activateUrl?: string,
+  editorHeight?: number,
+  editorWidth?: number,
+  commands?: string[],
+  category?: string,
+  isEditable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### linkResolvers.create
+
+`integrations.linkResolvers.create`
+
+Create a Mixmax link resolver integration.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.integrations.linkResolvers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | Yes | — |
+| `regex` | `string` | Yes | — |
+| `resolverUrl` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `description` | `string` | No | — |
+| `regex` | `string` | No | — |
+| `resolverUrl` | `string` | No | — |
+| `order` | `number` | No | — |
+
+
+
+---
+
+### linkResolvers.delete
+
+`integrations.linkResolvers.delete`
+
+Delete a Mixmax link resolver integration.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.integrations.linkResolvers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### linkResolvers.list
+
+`integrations.linkResolvers.list`
+
+List the user’s Mixmax link resolver integrations.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.integrations.linkResolvers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  id?: string,
+  userId?: string,
+  name?: string,
+  createdAt?: string,
+  description?: string,
+  regex?: string,
+  resolverUrl?: string,
+  order?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sidebars.create
+
+`integrations.sidebars.create`
+
+Create a Mixmax sidebar integration.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.integrations.sidebars.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `iconImage` | `string` | No | — |
+| `iconName` | `string` | No | — |
+| `iconColor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `name` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `url` | `string` | No | — |
+| `iconImage` | `string` | No | — |
+| `iconName` | `string` | No | — |
+| `iconColor` | `string` | No | — |
+
+
+
+---
+
+### sidebars.delete
+
+`integrations.sidebars.delete`
+
+Delete a Mixmax sidebar integration.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.integrations.sidebars.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### sidebars.list
+
+`integrations.sidebars.list`
+
+List the user’s Mixmax sidebar integrations.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.integrations.sidebars.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id?: string,
+  id?: string,
+  userId?: string,
+  name?: string,
+  createdAt?: string,
+  url?: string,
+  iconImage?: string,
+  iconName?: string,
+  iconColor?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Livefeed
 
 ### events
@@ -3917,6 +4416,1196 @@ await corsair.mixmax.api.rules.update({});
 
 ---
 
+## Salesforce
+
+### createAccount
+
+`salesforce.createAccount`
+
+Create a Salesforce account through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.createAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createContact
+
+`salesforce.createContact`
+
+Create a Salesforce contact through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.createContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createLead
+
+`salesforce.createLead`
+
+Create a Salesforce lead through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.createLead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `LastName` | `string` | Yes | — |
+| `Company` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createOpportunity
+
+`salesforce.createOpportunity`
+
+Create a Salesforce opportunity through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.createOpportunity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `ContactId` | `string` | Yes | — |
+| `AccountId` | `string` | No | — |
+| `mm_IsPrimaryContactRole` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createTask
+
+`salesforce.createTask`
+
+Create a Salesforce task through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.createTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteOpportunity
+
+`salesforce.deleteOpportunity`
+
+Delete a Salesforce opportunity through Mixmax.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.salesforce.deleteOpportunity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### deleteTask
+
+`salesforce.deleteTask`
+
+Delete a Salesforce task through Mixmax.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.salesforce.deleteTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAccount
+
+`salesforce.getAccount`
+
+Retrieve one Salesforce account synced to Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAccountImplicit
+
+`salesforce.getAccountImplicit`
+
+Look up the Salesforce account matching an email domain.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getAccountImplicit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailDomain` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  account?: {
+    Id?: string,
+    salesforceURL?: string
+  }
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getContact
+
+`salesforce.getContact`
+
+Retrieve one Salesforce contact synced to Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getContactOrLead
+
+`salesforce.getContactOrLead`
+
+Look up the Salesforce contact or lead matching an email address.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getContactOrLead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `withRelatedObjects` | `true \| false` | No | — |
+| `fetch` | `string` | No | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  contact?: {
+    Id?: string,
+    salesforceURL?: string
+  },
+  lead?: {
+    Id?: string,
+    salesforceURL?: string
+  },
+  account?: {
+    Id?: string,
+    salesforceURL?: string
+  } | null,
+  opportunities?: {
+    Id?: string,
+    salesforceURL?: string
+  }[],
+  events?: {
+    tasks?: {
+      Id?: string,
+      salesforceURL?: string
+    }[],
+    events?: {
+      Id?: string,
+      salesforceURL?: string
+    }[],
+    hasMore?: boolean,
+    listLink?: string
+  },
+  openTasks?: {
+    tasks?: {
+      Id?: string,
+      salesforceURL?: string
+    }[],
+    events?: {
+      Id?: string,
+      salesforceURL?: string
+    }[],
+    hasMore?: boolean,
+    listLink?: string
+  },
+  closedTasks?: {
+    tasks?: {
+      Id?: string,
+      salesforceURL?: string
+    }[],
+    events?: {
+      Id?: string,
+      salesforceURL?: string
+    }[],
+    hasMore?: boolean,
+    listLink?: string
+  }
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getLead
+
+`salesforce.getLead`
+
+Retrieve one Salesforce lead synced to Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getLead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getOpportunity
+
+`salesforce.getOpportunity`
+
+Retrieve one Salesforce opportunity synced to Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getOpportunity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTask
+
+`salesforce.getTask`
+
+Retrieve one Salesforce task synced to Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getWhat
+
+`salesforce.getWhat`
+
+Resolve any Salesforce record id to its related “what” object.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getWhat({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getWho
+
+`salesforce.getWho`
+
+Resolve any Salesforce record id to its related “who” object.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.getWho({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listAccounts
+
+`salesforce.listAccounts`
+
+List the Salesforce accounts synced to the user’s Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.listAccounts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listContactTasks
+
+`salesforce.listContactTasks`
+
+List the Salesforce tasks of one contact.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.listContactTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLeadTasks
+
+`salesforce.listLeadTasks`
+
+List the Salesforce tasks of one lead.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.listLeadTasks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`salesforce.search`
+
+Search Salesforce records of one object type through Mixmax.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `Account \| Campaign \| Contact \| Lead \| Opportunity \| User` | Yes | — |
+| `q` | `string` | Yes | — |
+| `fields` | `string` | Yes | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  Id?: string,
+  salesforceURL?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### syncedFields
+
+`salesforce.syncedFields`
+
+List the Salesforce fields Mixmax syncs for each object type.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.salesforce.syncedFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | Yes | — |
+| `useSyncUser` | `true \| false` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+Record<string, {
+  fieldName?: string,
+  fieldLabel?: string,
+  objectName?: string,
+  fieldType?: string,
+  required?: boolean,
+  createable?: boolean,
+  isDefault?: boolean,
+  picklistValues?: {
+    label?: string,
+    value?: string,
+    active?: boolean,
+    defaultValue?: boolean
+  }[]
+}[]>
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateAccount
+
+`salesforce.updateAccount`
+
+Update a Salesforce account through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.updateAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `Id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateContact
+
+`salesforce.updateContact`
+
+Update a Salesforce contact through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.updateContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `Id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateLead
+
+`salesforce.updateLead`
+
+Update a Salesforce lead through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.updateLead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `Id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateOpportunity
+
+`salesforce.updateOpportunity`
+
+Update a Salesforce opportunity through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.updateOpportunity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `Id` | `string` | Yes | — |
+| `CloseDate` | `string` | Yes | — |
+| `ContactId` | `string` | No | — |
+| `mm_IsPrimaryContactRole` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateTask
+
+`salesforce.updateTask`
+
+Update a Salesforce task through Mixmax.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.salesforce.updateTask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OwnerId` | `string` | No | — |
+| `id` | `string` | Yes | — |
+| `Id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  name?: string,
+  errorCode?: string,
+  message?: string,
+  fields?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Sequence Folders
 
 ### addSequences
@@ -5542,6 +7231,403 @@ await corsair.mixmax.api.tasks.list({});
 </Accordion>
 </AccordionGroup>
 
+
+
+---
+
+## Teams
+
+### create
+
+`teams.create`
+
+Create a Mixmax team.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.teams.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `orgId` | `string` | No | — |
+| `members` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  email: string,
+  role?: admin | member
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `modifiedAt` | `string` | Yes | — |
+| `members` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  memberId: string,
+  userId?: string,
+  email?: string,
+  name?: string,
+  role: admin | member,
+  accepted?: boolean,
+  acceptedAt?: string,
+  createdAt?: string,
+  invitedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`teams.delete`
+
+Delete a Mixmax team permanently.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.teams.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`teams.get`
+
+Retrieve one Mixmax team by id.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.teams.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `createdAt` | `string` | Yes | — |
+| `modifiedAt` | `string` | Yes | — |
+| `members` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  memberId: string,
+  userId?: string,
+  email?: string,
+  name?: string,
+  role: admin | member,
+  accepted?: boolean,
+  acceptedAt?: string,
+  createdAt?: string,
+  invitedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List the user’s Mixmax teams.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expand` | `string` | No | — |
+| `accessThrough` | `myself` | No | — |
+| `limit` | `number` | No | — |
+| `next` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `next` | `string` | No | — |
+| `hasNext` | `boolean` | No | — |
+| `previous` | `string` | No | — |
+| `hasPrevious` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  createdAt: string,
+  modifiedAt: string,
+  members?: {
+    memberId: string,
+    userId?: string,
+    email?: string,
+    name?: string,
+    role: admin | member,
+    accepted?: boolean,
+    acceptedAt?: string,
+    createdAt?: string,
+    invitedAt: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### members.add
+
+`teams.members.add`
+
+Invite members to a Mixmax team.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.teams.members.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `members` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  email: string,
+  role?: admin | member
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  memberId: string,
+  userId?: string,
+  email?: string,
+  name?: string,
+  role: admin | member,
+  accepted?: boolean,
+  acceptedAt?: string,
+  createdAt?: string,
+  invitedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### members.list
+
+`teams.members.list`
+
+List the members of one Mixmax team.
+
+**Risk:** `read`
+
+```ts
+await corsair.mixmax.api.teams.members.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `members.userId` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  memberId: string,
+  userId?: string,
+  email?: string,
+  name?: string,
+  role: admin | member,
+  accepted?: boolean,
+  acceptedAt?: string,
+  createdAt?: string,
+  invitedAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### members.remove
+
+`teams.members.remove`
+
+Remove one member from a Mixmax team.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixmax.api.teams.members.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `memberId` | `string` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### members.update
+
+`teams.members.update`
+
+Change a Mixmax team member’s role.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.teams.members.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `memberId` | `string` | Yes | — |
+| `role` | `admin \| member` | Yes | — |
+
+
+
+**Output:** `boolean`
+
+
+---
+
+### update
+
+`teams.update`
+
+Rename a Mixmax team.
+
+**Risk:** `write`
+
+```ts
+await corsair.mixmax.api.teams.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `string`
 
 
 ---
