@@ -43,6 +43,12 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	// Both the project domain and the auth username are per-call inputs:
 	// ApiKey auth is user-scoped, so each tenant carries its own pair.
 	const scoped = parsed as { domain: string; username: string };
+	if (!scoped.username) {
+		console.log('DEBUG scoped:', JSON.stringify(scoped));
+		throw new Error(
+			'No CommCare username is set; ApiKey auth is user-scoped (plugin option or per-operation `username`)',
+		);
+	}
 	const domain = scoped.domain;
 	const auth: CommCareAuth = {
 		domain,

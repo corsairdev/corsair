@@ -452,9 +452,11 @@ describe('device', () => {
 		expect(result.message).toContain('successfully submitted');
 		const sent = lastRequest();
 		expect(sent.path).toBe(`/a/${DOMAIN}/receiver/app-1/`);
-		expect((sent.body as FormData).get('xml_submission_file')).toBe(
-			'<xform></xform>',
-		);
+		// The submission goes out as a file part (Blob), which is what the
+		// receiver requires; the XML content matches what was signed in.
+		const part = (sent.body as FormData).get('xml_submission_file');
+		expect(part).toBeInstanceOf(Blob);
+		expect(await (part as Blob).text()).toBe('<xform></xform>');
 	});
 });
 

@@ -60,6 +60,12 @@ export class CommCareAPIError extends Error {
 }
 
 // unknown: the body is an untyped error body until asRecord narrows it.
+function bodyHasSecret(body: unknown): boolean {
+	const record = asRecord(body);
+	return record !== null && typeof record === 'object' && 'password' in record;
+}
+
+// unknown: the body is an untyped error body until asRecord narrows it.
 function readString(
 	record: Record<string, unknown> | null | undefined,
 	key: string,
@@ -93,8 +99,8 @@ export type CommCareRequest = {
 	query?: CommCareQuery;
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
-	/** Multipart fields (the OpenRosa form submission); string values only. */
-	formData?: Record<string, string>;
+	/** Multipart fields (the OpenRosa form submission); string values or file parts. */
+	formData?: Record<string, string | Blob>;
 	/** Marks reads whose 5xx failure can be retried without repeating an effect. */
 	replaySafe?: boolean;
 };
@@ -147,9 +153,20 @@ export async function makeCommCareRequest(
 			throw error;
 		}
 		if (error instanceof ApiError) {
+			// Credential-bearing request bodies (users.create sends a worker
+			// password) must not ride through the cause chain, where
+			// JSON.stringify would expose them; status and body are copied
+			// onto this error instead.
+			const sensitive = bodyHasSecret(requestOptions.body);
 			throw new CommCareAPIError(
 				describeCommCareError(error.status, error.body, error.message),
-				{ cause: error, replaySafe },
+				{
+					cause: sensitive ? undefined : error,
+					status: error.status,
+					// unknown: the response body is an untyped error body.
+					body: error.body,
+					replaySafe,
+				},
 			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.

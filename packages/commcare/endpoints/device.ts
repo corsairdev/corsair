@@ -47,7 +47,11 @@ export const submit: CommCareEndpoints['submissionsSubmit'] = (ctx, input) =>
 		(domain, { appId, xml }) => ({
 			method: 'POST',
 			path: `/a/${segment(domain)}/receiver/${segment(appId)}/`,
-			formData: { xml_submission_file: xml },
+			// The receiver rejects xml_submission_file sent as a plain text
+			// field, so the XForm goes as a named file part.
+			formData: {
+				xml_submission_file: new Blob([xml], { type: 'text/xml' }),
+			},
 		}),
 		{
 			// unknown: the body is an OpenRosa XML payload until narrowed.

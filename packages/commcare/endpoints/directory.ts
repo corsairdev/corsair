@@ -250,11 +250,18 @@ export const listReports: CommCareEndpoints['reportsList'] = (ctx, input) =>
 		}),
 		{
 			// The endpoint answers a bare array of report configurations.
-			shape: (raw) => ({
-				reports: Array.isArray(raw)
-					? raw
-					: ((asRecord(raw)?.objects as unknown[] | undefined) ?? []),
-			}),
+			// A malformed body is passed through so the output schema
+			// rejects it instead of reporting an empty inventory.
+			shape: (raw) => {
+				const record = asRecord(raw);
+				return {
+					reports: Array.isArray(raw)
+						? raw
+						: Array.isArray(record?.objects)
+							? record.objects
+							: raw,
+				};
+			},
 			log: (_, result) => ({ count: result.reports.length }),
 		},
 	);
@@ -304,11 +311,16 @@ export const listDetExports: CommCareEndpoints['detExportsList'] = (
 			replaySafe: true,
 		}),
 		{
-			shape: (raw) => ({
-				detExports: Array.isArray(raw)
-					? raw
-					: ((asRecord(raw)?.objects as unknown[] | undefined) ?? []),
-			}),
+			shape: (raw) => {
+				const record = asRecord(raw);
+				return {
+					detExports: Array.isArray(raw)
+						? raw
+						: Array.isArray(record?.objects)
+							? record.objects
+							: raw,
+				};
+			},
 			log: (_, result) => ({ count: result.detExports.length }),
 		},
 	);

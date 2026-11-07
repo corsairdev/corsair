@@ -6,17 +6,19 @@ import { z } from 'zod';
 // a call that has already happened. Field reference:
 // https://commcare-hq.readthedocs.io/api/
 
-const AuthUsernameSchema = z
-	.string()
-	.min(1)
-	.describe(
-		'CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`.',
-	);
-
 const DomainSchema = z
 	.string()
 	.min(1)
 	.describe('CommCare project domain (HQ domain), e.g. `my-project`.');
+
+// ApiKey auth is user-scoped: every operation carries the username the key
+// belongs to alongside the key itself.
+const AuthUsernameSchema = z
+	.string()
+	.min(1)
+	.describe(
+		'CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`.',
+	);
 
 const FormIdSchema = z
 	.string()
@@ -26,11 +28,6 @@ const FormIdSchema = z
 const CaseIdSchema = z.string().min(1).describe('Case ID (UUID).');
 
 const UserIdSchema = z.string().min(1).describe('Mobile worker ID (UUID).');
-
-const TagsSchema = z
-	.array(z.string().min(1))
-	.optional()
-	.describe('Tags to attach.');
 
 // ── shared output shapes ──────────────────────────────────────────────────
 
@@ -60,7 +57,7 @@ const CommCareListSchema = <T extends z.ZodType>(item: T) =>
 export const CommCareFormSchema = z
 	.object({
 		id: z.string().nullish(),
-		// unknown: unknown: XForm content varies per application form design.
+		// unknown: XForm content varies per application form design.
 		form: z.record(z.string(), z.unknown()).nullish(),
 		// unknown: submission metadata (app_id, form_type, received_on…).
 		metadata: z.record(z.string(), z.unknown()).nullish(),
@@ -112,7 +109,7 @@ export const CommCareUserSchema = z
 		email: z.string().nullish(),
 		default_phone_number: z.string().nullish(),
 		phone_numbers: z.array(z.string()).nullish(),
-		// unknown: unknown: free-form per-project user data.
+		// unknown: free-form per-project user data.
 		user_data: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -140,7 +137,7 @@ export const CommCareWebUserSchema = z
 		default_phone_number: z.string().nullish(),
 		role: z.string().nullish(),
 		is_admin: z.boolean().nullish(),
-		// unknown: unknown: permission keys vary by plan and role.
+		// unknown: permission keys vary by plan and role.
 		permissions: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
@@ -455,7 +452,12 @@ const CasesGetByExternalIdResponseSchema = CommCareCaseSchema;
 const UsersListInputSchema = z.object({
 	username: AuthUsernameSchema,
 	domain: DomainSchema,
-	limit: PerPageLimitSchema(),
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page size; the default is 20.'),
 	offset: z
 		.number()
 		.int()
@@ -463,16 +465,6 @@ const UsersListInputSchema = z.object({
 		.optional()
 		.describe('Records to skip before this page.'),
 });
-
-// v0.5 list endpoints default to a page size of 20.
-function PerPageLimitSchema() {
-	return z
-		.number()
-		.int()
-		.min(1)
-		.optional()
-		.describe('Page size; the default is 20.');
-}
 
 export type UsersListInput = z.input<typeof UsersListInputSchema>;
 
@@ -489,8 +481,8 @@ export type UsersGetInput = z.input<typeof UsersGetInputSchema>;
 const UsersGetResponseSchema = CommCareUserSchema;
 
 const UsersCreateInputSchema = z.object({
-	domain: DomainSchema,
 	username: AuthUsernameSchema,
+	domain: DomainSchema,
 	workerUsername: z
 		.string()
 		.min(1)
@@ -505,7 +497,7 @@ const UsersCreateInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('Primary phone number of the worker.'),
-	// unknown: unknown: free-form per-project user data.
+	// unknown: free-form per-project user data.
 	userData: z
 		.record(z.string(), z.unknown())
 		.optional()
@@ -527,7 +519,7 @@ const UsersUpdateInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('Primary phone number of the worker.'),
-	// unknown: unknown: free-form per-project user data.
+	// unknown: free-form per-project user data.
 	userData: z
 		.record(z.string(), z.unknown())
 		.optional()
@@ -628,6 +620,7 @@ const GroupsUpdateResponseSchema = CommCareGroupSchema;
 // ── webUsers.list ─────────────────────────────────────────────────────────
 
 const WebUsersListInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	limit: z
 		.number()
@@ -692,6 +685,7 @@ const LocationsGetResponseSchema = CommCareLocationSchema;
 // ── locationTypes.list / get ──────────────────────────────────────────────
 
 const LocationTypesListInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	limit: z
 		.number()
@@ -763,6 +757,7 @@ export type FixturesGetItemInput = z.input<typeof FixturesGetItemInputSchema>;
 const FixturesGetItemResponseSchema = CommCareGlossarySchema;
 
 const LookupTablesListInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	limit: z
 		.number()
@@ -796,7 +791,10 @@ const LookupTablesGetResponseSchema = CommCareLookupTableSchema;
 
 // ── reports.list / reports.getData ────────────────────────────────────────
 
-const ReportsListInputSchema = z.object({ domain: DomainSchema });
+const ReportsListInputSchema = z.object({
+	username: AuthUsernameSchema,
+	domain: DomainSchema,
+});
 
 export type ReportsListInput = z.input<typeof ReportsListInputSchema>;
 
@@ -835,7 +833,7 @@ const ReportsGetDataInputSchema = z.object({
 		.max(50)
 		.optional()
 		.describe('Page size, maximum 50.'),
-	// unknown: unknown: report filter keys vary per report configuration.
+	// unknown: report filter keys vary per report configuration.
 	filters: z
 		.record(z.string(), z.string())
 		.optional()
@@ -850,7 +848,10 @@ const ReportsGetDataResponseSchema = CommCareReportDataSchema;
 
 // ── ota.restore ───────────────────────────────────────────────────────────
 
-const OtaRestoreInputSchema = z.object({ domain: DomainSchema });
+const OtaRestoreInputSchema = z.object({
+	username: AuthUsernameSchema,
+	domain: DomainSchema,
+});
 
 export type OtaRestoreInput = z.input<typeof OtaRestoreInputSchema>;
 
@@ -878,15 +879,13 @@ export type SubmissionsSubmitInput = z.input<
 // The receiver answers 201 with an OpenRosa XML payload; 201 with a
 // submit_error nature means the form arrived but could not be processed.
 const SubmissionsSubmitResponseSchema = z
-	.object({
-		raw: z.string(),
-		message: z.string().nullish(),
-	})
+	.object({ raw: z.string(), message: z.string().nullish() })
 	.loose();
 
 // ── detExports.list ───────────────────────────────────────────────────────
 
 const DetExportsListInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	limit: z
 		.number()
