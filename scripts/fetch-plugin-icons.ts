@@ -38,7 +38,7 @@ type IconSource = 'twenty-icons' | 'google-favicon' | 'url-override';
  * picker draws icons with no tile behind them). These are flattened onto a
  * white tile with some padding after fetching.
  */
-const PLUGIN_ICON_LIGHT_TILE = new Set(['api2pdf', 'attio', 'bigml']);
+const PLUGIN_ICON_LIGHT_TILE = new Set(['attio']);
 
 const LIGHT_TILE_SIZE = 256;
 const LIGHT_TILE_MARK = 200;
@@ -105,6 +105,17 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	googleanalytics: `${COMPOSIO_LOGOS}/google_analytics.svg`,
 	googlebigquery: `${COMPOSIO_LOGOS}/googlebigquery.svg`,
 	googlecloudvision: `${COMPOSIO_LOGOS}/google_cloud_vision.svg`,
+	// App Store tiles, GitHub avatars and wordmarks shrink to a speck in Lug's
+	// 26px picker; Composio's marks fill the square.
+	api2pdf: `${COMPOSIO_LOGOS}/api2pdf.svg`,
+	bigml: `${COMPOSIO_LOGOS}/bigml.svg`,
+	filloutforms: `${COMPOSIO_LOGOS}/fillout_forms.svg`,
+	nextdns: `${COMPOSIO_LOGOS}/nextdns.svg`,
+	recallai: `${COMPOSIO_LOGOS}/recallai.svg`,
+	salesforce: `${COMPOSIO_LOGOS}/salesforce.svg`,
+	slack: `${COMPOSIO_LOGOS}/slack.svg`,
+	slackbot: `${COMPOSIO_LOGOS}/slack.svg`,
+	zoom: `${COMPOSIO_LOGOS}/zoom.svg`,
 	// twenty-icons returns a 32px blur; Google's favicon is the sharp site mark.
 	octen: 'https://www.google.com/s2/favicons?domain=octen.ai&sz=128',
 	// twenty-icons has an old blue and green mark; typesafe.ai's apple touch icon
@@ -194,8 +205,6 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	orbit: 'https://orbitsearch.com/images/apple-touch-icon.png?v=2',
 	// striped mark from prisma.com, not Prisma (prisma.io).
 	prisma: 'https://github.com/prisma.png?size=256',
-	// plain blue circle; GitHub org avatar is the Recall.ai wordmark.
-	recallai: 'https://github.com/recallai.png?size=256',
 	// GoDaddy parked-domain icon from revai.com; Rev AI is rev.ai.
 	revai: 'https://github.com/revdotcom.png?size=256',
 	// GoDaddy parked-domain icon from supadata.com; Supadata is supadata.ai.
@@ -221,7 +230,6 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	activetrail:
 		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/1e/88/58/1e8858d6-d38d-86f4-eaba-ec0def3a1abf/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/256x256bb.png',
 	agentmail: 'https://github.com/agentmail-to.png?size=256',
-	api2pdf: 'https://github.com/api2pdf.png?size=256',
 	apipie:
 		'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://apipie.ai&size=256',
 	attio: 'https://github.com/attio.png?size=256',
@@ -231,7 +239,6 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	bestbuy:
 		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4c/d0/aa/4cd0aa20-24a4-3477-ea0c-c4cfd922eef9/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/256x256bb.png',
 	bigdatacloud: 'https://www.bigdatacloud.com/apple-touch-icon.png',
-	bigml: 'https://github.com/bigmlcom.png?size=256',
 	blackbaud: 'https://github.com/blackbaud.png?size=256',
 	booqable: 'https://github.com/booqable.png?size=256',
 	boxhero:
@@ -255,7 +262,6 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	dropbox:
 		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/94/2b/ca/942bcaba-f8db-9467-f3c9-10f6f35267a3/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/256x256bb.png',
 	epicgames: 'https://github.com/EpicGames.png?size=256',
-	filloutforms: 'https://github.com/fillout.png?size=256',
 	firecrawl: 'https://github.com/firecrawl.png?size=256',
 	gitlab: 'https://about.gitlab.com/images/ico/favicon-192x192.png',
 	grafana:
@@ -270,20 +276,14 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	loyverse:
 		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/9d/74/00/9d740077-094a-1b77-59e9-d71085575fa9/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/256x256bb.png',
 	mailboxlayer: 'https://mailboxlayer.com/images/icons/mailboxlayer_icon.png',
-	nextdns: 'https://github.com/nextdns.png?size=256',
 	openrouter: 'https://openrouter.ai/favicon/glyph.png',
 	pdfco: 'https://pdf.co/favicon.png',
 	pdl: 'https://github.com/peopledatalabs.png?size=256',
 	perplexityai: 'https://github.com/perplexityai.png?size=256',
 	pinecone: 'https://github.com/pinecone-io.png?size=256',
 	pushbullet: 'https://github.com/pushbullet.png?size=256',
-	salesforce: 'https://github.com/salesforce.png?size=256',
 	scaleai: 'https://scale.com/static/global/favicon/v3/apple-touch-icon.png',
 	sentry: 'https://github.com/getsentry.png?size=256',
-	slack:
-		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/8e/a6/9e/8ea69e16-151a-811a-75a7-bce97339b000/slack_icon_prod-0-0-1x_U007epad-0-1-85-220.png/256x256bb.png',
-	slackbot:
-		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/8e/a6/9e/8ea69e16-151a-811a-75a7-bce97339b000/slack_icon_prod-0-0-1x_U007epad-0-1-85-220.png/256x256bb.png',
 	snapchat:
 		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/30/cc/d2/30ccd285-16f5-c44b-1b20-35ba6f52e26f/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/256x256bb.png',
 	spotify: 'https://github.com/spotify.png?size=256',
@@ -301,7 +301,6 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/15/eb/39/15eb3965-bec3-4737-950a-9d9df5303e93/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-0-85-220.png/256x256bb.png',
 	witai: 'https://github.com/wit-ai.png?size=256',
 	workday: 'https://github.com/Workday.png?size=256',
-	zoom: 'https://github.com/zoom.png?size=256',
 };
 
 type FetchResult =
