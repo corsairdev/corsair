@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { mixmaxBooleanFlag } from './flags';
 
 // Saved Insights reports and the report data table
 // (developer.mixmax.com/reference, Reports section). Field names, types, and
@@ -159,7 +160,7 @@ export const ReportsRunDataTableInputSchema = z.object({
 	// The field to sort by.
 	sortBy: z.string().optional(),
 	// Defaults to true.
-	sortDesc: z.coerce.boolean().optional(),
+	sortDesc: mixmaxBooleanFlag.optional(),
 	// Timezone used to understand times, eg `America/New_York`. Defaults to
 	// UTC.
 	timezone: z.string().optional(),

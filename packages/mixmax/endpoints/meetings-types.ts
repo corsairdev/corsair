@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { mixmaxBooleanFlag } from './flags';
 
 // Meeting summaries search and meeting transcripts
 // (developer.mixmax.com/reference, Meetings section). Field names, types, and
@@ -110,7 +111,7 @@ export type MeetingSummary = z.infer<typeof MeetingSummarySchema>;
 
 export const MeetingsSearchSummariesInputSchema = z.object({
 	// `true` for external meetings only, `false` for internal only.
-	isExternal: z.coerce.boolean().optional(),
+	isExternal: mixmaxBooleanFlag.optional(),
 	// ISO 8601 date-time; only meetings on or after this date are returned.
 	from: z.string().optional(),
 	// ISO 8601 date-time; only meetings on or before this date are returned.

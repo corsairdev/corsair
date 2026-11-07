@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { mixmaxBooleanFlag } from './flags';
 
 // Sequences and sequence folders (developer.mixmax.com/reference, Sequences
 // section). Field names, types, and limits mirror the official inline schemas
@@ -85,7 +86,7 @@ export const SequencesSearchInputSchema = z.object({
 	limit: z.coerce.number().int().max(50).optional(),
 	offset: z.coerce.number().int().optional(),
 	sortBy: z.string().optional(),
-	sortDesc: z.coerce.boolean().optional(),
+	sortDesc: mixmaxBooleanFlag.optional(),
 });
 
 export type SequencesSearchInput = z.infer<typeof SequencesSearchInputSchema>;
@@ -273,14 +274,14 @@ export const SequencesRecipientsListInputSchema = z.object({
 	limit: z.coerce.number().int().max(50).optional(),
 	offset: z.coerce.number().int().optional(),
 	sortBy: z.string().optional(),
-	sortDesc: z.coerce.boolean().optional(),
+	sortDesc: mixmaxBooleanFlag.optional(),
 	// A search string that narrows the list, for example a full email address.
 	query: z.string().optional(),
 	// Whose recipients to include: leave out for everyone, `myself` for
 	// recipients the caller added, or a team id.
 	analyticsFrom: z.string().optional(),
 	// `true` to include each recipient's `variables`.
-	includeVariables: z.coerce.boolean().optional(),
+	includeVariables: mixmaxBooleanFlag.optional(),
 });
 
 export type SequencesRecipientsListInput = z.infer<
@@ -317,10 +318,10 @@ export const SequencesRecipientsAddInputSchema = z.object({
 	// each recipient's own `scheduledAt` takes precedence.
 	scheduledAt: z.coerce.number().int().optional(),
 	// `true` to fill in each recipient's variables from their contact data.
-	enrich: z.coerce.boolean().optional(),
+	enrich: mixmaxBooleanFlag.optional(),
 	// `true` to add recipients even when they lack values for variables the
 	// sequence uses.
-	allowMissingVariables: z.coerce.boolean().optional(),
+	allowMissingVariables: mixmaxBooleanFlag.optional(),
 });
 
 export type SequencesRecipientsAddInput = z.infer<

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { mixmaxBooleanFlag } from './flags';
 
 // Users and user preferences (developer.mixmax.com/reference, Users section).
 
@@ -19,7 +20,7 @@ export type UsersGetMeOutput = z.infer<typeof UsersGetMeOutputSchema>;
 
 export const UserPreferencesGetInputSchema = z.object({
 	fields: z.string().optional(),
-	includeFinalDefaultCalendarUrl: z.coerce.boolean().optional(),
+	includeFinalDefaultCalendarUrl: mixmaxBooleanFlag.optional(),
 });
 
 export type UserPreferencesGetInput = z.infer<

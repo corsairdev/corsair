@@ -93,7 +93,8 @@ describe('Mixmax livefeed endpoints', () => {
 		await endpoints.livefeed.list(
 			ctx,
 			// unknown: the raw value is a string, but the schema boundary
-			// coerces boolean query flags before the handler sees them.
+			// parses only the explicit `true`/`false` strings before the
+			// handler sees them.
 			{ stats: 'true' } as never,
 		);
 
@@ -107,6 +108,32 @@ describe('Mixmax livefeed endpoints', () => {
 				next: undefined,
 				previous: undefined,
 				stats: true,
+				showOnlySyncedToMixmax: undefined,
+				messageIds: undefined,
+			},
+		});
+	});
+
+	it('livefeed.list parses an explicit false string as false', async () => {
+		// `Boolean('false')` would enable the flag; the boundary must not.
+		request.mockResolvedValue({ results: [] });
+		await endpoints.livefeed.list(
+			ctx,
+			// unknown: the raw value is a string, and the boundary must turn
+			// the explicit `false` string into the boolean false.
+			{ stats: 'false' } as never,
+		);
+
+		expect(request).toHaveBeenCalledWith(ctx, '/v1/livefeed', {
+			method: 'GET',
+			query: {
+				query: undefined,
+				timezone: undefined,
+				limit: undefined,
+				offset: undefined,
+				next: undefined,
+				previous: undefined,
+				stats: false,
 				showOnlySyncedToMixmax: undefined,
 				messageIds: undefined,
 			},

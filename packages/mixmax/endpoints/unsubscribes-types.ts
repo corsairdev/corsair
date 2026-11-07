@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { mixmaxBooleanFlag } from './flags';
 
 // Unsubscribes (developer.mixmax.com/reference, Unsubscribes section). Field
 // names, types and limits mirror the official Unsubscribe / UnsubscribePage
@@ -37,7 +38,7 @@ export const UnsubscribesListInputSchema = z.object({
 	// Field to sort by, for example `createdAt` or `email`; defaults to `_id`.
 	sort: z.string().optional(),
 	// Set to true to sort ascending; defaults to descending.
-	sortAscending: z.coerce.boolean().optional(),
+	sortAscending: mixmaxBooleanFlag.optional(),
 	// Number of records to return. Values above 300 return 300.
 	limit: z.coerce.number().int().max(300).optional(),
 	// The `next` token from a previous page.

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { mixmaxBooleanFlag } from './flags';
 
 // Live feed (developer.mixmax.com/reference, Live feed section). Field names
 // and types mirror the official LiveFeedMessage, LiveFeedStats and
@@ -105,9 +106,9 @@ export const LiveFeedListInputSchema = z.object({
 	// The `previous` token from a previous page.
 	previous: z.string().optional(),
 	// Set to false to leave out `stats`, which makes the request faster.
-	stats: z.coerce.boolean().optional(),
+	stats: mixmaxBooleanFlag.optional(),
 	// Set to true to return only messages shared to the team live feed.
-	showOnlySyncedToMixmax: z.coerce.boolean().optional(),
+	showOnlySyncedToMixmax: mixmaxBooleanFlag.optional(),
 	// Returns only these messages, if they also match the query. Passed
 	// through as an array; the shared transport serializes arrays as repeated
 	// query keys, matching the parameter's form/explode style.
@@ -190,15 +191,15 @@ export const LiveFeedEventsInputSchema = z.object({
 	// required by the provider.
 	messageId: z.string().optional(),
 	// Whether the message in `messageId` was sent through Mixmax.
-	wasSentViaMixmax: z.coerce.boolean().optional(),
+	wasSentViaMixmax: mixmaxBooleanFlag.optional(),
 	// A recipient email address; returns that contact's events across your
 	// messages.
 	contactEmail: z.string().optional(),
 	// Include events on messages from people who share a group with you,
 	// limited to messages shared to the team live feed.
-	includeGroupMembers: z.coerce.boolean().optional(),
+	includeGroupMembers: mixmaxBooleanFlag.optional(),
 	// Same as `includeGroupMembers`; used only when that is not set.
-	includeTeammates: z.coerce.boolean().optional(),
+	includeTeammates: mixmaxBooleanFlag.optional(),
 	// Number of events to return.
 	limit: z.coerce.number().int().optional(),
 	// The `next` token from a previous events page. Tokens from

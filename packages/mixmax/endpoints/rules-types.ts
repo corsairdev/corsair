@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { mixmaxBooleanFlag } from './flags';
 
 // Rules and rule actions (developer.mixmax.com/reference, Rules and webhooks
 // section). Field names, types, and limits mirror the official Rule /
@@ -247,7 +248,7 @@ export const RulesListInputSchema = z.object({
 	owner: z.string().optional(),
 	// Pass `false` to leave out rules hidden in the Mixmax app. They are
 	// included by default.
-	hidden: z.coerce.boolean().optional(),
+	hidden: mixmaxBooleanFlag.optional(),
 	// The maximum, and the default, is 50.
 	limit: z.coerce.number().int().max(50).optional(),
 	// The `next` cursor from the previous page.
@@ -431,7 +432,7 @@ export const RulesListEventsInputSchema = z.object({
 	userId: z.string().optional(),
 	// Pass `true` to list the history of the workspace's shared rules instead
 	// of the caller's own; only workspace admins can use it.
-	getWorkspaceEvents: z.coerce.boolean().optional(),
+	getWorkspaceEvents: mixmaxBooleanFlag.optional(),
 	// Only events of this rule.
 	ruleId: z.string().optional(),
 	// Only events with this status.
@@ -440,7 +441,7 @@ export const RulesListEventsInputSchema = z.object({
 	text: z.string().optional(),
 	// Pass `true` to add `statuses`, a count of the matching events by
 	// status, across all pages.
-	aggregate: z.coerce.boolean().optional(),
+	aggregate: mixmaxBooleanFlag.optional(),
 	// A comma-separated list of the fields to return on each event, such as
 	// `status,date,metadata.ruleId`. `_id` is always returned.
 	fields: z.string().optional(),
