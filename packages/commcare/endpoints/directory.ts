@@ -10,6 +10,8 @@ import {
 // v0.5 list helper: flatten the Tastypie next-page link. Some CommCare
 // listings answer a bare array instead of the `{ meta, objects }` envelope;
 // both normalize to `{ objects }`.
+// unknown: the raw body is an untyped envelope until the output schema
+// validates it; objects and meta are narrowed below.
 function listWithMeta(raw: unknown): unknown {
 	if (Array.isArray(raw)) return { objects: raw };
 	const record = raw as {
@@ -154,6 +156,8 @@ export const listFixtures: CommCareEndpoints['fixturesList'] = (ctx, input) =>
 			path: `/a/${segment(domain)}/api/fixture/v1/`,
 			query: {
 				...(fixtureType !== undefined ? { fixture_type: fixtureType } : {}),
+				limit,
+				offset,
 			},
 			replaySafe: true,
 		}),

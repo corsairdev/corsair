@@ -9,6 +9,8 @@ import {
 // v0.5/v1 listings answer `{ meta: { next, … }, objects }`; flatten the
 // next-page link for the caller. A missing `objects` array is left as-is
 // so the output schema rejects a malformed body.
+// unknown: the raw body is an untyped envelope until the output schema
+// validates it; objects and meta are narrowed below.
 function listWithMeta(raw: unknown): unknown {
 	// unknown: the envelope is untyped until the output schema validates it.
 	const record = raw as {

@@ -9,6 +9,8 @@ import {
 // v0.5 list helper: flatten the Tastypie next-page link. A missing
 // `objects` array is left as-is so the output schema rejects a malformed
 // body.
+// unknown: the raw body is an untyped envelope until the output schema
+// validates it; objects and meta are narrowed below.
 function listWithMeta(raw: unknown): unknown {
 	const record = raw as {
 		objects?: unknown;
