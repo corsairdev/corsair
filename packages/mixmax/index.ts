@@ -17,6 +17,7 @@ import {
 	CodeSnippets,
 	FileRequests,
 	InsightsReports,
+	Integrations,
 	Livefeed,
 	MeetingInvites,
 	Meetings,
@@ -32,6 +33,7 @@ import {
 	Snippets,
 	SnippetTags,
 	Tasks,
+	Teams,
 	Unsubscribes,
 	Users,
 	YesNo,
@@ -182,6 +184,27 @@ export type MixmaxEndpoints = {
 	salesforceDeleteTask: MixmaxEndpoint<'salesforceDeleteTask'>;
 	salesforceGetWhat: MixmaxEndpoint<'salesforceGetWhat'>;
 	salesforceGetWho: MixmaxEndpoint<'salesforceGetWho'>;
+	teamsList: MixmaxEndpoint<'teamsList'>;
+	teamsCreate: MixmaxEndpoint<'teamsCreate'>;
+	teamsGet: MixmaxEndpoint<'teamsGet'>;
+	teamsUpdate: MixmaxEndpoint<'teamsUpdate'>;
+	teamsDelete: MixmaxEndpoint<'teamsDelete'>;
+	teamsMembersList: MixmaxEndpoint<'teamsMembersList'>;
+	teamsMembersAdd: MixmaxEndpoint<'teamsMembersAdd'>;
+	teamsMembersRemove: MixmaxEndpoint<'teamsMembersRemove'>;
+	teamsMembersUpdate: MixmaxEndpoint<'teamsMembersUpdate'>;
+	integrationsCommandsList: MixmaxEndpoint<'integrationsCommandsList'>;
+	integrationsCommandsCreate: MixmaxEndpoint<'integrationsCommandsCreate'>;
+	integrationsCommandsDelete: MixmaxEndpoint<'integrationsCommandsDelete'>;
+	integrationsEnhancementsList: MixmaxEndpoint<'integrationsEnhancementsList'>;
+	integrationsEnhancementsCreate: MixmaxEndpoint<'integrationsEnhancementsCreate'>;
+	integrationsEnhancementsDelete: MixmaxEndpoint<'integrationsEnhancementsDelete'>;
+	integrationsLinkResolversList: MixmaxEndpoint<'integrationsLinkResolversList'>;
+	integrationsLinkResolversCreate: MixmaxEndpoint<'integrationsLinkResolversCreate'>;
+	integrationsLinkResolversDelete: MixmaxEndpoint<'integrationsLinkResolversDelete'>;
+	integrationsSidebarsList: MixmaxEndpoint<'integrationsSidebarsList'>;
+	integrationsSidebarsCreate: MixmaxEndpoint<'integrationsSidebarsCreate'>;
+	integrationsSidebarsDelete: MixmaxEndpoint<'integrationsSidebarsDelete'>;
 };
 
 const mixmaxEndpointsNested = {
@@ -349,6 +372,41 @@ const mixmaxEndpointsNested = {
 		deleteTask: Salesforce.deleteTask,
 		getWhat: Salesforce.getWhat,
 		getWho: Salesforce.getWho,
+	},
+	teams: {
+		list: Teams.list,
+		create: Teams.create,
+		get: Teams.get,
+		update: Teams.update,
+		delete: Teams.delete,
+		members: {
+			list: Teams.members.list,
+			add: Teams.members.add,
+			remove: Teams.members.remove,
+			update: Teams.members.update,
+		},
+	},
+	integrations: {
+		commands: {
+			list: Integrations.commands.list,
+			create: Integrations.commands.create,
+			delete: Integrations.commands.delete,
+		},
+		enhancements: {
+			list: Integrations.enhancements.list,
+			create: Integrations.enhancements.create,
+			delete: Integrations.enhancements.delete,
+		},
+		linkResolvers: {
+			list: Integrations.linkResolvers.list,
+			create: Integrations.linkResolvers.create,
+			delete: Integrations.linkResolvers.delete,
+		},
+		sidebars: {
+			list: Integrations.sidebars.list,
+			create: Integrations.sidebars.create,
+			delete: Integrations.sidebars.delete,
+		},
 	},
 } as const;
 
@@ -798,6 +856,90 @@ export const mixmaxEndpointSchemas = {
 		input: MixmaxEndpointInputSchemas.salesforceGetWho,
 		output: MixmaxEndpointOutputSchemas.salesforceGetWho,
 	},
+	'teams.list': {
+		input: MixmaxEndpointInputSchemas.teamsList,
+		output: MixmaxEndpointOutputSchemas.teamsList,
+	},
+	'teams.create': {
+		input: MixmaxEndpointInputSchemas.teamsCreate,
+		output: MixmaxEndpointOutputSchemas.teamsCreate,
+	},
+	'teams.get': {
+		input: MixmaxEndpointInputSchemas.teamsGet,
+		output: MixmaxEndpointOutputSchemas.teamsGet,
+	},
+	'teams.update': {
+		input: MixmaxEndpointInputSchemas.teamsUpdate,
+		output: MixmaxEndpointOutputSchemas.teamsUpdate,
+	},
+	'teams.delete': {
+		input: MixmaxEndpointInputSchemas.teamsDelete,
+		output: MixmaxEndpointOutputSchemas.teamsDelete,
+	},
+	'teams.members.list': {
+		input: MixmaxEndpointInputSchemas.teamsMembersList,
+		output: MixmaxEndpointOutputSchemas.teamsMembersList,
+	},
+	'teams.members.add': {
+		input: MixmaxEndpointInputSchemas.teamsMembersAdd,
+		output: MixmaxEndpointOutputSchemas.teamsMembersAdd,
+	},
+	'teams.members.remove': {
+		input: MixmaxEndpointInputSchemas.teamsMembersRemove,
+		output: MixmaxEndpointOutputSchemas.teamsMembersRemove,
+	},
+	'teams.members.update': {
+		input: MixmaxEndpointInputSchemas.teamsMembersUpdate,
+		output: MixmaxEndpointOutputSchemas.teamsMembersUpdate,
+	},
+	'integrations.commands.list': {
+		input: MixmaxEndpointInputSchemas.integrationsCommandsList,
+		output: MixmaxEndpointOutputSchemas.integrationsCommandsList,
+	},
+	'integrations.commands.create': {
+		input: MixmaxEndpointInputSchemas.integrationsCommandsCreate,
+		output: MixmaxEndpointOutputSchemas.integrationsCommandsCreate,
+	},
+	'integrations.commands.delete': {
+		input: MixmaxEndpointInputSchemas.integrationsCommandsDelete,
+		output: MixmaxEndpointOutputSchemas.integrationsCommandsDelete,
+	},
+	'integrations.enhancements.list': {
+		input: MixmaxEndpointInputSchemas.integrationsEnhancementsList,
+		output: MixmaxEndpointOutputSchemas.integrationsEnhancementsList,
+	},
+	'integrations.enhancements.create': {
+		input: MixmaxEndpointInputSchemas.integrationsEnhancementsCreate,
+		output: MixmaxEndpointOutputSchemas.integrationsEnhancementsCreate,
+	},
+	'integrations.enhancements.delete': {
+		input: MixmaxEndpointInputSchemas.integrationsEnhancementsDelete,
+		output: MixmaxEndpointOutputSchemas.integrationsEnhancementsDelete,
+	},
+	'integrations.linkResolvers.list': {
+		input: MixmaxEndpointInputSchemas.integrationsLinkResolversList,
+		output: MixmaxEndpointOutputSchemas.integrationsLinkResolversList,
+	},
+	'integrations.linkResolvers.create': {
+		input: MixmaxEndpointInputSchemas.integrationsLinkResolversCreate,
+		output: MixmaxEndpointOutputSchemas.integrationsLinkResolversCreate,
+	},
+	'integrations.linkResolvers.delete': {
+		input: MixmaxEndpointInputSchemas.integrationsLinkResolversDelete,
+		output: MixmaxEndpointOutputSchemas.integrationsLinkResolversDelete,
+	},
+	'integrations.sidebars.list': {
+		input: MixmaxEndpointInputSchemas.integrationsSidebarsList,
+		output: MixmaxEndpointOutputSchemas.integrationsSidebarsList,
+	},
+	'integrations.sidebars.create': {
+		input: MixmaxEndpointInputSchemas.integrationsSidebarsCreate,
+		output: MixmaxEndpointOutputSchemas.integrationsSidebarsCreate,
+	},
+	'integrations.sidebars.delete': {
+		input: MixmaxEndpointInputSchemas.integrationsSidebarsDelete,
+		output: MixmaxEndpointOutputSchemas.integrationsSidebarsDelete,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof mixmaxEndpointsNested
 >;
@@ -1211,7 +1353,8 @@ export const mixmaxEndpointMeta = {
 	},
 	'salesforce.getContactOrLead': {
 		riskLevel: 'read',
-		description: 'Look up the Salesforce contact or lead matching an email address.',
+		description:
+			'Look up the Salesforce contact or lead matching an email address.',
 	},
 	'salesforce.createLead': {
 		riskLevel: 'write',
@@ -1251,7 +1394,8 @@ export const mixmaxEndpointMeta = {
 	},
 	'salesforce.syncedFields': {
 		riskLevel: 'read',
-		description: 'List the Salesforce fields Mixmax syncs for each object type.',
+		description:
+			'List the Salesforce fields Mixmax syncs for each object type.',
 	},
 	'salesforce.createTask': {
 		riskLevel: 'write',
@@ -1271,11 +1415,97 @@ export const mixmaxEndpointMeta = {
 	},
 	'salesforce.getWhat': {
 		riskLevel: 'read',
-		description: 'Resolve any Salesforce record id to its related “what” object.',
+		description:
+			'Resolve any Salesforce record id to its related “what” object.',
 	},
 	'salesforce.getWho': {
 		riskLevel: 'read',
-		description: 'Resolve any Salesforce record id to its related “who” object.',
+		description:
+			'Resolve any Salesforce record id to its related “who” object.',
+	},
+	'teams.list': {
+		riskLevel: 'read',
+		description: 'List the user’s Mixmax teams.',
+	},
+	'teams.create': {
+		riskLevel: 'write',
+		description: 'Create a Mixmax team.',
+	},
+	'teams.get': {
+		riskLevel: 'read',
+		description: 'Retrieve one Mixmax team by id.',
+	},
+	'teams.update': {
+		riskLevel: 'write',
+		description: 'Rename a Mixmax team.',
+	},
+	'teams.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Mixmax team permanently.',
+	},
+	'teams.members.list': {
+		riskLevel: 'read',
+		description: 'List the members of one Mixmax team.',
+	},
+	'teams.members.add': {
+		riskLevel: 'write',
+		description: 'Invite members to a Mixmax team.',
+	},
+	'teams.members.remove': {
+		riskLevel: 'destructive',
+		description: 'Remove one member from a Mixmax team.',
+	},
+	'teams.members.update': {
+		riskLevel: 'write',
+		description: 'Change a Mixmax team member’s role.',
+	},
+	'integrations.commands.list': {
+		riskLevel: 'read',
+		description: 'List the user’s Mixmax slash command integrations.',
+	},
+	'integrations.commands.create': {
+		riskLevel: 'write',
+		description: 'Create a Mixmax slash command integration.',
+	},
+	'integrations.commands.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Mixmax slash command integration.',
+	},
+	'integrations.enhancements.list': {
+		riskLevel: 'read',
+		description: 'List the user’s Mixmax enhance-menu integrations.',
+	},
+	'integrations.enhancements.create': {
+		riskLevel: 'write',
+		description: 'Create a Mixmax enhance-menu integration.',
+	},
+	'integrations.enhancements.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Mixmax enhance-menu integration.',
+	},
+	'integrations.linkResolvers.list': {
+		riskLevel: 'read',
+		description: 'List the user’s Mixmax link resolver integrations.',
+	},
+	'integrations.linkResolvers.create': {
+		riskLevel: 'write',
+		description: 'Create a Mixmax link resolver integration.',
+	},
+	'integrations.linkResolvers.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Mixmax link resolver integration.',
+	},
+	'integrations.sidebars.list': {
+		riskLevel: 'read',
+		description: 'List the user’s Mixmax sidebar integrations.',
+	},
+	'integrations.sidebars.create': {
+		riskLevel: 'write',
+		description: 'Create a Mixmax sidebar integration.',
+	},
+	'integrations.sidebars.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Mixmax sidebar integration.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof mixmaxEndpointsNested>;
 

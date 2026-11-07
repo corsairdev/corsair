@@ -23,6 +23,20 @@ import {
 	insightsReportsUpdate,
 	reportsRunDataTable,
 } from './insights';
+import {
+	integrationsCommandsCreate,
+	integrationsCommandsDelete,
+	integrationsCommandsList,
+	integrationsEnhancementsCreate,
+	integrationsEnhancementsDelete,
+	integrationsEnhancementsList,
+	integrationsLinkResolversCreate,
+	integrationsLinkResolversDelete,
+	integrationsLinkResolversList,
+	integrationsSidebarsCreate,
+	integrationsSidebarsDelete,
+	integrationsSidebarsList,
+} from './integrations';
 import { livefeedEvents, livefeedList } from './livefeed';
 import { meetingsGetTranscript, meetingsSearchSummaries } from './meetings';
 import {
@@ -53,32 +67,32 @@ import {
 	rulesUpdateAction,
 } from './rules';
 import {
-	salesforceListAccounts,
 	salesforceCreateAccount,
-	salesforceGetAccountImplicit,
-	salesforceGetAccount,
-	salesforceUpdateAccount,
 	salesforceCreateContact,
-	salesforceGetContact,
-	salesforceUpdateContact,
-	salesforceListContactTasks,
-	salesforceGetContactOrLead,
 	salesforceCreateLead,
-	salesforceGetLead,
-	salesforceUpdateLead,
-	salesforceListLeadTasks,
 	salesforceCreateOpportunity,
-	salesforceGetOpportunity,
-	salesforceUpdateOpportunity,
+	salesforceCreateTask,
 	salesforceDeleteOpportunity,
+	salesforceDeleteTask,
+	salesforceGetAccount,
+	salesforceGetAccountImplicit,
+	salesforceGetContact,
+	salesforceGetContactOrLead,
+	salesforceGetLead,
+	salesforceGetOpportunity,
+	salesforceGetTask,
+	salesforceGetWhat,
+	salesforceGetWho,
+	salesforceListAccounts,
+	salesforceListContactTasks,
+	salesforceListLeadTasks,
 	salesforceSearch,
 	salesforceSyncedFields,
-	salesforceCreateTask,
-	salesforceGetTask,
+	salesforceUpdateAccount,
+	salesforceUpdateContact,
+	salesforceUpdateLead,
+	salesforceUpdateOpportunity,
 	salesforceUpdateTask,
-	salesforceDeleteTask,
-	salesforceGetWhat,
-	salesforceGetWho
 } from './salesforce';
 import {
 	sequenceFoldersAddSequences,
@@ -109,6 +123,17 @@ import {
 	snippetTagsUpdate,
 } from './snippets';
 import { tasksList } from './tasks';
+import {
+	teamsCreate,
+	teamsDelete,
+	teamsGet,
+	teamsList,
+	teamsMembersAdd,
+	teamsMembersList,
+	teamsMembersRemove,
+	teamsMembersUpdate,
+	teamsUpdate,
+} from './teams';
 import {
 	unsubscribesCreate,
 	unsubscribesList,
@@ -298,6 +323,43 @@ export const Salesforce = {
 	deleteTask: salesforceDeleteTask,
 	getWhat: salesforceGetWhat,
 	getWho: salesforceGetWho,
+};
+
+export const Teams = {
+	list: teamsList,
+	create: teamsCreate,
+	get: teamsGet,
+	update: teamsUpdate,
+	delete: teamsDelete,
+	members: {
+		list: teamsMembersList,
+		add: teamsMembersAdd,
+		remove: teamsMembersRemove,
+		update: teamsMembersUpdate,
+	},
+};
+
+export const Integrations = {
+	commands: {
+		list: integrationsCommandsList,
+		create: integrationsCommandsCreate,
+		delete: integrationsCommandsDelete,
+	},
+	enhancements: {
+		list: integrationsEnhancementsList,
+		create: integrationsEnhancementsCreate,
+		delete: integrationsEnhancementsDelete,
+	},
+	linkResolvers: {
+		list: integrationsLinkResolversList,
+		create: integrationsLinkResolversCreate,
+		delete: integrationsLinkResolversDelete,
+	},
+	sidebars: {
+		list: integrationsSidebarsList,
+		create: integrationsSidebarsCreate,
+		delete: integrationsSidebarsDelete,
+	},
 };
 
 export const Unsubscribes = {
