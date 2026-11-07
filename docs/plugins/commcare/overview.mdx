@@ -5,7 +5,7 @@ description: "Global health data collection platform with CommCare HQ - list and
 
 Use **CommCare** through Corsair: one client, typed API calls.
 
-Generate an API key in CommCare HQ under Account Settings, API Keys, and set the plugin options `domain` (the HQ project) and `username` (the key's owner). Things to know before you call:
+Generate an API key in CommCare HQ under Account Settings, API Keys (the key belongs to your CommCare username). Because ApiKey auth is user-scoped, every operation takes the project `domain` and that `username` as inputs. Things to know before you call:
 
 - **API access needs a plan.** The CommCare APIs require a Standard plan or above.
 - **Every endpoint is scoped to one project.** All requests go to `https://www.commcarehq.org/a/{domain}/...`, so set the plugin's `domain` option once.
@@ -73,7 +73,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. A call with no saved key throws `AuthMissingError`, which may carry a `connectUrl`. The plugin option `domain` must also be set, and the API key belongs to a CommCare username (ApiKey auth: `Authorization: ApiKey <username>:<key>`).
+No setup required yet. A call with no saved key throws `AuthMissingError`, which may carry a `connectUrl`. ApiKey auth is user-scoped, so every operation takes the project `domain` and the key's `username` as inputs.
 
 ```ts
 commcare()

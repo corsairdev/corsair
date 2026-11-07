@@ -45,7 +45,10 @@ describe('CommCare plugin through createCorsair', () => {
 		try {
 			await corsair.commcare.keys.issue_new_dek();
 			await expect(
-				corsair.commcare.api.users.list({ domain: 'my-project' }),
+				corsair.commcare.api.users.list({
+					domain: 'my-project',
+					username: 'jdoe@my-project.commcarehq.org',
+				}),
 			).rejects.toThrow(/auth-missing/);
 			expect(fetchMock).not.toHaveBeenCalled();
 		} finally {
@@ -54,9 +57,7 @@ describe('CommCare plugin through createCorsair', () => {
 	});
 
 	it('sends the stored key with the ApiKey scheme and username', async () => {
-		const { corsair, testDb } = await createClient({
-			username: 'jdoe@my-project.commcarehq.org',
-		});
+		const { corsair, testDb } = await createClient({});
 		try {
 			await corsair.commcare.keys.issue_new_dek();
 			await corsair.commcare.keys.set_api_key('cc-stored-key');
@@ -64,6 +65,7 @@ describe('CommCare plugin through createCorsair', () => {
 
 			await corsair.commcare.api.users.get({
 				domain: 'my-project',
+				username: 'jdoe@my-project.commcarehq.org',
 				userId: user.id!,
 			});
 
@@ -78,16 +80,14 @@ describe('CommCare plugin through createCorsair', () => {
 	});
 
 	it('does not retry a 404 on delete', async () => {
-		const { corsair, testDb } = await createClient({
-			key: 'cc-test-key',
-			username: 'jdoe@my-project.commcarehq.org',
-		});
+		const { corsair, testDb } = await createClient({ key: 'cc-test-key' });
 		try {
 			respond({ message: 'Not found.' }, 404);
 
 			await expect(
 				corsair.commcare.api.users.delete({
 					domain: 'my-project',
+					username: 'jdoe@my-project.commcarehq.org',
 					userId: user.id!,
 				}),
 			).rejects.toMatchObject({ status: 404 });
@@ -98,10 +98,7 @@ describe('CommCare plugin through createCorsair', () => {
 	});
 
 	it('surfaces a 503 with its status and no key in the message', async () => {
-		const { corsair, testDb } = await createClient({
-			key: 'cc-secret-key',
-			username: 'jdoe@my-project.commcarehq.org',
-		});
+		const { corsair, testDb } = await createClient({ key: 'cc-secret-key' });
 		try {
 			respond(serverError, 503);
 			respond(serverError, 503);
@@ -111,7 +108,11 @@ describe('CommCare plugin through createCorsair', () => {
 			// to assert on status and message without importing the class into
 			// the bound-client contract under test.
 			const error = (await corsair.commcare.api.users
-				.get({ domain: 'my-project', userId: user.id! })
+				.get({
+					domain: 'my-project',
+					username: 'jdoe@my-project.commcarehq.org',
+					userId: user.id!,
+				})
 				.catch((e: unknown) => e)) as { message?: string; status?: number };
 			expect(error.status).toBe(503);
 			expect(error.message).not.toContain('cc-secret-key');
@@ -130,9 +131,12 @@ describeIfKey('live CommCare', () => {
 	const domain = process.env.COMMCARE_DOMAIN as string;
 
 	it('lists users from the live project', async () => {
-		const { corsair, testDb } = await createClient({ key, username });
+		const { corsair, testDb } = await createClient({ key });
 		try {
-			const result = await corsair.commcare.api.users.list({ domain });
+			const result = await corsair.commcare.api.users.list({
+				domain,
+				username,
+			});
 			expect(result.objects.length).toBeGreaterThan(0);
 		} finally {
 			testDb.cleanup();
@@ -140,13 +144,10 @@ describeIfKey('live CommCare', () => {
 	});
 
 	it('rejects a bad key with a 401 from the live API', async () => {
-		const { corsair, testDb } = await createClient({
-			key: 'wrong-key',
-			username,
-		});
+		const { corsair, testDb } = await createClient({ key: 'wrong-key' });
 		try {
 			await expect(
-				corsair.commcare.api.users.list({ domain }),
+				corsair.commcare.api.users.list({ domain, username }),
 			).rejects.toMatchObject({ status: 401 });
 		} finally {
 			testDb.cleanup();

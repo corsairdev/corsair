@@ -73,12 +73,20 @@ export const create: CommCareEndpoints['usersCreate'] = (ctx, input) =>
 		input,
 		(
 			domain,
-			{ username, password, firstName, lastName, email, phoneNumber, userData },
+			{
+				workerUsername,
+				password,
+				firstName,
+				lastName,
+				email,
+				phoneNumber,
+				userData,
+			},
 		) => ({
 			method: 'POST',
 			path: `/a/${segment(domain)}/api/user/v1/`,
 			body: {
-				username,
+				username: workerUsername,
 				password,
 				first_name: firstName,
 				last_name: lastName,

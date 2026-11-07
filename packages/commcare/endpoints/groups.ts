@@ -31,9 +31,10 @@ export const list: CommCareEndpoints['groupsList'] = (ctx, input) =>
 			output: Outputs.groupsList,
 		},
 		input,
-		(domain) => ({
+		(domain, { limit, offset }) => ({
 			method: 'GET',
 			path: `/a/${segment(domain)}/api/group/v1/`,
+			query: { limit, offset },
 			replaySafe: true,
 		}),
 		{

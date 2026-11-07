@@ -33,9 +33,10 @@ export const listWebUsers: CommCareEndpoints['webUsersList'] = (ctx, input) =>
 			output: Outputs.webUsersList,
 		},
 		input,
-		(domain) => ({
+		(domain, { limit, offset }) => ({
 			method: 'GET',
 			path: `/a/${segment(domain)}/api/web-user/v1/`,
+			query: { limit, offset },
 			replaySafe: true,
 		}),
 		{
@@ -56,13 +57,15 @@ export const listLocations: CommCareEndpoints['locationsList'] = (ctx, input) =>
 			output: Outputs.locationsList,
 		},
 		input,
-		(domain, { siteCode, name, locationTypeCode }) => ({
+		(domain, { siteCode, name, locationTypeCode, limit, offset }) => ({
 			method: 'GET',
 			path: `/a/${segment(domain)}/api/location/v2/`,
 			query: {
 				site_code: siteCode,
 				name,
 				location_type_code: locationTypeCode,
+				limit,
+				offset,
 			},
 			replaySafe: true,
 		}),
@@ -103,9 +106,10 @@ export const listLocationTypes: CommCareEndpoints['locationTypesList'] = (
 			output: Outputs.locationTypesList,
 		},
 		input,
-		(domain) => ({
+		(domain, { limit, offset }) => ({
 			method: 'GET',
 			path: `/a/${segment(domain)}/api/location_type/v1/`,
+			query: { limit, offset },
 			replaySafe: true,
 		}),
 		{
@@ -145,7 +149,7 @@ export const listFixtures: CommCareEndpoints['fixturesList'] = (ctx, input) =>
 			output: Outputs.fixturesList,
 		},
 		input,
-		(domain, { fixtureType }) => ({
+		(domain, { fixtureType, limit, offset }) => ({
 			method: 'GET',
 			path: `/a/${segment(domain)}/api/fixture/v1/`,
 			query: {
@@ -193,9 +197,10 @@ export const listLookupTables: CommCareEndpoints['lookupTablesList'] = (
 			output: Outputs.lookupTablesList,
 		},
 		input,
-		(domain) => ({
+		(domain, { limit, offset }) => ({
 			method: 'GET',
 			path: `/a/${segment(domain)}/api/lookup_table/v1/`,
+			query: { limit, offset },
 			replaySafe: true,
 		}),
 		{
@@ -292,9 +297,10 @@ export const listDetExports: CommCareEndpoints['detExportsList'] = (
 			output: Outputs.detExportsList,
 		},
 		input,
-		(domain) => ({
+		(domain, { limit, offset }) => ({
 			method: 'GET',
 			path: `/a/${segment(domain)}/api/det_export_instance/v1/`,
+			query: { limit, offset },
 			replaySafe: true,
 		}),
 		{

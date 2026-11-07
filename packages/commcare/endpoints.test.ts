@@ -43,11 +43,13 @@ async function invoke<T = unknown>(
 	endpoint: AnyEndpoint,
 	input: unknown,
 ): Promise<T> {
-	const ctx = {
-		key: API_KEY,
-		options: { domain: DOMAIN, username: USERNAME },
+	const ctx = { key: API_KEY };
+	// Every op is user-scoped: inject the auth username into the input.
+	const withAuth = {
+		...(input as Record<string, unknown>),
+		username: USERNAME,
 	};
-	return endpoint(ctx as never, input as never) as Promise<T>;
+	return endpoint(ctx as never, withAuth as never) as Promise<T>;
 }
 
 let fetchMock: jest.SpyInstance;
@@ -253,7 +255,8 @@ describe('users', () => {
 		respond(user, 201);
 		const result = await invoke<{ id?: string }>(Users.create, {
 			domain: DOMAIN,
-			username: 'new@my-project.commcarehq.org',
+			username: USERNAME,
+			workerUsername: 'new@my-project.commcarehq.org',
 			password: 'pw',
 			firstName: 'Jo',
 			lastName: 'Lee',

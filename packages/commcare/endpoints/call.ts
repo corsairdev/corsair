@@ -40,10 +40,13 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	const parsed = operation.input.parse(rawInput ?? {});
 	// Every input schema carries `domain` (one CommCare connection serves
 	// multiple projects), so the request is scoped to the caller's project.
-	const domain = (parsed as { domain: string }).domain;
+	// Both the project domain and the auth username are per-call inputs:
+	// ApiKey auth is user-scoped, so each tenant carries its own pair.
+	const scoped = parsed as { domain: string; username: string };
+	const domain = scoped.domain;
 	const auth: CommCareAuth = {
 		domain,
-		username: ctx.options.username ?? '',
+		username: scoped.username,
 		apiKey: ctx.key,
 	};
 	const raw = await makeCommCareRequest(auth, toRequest(domain, parsed));

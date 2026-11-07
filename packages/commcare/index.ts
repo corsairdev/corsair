@@ -26,8 +26,6 @@ import { CommCareSchema } from './schema';
 export type CommCarePluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	/** CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`. */
-	username?: string;
 	hooks?: InternalCommCarePlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof commCareEndpointsNested>;

@@ -6,6 +6,13 @@ import { z } from 'zod';
 // a call that has already happened. Field reference:
 // https://commcare-hq.readthedocs.io/api/
 
+const AuthUsernameSchema = z
+	.string()
+	.min(1)
+	.describe(
+		'CommCare username the API key belongs to (ApiKey auth is user-scoped), e.g. `me@my-project.commcarehq.org`.',
+	);
+
 const DomainSchema = z
 	.string()
 	.min(1)
@@ -38,7 +45,9 @@ const TastypieMetaSchema = z
 	})
 	.loose();
 
-const CommCareListSchema = (item: z.ZodType) =>
+// unknown: kept generic so each list keeps its concrete item schema and
+// TypeScript callers read fields without casts.
+const CommCareListSchema = <T extends z.ZodType>(item: T) =>
 	z
 		.object({
 			objects: z.array(item),
@@ -160,6 +169,7 @@ export const CommCareLocationTypeSchema = z
 		name: z.string().nullish(),
 		administrative: z.boolean().nullish(),
 		domain: z.string().nullish(),
+		// unknown: parent is a location-type reference whose shape varies.
 		parent: z.unknown().nullish(),
 	})
 	.loose();
@@ -241,6 +251,7 @@ const EmptyObjectSchema = z.object({}).loose();
 // ── forms.list ────────────────────────────────────────────────────────────
 
 const FormsListInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	limit: z
 		.number()
@@ -278,6 +289,7 @@ const FormsListResponseSchema = CommCareListSchema(CommCareFormSchema);
 // ── forms.get ─────────────────────────────────────────────────────────────
 
 const FormsGetInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	formId: FormIdSchema,
 });
@@ -289,6 +301,7 @@ const FormsGetResponseSchema = CommCareFormSchema;
 // ── forms.bulkAction / forms.bulkActionStatus ─────────────────────────────
 
 const FormsBulkActionInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	action: z
 		.enum(['archive', 'unarchive', 'delete'])
@@ -312,6 +325,7 @@ export const CommCareBulkActionSchema = z
 		requested: z.number().nullish(),
 		processed: z.number().nullish(),
 		succeeded: z.number().nullish(),
+		// unknown: skipped counts are keyed by per-form skip reasons.
 		skipped: z.record(z.string(), z.unknown()).nullish(),
 		created_at: z.string().nullish(),
 		started_at: z.string().nullish(),
@@ -326,6 +340,7 @@ export type CommCareBulkAction = z.infer<typeof CommCareBulkActionSchema>;
 const FormsBulkActionResponseSchema = CommCareBulkActionSchema;
 
 const FormsBulkActionStatusInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	actionId: z
 		.string()
@@ -342,6 +357,7 @@ const FormsBulkActionStatusResponseSchema = CommCareBulkActionSchema;
 // ── cases.list / cases.get / cases.bulkFetch / cases.getByExternalId ──────
 
 const CasesListInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	cursor: z
 		.string()
@@ -385,6 +401,7 @@ export type CasesListInput = z.input<typeof CasesListInputSchema>;
 const CasesListResponseSchema = CommCareCaseListSchema;
 
 const CasesGetInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	caseId: CaseIdSchema,
 });
@@ -394,6 +411,7 @@ export type CasesGetInput = z.input<typeof CasesGetInputSchema>;
 const CasesGetResponseSchema = CommCareCaseSchema;
 
 const CasesBulkFetchInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	caseIds: z
 		.array(CaseIdSchema)
@@ -414,6 +432,7 @@ export type CasesBulkFetchInput = z.input<typeof CasesBulkFetchInputSchema>;
 const CasesBulkFetchResponseSchema = CommCareCaseListSchema;
 
 const CasesGetByExternalIdInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	externalId: z
 		.string()
@@ -434,6 +453,7 @@ const CasesGetByExternalIdResponseSchema = CommCareCaseSchema;
 // ── users.list / get / create / update / delete / sendPasswordReset ───────
 
 const UsersListInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	limit: PerPageLimitSchema(),
 	offset: z
@@ -459,6 +479,7 @@ export type UsersListInput = z.input<typeof UsersListInputSchema>;
 const UsersListResponseSchema = CommCareListSchema(CommCareUserSchema);
 
 const UsersGetInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	userId: UserIdSchema,
 });
@@ -469,11 +490,12 @@ const UsersGetResponseSchema = CommCareUserSchema;
 
 const UsersCreateInputSchema = z.object({
 	domain: DomainSchema,
-	username: z
+	username: AuthUsernameSchema,
+	workerUsername: z
 		.string()
 		.min(1)
 		.describe(
-			'Login name including the domain suffix, e.g. `jdoe@my-project.commcarehq.org`.',
+			'Login name for the new worker, including the domain suffix, e.g. `jdoe@my-project.commcarehq.org`.',
 		),
 	password: z.string().min(1).describe('Initial password for the worker.'),
 	firstName: z.string().min(1).describe('First name of the worker.'),
@@ -495,6 +517,7 @@ export type UsersCreateInput = z.input<typeof UsersCreateInputSchema>;
 const UsersCreateResponseSchema = CommCareUserSchema;
 
 const UsersUpdateInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	userId: UserIdSchema,
 	firstName: z.string().optional().describe('First name of the worker.'),
@@ -516,6 +539,7 @@ export type UsersUpdateInput = z.input<typeof UsersUpdateInputSchema>;
 const UsersUpdateResponseSchema = CommCareUserSchema;
 
 const UsersDeleteInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	userId: UserIdSchema,
 });
@@ -525,6 +549,7 @@ export type UsersDeleteInput = z.input<typeof UsersDeleteInputSchema>;
 const UsersDeleteResponseSchema = EmptyObjectSchema;
 
 const UsersSendPasswordResetInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	userId: UserIdSchema,
 });
@@ -538,13 +563,29 @@ const UsersSendPasswordResetResponseSchema = EmptyObjectSchema;
 
 // ── groups.list / get / create / update ───────────────────────────────────
 
-const GroupsListInputSchema = z.object({ domain: DomainSchema });
+const GroupsListInputSchema = z.object({
+	username: AuthUsernameSchema,
+	domain: DomainSchema,
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page size; the default is 20.'),
+	offset: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Records to skip before this page.'),
+});
 
 export type GroupsListInput = z.input<typeof GroupsListInputSchema>;
 
 const GroupsListResponseSchema = CommCareListSchema(CommCareGroupSchema);
 
 const GroupsGetInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	groupId: z.string().min(1).describe('Group ID (UUID).'),
 });
@@ -554,6 +595,7 @@ export type GroupsGetInput = z.input<typeof GroupsGetInputSchema>;
 const GroupsGetResponseSchema = CommCareGroupSchema;
 
 const GroupsCreateInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	name: z.string().min(1).describe('Name of the new group.'),
 	reporting: z.boolean().optional().describe('Include the group in reporting.'),
@@ -568,6 +610,7 @@ export type GroupsCreateInput = z.input<typeof GroupsCreateInputSchema>;
 const GroupsCreateResponseSchema = CommCareGroupSchema;
 
 const GroupsUpdateInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	groupId: z.string().min(1).describe('Group ID to update.'),
 	name: z.string().optional().describe('New name for the group.'),
@@ -584,7 +627,21 @@ const GroupsUpdateResponseSchema = CommCareGroupSchema;
 
 // ── webUsers.list ─────────────────────────────────────────────────────────
 
-const WebUsersListInputSchema = z.object({ domain: DomainSchema });
+const WebUsersListInputSchema = z.object({
+	domain: DomainSchema,
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page size; the default is 20.'),
+	offset: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Records to skip before this page.'),
+});
 
 export type WebUsersListInput = z.input<typeof WebUsersListInputSchema>;
 
@@ -593,7 +650,20 @@ const WebUsersListResponseSchema = CommCareListSchema(CommCareWebUserSchema);
 // ── locations.list / get ──────────────────────────────────────────────────
 
 const LocationsListInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page size; the default is 20.'),
+	offset: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Records to skip before this page.'),
 	siteCode: z
 		.string()
 		.optional()
@@ -610,6 +680,7 @@ export type LocationsListInput = z.input<typeof LocationsListInputSchema>;
 const LocationsListResponseSchema = CommCareListSchema(CommCareLocationSchema);
 
 const LocationsGetInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	locationId: z.string().min(1).describe('Location ID to retrieve.'),
 });
@@ -620,7 +691,21 @@ const LocationsGetResponseSchema = CommCareLocationSchema;
 
 // ── locationTypes.list / get ──────────────────────────────────────────────
 
-const LocationTypesListInputSchema = z.object({ domain: DomainSchema });
+const LocationTypesListInputSchema = z.object({
+	domain: DomainSchema,
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page size; the default is 20.'),
+	offset: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Records to skip before this page.'),
+});
 
 export type LocationTypesListInput = z.input<
 	typeof LocationTypesListInputSchema
@@ -631,6 +716,7 @@ const LocationTypesListResponseSchema = CommCareListSchema(
 );
 
 const LocationTypesGetInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	typeId: z.number().int().describe('Location type ID to retrieve.'),
 });
@@ -642,7 +728,20 @@ const LocationTypesGetResponseSchema = CommCareLocationTypeSchema;
 // ── fixtures.list / getItem; lookupTables.list / get ──────────────────────
 
 const FixturesListInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page size; the default is 20.'),
+	offset: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Records to skip before this page.'),
 	fixtureType: z
 		.string()
 		.optional()
@@ -654,6 +753,7 @@ export type FixturesListInput = z.input<typeof FixturesListInputSchema>;
 const FixturesListResponseSchema = CommCareListSchema(CommCareGlossarySchema);
 
 const FixturesGetItemInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	itemId: z.string().min(1).describe('Fixture item ID to retrieve.'),
 });
@@ -662,7 +762,21 @@ export type FixturesGetItemInput = z.input<typeof FixturesGetItemInputSchema>;
 
 const FixturesGetItemResponseSchema = CommCareGlossarySchema;
 
-const LookupTablesListInputSchema = z.object({ domain: DomainSchema });
+const LookupTablesListInputSchema = z.object({
+	domain: DomainSchema,
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page size; the default is 20.'),
+	offset: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Records to skip before this page.'),
+});
 
 export type LookupTablesListInput = z.input<typeof LookupTablesListInputSchema>;
 
@@ -671,6 +785,7 @@ const LookupTablesListResponseSchema = CommCareListSchema(
 );
 
 const LookupTablesGetInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	tableId: z.string().min(1).describe('Lookup table ID to retrieve.'),
 });
@@ -699,6 +814,7 @@ const ReportsListResponseSchema = z
 	.loose();
 
 const ReportsGetDataInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	reportId: z
 		.string()
@@ -744,6 +860,7 @@ const OtaRestoreResponseSchema = z.object({ raw: z.string() }).loose();
 // ── submissions.submit ────────────────────────────────────────────────────
 
 const SubmissionsSubmitInputSchema = z.object({
+	username: AuthUsernameSchema,
 	domain: DomainSchema,
 	appId: z.string().min(1).describe('Application ID the form belongs to.'),
 	xml: z
@@ -769,7 +886,21 @@ const SubmissionsSubmitResponseSchema = z
 
 // ── detExports.list ───────────────────────────────────────────────────────
 
-const DetExportsListInputSchema = z.object({ domain: DomainSchema });
+const DetExportsListInputSchema = z.object({
+	domain: DomainSchema,
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page size; the default is 20.'),
+	offset: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe('Records to skip before this page.'),
+});
 
 export type DetExportsListInput = z.input<typeof DetExportsListInputSchema>;
 

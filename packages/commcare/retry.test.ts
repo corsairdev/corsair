@@ -19,6 +19,8 @@ function respond(
 	);
 }
 
+const USERNAME = 'jdoe@my-project.commcarehq.org';
+
 async function createClient() {
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'commcare', 'default');
@@ -26,7 +28,6 @@ async function createClient() {
 		plugins: [
 			commcare({
 				key: 'cc-test-key',
-				username: 'jdoe@my-project.commcarehq.org',
 			}),
 		],
 		database: testDb.db,
@@ -53,6 +54,7 @@ describe('CommCare 5xx retries through the bound client', () => {
 
 			const result = await corsair.commcare.api.cases.list({
 				domain: 'my-project',
+				username: USERNAME,
 			});
 			expect(result.cases).toHaveLength(1);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
@@ -69,6 +71,7 @@ describe('CommCare 5xx retries through the bound client', () => {
 			await expect(
 				corsair.commcare.api.submissions.submit({
 					domain: 'my-project',
+					username: USERNAME,
 					appId: 'app-1',
 					xml: '<xform></xform>',
 				}),
