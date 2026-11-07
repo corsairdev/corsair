@@ -786,6 +786,7 @@ export const NoteSchema = z
 		subject: z.string().nullish(),
 		body: z.string().nullish(),
 		isHtml: FubFlagSchema.nullish(),
+		// unknown: the note author's user summary; its fields are not documented.
 		user: z.record(z.string(), z.unknown()).nullish(),
 		created: z.string().nullish(),
 		updated: z.string().nullish(),
@@ -1166,6 +1167,7 @@ export const AppointmentSchema = z
 		allDay: FubFlagSchema.nullish(),
 		location: z.string().nullish(),
 		typeId: IdSchema.nullish(),
+		// unknown: invitee summaries whose fields vary between people and users.
 		persons: z.array(z.record(z.string(), z.unknown())).nullish(),
 		users: z.array(z.record(z.string(), z.unknown())).nullish(),
 		createdById: IdSchema.nullish(),

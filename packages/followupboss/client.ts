@@ -77,6 +77,7 @@ export class FollowUpBossAPIError extends Error {
 
 export function describeFollowUpBossError(
 	status: number | undefined,
+	// unknown: the error body is `{ errorMessage }` or proxy HTML/text.
 	body: unknown,
 	fallback: string,
 ): string {

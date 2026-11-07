@@ -215,6 +215,7 @@ export const ignoreUnclaimed: FollowUpBossEndpoints['peopleIgnoreUnclaimed'] = (
 
 // ── person attachments ─────────────────────────────────────────────────────
 
+// unknown: picks the documented attachment fields from an already-parsed input.
 function attachmentBody({
 	personId,
 	uri,
