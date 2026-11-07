@@ -1,0 +1,162 @@
+---
+title: Overview
+description: "Log, edit and report time in Timely: time entries, timers, projects, clients, tags, people and signed webhooks."
+---
+
+Use **Timely** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Timely only offers OAuth 2.0; there are no API keys or personal access tokens. Register an app under **Settings → API Access** in Timely (`https://app.timelyapp.com/<workspace id>/oauth_applications`), then store its client ID and secret. Timely access tokens do not expire; refresh tokens rotate on every use.
+
+Every call is scoped to a workspace. Operations take an optional `accountId`; without one the plugin uses `timely({ accountId })`, then the account's stored `account_id`, then the only workspace the token can reach. When the user belongs to several workspaces, pass `accountId` (from `accounts.list`).
+
+**What you get:**
+
+- 36 typed API operations
+- 12 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/timely
+```
+```bash yarn
+yarn add corsair @corsair-dev/timely
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/timely
+```
+```bash bun
+bun add corsair @corsair-dev/timely
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { timely } from '@corsair-dev/timely';
+
+export const corsair = createCorsair({
+	plugins: [
+		timely({
+			accountId: 123456,
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Timely OAuth app.
+
+`accountId` is optional when the connected user has a single Timely workspace.
+
+```ts
+timely({
+	accountId: 123456,
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'timely',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List this week's time entries**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.timely.api.timeEntries.list({ since: '2026-11-02', upto: '2026-11-08', per_page: 100 });
+```
+
+
+**Log 1h 30m on a project**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.timely.api.timeEntries.create({
+	project_id: 987654,
+	day: '2026-11-06',
+	hours: 1,
+	minutes: 30,
+	note: 'Code review',
+});
+```
+
+
+See the full list on the [API](/plugins/timely/api) page.
+
+## Webhooks
+
+Timely sends a thin reference (`entity_id`, `entity_type`, `date`), not the full entry. Fetch the entry with `timeEntries.get`. Create the Timely webhook with a `secret_token` and store the same value as the account's `webhook_signature`: unsigned deliveries are rejected.
+
+```ts
+timely({
+    webhookHooks: {
+        timeEntries: {
+            created: {
+                after: async (ctx, result) => {
+                    console.log('Time entry logged:', result.data?.payload.entity_id);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/timely/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/timely/api">
+    Every `timely.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/timely/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
