@@ -1,6 +1,5 @@
 import type {
 	AuthTypes,
-	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -11,7 +10,6 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
 import {
 	createBrand,
 	deleteBrand,

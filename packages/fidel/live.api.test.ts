@@ -20,8 +20,7 @@ describeLive('Fidel live API', () => {
 			{ method: 'GET' },
 		);
 
-		const programs =
-			FidelEndpointOutputSchemas.listPrograms.parse(response);
+		const programs = FidelEndpointOutputSchemas.listPrograms.parse(response);
 		expect(programs).toBeDefined();
 	});
 });
