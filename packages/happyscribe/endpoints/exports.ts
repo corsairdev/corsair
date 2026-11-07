@@ -1,4 +1,4 @@
-import type { HappyScribeContext, HappyScribeEndpoints } from '..';
+import type { HappyScribeEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {

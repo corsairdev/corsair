@@ -1,4 +1,4 @@
-import type { HappyScribeContext, HappyScribeEndpoints } from '..';
+import type { HappyScribeEndpoints } from '..';
 import { call } from './call';
 import {
 	HappyScribeEndpointInputSchemas as Inputs,

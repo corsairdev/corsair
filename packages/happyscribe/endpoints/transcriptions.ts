@@ -1,5 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type { HappyScribeContext, HappyScribeEndpoints } from '..';
+import type { HappyScribeEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -60,11 +60,17 @@ export const list: HappyScribeEndpoints['transcriptionsList'] = (ctx, input) =>
 		}),
 		{
 			shape: listWithLinks,
-			log: (_, result) => ({ count: result.results.length, hasMore: result.nextPageUrl !== undefined }),
+			log: (_, result) => ({
+				count: result.results.length,
+				hasMore: result.nextPageUrl !== undefined,
+			}),
 		},
 	);
 
-export const create: HappyScribeEndpoints['transcriptionsCreate'] = (ctx, input) =>
+export const create: HappyScribeEndpoints['transcriptionsCreate'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -73,7 +79,15 @@ export const create: HappyScribeEndpoints['transcriptionsCreate'] = (ctx, input)
 			output: Outputs.transcriptionsCreate,
 		},
 		input,
-		({ organizationId, name, language, tmpUrl, isSubtitle, folderId, tags }) => ({
+		({
+			organizationId,
+			name,
+			language,
+			tmpUrl,
+			isSubtitle,
+			folderId,
+			tags,
+		}) => ({
 			method: 'POST',
 			path: '/transcriptions',
 			body: {
@@ -137,31 +151,32 @@ export const getSummary: HappyScribeEndpoints['transcriptionsGetSummary'] = (
 		}),
 	);
 
-export const updateDetails: HappyScribeEndpoints['transcriptionsUpdateDetails'] = (
+export const updateDetails: HappyScribeEndpoints['transcriptionsUpdateDetails'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'transcriptions.updateDetails',
+				input: Inputs.transcriptionsUpdateDetails,
+				output: Outputs.transcriptionsUpdateDetails,
+			},
+			input,
+			({ fileId, organizationId, sharingEnabled }) => ({
+				method: 'PATCH',
+				path: `/transcriptions/${segment(fileId)}`,
+				body: {
+					transcription: {
+						organization_id: organizationId,
+						sharing_enabled: sharingEnabled,
+					},
+				},
+			}),
+		);
+
+export const remove: HappyScribeEndpoints['transcriptionsDelete'] = (
 	ctx,
 	input,
 ) =>
-	call(
-		ctx,
-		{
-			event: 'transcriptions.updateDetails',
-			input: Inputs.transcriptionsUpdateDetails,
-			output: Outputs.transcriptionsUpdateDetails,
-		},
-		input,
-		({ fileId, organizationId, sharingEnabled }) => ({
-			method: 'PATCH',
-			path: `/transcriptions/${segment(fileId)}`,
-			body: {
-				transcription: {
-					organization_id: organizationId,
-					sharing_enabled: sharingEnabled,
-				},
-			},
-		}),
-	);
-
-export const remove: HappyScribeEndpoints['transcriptionsDelete'] = (ctx, input) =>
 	call(
 		ctx,
 		{

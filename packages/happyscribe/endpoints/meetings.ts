@@ -1,4 +1,4 @@
-import type { HappyScribeContext, HappyScribeEndpoints } from '..';
+import type { HappyScribeEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -38,8 +38,12 @@ export const create: HappyScribeEndpoints['meetingsCreate'] = (ctx, input) =>
 				metadata,
 				settings: {
 					...(botName !== undefined ? { bot_name: botName } : {}),
-					...(recordingMode !== undefined ? { recording_mode: recordingMode } : {}),
-					...(summaryTemplate !== undefined ? { summary_template: summaryTemplate } : {}),
+					...(recordingMode !== undefined
+						? { recording_mode: recordingMode }
+						: {}),
+					...(summaryTemplate !== undefined
+						? { summary_template: summaryTemplate }
+						: {}),
 					...(accessLevel !== undefined ? { access_level: accessLevel } : {}),
 				},
 			},

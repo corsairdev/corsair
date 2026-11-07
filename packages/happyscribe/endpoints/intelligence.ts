@@ -1,5 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type { HappyScribeContext, HappyScribeEndpoints } from '..';
+import type { HappyScribeEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -19,7 +19,10 @@ function intelList(raw: unknown): unknown {
 	};
 }
 
-export const listCompanies: HappyScribeEndpoints['companiesList'] = (ctx, input) =>
+export const listCompanies: HappyScribeEndpoints['companiesList'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -42,7 +45,10 @@ export const listCompanies: HappyScribeEndpoints['companiesList'] = (ctx, input)
 		}),
 		{
 			shape: intelList,
-			log: (_, result) => ({ count: result.results.length, hasMore: result.nextPageUrl !== undefined }),
+			log: (_, result) => ({
+				count: result.results.length,
+				hasMore: result.nextPageUrl !== undefined,
+			}),
 		},
 	);
 
@@ -86,7 +92,10 @@ export const listPeople: HappyScribeEndpoints['peopleList'] = (ctx, input) =>
 		}),
 		{
 			shape: intelList,
-			log: (_, result) => ({ count: result.results.length, hasMore: result.nextPageUrl !== undefined }),
+			log: (_, result) => ({
+				count: result.results.length,
+				hasMore: result.nextPageUrl !== undefined,
+			}),
 		},
 	);
 

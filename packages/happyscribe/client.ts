@@ -88,9 +88,7 @@ export function describeHappyScribeError(
 ): string {
 	const record = asRecord(body);
 	const text =
-		readString(record, 'message') ??
-		readString(record, 'error') ??
-		fallback;
+		readString(record, 'message') ?? readString(record, 'error') ?? fallback;
 	const label = status === undefined ? '' : `HappyScribe ${status}`;
 	const summary = label ? `${label}: ${text}` : text;
 	const retry = readRetryInSeconds(record);
@@ -134,8 +132,7 @@ export async function makeHappyScribeRequest(
 		HEADERS: { Accept: 'application/json' },
 	};
 
-	const mediaType =
-		body === undefined ? undefined : 'application/json';
+	const mediaType = body === undefined ? undefined : 'application/json';
 
 	const requestOptions: ApiRequestOptions = {
 		method,

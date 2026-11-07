@@ -1,4 +1,4 @@
-import { timingSafeEqual, createHmac } from 'node:crypto';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -57,6 +57,7 @@ function signedBody(request: WebhookRequest<unknown>): string {
  * unsigned deliveries.
  */
 export function verifyHappyScribeWebhook(
+	// WebhookRequest.rawBody is the signed input; the adapters supply it.
 	request: WebhookRequest<unknown>,
 	secret: string | undefined,
 	now: number = Math.floor(Date.now() / 1000),
@@ -74,8 +75,7 @@ export function verifyHappyScribeWebhook(
 	const body = signedBody(request);
 	const plain = headerValue(request.headers, 'x-webhook-signature');
 	const expectedPlain = `sha256=${hexDigest(body, key)}`;
-	const plainOk =
-		plain !== undefined && safeEqual(plain.trim(), expectedPlain);
+	const plainOk = plain !== undefined && safeEqual(plain.trim(), expectedPlain);
 
 	const stamped = headerValue(request.headers, 'x-happyscribe-signature');
 	let stampedOk = false;
@@ -86,8 +86,7 @@ export function verifyHappyScribeWebhook(
 			const age = now - Number(timestamp);
 			const fresh = age >= 0 && age <= HAPPYSCRIBE_SIGNATURE_MAX_AGE_SECONDS;
 			stampedOk =
-				fresh &&
-				safeEqual(digest, hexDigest(`${timestamp}.${body}`, key));
+				fresh && safeEqual(digest, hexDigest(`${timestamp}.${body}`, key));
 		}
 	}
 
@@ -121,14 +120,17 @@ export const HAPPYSCRIBE_WEBHOOK_EVENTS = [
 
 export const HappyScribeWebhookPayloadSchema = z
 	.object({
-		id: z.string().describe('Event ID beginning with `evt_`; deduplicate retries on it.'),
+		id: z
+			.string()
+			.describe('Event ID beginning with `evt_`; deduplicate retries on it.'),
 		type: z.string().describe('Event type, e.g. `meeting.summary_ready`.'),
 		created_at: z.string().nullish(),
 		data: z
 			.object({
 				// unknown: the embedded Meeting carries the full field set of
 				// meetings.get, which varies by state.
-				object: z.record(z.string(), z.unknown())
+				object: z
+					.record(z.string(), z.unknown())
 					.describe('Current representation of the Meeting.'),
 			})
 			.loose(),
@@ -139,7 +141,9 @@ export type HappyScribeWebhookPayload = z.infer<
 	typeof HappyScribeWebhookPayloadSchema
 >;
 
-export function eventSchema<const T extends readonly [string, ...string[]]>(types: T) {
+export function eventSchema<const T extends readonly [string, ...string[]]>(
+	types: T,
+) {
 	return HappyScribeWebhookPayloadSchema.extend({ type: z.enum(types) });
 }
 
@@ -175,5 +179,7 @@ export const matchOtherEvent: CorsairWebhookMatcher = (request) => {
 	const body = readBodyRecord(request);
 	const type =
 		header ?? (typeof body?.type === 'string' ? body.type : undefined);
-	return type !== undefined && !Object.values(EVENT_TYPE_MAP).flat().includes(type);
-}
+	return (
+		type !== undefined && !Object.values(EVENT_TYPE_MAP).flat().includes(type)
+	);
+};

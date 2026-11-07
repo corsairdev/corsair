@@ -18,8 +18,8 @@ import {
 	Exports,
 	Glossaries,
 	Intelligence,
-	Memberships,
 	Meetings,
+	Memberships,
 	Orders,
 	Organizations,
 	StyleGuides,
@@ -37,9 +37,9 @@ import {
 } from './endpoints/types';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { HappyScribeSchema } from './schema';
-import { HappyScribeWebhookPayloadSchema } from './webhooks/types';
 import { MeetingWebhooks, OtherWebhooks } from './webhooks';
 import { matchHappyScribeTenantWebhook } from './webhooks/tenant-matcher';
+import { HappyScribeWebhookPayloadSchema } from './webhooks/types';
 
 export type HappyScribePluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -363,16 +363,19 @@ const happyScribeEndpointMeta = {
 	},
 	'transcriptions.getSummary': {
 		riskLevel: 'read',
-		description: 'Read the AI-generated meeting summary of a notetaker recording',
+		description:
+			'Read the AI-generated meeting summary of a notetaker recording',
 	},
 	'transcriptions.updateDetails': {
 		riskLevel: 'write',
-		description: 'Change a transcription: move it between organizations or toggle its public sharing link',
+		description:
+			'Change a transcription: move it between organizations or toggle its public sharing link',
 	},
 	'transcriptions.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Permanently delete a transcription and its media; there is no restore',
+		description:
+			'Permanently delete a transcription and its media; there is no restore',
 	},
 	'exports.create': {
 		riskLevel: 'write',
@@ -382,7 +385,8 @@ const happyScribeEndpointMeta = {
 	},
 	'exports.get': {
 		riskLevel: 'read',
-		description: 'Where an export stands; once state is ready the answer carries its download_link',
+		description:
+			'Where an export stands; once state is ready the answer carries its download_link',
 	},
 	'translations.createTask': {
 		riskLevel: 'write',
@@ -413,11 +417,13 @@ const happyScribeEndpointMeta = {
 	},
 	'glossaries.list': {
 		riskLevel: 'read',
-		description: 'List the glossaries an organization can attach to human orders',
+		description:
+			'List the glossaries an organization can attach to human orders',
 	},
 	'styleGuides.list': {
 		riskLevel: 'read',
-		description: 'List the style guides an organization can attach to human orders',
+		description:
+			'List the style guides an organization can attach to human orders',
 	},
 	'organizations.list': {
 		riskLevel: 'read',
@@ -438,7 +444,8 @@ const happyScribeEndpointMeta = {
 	},
 	'memberships.remove': {
 		riskLevel: 'destructive',
-		description: 'Remove a user from the organization; their existing transcripts stay',
+		description:
+			'Remove a user from the organization; their existing transcripts stay',
 	},
 	'orders.create': {
 		riskLevel: 'write',
@@ -452,7 +459,8 @@ const happyScribeEndpointMeta = {
 	},
 	'orders.get': {
 		riskLevel: 'read',
-		description: 'Read one human-service order: state, operations, languages and pricing',
+		description:
+			'Read one human-service order: state, operations, languages and pricing',
 	},
 	'orders.confirm': {
 		riskLevel: 'write',
@@ -476,7 +484,8 @@ const happyScribeEndpointMeta = {
 	},
 	'people.get': {
 		riskLevel: 'read',
-		description: 'Read one discovered contact with company linkage (Intelligence API)',
+		description:
+			'Read one discovered contact with company linkage (Intelligence API)',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof happyScribeEndpointsNested
@@ -499,12 +508,14 @@ const happyScribeWebhookSchemas = {
 		response: HappyScribeWebhookPayloadSchema,
 	},
 	'meetings.summaryReady': {
-		description: 'The plain-text meeting summary has been generated and persisted',
+		description:
+			'The plain-text meeting summary has been generated and persisted',
 		payload: HappyScribeWebhookPayloadSchema,
 		response: HappyScribeWebhookPayloadSchema,
 	},
 	'meetings.failed': {
-		description: 'The notetaker or transcription flow reached a terminal failure',
+		description:
+			'The notetaker or transcription flow reached a terminal failure',
 		payload: HappyScribeWebhookPayloadSchema,
 		response: HappyScribeWebhookPayloadSchema,
 	},
@@ -605,8 +616,6 @@ export { HappyScribeAPIError } from './client';
 export type {
 	CompaniesGetInput,
 	CompaniesListInput,
-	TranscriptionsCreateExportInput as ExportsCreateInput,
-	TranscriptionsGetExportInput as ExportsGetInput,
 	GlossariesListInput,
 	HappyScribeCompany,
 	HappyScribeEndpointInputs,
@@ -634,9 +643,11 @@ export type {
 	PeopleGetInput,
 	PeopleListInput,
 	StyleGuidesListInput,
+	TranscriptionsCreateExportInput as ExportsCreateInput,
 	TranscriptionsCreateInput,
 	TranscriptionsDeleteInput,
 	TranscriptionsGetDetailsInput,
+	TranscriptionsGetExportInput as ExportsGetInput,
 	TranscriptionsGetSummaryInput,
 	TranscriptionsListInput,
 	TranscriptionsUpdateDetailsInput,

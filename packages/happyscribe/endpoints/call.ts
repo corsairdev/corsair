@@ -42,8 +42,10 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);
 
-	await safeLog(ctx, `happyscribe.${operation.event}`, () =>
-		options.log?.(parsed, result) ?? {},
+	await safeLog(
+		ctx,
+		`happyscribe.${operation.event}`,
+		() => options.log?.(parsed, result) ?? {},
 	);
 	return result;
 }

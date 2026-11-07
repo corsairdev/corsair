@@ -6,11 +6,10 @@ import type { HappyScribeWebhookPayload } from './types';
 import {
 	createHappyScribeMatch,
 	eventSchema,
-	matchOtherEvent,
 	HappyScribeWebhookPayloadSchema,
+	matchOtherEvent,
 	verifyHappyScribeWebhook,
 } from './types';
-import type { HappyScribeEventSchema } from './types';
 
 /**
  * One handler per Corsair webhook path: verify both signature headers,
@@ -90,4 +89,3 @@ export const otherEvent = handlerFor(
 	HappyScribeWebhookPayloadSchema,
 	matchOtherEvent,
 );
-

@@ -97,7 +97,9 @@ export const HappyScribeTranscriptionSchema = z
 	})
 	.loose();
 
-export type HappyScribeTranscription = z.infer<typeof HappyScribeTranscriptionSchema>;
+export type HappyScribeTranscription = z.infer<
+	typeof HappyScribeTranscriptionSchema
+>;
 
 export const HappyScribeMeetingSchema = z
 	.object({
@@ -218,7 +220,9 @@ export const HappyScribeOrganizationSchema = z
 	})
 	.loose();
 
-export type HappyScribeOrganization = z.infer<typeof HappyScribeOrganizationSchema>;
+export type HappyScribeOrganization = z.infer<
+	typeof HappyScribeOrganizationSchema
+>;
 
 export const HappyScribeMembershipSchema = z
 	.object({
@@ -328,17 +332,41 @@ export const HappyScribeStyleGuideListSchema = z
 // ── transcriptions.list ───────────────────────────────────────────────────
 
 const TranscriptionsListInputSchema = z.object({
-	organizationId: OrganizationIdSchema.describe('Organization to list transcriptions from.'),
-	folderId: z.number().int().optional().describe('Only transcriptions inside this folder or its subfolders.'),
+	organizationId: OrganizationIdSchema.describe(
+		'Organization to list transcriptions from.',
+	),
+	folderId: z
+		.number()
+		.int()
+		.optional()
+		.describe('Only transcriptions inside this folder or its subfolders.'),
 	page: PageSchema,
 	perPage: PerPageSchema,
-	personId: z.number().int().optional().describe('Intelligence API: transcriptions where this person was linked.'),
-	personEmail: z.string().optional().describe('Intelligence API: same, resolved by email.'),
-	companyId: z.number().int().optional().describe('Intelligence API: transcriptions with a participant from this company.'),
-	companyDomain: z.string().optional().describe('Intelligence API: same, resolved by domain.'),
+	personId: z
+		.number()
+		.int()
+		.optional()
+		.describe('Intelligence API: transcriptions where this person was linked.'),
+	personEmail: z
+		.string()
+		.optional()
+		.describe('Intelligence API: same, resolved by email.'),
+	companyId: z
+		.number()
+		.int()
+		.optional()
+		.describe(
+			'Intelligence API: transcriptions with a participant from this company.',
+		),
+	companyDomain: z
+		.string()
+		.optional()
+		.describe('Intelligence API: same, resolved by domain.'),
 });
 
-export type TranscriptionsListInput = z.input<typeof TranscriptionsListInputSchema>;
+export type TranscriptionsListInput = z.input<
+	typeof TranscriptionsListInputSchema
+>;
 
 const TranscriptionsListResponseSchema = HappyScribeTranscriptionListSchema;
 
@@ -355,12 +383,21 @@ const TranscriptionsCreateInputSchema = z.object({
 		.string()
 		.min(1)
 		.describe('Public https URL of the media file to transcribe.'),
-	isSubtitle: z.boolean().optional().describe('Create a subtitle file instead of a transcript.'),
-	folderId: z.number().int().optional().describe('Folder to create the transcription in.'),
+	isSubtitle: z
+		.boolean()
+		.optional()
+		.describe('Create a subtitle file instead of a transcript.'),
+	folderId: z
+		.number()
+		.int()
+		.optional()
+		.describe('Folder to create the transcription in.'),
 	tags: TagsSchema,
 });
 
-export type TranscriptionsCreateInput = z.input<typeof TranscriptionsCreateInputSchema>;
+export type TranscriptionsCreateInput = z.input<
+	typeof TranscriptionsCreateInputSchema
+>;
 
 const TranscriptionsCreateResponseSchema = HappyScribeTranscriptionSchema;
 
@@ -397,11 +434,14 @@ export type TranscriptionsUpdateDetailsInput = z.input<
 	typeof TranscriptionsUpdateDetailsInputSchema
 >;
 
-const TranscriptionsUpdateDetailsResponseSchema = HappyScribeTranscriptionSchema;
+const TranscriptionsUpdateDetailsResponseSchema =
+	HappyScribeTranscriptionSchema;
 
 const TranscriptionsDeleteInputSchema = z.object({ fileId: FileIdSchema });
 
-export type TranscriptionsDeleteInput = z.input<typeof TranscriptionsDeleteInputSchema>;
+export type TranscriptionsDeleteInput = z.input<
+	typeof TranscriptionsDeleteInputSchema
+>;
 
 // delete answers an empty body; the file is gone.
 const TranscriptionsDeleteResponseSchema = z.object({}).loose();
@@ -428,7 +468,10 @@ const TranscriptionsCreateExportInputSchema = z.object({
 		.array(FileIdSchema)
 		.min(1)
 		.describe('Transcription IDs to include in the export.'),
-	showTimestamps: z.boolean().optional().describe('Include timestamps in the exported file.'),
+	showTimestamps: z
+		.boolean()
+		.optional()
+		.describe('Include timestamps in the exported file.'),
 	showSpeakers: z.boolean().optional().describe('Include speaker names.'),
 	showComments: z.boolean().optional().describe('Include comments.'),
 	showHighlights: z.boolean().optional().describe('Include highlights.'),
@@ -467,10 +510,15 @@ export type TranslationsCreateTaskInput = z.input<
 const TranslationsCreateTaskResponseSchema = HappyScribeTranslationTaskSchema;
 
 const TranslationsGetTaskInputSchema = z.object({
-	taskId: z.string().min(1).describe('Translation task ID from a creation call.'),
+	taskId: z
+		.string()
+		.min(1)
+		.describe('Translation task ID from a creation call.'),
 });
 
-export type TranslationsGetTaskInput = z.input<typeof TranslationsGetTaskInputSchema>;
+export type TranslationsGetTaskInput = z.input<
+	typeof TranslationsGetTaskInputSchema
+>;
 
 const TranslationsGetTaskResponseSchema = HappyScribeTranslationTaskSchema;
 
@@ -481,7 +529,9 @@ const MeetingsCreateInputSchema = z.object({
 	meetingUrl: z
 		.string()
 		.min(1)
-		.describe('Meeting room URL the notetaker joins, e.g. a Zoom or Meet link.'),
+		.describe(
+			'Meeting room URL the notetaker joins, e.g. a Zoom or Meet link.',
+		),
 	joinAt: z
 		.string()
 		.min(1)
@@ -521,7 +571,10 @@ export type MeetingsCreateInput = z.input<typeof MeetingsCreateInputSchema>;
 const MeetingsCreateResponseSchema = HappyScribeMeetingSchema;
 
 const MeetingsGetInputSchema = z.object({
-	meetingId: z.string().min(1).describe('Meeting ID, e.g. `mtg_01k0h4r9s8x7c2dvq3m5n6p4ab`.'),
+	meetingId: z
+		.string()
+		.min(1)
+		.describe('Meeting ID, e.g. `mtg_01k0h4r9s8x7c2dvq3m5n6p4ab`.'),
 });
 
 export type MeetingsGetInput = z.input<typeof MeetingsGetInputSchema>;
@@ -537,7 +590,9 @@ const UploadsGetSignedUrlInputSchema = z.object({
 		.describe('File name the upload gets in storage, e.g. `my_media.mp3`.'),
 });
 
-export type UploadsGetSignedUrlInput = z.input<typeof UploadsGetSignedUrlInputSchema>;
+export type UploadsGetSignedUrlInput = z.input<
+	typeof UploadsGetSignedUrlInputSchema
+>;
 
 const UploadsGetSignedUrlResponseSchema = z
 	.object({
@@ -567,7 +622,9 @@ const StyleGuidesListResponseSchema = HappyScribeStyleGuideListSchema;
 
 const OrganizationsListInputSchema = z.object({});
 
-export type OrganizationsListInput = z.input<typeof OrganizationsListInputSchema>;
+export type OrganizationsListInput = z.input<
+	typeof OrganizationsListInputSchema
+>;
 
 const OrganizationsListResponseSchema = HappyScribeOrganizationListSchema;
 
@@ -606,14 +663,19 @@ const MembershipsRemoveInputSchema = z.object({
 	membershipId: z.number().int().describe('Membership ID to remove.'),
 });
 
-export type MembershipsRemoveInput = z.input<typeof MembershipsRemoveInputSchema>;
+export type MembershipsRemoveInput = z.input<
+	typeof MembershipsRemoveInputSchema
+>;
 
 const MembershipsRemoveResponseSchema = z.object({}).loose();
 
 // ── orders.create / createTranslation / get / confirm ─────────────────────
 
 const OrdersCreateInputSchema = z.object({
-	url: z.string().min(1).describe('Public URL of the media to transcribe or subtitle.'),
+	url: z
+		.string()
+		.min(1)
+		.describe('Public URL of the media to transcribe or subtitle.'),
 	language: z.string().min(1).describe('Spoken language code of the media.'),
 	service: z
 		.enum(['pro', 'standard'])
@@ -622,7 +684,9 @@ const OrdersCreateInputSchema = z.object({
 	confirm: z
 		.boolean()
 		.optional()
-		.describe('Confirm and pay immediately instead of leaving the order incomplete.'),
+		.describe(
+			'Confirm and pay immediately instead of leaving the order incomplete.',
+		),
 	organizationId: OrganizationIdSchema,
 	folderId: z.number().int().optional().describe('Folder ID for the result.'),
 	folder: z
@@ -632,10 +696,23 @@ const OrdersCreateInputSchema = z.object({
 	name: z.string().optional().describe('Name of the ordered transcription.'),
 	tags: TagsSchema,
 	boost: z.boolean().optional().describe('Pay for faster delivery.'),
-	isSubtitle: z.boolean().optional().describe('Order subtitling instead of transcription.'),
-	webhookUrl: z.string().optional().describe('URL notified when the order finishes.'),
-	glossaryIds: z.array(z.number().int()).optional().describe('Glossaries the human translators use.'),
-	styleGuideId: z.number().int().optional().describe('Style guide the human translators use.'),
+	isSubtitle: z
+		.boolean()
+		.optional()
+		.describe('Order subtitling instead of transcription.'),
+	webhookUrl: z
+		.string()
+		.optional()
+		.describe('URL notified when the order finishes.'),
+	glossaryIds: z
+		.array(z.number().int())
+		.optional()
+		.describe('Glossaries the human translators use.'),
+	styleGuideId: z
+		.number()
+		.int()
+		.optional()
+		.describe('Style guide the human translators use.'),
 });
 
 export type OrdersCreateInput = z.input<typeof OrdersCreateInputSchema>;
@@ -650,7 +727,10 @@ const OrdersCreateTranslationInputSchema = z.object({
 		.describe('Languages to translate into.'),
 	confirm: z.boolean().optional().describe('Confirm and pay immediately.'),
 	organizationId: OrganizationIdSchema,
-	glossaryIds: z.array(z.number().int()).optional().describe('Glossaries for the translators.'),
+	glossaryIds: z
+		.array(z.number().int())
+		.optional()
+		.describe('Glossaries for the translators.'),
 });
 
 export type OrdersCreateTranslationInput = z.input<
@@ -668,7 +748,10 @@ export type OrdersGetInput = z.input<typeof OrdersGetInputSchema>;
 const OrdersGetResponseSchema = HappyScribeOrderSchema;
 
 const OrdersConfirmInputSchema = z.object({
-	orderId: z.string().min(1).describe('Incomplete order to confirm and pay for.'),
+	orderId: z
+		.string()
+		.min(1)
+		.describe('Incomplete order to confirm and pay for.'),
 });
 
 export type OrdersConfirmInput = z.input<typeof OrdersConfirmInputSchema>;
@@ -679,9 +762,20 @@ const OrdersConfirmResponseSchema = HappyScribeOrderSchema;
 
 const CompaniesListInputSchema = z.object({
 	organizationId: OrganizationIdSchema,
-	search: z.string().optional().describe('Case-insensitive substring match on company name.'),
-	domain: z.string().optional().describe('Exact match on the primary domain or any known domain.'),
-	page: z.number().int().min(1).optional().describe('Page to retrieve; companies count from 1.'),
+	search: z
+		.string()
+		.optional()
+		.describe('Case-insensitive substring match on company name.'),
+	domain: z
+		.string()
+		.optional()
+		.describe('Exact match on the primary domain or any known domain.'),
+	page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page to retrieve; companies count from 1.'),
 	perPage: IntelligencePerPageSchema,
 });
 
@@ -699,10 +793,22 @@ const CompaniesGetResponseSchema = HappyScribeCompanySchema;
 
 const PeopleListInputSchema = z.object({
 	organizationId: OrganizationIdSchema,
-	search: z.string().optional().describe('Full-text match over name and email fields.'),
+	search: z
+		.string()
+		.optional()
+		.describe('Full-text match over name and email fields.'),
 	email: z.string().optional().describe('Exact email match, case-insensitive.'),
-	companyId: z.number().int().optional().describe('Only people of this company.'),
-	page: z.number().int().min(1).optional().describe('Page to retrieve; people count from 1.'),
+	companyId: z
+		.number()
+		.int()
+		.optional()
+		.describe('Only people of this company.'),
+	page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page to retrieve; people count from 1.'),
 	perPage: IntelligencePerPageSchema,
 });
 
@@ -754,9 +860,15 @@ export type HappyScribeEndpointInputs = {
 export type HappyScribeEndpointOutputs = {
 	transcriptionsList: z.infer<typeof TranscriptionsListResponseSchema>;
 	transcriptionsCreate: z.infer<typeof TranscriptionsCreateResponseSchema>;
-	transcriptionsGetDetails: z.infer<typeof TranscriptionsGetDetailsResponseSchema>;
-	transcriptionsGetSummary: z.infer<typeof TranscriptionsGetSummaryResponseSchema>;
-	transcriptionsUpdateDetails: z.infer<typeof TranscriptionsUpdateDetailsResponseSchema>;
+	transcriptionsGetDetails: z.infer<
+		typeof TranscriptionsGetDetailsResponseSchema
+	>;
+	transcriptionsGetSummary: z.infer<
+		typeof TranscriptionsGetSummaryResponseSchema
+	>;
+	transcriptionsUpdateDetails: z.infer<
+		typeof TranscriptionsUpdateDetailsResponseSchema
+	>;
 	transcriptionsDelete: z.infer<typeof TranscriptionsDeleteResponseSchema>;
 	exportsCreate: z.infer<typeof TranscriptionsCreateExportResponseSchema>;
 	exportsGet: z.infer<typeof TranscriptionsGetExportResponseSchema>;
@@ -773,7 +885,9 @@ export type HappyScribeEndpointOutputs = {
 	membershipsUpdateRole: z.infer<typeof MembershipsUpdateRoleResponseSchema>;
 	membershipsRemove: z.infer<typeof MembershipsRemoveResponseSchema>;
 	ordersCreate: z.infer<typeof OrdersCreateResponseSchema>;
-	ordersCreateTranslation: z.infer<typeof OrdersCreateTranslationResponseSchema>;
+	ordersCreateTranslation: z.infer<
+		typeof OrdersCreateTranslationResponseSchema
+	>;
 	ordersGet: z.infer<typeof OrdersGetResponseSchema>;
 	ordersConfirm: z.infer<typeof OrdersConfirmResponseSchema>;
 	companiesList: z.infer<typeof CompaniesListResponseSchema>;

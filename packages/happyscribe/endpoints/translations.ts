@@ -1,4 +1,4 @@
-import type { HappyScribeContext, HappyScribeEndpoints } from '..';
+import type { HappyScribeEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -34,7 +34,10 @@ export const createTask: HappyScribeEndpoints['translationsCreateTask'] = (
 		},
 	);
 
-export const getTask: HappyScribeEndpoints['translationsGetTask'] = (ctx, input) =>
+export const getTask: HappyScribeEndpoints['translationsGetTask'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{

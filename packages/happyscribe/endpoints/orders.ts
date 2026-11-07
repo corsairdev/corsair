@@ -1,4 +1,4 @@
-import type { HappyScribeContext, HappyScribeEndpoints } from '..';
+import type { HappyScribeEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -48,7 +48,9 @@ export const create: HappyScribeEndpoints['ordersCreate'] = (ctx, input) =>
 					...(isSubtitle !== undefined ? { is_subtitle: isSubtitle } : {}),
 					...(webhookUrl !== undefined ? { webhook_url: webhookUrl } : {}),
 					...(glossaryIds !== undefined ? { glossary_ids: glossaryIds } : {}),
-					...(styleGuideId !== undefined ? { style_guide_id: styleGuideId } : {}),
+					...(styleGuideId !== undefined
+						? { style_guide_id: styleGuideId }
+						: {}),
 				},
 			},
 		}),
@@ -61,35 +63,42 @@ export const create: HappyScribeEndpoints['ordersCreate'] = (ctx, input) =>
 		},
 	);
 
-export const createTranslation: HappyScribeEndpoints['ordersCreateTranslation'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'orders.createTranslation',
-			input: Inputs.ordersCreateTranslation,
-			output: Outputs.ordersCreateTranslation,
-		},
-		input,
-		({ sourceTranscriptionId, targetLanguages, confirm, organizationId, glossaryIds }) => ({
-			method: 'POST',
-			path: '/orders/translation',
-			body: {
-				order: {
-					source_transcription_id: sourceTranscriptionId,
-					target_languages: targetLanguages,
-					confirm,
-					organization_id: organizationId,
-					...(glossaryIds !== undefined ? { glossary_ids: glossaryIds } : {}),
-				},
+export const createTranslation: HappyScribeEndpoints['ordersCreateTranslation'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'orders.createTranslation',
+				input: Inputs.ordersCreateTranslation,
+				output: Outputs.ordersCreateTranslation,
 			},
-		}),
-		{
-			log: (_parsed, result) => ({ orderId: result.id, state: result.state ?? undefined }),
-		},
-	);
+			input,
+			({
+				sourceTranscriptionId,
+				targetLanguages,
+				confirm,
+				organizationId,
+				glossaryIds,
+			}) => ({
+				method: 'POST',
+				path: '/orders/translation',
+				body: {
+					order: {
+						source_transcription_id: sourceTranscriptionId,
+						target_languages: targetLanguages,
+						confirm,
+						organization_id: organizationId,
+						...(glossaryIds !== undefined ? { glossary_ids: glossaryIds } : {}),
+					},
+				},
+			}),
+			{
+				log: (_parsed, result) => ({
+					orderId: result.id,
+					state: result.state ?? undefined,
+				}),
+			},
+		);
 
 export const get: HappyScribeEndpoints['ordersGet'] = (ctx, input) =>
 	call(
@@ -121,6 +130,9 @@ export const confirm: HappyScribeEndpoints['ordersConfirm'] = (ctx, input) =>
 			path: `/orders/${segment(orderId)}/confirm`,
 		}),
 		{
-			log: (parsed, result) => ({ orderId: parsed.orderId, state: result.state ?? undefined }),
+			log: (parsed, result) => ({
+				orderId: parsed.orderId,
+				state: result.state ?? undefined,
+			}),
 		},
 	);

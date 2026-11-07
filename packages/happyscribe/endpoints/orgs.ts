@@ -1,4 +1,4 @@
-import type { HappyScribeContext, HappyScribeEndpoints } from '..';
+import type { HappyScribeEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -6,7 +6,10 @@ import {
 	HappyScribeEndpointOutputSchemas as Outputs,
 } from './types';
 
-export const listGlossaries: HappyScribeEndpoints['glossariesList'] = (ctx, input) =>
+export const listGlossaries: HappyScribeEndpoints['glossariesList'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -24,7 +27,10 @@ export const listGlossaries: HappyScribeEndpoints['glossariesList'] = (ctx, inpu
 		{ log: (_, result) => ({ count: result.glossaries.length }) },
 	);
 
-export const listStyleGuides: HappyScribeEndpoints['styleGuidesList'] = (ctx, input) =>
+export const listStyleGuides: HappyScribeEndpoints['styleGuidesList'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -62,7 +68,10 @@ export const listOrganizations: HappyScribeEndpoints['organizationsList'] = (
 		{ log: (_, result) => ({ count: result.organizations.length }) },
 	);
 
-export const listMemberships: HappyScribeEndpoints['membershipsList'] = (ctx, input) =>
+export const listMemberships: HappyScribeEndpoints['membershipsList'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -80,7 +89,10 @@ export const listMemberships: HappyScribeEndpoints['membershipsList'] = (ctx, in
 		{ log: (_, result) => ({ count: result.members.length }) },
 	);
 
-export const addMembership: HappyScribeEndpoints['membershipsAdd'] = (ctx, input) =>
+export const addMembership: HappyScribeEndpoints['membershipsAdd'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -95,31 +107,35 @@ export const addMembership: HappyScribeEndpoints['membershipsAdd'] = (ctx, input
 			body: { organization_id: organizationId, email, role },
 		}),
 		{
-			log: (parsed) => ({ organizationId: parsed.organizationId, role: parsed.role }),
+			log: (parsed) => ({
+				organizationId: parsed.organizationId,
+				role: parsed.role,
+			}),
 		},
 	);
 
-export const updateMembershipRole: HappyScribeEndpoints['membershipsUpdateRole'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'memberships.updateRole',
-			input: Inputs.membershipsUpdateRole,
-			output: Outputs.membershipsUpdateRole,
-		},
-		input,
-		({ membershipId, role }) => ({
-			method: 'PATCH',
-			path: `/organization_memberships/${segment(membershipId)}`,
-			body: { role },
-		}),
-		{
-			log: (parsed) => ({ membershipId: parsed.membershipId, role: parsed.role }),
-		},
-	);
+export const updateMembershipRole: HappyScribeEndpoints['membershipsUpdateRole'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'memberships.updateRole',
+				input: Inputs.membershipsUpdateRole,
+				output: Outputs.membershipsUpdateRole,
+			},
+			input,
+			({ membershipId, role }) => ({
+				method: 'PATCH',
+				path: `/organization_memberships/${segment(membershipId)}`,
+				body: { role },
+			}),
+			{
+				log: (parsed) => ({
+					membershipId: parsed.membershipId,
+					role: parsed.role,
+				}),
+			},
+		);
 
 export const removeMembership: HappyScribeEndpoints['membershipsRemove'] = (
 	ctx,
