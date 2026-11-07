@@ -77,7 +77,12 @@ export const dealsCreate: FollowUpBossEndpoints['dealsCreate'] = (ctx, input) =>
 			output: Outputs.dealsCreate,
 		},
 		input,
-		(body) => ({ method: 'POST', path: '/deals', body }),
+		// Custom fields go out as top-level custom* keys, as for people.
+		({ customFields, ...rest }) => ({
+			method: 'POST',
+			path: '/deals',
+			body: { ...rest, ...(customFields ?? {}) },
+		}),
 		{
 			// 200 arrives as the created deal, either bare or wrapped.
 			shape: (raw) => envelopeOne(raw, 'deals'),
@@ -94,10 +99,10 @@ export const dealsUpdate: FollowUpBossEndpoints['dealsUpdate'] = (ctx, input) =>
 			output: Outputs.dealsUpdate,
 		},
 		input,
-		({ id, ...body }) => ({
+		({ id, customFields, ...rest }) => ({
 			method: 'PUT',
 			path: `/deals/${segment(id)}`,
-			body,
+			body: { ...rest, ...(customFields ?? {}) },
 		}),
 		{
 			shape: (raw) => envelopeOne(raw, 'deals'),

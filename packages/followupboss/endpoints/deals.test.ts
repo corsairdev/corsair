@@ -307,6 +307,36 @@ describe('deals', () => {
 		expect(result).toEqual(deal);
 	});
 
+	it('sends deal custom fields as top-level custom* keys on create and update', async () => {
+		respond(deal);
+		await invoke(dealsCreate, {
+			name: 'adding deal',
+			stageId: 5,
+			customFields: {
+				customClosingDate: '2026-12-01',
+				customLender: 'Acme Bank',
+			},
+		});
+		expect(lastRequest().body).toEqual({
+			name: 'adding deal',
+			stageId: 5,
+			customClosingDate: '2026-12-01',
+			customLender: 'Acme Bank',
+		});
+
+		respond(deal);
+		await invoke(dealsUpdate, {
+			id: 2146,
+			customFields: { customClosingDate: null },
+		});
+		expect(lastRequest()).toMatchObject({
+			method: 'PUT',
+			path: '/v1/deals/2146',
+			body: { customClosingDate: null },
+		});
+		expect(lastRequest().body).not.toHaveProperty('customFields');
+	});
+
 	it('delete answers {id, resource} from the empty 200 body', async () => {
 		respond({});
 

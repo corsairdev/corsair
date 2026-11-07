@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import {
+	CustomFieldsSchema,
 	DeletedResponseSchema,
 	FubFlagSchema,
 	FubMetadataSchema,
@@ -232,6 +233,9 @@ const DealsCreateInputSchema = z.object({
 	name: z.string().describe('Name of the deal.'),
 	stageId: IdSchema.describe('The stage that this deal should be assigned to.'),
 	description: z.string().optional(),
+	customFields: CustomFieldsSchema.optional().describe(
+		'Deal custom field values keyed by their `custom…` name (e.g. `{ customClosingDate: "2026-12-01" }`); sent as top-level fields.',
+	),
 	peopleIds: z
 		.array(IdSchema)
 		.optional()
@@ -281,6 +285,9 @@ const DealsUpdateInputSchema = z.object({
 	name: z.string().optional(),
 	stageId: IdSchema.optional(),
 	description: z.string().optional(),
+	customFields: CustomFieldsSchema.optional().describe(
+		'Deal custom field values keyed by their `custom…` name (e.g. `{ customClosingDate: "2026-12-01" }`); sent as top-level fields.',
+	),
 	peopleIds: z.array(IdSchema).optional(),
 	userIds: z.array(IdSchema).optional(),
 	price: z.number().int().optional(),
