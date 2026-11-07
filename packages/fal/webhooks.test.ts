@@ -154,6 +154,56 @@ describe('fal key rotation', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});
 
+	it('shares one fetch between deliveries that arrive together', async () => {
+		resetFalJwksCache();
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValue({ ok: true, json: async () => ({ keys: JWKS }) });
+		global.fetch = fetchMock as unknown as typeof fetch;
+
+		const results = await Promise.all(
+			[1, 2, 3].map(() =>
+				verifyFalWebhookSignature(sign({ timestampSeconds: NOW_S }), {
+					now: NOW_MS,
+				}),
+			),
+		);
+		expect(results).toEqual([
+			{ valid: true },
+			{ valid: true },
+			{ valid: true },
+		]);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('waits a minute after a failed fetch before trying again', async () => {
+		resetFalJwksCache();
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce({ ok: false, status: 503 })
+			.mockResolvedValue({ ok: true, json: async () => ({ keys: JWKS }) });
+		global.fetch = fetchMock as unknown as typeof fetch;
+
+		const first = await verifyFalWebhookSignature(
+			sign({ timestampSeconds: NOW_S }),
+			{ now: NOW_MS },
+		);
+		const soon = await verifyFalWebhookSignature(
+			sign({ timestampSeconds: NOW_S }),
+			{ now: NOW_MS + 30_000 },
+		);
+		expect(first).toMatchObject({ valid: false, retryable: true });
+		expect(soon).toMatchObject({ valid: false, retryable: true });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+
+		const later = await verifyFalWebhookSignature(
+			sign({ timestampSeconds: NOW_S + 61 }),
+			{ now: NOW_MS + 61_000 },
+		);
+		expect(later).toEqual({ valid: true });
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
 	it('does not refetch more than once a minute for bad signatures', async () => {
 		resetFalJwksCache();
 		const fetchMock = jest

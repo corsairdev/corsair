@@ -428,7 +428,12 @@ const RequestsDeletePayloadsResponseSchema = z
 			z
 				.object({
 					link: z.string(),
-					exception: z.string().nullish(),
+					exception: z
+						.string()
+						.nullish()
+						.describe(
+							'Set when fal could not delete this file; it is still there.',
+						),
 				})
 				.loose(),
 		),

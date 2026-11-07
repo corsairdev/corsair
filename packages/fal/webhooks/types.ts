@@ -116,23 +116,19 @@ const TIMESTAMP_LEEWAY_SECONDS = 300;
 
 export type FalJwk = { kty?: string; crv?: string; kid?: string; x?: string };
 
-/** A signature miss refetches the keys (fal may have rotated), at most once a minute. */
-const JWKS_REFRESH_MIN_MS = 60 * 1000;
+/**
+ * At most one fetch of fal's keys a minute, failed ones included: a signature
+ * miss asks for a refetch (fal may have rotated), and a burst of misses or an
+ * outage must not turn into a request per delivery.
+ */
+const JWKS_FETCH_MIN_INTERVAL_MS = 60 * 1000;
 
 let jwksCache: { keys: FalJwk[]; fetchedAt: number } | null = null;
+let lastFetchAttemptAt = Number.NEGATIVE_INFINITY;
+// Deliveries that need the keys while a fetch is under way share it.
+let pendingFetch: Promise<FalJwk[]> | null = null;
 
-export async function fetchFalJwks(
-	now = Date.now(),
-	options: { refresh?: boolean } = {},
-): Promise<FalJwk[]> {
-	const age = jwksCache ? now - jwksCache.fetchedAt : Number.POSITIVE_INFINITY;
-	if (
-		jwksCache &&
-		age < JWKS_CACHE_MS &&
-		!(options.refresh && age >= JWKS_REFRESH_MIN_MS)
-	) {
-		return jwksCache.keys;
-	}
+async function loadFalJwks(now: number): Promise<FalJwk[]> {
 	const response = await fetch(FAL_JWKS_URL, {
 		signal: AbortSignal.timeout(10_000),
 	});
@@ -145,9 +141,34 @@ export async function fetchFalJwks(
 	return keys;
 }
 
-/** Clears the cached key set (tests, or after a rotation). */
+export async function fetchFalJwks(
+	now = Date.now(),
+	options: { refresh?: boolean } = {},
+): Promise<FalJwk[]> {
+	if (pendingFetch) return pendingFetch;
+
+	const fresh = jwksCache !== null && now - jwksCache.fetchedAt < JWKS_CACHE_MS;
+	const mayFetch = now - lastFetchAttemptAt >= JWKS_FETCH_MIN_INTERVAL_MS;
+	if (jwksCache && fresh && !(options.refresh && mayFetch)) {
+		return jwksCache.keys;
+	}
+	if (!mayFetch) {
+		// No usable keys and the last attempt, under a minute ago, failed.
+		throw new Error('fal JWKS fetch failed under a minute ago');
+	}
+
+	lastFetchAttemptAt = now;
+	pendingFetch = loadFalJwks(now).finally(() => {
+		pendingFetch = null;
+	});
+	return pendingFetch;
+}
+
+/** Clears the cached key set and fetch limits (tests, or after a rotation). */
 export function resetFalJwksCache(): void {
 	jwksCache = null;
+	lastFetchAttemptAt = Number.NEGATIVE_INFINITY;
+	pendingFetch = null;
 }
 
 // DER prefix that wraps a raw 32-byte Ed25519 key as SubjectPublicKeyInfo.

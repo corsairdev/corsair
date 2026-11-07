@@ -498,7 +498,7 @@ await corsair.fal.api.requests.deletePayloads({ requestId: '<request id>' });
 |------|------|----------|-------------|
 | `requestId` | `string` | Yes | — |
 
-Needs a full-access fal key; inference-only keys get 403. Deletes the request's stored input and output payloads and the files it generated, for good. Files the request took as input (uploads, shared URLs) stay on fal's CDN.
+Needs a full-access fal key; inference-only keys get 403. Deletes the request's stored input and output payloads and the files it generated, for good. Files the request took as input (uploads, shared URLs) stay on fal's CDN. A file fal could not delete comes back with a non-null `exception` in `cdn_delete_results` rather than an error, so check each entry.
 
 
 
