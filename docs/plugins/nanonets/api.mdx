@@ -1,0 +1,1276 @@
+---
+title: API
+description: "API reference for Nanonets: every `nanonets.api.*` operation with input and output types."
+---
+
+Every `nanonets.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Files
+
+### approve
+
+`files.approve`
+
+Approve a validated file from an approval stage, which can trigger exports
+
+**Risk:** `write`
+
+```ts
+await corsair.nanonets.api.files.approve({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', request_file_id: '68d2b0f6-af9c-4c71-9d3e-2f3a4b5c6d7e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `request_file_id` | `string` | Yes | The Nanonets file ID. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### assign
+
+`files.assign`
+
+Assign files to a team member by email for review
+
+**Risk:** `write`
+
+```ts
+await corsair.nanonets.api.files.assign({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', member: 'reviewer@example.com', file_ids: ['68d2b0f6-af9c-4c71-9d3e-2f3a4b5c6d7e'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `member` | `string` | Yes | Team member email to assign to. |
+| `file_ids` | `string[]` | Yes | File IDs to assign. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### delete
+
+`files.delete`
+
+Permanently delete a file and its predictions from a model
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nanonets.api.files.delete({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', file_id: '68d2b0f6-af9c-4c71-9d3e-2f3a4b5c6d7e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `file_id` | `string` | Yes | The Nanonets file ID. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### retryExports
+
+`files.retryExports`
+
+Re-run the export integrations for the given files
+
+**Risk:** `write`
+
+```ts
+await corsair.nanonets.api.files.retryExports({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', file_ids: ['68d2b0f6-af9c-4c71-9d3e-2f3a4b5c6d7e'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `file_ids` | `string[]` | Yes | File IDs to re-export. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### retryPredictions
+
+`files.retryPredictions`
+
+Re-run OCR prediction for the given files
+
+**Risk:** `write`
+
+```ts
+await corsair.nanonets.api.files.retryPredictions({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', file_ids: ['68d2b0f6-af9c-4c71-9d3e-2f3a4b5c6d7e'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `file_ids` | `string[]` | Yes | File IDs to re-run OCR on. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### unapprove
+
+`files.unapprove`
+
+Reopen a previously approved file; it cannot be rejected here
+
+**Risk:** `write`
+
+```ts
+await corsair.nanonets.api.files.unapprove({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', request_file_id: '68d2b0f6-af9c-4c71-9d3e-2f3a4b5c6d7e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `request_file_id` | `string` | Yes | The Nanonets file ID. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### updateFields
+
+`files.updateFields`
+
+Replace a file field set: unchanged boxes stay, new boxes need is_new, and any omitted field is deleted
+
+**Risk:** `write`
+
+```ts
+await corsair.nanonets.api.files.updateFields({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', moderated_boxes: [{ id: 'box-1', label: 'total_amount', xmin: 10, ymin: 20, xmax: 200, ymax: 40, ocr_text: '120.00' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `moderated_boxes` | `object[]` | Yes | The full field list: existing boxes unchanged, new boxes with is_new: true, and any field omitted from the array is deleted. |
+
+<AccordionGroup>
+<Accordion title="moderated_boxes full type">
+
+```ts
+{
+  id?: string | null,
+  label?: string | null,
+  xmin?: number | null,
+  ymin?: number | null,
+  xmax?: number | null,
+  ymax?: number | null,
+  score?: string | number | null,
+  ocr_text?: string | null,
+  type?: string | null,
+  status?: string | null,
+  validation_status?: string | null,
+  validation_message?: string | null,
+  page?: number | string | null,
+  page_no?: number | null,
+  label_id?: string | null,
+  verification_status?: string | null,
+  failed_validation?: boolean | null,
+  row?: number | null,
+  col?: number | null,
+  row_span?: number | null,
+  col_span?: number | null,
+  text?: string | null,
+  lookup_edited?: boolean | null,
+  lookup_parent_box_ids?: string[] | null,
+  is_new?: boolean | null,
+  cells?: Record<string, any>[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+## Integrations
+
+### executeQuery
+
+`integrations.executeQuery`
+
+Run arbitrary SQL against a connected store; documented examples include UPDATE, which cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nanonets.api.integrations.executeQuery({ external_integration_id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890', query: 'select * from passports limit 10' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_integration_id` | `string` | Yes | The integration to query, from integrations.list. |
+| `query` | `string` | Yes | SQL to run against the connected store; documented examples include UPDATE, which cannot be undone. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+### list
+
+`integrations.list`
+
+List external integrations with their IDs, types and masked connection info
+
+**Risk:** `read`
+
+```ts
+await corsair.nanonets.api.integrations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="integrations full type">
+
+```ts
+{
+  id?: string | null,
+  email?: string | null,
+  name?: string | null,
+  type?: string | null,
+  info?: Record<string, any> | null,
+  status?: string | null,
+  is_internal?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### train
+
+`models.train`
+
+Train or retrain a model from its uploaded images; the model state moves through the training queue
+
+**Risk:** `write`
+
+```ts
+await corsair.nanonets.api.models.train({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string \| null` | No | — |
+| `model_type` | `string \| null` | No | — |
+| `state` | `string \| number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### updateGuidelines
+
+`models.updateGuidelines`
+
+Add or update the natural-language field and table extraction guidelines of an Instant Learning model
+
+**Risk:** `write`
+
+```ts
+await corsair.nanonets.api.models.updateGuidelines({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', field_instructions: 'Extract the invoice total and tax fields', table_instructions: 'Extract line items as a table', ai_guidelines: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `field_instructions` | `string` | Yes | Natural-language extraction instructions for fields. |
+| `table_instructions` | `string` | Yes | Natural-language extraction instructions for tables. |
+| `ai_guidelines` | `true` | Yes | Must be true to apply the guidelines. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### uploadTrainingUrls
+
+`models.uploadTrainingUrls`
+
+Add training images to a model by URL before (re)training
+
+**Risk:** `write`
+
+```ts
+await corsair.nanonets.api.models.uploadTrainingUrls({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', urls: ['https://example.com/receipt-1.png', 'https://example.com/receipt-2.png'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `urls` | `string[]` | Yes | Training image URLs. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string \| null` | No | — |
+| `model_type` | `string \| null` | No | — |
+| `state` | `string \| number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+## Predictions
+
+### createFromFile
+
+`predictions.createFromFile`
+
+Upload a base64 PNG or JPEG to an OCR model and extract fields synchronously or, with async, as a pollable request
+
+**Risk:** `write`
+
+```ts
+await corsair.nanonets.api.predictions.createFromFile({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', base64_data: '<base64 PNG or JPEG>', async: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `base64_data` | `string` | Yes | Base64-encoded PNG or JPEG image to extract fields from. |
+| `request_metadata` | `string` | No | Your identifier for the request, returned with the result. |
+| `pages_to_process` | `string` | No | Comma-separated page numbers to process, e.g. "1,2". |
+| `l` | `string` | No | ISO language code of the document; omit for best results. |
+| `async` | `boolean` | No | Process asynchronously: returns pending with a request_file_id to poll. Recommended above 3 pages. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `result` | `object[] \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  message?: string | null,
+  input?: string | null,
+  prediction?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  predicted_boxes?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  moderated_boxes?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  raw_ocr?: Record<string, any> | null,
+  page?: number | string | null,
+  request_file_id?: string | null,
+  id?: string | null,
+  is_moderated?: boolean | null,
+  request_metadata?: string | null,
+  processing_type?: string | null,
+  size?: {
+    width?: number | null,
+    height?: number | null
+  } | null,
+  rotation?: number | null,
+  file_url?: string | null,
+  filepath?: string | null,
+  approval_status?: string | null,
+  export_status?: string | null,
+  exported_at?: string | null,
+  updated_at?: string | null,
+  verified_at?: string | null,
+  verified_by?: string | null,
+  current_stage_id?: string | null,
+  uploaded_by?: string | null,
+  upload_channel?: string | null,
+  assigned_member?: string | null,
+  assigned_members?: string[] | null,
+  no_of_fields?: number | null,
+  original_file_name?: string | null,
+  day_since_epoch?: number | null,
+  url?: string | null,
+  file_metadata?: Record<string, any> | null,
+  raw_ocr_api_response?: any | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromUrls
+
+`predictions.createFromUrls`
+
+Extract fields from public image URLs with an OCR model, synchronously or as a pollable async request
+
+**Risk:** `write`
+
+```ts
+await corsair.nanonets.api.predictions.createFromUrls({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', urls: ['https://example.com/invoice.png'], pages_to_process: '1,2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `urls` | `string[]` | Yes | Public image URLs to extract fields from. |
+| `request_metadata` | `string` | No | Your identifier for the request, returned with the result. |
+| `pages_to_process` | `string` | No | Comma-separated page numbers to process, e.g. "1,2". |
+| `l` | `string` | No | ISO language code of the document; omit for best results. |
+| `async` | `boolean` | No | Process asynchronously: returns pending with a request_file_id to poll. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `result` | `object[] \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  message?: string | null,
+  input?: string | null,
+  prediction?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  predicted_boxes?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  moderated_boxes?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  raw_ocr?: Record<string, any> | null,
+  page?: number | string | null,
+  request_file_id?: string | null,
+  id?: string | null,
+  is_moderated?: boolean | null,
+  request_metadata?: string | null,
+  processing_type?: string | null,
+  size?: {
+    width?: number | null,
+    height?: number | null
+  } | null,
+  rotation?: number | null,
+  file_url?: string | null,
+  filepath?: string | null,
+  approval_status?: string | null,
+  export_status?: string | null,
+  exported_at?: string | null,
+  updated_at?: string | null,
+  verified_at?: string | null,
+  verified_by?: string | null,
+  current_stage_id?: string | null,
+  uploaded_by?: string | null,
+  upload_channel?: string | null,
+  assigned_member?: string | null,
+  assigned_members?: string[] | null,
+  no_of_fields?: number | null,
+  original_file_name?: string | null,
+  day_since_epoch?: number | null,
+  url?: string | null,
+  file_metadata?: Record<string, any> | null,
+  raw_ocr_api_response?: any | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFileByFileId
+
+`predictions.getFileByFileId`
+
+Fetch a whole prediction file by request file ID, the poll target for async requests
+
+**Risk:** `read`
+
+```ts
+await corsair.nanonets.api.predictions.getFileByFileId({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', request_file_id: '68d2b0f6-af9c-4c71-9d3e-2f3a4b5c6d7e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `request_file_id` | `string` | Yes | The Nanonets file ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `result` | `object[] \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  message?: string | null,
+  input?: string | null,
+  prediction?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  predicted_boxes?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  moderated_boxes?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  raw_ocr?: Record<string, any> | null,
+  page?: number | string | null,
+  request_file_id?: string | null,
+  id?: string | null,
+  is_moderated?: boolean | null,
+  request_metadata?: string | null,
+  processing_type?: string | null,
+  size?: {
+    width?: number | null,
+    height?: number | null
+  } | null,
+  rotation?: number | null,
+  file_url?: string | null,
+  filepath?: string | null,
+  approval_status?: string | null,
+  export_status?: string | null,
+  exported_at?: string | null,
+  updated_at?: string | null,
+  verified_at?: string | null,
+  verified_by?: string | null,
+  current_stage_id?: string | null,
+  uploaded_by?: string | null,
+  upload_channel?: string | null,
+  assigned_member?: string | null,
+  assigned_members?: string[] | null,
+  no_of_fields?: number | null,
+  original_file_name?: string | null,
+  day_since_epoch?: number | null,
+  url?: string | null,
+  file_metadata?: Record<string, any> | null,
+  raw_ocr_api_response?: any | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFileByPageId
+
+`predictions.getFileByPageId`
+
+Fetch one prediction page with its boxes and raw OCR output
+
+**Risk:** `read`
+
+```ts
+await corsair.nanonets.api.predictions.getFileByPageId({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', id: '68d2b0f6-af9c-4c71-9d3e-2f3a4b5c6d7e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `id` | `string` | Yes | The page ID, from a list or async response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+| `result` | `object[] \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  message?: string | null,
+  input?: string | null,
+  prediction?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  predicted_boxes?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  moderated_boxes?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  raw_ocr?: Record<string, any> | null,
+  page?: number | string | null,
+  request_file_id?: string | null,
+  id?: string | null,
+  is_moderated?: boolean | null,
+  request_metadata?: string | null,
+  processing_type?: string | null,
+  size?: {
+    width?: number | null,
+    height?: number | null
+  } | null,
+  rotation?: number | null,
+  file_url?: string | null,
+  filepath?: string | null,
+  approval_status?: string | null,
+  export_status?: string | null,
+  exported_at?: string | null,
+  updated_at?: string | null,
+  verified_at?: string | null,
+  verified_by?: string | null,
+  current_stage_id?: string | null,
+  uploaded_by?: string | null,
+  upload_channel?: string | null,
+  assigned_member?: string | null,
+  assigned_members?: string[] | null,
+  no_of_fields?: number | null,
+  original_file_name?: string | null,
+  day_since_epoch?: number | null,
+  url?: string | null,
+  file_metadata?: Record<string, any> | null,
+  raw_ocr_api_response?: any | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFiles
+
+`predictions.listFiles`
+
+List a model prediction files in a day-since-epoch window, split into moderated and unmoderated
+
+**Risk:** `read`
+
+```ts
+await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', start_day_interval: 20590, current_batch_day: 20591 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | The Nanonets model ID. |
+| `start_day_interval` | `number` | Yes | Window start as days since 1970-01-01 GMT. |
+| `current_batch_day` | `number` | Yes | Window end as days since 1970-01-01 GMT. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `moderated_images_count` | `number \| null` | No | — |
+| `unmoderated_images_count` | `number \| null` | No | — |
+| `moderated_images` | `object[] \| null` | No | — |
+| `unmoderated_images` | `object[] \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="moderated_images full type">
+
+```ts
+{
+  model_id?: string | null,
+  day_since_epoch?: number | null,
+  is_moderated?: boolean | null,
+  id?: string | null,
+  url?: string | null,
+  predicted_boxes?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  moderated_boxes?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  size?: {
+    width?: number | null,
+    height?: number | null
+  } | null,
+  page?: number | string | null,
+  request_file_id?: string | null,
+  original_file_name?: string | null,
+  assigned_member?: string | null,
+  assigned_members?: string[] | null,
+  no_of_fields?: number | null,
+  export_status?: string | null,
+  exported_at?: string | null,
+  updated_at?: string | null,
+  verified_at?: string | null,
+  verified_by?: string | null,
+  current_stage_id?: string | null,
+  uploaded_by?: string | null,
+  upload_channel?: string | null,
+  file_url?: string | null,
+  request_metadata?: string | null,
+  raw_ocr?: Record<string, any> | null,
+  approval_status?: string | null,
+  processing_type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="unmoderated_images full type">
+
+```ts
+{
+  model_id?: string | null,
+  day_since_epoch?: number | null,
+  is_moderated?: boolean | null,
+  id?: string | null,
+  url?: string | null,
+  predicted_boxes?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  moderated_boxes?: {
+    id?: string | null,
+    label?: string | null,
+    xmin?: number | null,
+    ymin?: number | null,
+    xmax?: number | null,
+    ymax?: number | null,
+    score?: string | number | null,
+    ocr_text?: string | null,
+    type?: string | null,
+    status?: string | null,
+    validation_status?: string | null,
+    validation_message?: string | null,
+    page?: number | string | null,
+    page_no?: number | null,
+    label_id?: string | null,
+    verification_status?: string | null,
+    failed_validation?: boolean | null,
+    row?: number | null,
+    col?: number | null,
+    row_span?: number | null,
+    col_span?: number | null,
+    text?: string | null,
+    lookup_edited?: boolean | null,
+    lookup_parent_box_ids?: string[] | null,
+    is_new?: boolean | null,
+    cells?: Record<string, any>[] | null
+  }[] | null,
+  size?: {
+    width?: number | null,
+    height?: number | null
+  } | null,
+  page?: number | string | null,
+  request_file_id?: string | null,
+  original_file_name?: string | null,
+  assigned_member?: string | null,
+  assigned_members?: string[] | null,
+  no_of_fields?: number | null,
+  export_status?: string | null,
+  exported_at?: string | null,
+  updated_at?: string | null,
+  verified_at?: string | null,
+  verified_by?: string | null,
+  current_stage_id?: string | null,
+  uploaded_by?: string | null,
+  upload_channel?: string | null,
+  file_url?: string | null,
+  request_metadata?: string | null,
+  raw_ocr?: Record<string, any> | null,
+  approval_status?: string | null,
+  processing_type?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
