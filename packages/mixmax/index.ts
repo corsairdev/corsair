@@ -26,6 +26,7 @@ import {
 	Qa,
 	Reports,
 	Rules,
+	Salesforce,
 	SequenceFolders,
 	Sequences,
 	Snippets,
@@ -155,6 +156,32 @@ export type MixmaxEndpoints = {
 	insightsReportsUpdate: MixmaxEndpoint<'insightsReportsUpdate'>;
 	insightsReportsDelete: MixmaxEndpoint<'insightsReportsDelete'>;
 	reportsRunDataTable: MixmaxEndpoint<'reportsRunDataTable'>;
+	salesforceListAccounts: MixmaxEndpoint<'salesforceListAccounts'>;
+	salesforceCreateAccount: MixmaxEndpoint<'salesforceCreateAccount'>;
+	salesforceGetAccountImplicit: MixmaxEndpoint<'salesforceGetAccountImplicit'>;
+	salesforceGetAccount: MixmaxEndpoint<'salesforceGetAccount'>;
+	salesforceUpdateAccount: MixmaxEndpoint<'salesforceUpdateAccount'>;
+	salesforceCreateContact: MixmaxEndpoint<'salesforceCreateContact'>;
+	salesforceGetContact: MixmaxEndpoint<'salesforceGetContact'>;
+	salesforceUpdateContact: MixmaxEndpoint<'salesforceUpdateContact'>;
+	salesforceListContactTasks: MixmaxEndpoint<'salesforceListContactTasks'>;
+	salesforceGetContactOrLead: MixmaxEndpoint<'salesforceGetContactOrLead'>;
+	salesforceCreateLead: MixmaxEndpoint<'salesforceCreateLead'>;
+	salesforceGetLead: MixmaxEndpoint<'salesforceGetLead'>;
+	salesforceUpdateLead: MixmaxEndpoint<'salesforceUpdateLead'>;
+	salesforceListLeadTasks: MixmaxEndpoint<'salesforceListLeadTasks'>;
+	salesforceCreateOpportunity: MixmaxEndpoint<'salesforceCreateOpportunity'>;
+	salesforceGetOpportunity: MixmaxEndpoint<'salesforceGetOpportunity'>;
+	salesforceUpdateOpportunity: MixmaxEndpoint<'salesforceUpdateOpportunity'>;
+	salesforceDeleteOpportunity: MixmaxEndpoint<'salesforceDeleteOpportunity'>;
+	salesforceSearch: MixmaxEndpoint<'salesforceSearch'>;
+	salesforceSyncedFields: MixmaxEndpoint<'salesforceSyncedFields'>;
+	salesforceCreateTask: MixmaxEndpoint<'salesforceCreateTask'>;
+	salesforceGetTask: MixmaxEndpoint<'salesforceGetTask'>;
+	salesforceUpdateTask: MixmaxEndpoint<'salesforceUpdateTask'>;
+	salesforceDeleteTask: MixmaxEndpoint<'salesforceDeleteTask'>;
+	salesforceGetWhat: MixmaxEndpoint<'salesforceGetWhat'>;
+	salesforceGetWho: MixmaxEndpoint<'salesforceGetWho'>;
 };
 
 const mixmaxEndpointsNested = {
@@ -294,6 +321,34 @@ const mixmaxEndpointsNested = {
 	},
 	reports: {
 		runDataTable: Reports.runDataTable,
+	},
+	salesforce: {
+		listAccounts: Salesforce.listAccounts,
+		createAccount: Salesforce.createAccount,
+		getAccountImplicit: Salesforce.getAccountImplicit,
+		getAccount: Salesforce.getAccount,
+		updateAccount: Salesforce.updateAccount,
+		createContact: Salesforce.createContact,
+		getContact: Salesforce.getContact,
+		updateContact: Salesforce.updateContact,
+		listContactTasks: Salesforce.listContactTasks,
+		getContactOrLead: Salesforce.getContactOrLead,
+		createLead: Salesforce.createLead,
+		getLead: Salesforce.getLead,
+		updateLead: Salesforce.updateLead,
+		listLeadTasks: Salesforce.listLeadTasks,
+		createOpportunity: Salesforce.createOpportunity,
+		getOpportunity: Salesforce.getOpportunity,
+		updateOpportunity: Salesforce.updateOpportunity,
+		deleteOpportunity: Salesforce.deleteOpportunity,
+		search: Salesforce.search,
+		syncedFields: Salesforce.syncedFields,
+		createTask: Salesforce.createTask,
+		getTask: Salesforce.getTask,
+		updateTask: Salesforce.updateTask,
+		deleteTask: Salesforce.deleteTask,
+		getWhat: Salesforce.getWhat,
+		getWho: Salesforce.getWho,
 	},
 } as const;
 
@@ -638,6 +693,110 @@ export const mixmaxEndpointSchemas = {
 	'reports.runDataTable': {
 		input: MixmaxEndpointInputSchemas.reportsRunDataTable,
 		output: MixmaxEndpointOutputSchemas.reportsRunDataTable,
+	},
+	'salesforce.listAccounts': {
+		input: MixmaxEndpointInputSchemas.salesforceListAccounts,
+		output: MixmaxEndpointOutputSchemas.salesforceListAccounts,
+	},
+	'salesforce.createAccount': {
+		input: MixmaxEndpointInputSchemas.salesforceCreateAccount,
+		output: MixmaxEndpointOutputSchemas.salesforceCreateAccount,
+	},
+	'salesforce.getAccountImplicit': {
+		input: MixmaxEndpointInputSchemas.salesforceGetAccountImplicit,
+		output: MixmaxEndpointOutputSchemas.salesforceGetAccountImplicit,
+	},
+	'salesforce.getAccount': {
+		input: MixmaxEndpointInputSchemas.salesforceGetAccount,
+		output: MixmaxEndpointOutputSchemas.salesforceGetAccount,
+	},
+	'salesforce.updateAccount': {
+		input: MixmaxEndpointInputSchemas.salesforceUpdateAccount,
+		output: MixmaxEndpointOutputSchemas.salesforceUpdateAccount,
+	},
+	'salesforce.createContact': {
+		input: MixmaxEndpointInputSchemas.salesforceCreateContact,
+		output: MixmaxEndpointOutputSchemas.salesforceCreateContact,
+	},
+	'salesforce.getContact': {
+		input: MixmaxEndpointInputSchemas.salesforceGetContact,
+		output: MixmaxEndpointOutputSchemas.salesforceGetContact,
+	},
+	'salesforce.updateContact': {
+		input: MixmaxEndpointInputSchemas.salesforceUpdateContact,
+		output: MixmaxEndpointOutputSchemas.salesforceUpdateContact,
+	},
+	'salesforce.listContactTasks': {
+		input: MixmaxEndpointInputSchemas.salesforceListContactTasks,
+		output: MixmaxEndpointOutputSchemas.salesforceListContactTasks,
+	},
+	'salesforce.getContactOrLead': {
+		input: MixmaxEndpointInputSchemas.salesforceGetContactOrLead,
+		output: MixmaxEndpointOutputSchemas.salesforceGetContactOrLead,
+	},
+	'salesforce.createLead': {
+		input: MixmaxEndpointInputSchemas.salesforceCreateLead,
+		output: MixmaxEndpointOutputSchemas.salesforceCreateLead,
+	},
+	'salesforce.getLead': {
+		input: MixmaxEndpointInputSchemas.salesforceGetLead,
+		output: MixmaxEndpointOutputSchemas.salesforceGetLead,
+	},
+	'salesforce.updateLead': {
+		input: MixmaxEndpointInputSchemas.salesforceUpdateLead,
+		output: MixmaxEndpointOutputSchemas.salesforceUpdateLead,
+	},
+	'salesforce.listLeadTasks': {
+		input: MixmaxEndpointInputSchemas.salesforceListLeadTasks,
+		output: MixmaxEndpointOutputSchemas.salesforceListLeadTasks,
+	},
+	'salesforce.createOpportunity': {
+		input: MixmaxEndpointInputSchemas.salesforceCreateOpportunity,
+		output: MixmaxEndpointOutputSchemas.salesforceCreateOpportunity,
+	},
+	'salesforce.getOpportunity': {
+		input: MixmaxEndpointInputSchemas.salesforceGetOpportunity,
+		output: MixmaxEndpointOutputSchemas.salesforceGetOpportunity,
+	},
+	'salesforce.updateOpportunity': {
+		input: MixmaxEndpointInputSchemas.salesforceUpdateOpportunity,
+		output: MixmaxEndpointOutputSchemas.salesforceUpdateOpportunity,
+	},
+	'salesforce.deleteOpportunity': {
+		input: MixmaxEndpointInputSchemas.salesforceDeleteOpportunity,
+		output: MixmaxEndpointOutputSchemas.salesforceDeleteOpportunity,
+	},
+	'salesforce.search': {
+		input: MixmaxEndpointInputSchemas.salesforceSearch,
+		output: MixmaxEndpointOutputSchemas.salesforceSearch,
+	},
+	'salesforce.syncedFields': {
+		input: MixmaxEndpointInputSchemas.salesforceSyncedFields,
+		output: MixmaxEndpointOutputSchemas.salesforceSyncedFields,
+	},
+	'salesforce.createTask': {
+		input: MixmaxEndpointInputSchemas.salesforceCreateTask,
+		output: MixmaxEndpointOutputSchemas.salesforceCreateTask,
+	},
+	'salesforce.getTask': {
+		input: MixmaxEndpointInputSchemas.salesforceGetTask,
+		output: MixmaxEndpointOutputSchemas.salesforceGetTask,
+	},
+	'salesforce.updateTask': {
+		input: MixmaxEndpointInputSchemas.salesforceUpdateTask,
+		output: MixmaxEndpointOutputSchemas.salesforceUpdateTask,
+	},
+	'salesforce.deleteTask': {
+		input: MixmaxEndpointInputSchemas.salesforceDeleteTask,
+		output: MixmaxEndpointOutputSchemas.salesforceDeleteTask,
+	},
+	'salesforce.getWhat': {
+		input: MixmaxEndpointInputSchemas.salesforceGetWhat,
+		output: MixmaxEndpointOutputSchemas.salesforceGetWhat,
+	},
+	'salesforce.getWho': {
+		input: MixmaxEndpointInputSchemas.salesforceGetWho,
+		output: MixmaxEndpointOutputSchemas.salesforceGetWho,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof mixmaxEndpointsNested
@@ -1013,6 +1172,110 @@ export const mixmaxEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Run a Mixmax reporting query and return the aggregated data table buckets.',
+	},
+	'salesforce.listAccounts': {
+		riskLevel: 'read',
+		description: 'List the Salesforce accounts synced to the user’s Mixmax.',
+	},
+	'salesforce.createAccount': {
+		riskLevel: 'write',
+		description: 'Create a Salesforce account through Mixmax.',
+	},
+	'salesforce.getAccountImplicit': {
+		riskLevel: 'read',
+		description: 'Look up the Salesforce account matching an email domain.',
+	},
+	'salesforce.getAccount': {
+		riskLevel: 'read',
+		description: 'Retrieve one Salesforce account synced to Mixmax.',
+	},
+	'salesforce.updateAccount': {
+		riskLevel: 'write',
+		description: 'Update a Salesforce account through Mixmax.',
+	},
+	'salesforce.createContact': {
+		riskLevel: 'write',
+		description: 'Create a Salesforce contact through Mixmax.',
+	},
+	'salesforce.getContact': {
+		riskLevel: 'read',
+		description: 'Retrieve one Salesforce contact synced to Mixmax.',
+	},
+	'salesforce.updateContact': {
+		riskLevel: 'write',
+		description: 'Update a Salesforce contact through Mixmax.',
+	},
+	'salesforce.listContactTasks': {
+		riskLevel: 'read',
+		description: 'List the Salesforce tasks of one contact.',
+	},
+	'salesforce.getContactOrLead': {
+		riskLevel: 'read',
+		description: 'Look up the Salesforce contact or lead matching an email address.',
+	},
+	'salesforce.createLead': {
+		riskLevel: 'write',
+		description: 'Create a Salesforce lead through Mixmax.',
+	},
+	'salesforce.getLead': {
+		riskLevel: 'read',
+		description: 'Retrieve one Salesforce lead synced to Mixmax.',
+	},
+	'salesforce.updateLead': {
+		riskLevel: 'write',
+		description: 'Update a Salesforce lead through Mixmax.',
+	},
+	'salesforce.listLeadTasks': {
+		riskLevel: 'read',
+		description: 'List the Salesforce tasks of one lead.',
+	},
+	'salesforce.createOpportunity': {
+		riskLevel: 'write',
+		description: 'Create a Salesforce opportunity through Mixmax.',
+	},
+	'salesforce.getOpportunity': {
+		riskLevel: 'read',
+		description: 'Retrieve one Salesforce opportunity synced to Mixmax.',
+	},
+	'salesforce.updateOpportunity': {
+		riskLevel: 'write',
+		description: 'Update a Salesforce opportunity through Mixmax.',
+	},
+	'salesforce.deleteOpportunity': {
+		riskLevel: 'destructive',
+		description: 'Delete a Salesforce opportunity through Mixmax.',
+	},
+	'salesforce.search': {
+		riskLevel: 'read',
+		description: 'Search Salesforce records of one object type through Mixmax.',
+	},
+	'salesforce.syncedFields': {
+		riskLevel: 'read',
+		description: 'List the Salesforce fields Mixmax syncs for each object type.',
+	},
+	'salesforce.createTask': {
+		riskLevel: 'write',
+		description: 'Create a Salesforce task through Mixmax.',
+	},
+	'salesforce.getTask': {
+		riskLevel: 'read',
+		description: 'Retrieve one Salesforce task synced to Mixmax.',
+	},
+	'salesforce.updateTask': {
+		riskLevel: 'write',
+		description: 'Update a Salesforce task through Mixmax.',
+	},
+	'salesforce.deleteTask': {
+		riskLevel: 'destructive',
+		description: 'Delete a Salesforce task through Mixmax.',
+	},
+	'salesforce.getWhat': {
+		riskLevel: 'read',
+		description: 'Resolve any Salesforce record id to its related “what” object.',
+	},
+	'salesforce.getWho': {
+		riskLevel: 'read',
+		description: 'Resolve any Salesforce record id to its related “who” object.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof mixmaxEndpointsNested>;
 

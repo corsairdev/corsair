@@ -16,6 +16,7 @@ export {
 	MixmaxEndpointOutputSchemas,
 } from './registry';
 export * from './rules-types';
+export * from './salesforce-types';
 export * from './sequences-types';
 export * from './snippets-types';
 export * from './tasks-types';

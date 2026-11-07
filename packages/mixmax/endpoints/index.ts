@@ -53,6 +53,34 @@ import {
 	rulesUpdateAction,
 } from './rules';
 import {
+	salesforceListAccounts,
+	salesforceCreateAccount,
+	salesforceGetAccountImplicit,
+	salesforceGetAccount,
+	salesforceUpdateAccount,
+	salesforceCreateContact,
+	salesforceGetContact,
+	salesforceUpdateContact,
+	salesforceListContactTasks,
+	salesforceGetContactOrLead,
+	salesforceCreateLead,
+	salesforceGetLead,
+	salesforceUpdateLead,
+	salesforceListLeadTasks,
+	salesforceCreateOpportunity,
+	salesforceGetOpportunity,
+	salesforceUpdateOpportunity,
+	salesforceDeleteOpportunity,
+	salesforceSearch,
+	salesforceSyncedFields,
+	salesforceCreateTask,
+	salesforceGetTask,
+	salesforceUpdateTask,
+	salesforceDeleteTask,
+	salesforceGetWhat,
+	salesforceGetWho
+} from './salesforce';
+import {
 	sequenceFoldersAddSequences,
 	sequenceFoldersCreate,
 	sequenceFoldersDelete,
@@ -241,6 +269,35 @@ export const YesNo = {
 export const Polls = {
 	list: pollsList,
 	get: pollsGet,
+};
+
+export const Salesforce = {
+	listAccounts: salesforceListAccounts,
+	createAccount: salesforceCreateAccount,
+	getAccountImplicit: salesforceGetAccountImplicit,
+	getAccount: salesforceGetAccount,
+	updateAccount: salesforceUpdateAccount,
+	createContact: salesforceCreateContact,
+	getContact: salesforceGetContact,
+	updateContact: salesforceUpdateContact,
+	listContactTasks: salesforceListContactTasks,
+	getContactOrLead: salesforceGetContactOrLead,
+	createLead: salesforceCreateLead,
+	getLead: salesforceGetLead,
+	updateLead: salesforceUpdateLead,
+	listLeadTasks: salesforceListLeadTasks,
+	createOpportunity: salesforceCreateOpportunity,
+	getOpportunity: salesforceGetOpportunity,
+	updateOpportunity: salesforceUpdateOpportunity,
+	deleteOpportunity: salesforceDeleteOpportunity,
+	search: salesforceSearch,
+	syncedFields: salesforceSyncedFields,
+	createTask: salesforceCreateTask,
+	getTask: salesforceGetTask,
+	updateTask: salesforceUpdateTask,
+	deleteTask: salesforceDeleteTask,
+	getWhat: salesforceGetWhat,
+	getWho: salesforceGetWho,
 };
 
 export const Unsubscribes = {
