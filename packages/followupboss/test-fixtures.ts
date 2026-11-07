@@ -39,7 +39,7 @@ export const person = {
 		},
 	],
 	tags: ['Buyer', 'Relocation'],
-	timeframes: [{ name: 'Move', from: '2026-08-01', to: '2026-09-01' }],
+	timeframeId: 1,
 	background: 'Referred by Dana Cole at Frontdesk.',
 	picture: 'https://pictures.example/ava-reyes.jpg',
 	assignedUserId: 21,
@@ -165,9 +165,8 @@ export const appointmentType = {
 };
 
 export const timeframe = {
-	name: 'Move',
-	from: '2026-08-01',
-	to: '2026-09-01',
+	id: 1,
+	timeframe: '0-3 Months',
 };
 
 export const smartList = {

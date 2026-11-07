@@ -83,11 +83,12 @@ export const AddressSchema = z
 // similar), so their map cannot be enumerated; values pass through as sent.
 export const CustomFieldsSchema = z.record(z.string(), z.unknown());
 
+// One of the account's buying timeframes, e.g. `{ id: 1, timeframe: '0-3 Months' }`.
+// A person carries the chosen one as timeframeId.
 export const TimeframeSchema = z
 	.object({
-		name: z.string().nullish(),
-		from: z.string().nullish(),
-		to: z.string().nullish(),
+		id: IdSchema.nullish(),
+		timeframe: z.string().nullish(),
 	})
 	.loose();
 
@@ -113,9 +114,12 @@ export const PersonSchema = z
 		phones: z.array(PhoneSchema).nullish(),
 		addresses: z.array(AddressSchema).nullish(),
 		tags: z.array(z.string()).nullish(),
-		timeframes: z.array(TimeframeSchema).nullish(),
+		timeframeId: IdSchema.nullish(),
 		background: z.string().nullish(),
-		picture: z.string().nullish(),
+		// The reference examples send `{ small: <url> }`.
+		picture: z
+			.union([z.string(), z.object({ small: z.string().nullish() }).loose()])
+			.nullish(),
 		assignedUserId: z.number().nullish(),
 		assignedPondId: z.number().nullish(),
 		assignedLenderId: z.number().nullish(),
@@ -188,6 +192,12 @@ export type PeopleListResponse = z.infer<typeof PeopleListResponseSchema>;
 
 const PeopleGetInputSchema = z.object({
 	id: IdSchema.describe('The person ID.'),
+	fields: z
+		.string()
+		.optional()
+		.describe(
+			'Comma-separated fields to return, or `allFields`; custom fields are only returned when requested here.',
+		),
 });
 
 export type PeopleGetInput = z.infer<typeof PeopleGetInputSchema>;
@@ -216,7 +226,19 @@ const PeopleCreateInputSchema = z.object({
 	assignedLenderId: z.number().int().optional(),
 	background: z.string().optional(),
 	tags: z.array(z.string()).optional(),
-	timeframes: z.array(TimeframeSchema).optional(),
+	timeframeId: z
+		.number()
+		.int()
+		.optional()
+		.describe('Buying timeframe ID from timeframes.list.'),
+	collaborators: z
+		.array(z.number().int())
+		.optional()
+		.describe('User IDs to set as collaborators on the person.'),
+	createdAt: z
+		.string()
+		.optional()
+		.describe('Backdates the creation time, for importing historical leads.'),
 	customFields: CustomFieldsSchema.optional(),
 	emails: z.array(EmailSchema).min(1).optional(),
 	phones: z.array(PhoneSchema).min(1).optional(),
@@ -253,7 +275,11 @@ const PeopleUpdateInputSchema = z.object({
 	phones: z.array(PhoneSchema).min(1).optional(),
 	addresses: z.array(AddressSchema).optional(),
 	tags: z.array(z.string()).optional(),
-	timeframes: z.array(TimeframeSchema).optional(),
+	timeframeId: z
+		.number()
+		.int()
+		.optional()
+		.describe('Buying timeframe ID from timeframes.list.'),
 	customFields: CustomFieldsSchema.optional(),
 	mergeTags: z
 		.boolean()

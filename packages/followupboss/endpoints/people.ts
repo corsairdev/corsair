@@ -47,7 +47,11 @@ export const get: FollowUpBossEndpoints['peopleGet'] = (ctx, input) =>
 		ctx,
 		{ event: 'people.get', input: Inputs.peopleGet, output: Outputs.peopleGet },
 		input,
-		({ id }) => ({ method: 'GET', path: `/people/${segment(id)}` }),
+		({ id, fields }) => ({
+			method: 'GET',
+			path: `/people/${segment(id)}`,
+			query: { fields },
+		}),
 		{
 			// A single fetch arrives as `{ people: [person] }`.
 			shape: (raw) => envelopeOne(raw, 'people'),
