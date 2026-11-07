@@ -12,3 +12,21 @@ export function isAlreadyPublished(output) {
 		output ?? '',
 	);
 }
+
+// A duplicate message only proves npm has *seen* the version. If an earlier
+// publish was accepted but never finished (a staged or timed-out publish), the
+// version may still be missing, and skipping it would report a release that
+// never happened. Poll for the exact version and give up after a bounded wait.
+// `view` returns the version npm serves for `name@version` (or null) and
+// `sleep` waits `ms`; both are injected so the test can drive them.
+export function waitUntilOnNpm(
+	name,
+	version,
+	{ view, sleep, attempts = 12, delayMs = 10_000 },
+) {
+	for (let i = 0; i < attempts; i++) {
+		if (view(`${name}@${version}`) === version) return true;
+		if (i < attempts - 1) sleep(delayMs);
+	}
+	return false;
+}

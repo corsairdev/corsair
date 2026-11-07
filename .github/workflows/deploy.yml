@@ -12,10 +12,8 @@ permissions:
   contents: read
   id-token: write
 
-# Back-to-back merges start overlapping runs that each see the same unpublished
-# package and both try to publish it. Run one at a time instead; never cancel
-# a run mid-publish. A queued run still scans every package, so a run that
-# GitHub drops from the queue loses nothing.
+# One publish at a time; a newer pending run replaces an older one, and every
+# run publishes whatever npm is missing.
 concurrency:
   group: deploy-npm
   cancel-in-progress: false
