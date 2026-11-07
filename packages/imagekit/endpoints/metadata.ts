@@ -1,4 +1,4 @@
-import type { ImageKitContext, ImageKitEndpoints } from '..';
+import type { ImageKitEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -6,7 +6,10 @@ import {
 	ImageKitEndpointOutputSchemas as Outputs,
 } from './types';
 
-export const getByFileId: ImageKitEndpoints['metadataGetByFileId'] = (ctx, input) =>
+export const getByFileId: ImageKitEndpoints['metadataGetByFileId'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{

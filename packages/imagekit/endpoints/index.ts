@@ -1,24 +1,27 @@
 import {
-	addTags as filesAddTags,
-	bulkDelete as filesBulkDelete,
-	copy as filesCopy,
-	getDetails as filesGetDetails,
-	list as filesList,
-	move as filesMove,
-	removeAITags as filesRemoveAITags,
-	removeTags as filesRemoveTags,
-	remove as filesRemove,
-	rename as filesRename,
-	updateDetails as filesUpdateDetails,
-	upload as filesUpload,
-} from './files';
+	getPurgeStatus as cacheGetPurgeStatus,
+	purge as cachePurge,
+} from './cache';
 import {
 	getDetails as fileVersionsGetDetails,
 	list as fileVersionsList,
 	remove as fileVersionsRemove,
 	restore as fileVersionsRestore,
 } from './file-versions';
-import { getByFileId as metadataGetByFileId, getByUrl as metadataGetByUrl } from './metadata';
+import {
+	addTags as filesAddTags,
+	bulkDelete as filesBulkDelete,
+	copy as filesCopy,
+	getDetails as filesGetDetails,
+	list as filesList,
+	move as filesMove,
+	remove as filesRemove,
+	removeAITags as filesRemoveAITags,
+	removeTags as filesRemoveTags,
+	rename as filesRename,
+	updateDetails as filesUpdateDetails,
+	upload as filesUpload,
+} from './files';
 import {
 	copy as foldersCopy,
 	create as foldersCreate,
@@ -27,7 +30,10 @@ import {
 	remove as foldersRemove,
 	rename as foldersRename,
 } from './folders';
-import { getPurgeStatus as cacheGetPurgeStatus, purge as cachePurge } from './cache';
+import {
+	getByFileId as metadataGetByFileId,
+	getByUrl as metadataGetByUrl,
+} from './metadata';
 
 /** File operations. */
 export const Files = {

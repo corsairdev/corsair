@@ -5,12 +5,17 @@ import { z } from 'zod';
 // call that has already happened. Field reference:
 // https://imagekit.io/docs/api-reference
 
-const FileIdSchema = z.string().min(1).describe('Unique identifier of the asset.');
+const FileIdSchema = z
+	.string()
+	.min(1)
+	.describe('Unique identifier of the asset.');
 
 const FilePathSchema = z
 	.string()
 	.min(1)
-	.describe('Full path of the asset, starting and ending with `/`, e.g. `/images/photo.jpg`.');
+	.describe(
+		'Full path of the asset, starting and ending with `/`, e.g. `/images/photo.jpg`.',
+	);
 
 // Bulk tag endpoints cap fileIds at 50 per call; their 400 error text names it.
 const BulkFileIdsSchema = z
@@ -28,7 +33,9 @@ const TagsSchema = z
 // this plugin does not read, so they pass through as sent.
 const CustomMetadataSchema = z
 	.record(z.string(), z.unknown())
-	.describe('Custom metadata to set, keyed by field label, identifier or UUID.');
+	.describe(
+		'Custom metadata to set, keyed by field label, identifier or UUID.',
+	);
 
 // ── shared output shapes ──────────────────────────────────────────────────
 
@@ -176,10 +183,9 @@ export const ImageKitJobSchema = z
 	.object({
 		jobId: z.string(),
 		// Strings rather than enums: COPY_FOLDER, MOVE_FOLDER, RENAME_FOLDER
-		// and Pending | Completed must not fail a status read that ImageKit
-		// can extend.
+		// must not fail a status read that ImageKit can extend.
 		type: z.string().nullish(),
-		status: z.string().nullish(),
+		status: z.string(),
 		purgeRequestId: z.string().nullish(),
 	})
 	.loose();
@@ -200,24 +206,45 @@ const FilesUploadInputSchema = z.object({
 		.describe(
 			'The file to upload: an https URL ImageKit can fetch, or base64-encoded content.',
 		),
-	fileName: z.string().min(1).describe('Name the file gets in the media library, e.g. photo.jpg.'),
-	folder: z.string().optional().describe('Destination folder path, e.g. `/products/`.'),
+	fileName: z
+		.string()
+		.min(1)
+		.describe('Name the file gets in the media library, e.g. photo.jpg.'),
+	folder: z
+		.string()
+		.optional()
+		.describe('Destination folder path, e.g. `/products/`.'),
 	tags: TagsSchema.optional().describe('Tags to attach to the uploaded file.'),
-	isPrivateFile: z.boolean().optional().describe('Serve the file only through signed URLs.'),
+	isPrivateFile: z
+		.boolean()
+		.optional()
+		.describe('Serve the file only through signed URLs.'),
 	isPublished: z.boolean().optional().describe('Publish the file immediately.'),
 	useUniqueFileName: z
 		.boolean()
 		.optional()
 		.describe('Add a random suffix to fileName when true (the default).'),
-	overwriteFile: z.boolean().optional().describe('Replace an existing file at the same path.'),
-	overwriteTags: z.boolean().optional().describe('Replace existing tags instead of merging.'),
-	overwriteAITags: z.boolean().optional().describe('Replace existing AI tags instead of merging.'),
+	overwriteFile: z
+		.boolean()
+		.optional()
+		.describe('Replace an existing file at the same path.'),
+	overwriteTags: z
+		.boolean()
+		.optional()
+		.describe('Replace existing tags instead of merging.'),
+	overwriteAITags: z
+		.boolean()
+		.optional()
+		.describe('Replace existing AI tags instead of merging.'),
 	overwriteCustomMetadata: z
 		.boolean()
 		.optional()
 		.describe('Replace existing custom metadata instead of merging.'),
 	customMetadata: CustomMetadataSchema.optional(),
-	description: z.string().optional().describe('Short human-readable description stored with the file.'),
+	description: z
+		.string()
+		.optional()
+		.describe('Short human-readable description stored with the file.'),
 });
 
 export type FilesUploadInput = z.input<typeof FilesUploadInputSchema>;
@@ -231,18 +258,26 @@ const FilesListInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('Only `file` returns files; the default also returns folders.'),
-	path: z.string().optional().describe('Only assets inside this folder path, e.g. `/products/`.'),
+	path: z
+		.string()
+		.optional()
+		.describe('Only assets inside this folder path, e.g. `/products/`.'),
 	searchQuery: z
 		.string()
 		.optional()
 		.describe(
 			'Search filter expression over name, tags, type, size and createdAt, e.g. `name = "summer"`.',
 		),
-	fileType: z.enum(['image', 'video']).optional().describe('Only files of this kind.'),
+	fileType: z
+		.enum(['image', 'video'])
+		.optional()
+		.describe('Only files of this kind.'),
 	sort: z
 		.string()
 		.optional()
-		.describe('Sort as `field ascOrDesc`, e.g. `createdAt ASC` or `name DESC`.'),
+		.describe(
+			'Sort as `field ascOrDesc`, e.g. `createdAt ASC` or `name DESC`.',
+		),
 	limit: z
 		.number()
 		.int()
@@ -274,15 +309,31 @@ const FilesGetDetailsResponseSchema = ImageKitFileSchema;
 
 const FilesUpdateDetailsInputSchema = z.object({
 	fileId: FileIdSchema,
-	tags: TagsSchema.optional().describe('Full replacement tag list for the file.'),
-	customCoordinates: z.string().optional().describe('Custom coordinates string, e.g. `w-100,h-100,x-0,y-0`.'),
+	tags: TagsSchema.optional().describe(
+		'Full replacement tag list for the file.',
+	),
+	customCoordinates: z
+		.string()
+		.optional()
+		.describe('Custom coordinates string, e.g. `w-100,h-100,x-0,y-0`.'),
 	customMetadata: CustomMetadataSchema.optional(),
-	isPrivateFile: z.boolean().optional().describe('Serve the file only through signed URLs.'),
-	isPublished: z.boolean().optional().describe('Publish or unpublish the file.'),
-	removeAITags: z.boolean().optional().describe('Remove all AI tags from the file.'),
+	isPrivateFile: z
+		.boolean()
+		.optional()
+		.describe('Serve the file only through signed URLs.'),
+	isPublished: z
+		.boolean()
+		.optional()
+		.describe('Publish or unpublish the file.'),
+	removeAITags: z
+		.boolean()
+		.optional()
+		.describe('Remove all AI tags from the file.'),
 });
 
-export type FilesUpdateDetailsInput = z.input<typeof FilesUpdateDetailsInputSchema>;
+export type FilesUpdateDetailsInput = z.input<
+	typeof FilesUpdateDetailsInputSchema
+>;
 
 const FilesUpdateDetailsResponseSchema = ImageKitFileSchema;
 
@@ -300,7 +351,9 @@ const FilesBulkDeleteInputSchema = z.object({
 	fileIds: z
 		.array(FileIdSchema)
 		.min(1)
-		.describe('File IDs to delete permanently; a 207 answer reports per-file failures.'),
+		.describe(
+			'File IDs to delete permanently; a 207 answer reports per-file failures.',
+		),
 });
 
 export type FilesBulkDeleteInput = z.input<typeof FilesBulkDeleteInputSchema>;
@@ -325,7 +378,10 @@ export type FilesCopyInput = z.input<typeof FilesCopyInputSchema>;
 
 const FilesMoveInputSchema = z.object({
 	sourceFilePath: FilePathSchema.describe('Path of the file to move.'),
-	destinationPath: z.string().min(1).describe('Folder path to move the file into.'),
+	destinationPath: z
+		.string()
+		.min(1)
+		.describe('Folder path to move the file into.'),
 });
 
 export type FilesMoveInput = z.input<typeof FilesMoveInputSchema>;
@@ -338,7 +394,9 @@ const FilesRenameInputSchema = z.object({
 	purgeCache: z
 		.boolean()
 		.optional()
-		.describe('Also purge the CDN cache for the file; adds purgeRequestId to the answer.'),
+		.describe(
+			'Also purge the CDN cache for the file; adds purgeRequestId to the answer.',
+		),
 });
 
 export type FilesRenameInput = z.input<typeof FilesRenameInputSchema>;
@@ -375,7 +433,9 @@ const FilesRemoveAITagsInputSchema = z.object({
 	AITags: TagsSchema.describe('AI tag names to remove from every listed file.'),
 });
 
-export type FilesRemoveAITagsInput = z.input<typeof FilesRemoveAITagsInputSchema>;
+export type FilesRemoveAITagsInput = z.input<
+	typeof FilesRemoveAITagsInputSchema
+>;
 
 // ── fileVersions.* ────────────────────────────────────────────────────────
 
@@ -397,7 +457,9 @@ const FileVersionsGetDetailsInputSchema = z.object({
 	versionId: VersionIdSchema,
 });
 
-export type FileVersionsGetDetailsInput = z.input<typeof FileVersionsGetDetailsInputSchema>;
+export type FileVersionsGetDetailsInput = z.input<
+	typeof FileVersionsGetDetailsInputSchema
+>;
 
 const FileVersionsGetDetailsResponseSchema = ImageKitFileSchema;
 
@@ -406,7 +468,9 @@ const FileVersionsDeleteInputSchema = z.object({
 	versionId: VersionIdSchema,
 });
 
-export type FileVersionsDeleteInput = z.input<typeof FileVersionsDeleteInputSchema>;
+export type FileVersionsDeleteInput = z.input<
+	typeof FileVersionsDeleteInputSchema
+>;
 
 const FileVersionsDeleteResponseSchema = EmptyObjectSchema;
 
@@ -415,7 +479,9 @@ const FileVersionsRestoreInputSchema = z.object({
 	versionId: VersionIdSchema,
 });
 
-export type FileVersionsRestoreInput = z.input<typeof FileVersionsRestoreInputSchema>;
+export type FileVersionsRestoreInput = z.input<
+	typeof FileVersionsRestoreInputSchema
+>;
 
 const FileVersionsRestoreResponseSchema = ImageKitFileSchema;
 
@@ -423,13 +489,17 @@ const FileVersionsRestoreResponseSchema = ImageKitFileSchema;
 
 const MetadataGetByFileIdInputSchema = z.object({ fileId: FileIdSchema });
 
-export type MetadataGetByFileIdInput = z.input<typeof MetadataGetByFileIdInputSchema>;
+export type MetadataGetByFileIdInput = z.input<
+	typeof MetadataGetByFileIdInputSchema
+>;
 
 const MetadataGetByUrlInputSchema = z.object({
 	url: z
 		.string()
 		.min(1)
-		.describe('Full https URL of the delivered file, transformation parameters allowed.'),
+		.describe(
+			'Full https URL of the delivered file, transformation parameters allowed.',
+		),
 });
 
 export type MetadataGetByUrlInput = z.input<typeof MetadataGetByUrlInputSchema>;
@@ -442,11 +512,15 @@ const FoldersCreateInputSchema = z.object({
 	folderName: z
 		.string()
 		.min(1)
-		.describe('Name of the new folder; characters outside letters and digits become underscores.'),
+		.describe(
+			'Name of the new folder; characters outside letters and digits become underscores.',
+		),
 	parentFolderPath: z
 		.string()
 		.min(1)
-		.describe('Folder path to create the new folder in, e.g. `/` for the library root.'),
+		.describe(
+			'Folder path to create the new folder in, e.g. `/` for the library root.',
+		),
 });
 
 export type FoldersCreateInput = z.input<typeof FoldersCreateInputSchema>;
@@ -454,7 +528,9 @@ export type FoldersCreateInput = z.input<typeof FoldersCreateInputSchema>;
 const FoldersCreateResponseSchema = EmptyObjectSchema;
 
 const FoldersDeleteInputSchema = z.object({
-	folderPath: FilePathSchema.describe('Full path of the folder to delete, contents included.'),
+	folderPath: FilePathSchema.describe(
+		'Full path of the folder to delete, contents included.',
+	),
 });
 
 export type FoldersDeleteInput = z.input<typeof FoldersDeleteInputSchema>;
@@ -463,15 +539,24 @@ const FoldersDeleteResponseSchema = EmptyObjectSchema;
 
 const FoldersCopyInputSchema = z.object({
 	sourceFolderPath: FilePathSchema.describe('Path of the folder to copy.'),
-	destinationPath: z.string().min(1).describe('Folder path to copy the source folder into.'),
-	includeVersions: z.boolean().optional().describe('Copy folder contents with all file versions.'),
+	destinationPath: z
+		.string()
+		.min(1)
+		.describe('Folder path to copy the source folder into.'),
+	includeVersions: z
+		.boolean()
+		.optional()
+		.describe('Copy folder contents with all file versions.'),
 });
 
 export type FoldersCopyInput = z.input<typeof FoldersCopyInputSchema>;
 
 const FoldersMoveInputSchema = z.object({
 	sourceFolderPath: FilePathSchema.describe('Path of the folder to move.'),
-	destinationPath: z.string().min(1).describe('Folder path to move the source folder into.'),
+	destinationPath: z
+		.string()
+		.min(1)
+		.describe('Folder path to move the source folder into.'),
 });
 
 export type FoldersMoveInput = z.input<typeof FoldersMoveInputSchema>;
@@ -481,11 +566,15 @@ const FoldersRenameInputSchema = z.object({
 	newFolderName: z
 		.string()
 		.min(1)
-		.describe('New folder name; characters outside letters, digits and `-` become underscores.'),
+		.describe(
+			'New folder name; characters outside letters, digits and `-` become underscores.',
+		),
 	purgeCache: z
 		.boolean()
 		.optional()
-		.describe('Also purge the CDN cache for the moved paths; adds purgeRequestId to the job status.'),
+		.describe(
+			'Also purge the CDN cache for the moved paths; adds purgeRequestId to the job status.',
+		),
 });
 
 export type FoldersRenameInput = z.input<typeof FoldersRenameInputSchema>;
@@ -497,10 +586,15 @@ export const ImageKitBulkJobResponseSchema = z
 	.loose();
 
 const FoldersGetJobStatusInputSchema = z.object({
-	jobId: z.string().min(1).describe('Job ID from a folder copy, move or rename call.'),
+	jobId: z
+		.string()
+		.min(1)
+		.describe('Job ID from a folder copy, move or rename call.'),
 });
 
-export type FoldersGetJobStatusInput = z.input<typeof FoldersGetJobStatusInputSchema>;
+export type FoldersGetJobStatusInput = z.input<
+	typeof FoldersGetJobStatusInputSchema
+>;
 
 const FoldersGetJobStatusResponseSchema = ImageKitJobSchema;
 
@@ -525,7 +619,9 @@ const CacheGetPurgeStatusInputSchema = z.object({
 	requestId: z.string().min(1).describe('Request ID from a cache purge call.'),
 });
 
-export type CacheGetPurgeStatusInput = z.input<typeof CacheGetPurgeStatusInputSchema>;
+export type CacheGetPurgeStatusInput = z.input<
+	typeof CacheGetPurgeStatusInputSchema
+>;
 
 const CacheGetPurgeStatusResponseSchema = z
 	.object({

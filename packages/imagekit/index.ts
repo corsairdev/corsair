@@ -11,7 +11,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Cache, FileVersions, Files, Folders, Metadata } from './endpoints';
+import { Cache, Files, FileVersions, Folders, Metadata } from './endpoints';
 import type {
 	ImageKitEndpointInputs,
 	ImageKitEndpointOutputs,
@@ -36,17 +36,19 @@ export type ImageKitContext = CorsairPluginContext<
 	ImageKitPluginOptions
 >;
 
-export type ImageKitKeyBuilderContext = KeyBuilderContext<ImageKitPluginOptions>;
+export type ImageKitKeyBuilderContext =
+	KeyBuilderContext<ImageKitPluginOptions>;
 
 export type ImageKitBoundEndpoints = BindEndpoints<
 	typeof imageKitEndpointsNested
 >;
 
-type ImageKitEndpoint<K extends keyof ImageKitEndpointOutputs> = CorsairEndpoint<
-	ImageKitContext,
-	ImageKitEndpointInputs[K],
-	ImageKitEndpointOutputs[K]
->;
+type ImageKitEndpoint<K extends keyof ImageKitEndpointOutputs> =
+	CorsairEndpoint<
+		ImageKitContext,
+		ImageKitEndpointInputs[K],
+		ImageKitEndpointOutputs[K]
+	>;
 
 export type ImageKitEndpoints = {
 	filesUpload: ImageKitEndpoint<'filesUpload'>;
@@ -265,7 +267,8 @@ const imageKitEndpointMeta = {
 	},
 	'files.getDetails': {
 		riskLevel: 'read',
-		description: 'Read one file by ID: path, URL, tags, AI tags, size, versions and custom metadata',
+		description:
+			'Read one file by ID: path, URL, tags, AI tags, size, versions and custom metadata',
 	},
 	'files.updateDetails': {
 		riskLevel: 'write',
@@ -286,7 +289,8 @@ const imageKitEndpointMeta = {
 	},
 	'files.copy': {
 		riskLevel: 'write',
-		description: 'Copy a file to another folder, optionally with all of its versions',
+		description:
+			'Copy a file to another folder, optionally with all of its versions',
 	},
 	'files.move': {
 		riskLevel: 'write',
@@ -330,11 +334,13 @@ const imageKitEndpointMeta = {
 	},
 	'metadata.getByFileId': {
 		riskLevel: 'read',
-		description: 'Read image or video metadata of a stored file: dimensions, format, pHash, EXIF',
+		description:
+			'Read image or video metadata of a stored file: dimensions, format, pHash, EXIF',
 	},
 	'metadata.getByUrl': {
 		riskLevel: 'read',
-		description: 'Read metadata of any delivered file URL, including transformed variants',
+		description:
+			'Read metadata of any delivered file URL, including transformed variants',
 	},
 	'folders.create': {
 		riskLevel: 'write',
@@ -378,9 +384,7 @@ const imageKitEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Where a cache purge stands; status Pending or Completed',
 	},
-} as const satisfies RequiredPluginEndpointMeta<
-	typeof imageKitEndpointsNested
->;
+} as const satisfies RequiredPluginEndpointMeta<typeof imageKitEndpointsNested>;
 
 export type BaseImageKitPlugin<T extends ImageKitPluginOptions> = CorsairPlugin<
 	'imagekit',
@@ -434,10 +438,6 @@ export { ImageKitAPIError } from './client';
 export type {
 	CacheGetPurgeStatusInput,
 	CachePurgeInput,
-	FileVersionsDeleteInput,
-	FileVersionsGetDetailsInput,
-	FileVersionsListInput,
-	FileVersionsRestoreInput,
 	FilesAddTagsInput,
 	FilesBulkDeleteInput,
 	FilesCopyInput,
@@ -445,11 +445,15 @@ export type {
 	FilesGetDetailsInput,
 	FilesListInput,
 	FilesMoveInput,
-	FilesRenameInput,
 	FilesRemoveAITagsInput,
 	FilesRemoveTagsInput,
+	FilesRenameInput,
 	FilesUpdateDetailsInput,
 	FilesUploadInput,
+	FileVersionsDeleteInput,
+	FileVersionsGetDetailsInput,
+	FileVersionsListInput,
+	FileVersionsRestoreInput,
 	FoldersCopyInput,
 	FoldersCreateInput,
 	FoldersDeleteInput,

@@ -38,6 +38,12 @@ export class ImageKitAPIError extends Error {
 	// proxy can answer with HTML or text.
 	readonly body?: unknown;
 	readonly method?: string;
+	/**
+	 * Milliseconds from a Retry-After header. ImageKit documents no such
+	 * header (its X-RateLimit-Reset is a duration in milliseconds, which
+	 * core cannot parse), so this is set only when a cause carried one.
+	 */
+	readonly retryAfter?: number;
 	/** True when retrying the failed request cannot repeat its effect. */
 	readonly replaySafe?: boolean;
 
@@ -59,7 +65,7 @@ export class ImageKitAPIError extends Error {
 		this.body = options.body ?? cause?.body;
 		this.method = options.method ?? cause?.request.method;
 		this.code = readString(asRecord(this.body), 'reason');
-		this.replaySafe = options.replaySafe;
+		this.replaySafe = options.replaySafe ?? false;
 	}
 }
 
@@ -174,6 +180,9 @@ export async function makeImageKitRequest(
 				replaySafe,
 			});
 		}
-		throw new ImageKitAPIError('Unknown ImageKit error', { method, replaySafe });
+		throw new ImageKitAPIError('Unknown ImageKit error', {
+			method,
+			replaySafe,
+		});
 	}
 }

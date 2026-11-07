@@ -16,9 +16,11 @@ export const errorHandlers = {
 	// waits the documented burst scale: 1s, then 2s, 4s.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async () => ({
+		handler: async (error: Error) => ({
 			maxRetries: 3,
-			headersRetryAfterMs: 1000,
+			// A real Retry-After would override the documented 1s fallback.
+			headersRetryAfterMs:
+				error instanceof ImageKitAPIError ? (error.retryAfter ?? 1000) : 1000,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

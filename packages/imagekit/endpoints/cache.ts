@@ -1,4 +1,4 @@
-import type { ImageKitContext, ImageKitEndpoints } from '..';
+import type { ImageKitEndpoints } from '..';
 import { call } from './call';
 import {
 	ImageKitEndpointInputSchemas as Inputs,
@@ -24,7 +24,10 @@ export const purge: ImageKitEndpoints['cachePurge'] = (ctx, input) =>
 		},
 	);
 
-export const getPurgeStatus: ImageKitEndpoints['cacheGetPurgeStatus'] = (ctx, input) =>
+export const getPurgeStatus: ImageKitEndpoints['cacheGetPurgeStatus'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{

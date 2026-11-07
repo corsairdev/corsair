@@ -1,4 +1,4 @@
-import type { ImageKitContext, ImageKitEndpoints } from '..';
+import type { ImageKitEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -28,7 +28,10 @@ export const list: ImageKitEndpoints['fileVersionsList'] = (ctx, input) =>
 		},
 	);
 
-export const getDetails: ImageKitEndpoints['fileVersionsGetDetails'] = (ctx, input) =>
+export const getDetails: ImageKitEndpoints['fileVersionsGetDetails'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{

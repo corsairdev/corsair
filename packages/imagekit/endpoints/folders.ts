@@ -1,4 +1,4 @@
-import type { ImageKitContext, ImageKitEndpoints } from '..';
+import type { ImageKitEndpoints } from '..';
 import { call } from './call';
 import {
 	ImageKitEndpointInputSchemas as Inputs,
@@ -22,7 +22,10 @@ export const create: ImageKitEndpoints['foldersCreate'] = (ctx, input) =>
 		{
 			// 201 carries an empty-object body; an empty answer is fine too.
 			shape: (raw) => raw ?? {},
-			log: ({ folderName, parentFolderPath }) => ({ folderName, parentFolderPath }),
+			log: ({ folderName, parentFolderPath }) => ({
+				folderName,
+				parentFolderPath,
+			}),
 		},
 	);
 
@@ -117,7 +120,10 @@ export const rename: ImageKitEndpoints['foldersRename'] = (ctx, input) =>
 		},
 	);
 
-export const getJobStatus: ImageKitEndpoints['foldersGetJobStatus'] = (ctx, input) =>
+export const getJobStatus: ImageKitEndpoints['foldersGetJobStatus'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{

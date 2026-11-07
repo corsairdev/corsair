@@ -40,18 +40,30 @@ export const upload: ImageKitEndpoints['filesUpload'] = (ctx, input) =>
 				...(folder ? { folder } : {}),
 				// ImageKit takes tags as one comma-separated multipart field.
 				...(tags ? { tags: tags.join(',') } : {}),
-				...(isPrivateFile !== undefined ? { isPrivateFile: String(isPrivateFile) } : {}),
-				...(isPublished !== undefined ? { isPublished: String(isPublished) } : {}),
+				...(isPrivateFile !== undefined
+					? { isPrivateFile: String(isPrivateFile) }
+					: {}),
+				...(isPublished !== undefined
+					? { isPublished: String(isPublished) }
+					: {}),
 				...(useUniqueFileName !== undefined
 					? { useUniqueFileName: String(useUniqueFileName) }
 					: {}),
-				...(overwriteFile !== undefined ? { overwriteFile: String(overwriteFile) } : {}),
-				...(overwriteTags !== undefined ? { overwriteTags: String(overwriteTags) } : {}),
-				...(overwriteAITags !== undefined ? { overwriteAITags: String(overwriteAITags) } : {}),
+				...(overwriteFile !== undefined
+					? { overwriteFile: String(overwriteFile) }
+					: {}),
+				...(overwriteTags !== undefined
+					? { overwriteTags: String(overwriteTags) }
+					: {}),
+				...(overwriteAITags !== undefined
+					? { overwriteAITags: String(overwriteAITags) }
+					: {}),
 				...(overwriteCustomMetadata !== undefined
 					? { overwriteCustomMetadata: String(overwriteCustomMetadata) }
 					: {}),
-				...(customMetadata ? { customMetadata: JSON.stringify(customMetadata) } : {}),
+				...(customMetadata
+					? { customMetadata: JSON.stringify(customMetadata) }
+					: {}),
 				...(description ? { description } : {}),
 			},
 		}),
@@ -77,6 +89,7 @@ export const list: ImageKitEndpoints['filesList'] = (ctx, input) =>
 			method: 'GET',
 			path: '/v1/files',
 			query: { type, path, searchQuery, fileType, sort, limit, skip },
+			replaySafe: true,
 		}),
 		{
 			// The list is a bare array; an error body must not parse as an
@@ -98,10 +111,14 @@ export const getDetails: ImageKitEndpoints['filesGetDetails'] = (ctx, input) =>
 		({ fileId }) => ({
 			method: 'GET',
 			path: `/v1/files/${segment(fileId)}/details`,
+			replaySafe: true,
 		}),
 	);
 
-export const updateDetails: ImageKitEndpoints['filesUpdateDetails'] = (ctx, input) =>
+export const updateDetails: ImageKitEndpoints['filesUpdateDetails'] = (
+	ctx,
+	input,
+) =>
 	call(
 		ctx,
 		{
@@ -176,7 +193,12 @@ export const copy: ImageKitEndpoints['filesCopy'] = (ctx, input) =>
 			body: { sourceFilePath, destinationPath, includeFileVersions },
 		}),
 		{
-			log: ({ sourceFilePath, destinationPath }) => ({ sourceFilePath, destinationPath }),
+			// 204 carries an empty-object body; an empty answer is fine too.
+			shape: (raw) => raw ?? {},
+			log: ({ sourceFilePath, destinationPath }) => ({
+				sourceFilePath,
+				destinationPath,
+			}),
 		},
 	);
 
@@ -195,7 +217,11 @@ export const move: ImageKitEndpoints['filesMove'] = (ctx, input) =>
 			body: { sourceFilePath, destinationPath },
 		}),
 		{
-			log: ({ sourceFilePath, destinationPath }) => ({ sourceFilePath, destinationPath }),
+			shape: (raw) => raw ?? {},
+			log: ({ sourceFilePath, destinationPath }) => ({
+				sourceFilePath,
+				destinationPath,
+			}),
 		},
 	);
 
@@ -256,7 +282,11 @@ function bulkTags<Input extends z.ZodType>(
 export const addTags: ImageKitEndpoints['filesAddTags'] = (ctx, input) =>
 	bulkTags(
 		ctx,
-		{ event: 'files.addTags', path: '/v1/files/addTags', input: Inputs.filesAddTags },
+		{
+			event: 'files.addTags',
+			path: '/v1/files/addTags',
+			input: Inputs.filesAddTags,
+		},
 		input,
 		({ fileIds, tags }) => ({ fileIds, tags }),
 	);
@@ -264,15 +294,26 @@ export const addTags: ImageKitEndpoints['filesAddTags'] = (ctx, input) =>
 export const removeTags: ImageKitEndpoints['filesRemoveTags'] = (ctx, input) =>
 	bulkTags(
 		ctx,
-		{ event: 'files.removeTags', path: '/v1/files/removeTags', input: Inputs.filesRemoveTags },
+		{
+			event: 'files.removeTags',
+			path: '/v1/files/removeTags',
+			input: Inputs.filesRemoveTags,
+		},
 		input,
 		({ fileIds, tags }) => ({ fileIds, tags }),
 	);
 
-export const removeAITags: ImageKitEndpoints['filesRemoveAITags'] = (ctx, input) =>
+export const removeAITags: ImageKitEndpoints['filesRemoveAITags'] = (
+	ctx,
+	input,
+) =>
 	bulkTags(
 		ctx,
-		{ event: 'files.removeAITags', path: '/v1/files/removeAITags', input: Inputs.filesRemoveAITags },
+		{
+			event: 'files.removeAITags',
+			path: '/v1/files/removeAITags',
+			input: Inputs.filesRemoveAITags,
+		},
 		input,
 		({ fileIds, AITags }) => ({ fileIds, AITags }),
 	);
