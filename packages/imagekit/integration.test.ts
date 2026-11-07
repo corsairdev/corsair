@@ -98,6 +98,9 @@ describe('ImageKit plugin through createCorsair', () => {
 			respond(serverError, 503);
 			respond(serverError, 503);
 
+			// unknown: the rejection is an ImageKitAPIError, typed loosely
+			// here to assert on status and message without importing the
+			// class into the bound-client contract under test.
 			const error = (await corsair.imagekit.api.files
 				.list({})
 				.catch((e: unknown) => e)) as { message?: string; status?: number };

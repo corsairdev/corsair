@@ -324,9 +324,10 @@ const FilesGetDetailsResponseSchema = ImageKitFileSchema;
 
 const FilesUpdateDetailsInputSchema = z.object({
 	fileId: FileIdSchema,
-	tags: TagsSchema.optional().describe(
-		'Full replacement tag list for the file.',
-	),
+	tags: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Full replacement tag list; an empty array clears every tag.'),
 	customCoordinates: z
 		.string()
 		.optional()
