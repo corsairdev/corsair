@@ -38,13 +38,12 @@ function apiError(
 }
 
 describe('Nanonets error handlers', () => {
-	it('retries a 429 with backoff', async () => {
+	it('sizes the no-header delay to the documented 30s window', async () => {
 		const error = apiError(429, error429);
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
+			headersRetryAfterMs: 30_000,
 		});
 	});
 
@@ -53,7 +52,6 @@ describe('Nanonets error handlers', () => {
 		expect(await strategy(error)).toEqual({
 			maxRetries: 3,
 			headersRetryAfterMs: 2000,
-			retryStrategy: 'exponential_backoff',
 		});
 	});
 

@@ -10,15 +10,20 @@ function statusOf(error: Error): number | undefined {
 export const errorHandlers = {
 	// 429 on the predict endpoints, per model per 1-minute window. A rejected
 	// request never ran, so every operation is safe to replay. The documented
-	// backoff is 30s then 60s then 120s; Retry-After is honored when sent.
+	// backoff is 30s then 60s then 120s, and corsair's strategy enums top out
+	// at 4s per attempt, which would burn every retry inside the still-closed
+	// window. headersRetryAfterMs is the only verbatim-delay channel, so the
+	// documented 30s initial delay rides there whenever the response did not
+	// send its own Retry-After, which is honored first.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
 			error instanceof NanonetsAPIError && error.isRateLimit,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof NanonetsAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
+				error instanceof NanonetsAPIError && error.retryAfter !== undefined
+					? error.retryAfter
+					: 30_000,
 		}),
 	},
 	// 402: the free API call quota is exhausted. A retry bills nothing but
