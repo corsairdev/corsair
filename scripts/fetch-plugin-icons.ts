@@ -40,6 +40,54 @@ const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
 type IconSource = 'twenty-icons' | 'google-favicon' | 'url-override';
 
+/**
+ * Dark marks on a transparent background that vanish on a dark surface (Lug's
+ * picker draws icons with no tile behind them). These are flattened onto a
+ * white tile with some padding after fetching.
+ */
+const PLUGIN_ICON_LIGHT_TILE = new Set(['api2pdf', 'attio', 'bigml']);
+
+/** Flatten a PNG onto a padded white tile with ImageMagick; unchanged if it isn't installed. */
+function onLightTile(bytes: Buffer): Buffer {
+	const id = randomBytes(8).toString('hex');
+	const inPath = join(tmpdir(), `corsair-icon-${id}-in.png`);
+	const outPath = join(tmpdir(), `corsair-icon-${id}-out.png`);
+	writeFileSync(inPath, bytes);
+	try {
+		for (const cmd of ['magick', 'convert']) {
+			const result = spawnSync(
+				cmd,
+				[
+					inPath,
+					'-trim',
+					'-resize',
+					'200x200',
+					'-background',
+					'white',
+					'-gravity',
+					'center',
+					'-extent',
+					'256x256',
+					'-alpha',
+					'remove',
+					'-alpha',
+					'off',
+					outPath,
+				],
+				{ stdio: 'ignore' },
+			);
+			if (result.status === 0 && existsSync(outPath)) {
+				return readFileSync(outPath);
+			}
+		}
+		console.warn('  light tile skipped: ImageMagick not found');
+		return bytes;
+	} finally {
+		rmSync(inPath, { force: true });
+		rmSync(outPath, { force: true });
+	}
+}
+
 /** Product marks twenty-icons can't distinguish (Docs vs Sheets on docs.google.com). */
 const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	gmail:
@@ -98,6 +146,166 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// mark at 180px.
 	netsuite:
 		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/19/ca/fb/19cafb9e-8f0b-d237-e0ea-a4b3ed3f88e4/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/180x180bb.png',
+	// The default domain (<id>.com) belongs to someone else, or serves a
+	// parked-domain or generic placeholder, so the icon was the wrong brand.
+	// alibaba.com marketplace logo; the plugin is Alibaba Cloud.
+	alibaba: 'https://twenty-icons.com/alibabacloud.com',
+	// plain light-blue circle; App Store icon carries the Ambee mark.
+	ambee:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/07/77/a9/0777a98a-2f46-ca8b-05d3-5f8fdf374fa0/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/256x256bb.png',
+	// "nP" mark from appointo.com, not Appointo (appointo.me).
+	appointo:
+		'https://cdn.prod.website-files.com/6555e79256c1657a9a2e92c3/65608f40416c64f555b756e5_logo256.png',
+	// GoDaddy parked-domain icon from browsertool.com; the toolkit is Composio's.
+	browsertool: 'https://composio.dev/apple-touch-icon.png',
+	// GoDaddy parked-domain icon from callpage.com; CallPage is callpage.io.
+	callpage: 'https://twenty-icons.com/callpage.io',
+	// starburst from canny.com, not Canny (canny.io).
+	canny:
+		'https://assets.canny.io/7673ed8964c6377226e64bb8ee33126f64a8c271/logo-icon.png',
+	// 32px mark from canvas.com; Canvas LMS is Instructure's red dots.
+	canvas:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/71/a8/f3/71a8f3d4-60d9-84c4-0dd7-483072d04dee/AppIcon-0-0-1x_U007epad-0-1-sRGB-85-220.png/256x256bb.png',
+	// GoDaddy parked-domain icon from certifier.com; Certifier is certifier.io.
+	certifier: 'https://certifier.io/favicon/apple-touch-icon.png',
+	// starburst from chaser.com, not Chaser (chaserhq.com).
+	chaser: 'https://www.chaserhq.com/hubfs/Chaser%20logo%20600x600-100.jpg',
+	// GoDaddy parked-domain icon from claidai.com; Claid is claid.ai.
+	claidai:
+		'https://claid.ai/icons/icon-256x256.png?v=929123789de593fc4153206756197444',
+	// "U4" logo from coda.com, not Coda (coda.io).
+	coda: 'https://cdn.coda.io/icons/png/color/coda-192.png',
+	// MongoDB logo; the plugin is LibreChat's Code Interpreter.
+	codeinterpreter: 'https://www.librechat.ai/apple-touch-icon.png',
+	// 16px mark from cody.com; Cody is meetcody.ai.
+	cody: 'https://twenty-icons.com/meetcody.ai',
+	// 32px mark from convex.com; Convex is convex.dev.
+	convex: 'https://avatars.githubusercontent.com/u/81530787?s=256',
+	// green "e" from exist.com; Exist is exist.io.
+	exist:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/eb/2d/87/eb2d8749-e29e-c363-0b02-515eec684bce/Icon-0-0-1x_U007epad-0-0-0-1-0-0-85-220.png/256x256bb.png',
+	// GoDaddy parked-domain icon from extractaai.com; Extracta is extracta.ai.
+	extractaai: 'https://extracta.ai/wp-content/uploads/2024/01/logo192.png',
+	// Fundable crowdfunding "F"; the plugin is Fundable (tryfundable.ai).
+	fundable:
+		'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://tryfundable.ai&size=256',
+	// Blogger logo; Gladia is gladia.io.
+	gladia:
+		'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://gladia.io&size=256',
+	// red "MINIMAX" block from minimax.com; MiniMax AI's mark is the pink waveform.
+	minimax: 'https://github.com/MiniMax-AI.png?size=256',
+	// "Q" mark from orbit.com; the API is Orbit (orbitsearch.com).
+	orbit: 'https://orbitsearch.com/images/apple-touch-icon.png?v=2',
+	// striped mark from prisma.com, not Prisma (prisma.io).
+	prisma: 'https://github.com/prisma.png?size=256',
+	// plain blue circle; GitHub org avatar is the Recall.ai wordmark.
+	recallai: 'https://github.com/recallai.png?size=256',
+	// GoDaddy parked-domain icon from revai.com; Rev AI is rev.ai.
+	revai: 'https://github.com/revdotcom.png?size=256',
+	// GoDaddy parked-domain icon from supadata.com; Supadata is supadata.ai.
+	supadata: 'https://github.com/supadata-ai.png?size=256',
+	// Surf detergent logo; the API is Surf (asksurf.ai).
+	surf: 'https://github.com/asksurf-ai.png?size=256',
+	// Suzanne Somers logo from suzanne.com; the API is suzanne3d.com.
+	suzanne: 'https://twenty-icons.com/suzanne3d.com',
+	// pink brush mark from winstonai.com; Winston AI is gowinston.ai.
+	winstonai:
+		'https://gowinston.ai/wp-content/uploads/2023/01/cropped-favicon-2-192x192.png',
+	// 32px generic Zoho mark; App Store icon is Zoho Inventory's own.
+	zohoinventory:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/05/cd/1c/05cd1ccf-f203-a247-f0e3-d14e1b5af0d2/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-0-85-220.png/256x256bb.png',
+	// 32px generic Zoho mark; App Store icon is Zoho Mail's own.
+	zohomail:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/9b/d0/c4/9bd0c4c3-c05f-07d8-4944-5c1344808d78/AppIcon-0-0-1x_U007epad-0-1-sRGB-85-220.png/256x256bb.png',
+	// twenty-icons only had a 16-64px favicon, or a 128px file upscaled from
+	// one, which shows as a blur. These are the brand's own larger marks: the
+	// App Store icon, the GitHub org avatar, or the site's touch icon.
+	ably: 'https://github.com/ably.png?size=256',
+	abuseipdb: 'https://github.com/abuseipdb.png?size=256',
+	activetrail:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/1e/88/58/1e8858d6-d38d-86f4-eaba-ec0def3a1abf/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/256x256bb.png',
+	agentmail: 'https://github.com/agentmail-to.png?size=256',
+	api2pdf: 'https://github.com/api2pdf.png?size=256',
+	apipie:
+		'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://apipie.ai&size=256',
+	attio: 'https://github.com/attio.png?size=256',
+	bart: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/a4/ba/9c/a4ba9c69-42da-ea8a-2563-2a61af13b85a/BartAppIcon-0-0-1x_U007emarketing-0-11-0-sRGB-85-220.png/256x256bb.png',
+	beeminder:
+		'https://www.beeminder.com/assets/small_logo_bee_256-e807d274abc2d10aad17390dfe41eecb07b851f1a106f6b06be069a1b2d92749.png',
+	bestbuy:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4c/d0/aa/4cd0aa20-24a4-3477-ea0c-c4cfd922eef9/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/256x256bb.png',
+	bigdatacloud: 'https://www.bigdatacloud.com/apple-touch-icon.png',
+	bigml: 'https://github.com/bigmlcom.png?size=256',
+	blackbaud: 'https://github.com/blackbaud.png?size=256',
+	booqable: 'https://github.com/booqable.png?size=256',
+	boxhero:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/bd/a5/8f/bda58fea-77be-f64c-2a75-760da526e309/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/256x256bb.png',
+	brex: 'https://github.com/brexhq.png?size=256',
+	browseai:
+		'https://cdn.prod.website-files.com/628be7c04ab34bfc699e4acb/68b9c656f48bca83e2a16839_webclip.png',
+	calendly: 'https://calendly.com/media/favicon/apple-touch-icon.png',
+	carbone: 'https://github.com/carboneio.png?size=256',
+	chatwork:
+		'https://go.chatwork.com/en/image/common/touch-icon-ipad-retina.png?v=20230526',
+	clickmeeting: 'https://github.com/ClickMeeting.png?size=256',
+	cloudcart: 'https://cloudcart.com/apple-touch-icon.png',
+	confluence:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/04/52/01/045201ed-6725-c7ef-6e2a-d7eb13a7e42e/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/256x256bb.png',
+	contactout: 'https://contactout.com/android-chrome-512x512.png',
+	cosmic: 'https://github.com/cosmicjs.png?size=256',
+	diffbot: 'https://www.diffbot.com/favicon-192.png',
+	docmosis:
+		'https://www.docmosis.com/wp-content/uploads/2021/07/favicon-2-300x300.png',
+	dropbox:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/94/2b/ca/942bcaba-f8db-9467-f3c9-10f6f35267a3/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/256x256bb.png',
+	epicgames: 'https://github.com/EpicGames.png?size=256',
+	filloutforms: 'https://github.com/fillout.png?size=256',
+	firecrawl: 'https://github.com/firecrawl.png?size=256',
+	gitlab: 'https://about.gitlab.com/images/ico/favicon-192x192.png',
+	grafana:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/1a/d7/9d/1ad79d36-8142-fb4a-0b83-61747215388e/AppIcon-0-0-1x_U007ephone-0-1-sRGB-85-220.png/256x256bb.png',
+	heygen: 'https://github.com/HeyGen-Official.png?size=256',
+	jira: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/41/38/ef/4138ef7d-0ec9-9782-6029-04b69aa60f26/AppIcon-0-0-1x_U007epad-0-1-85-220.png/256x256bb.png',
+	kaggle: 'https://github.com/Kaggle.png?size=256',
+	leexi:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/db/74/d1/db74d11f-37da-68e4-5962-dca0a950dd68/AppIcon-0-0-1x_U007epad-0-1-85-220.png/256x256bb.png',
+	linkedin:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/81/62/17/81621741-aef5-e3e0-c20d-645b83902669/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/256x256bb.png',
+	loyverse:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/9d/74/00/9d740077-094a-1b77-59e9-d71085575fa9/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/256x256bb.png',
+	mailboxlayer: 'https://mailboxlayer.com/images/icons/mailboxlayer_icon.png',
+	nextdns: 'https://github.com/nextdns.png?size=256',
+	openrouter: 'https://openrouter.ai/favicon/glyph.png',
+	pdfco: 'https://pdf.co/favicon.png',
+	pdl: 'https://github.com/peopledatalabs.png?size=256',
+	perplexityai: 'https://github.com/perplexityai.png?size=256',
+	pinecone: 'https://github.com/pinecone-io.png?size=256',
+	pushbullet: 'https://github.com/pushbullet.png?size=256',
+	salesforce: 'https://github.com/salesforce.png?size=256',
+	scaleai: 'https://scale.com/static/global/favicon/v3/apple-touch-icon.png',
+	sentry: 'https://github.com/getsentry.png?size=256',
+	slack:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/8e/a6/9e/8ea69e16-151a-811a-75a7-bce97339b000/slack_icon_prod-0-0-1x_U007epad-0-1-85-220.png/256x256bb.png',
+	slackbot:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/8e/a6/9e/8ea69e16-151a-811a-75a7-bce97339b000/slack_icon_prod-0-0-1x_U007epad-0-1-85-220.png/256x256bb.png',
+	snapchat:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/30/cc/d2/30ccd285-16f5-c44b-1b20-35ba6f52e26f/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/256x256bb.png',
+	spotify: 'https://github.com/spotify.png?size=256',
+	strava: 'https://github.com/strava.png?size=256',
+	tavily: 'https://www.tavily.com/apple-icon.png?apple-icon.2rsjznomrsf77.png',
+	tavilymcp:
+		'https://www.tavily.com/apple-icon.png?apple-icon.2rsjznomrsf77.png',
+	textrazor: 'https://github.com/TextRazor.png?size=256',
+	todoist:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/28/db/77/28db7718-8ed9-e73d-cce4-88879b0e87ae/AppIcon-0-0-1x_U007epad-0-1-85-220.png/256x256bb.png',
+	twentyonerisk:
+		'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://21risk.com&size=256',
+	webscrapingai: 'https://github.com/webscraping-ai.png?size=256',
+	whatsapp:
+		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/15/eb/39/15eb3965-bec3-4737-950a-9d9df5303e93/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-0-85-220.png/256x256bb.png',
+	witai: 'https://github.com/wit-ai.png?size=256',
+	workday: 'https://github.com/Workday.png?size=256',
+	zoom: 'https://github.com/zoom.png?size=256',
 };
 
 type FetchResult =
@@ -346,7 +554,12 @@ async function main(): Promise<void> {
 				return;
 			}
 
-			writeFileSync(join(iconsDir, `${pluginId}.png`), result.bytes);
+			writeFileSync(
+				join(iconsDir, `${pluginId}.png`),
+				PLUGIN_ICON_LIGHT_TILE.has(pluginId)
+					? onLightTile(result.bytes)
+					: result.bytes,
+			);
 			sources[pluginId] = result.source;
 			console.log(`[plugin-icons] ${pluginId} (${result.source})`);
 		});
