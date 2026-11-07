@@ -42,9 +42,21 @@ function scalarFor(field: ZodField, key: string): unknown {
 	return 'test-' + key;
 }
 
-function buildValidInput(schema: {
-	shape: Record<string, ZodField>;
-}): Record<string, unknown> {
+// Meeting and call updates accept one of two body forms (calendar-synced or
+// logged), so no single field is required; a valid input picks the logged
+// form.
+// unknown: per-operation extra fields keyed by operation name.
+const refinedFormInputs: Record<string, Record<string, unknown>> = {
+	updateMeeting: { participants: [1] },
+	updateCall: { participants: [1] },
+};
+
+function buildValidInput(
+	schema: {
+		shape: Record<string, ZodField>;
+	},
+	operation?: string,
+): Record<string, unknown> {
 	// unknown: minimal valid inputs mix scalar kinds per required field
 	// Minimal valid input: only required fields get values. Optional fields
 	// stay absent — placeholder strings would violate enum and array
@@ -54,7 +66,7 @@ function buildValidInput(schema: {
 		if (field.isOptional()) continue;
 		input[key] = scalarFor(field, key);
 	}
-	return input;
+	return { ...input, ...(operation ? refinedFormInputs[operation] : {}) };
 }
 
 describe('Salesflare schema', () => {
@@ -123,7 +135,7 @@ describe('Salesflare schema', () => {
 	});
 
 	it('requires required fields at the schema boundary for every operation', () => {
-		for (const [, rawSchema] of Object.entries(
+		for (const [operation, rawSchema] of Object.entries(
 			SalesflareEndpointInputSchemas,
 		)) {
 			// unknown: zod v4 schema objects are accessed structurally to derive
@@ -138,7 +150,9 @@ describe('Salesflare schema', () => {
 			const required = requiredKeys(schema);
 			if (!required.length) continue;
 			expect(schema.safeParse({}).success).toBe(false);
-			expect(schema.safeParse(buildValidInput(schema)).success).toBe(true);
+			expect(schema.safeParse(buildValidInput(schema, operation)).success).toBe(
+				true,
+			);
 		}
 	});
 
@@ -174,6 +188,32 @@ describe('Salesflare schema', () => {
 				}
 			).tasks.deleteTask(ctx, { id: '.' }),
 		).rejects.toThrow('Invalid Salesflare id');
+	});
+
+	it('accepts both meeting update forms and rejects neither', () => {
+		for (const op of ['updateMeeting', 'updateCall'] as const) {
+			const schema = SalesflareEndpointInputSchemas[op];
+			// Logged meetings (created in Salesflare or via the API).
+			expect(
+				schema.safeParse({ meetingId: '1', participants: [2], notes: 'n' })
+					.success,
+			).toBe(true);
+			// Calendar-synced meetings: only the notes can change.
+			expect(
+				schema.safeParse({
+					meetingId: '1',
+					calendar_id: 'c',
+					external_id: 'e',
+					notes: 'n',
+				}).success,
+			).toBe(true);
+			expect(schema.safeParse({ meetingId: '1', notes: 'n' }).success).toBe(
+				false,
+			);
+			expect(
+				schema.safeParse({ meetingId: '1', participants: [] }).success,
+			).toBe(false);
+		}
 	});
 
 	it('accepts the array responses of array-bodied writes', async () => {
@@ -674,6 +714,7 @@ describe('Salesflare schema', () => {
 					if (field.isOptional()) continue;
 					input[key] = scalarFor(field, key);
 				}
+				Object.assign(input, refinedFormInputs[path.split('.')[1] ?? '']);
 				if (!(path in fixedOutputs)) {
 					throw new Error(
 						'No fixed provider-shaped response registered for ' + String(path),

@@ -720,16 +720,60 @@ const RetrieveMeetingInputSchema = z.object({
 	meetingId: z.string().min(1),
 });
 
+// PUT /meetings/{id} and PUT /calls/{id} take one of two bodies (spec
+// x-alternatives): a calendar-synced meeting, where only the notes can change
+// ({ calendar_id, external_id, notes }), or a meeting logged in Salesflare or
+// through the API ({ participants, ...details }). The live API rejects the
+// calendar form for logged meetings, so both forms are accepted here and the
+// refinement requires one of them.
+const MeetingUpdateBodyFields = {
+	meetingId: z.string().min(1),
+	calendar_id: z.string().optional(),
+	external_id: z.string().optional(),
+	date: z.string().optional(),
+	end_date: z.string().optional(),
+	subject: z.string().max(200).optional(),
+	description: z.string().optional(),
+	minutes: z.string().optional(),
+	notes: z.string().optional(),
+	edited_by: z.number().optional(),
+	type: z.enum(['meeting-live', 'meeting-phone']).optional(),
+	phone_type: z.string().optional(),
+	participants: z.array(z.number()).min(1).optional(),
+};
+
+const requireOneMeetingUpdateForm = (
+	value: {
+		calendar_id?: string;
+		external_id?: string;
+		notes?: string;
+		participants?: number[];
+	},
+	ctx: z.RefinementCtx,
+) => {
+	const calendarForm =
+		value.calendar_id !== undefined &&
+		value.external_id !== undefined &&
+		value.notes !== undefined;
+	const loggedForm = value.participants !== undefined;
+	if (!calendarForm && !loggedForm) {
+		ctx.addIssue({
+			code: 'custom',
+			message:
+				'Provide participants (meetings logged in Salesflare) or calendar_id, external_id and notes (calendar-synced meetings)',
+		});
+	}
+};
+
 const UpdateMeetingInputSchema = z
 	.object({
-		meetingId: z.string().min(1),
-		calendar_id: z.string(),
-		external_id: z.string(),
-		minutes: z.string().optional(),
-		notes: z.string(),
-		edited_by: z.number().optional(),
+		...MeetingUpdateBodyFields,
+		type: MeetingUpdateBodyFields.type.describe(
+			"Send 'meeting-live' when updating a logged live meeting; without it the API answers 422.",
+		),
 	})
-	.passthrough();
+	.passthrough()
+	.superRefine(requireOneMeetingUpdateForm);
 
 const DeleteMeetingInputSchema = z.object({
 	meetingId: z.string().min(1),
@@ -1055,15 +1099,9 @@ const CreateMessageFeedbackInputSchema = z
 	.passthrough();
 
 const UpdateCallInputSchema = z
-	.object({
-		meetingId: z.string().min(1),
-		calendar_id: z.string(),
-		external_id: z.string(),
-		minutes: z.string().optional(),
-		notes: z.string(),
-		edited_by: z.number().optional(),
-	})
-	.passthrough();
+	.object(MeetingUpdateBodyFields)
+	.passthrough()
+	.superRefine(requireOneMeetingUpdateForm);
 
 const UpdateMessageInputSchema = z
 	.object({
