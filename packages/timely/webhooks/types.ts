@@ -105,35 +105,81 @@ function headerValue(
 	return undefined;
 }
 
+/** Index just past the JSON value starting at `i`, or -1 if it is malformed. */
+function skipJsonValue(raw: string, i: number): number {
+	const first = raw[i];
+	if (first === '"') {
+		for (let j = i + 1; j < raw.length; j++) {
+			if (raw[j] === '\\') j++;
+			else if (raw[j] === '"') return j + 1;
+		}
+		return -1;
+	}
+	if (first === '{' || first === '[') {
+		let depth = 0;
+		for (let j = i; j < raw.length; j++) {
+			const c = raw[j];
+			if (c === '"') {
+				const end = skipJsonValue(raw, j);
+				if (end < 0) return -1;
+				j = end - 1;
+			} else if (c === '{' || c === '[') depth++;
+			else if (c === '}' || c === ']') {
+				depth--;
+				if (depth === 0) return j + 1;
+			}
+		}
+		return -1;
+	}
+	let j = i;
+	while (j < raw.length && !/[\s,}\]]/.test(raw[j] ?? '')) j++;
+	return j > i ? j : -1;
+}
+
 /**
  * Returns the exact bytes of the top-level `payload` object inside the raw
- * body. Timely signs those bytes, not the whole body.
+ * body. Timely signs those bytes, not the whole body. Only a key of the
+ * top-level object counts: a `payload` nested anywhere else is ignored, and a
+ * body with two top-level `payload` keys is rejected, so the bytes verified are
+ * the ones the handler reads.
  */
 export function extractRawPayload(rawBody: string): string | undefined {
-	const marker = rawBody.indexOf('"payload"');
-	if (marker < 0) return undefined;
-	let i = rawBody.indexOf(':', marker + '"payload"'.length);
-	if (i < 0) return undefined;
-	i++;
-	while (i < rawBody.length && /\s/.test(rawBody[i] ?? '')) i++;
+	const ws = (k: number) => {
+		while (k < rawBody.length && /\s/.test(rawBody[k] ?? '')) k++;
+		return k;
+	};
+	let i = ws(0);
 	if (rawBody[i] !== '{') return undefined;
-	let depth = 0;
-	let inString = false;
-	let escaped = false;
-	for (let j = i; j < rawBody.length; j++) {
-		const c = rawBody[j];
-		if (inString) {
-			if (escaped) escaped = false;
-			else if (c === '\\') escaped = true;
-			else if (c === '"') inString = false;
+	i = ws(i + 1);
+	let found: string | undefined;
+	if (rawBody[i] === '}') return undefined;
+	while (i < rawBody.length) {
+		if (rawBody[i] !== '"') return undefined;
+		const keyEnd = skipJsonValue(rawBody, i);
+		if (keyEnd < 0) return undefined;
+		let key: string;
+		try {
+			key = JSON.parse(rawBody.slice(i, keyEnd)) as string;
+		} catch {
+			return undefined;
+		}
+		i = ws(keyEnd);
+		if (rawBody[i] !== ':') return undefined;
+		i = ws(i + 1);
+		const valueEnd = skipJsonValue(rawBody, i);
+		if (valueEnd < 0) return undefined;
+		if (key === 'payload') {
+			if (found !== undefined) return undefined;
+			if (rawBody[i] !== '{') return undefined;
+			found = rawBody.slice(i, valueEnd);
+		}
+		i = ws(valueEnd);
+		if (rawBody[i] === ',') {
+			i = ws(i + 1);
 			continue;
 		}
-		if (c === '"') inString = true;
-		else if (c === '{') depth++;
-		else if (c === '}') {
-			depth--;
-			if (depth === 0) return rawBody.slice(i, j + 1);
-		}
+		if (rawBody[i] === '}') return found;
+		return undefined;
 	}
 	return undefined;
 }
@@ -191,14 +237,16 @@ export function verifyTimelyWebhookSignature(
 	if (rawPayload) candidates.push(rawPayload);
 	// Fallback for frameworks that only hand over parsed JSON: Timely's own
 	// serialization is compact JSON in key order, which JSON.stringify matches.
-	const parsedPayload = parseBody(
-		rawText ??
-			('payload' in request
-				? request.payload
-				: 'body' in request
-					? request.body
-					: undefined),
-	)?.payload;
+	// With raw text available, only its exact top-level payload bytes count.
+	const parsedPayload = rawText
+		? undefined
+		: parseBody(
+				'payload' in request
+					? request.payload
+					: 'body' in request
+						? request.body
+						: undefined,
+			)?.payload;
 	if (parsedPayload && typeof parsedPayload === 'object') {
 		const reserialized = JSON.stringify(parsedPayload);
 		if (!candidates.includes(reserialized)) candidates.push(reserialized);

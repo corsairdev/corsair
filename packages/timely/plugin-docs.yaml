@@ -61,6 +61,12 @@ apiExamples:
     call: "{ id: 987654, budget_type: 'H', budget: 40 }"
   projects.delete:
     id: 987654
+  timeEntries.create:
+    project_id: 987654
+    day: "2026-11-06"
+    hours: 1
+    minutes: 30
+    note: "Code review"
   timeEntries.get:
     id: 112233445
   timeEntries.update:

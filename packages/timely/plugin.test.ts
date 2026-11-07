@@ -1000,6 +1000,32 @@ describe('webhooks', () => {
 		);
 	});
 
+	it('verifies only the top-level payload, never a nested or duplicate one', () => {
+		const evil =
+			'{"entity_id":1,"entity_type":"Hour","entity_path":"/hours/1","status":"deleted"}';
+		// The genuinely signed payload hidden in an earlier nested object.
+		const nested = `{"event":"hours:created","x":{"payload":${rawPayload}},"payload":${evil}}`;
+		expect(extractRawPayload(nested)).toBe(evil);
+		expect(verifyTimelyWebhookSignature(request(nested), SECRET)).toEqual({
+			valid: false,
+			error: 'Signature mismatch',
+		});
+		// Two top-level payload keys: JSON.parse keeps the last, so refuse both.
+		const duplicate = `{"event":"hours:created","payload":${rawPayload},"payload":${evil}}`;
+		expect(extractRawPayload(duplicate)).toBeUndefined();
+		expect(verifyTimelyWebhookSignature(request(duplicate), SECRET).valid).toBe(
+			false,
+		);
+	});
+
+	it('finds the payload when other values hold braces, quotes or a "payload" string', () => {
+		const tricky = `{"note":"a } \\" { \\"payload\\": {}","list":[{"payload":{"x":1}}],"payload":${rawPayload}}`;
+		expect(extractRawPayload(tricky)).toBe(rawPayload);
+		expect(verifyTimelyWebhookSignature(request(tricky), SECRET).valid).toBe(
+			true,
+		);
+	});
+
 	it('trusts hub-verified deliveries', () => {
 		expect(
 			verifyTimelyWebhookSignature(

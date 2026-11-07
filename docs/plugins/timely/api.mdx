@@ -1253,7 +1253,13 @@ Log time on a project
 **Risk:** `write`
 
 ```ts
-await corsair.timely.api.timeEntries.create({});
+await corsair.timely.api.timeEntries.create({
+	project_id: 987654,
+	day: '2026-11-06',
+	hours: 1,
+	minutes: 30,
+	note: 'Code review',
+});
 ```
 
 **Input**
