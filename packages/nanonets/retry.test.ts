@@ -68,6 +68,29 @@ describe('Nanonets retry through createCorsair', () => {
 		}
 	});
 
+	it('waits the documented 30 seconds between no-header retries', async () => {
+		const { corsair, testDb } = await createClient();
+		jest.useFakeTimers();
+		try {
+			respond(error429, 429);
+			respond(predictionEnvelope, 200);
+
+			const pending = corsair.nanonets.api.predictions.createFromUrls({
+				model_id: modelId,
+				urls: ['https://img.example/a.png'],
+			});
+
+			await jest.advanceTimersByTimeAsync(29_999);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+			await jest.advanceTimersByTimeAsync(1);
+			await expect(pending).resolves.toMatchObject({ message: 'Success' });
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			jest.useRealTimers();
+			testDb.cleanup();
+		}
+	});
+
 	it('gives up after three rate-limit retries', async () => {
 		const { corsair, testDb } = await createClient();
 		try {

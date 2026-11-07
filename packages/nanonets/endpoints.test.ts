@@ -131,9 +131,13 @@ describe('predictions.createFromFile', () => {
 			label: 'total_amount',
 			ocr_text: '120.00',
 		});
-		expect(result.signed_urls?.['invoice.png']?.original).toBe(
-			'https://files.nanonets.com/signed/invoice.png?exp=4h',
-		);
+		// The union allows the [null] form; this fixture carries the record form.
+		const signedUrls = result.signed_urls;
+		expect(
+			Array.isArray(signedUrls)
+				? undefined
+				: signedUrls?.['invoice.png']?.original,
+		).toBe('https://files.nanonets.com/signed/invoice.png?exp=4h');
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'nanonets.predictions.createFromFile',
@@ -599,6 +603,19 @@ describe('integrations.list', () => {
 		respond({ data: integrationsArray });
 
 		await expect(invoke(Integrations.list, {})).rejects.toBeInstanceOf(Error);
+	});
+});
+
+describe('output validation', () => {
+	it('rejects a successful response with a malformed known field', async () => {
+		respond({ message: 'Success', result: [{ id: 123 }] });
+
+		await expect(
+			invoke(Predictions.createFromUrls, {
+				model_id: modelId,
+				urls: ['https://img.example/a.png'],
+			}),
+		).rejects.toBeInstanceOf(Error);
 	});
 });
 

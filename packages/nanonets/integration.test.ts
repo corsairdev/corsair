@@ -170,6 +170,21 @@ describeIfKey('Nanonets live smoke', () => {
 			const result = await corsair.nanonets.api.integrations.list({});
 
 			expect(Array.isArray(result.integrations)).toBe(true);
+
+			// The wrapper can mask a wrong-shaped payload as an empty list, so
+			// check the raw API answer directly.
+			const key = process.env.NANONETS_API_KEY as string;
+			const raw = await fetch(
+				'https://app.nanonets.com/api/v2/externalIntegrations',
+				{
+					headers: {
+						Authorization: `Basic ${Buffer.from(`${key}:`).toString('base64')}`,
+					},
+				},
+			);
+			// unknown: the raw body is whatever the API answers today.
+			const body: unknown = await raw.json();
+			expect(Array.isArray(body)).toBe(true);
 		} finally {
 			testDb.cleanup();
 		}
