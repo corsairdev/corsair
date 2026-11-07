@@ -3,74 +3,16 @@ import { makeMixmaxRequest } from '../client';
 import type { MixmaxEndpoints } from '../index';
 import type { MixmaxEndpointOutputs } from './types';
 
-export const usersGetMe: MixmaxEndpoints['usersGetMe'] = async (ctx, _input) => {
-	const result = await makeMixmaxRequest<
-		MixmaxEndpointOutputs['usersGetMe']
-	>('/v1/users/me', ctx.key, {
-		method: 'GET',
-	});
+export const usersGetMe: MixmaxEndpoints['usersGetMe'] = async (ctx, input) => {
+	const result = await makeMixmaxRequest<MixmaxEndpointOutputs['usersGetMe']>(
+		ctx,
+		'/v1/users/me',
+		{ method: 'GET' },
+	);
 
 	await logEventFromContext(
 		ctx,
 		'mixmax.users.getMe',
-		{},
-		'completed',
-	);
-	return result;
-};
-
-export const usersGet: MixmaxEndpoints['usersGet'] = async (ctx, input) => {
-	const result = await makeMixmaxRequest<
-		MixmaxEndpointOutputs['usersGet']
-	>(`/v1/users/${input.id}`, ctx.key, {
-		method: 'GET',
-	});
-
-	await logEventFromContext(
-		ctx,
-		'mixmax.users.get',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
-
-export const usersUpdatePassword: MixmaxEndpoints['usersUpdatePassword'] = async (
-	ctx,
-	input,
-) => {
-	const result = await makeMixmaxRequest<
-		MixmaxEndpointOutputs['usersUpdatePassword']
-	>(`/v1/users/${input.id}/password`, ctx.key, {
-		method: 'PATCH',
-		body: {
-			password: input.password,
-		},
-	});
-
-	await logEventFromContext(
-		ctx,
-		'mixmax.users.updatePassword',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
-
-export const usersUpdateSubscription: MixmaxEndpoints['usersUpdateSubscription'] =
-	async (ctx, input) => {
-	const result = await makeMixmaxRequest<
-		MixmaxEndpointOutputs['usersUpdateSubscription']
-	>(`/v1/users/${input.id}/subscription`, ctx.key, {
-		method: 'PATCH',
-		body: {
-			plan: input.plan,
-		},
-	});
-
-	await logEventFromContext(
-		ctx,
-		'mixmax.users.updateSubscription',
 		{ ...input },
 		'completed',
 	);
@@ -79,18 +21,22 @@ export const usersUpdateSubscription: MixmaxEndpoints['usersUpdateSubscription']
 
 export const userPreferencesGet: MixmaxEndpoints['userPreferencesGet'] = async (
 	ctx,
-	_input,
+	input,
 ) => {
 	const result = await makeMixmaxRequest<
 		MixmaxEndpointOutputs['userPreferencesGet']
-	>('/v1/userpreferences/me', ctx.key, {
+	>(ctx, '/v1/userpreferences/me', {
 		method: 'GET',
+		query: {
+			fields: input.fields,
+			includeFinalDefaultCalendarUrl: input.includeFinalDefaultCalendarUrl,
+		},
 	});
 
 	await logEventFromContext(
 		ctx,
 		'mixmax.userPreferences.get',
-		{},
+		{ ...input },
 		'completed',
 	);
 	return result;
@@ -98,22 +44,81 @@ export const userPreferencesGet: MixmaxEndpoints['userPreferencesGet'] = async (
 
 export const userPreferencesUpdate: MixmaxEndpoints['userPreferencesUpdate'] =
 	async (ctx, input) => {
-	const result = await makeMixmaxRequest<
-		MixmaxEndpointOutputs['userPreferencesUpdate']
-	>('/v1/userpreferences/me', ctx.key, {
-		method: 'PATCH',
-		body: {
-			autoBcc: input.autoBcc,
-			autoBccExcludedEmails: input.autoBccExcludedEmails,
-			signature: input.signature,
-		},
-	});
+		// The whole preferences document is patchable and the provider schema
+		// is explicitly extensible, so the validated input is forwarded as the
+		// body minus nothing.
+		const { ...preferences } = input;
+		const result = await makeMixmaxRequest<
+			MixmaxEndpointOutputs['userPreferencesUpdate']
+		>(ctx, '/v1/userpreferences/me', {
+			method: 'PATCH',
+			body: preferences,
+		});
 
-	await logEventFromContext(
-		ctx,
-		'mixmax.userPreferences.update',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
+		await logEventFromContext(
+			ctx,
+			'mixmax.userPreferences.update',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
+
+export const userPreferencesAutoBccList: MixmaxEndpoints['userPreferencesAutoBccList'] =
+	async (ctx, input) => {
+		const result = await makeMixmaxRequest<
+			MixmaxEndpointOutputs['userPreferencesAutoBccList']
+		>(ctx, '/v1/userpreferences/me/autoBccExcludedEmails', {
+			method: 'GET',
+			query: { email: input.email },
+		});
+
+		await logEventFromContext(
+			ctx,
+			'mixmax.userPreferences.autoBccExcludedEmails.list',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
+
+export const userPreferencesAutoBccAdd: MixmaxEndpoints['userPreferencesAutoBccAdd'] =
+	async (ctx, input) => {
+		const result = await makeMixmaxRequest<
+			MixmaxEndpointOutputs['userPreferencesAutoBccAdd']
+		>(ctx, '/v1/userpreferences/me/autoBccExcludedEmails', {
+			method: 'POST',
+			body: {
+				email: input.email,
+				emails: input.emails,
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'mixmax.userPreferences.autoBccExcludedEmails.add',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
+
+export const userPreferencesAutoBccExists: MixmaxEndpoints['userPreferencesAutoBccExists'] =
+	async (ctx, input) => {
+		const result = await makeMixmaxRequest<
+			MixmaxEndpointOutputs['userPreferencesAutoBccExists']
+		>(ctx, '/v1/userpreferences/me/autoBccExcludedEmails/exists', {
+			method: 'POST',
+			body: {
+				emails: input.emails,
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'mixmax.userPreferences.autoBccExcludedEmails.exists',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};
