@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-07T11:55:43.011Z",
+  "generatedAt": "2026-11-07T18:23:20.410Z",
   "corsairVersion": "0.1.157",
   "catalogVersion": 2,
   "plugins": [
@@ -1283,7 +1283,7 @@
     {
       "id": "bonsai",
       "displayName": "Bonsai",
-      "description": "Freelance business management for contracts, invoices, proposals, and client billing.",
+      "description": "Managed Elasticsearch and OpenSearch hosting. Look up your clusters and the regions (spaces) they can run in.",
       "npmPackageName": "@corsair-dev/bonsai",
       "authTypes": [
         "api_key"
@@ -5424,8 +5424,8 @@
     },
     {
       "id": "studiobyai21labs",
-      "displayName": "ElevenLabs Studio",
-      "description": "AI audio studio for voice generation, dubbing, and long-form spoken content production.",
+      "displayName": "AI21 Studio",
+      "description": "AI21 Labs' model platform: Jamba chat completions, Maestro runs, and a file library to ground answers in your documents.",
       "npmPackageName": "@corsair-dev/studiobyai21labs",
       "authTypes": [
         "api_key"
