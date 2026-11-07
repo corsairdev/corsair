@@ -58,6 +58,7 @@ const PredictionPageSchema = z
 		prediction: z.array(BoxSchema).nullish(),
 		predicted_boxes: z.array(BoxSchema).nullish(),
 		moderated_boxes: z.array(BoxSchema).nullish(),
+		// unknown: raw OCR fields vary by document and engine.
 		raw_ocr: z.record(z.string(), z.unknown()).nullish(),
 		page: z.union([z.number(), z.string()]).nullish(),
 		request_file_id: z.string().nullish(),
@@ -90,6 +91,7 @@ const PredictionPageSchema = z
 		original_file_name: z.string().nullish(),
 		day_since_epoch: z.number().nullish(),
 		url: z.string().nullish(),
+		// unknown: file metadata flags vary by workflow configuration.
 		file_metadata: z.record(z.string(), z.unknown()).nullish(),
 		// unknown: the vendor OCR payload varies by engine.
 		raw_ocr_api_response: z.unknown().nullish(),
@@ -147,6 +149,7 @@ const PredictionFileSummarySchema = z
 		upload_channel: z.string().nullish(),
 		file_url: z.string().nullish(),
 		request_metadata: z.string().nullish(),
+		// unknown: raw OCR fields vary by document and engine.
 		raw_ocr: z.record(z.string(), z.unknown()).nullish(),
 		approval_status: z.string().nullish(),
 		processing_type: z.string().nullish(),
@@ -154,7 +157,8 @@ const PredictionFileSummarySchema = z
 	.loose();
 
 // Nanonets documents no response body for the workflow actions; whatever
-// comes back is passed through as a record.
+// comes back is passed through.
+// unknown: the undocumented action payloads vary per endpoint.
 const WorkflowActionResponseSchema = z.record(z.string(), z.unknown());
 
 // ── predictions.createFromFile ─────────────────────────────────────────────

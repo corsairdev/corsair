@@ -32,7 +32,7 @@ await corsair.nanonets.api.files.approve({ model_id: 'd4d3beec-1029-497a-8d4c-8a
 
 
 
-**Output:** `Record<string, any>`
+**Output:** `Record<string, unknown>`
 
 
 ---
@@ -59,7 +59,7 @@ await corsair.nanonets.api.files.assign({ model_id: 'd4d3beec-1029-497a-8d4c-8a3
 
 
 
-**Output:** `Record<string, any>`
+**Output:** `Record<string, unknown>`
 
 
 ---
@@ -85,7 +85,7 @@ await corsair.nanonets.api.files.delete({ model_id: 'd4d3beec-1029-497a-8d4c-8a3
 
 
 
-**Output:** `Record<string, any>`
+**Output:** `Record<string, unknown>`
 
 
 ---
@@ -111,7 +111,7 @@ await corsair.nanonets.api.files.retryExports({ model_id: 'd4d3beec-1029-497a-8d
 
 
 
-**Output:** `Record<string, any>`
+**Output:** `Record<string, unknown>`
 
 
 ---
@@ -137,7 +137,7 @@ await corsair.nanonets.api.files.retryPredictions({ model_id: 'd4d3beec-1029-497
 
 
 
-**Output:** `Record<string, any>`
+**Output:** `Record<string, unknown>`
 
 
 ---
@@ -163,7 +163,7 @@ await corsair.nanonets.api.files.unapprove({ model_id: 'd4d3beec-1029-497a-8d4c-
 
 
 
-**Output:** `Record<string, any>`
+**Output:** `Record<string, unknown>`
 
 
 ---
@@ -217,7 +217,7 @@ await corsair.nanonets.api.files.updateFields({ model_id: 'd4d3beec-1029-497a-8d
   lookup_edited?: boolean | null,
   lookup_parent_box_ids?: string[] | null,
   is_new?: boolean | null,
-  cells?: Record<string, any>[] | null
+  cells?: Record<string, unknown>[] | null
 }[]
 ```
 </Accordion>
@@ -225,7 +225,7 @@ await corsair.nanonets.api.files.updateFields({ model_id: 'd4d3beec-1029-497a-8d
 
 
 
-**Output:** `Record<string, any>`
+**Output:** `Record<string, unknown>`
 
 
 ---
@@ -257,7 +257,7 @@ await corsair.nanonets.api.integrations.executeQuery({ external_integration_id: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `rows` | `Record<string, any>[]` | Yes | — |
+| `rows` | `Record<string, unknown>[]` | Yes | — |
 
 
 
@@ -293,7 +293,7 @@ await corsair.nanonets.api.integrations.list({});
   email?: string | null,
   name?: string | null,
   type?: string | null,
-  info?: Record<string, any> | null,
+  info?: Record<string, unknown> | null,
   status?: string | null,
   is_internal?: boolean | null
 }[]
@@ -363,7 +363,7 @@ await corsair.nanonets.api.models.updateGuidelines({ model_id: 'd4d3beec-1029-49
 
 
 
-**Output:** `Record<string, any>`
+**Output:** `Record<string, unknown>`
 
 
 ---
@@ -470,7 +470,7 @@ await corsair.nanonets.api.predictions.createFromFile({ model_id: 'd4d3beec-1029
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
   predicted_boxes?: {
     id?: string | null,
@@ -498,7 +498,7 @@ await corsair.nanonets.api.predictions.createFromFile({ model_id: 'd4d3beec-1029
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
   moderated_boxes?: {
     id?: string | null,
@@ -526,9 +526,9 @@ await corsair.nanonets.api.predictions.createFromFile({ model_id: 'd4d3beec-1029
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
-  raw_ocr?: Record<string, any> | null,
+  raw_ocr?: Record<string, unknown> | null,
   page?: number | string | null,
   request_file_id?: string | null,
   id?: string | null,
@@ -557,7 +557,7 @@ await corsair.nanonets.api.predictions.createFromFile({ model_id: 'd4d3beec-1029
   original_file_name?: string | null,
   day_since_epoch?: number | null,
   url?: string | null,
-  file_metadata?: Record<string, any> | null,
+  file_metadata?: Record<string, unknown> | null,
   raw_ocr_api_response?: any | null
 }[] | null
 ```
@@ -634,7 +634,7 @@ await corsair.nanonets.api.predictions.createFromUrls({ model_id: 'd4d3beec-1029
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
   predicted_boxes?: {
     id?: string | null,
@@ -662,7 +662,7 @@ await corsair.nanonets.api.predictions.createFromUrls({ model_id: 'd4d3beec-1029
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
   moderated_boxes?: {
     id?: string | null,
@@ -690,9 +690,9 @@ await corsair.nanonets.api.predictions.createFromUrls({ model_id: 'd4d3beec-1029
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
-  raw_ocr?: Record<string, any> | null,
+  raw_ocr?: Record<string, unknown> | null,
   page?: number | string | null,
   request_file_id?: string | null,
   id?: string | null,
@@ -721,7 +721,7 @@ await corsair.nanonets.api.predictions.createFromUrls({ model_id: 'd4d3beec-1029
   original_file_name?: string | null,
   day_since_epoch?: number | null,
   url?: string | null,
-  file_metadata?: Record<string, any> | null,
+  file_metadata?: Record<string, unknown> | null,
   raw_ocr_api_response?: any | null
 }[] | null
 ```
@@ -794,7 +794,7 @@ await corsair.nanonets.api.predictions.getFileByFileId({ model_id: 'd4d3beec-102
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
   predicted_boxes?: {
     id?: string | null,
@@ -822,7 +822,7 @@ await corsair.nanonets.api.predictions.getFileByFileId({ model_id: 'd4d3beec-102
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
   moderated_boxes?: {
     id?: string | null,
@@ -850,9 +850,9 @@ await corsair.nanonets.api.predictions.getFileByFileId({ model_id: 'd4d3beec-102
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
-  raw_ocr?: Record<string, any> | null,
+  raw_ocr?: Record<string, unknown> | null,
   page?: number | string | null,
   request_file_id?: string | null,
   id?: string | null,
@@ -881,7 +881,7 @@ await corsair.nanonets.api.predictions.getFileByFileId({ model_id: 'd4d3beec-102
   original_file_name?: string | null,
   day_since_epoch?: number | null,
   url?: string | null,
-  file_metadata?: Record<string, any> | null,
+  file_metadata?: Record<string, unknown> | null,
   raw_ocr_api_response?: any | null
 }[] | null
 ```
@@ -954,7 +954,7 @@ await corsair.nanonets.api.predictions.getFileByPageId({ model_id: 'd4d3beec-102
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
   predicted_boxes?: {
     id?: string | null,
@@ -982,7 +982,7 @@ await corsair.nanonets.api.predictions.getFileByPageId({ model_id: 'd4d3beec-102
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
   moderated_boxes?: {
     id?: string | null,
@@ -1010,9 +1010,9 @@ await corsair.nanonets.api.predictions.getFileByPageId({ model_id: 'd4d3beec-102
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
-  raw_ocr?: Record<string, any> | null,
+  raw_ocr?: Record<string, unknown> | null,
   page?: number | string | null,
   request_file_id?: string | null,
   id?: string | null,
@@ -1041,7 +1041,7 @@ await corsair.nanonets.api.predictions.getFileByPageId({ model_id: 'd4d3beec-102
   original_file_name?: string | null,
   day_since_epoch?: number | null,
   url?: string | null,
-  file_metadata?: Record<string, any> | null,
+  file_metadata?: Record<string, unknown> | null,
   raw_ocr_api_response?: any | null
 }[] | null
 ```
@@ -1120,7 +1120,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
   moderated_boxes?: {
     id?: string | null,
@@ -1148,7 +1148,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
   size?: {
     width?: number | null,
@@ -1170,7 +1170,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
   upload_channel?: string | null,
   file_url?: string | null,
   request_metadata?: string | null,
-  raw_ocr?: Record<string, any> | null,
+  raw_ocr?: Record<string, unknown> | null,
   approval_status?: string | null,
   processing_type?: string | null
 }[] | null
@@ -1212,7 +1212,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
   moderated_boxes?: {
     id?: string | null,
@@ -1240,7 +1240,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, any>[] | null
+    cells?: Record<string, unknown>[] | null
   }[] | null,
   size?: {
     width?: number | null,
@@ -1262,7 +1262,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
   upload_channel?: string | null,
   file_url?: string | null,
   request_metadata?: string | null,
-  raw_ocr?: Record<string, any> | null,
+  raw_ocr?: Record<string, unknown> | null,
   approval_status?: string | null,
   processing_type?: string | null
 }[] | null
