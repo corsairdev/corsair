@@ -17,9 +17,22 @@ const nextConfig: NextConfig = {
 				permanent: true,
 			},
 			// The MCP vs CLI benchmark page was removed; other sites still link to it.
+			// The MCP vs API post covers the same comparison.
 			{
 				source: '/mcp-vs-cli',
-				destination: '/',
+				destination: '/blog/mcp-vs-api',
+				permanent: true,
+			},
+			// The docs live on docs.corsair.dev. Some npm package homepages and
+			// older links still point at corsair.dev/docs.
+			{
+				source: '/docs',
+				destination: 'https://docs.corsair.dev',
+				permanent: true,
+			},
+			{
+				source: '/docs/:path*',
+				destination: 'https://docs.corsair.dev/:path*',
 				permanent: true,
 			},
 			// Old slug of this post, still linked from other pages.
