@@ -141,8 +141,10 @@ export const webhookEventsGet: FollowUpBossEndpoints['webhookEventsGet'] = (
 			// array); the full list is preserved, including an empty one.
 			shape: (raw) => {
 				const record = asRecord(raw);
-				// The documented envelope wins, even when its list is empty.
-				if (record && Array.isArray(record.webhookEvents)) {
+				// The documented envelope wins, even when its list is empty. A
+				// non-list `webhookEvents` (null, an object) goes to output
+				// validation as-is so it fails instead of passing as one event.
+				if (record && 'webhookEvents' in record) {
 					return record.webhookEvents;
 				}
 				if (Array.isArray(raw)) return raw;

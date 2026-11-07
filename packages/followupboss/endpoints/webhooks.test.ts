@@ -260,6 +260,19 @@ describe('webhookEvents', () => {
 		expect(result).toEqual([]);
 	});
 
+	it.each([null, {}, 'oops'])(
+		'get rejects a webhookEvents envelope holding %p instead of a list',
+		async (webhookEvents) => {
+			respond({ webhookEvents });
+
+			await expect(invoke(webhookEventsGet, { id: 123 })).rejects.toMatchObject(
+				{
+					name: 'ZodError',
+				},
+			);
+		},
+	);
+
 	it('get accepts a string id spelling as well', async () => {
 		respond(webhookEvent);
 
