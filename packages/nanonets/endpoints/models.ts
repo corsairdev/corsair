@@ -1,5 +1,5 @@
 import type { NanonetsEndpoints } from '..';
-import { call } from './call';
+import { call, emptyBodyAsRecord } from './call';
 import {
 	NanonetsEndpointInputSchemas as Inputs,
 	NanonetsEndpointOutputSchemas as Outputs,
@@ -61,7 +61,7 @@ export const updateGuidelines: NanonetsEndpoints['modelsUpdateGuidelines'] = (
 			body: { field_instructions, table_instructions, ai_guidelines },
 		}),
 		{
-			shape: (raw) => raw ?? {},
+			shape: emptyBodyAsRecord,
 			log: ({ model_id }) => ({ model_id }),
 		},
 	);

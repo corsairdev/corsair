@@ -1,5 +1,5 @@
 import type { NanonetsEndpoints } from '..';
-import { call } from './call';
+import { call, emptyBodyAsRecord } from './call';
 import {
 	NanonetsEndpointInputSchemas as Inputs,
 	NanonetsEndpointOutputSchemas as Outputs,
@@ -19,7 +19,7 @@ export const approve: NanonetsEndpoints['filesApprove'] = (ctx, input) =>
 			path: `/Inferences/Model/${encodeURIComponent(model_id)}/ImageLevelInferences/Verify/${encodeURIComponent(request_file_id)}`,
 		}),
 		{
-			shape: (raw) => raw ?? {},
+			shape: emptyBodyAsRecord,
 			log: ({ model_id, request_file_id }) => ({ model_id, request_file_id }),
 		},
 	);
@@ -38,7 +38,7 @@ export const unapprove: NanonetsEndpoints['filesUnapprove'] = (ctx, input) =>
 			path: `/Inferences/Model/${encodeURIComponent(model_id)}/ImageLevelInferences/UnVerify/${encodeURIComponent(request_file_id)}`,
 		}),
 		{
-			shape: (raw) => raw ?? {},
+			shape: emptyBodyAsRecord,
 			log: ({ model_id, request_file_id }) => ({ model_id, request_file_id }),
 		},
 	);
@@ -57,7 +57,7 @@ const deleteFile: NanonetsEndpoints['filesDelete'] = (ctx, input) =>
 			path: `/Inferences/Model/${encodeURIComponent(model_id)}/InferenceRequestFiles/${encodeURIComponent(file_id)}`,
 		}),
 		{
-			shape: (raw) => raw ?? {},
+			shape: emptyBodyAsRecord,
 			log: ({ model_id, file_id }) => ({ model_id, file_id }),
 		},
 	);
@@ -84,7 +84,7 @@ export const updateFields: NanonetsEndpoints['filesUpdateFields'] = (
 			mediaType: 'text/plain;charset=UTF-8',
 		}),
 		{
-			shape: (raw) => raw ?? {},
+			shape: emptyBodyAsRecord,
 			log: ({ model_id, moderated_boxes }) => ({
 				model_id,
 				fields: moderated_boxes.length,
@@ -107,7 +107,7 @@ export const assign: NanonetsEndpoints['filesAssign'] = (ctx, input) =>
 			body: { member, file_ids },
 		}),
 		{
-			shape: (raw) => raw ?? {},
+			shape: emptyBodyAsRecord,
 			log: ({ model_id, file_ids }) => ({ model_id, files: file_ids.length }),
 		},
 	);
@@ -130,7 +130,7 @@ export const retryExports: NanonetsEndpoints['filesRetryExports'] = (
 			body: { file_ids },
 		}),
 		{
-			shape: (raw) => raw ?? {},
+			shape: emptyBodyAsRecord,
 			log: ({ model_id, file_ids }) => ({ model_id, files: file_ids.length }),
 		},
 	);
@@ -153,7 +153,7 @@ export const retryPredictions: NanonetsEndpoints['filesRetryPredictions'] = (
 			body: { file_ids },
 		}),
 		{
-			shape: (raw) => raw ?? {},
+			shape: emptyBodyAsRecord,
 			log: ({ model_id, file_ids }) => ({ model_id, files: file_ids.length }),
 		},
 	);

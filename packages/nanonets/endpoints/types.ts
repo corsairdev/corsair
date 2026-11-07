@@ -48,7 +48,11 @@ const BoxSchema = z
 export type NanonetsBox = z.infer<typeof BoxSchema>;
 
 const SignedUrlsSchema = z
-	.record(z.string(), z.record(z.string(), z.string()))
+	.union([
+		z.record(z.string(), z.record(z.string(), z.string())),
+		// Files without signed URLs have been seen answering [null].
+		z.array(z.record(z.string(), z.string()).nullish()),
+	])
 	.nullish();
 
 const PredictionPageSchema = z
@@ -408,9 +412,8 @@ const FilesUpdateFieldsInputSchema = z.object({
 	model_id: ModelIdSchema,
 	moderated_boxes: z
 		.array(BoxSchema)
-		.min(1)
 		.describe(
-			'The full field list: existing boxes unchanged, new boxes with is_new: true, and any field omitted from the array is deleted.',
+			'The full field list: existing boxes unchanged, new boxes with is_new: true, any omitted field is deleted, and an empty array removes every field.',
 		),
 });
 

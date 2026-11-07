@@ -7,6 +7,16 @@ import { makeNanonetsRequest } from '../client';
 type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
+ * Workflow actions answer undocumented bodies, sometimes an empty string;
+ * '', null and undefined all read as an empty record while anything else
+ * passes through for the output schema to judge.
+ */
+// unknown: the undocumented action payloads vary per endpoint.
+export function emptyBodyAsRecord(raw: unknown): unknown {
+	return raw === '' || raw === null || raw === undefined ? {} : raw;
+}
+
+/**
  * Validates the input, sends the request, shapes and validates the response,
  * then logs the event. Inputs are not logged, because documents and request
  * metadata identify people; `log` picks the safe IDs.

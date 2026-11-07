@@ -435,7 +435,7 @@ await corsair.nanonets.api.predictions.createFromFile({ model_id: 'd4d3beec-1029
 |------|------|----------|-------------|
 | `message` | `string \| null` | No | — |
 | `result` | `object[] \| null` | No | — |
-| `signed_urls` | `Record<string, Record<string, string>> \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| Record<string, string>[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -599,7 +599,7 @@ await corsair.nanonets.api.predictions.createFromUrls({ model_id: 'd4d3beec-1029
 |------|------|----------|-------------|
 | `message` | `string \| null` | No | — |
 | `result` | `object[] \| null` | No | — |
-| `signed_urls` | `Record<string, Record<string, string>> \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| Record<string, string>[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -759,7 +759,7 @@ await corsair.nanonets.api.predictions.getFileByFileId({ model_id: 'd4d3beec-102
 |------|------|----------|-------------|
 | `message` | `string \| null` | No | — |
 | `result` | `object[] \| null` | No | — |
-| `signed_urls` | `Record<string, Record<string, string>> \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| Record<string, string>[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -919,7 +919,7 @@ await corsair.nanonets.api.predictions.getFileByPageId({ model_id: 'd4d3beec-102
 |------|------|----------|-------------|
 | `message` | `string \| null` | No | — |
 | `result` | `object[] \| null` | No | — |
-| `signed_urls` | `Record<string, Record<string, string>> \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| Record<string, string>[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -1082,7 +1082,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
 | `unmoderated_images_count` | `number \| null` | No | — |
 | `moderated_images` | `object[] \| null` | No | — |
 | `unmoderated_images` | `object[] \| null` | No | — |
-| `signed_urls` | `Record<string, Record<string, string>> \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| Record<string, string>[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="moderated_images full type">
