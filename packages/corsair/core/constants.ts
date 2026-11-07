@@ -163,7 +163,6 @@ export const BaseProviders = [
 	'cloudinary',
 	'coassemble',
 	'coda',
-
 	'codacy',
 	'codeinterpreter',
 	'cody',
@@ -340,7 +339,6 @@ export const BaseProviders = [
 	'remoet',
 	'removebg',
 	'render',
-	'replicate',
 	'replicate',
 	'replicate',
 	'replyio',
@@ -603,7 +601,6 @@ export const ProviderDisplayNames = {
 	cloudinary: 'Cloudinary',
 	coassemble: 'Coassemble',
 	coda: 'Coda',
-
 	codacy: 'Codacy',
 	codeinterpreter: 'CodeInterpreter',
 	cody: 'Cody',
@@ -675,7 +672,7 @@ export const ProviderDisplayNames = {
 	fixer: 'Fixer',
 	flexisign: 'Flexisign',
 	flutterwave: 'Flutterwave',
-	followupboss: 'FollowUpBoss',
+	followupboss: 'Follow Up Boss',
 	formbricks: 'Formbricks',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
@@ -1222,7 +1219,6 @@ export type AllProviders =
 	| 'remoet'
 	| 'removebg'
 	| 'render'
-	| 'replicate'
 	| 'replicate'
 	| 'replicate'
 	| 'replyio'
