@@ -297,6 +297,14 @@
                 ]
               },
               {
+                "group": "AI21 Studio",
+                "pages": [
+                  "plugins/studiobyai21labs/overview",
+                  "plugins/studiobyai21labs/api",
+                  "plugins/studiobyai21labs/database"
+                ]
+              },
+              {
                 "group": "AIML API",
                 "pages": [
                   "plugins/aimlapi/overview",
@@ -1773,14 +1781,6 @@
                   "plugins/dynapictures/overview",
                   "plugins/dynapictures/api",
                   "plugins/dynapictures/database"
-                ]
-              },
-              {
-                "group": "ElevenLabs Studio",
-                "pages": [
-                  "plugins/studiobyai21labs/overview",
-                  "plugins/studiobyai21labs/api",
-                  "plugins/studiobyai21labs/database"
                 ]
               },
               {
