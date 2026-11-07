@@ -1,0 +1,4 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Fidel"
+description: Card-linking API for linking consumer payment cards to programs and offers, exposing cards, transactions, programs, brands, locations, offers, and webhooks operations.
