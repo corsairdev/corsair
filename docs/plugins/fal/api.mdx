@@ -184,7 +184,7 @@ await corsair.fal.api.models.pricing({ endpointIds: ['fal-ai/flux/schnell', 'fal
 
 `models.run`
 
-Run a model and wait up to waitSeconds (default 10) for its output; spends fal credits. When it sees the run end in time it answers SUCCEEDED with output or FAILED with error, both final; any other answer, even for a run that may have finished, is IN_QUEUE or IN_PROGRESS to follow. Video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job: follow it with queue.status until SUCCEEDED or FAILED.
+Run a model and wait up to waitSeconds (default 10) for its output; spends fal credits. SUCCEEDED and FAILED are final. IN_QUEUE or IN_PROGRESS is a job to follow with queue.status; video, audio and training usually take longer than the wait.
 
 **Risk:** `write`
 
@@ -204,7 +204,7 @@ await corsair.fal.api.models.run({ endpointId: 'fal-ai/flux/schnell', input: { p
 | `hint` | `string` | No | Routing hint: requests with the same hint go to the same runner. |
 | `noRetry` | `boolean` | No | true turns off fal’s automatic retries for this request. |
 | `maxQueueLength` | `number` | No | Reject with 429 if this many requests are already queued. |
-| `waitSeconds` | `number` | No | How long to wait for the output, default 10 and at most 15 seconds; every read fits inside it. SUCCEEDED and FAILED are final when seen in time; IN_QUEUE also covers a read that failed or ran out of time. Video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job to follow with queue.status. |
+| `waitSeconds` | `number` | No | How long models.run waits after submitting, default 10 and at most 15 seconds. |
 
 Goes through fal's queue, so a run that outlasts `waitSeconds` is not lost. It answers with the same fields as `queue.status`. SUCCEEDED and FAILED are final; only IN_QUEUE or IN_PROGRESS need following, with `queue.status({ responseUrl })`.
 
@@ -458,7 +458,7 @@ Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` retu
 
 `queue.submit`
 
-Queue a model run (image, video, audio, 3D…) and get a request id back at once; spends fal credits. Video runs take minutes: follow it with queue.status until state is SUCCEEDED or FAILED, or pass webhookUrl.
+Queue a model run (image, video, audio, 3D…) and get a request id back at once; spends fal credits. Follow it with queue.status until state is SUCCEEDED or FAILED, or pass webhookUrl.
 
 **Risk:** `write`
 

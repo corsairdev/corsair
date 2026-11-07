@@ -241,7 +241,7 @@ const ModelsRunInputSchema = QueueSubmitInputSchema.extend({
 		.max(MODELS_RUN_MAX_WAIT_S)
 		.optional()
 		.describe(
-			'How long to wait for the output, default 10 and at most 15 seconds; every read fits inside it. SUCCEEDED and FAILED are final when seen in time; IN_QUEUE also covers a read that failed or ran out of time. Video, audio and training take minutes and come back IN_QUEUE or IN_PROGRESS as a job to follow with queue.status.',
+			'How long models.run waits after submitting, default 10 and at most 15 seconds.',
 		),
 });
 

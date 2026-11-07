@@ -7,7 +7,7 @@ Use **fal** through Corsair: one client, typed API calls, and incoming webhooks.
 
 Every model on fal takes its own input fields. Look them up with `models.search({ endpointIds: ['<endpoint id>'], includeOpenApi: true })`, then pass them as `input`.
 
-Video, audio and training runs take minutes. `models.run` waits up to 10 seconds (at most 15). When it sees the run end within the wait, it answers a final `state`: SUCCEEDED with `output`, or FAILED with `error` (bad input or a model error), and there is nothing to follow. Any other answer carries the run's `response_url` and IN_PROGRESS or IN_QUEUE. IN_QUEUE also covers a read that failed or ran out of time, so the run may already have started or even finished at fal. Follow every IN_QUEUE or IN_PROGRESS answer with `queue.status({ responseUrl })` until it says SUCCEEDED or FAILED, or pass `webhookUrl` and let fal post the result. On Corsair's cloud, `get_job` and the job card do the following for you.
+Video, audio and training runs usually take minutes. After submitting, `models.run` waits up to 10 seconds (at most 15). When it sees the run end within the wait, it answers a final `state`: SUCCEEDED with `output`, or FAILED with `error` (bad input or a model error), and there is nothing to follow. Any other answer carries the run's `response_url` and IN_PROGRESS or IN_QUEUE. IN_QUEUE also covers a read that failed or ran out of time, so the run may already have started or even finished at fal. Follow every IN_QUEUE or IN_PROGRESS answer with `queue.status({ responseUrl })` until it says SUCCEEDED or FAILED, or pass `webhookUrl` and let fal post the result. On Corsair's cloud, `get_job` and the job card do the following for you.
 
 **What you get:**
 
