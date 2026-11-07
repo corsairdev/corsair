@@ -23,6 +23,22 @@ export {
 	updateLocation,
 } from './locations';
 export {
+	createOfferFromMarketplaceOffer,
+	listMarketplaceOffers,
+} from './marketplace';
+export { listMidInsights } from './mid-insights';
+export {
+	createMidRequest,
+	listMidRequests,
+	retrieveMidRequest,
+} from './mid-requests';
+export { listMids } from './mids';
+export {
+	createMissingTransactionRequest,
+	listMissingTransactionRequests,
+	retrieveMissingTransactionRequest,
+} from './missing-transaction-requests';
+export {
 	activateOfferOnCard,
 	createOffer,
 	deleteOffer,
@@ -43,4 +59,18 @@ export {
 	retrieveProgram,
 	updateProgram,
 } from './programs';
+export {
+	createTransactionTest,
+	listTransactions,
+	listTransactionsByCard,
+	retrieveTransaction,
+} from './transactions';
 export * from './types';
+export {
+	createBrandWebhook,
+	createProgramWebhook,
+	deleteWebhook,
+	listWebhooks,
+	retrieveWebhook,
+	updateWebhook,
+} from './webhooks';

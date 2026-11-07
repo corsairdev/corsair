@@ -37,6 +37,22 @@ import {
 	updateLocation,
 } from './endpoints/locations';
 import {
+	createOfferFromMarketplaceOffer,
+	listMarketplaceOffers,
+} from './endpoints/marketplace';
+import { listMidInsights } from './endpoints/mid-insights';
+import {
+	createMidRequest,
+	listMidRequests,
+	retrieveMidRequest,
+} from './endpoints/mid-requests';
+import { listMids } from './endpoints/mids';
+import {
+	createMissingTransactionRequest,
+	listMissingTransactionRequests,
+	retrieveMissingTransactionRequest,
+} from './endpoints/missing-transaction-requests';
+import {
 	activateOfferOnCard,
 	createOffer,
 	deleteOffer,
@@ -57,6 +73,12 @@ import {
 	retrieveProgram,
 	updateProgram,
 } from './endpoints/programs';
+import {
+	createTransactionTest,
+	listTransactions,
+	listTransactionsByCard,
+	retrieveTransaction,
+} from './endpoints/transactions';
 import type {
 	FidelEndpointInputs,
 	FidelEndpointOutputs,
@@ -65,6 +87,14 @@ import {
 	FidelEndpointInputSchemas,
 	FidelEndpointOutputSchemas,
 } from './endpoints/types';
+import {
+	createBrandWebhook,
+	createProgramWebhook,
+	deleteWebhook,
+	listWebhooks,
+	retrieveWebhook,
+	updateWebhook,
+} from './endpoints/webhooks';
 import { errorHandlers } from './error-handlers';
 import { FidelSchema } from './schema';
 
@@ -192,6 +222,14 @@ const fidelEndpointsNested = {
 		deleteCard: deleteCard,
 		updateCardMetadata: updateCardMetadata,
 	},
+	webhooks: {
+		createBrandWebhook: createBrandWebhook,
+		createProgramWebhook: createProgramWebhook,
+		retrieveWebhook: retrieveWebhook,
+		updateWebhook: updateWebhook,
+		listWebhooks: listWebhooks,
+		deleteWebhook: deleteWebhook,
+	},
 	offers: {
 		createOffer: createOffer,
 		updateOffer: updateOffer,
@@ -206,6 +244,32 @@ const fidelEndpointsNested = {
 		unlinkCardFromOffer: unlinkCardFromOffer,
 		retrieveActiveOfferOnCard: retrieveActiveOfferOnCard,
 		listCardsWithActiveOffer: listCardsWithActiveOffer,
+	},
+	transactions: {
+		createTransactionTest: createTransactionTest,
+		retrieveTransaction: retrieveTransaction,
+		listTransactions: listTransactions,
+		listTransactionsByCard: listTransactionsByCard,
+	},
+	mids: {
+		listMids: listMids,
+	},
+	'mid-requests': {
+		retrieveMidRequest: retrieveMidRequest,
+		listMidRequests: listMidRequests,
+		createMidRequest: createMidRequest,
+	},
+	marketplace: {
+		listMarketplaceOffers: listMarketplaceOffers,
+		createOfferFromMarketplaceOffer: createOfferFromMarketplaceOffer,
+	},
+	'missing-transaction-requests': {
+		createMissingTransactionRequest: createMissingTransactionRequest,
+		retrieveMissingTransactionRequest: retrieveMissingTransactionRequest,
+		listMissingTransactionRequests: listMissingTransactionRequests,
+	},
+	'mid-insights': {
+		listMidInsights: listMidInsights,
 	},
 } as const;
 
@@ -298,6 +362,30 @@ export const fidelEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Replace the metadata of a linked card',
 	},
+	'webhooks.createBrandWebhook': {
+		riskLevel: 'write',
+		description: 'Create a webhook for brand events on Fidel',
+	},
+	'webhooks.createProgramWebhook': {
+		riskLevel: 'write',
+		description: 'Create a webhook for program events on Fidel',
+	},
+	'webhooks.retrieveWebhook': {
+		riskLevel: 'read',
+		description: 'Retrieve a webhook by ID',
+	},
+	'webhooks.updateWebhook': {
+		riskLevel: 'write',
+		description: 'Update the details of a webhook',
+	},
+	'webhooks.listWebhooks': {
+		riskLevel: 'read',
+		description: 'List the webhooks of a program',
+	},
+	'webhooks.deleteWebhook': {
+		riskLevel: 'destructive',
+		description: 'Delete a webhook from a program',
+	},
 	'offers.createOffer': {
 		riskLevel: 'write',
 		description: 'Create an offer on Fidel',
@@ -349,6 +437,62 @@ export const fidelEndpointMeta = {
 	'offers.listCardsWithActiveOffer': {
 		riskLevel: 'read',
 		description: 'List the linked cards with an active offer',
+	},
+	'transactions.createTransactionTest': {
+		riskLevel: 'write',
+		description: 'Create a test transaction in the test environment',
+	},
+	'transactions.retrieveTransaction': {
+		riskLevel: 'read',
+		description: 'Retrieve a transaction by ID',
+	},
+	'transactions.listTransactions': {
+		riskLevel: 'read',
+		description: 'List the transactions of a program',
+	},
+	'transactions.listTransactionsByCard': {
+		riskLevel: 'read',
+		description: 'List the transactions of a linked card',
+	},
+	'mids.listMids': {
+		riskLevel: 'read',
+		description: 'List the merchant IDs of a program',
+	},
+	'mid-requests.retrieveMidRequest': {
+		riskLevel: 'read',
+		description: 'Retrieve a MID request by ID',
+	},
+	'mid-requests.listMidRequests': {
+		riskLevel: 'read',
+		description: 'List the MID requests of a program',
+	},
+	'mid-requests.createMidRequest': {
+		riskLevel: 'write',
+		description: 'Create a MID request for a program',
+	},
+	'marketplace.listMarketplaceOffers': {
+		riskLevel: 'read',
+		description: 'List the offers available in the Fidel marketplace',
+	},
+	'marketplace.createOfferFromMarketplaceOffer': {
+		riskLevel: 'write',
+		description: 'Create an offer from a marketplace offer',
+	},
+	'missing-transaction-requests.createMissingTransactionRequest': {
+		riskLevel: 'write',
+		description: 'Create a missing transaction request for a linked card',
+	},
+	'missing-transaction-requests.retrieveMissingTransactionRequest': {
+		riskLevel: 'read',
+		description: 'Retrieve a missing transaction request by ID',
+	},
+	'missing-transaction-requests.listMissingTransactionRequests': {
+		riskLevel: 'read',
+		description: 'List the missing transaction requests of a program',
+	},
+	'mid-insights.listMidInsights': {
+		riskLevel: 'read',
+		description: 'List the MID insights of a program',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof fidelEndpointsNested>;
 
@@ -441,6 +585,30 @@ export const fidelEndpointSchemas = {
 		input: FidelEndpointInputSchemas.updateCardMetadata,
 		output: FidelEndpointOutputSchemas.updateCardMetadata,
 	},
+	'webhooks.createBrandWebhook': {
+		input: FidelEndpointInputSchemas.createBrandWebhook,
+		output: FidelEndpointOutputSchemas.createBrandWebhook,
+	},
+	'webhooks.createProgramWebhook': {
+		input: FidelEndpointInputSchemas.createProgramWebhook,
+		output: FidelEndpointOutputSchemas.createProgramWebhook,
+	},
+	'webhooks.retrieveWebhook': {
+		input: FidelEndpointInputSchemas.retrieveWebhook,
+		output: FidelEndpointOutputSchemas.retrieveWebhook,
+	},
+	'webhooks.updateWebhook': {
+		input: FidelEndpointInputSchemas.updateWebhook,
+		output: FidelEndpointOutputSchemas.updateWebhook,
+	},
+	'webhooks.listWebhooks': {
+		input: FidelEndpointInputSchemas.listWebhooks,
+		output: FidelEndpointOutputSchemas.listWebhooks,
+	},
+	'webhooks.deleteWebhook': {
+		input: FidelEndpointInputSchemas.deleteWebhook,
+		output: FidelEndpointOutputSchemas.deleteWebhook,
+	},
 	'offers.createOffer': {
 		input: FidelEndpointInputSchemas.createOffer,
 		output: FidelEndpointOutputSchemas.createOffer,
@@ -492,6 +660,62 @@ export const fidelEndpointSchemas = {
 	'offers.listCardsWithActiveOffer': {
 		input: FidelEndpointInputSchemas.listCardsWithActiveOffer,
 		output: FidelEndpointOutputSchemas.listCardsWithActiveOffer,
+	},
+	'transactions.createTransactionTest': {
+		input: FidelEndpointInputSchemas.createTransactionTest,
+		output: FidelEndpointOutputSchemas.createTransactionTest,
+	},
+	'transactions.retrieveTransaction': {
+		input: FidelEndpointInputSchemas.retrieveTransaction,
+		output: FidelEndpointOutputSchemas.retrieveTransaction,
+	},
+	'transactions.listTransactions': {
+		input: FidelEndpointInputSchemas.listTransactions,
+		output: FidelEndpointOutputSchemas.listTransactions,
+	},
+	'transactions.listTransactionsByCard': {
+		input: FidelEndpointInputSchemas.listTransactionsByCard,
+		output: FidelEndpointOutputSchemas.listTransactionsByCard,
+	},
+	'mids.listMids': {
+		input: FidelEndpointInputSchemas.listMids,
+		output: FidelEndpointOutputSchemas.listMids,
+	},
+	'mid-requests.retrieveMidRequest': {
+		input: FidelEndpointInputSchemas.retrieveMidRequest,
+		output: FidelEndpointOutputSchemas.retrieveMidRequest,
+	},
+	'mid-requests.listMidRequests': {
+		input: FidelEndpointInputSchemas.listMidRequests,
+		output: FidelEndpointOutputSchemas.listMidRequests,
+	},
+	'mid-requests.createMidRequest': {
+		input: FidelEndpointInputSchemas.createMidRequest,
+		output: FidelEndpointOutputSchemas.createMidRequest,
+	},
+	'marketplace.listMarketplaceOffers': {
+		input: FidelEndpointInputSchemas.listMarketplaceOffers,
+		output: FidelEndpointOutputSchemas.listMarketplaceOffers,
+	},
+	'marketplace.createOfferFromMarketplaceOffer': {
+		input: FidelEndpointInputSchemas.createOfferFromMarketplaceOffer,
+		output: FidelEndpointOutputSchemas.createOfferFromMarketplaceOffer,
+	},
+	'missing-transaction-requests.createMissingTransactionRequest': {
+		input: FidelEndpointInputSchemas.createMissingTransactionRequest,
+		output: FidelEndpointOutputSchemas.createMissingTransactionRequest,
+	},
+	'missing-transaction-requests.retrieveMissingTransactionRequest': {
+		input: FidelEndpointInputSchemas.retrieveMissingTransactionRequest,
+		output: FidelEndpointOutputSchemas.retrieveMissingTransactionRequest,
+	},
+	'missing-transaction-requests.listMissingTransactionRequests': {
+		input: FidelEndpointInputSchemas.listMissingTransactionRequests,
+		output: FidelEndpointOutputSchemas.listMissingTransactionRequests,
+	},
+	'mid-insights.listMidInsights': {
+		input: FidelEndpointInputSchemas.listMidInsights,
+		output: FidelEndpointOutputSchemas.listMidInsights,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof fidelEndpointsNested>;
 

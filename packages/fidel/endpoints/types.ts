@@ -208,6 +208,59 @@ const UpdateCardMetadataInputSchema = z.object({
 	RAW_BODY: z.string(),
 });
 
+const CreateBrandWebhookInputSchema = z.object({
+	event: z.enum(['brand.consent']),
+	url: z.string(),
+	// unknown: the provider documents headers as an open shape; values pass through as-is
+	headers: z.record(z.string(), z.unknown()).optional(),
+});
+
+const CreateProgramWebhookInputSchema = z.object({
+	programId: z.string().min(1),
+	event: z.enum([
+		'card.linked',
+		'card.failed',
+		'program.status',
+		'transaction.auth',
+		'transaction.auth.qualified',
+		'transaction.clearing',
+		'transaction.clearing.qualified',
+		'transaction.refund',
+		'transaction.refund.qualified',
+		'credits.balance.low',
+		'marketplace.offer.live',
+		'marketplace.offer.updated',
+	]),
+	url: z.string(),
+	offerId: z.string().optional(),
+	// unknown: the provider documents headers as an open shape; values pass through as-is
+	headers: z.record(z.string(), z.unknown()).optional(),
+});
+
+const RetrieveWebhookInputSchema = z.object({
+	hookId: z.string().min(1),
+});
+
+const UpdateWebhookInputSchema = z.object({
+	hookId: z.string().min(1),
+	event: z.string(),
+	url: z.string(),
+	programId: z.string().optional(),
+	offerId: z.string().optional(),
+	// unknown: the provider documents headers as an open shape; values pass through as-is
+	headers: z.record(z.string(), z.unknown()).optional(),
+});
+
+const ListWebhooksInputSchema = z.object({
+	programId: z.string().min(1),
+	limit: z.string().optional(),
+	event: z.string().optional(),
+});
+
+const DeleteWebhookInputSchema = z.object({
+	hookId: z.string().min(1),
+});
+
 const CreateOfferInputSchema = z.object({
 	brandId: z.string(),
 	countryCode: z.string(),
@@ -320,6 +373,177 @@ const ListCardsWithActiveOfferInputSchema = z.object({
 	start: z.string().optional(),
 });
 
+const CreateTransactionTestInputSchema = z.object({
+	amount: z.number(),
+	cardId: z.string(),
+	locationId: z.string(),
+});
+
+const RetrieveTransactionInputSchema = z.object({
+	transactionId: z.string().min(1),
+});
+
+const ListTransactionsInputSchema = z.object({
+	programId: z.string().min(1),
+	limit: z.string().optional(),
+	start: z.string().optional(),
+	order: z.string().optional(),
+	from: z.string().optional(),
+	to: z.string().optional(),
+});
+
+const ListTransactionsByCardInputSchema = z.object({
+	cardId: z.string().min(1),
+	limit: z.string().optional(),
+	start: z.string().optional(),
+	order: z.string().optional(),
+	from: z.string().optional(),
+	to: z.string().optional(),
+});
+
+const ListMidsInputSchema = z.object({
+	programId: z.string().min(1),
+	locationId: z.string().optional(),
+	brandId: z.string().optional(),
+	scheme: z.string().optional(),
+	seNumber: z.string().optional(),
+	mcAcquiringMid: z.string().optional(),
+	visaAcquiringMid: z.string().optional(),
+	vmid: z.string().optional(),
+	limit: z.string().optional(),
+	start: z.string().optional(),
+	sort: z.string().optional(),
+	order: z.string().optional(),
+});
+
+const RetrieveMidRequestInputSchema = z.object({
+	programId: z.string().min(1),
+	midRequestId: z.string().min(1),
+});
+
+const ListMidRequestsInputSchema = z.object({
+	programId: z.string().min(1),
+	locationId: z.string().optional(),
+	brandId: z.string().optional(),
+	midId: z.string().optional(),
+	status: z.string().optional(),
+	scheme: z.string().optional(),
+	seNumber: z.string().optional(),
+	mcAcquiringMid: z.string().optional(),
+	vmid: z.string().optional(),
+	limit: z.string().optional(),
+	start: z.string().optional(),
+	sort: z.string().optional(),
+	order: z.string().optional(),
+});
+
+const CreateMidRequestInputSchema = z.object({
+	programId: z.string().min(1),
+	action: z.enum(['onboard', 'offboard', 'reassign']),
+	scheme: z.enum(['amex', 'mastercard', 'visa']).optional(),
+	locationId: z.string().optional(),
+	midId: z.string().optional(),
+	origin: z
+		.enum([
+			'missing-transaction-lookup',
+			'brand-provided-mid',
+			'processor-provided-mid',
+			'third-party-provided-mid',
+			'manual-mid-lookup',
+		])
+		.optional(),
+	reason: z
+		.enum([
+			'wrong-mid',
+			'undesired-mid',
+			'invalid-mid',
+			'duplicated-location',
+			'wrong-location',
+		])
+		.optional(),
+	seNumber: z.string().optional(),
+	mcAcquiringMid: z.string().optional(),
+	mcLocationId: z.string().optional(),
+	vmid: z.string().optional(),
+	vsid: z.string().optional(),
+	visaBin: z.string().optional(),
+	visaAcquiringMid: z.string().optional(),
+});
+
+const ListMarketplaceOffersInputSchema = z.object({
+	limit: z.string().optional(),
+	start: z.string().optional(),
+	select: z.string().optional(),
+	order: z.string().optional(),
+	sort: z.string().optional(),
+	status: z.string().optional(),
+	activation: z.string().optional(),
+	approval: z.string().optional(),
+	brandId: z.array(z.string()).optional(),
+	channel: z.string().optional(),
+	supplierId: z.string().optional(),
+	countryCode: z.string().optional(),
+	network: z.string().optional(),
+	returnPeriod: z.string().optional(),
+});
+
+const CreateOfferFromMarketplaceOfferInputSchema = z.object({
+	marketplaceOfferId: z.string().min(1),
+	// unknown: the provider documents programIds as an open shape; values pass through as-is
+	programIds: z.array(z.unknown()),
+});
+
+const CreateMissingTransactionRequestInputSchema = z.object({
+	cardId: z.string().min(1),
+	locationId: z.string(),
+	amount: z.number(),
+	transactionDate: z.string(),
+});
+
+const RetrieveMissingTransactionRequestInputSchema = z.object({
+	missingTransactionRequestId: z.string().min(1),
+});
+
+const ListMissingTransactionRequestsInputSchema = z.object({
+	programId: z.string().min(1),
+	brandId: z.string().optional(),
+	locationId: z.string().optional(),
+	cardId: z.string().optional(),
+	amount: z.string().optional(),
+	transactionDate: z.string().optional(),
+	scheme: z.string().optional(),
+	status: z.string().optional(),
+	limit: z.string().optional(),
+	start: z.string().optional(),
+	sort: z.string().optional(),
+	order: z.string().optional(),
+});
+
+const ListMidInsightsInputSchema = z.object({
+	programId: z.string().min(1),
+	origin: z.array(z.string()).optional(),
+	id: z.array(z.string()).optional(),
+	status: z.string().optional(),
+	brandId: z.string().optional(),
+	locationId: z.string().optional(),
+	midId: z.string().optional(),
+	scheme: z.string().optional(),
+	seNumber: z.string().optional(),
+	mcAcquiringMid: z.string().optional(),
+	mcLocationId: z.string().optional(),
+	visaAcquiringMid: z.string().optional(),
+	visaBin: z.string().optional(),
+	vmid: z.string().optional(),
+	vsid: z.string().optional(),
+	lastSeenTransactionDateFrom: z.string().optional(),
+	lastSeenTransactionDateTo: z.string().optional(),
+	sort: z.string().optional(),
+	order: z.string().optional(),
+	limit: z.number().optional(),
+	start: z.string().optional(),
+	select: z.string().optional(),
+});
+
 export const FidelEndpointInputSchemas = {
 	createBrand: CreateBrandInputSchema,
 	retrieveBrand: RetrieveBrandInputSchema,
@@ -343,6 +567,12 @@ export const FidelEndpointInputSchemas = {
 	listCardsFromMetadataId: ListCardsFromMetadataIdInputSchema,
 	deleteCard: DeleteCardInputSchema,
 	updateCardMetadata: UpdateCardMetadataInputSchema,
+	createBrandWebhook: CreateBrandWebhookInputSchema,
+	createProgramWebhook: CreateProgramWebhookInputSchema,
+	retrieveWebhook: RetrieveWebhookInputSchema,
+	updateWebhook: UpdateWebhookInputSchema,
+	listWebhooks: ListWebhooksInputSchema,
+	deleteWebhook: DeleteWebhookInputSchema,
 	createOffer: CreateOfferInputSchema,
 	updateOffer: UpdateOfferInputSchema,
 	retrieveOffer: RetrieveOfferInputSchema,
@@ -356,6 +586,21 @@ export const FidelEndpointInputSchemas = {
 	unlinkCardFromOffer: UnlinkCardFromOfferInputSchema,
 	retrieveActiveOfferOnCard: RetrieveActiveOfferOnCardInputSchema,
 	listCardsWithActiveOffer: ListCardsWithActiveOfferInputSchema,
+	createTransactionTest: CreateTransactionTestInputSchema,
+	retrieveTransaction: RetrieveTransactionInputSchema,
+	listTransactions: ListTransactionsInputSchema,
+	listTransactionsByCard: ListTransactionsByCardInputSchema,
+	listMids: ListMidsInputSchema,
+	retrieveMidRequest: RetrieveMidRequestInputSchema,
+	listMidRequests: ListMidRequestsInputSchema,
+	createMidRequest: CreateMidRequestInputSchema,
+	listMarketplaceOffers: ListMarketplaceOffersInputSchema,
+	createOfferFromMarketplaceOffer: CreateOfferFromMarketplaceOfferInputSchema,
+	createMissingTransactionRequest: CreateMissingTransactionRequestInputSchema,
+	retrieveMissingTransactionRequest:
+		RetrieveMissingTransactionRequestInputSchema,
+	listMissingTransactionRequests: ListMissingTransactionRequestsInputSchema,
+	listMidInsights: ListMidInsightsInputSchema,
 } as const;
 
 export const FidelEndpointOutputSchemas = {
@@ -381,6 +626,12 @@ export const FidelEndpointOutputSchemas = {
 	listCardsFromMetadataId: FidelItemsOutputSchema,
 	deleteCard: FidelEmptyOutputSchema,
 	updateCardMetadata: FidelItemsOutputSchema,
+	createBrandWebhook: FidelItemsOutputSchema,
+	createProgramWebhook: FidelItemsOutputSchema,
+	retrieveWebhook: FidelItemsOutputSchema,
+	updateWebhook: FidelItemsOutputSchema,
+	listWebhooks: FidelItemsOutputSchema,
+	deleteWebhook: FidelEmptyOutputSchema,
 	createOffer: FidelItemsOutputSchema,
 	updateOffer: FidelItemsOutputSchema,
 	retrieveOffer: FidelItemsOutputSchema,
@@ -394,6 +645,20 @@ export const FidelEndpointOutputSchemas = {
 	unlinkCardFromOffer: FidelEmptyOutputSchema,
 	retrieveActiveOfferOnCard: FidelItemsOutputSchema,
 	listCardsWithActiveOffer: FidelItemsOutputSchema,
+	createTransactionTest: FidelItemsOutputSchema,
+	retrieveTransaction: FidelItemsOutputSchema,
+	listTransactions: FidelItemsOutputSchema,
+	listTransactionsByCard: FidelItemsOutputSchema,
+	listMids: FidelItemsOutputSchema,
+	retrieveMidRequest: FidelItemsOutputSchema,
+	listMidRequests: FidelItemsOutputSchema,
+	createMidRequest: FidelItemsOutputSchema,
+	listMarketplaceOffers: FidelItemsOutputSchema,
+	createOfferFromMarketplaceOffer: FidelAckOutputSchema,
+	createMissingTransactionRequest: FidelItemsOutputSchema,
+	retrieveMissingTransactionRequest: FidelItemsOutputSchema,
+	listMissingTransactionRequests: FidelItemsOutputSchema,
+	listMidInsights: FidelItemsOutputSchema,
 } as const;
 
 export type FidelEndpointInputs = {
