@@ -42,7 +42,10 @@ const AiSafetySchema = z
 		risk_score: z.number().nullish(),
 		risk_level: z.string().nullish(),
 		action_taken: z.string().nullish(),
-		signals: z.array(z.string()).nullish(),
+		// Extract documents signals as an object, markdown as a string array.
+		signals: z
+			.union([z.record(z.string(), z.unknown()), z.array(z.string())])
+			.nullish(),
 		recommendation: z.string().nullish(),
 	})
 	.loose();

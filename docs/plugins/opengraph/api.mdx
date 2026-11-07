@@ -271,7 +271,7 @@ Record<string, {
   risk_score?: number | null,
   risk_level?: string | null,
   action_taken?: string | null,
-  signals?: string[] | null,
+  signals?: Record<string, unknown> | string[] | null,
   recommendation?: string | null
 } | null
 ```
@@ -462,7 +462,7 @@ await corsair.opengraph.api.markdown.get({ url: 'https://en.wikipedia.org/wiki/W
   risk_score?: number | null,
   risk_level?: string | null,
   action_taken?: string | null,
-  signals?: string[] | null,
+  signals?: Record<string, unknown> | string[] | null,
   recommendation?: string | null
 } | null
 ```

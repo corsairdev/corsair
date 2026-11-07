@@ -14,6 +14,7 @@ import {
 	blockedError,
 	brandResponse,
 	extractResponse,
+	extractSanitizedResponse,
 	flatError,
 	markdownChunkedResponse,
 	markdownResponse,
@@ -264,6 +265,22 @@ describe('extract.run', () => {
 			allLinks: ['https://www.iana.org/domains/example'],
 		});
 		expect(result.concatenatedText).toContain('Example Domain');
+	});
+
+	it('accepts a sanitized response, whose signals come back as an object', async () => {
+		respond(extractSanitizedResponse);
+
+		const result = await invoke(Extract.run, {
+			site: 'https://example.com',
+			ai_sanitize: true,
+		});
+
+		expect(lastRequest().query.ai_sanitize).toBe('true');
+		expect(result.ai_safety).toEqual({
+			risk_score: 0.02,
+			risk_level: 'low',
+			signals: {},
+		});
 	});
 
 	it('rejects a selector config without a selector', async () => {
