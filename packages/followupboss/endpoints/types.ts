@@ -83,6 +83,17 @@ export const AddressSchema = z
 // similar), so their map cannot be enumerated; values pass through as sent.
 export const CustomFieldsSchema = z.record(z.string(), z.unknown());
 
+// Writes flatten custom fields into the top-level body, so their keys must be
+// FUB custom-field names (`custom…`): a key like `stageId` would otherwise
+// overwrite a validated field.
+// unknown: values are whatever the account's custom field takes.
+export const CustomFieldInputsSchema = z.record(
+	z
+		.string()
+		.regex(/^custom[A-Za-z0-9_]/, 'Custom field keys start with "custom"'),
+	z.unknown(),
+);
+
 // One of the account's buying timeframes, e.g. `{ id: 1, timeframe: '0-3 Months' }`.
 // A person carries the chosen one as timeframeId.
 export const TimeframeSchema = z
@@ -239,7 +250,7 @@ const PeopleCreateInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('Backdates the creation time, for importing historical leads.'),
-	customFields: CustomFieldsSchema.optional(),
+	customFields: CustomFieldInputsSchema.optional(),
 	emails: z.array(EmailSchema).min(1).optional(),
 	phones: z.array(PhoneSchema).min(1).optional(),
 	addresses: z.array(AddressSchema).optional(),
@@ -289,7 +300,7 @@ const PeopleUpdateInputSchema = z.object({
 		.int()
 		.optional()
 		.describe('Buying timeframe ID from timeframes.list.'),
-	customFields: CustomFieldsSchema.optional(),
+	customFields: CustomFieldInputsSchema.optional(),
 	mergeTags: z
 		.boolean()
 		.optional()

@@ -337,6 +337,20 @@ describe('deals', () => {
 		expect(lastRequest().body).not.toHaveProperty('customFields');
 	});
 
+	it('refuses custom field keys that could overwrite deal fields', async () => {
+		await expect(
+			invoke(dealsCreate, {
+				name: 'adding deal',
+				stageId: 5,
+				customFields: { stageId: 999 },
+			}),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		await expect(
+			invoke(dealsUpdate, { id: 2146, customFields: { price: 1 } }),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('delete answers {id, resource} from the empty 200 body', async () => {
 		respond({});
 
