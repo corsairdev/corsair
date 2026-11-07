@@ -1,0 +1,70 @@
+displayName: Salesflare
+description: CRM for small-to-medium B2B companies with automated data entry, pipeline management, and customer relationships.
+domain: salesflare.com
+recommendedAuth: api_key
+examples:
+  read:
+    path: accounts.listAccounts
+    title: List accounts
+    args: {}
+  write:
+    path: accounts.createAccount
+    title: Create an account
+    args:
+      name: Acme Inc
+apiExamples:
+  accounts.createAccount: { name: Acme Inc, domain: acme.example.com, website: 'https://acme.example.com' }
+  contacts.createContact: { email: jane@acme.example.com, firstname: Jane, lastname: Doe, account: 1234567 }
+  settings.updateAiSettings: { company: { name: Acme Inc, summary: B2B software for logistics teams } }
+  accounts.retrieveAccount: { accountId: '1234567' }
+  accounts.updateAccount: { accountId: '1234567', name: Acme Inc, website: 'https://acme.example.com' }
+  accounts.deleteAccount: { accountId: '1234567' }
+  accounts.listAccountMessages: { accountId: '1234567', limit: 20 }
+  accounts.listAccountFeed: { accountId: '1234567', limit: 20, types: [email, meeting-live] }
+  accounts.addAccountUsers: { accountId: '1234567', id: 2001 }
+  accounts.updateAccountUsers: { accountId: '1234567', id: 2001, _dirty: true, _deleted: true }
+  accounts.addAccountContacts: { accountId: '1234567', id: 3001 }
+  accounts.updateAccountContacts: { accountId: '1234567', id: 3001, _dirty: true, _deleted: true }
+  contacts.retrieveContact: { contactId: '3001' }
+  contacts.updateContact: { contactId: '3001', firstname: Jane, lastname: Doe }
+  contacts.deleteContact: { contactId: '3001' }
+  opportunities.createOpportunity: { account: 1234567, name: Acme renewal, value: 12000 }
+  opportunities.retrieveOpportunity: { id: '4001' }
+  opportunities.updateOpportunity: { id: '4001', value: 15000 }
+  opportunities.deleteOpportunity: { id: '4001' }
+  tags.createTag: { name: Enterprise }
+  tags.retrieveTag: { tagId: '5001' }
+  tags.updateTag: { tagId: '5001', name: Enterprise plan }
+  tags.deleteTag: { tagId: '5001' }
+  tags.listTagUsage: { tagId: '5001' }
+  tasks.createTask: { description: Send the renewal proposal, account: 1234567, reminder_date: '2026-12-01T09:00:00Z' }
+  tasks.updateTask: { id: '6001', completed: true }
+  tasks.deleteTask: { id: '6001' }
+  meetings.createMeeting: { date: '2026-12-01T15:00:00Z', end_date: '2026-12-01T15:30:00Z', subject: Renewal call, participants: [3001] }
+  meetings.retrieveMeeting: { meetingId: '7001' }
+  # call form: the docs generator can't match a string to the meeting-live | meeting-phone union.
+  meetings.updateMeeting:
+    call: "{ meetingId: '7001', type: 'meeting-live', participants: [3001], notes: 'Agreed on a 12-month renewal' }"
+  meetings.deleteMeeting: { meetingId: '7001' }
+  calls.createCall: { date: '2026-12-01T15:00:00Z', participants: [3001], notes: Left a voicemail }
+  calls.updateCall:
+    call: "{ meetingId: '7002', type: 'meeting-phone', participants: [3001], notes: 'Called back, renewal confirmed' }"
+  messages.createMessage: { account: 1234567, body: Renewal confirmed for next year. }
+  messages.updateMessage: { messageId: '8001', account: 1234567, body: Renewal confirmed for 12 months. }
+  messages.deleteMessage: { messageId: '8001' }
+  messages.createMessageFeedback: { messageId: '8001', feedback: The suggested reply was useful }
+  customfields.listCustomFields: { itemClass: accounts }
+  customfields.createCustomFieldSub: { itemClass: accounts, name: Contract tier, type: 1 }
+  customfields.retrieveCustomField: { itemClass: accounts, id: '9001' }
+  customfields.updateCustomField: { itemClass: accounts, id: '9001', name: Contract plan }
+  customfields.deleteCustomField: { itemClass: accounts, id: '9001' }
+  customfields.listCustomFieldOptions: { itemClass: accounts, customFieldApiField: contract_tier }
+  filterfields.listFilterFields: { entity: account }
+  groups.retrieveGroup: { id: '101' }
+  stages.retrieveStage: { stageId: '201' }
+  users.retrieveUser: { id: '2001' }
+  workflows.createWorkflow: { name: Renewal follow-up }
+  workflows.retrieveWorkflow: { id: '301' }
+  workflows.updateWorkflow: { id: '301', name: Renewal follow-up (Q1) }
+  workflows.updateWorkflowAudience: { id: '301', recordId: '3001', exited: true }
+  datasources.updateEmailDataSource: { id: '401', max_emails_day: 200, max_emails_hour: 40 }

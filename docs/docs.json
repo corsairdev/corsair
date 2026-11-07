@@ -2926,6 +2926,14 @@
                 ]
               },
               {
+                "group": "Salesflare",
+                "pages": [
+                  "plugins/salesflare/overview",
+                  "plugins/salesflare/api",
+                  "plugins/salesflare/database"
+                ]
+              },
+              {
                 "group": "Salesforce",
                 "pages": [
                   "plugins/salesforce/overview",
