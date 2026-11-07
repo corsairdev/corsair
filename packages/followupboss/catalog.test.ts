@@ -117,4 +117,51 @@ describe('followupboss catalog', () => {
 			expect(meta[id]?.riskLevel).toBe(expectedRisk(init.method ?? 'GET'));
 		},
 	);
+
+	// FUB's Pagination guide: every list that returns a collection pages with
+	// limit, offset and the keyset `next` cursor from `_metadata.next`.
+	const collections = operations.filter(({ id }) => {
+		const output = (
+			plugin.endpointSchemas as unknown as Record<
+				string,
+				{ output: { shape?: Record<string, unknown> } }
+			>
+		)[id]?.output;
+		return output?.shape !== undefined && '_metadata' in output.shape;
+	});
+
+	it('finds the paged collections', () => {
+		expect(collections.map(({ id }) => id)).toEqual(
+			expect.arrayContaining([
+				'tasks.list',
+				'textMessages.list',
+				'groups.list',
+				'automationsPeople.list',
+				'teamInboxes.list',
+				'emCampaigns.list',
+			]),
+		);
+	});
+
+	it.each(collections.map((op) => [op.id, op.endpoint] as const))(
+		'%s forwards limit, offset and next to the query',
+		async (id, endpoint) => {
+			const input = {
+				...(exampleInput(id) as Record<string, unknown>),
+				limit: 25,
+				offset: 50,
+				next: 'a2V5c2V0Ojk1MA',
+			};
+			await endpoint(
+				{ key: 'fub-test-key', options: {} } as never,
+				input as never,
+			).catch(() => undefined);
+
+			const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
+			const query = new URL(url).searchParams;
+			expect(query.get('limit')).toBe('25');
+			expect(query.get('offset')).toBe('50');
+			expect(query.get('next')).toBe('a2V5c2V0Ojk1MA');
+		},
+	);
 });

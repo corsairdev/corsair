@@ -85,7 +85,7 @@ const AUTOMATION_RUN_STATUSES = [
 	'Completed',
 ] as const;
 
-const AutomationsPeopleListInputSchema = z.object({
+const AutomationsPeopleListInputSchema = ListQuerySchema.extend({
 	personId: z.number().int().optional(),
 	automationId: z.number().int().optional(),
 	status: z.enum(AUTOMATION_RUN_STATUSES).optional(),

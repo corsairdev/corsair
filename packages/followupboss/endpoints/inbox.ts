@@ -274,7 +274,7 @@ export const teamInboxesList: FollowUpBossEndpoints['teamInboxesList'] = (
 			output: Outputs.teamInboxesList,
 		},
 		input,
-		() => ({ method: 'GET', path: '/teamInboxes' }),
+		(query) => ({ method: 'GET', path: '/teamInboxes', query }),
 		{
 			shape: (raw) => ({
 				teamInboxes: envelopeMany(raw, 'teamInboxes'),

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FubMetadataSchema, IdSchema } from './types';
+import { FubMetadataSchema, IdSchema, ListQuerySchema } from './types';
 
 // The inbox family: inbox apps (conversations, participants, messages, notes,
 // installs), team inboxes, reactions and threaded replies. Inputs use Follow
@@ -647,7 +647,7 @@ export type InboxAppsInstalledAppResponse = z.infer<
 
 // ── teamInboxes ────────────────────────────────────────────────────────────
 
-const TeamInboxesListInputSchema = z.object({});
+const TeamInboxesListInputSchema = ListQuerySchema;
 
 export type TeamInboxesListInput = z.infer<typeof TeamInboxesListInputSchema>;
 

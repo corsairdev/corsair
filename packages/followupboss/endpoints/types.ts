@@ -666,7 +666,7 @@ const TextMessageEnvelopeSchema = z
 	})
 	.loose();
 
-const TextMessagesListInputSchema = z.object({
+const TextMessagesListInputSchema = ListQuerySchema.extend({
 	personId: z.number().int().optional(),
 	toNumber: z.string().optional(),
 	fromNumber: z.string().optional(),
@@ -942,7 +942,7 @@ const TaskEnvelopeSchema = z
 	})
 	.loose();
 
-const TasksListInputSchema = z.object({
+const TasksListInputSchema = ListQuerySchema.extend({
 	personId: z.number().int().optional(),
 	assignedTo: z.string().optional(),
 	assignedUserId: z.number().int().optional(),

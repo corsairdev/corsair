@@ -361,7 +361,7 @@ const EmCampaignEnvelopeSchema = z
 
 // Unlike the other lists, /emCampaigns publishes no limit/offset paging
 // parameters.
-const EmCampaignsListInputSchema = z.object({
+const EmCampaignsListInputSchema = ListQuerySchema.extend({
 	origin: z
 		.string()
 		.optional()

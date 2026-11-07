@@ -247,7 +247,7 @@ export const GroupSchema = z
 
 export type FollowUpBossGroup = z.infer<typeof GroupSchema>;
 
-const GroupsListInputSchema = z.object({
+const GroupsListInputSchema = ListQuerySchema.extend({
 	type: z
 		.enum(GROUP_TYPES)
 		.optional()
