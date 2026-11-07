@@ -18,7 +18,15 @@ function request(
 ): WebhookRequest<unknown> & RawWebhookRequest {
 	// rawBody is the exact bytes HappyScribe signed; the mutated variant
 	// exercises the re-serialization rejection.
-	return { headers, rawBody: body, body: webhookEvent, payload: webhookEvent };
+	// body and payload parse the same bytes rawBody carries, mirroring the
+	// adapters.
+	const parsed = JSON.parse(body) as unknown;
+	return {
+		headers,
+		rawBody: body,
+		body: parsed,
+		payload: parsed,
+	};
 }
 
 function sign(input: string): string {
@@ -107,6 +115,18 @@ describe('verifyHappyScribeWebhook', () => {
 		expect(result.error).toContain('Stale');
 	});
 
+	it('rejects a fresh stamped signature whose digest is wrong', () => {
+		const forged = `t=${Math.floor(Date.now() / 1000)},v1=${'0'.repeat(64)}`;
+		const result = verifyHappyScribeWebhook(
+			request({
+				'x-webhook-signature': `sha256=${sign(rawBody)}`,
+				'x-happyscribe-signature': forged,
+			}),
+			SECRET,
+		);
+		expect(result.valid).toBe(false);
+	});
+
 	it('rejects a wrong secret', () => {
 		const result = verifyHappyScribeWebhook(
 			request({
@@ -132,15 +152,28 @@ describe('verifyHappyScribeWebhook', () => {
 });
 
 describe('event matching', () => {
-	it('matches deliveries by header first, then body type', () => {
+	// The body's `type` is signed; the event header is not, so the header
+	// never overrides the body when both are present.
+	it('matches deliveries by the signed body type, header as fallback', () => {
 		expect(
 			createHappyScribeMatch('summaryReady')(
 				request({ 'x-happyscribe-event': 'meeting.summary_ready' }),
 			),
 		).toBe(true);
+		// A mismatching header cannot suppress the signed body type.
 		expect(
 			createHappyScribeMatch('summaryReady')(
 				request({ 'x-happyscribe-event': 'meeting.failed' }),
+			),
+		).toBe(true);
+		// A spoofed header cannot reroute a signed failed delivery to the
+		// summaryReady handler.
+		expect(
+			createHappyScribeMatch('summaryReady')(
+				request(
+					{ 'x-happyscribe-event': 'meeting.summary_ready' },
+					JSON.stringify({ ...webhookEvent, type: 'meeting.failed' }),
+				),
 			),
 		).toBe(false);
 		expect(createHappyScribeMatch('summaryReady')(request({}))).toBe(true);

@@ -5,11 +5,13 @@ import { z } from 'zod';
 // cannot fail a call that has already happened. Field reference:
 // https://dev.happyscribe.com/sections/product/
 
+// organizations.list returns ids as strings on the live API while the docs
+// examples show numbers, so both are accepted and serialized as given.
 const OrganizationIdSchema = z
-	.number()
-	.int()
-	.positive()
-	.describe('Numeric ID of the organization to act on.');
+	.union([z.string().min(1), z.number().int().positive()])
+	.describe(
+		'ID of the organization to act on, as `organizations.list` returned it.',
+	);
 
 const FileIdSchema = z
 	.string()

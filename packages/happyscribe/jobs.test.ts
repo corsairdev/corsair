@@ -55,18 +55,31 @@ describe('happyscribe jobs', () => {
 	);
 
 	it.each(jobs)(
-		'%s: every documented terminal status sorts into done or failed',
-		(_op, { job }) => {
-			// done and failed must not overlap, and both must be non-empty
-			// unless the provider documents no failure state.
+		'%s: terminal states match the documented values exactly',
+		(op, { job }) => {
+			// Expected terminal values, from the docs, specified per job.
+			const expected: Record<string, { done: string[]; failed: string[] }> = {
+				'transcriptions.create': {
+					done: ['automatic_done'],
+					failed: ['failed', 'locked'],
+				},
+				'exports.create': { done: ['ready'], failed: [] },
+				'translations.createTask': { done: ['done'], failed: ['failed'] },
+				'meetings.create': {
+					done: ['completed'],
+					failed: ['failed', 'cancelled'],
+				},
+			};
+			expect(job.status.done).toEqual(expected[op]!.done);
+			expect(job.status.failed).toEqual(expected[op]!.failed);
+			// done and failed must not overlap.
 			for (const status of job.status.done) {
 				expect(job.status.failed.includes(status)).toBe(false);
 			}
-			const all = [...job.status.done, ...job.status.failed];
-			expect(all.length).toBeGreaterThan(0);
 			// meetings report `status`; the other three report `state`.
-			const meetingsJob = job.status.op === 'meetings.get';
-			expect(job.status.statusPath).toBe(meetingsJob ? 'status' : 'state');
+			expect(job.status.statusPath).toBe(
+				job.status.op === 'meetings.get' ? 'status' : 'state',
+			);
 		},
 	);
 });

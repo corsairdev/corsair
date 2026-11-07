@@ -16,11 +16,12 @@ function withLinks(raw: unknown): unknown {
 
 function listWithLinks(raw: unknown): unknown {
 	const record = asRecord(raw);
-	if (!record) return raw;
-	const results = Array.isArray(record.results) ? record.results : [];
+	// A missing or non-array `results` is left as-is so the output schema
+	// rejects it loudly; a fallback here would mask a truncated 200.
+	if (!record || !Array.isArray(record.results)) return raw;
 	return {
 		...record,
-		results: results.map((item) => withLinks(item)),
+		results: record.results.map((item) => withLinks(item)),
 		nextPageUrl: asRecord(asRecord(record._links)?.next)?.url,
 	};
 }

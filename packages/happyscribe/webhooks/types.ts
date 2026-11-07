@@ -178,11 +178,13 @@ export function createHappyScribeMatch(
 ): CorsairWebhookMatcher {
 	const types = EVENT_TYPE_MAP[webhookPath] ?? [];
 	return (request) => {
-		const header = headerValue(request.headers, 'x-happyscribe-event');
-		if (header) return types.includes(header);
+		// The body's `type` is inside the signed input; the event header is
+		// not, so the header never overrides it.
 		const body = readBodyRecord(request);
-		const type = typeof body?.type === 'string' ? body.type : undefined;
-		return type !== undefined && types.includes(type);
+		const bodyType = typeof body?.type === 'string' ? body.type : undefined;
+		if (bodyType) return types.includes(bodyType);
+		const header = headerValue(request.headers, 'x-happyscribe-event');
+		return header !== undefined && types.includes(header);
 	};
 }
 

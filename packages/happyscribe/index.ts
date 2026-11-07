@@ -340,7 +340,7 @@ const MEETING_JOB = {
 		idArg: 'meetingId',
 		statusPath: 'status',
 		done: ['completed'],
-		failed: ['failed'],
+		failed: ['failed', 'cancelled'],
 	},
 } as const;
 
@@ -588,12 +588,15 @@ export function happyscribe<const T extends HappyScribePluginOptions>(
 		pluginTenantWebhookMatcher: matchHappyScribeTenantWebhook,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: HappyScribeKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
+			// Trimmed so a whitespace-only option counts as unset and falls
+			// back to the stored secret.
+			const optionSecret = options.webhookSecret?.trim();
+			if (source === 'webhook' && optionSecret) {
+				return optionSecret;
 			}
 
 			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
+				const res = (await ctx.keys.get_webhook_signature())?.trim();
 				return res ?? '';
 			}
 
