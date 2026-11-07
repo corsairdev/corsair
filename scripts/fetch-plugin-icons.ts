@@ -74,12 +74,16 @@ const COMPOSIO_LOGOS =
 
 /** Product marks twenty-icons can't distinguish (Docs vs Sheets on docs.google.com). */
 const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
-	gmail:
-		'https://www.gstatic.com/images/branding/product/2x/gmail_2020q4_96dp.png',
+	// svgl's marks fill the square; Google's 96dp PNGs carry wide padding and
+	// look small next to other icons. Hub used these same files until it
+	// started loading icons from corsair.dev.
+	gmail: 'https://svgl.app/library/gmail.svg',
+	googlecalendar: 'https://svgl.app/library/google-calendar.svg',
+	googledrive: 'https://svgl.app/library/drive.svg',
+	googlemeet: 'https://svgl.app/library/google-meet.svg',
+	googlesheets: 'https://svgl.app/library/google-sheets.svg',
 	googledocs:
 		'https://www.gstatic.com/images/branding/product/2x/docs_2020q4_96dp.png',
-	googlesheets:
-		'https://www.gstatic.com/images/branding/product/2x/sheets_2020q4_96dp.png',
 	filevine:
 		'https://media.licdn.com/dms/image/v2/D560BAQGBEC5giXvomQ/company-logo_200_200/B56ZlidRJjIsAM-/0/1758293463972/filevine_logo?e=2147483647&v=beta&t=oruRrK3tPc5_e8haya4o-oxpBMhFDjjgoa_1xePKBYI',
 	currentsapi:
