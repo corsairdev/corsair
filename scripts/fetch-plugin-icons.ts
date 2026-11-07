@@ -69,6 +69,9 @@ async function onLightTile(bytes: Buffer): Promise<Buffer> {
 		.toBuffer();
 }
 
+const COMPOSIO_LOGOS =
+	'https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets';
+
 /** Product marks twenty-icons can't distinguish (Docs vs Sheets on docs.google.com). */
 const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	gmail:
@@ -90,6 +93,18 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// plugin-docs.yaml names graph.microsoft.com (the API host), whose icon is the
 	// Microsoft logo; excel.cloud.microsoft carries Excel's own mark.
 	excel: 'https://twenty-icons.com/excel.cloud.microsoft/128',
+	// graph.microsoft.com gives these three the Microsoft logo, and teams.microsoft.com
+	// an old flat mark; svgl has each product's current mark.
+	onedrive: 'https://svgl.app/library/microsoft-onedrive.svg',
+	outlook: 'https://svgl.app/library/microsoft-outlook.svg',
+	sharepoint: 'https://svgl.app/library/microsoft-sharepoint.svg',
+	teams: 'https://svgl.app/library/microsoft-teams.svg',
+	// These Google APIs got the Google Cloud cloud or the plain G; Composio's
+	// logo-cdn (MIT) has each product's mark. Pinned to a commit.
+	googleaddressvalidation: `${COMPOSIO_LOGOS}/google_address_validation.svg`,
+	googleanalytics: `${COMPOSIO_LOGOS}/google_analytics.svg`,
+	googlebigquery: `${COMPOSIO_LOGOS}/googlebigquery.svg`,
+	googlecloudvision: `${COMPOSIO_LOGOS}/google_cloud_vision.svg`,
 	// twenty-icons returns a 32px blur; Google's favicon is the sharp site mark.
 	octen: 'https://www.google.com/s2/favicons?domain=octen.ai&sz=128',
 	// twenty-icons has an old blue and green mark; typesafe.ai's apple touch icon
@@ -334,14 +349,28 @@ function isPng(bytes: Buffer): boolean {
 /** Raster formats some override CDNs serve instead of PNG. */
 const CONVERTIBLE_FORMATS = new Set(['jpeg', 'webp', 'gif']);
 
-/** Normalize url-override bytes to PNG; null when they aren't a raster image. */
+/** Size an SVG override is rendered at. */
+const SVG_RENDER_SIZE = 256;
+
+/** Normalize url-override bytes to PNG; null when they aren't an image. */
 async function normalizeOverrideToPng(bytes: Buffer): Promise<Buffer | null> {
 	if (isPng(bytes)) return bytes;
 	try {
-		const image = sharp(bytes);
-		const { format } = await image.metadata();
+		const { format, width, height } = await sharp(bytes).metadata();
+		if (format === 'svg' && width && height) {
+			// Render at the density that makes the longer side SVG_RENDER_SIZE,
+			// so the PNG is drawn sharp rather than scaled up from 72 dpi.
+			const density = (72 * SVG_RENDER_SIZE) / Math.max(width, height);
+			return await sharp(bytes, { density })
+				.resize(SVG_RENDER_SIZE, SVG_RENDER_SIZE, {
+					fit: 'contain',
+					background: { r: 0, g: 0, b: 0, alpha: 0 },
+				})
+				.png()
+				.toBuffer();
+		}
 		if (!format || !CONVERTIBLE_FORMATS.has(format)) return null;
-		return await image.png().toBuffer();
+		return await sharp(bytes).png().toBuffer();
 	} catch {
 		return null;
 	}
