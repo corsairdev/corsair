@@ -1,0 +1,360 @@
+---
+title: Database
+description: "NetSuite local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The NetSuite plugin syncs data locally. Use `corsair.netsuite.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Customer Payments
+
+Path: `netsuite.db.customerPayments.search`
+
+```ts
+const rows = await corsair.netsuite.db.customerPayments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranId` | `string` | equals, contains, startsWith, endsWith, in |
+| `payment` | `number` | equals, gt, gte, lt, lte, in |
+| `total` | `number` | equals, gt, gte, lt, lte, in |
+| `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Customers
+
+Path: `netsuite.db.customers.search`
+
+```ts
+const rows = await corsair.netsuite.db.customers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `entityId` | `string` | equals, contains, startsWith, endsWith, in |
+| `companyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `isInactive` | `boolean` | equals |
+| `dateCreated` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastModifiedDate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Employees
+
+Path: `netsuite.db.employees.search`
+
+```ts
+const rows = await corsair.netsuite.db.employees.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `entityId` | `string` | equals, contains, startsWith, endsWith, in |
+| `firstName` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastName` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `isInactive` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Invoices
+
+Path: `netsuite.db.invoices.search`
+
+```ts
+const rows = await corsair.netsuite.db.invoices.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `total` | `number` | equals, gt, gte, lt, lte, in |
+| `balance` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Item Fulfillments
+
+Path: `netsuite.db.itemFulfillments.search`
+
+```ts
+const rows = await corsair.netsuite.db.itemFulfillments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Item Receipts
+
+Path: `netsuite.db.itemReceipts.search`
+
+```ts
+const rows = await corsair.netsuite.db.itemReceipts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Items
+
+Path: `netsuite.db.items.search`
+
+```ts
+const rows = await corsair.netsuite.db.items.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `itemId` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `isInactive` | `boolean` | equals |
+| `basePrice` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Journal Entries
+
+Path: `netsuite.db.journalEntries.search`
+
+```ts
+const rows = await corsair.netsuite.db.journalEntries.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `memo` | `string` | equals, contains, startsWith, endsWith, in |
+| `approved` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Purchase Orders
+
+Path: `netsuite.db.purchaseOrders.search`
+
+```ts
+const rows = await corsair.netsuite.db.purchaseOrders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `total` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sales Orders
+
+Path: `netsuite.db.salesOrders.search`
+
+```ts
+const rows = await corsair.netsuite.db.salesOrders.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `total` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Vendor Bills
+
+Path: `netsuite.db.vendorBills.search`
+
+```ts
+const rows = await corsair.netsuite.db.vendorBills.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `total` | `number` | equals, gt, gte, lt, lte, in |
+| `balance` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Vendor Payments
+
+Path: `netsuite.db.vendorPayments.search`
+
+```ts
+const rows = await corsair.netsuite.db.vendorPayments.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tranDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `total` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Vendors
+
+Path: `netsuite.db.vendors.search`
+
+```ts
+const rows = await corsair.netsuite.db.vendors.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `externalId` | `string` | equals, contains, startsWith, endsWith, in |
+| `entityId` | `string` | equals, contains, startsWith, endsWith, in |
+| `companyName` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `phone` | `string` | equals, contains, startsWith, endsWith, in |
+| `isInactive` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

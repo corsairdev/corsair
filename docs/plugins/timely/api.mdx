@@ -1,0 +1,2420 @@
+---
+title: API
+description: "API reference for Timely: every `timely.api.*` operation with input and output types."
+---
+
+Every `timely.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### get
+
+`accounts.get`
+
+Get a Timely workspace (account) by id
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.accounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string \| null` | No | — |
+| `plan_name` | `string \| null` | No | — |
+| `num_users` | `number \| null` | No | — |
+| `num_projects` | `number \| null` | No | — |
+| `owner_id` | `number \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+List the Timely workspaces (accounts) the user can reach
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.accounts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  name?: string,
+  color?: string | null,
+  plan_name?: string | null,
+  num_users?: number | null,
+  num_projects?: number | null,
+  owner_id?: number | null,
+  created_at?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Clients
+
+### create
+
+`clients.create`
+
+Create a client
+
+**Risk:** `write`
+
+```ts
+await corsair.timely.api.clients.create({ name: 'Acme Inc.', external_id: 'crm-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `name` | `string` | Yes | — |
+| `color` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `external_id` | `string` | No | Your system id for this client |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string \| null` | No | — |
+| `active` | `boolean` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`clients.get`
+
+Get a client by id
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.clients.get({ id: 54321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string \| null` | No | — |
+| `active` | `boolean` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`clients.list`
+
+List clients
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.clients.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `show` | `all \| active \| archived` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  name?: string,
+  color?: string | null,
+  active?: boolean,
+  external_id?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`clients.update`
+
+Update a client (active: false archives it)
+
+**Risk:** `write`
+
+```ts
+await corsair.timely.api.clients.update({ id: 54321, active: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+| `name` | `string` | No | — |
+| `color` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `external_id` | `string` | No | Your system id for this client |
+
+Timely has no client delete; set `active: false` to archive a client.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string \| null` | No | — |
+| `active` | `boolean` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project under a client
+
+**Risk:** `write`
+
+```ts
+await corsair.timely.api.projects.create({ name: 'Website redesign', rate_type: 'project', hour_rate: 150, client_id: 54321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `name` | `string` | Yes | — |
+| `rate_type` | `project \| user \| non-billable` | Yes | — |
+| `client_id` | `number \| string` | Yes | Client the project belongs to |
+| `hour_rate` | `number` | No | — |
+| `color` | `string` | No | — |
+| `description` | `string` | No | — |
+| `billable` | `boolean` | No | — |
+| `active` | `boolean` | No | false archives the project |
+| `external_id` | `string` | No | — |
+| `budget` | `number` | No | — |
+| `budget_type` | `H \| M` | No | H = hours budget, M = money budget |
+| `users` | `object[]` | No | People who may log time on the project. On update this replaces the list: anyone left out loses access. |
+| `team_ids` | `(number \| string)[]` | No | — |
+| `label_ids` | `(number \| string)[]` | No | — |
+| `required_notes` | `boolean` | No | — |
+| `required_labels` | `boolean` | No | — |
+
+Timely needs a `client_id`. The creating user is added to the project automatically.
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  user_id: number | string,
+  hour_rate: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `account_id` | `number \| string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `rate_type` | `string \| null` | No | — |
+| `billable` | `boolean` | No | — |
+| `active` | `boolean` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `client` | `object \| null` | No | — |
+| `budget` | `number \| null` | No | — |
+| `budget_type` | `string \| null` | No | — |
+| `hour_rate` | `number \| null` | No | — |
+| `duration` | `object` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `updated_at` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id: number | string,
+  name?: string,
+  color?: string | null,
+  active?: boolean,
+  external_id?: string | null,
+  updated_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="duration full type">
+
+```ts
+{
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  formatted?: string,
+  total_hours?: number,
+  total_seconds?: number,
+  total_minutes?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.timely.api.projects.delete({ id: 987654 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Get a project by id
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.projects.get({ id: 987654 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `account_id` | `number \| string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `rate_type` | `string \| null` | No | — |
+| `billable` | `boolean` | No | — |
+| `active` | `boolean` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `client` | `object \| null` | No | — |
+| `budget` | `number \| null` | No | — |
+| `budget_type` | `string \| null` | No | — |
+| `hour_rate` | `number \| null` | No | — |
+| `duration` | `object` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `updated_at` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id: number | string,
+  name?: string,
+  color?: string | null,
+  active?: boolean,
+  external_id?: string | null,
+  updated_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="duration full type">
+
+```ts
+{
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  formatted?: string,
+  total_hours?: number,
+  total_seconds?: number,
+  total_minutes?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `state` | `all \| active \| archived` | No | — |
+| `relation` | `all \| assigned \| created` | No | — |
+| `updated_after` | `string` | No | Only projects updated after this ISO 8601 timestamp |
+| `totals` | `boolean` | No | false skips per-project cost/duration totals (faster) |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  account_id?: number | string,
+  name?: string,
+  description?: string | null,
+  color?: string | null,
+  rate_type?: string | null,
+  billable?: boolean,
+  active?: boolean,
+  external_id?: string | null,
+  client?: {
+    id: number | string,
+    name?: string,
+    color?: string | null,
+    active?: boolean,
+    external_id?: string | null,
+    updated_at?: string | null
+  } | null,
+  budget?: number | null,
+  budget_type?: string | null,
+  hour_rate?: number | null,
+  duration?: {
+    hours?: number,
+    minutes?: number,
+    seconds?: number,
+    formatted?: string,
+    total_hours?: number,
+    total_seconds?: number,
+    total_minutes?: number
+  },
+  created_at?: number | null,
+  updated_at?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project; passing `users` replaces who may log time on it
+
+**Risk:** `write`
+
+```ts
+await corsair.timely.api.projects.update({ id: 987654, budget_type: 'H', budget: 40 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+| `name` | `string` | No | — |
+| `rate_type` | `project \| user \| non-billable` | No | project = one hour_rate for everyone, user = per-user rates in `users`, non-billable |
+| `client_id` | `number \| string` | No | Client the project belongs to (Timely requires one) |
+| `hour_rate` | `number` | No | — |
+| `color` | `string` | No | — |
+| `description` | `string` | No | — |
+| `billable` | `boolean` | No | — |
+| `active` | `boolean` | No | false archives the project |
+| `external_id` | `string` | No | — |
+| `budget` | `number` | No | — |
+| `budget_type` | `H \| M` | No | H = hours budget, M = money budget |
+| `users` | `object[]` | No | People who may log time on the project. On update this replaces the list: anyone left out loses access. |
+| `team_ids` | `(number \| string)[]` | No | — |
+| `label_ids` | `(number \| string)[]` | No | — |
+| `required_notes` | `boolean` | No | — |
+| `required_labels` | `boolean` | No | — |
+
+Passing `users` replaces the project's member list: anyone left out can no longer log time on it.
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  user_id: number | string,
+  hour_rate: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `account_id` | `number \| string` | No | — |
+| `name` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `rate_type` | `string \| null` | No | — |
+| `billable` | `boolean` | No | — |
+| `active` | `boolean` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `client` | `object \| null` | No | — |
+| `budget` | `number \| null` | No | — |
+| `budget_type` | `string \| null` | No | — |
+| `hour_rate` | `number \| null` | No | — |
+| `duration` | `object` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `updated_at` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id: number | string,
+  name?: string,
+  color?: string | null,
+  active?: boolean,
+  external_id?: string | null,
+  updated_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="duration full type">
+
+```ts
+{
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  formatted?: string,
+  total_hours?: number,
+  total_seconds?: number,
+  total_minutes?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### filter
+
+`reports.filter`
+
+Totals grouped by clients, users, tags, days and teams, or the matching time entries
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.reports.filter({
+	since: '2026-11-01',
+	until: '2026-11-07',
+	group_by: ['users', 'days'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `since` | `string` | Yes | Date as YYYY-MM-DD |
+| `until` | `string` | Yes | Date as YYYY-MM-DD |
+| `user_ids` | `(number \| string)[]` | No | — |
+| `project_ids` | `(number \| string)[]` | No | — |
+| `client_ids` | `(number \| string)[]` | No | — |
+| `label_ids` | `(number \| string)[]` | No | — |
+| `team_ids` | `(number \| string)[]` | No | — |
+| `state_ids` | `(number \| string)[]` | No | — |
+| `group_by` | `(clients \| users \| labels \| days \| teams)[]` | No | — |
+| `scope` | `totals \| events` | No | totals (default) returns grouped totals; events returns the matching time entries |
+| `billed` | `boolean` | No | — |
+
+`scope: events` returns the matching time entries instead of grouped totals.
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  totals?: Record<string, any>,
+  clients?: Record<string, any>[],
+  users?: Record<string, any>[],
+  labels?: Record<string, any>[],
+  days?: Record<string, any>[],
+  teams?: Record<string, any>[]
+} | {
+  id: number | string,
+  uid?: string | null,
+  day?: string,
+  note?: string | null,
+  duration?: {
+    hours?: number,
+    minutes?: number,
+    seconds?: number,
+    formatted?: string,
+    total_hours?: number,
+    total_seconds?: number,
+    total_minutes?: number
+  },
+  estimated_duration?: {
+    hours?: number,
+    minutes?: number,
+    seconds?: number,
+    formatted?: string,
+    total_hours?: number,
+    total_seconds?: number,
+    total_minutes?: number
+  },
+  from?: string | null,
+  to?: string | null,
+  billable?: boolean,
+  billed?: boolean,
+  locked?: boolean,
+  timer_state?: string | number | null,
+  external_id?: string | null,
+  label_ids?: (number | string)[],
+  user?: {
+    id: number | string,
+    name?: string
+  } | null,
+  project?: {
+    id: number | string,
+    account_id?: number | string,
+    name?: string,
+    description?: string | null,
+    color?: string | null,
+    rate_type?: string | null,
+    billable?: boolean,
+    active?: boolean,
+    external_id?: string | null,
+    client?: {
+      id: number | string,
+      name?: string,
+      color?: string | null,
+      active?: boolean,
+      external_id?: string | null,
+      updated_at?: string | null
+    } | null,
+    budget?: number | null,
+    budget_type?: string | null,
+    hour_rate?: number | null,
+    duration?: {
+      hours?: number,
+      minutes?: number,
+      seconds?: number,
+      formatted?: string,
+      total_hours?: number,
+      total_seconds?: number,
+      total_minutes?: number
+    },
+    created_at?: number | null,
+    updated_at?: number | null
+  } | null,
+  created_at?: number | string | null,
+  updated_at?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### totals
+
+`reports.totals`
+
+Logged time and cost per client and project for a period
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.reports.totals({ since: '2026-11-01', until: '2026-11-07' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `since` | `string` | No | Date as YYYY-MM-DD |
+| `until` | `string` | No | Date as YYYY-MM-DD |
+| `user_ids` | `(number \| string)[]` | No | — |
+| `project_ids` | `(number \| string)[]` | No | — |
+| `client_ids` | `(number \| string)[]` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | string | null,
+  name?: string | null,
+  duration?: {
+    hours?: number,
+    minutes?: number,
+    seconds?: number,
+    formatted?: string,
+    total_hours?: number,
+    total_seconds?: number,
+    total_minutes?: number
+  },
+  projects?: Record<string, any>[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.timely.api.tags.create({ name: 'Design' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `name` | `string` | Yes | — |
+| `emoji` | `string` | No | Emoji URL or character |
+| `parent_id` | `number \| string` | No | Parent tag id for a child tag |
+| `active` | `boolean` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `parent_id` | `number \| string \| null` | No | — |
+| `emoji` | `string \| null` | No | — |
+| `active` | `boolean` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `sequence` | `number \| null` | No | — |
+| `children` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+### delete
+
+`tags.delete`
+
+Delete a tag
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.timely.api.tags.delete({ id: 4321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`tags.get`
+
+Get a tag by id
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.tags.get({ id: 4321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `parent_id` | `number \| string \| null` | No | — |
+| `emoji` | `string \| null` | No | — |
+| `active` | `boolean` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `sequence` | `number \| null` | No | — |
+| `children` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List tags (labels)
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `filter` | `all \| active \| archived` | No | — |
+| `parent_id` | `number \| string` | No | Only children of this tag |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  name?: string,
+  parent_id?: number | string | null,
+  emoji?: string | null,
+  active?: boolean,
+  external_id?: string | null,
+  sequence?: number | null,
+  children?: Record<string, any>[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`tags.update`
+
+Update a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.timely.api.tags.update({ id: 4321, name: 'UX design' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+| `name` | `string` | No | — |
+| `emoji` | `string` | No | Emoji URL or character |
+| `parent_id` | `number \| string` | No | Parent tag id for a child tag |
+| `active` | `boolean` | No | — |
+| `external_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `parent_id` | `number \| string \| null` | No | — |
+| `emoji` | `string \| null` | No | — |
+| `active` | `boolean` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `sequence` | `number \| null` | No | — |
+| `children` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+## Teams
+
+### get
+
+`teams.get`
+
+Get a team by id
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.teams.get({ id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `color` | `string \| null` | No | — |
+| `emoji` | `string \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `user_ids` | `(number \| string)[]` | No | — |
+| `project_ids` | `(number \| string)[]` | No | — |
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List teams
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  name?: string,
+  color?: string | null,
+  emoji?: string | null,
+  external_id?: string | null,
+  user_ids?: (number | string)[],
+  project_ids?: (number | string)[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Time Entries
+
+### bulk
+
+`timeEntries.bulk`
+
+Create, update and delete up to 100 time entries in one request
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.timely.api.timeEntries.bulk({
+	create: [{
+		project_id: 987654,
+		day: '2026-11-06',
+		hours: 2,
+		note: 'Planning',
+	}],
+	delete: [112233446],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `create` | `object[]` | No | — |
+| `update` | `object[]` | No | — |
+| `delete` | `(number \| string)[]` | No | Time entry ids to delete |
+
+Up to 100 records. Timely answers 200 even when some records fail: check `errors.create`, `errors.update` and `errors.delete` (each item has the record `index` and `messages`). Batches over 20 records run asynchronously and return a `job`.
+
+<AccordionGroup>
+<Accordion title="create full type">
+
+```ts
+{
+  project_id: number | string,
+  day: string,
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  from?: string,
+  to?: string,
+  note?: string,
+  user_id?: number | string,
+  billable?: boolean,
+  billed?: boolean,
+  external_id?: string,
+  label_ids?: (number | string)[],
+  estimated_hours?: number,
+  estimated_minutes?: number,
+  forecast_id?: number | string,
+  state_id?: number | string
+}[]
+```
+</Accordion>
+
+<Accordion title="update full type">
+
+```ts
+{
+  id: number | string,
+  project_id?: number | string,
+  day?: string,
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  from?: string,
+  to?: string,
+  note?: string,
+  user_id?: number | string,
+  billable?: boolean,
+  billed?: boolean,
+  external_id?: string,
+  label_ids?: (number | string)[],
+  estimated_hours?: number,
+  estimated_minutes?: number,
+  forecast_id?: number | string,
+  state_id?: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created_ids` | `(number \| string)[]` | Yes | — |
+| `updated_ids` | `(number \| string)[]` | Yes | — |
+| `deleted_ids` | `(number \| string)[]` | Yes | — |
+| `errors` | `object` | No | — |
+| `job` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  create?: {
+    index?: number,
+    id?: number | string,
+    messages?: string[]
+  }[],
+  update?: {
+    index?: number,
+    id?: number | string,
+    messages?: string[]
+  }[],
+  delete?: {
+    index?: number,
+    id?: number | string,
+    messages?: string[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`timeEntries.create`
+
+Log time on a project
+
+**Risk:** `write`
+
+```ts
+await corsair.timely.api.timeEntries.create({
+	project_id: 987654,
+	day: '2026-11-06',
+	hours: 1,
+	minutes: 30,
+	note: 'Code review',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `project_id` | `number \| string` | Yes | — |
+| `day` | `string` | Yes | Date as YYYY-MM-DD |
+| `hours` | `number` | No | — |
+| `minutes` | `number` | No | — |
+| `seconds` | `number` | No | — |
+| `from` | `string` | No | Start time HH:MM (24-hour) |
+| `to` | `string` | No | End time HH:MM (24-hour) |
+| `note` | `string` | No | — |
+| `user_id` | `number \| string` | No | Log on behalf of this user (admins only); defaults to the connected user |
+| `billable` | `boolean` | No | — |
+| `billed` | `boolean` | No | true marks the time as invoiced and locks it |
+| `external_id` | `string` | No | — |
+| `label_ids` | `(number \| string)[]` | No | Tag ids; the project must allow tags |
+| `estimated_hours` | `number` | No | — |
+| `estimated_minutes` | `number` | No | — |
+| `forecast_id` | `number \| string` | No | Task (forecast) id |
+| `state_id` | `number \| string` | No | Time entry state id |
+
+The user must be a member of the project, and `label_ids` only work on projects that allow tags. Give the duration as `hours`/`minutes`/`seconds` or as `from`/`to`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `uid` | `string \| null` | No | — |
+| `day` | `string` | No | — |
+| `note` | `string \| null` | No | — |
+| `duration` | `object` | No | — |
+| `estimated_duration` | `object` | No | — |
+| `from` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+| `billable` | `boolean` | No | — |
+| `billed` | `boolean` | No | — |
+| `locked` | `boolean` | No | — |
+| `timer_state` | `string \| number \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `label_ids` | `(number \| string)[]` | No | — |
+| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `created_at` | `number \| string \| null` | No | — |
+| `updated_at` | `number \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="duration full type">
+
+```ts
+{
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  formatted?: string,
+  total_hours?: number,
+  total_seconds?: number,
+  total_minutes?: number
+}
+```
+</Accordion>
+
+<Accordion title="estimated_duration full type">
+
+```ts
+{
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  formatted?: string,
+  total_hours?: number,
+  total_seconds?: number,
+  total_minutes?: number
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id: number | string,
+  name?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id: number | string,
+  account_id?: number | string,
+  name?: string,
+  description?: string | null,
+  color?: string | null,
+  rate_type?: string | null,
+  billable?: boolean,
+  active?: boolean,
+  external_id?: string | null,
+  client?: {
+    id: number | string,
+    name?: string,
+    color?: string | null,
+    active?: boolean,
+    external_id?: string | null,
+    updated_at?: string | null
+  } | null,
+  budget?: number | null,
+  budget_type?: string | null,
+  hour_rate?: number | null,
+  duration?: {
+    hours?: number,
+    minutes?: number,
+    seconds?: number,
+    formatted?: string,
+    total_hours?: number,
+    total_seconds?: number,
+    total_minutes?: number
+  },
+  created_at?: number | null,
+  updated_at?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`timeEntries.delete`
+
+Delete a time entry
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.timely.api.timeEntries.delete({ id: 112233445 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`timeEntries.get`
+
+Get a time entry by id
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.timeEntries.get({ id: 112233445 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `uid` | `string \| null` | No | — |
+| `day` | `string` | No | — |
+| `note` | `string \| null` | No | — |
+| `duration` | `object` | No | — |
+| `estimated_duration` | `object` | No | — |
+| `from` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+| `billable` | `boolean` | No | — |
+| `billed` | `boolean` | No | — |
+| `locked` | `boolean` | No | — |
+| `timer_state` | `string \| number \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `label_ids` | `(number \| string)[]` | No | — |
+| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `created_at` | `number \| string \| null` | No | — |
+| `updated_at` | `number \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="duration full type">
+
+```ts
+{
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  formatted?: string,
+  total_hours?: number,
+  total_seconds?: number,
+  total_minutes?: number
+}
+```
+</Accordion>
+
+<Accordion title="estimated_duration full type">
+
+```ts
+{
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  formatted?: string,
+  total_hours?: number,
+  total_seconds?: number,
+  total_minutes?: number
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id: number | string,
+  name?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id: number | string,
+  account_id?: number | string,
+  name?: string,
+  description?: string | null,
+  color?: string | null,
+  rate_type?: string | null,
+  billable?: boolean,
+  active?: boolean,
+  external_id?: string | null,
+  client?: {
+    id: number | string,
+    name?: string,
+    color?: string | null,
+    active?: boolean,
+    external_id?: string | null,
+    updated_at?: string | null
+  } | null,
+  budget?: number | null,
+  budget_type?: string | null,
+  hour_rate?: number | null,
+  duration?: {
+    hours?: number,
+    minutes?: number,
+    seconds?: number,
+    formatted?: string,
+    total_hours?: number,
+    total_seconds?: number,
+    total_minutes?: number
+  },
+  created_at?: number | null,
+  updated_at?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`timeEntries.list`
+
+List time entries for a day or a since/upto date range
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.timeEntries.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `since` | `string` | No | First day (inclusive); needs `upto` |
+| `upto` | `string` | No | Last day (inclusive); needs `since` |
+| `day` | `string` | No | A single day; Timely defaults to today when no range is given |
+| `project_id` | `number \| string` | No | — |
+| `user_id` | `number \| string` | No | — |
+| `hour_ids` | `(number \| string)[]` | No | — |
+| `sort` | `day \| created_at \| updated_at` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+Pass `since` and `upto` together for a range, or `day` for one day. Without either, Timely returns today's entries.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  uid?: string | null,
+  day?: string,
+  note?: string | null,
+  duration?: {
+    hours?: number,
+    minutes?: number,
+    seconds?: number,
+    formatted?: string,
+    total_hours?: number,
+    total_seconds?: number,
+    total_minutes?: number
+  },
+  estimated_duration?: {
+    hours?: number,
+    minutes?: number,
+    seconds?: number,
+    formatted?: string,
+    total_hours?: number,
+    total_seconds?: number,
+    total_minutes?: number
+  },
+  from?: string | null,
+  to?: string | null,
+  billable?: boolean,
+  billed?: boolean,
+  locked?: boolean,
+  timer_state?: string | number | null,
+  external_id?: string | null,
+  label_ids?: (number | string)[],
+  user?: {
+    id: number | string,
+    name?: string
+  } | null,
+  project?: {
+    id: number | string,
+    account_id?: number | string,
+    name?: string,
+    description?: string | null,
+    color?: string | null,
+    rate_type?: string | null,
+    billable?: boolean,
+    active?: boolean,
+    external_id?: string | null,
+    client?: {
+      id: number | string,
+      name?: string,
+      color?: string | null,
+      active?: boolean,
+      external_id?: string | null,
+      updated_at?: string | null
+    } | null,
+    budget?: number | null,
+    budget_type?: string | null,
+    hour_rate?: number | null,
+    duration?: {
+      hours?: number,
+      minutes?: number,
+      seconds?: number,
+      formatted?: string,
+      total_hours?: number,
+      total_seconds?: number,
+      total_minutes?: number
+    },
+    created_at?: number | null,
+    updated_at?: number | null
+  } | null,
+  created_at?: number | string | null,
+  updated_at?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### startTimer
+
+`timeEntries.startTimer`
+
+Start the timer on a time entry
+
+**Risk:** `write`
+
+```ts
+await corsair.timely.api.timeEntries.startTimer({ id: 112233445 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `uid` | `string \| null` | No | — |
+| `day` | `string` | No | — |
+| `note` | `string \| null` | No | — |
+| `duration` | `object` | No | — |
+| `estimated_duration` | `object` | No | — |
+| `from` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+| `billable` | `boolean` | No | — |
+| `billed` | `boolean` | No | — |
+| `locked` | `boolean` | No | — |
+| `timer_state` | `string \| number \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `label_ids` | `(number \| string)[]` | No | — |
+| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `created_at` | `number \| string \| null` | No | — |
+| `updated_at` | `number \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="duration full type">
+
+```ts
+{
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  formatted?: string,
+  total_hours?: number,
+  total_seconds?: number,
+  total_minutes?: number
+}
+```
+</Accordion>
+
+<Accordion title="estimated_duration full type">
+
+```ts
+{
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  formatted?: string,
+  total_hours?: number,
+  total_seconds?: number,
+  total_minutes?: number
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id: number | string,
+  name?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id: number | string,
+  account_id?: number | string,
+  name?: string,
+  description?: string | null,
+  color?: string | null,
+  rate_type?: string | null,
+  billable?: boolean,
+  active?: boolean,
+  external_id?: string | null,
+  client?: {
+    id: number | string,
+    name?: string,
+    color?: string | null,
+    active?: boolean,
+    external_id?: string | null,
+    updated_at?: string | null
+  } | null,
+  budget?: number | null,
+  budget_type?: string | null,
+  hour_rate?: number | null,
+  duration?: {
+    hours?: number,
+    minutes?: number,
+    seconds?: number,
+    formatted?: string,
+    total_hours?: number,
+    total_seconds?: number,
+    total_minutes?: number
+  },
+  created_at?: number | null,
+  updated_at?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stopTimer
+
+`timeEntries.stopTimer`
+
+Stop the timer on a time entry
+
+**Risk:** `write`
+
+```ts
+await corsair.timely.api.timeEntries.stopTimer({ id: 112233445 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `uid` | `string \| null` | No | — |
+| `day` | `string` | No | — |
+| `note` | `string \| null` | No | — |
+| `duration` | `object` | No | — |
+| `estimated_duration` | `object` | No | — |
+| `from` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+| `billable` | `boolean` | No | — |
+| `billed` | `boolean` | No | — |
+| `locked` | `boolean` | No | — |
+| `timer_state` | `string \| number \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `label_ids` | `(number \| string)[]` | No | — |
+| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `created_at` | `number \| string \| null` | No | — |
+| `updated_at` | `number \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="duration full type">
+
+```ts
+{
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  formatted?: string,
+  total_hours?: number,
+  total_seconds?: number,
+  total_minutes?: number
+}
+```
+</Accordion>
+
+<Accordion title="estimated_duration full type">
+
+```ts
+{
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  formatted?: string,
+  total_hours?: number,
+  total_seconds?: number,
+  total_minutes?: number
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id: number | string,
+  name?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id: number | string,
+  account_id?: number | string,
+  name?: string,
+  description?: string | null,
+  color?: string | null,
+  rate_type?: string | null,
+  billable?: boolean,
+  active?: boolean,
+  external_id?: string | null,
+  client?: {
+    id: number | string,
+    name?: string,
+    color?: string | null,
+    active?: boolean,
+    external_id?: string | null,
+    updated_at?: string | null
+  } | null,
+  budget?: number | null,
+  budget_type?: string | null,
+  hour_rate?: number | null,
+  duration?: {
+    hours?: number,
+    minutes?: number,
+    seconds?: number,
+    formatted?: string,
+    total_hours?: number,
+    total_seconds?: number,
+    total_minutes?: number
+  },
+  created_at?: number | null,
+  updated_at?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`timeEntries.update`
+
+Update a time entry
+
+**Risk:** `write`
+
+```ts
+await corsair.timely.api.timeEntries.update({ id: 112233445, note: 'Code review (PR 42)' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+| `project_id` | `number \| string` | No | — |
+| `day` | `string` | No | Date as YYYY-MM-DD |
+| `hours` | `number` | No | — |
+| `minutes` | `number` | No | — |
+| `seconds` | `number` | No | — |
+| `from` | `string` | No | Start time HH:MM (24-hour) |
+| `to` | `string` | No | End time HH:MM (24-hour) |
+| `note` | `string` | No | — |
+| `user_id` | `number \| string` | No | Log on behalf of this user (admins only); defaults to the connected user |
+| `billable` | `boolean` | No | — |
+| `billed` | `boolean` | No | true marks the time as invoiced and locks it |
+| `external_id` | `string` | No | — |
+| `label_ids` | `(number \| string)[]` | No | Tag ids; the project must allow tags |
+| `estimated_hours` | `number` | No | — |
+| `estimated_minutes` | `number` | No | — |
+| `forecast_id` | `number \| string` | No | Task (forecast) id |
+| `state_id` | `number \| string` | No | Time entry state id |
+
+Fields you leave out keep their value. Billed (`billed: true`) and locked entries can't be edited.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `uid` | `string \| null` | No | — |
+| `day` | `string` | No | — |
+| `note` | `string \| null` | No | — |
+| `duration` | `object` | No | — |
+| `estimated_duration` | `object` | No | — |
+| `from` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+| `billable` | `boolean` | No | — |
+| `billed` | `boolean` | No | — |
+| `locked` | `boolean` | No | — |
+| `timer_state` | `string \| number \| null` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `label_ids` | `(number \| string)[]` | No | — |
+| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `created_at` | `number \| string \| null` | No | — |
+| `updated_at` | `number \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="duration full type">
+
+```ts
+{
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  formatted?: string,
+  total_hours?: number,
+  total_seconds?: number,
+  total_minutes?: number
+}
+```
+</Accordion>
+
+<Accordion title="estimated_duration full type">
+
+```ts
+{
+  hours?: number,
+  minutes?: number,
+  seconds?: number,
+  formatted?: string,
+  total_hours?: number,
+  total_seconds?: number,
+  total_minutes?: number
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id: number | string,
+  name?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id: number | string,
+  account_id?: number | string,
+  name?: string,
+  description?: string | null,
+  color?: string | null,
+  rate_type?: string | null,
+  billable?: boolean,
+  active?: boolean,
+  external_id?: string | null,
+  client?: {
+    id: number | string,
+    name?: string,
+    color?: string | null,
+    active?: boolean,
+    external_id?: string | null,
+    updated_at?: string | null
+  } | null,
+  budget?: number | null,
+  budget_type?: string | null,
+  hour_rate?: number | null,
+  duration?: {
+    hours?: number,
+    minutes?: number,
+    seconds?: number,
+    formatted?: string,
+    total_hours?: number,
+    total_seconds?: number,
+    total_minutes?: number
+  },
+  created_at?: number | null,
+  updated_at?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### current
+
+`users.current`
+
+Get the connected user in a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.users.current({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `admin` | `boolean` | No | — |
+| `kind` | `string` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `time_zone` | `string \| null` | No | — |
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`users.get`
+
+Get a person by id
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.users.get({ id: 7654 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `active` | `boolean` | No | — |
+| `admin` | `boolean` | No | — |
+| `kind` | `string` | No | — |
+| `external_id` | `string \| null` | No | — |
+| `time_zone` | `string \| null` | No | — |
+| `deleted` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List people
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `kind` | `human \| agent \| all` | No | Member kind; Timely defaults to human |
+| `filter` | `deleted` | No | deleted lists archived people |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  email?: string,
+  name?: string,
+  active?: boolean,
+  admin?: boolean,
+  kind?: string,
+  external_id?: string | null,
+  time_zone?: string | null,
+  deleted?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a signed webhook subscription
+
+**Risk:** `write`
+
+```ts
+await corsair.timely.api.webhooks.create({
+	url: 'https://example.com/api/webhook',
+	subscriptions: ['hours:created', 'hours:updated', 'hours:deleted'],
+	secret_token: 'a-long-random-signing-secret',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `url` | `string` | Yes | — |
+| `subscriptions` | `(hours:created \| hours:updated \| hours:deleted \| projects:created \| projects:updated \| projects:deleted \| labels:created \| labels:updated \| labels:deleted \| forecasts:created \| forecasts:updated \| forecasts:deleted)[]` | Yes | — |
+| `secret_token` | `string` | Yes | Signing secret. Timely sends X-Signature = hex HMAC-SHA256 of the payload; Corsair rejects unsigned deliveries, so store the same value as the account webhook_signature. |
+| `active` | `boolean` | No | — |
+
+Timely signs each delivery with `X-Signature` (hex HMAC-SHA256 of the `payload` object, keyed with `secret_token`). Timely currently answers 500 to `custom_headers`, so the plugin doesn't send them.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `account_id` | `number \| string` | No | — |
+| `url` | `string` | Yes | — |
+| `subscriptions` | `string[]` | Yes | — |
+| `secret_token` | `string \| null` | No | — |
+| `active` | `boolean` | No | — |
+| `custom_headers` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.timely.api.webhooks.delete({ id: 1001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a webhook by id
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.webhooks.get({ id: 1001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `account_id` | `number \| string` | No | — |
+| `url` | `string` | Yes | — |
+| `subscriptions` | `string[]` | Yes | — |
+| `secret_token` | `string \| null` | No | — |
+| `active` | `boolean` | No | — |
+| `custom_headers` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.timely.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  account_id?: number | string,
+  url: string,
+  subscriptions: string[],
+  secret_token?: string | null,
+  active?: boolean,
+  custom_headers?: Record<string, string> | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.timely.api.webhooks.update({ id: 1001, active: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `number \| string` | No | Timely workspace (account) id. Optional: falls back to timely(&#123; accountId &#125;), the stored account_id, then the only workspace the token can reach. |
+| `id` | `number \| string` | Yes | Record id |
+| `url` | `string` | No | — |
+| `subscriptions` | `(hours:created \| hours:updated \| hours:deleted \| projects:created \| projects:updated \| projects:deleted \| labels:created \| labels:updated \| labels:deleted \| forecasts:created \| forecasts:updated \| forecasts:deleted)[]` | No | — |
+| `secret_token` | `string` | No | Signing secret. Timely sends X-Signature = hex HMAC-SHA256 of the payload; Corsair rejects unsigned deliveries, so store the same value as the account webhook_signature. |
+| `active` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `account_id` | `number \| string` | No | — |
+| `url` | `string` | Yes | — |
+| `subscriptions` | `string[]` | Yes | — |
+| `secret_token` | `string \| null` | No | — |
+| `active` | `boolean` | No | — |
+| `custom_headers` | `Record<string, string> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+

@@ -300,6 +300,7 @@ export const BaseProviders = [
 	'monday',
 	'mrscraper',
 	'neon',
+	'netsuite',
 	'nextdns',
 	'northflank',
 	'notion',
@@ -387,6 +388,7 @@ export const BaseProviders = [
 	'tikhub',
 	'timecamp',
 	'timelink',
+	'timely',
 	'tinyfish',
 	'tinypng',
 	'tinyurl',
@@ -736,6 +738,7 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	mrscraper: 'MrScraper',
 	neon: 'Neon',
+	netsuite: 'NetSuite',
 	nextdns: 'NextDNS',
 	northflank: 'Northflank',
 	notion: 'Notion',
@@ -822,6 +825,7 @@ export const ProviderDisplayNames = {
 	tikhub: 'TikHub',
 	timecamp: 'TimeCamp',
 	timelink: 'Timelink',
+	timely: 'Timely',
 	tinyfish: 'TinyFish',
 	tinypng: 'TinyPNG',
 	tinyurl: 'TinyURL',
@@ -1176,6 +1180,7 @@ export type AllProviders =
 	| 'monday'
 	| 'mrscraper'
 	| 'neon'
+	| 'netsuite'
 	| 'nextdns'
 	| 'northflank'
 	| 'notion'
@@ -1263,6 +1268,7 @@ export type AllProviders =
 	| 'tikhub'
 	| 'timecamp'
 	| 'timelink'
+	| 'timely'
 	| 'tinyfish'
 	| 'tinypng'
 	| 'tinyurl'
