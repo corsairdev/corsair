@@ -247,6 +247,18 @@ describe('waitOnStatusStream', () => {
 		);
 	});
 
+	it('gives up on a line that never ends instead of buffering it', async () => {
+		fetchMock.mockResolvedValueOnce(
+			sse(
+				['data: {"status":"IN_QUEUE","pad":"', 'x'.repeat(1024 * 1024 + 10)],
+				false,
+			),
+		);
+		await expect(waitOnStatusStream('k', BASE, 5_000)).resolves.toBe(
+			'unavailable',
+		);
+	});
+
 	it('does not open a stream for a zero wait', async () => {
 		await expect(waitOnStatusStream('k', BASE, 0)).resolves.toBe('waiting');
 		expect(fetchMock).not.toHaveBeenCalled();

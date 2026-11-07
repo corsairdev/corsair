@@ -29,6 +29,9 @@ export const FAL_HOSTS = {
 
 export type FalHost = keyof typeof FAL_HOSTS;
 
+/** Longest unfinished line the status stream reader holds. */
+const MAX_SSE_LINE_CHARS = 1024 * 1024;
+
 // Retries are the error handlers' call (error-handlers.ts), so the transport
 // makes one attempt: a retried model call can bill twice.
 const FAL_NO_TRANSPORT_RETRIES: RateLimitConfig = {
@@ -140,6 +143,9 @@ export async function waitOnStatusStream(
 			buffered += decoder.decode(value, { stream: true });
 			const lines = buffered.split('\n');
 			buffered = lines.pop() ?? '';
+			// A status event is a few hundred bytes; a line that never ends is
+			// not fal's stream, so the caller reads the status itself.
+			if (buffered.length > MAX_SSE_LINE_CHARS) return 'unavailable';
 			for (const line of lines) {
 				// Comment lines (": ping") keep the connection open; events are `data: {...}`.
 				if (!line.startsWith('data:')) continue;

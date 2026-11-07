@@ -158,6 +158,22 @@ describe('fal key rotation', () => {
 		['an empty key list', { keys: [] }],
 		['no keys field', {}],
 		['keys that are not Ed25519', { keys: [{ kty: 'RSA', n: 'abc' }] }],
+		[
+			'an X25519 key (OKP with a 32-byte x too)',
+			{
+				keys: [
+					{
+						kty: 'OKP',
+						crv: 'X25519',
+						x: Buffer.alloc(32, 7).toString('base64'),
+					},
+				],
+			},
+		],
+		[
+			'a key without kty and crv',
+			{ keys: [{ x: Buffer.alloc(32, 7).toString('base64') }] },
+		],
 	])('treats %s as a failed load and asks for a retry', async (_case, body) => {
 		resetFalJwksCache();
 		const fetchMock = jest

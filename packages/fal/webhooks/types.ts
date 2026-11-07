@@ -193,6 +193,8 @@ export function resetFalJwksCache(): void {
 const ED25519_SPKI_PREFIX = Buffer.from('302a300506032b6570032100', 'hex');
 
 function ed25519KeyFromJwk(jwk: FalJwk): crypto.KeyObject | null {
+	// An X25519 key is OKP with a 32-byte x too; only Ed25519 signs.
+	if (jwk.kty !== 'OKP' || jwk.crv !== 'Ed25519') return null;
 	if (typeof jwk.x !== 'string') return null;
 	// fal's x is base64 with padding; accept base64url too.
 	const raw = Buffer.from(

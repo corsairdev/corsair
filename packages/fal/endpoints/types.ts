@@ -84,7 +84,7 @@ const QueueStatusFields = {
 	status: z
 		.string()
 		.describe(
-			"fal's queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too.",
+			"fal's raw queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too, so read `state` for the outcome.",
 		),
 	request_id: z.string(),
 	response_url: z.string().nullish(),

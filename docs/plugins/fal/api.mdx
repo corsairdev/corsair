@@ -214,7 +214,7 @@ Goes through fal's queue, so a run that outlasts `waitSeconds` is not lost. It a
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | fal's queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too. |
+| `status` | `string` | Yes | fal's raw queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too, so read `state` for the outcome. |
 | `request_id` | `string` | Yes | — |
 | `response_url` | `string` | Yes | Pass to queue.status as responseUrl to follow a run still going. |
 | `status_url` | `string \| null` | No | — |
@@ -414,7 +414,7 @@ Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` retu
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | fal's queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too. |
+| `status` | `string` | Yes | fal's raw queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too, so read `state` for the outcome. |
 | `request_id` | `string` | Yes | — |
 | `response_url` | `string \| null` | No | — |
 | `status_url` | `string \| null` | No | — |
@@ -485,7 +485,7 @@ await corsair.fal.api.queue.submit({ endpointId: 'fal-ai/kling-video/v2.1/master
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | fal's queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too. |
+| `status` | `string` | Yes | fal's raw queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too, so read `state` for the outcome. |
 | `request_id` | `string` | Yes | — |
 | `response_url` | `string` | Yes | Pass to queue.status as responseUrl to follow the request. |
 | `status_url` | `string \| null` | No | — |
