@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-06T18:23:30.433Z",
+  "generatedAt": "2026-11-07T11:56:05.540Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
   "format": "png",
-  "total": 432,
-  "succeeded": 432,
+  "total": 436,
+  "succeeded": 436,
   "failed": 0,
   "domains": {
     "ably": "ably.io",
@@ -219,6 +219,7 @@
     "exist": "exist.com",
     "extractaai": "extractaai.com",
     "facebook": "facebook.com",
+    "fal": "fal.ai",
     "faraday": "faraday.com",
     "figma": "figma.com",
     "filevine": "filevine.com",
@@ -229,6 +230,7 @@
     "fixer": "fixer.io",
     "flexisign": "flexisign.io",
     "flutterwave": "flutterwave.com",
+    "followupboss": "followupboss.com",
     "formbricks": "formbricks.com",
     "fundable": "fundable.com",
     "gemini": "gemini.com",
@@ -341,6 +343,7 @@
     "revai": "revai.com",
     "rootly": "rootly.com",
     "runpod": "runpod.com",
+    "salesflare": "salesflare.com",
     "salesforce": "salesforce.com",
     "saperly": "saperly.com",
     "sapsuccessfactors": "sapsuccessfactors.com",
@@ -381,6 +384,7 @@
     "tikhub": "tikhub.io",
     "timecamp": "timecamp.com",
     "timelink": "timelink.com",
+    "timely": "timely.com",
     "tinyfish": "tinyfish.ai",
     "tinypng": "tinypng.com",
     "tinyurl": "tinyurl.com",
@@ -873,7 +877,11 @@
     "retellai": "url-override",
     "snowflake": "twenty-icons",
     "ticketmaster": "url-override",
-    "netsuite": "url-override"
+    "netsuite": "url-override",
+    "timely": "twenty-icons",
+    "fal": "twenty-icons",
+    "salesflare": "twenty-icons",
+    "followupboss": "twenty-icons"
   },
   "failures": []
 }

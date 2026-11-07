@@ -1,0 +1,1024 @@
+{
+  "id": "fal",
+  "displayName": "fal",
+  "description": "Generative media platform with hundreds of image, video, audio and 3D models; queue or run models, follow requests, look up models and prices, track usage and upload input files.",
+  "npmPackageName": "@corsair-dev/fal",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 14,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "user_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "fal.api.account.billing",
+      "shortPath": "account.billing",
+      "description": "The account's credit balance (needs a key with billing read access)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "{ current_balance: number, currency: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fal.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a file to fal storage and get a public URL to pass as a model input",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file’s bytes, base64 encoded (a data: URL prefix is fine)."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "MIME type, for example image/png or audio/wav."
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file_url",
+            "optional": false,
+            "type": "string",
+            "description": "Public fal CDN URL to pass as a model input (image_url, audio_url...)."
+          },
+          {
+            "key": "file_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fal.api.models.estimateCost",
+      "shortPath": "models.estimateCost",
+      "description": "Estimate what a number of calls or output units will cost",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimateType",
+            "optional": false,
+            "type": "historical_api_price | unit_price",
+            "description": "historical_api_price: quantity = number of calls, priced from past calls. unit_price: quantity = billing units (images, seconds, megapixels)."
+          },
+          {
+            "key": "endpoints",
+            "optional": false,
+            "type": "Record<string, { quantity: number }>",
+            "description": "Endpoint id to quantity, for example { \"fal-ai/flux/dev\": { quantity: 100 } }."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "estimate_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "total_cost",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fal.api.models.pricing",
+      "shortPath": "models.pricing",
+      "description": "Unit price of fal models (per image, megapixel, second…)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpointIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "1 to 50 fal endpoint ids, for example [\"fal-ai/flux/dev\"]."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prices",
+            "optional": false,
+            "type": "{ endpoint_id: string, unit_price: number, unit: string, currency: string }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fal.api.models.run",
+      "shortPath": "models.run",
+      "description": "Run a model and wait up to waitSeconds (default 10) for its output; spends fal credits. SUCCEEDED and FAILED are final. IN_QUEUE or IN_PROGRESS is a job to follow with queue.status; video, audio and training usually take longer than the wait.",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "response_url",
+        "status": {
+          "op": "queue.status",
+          "idArg": "responseUrl",
+          "statusPath": "state",
+          "done": ["SUCCEEDED"],
+          "failed": ["FAILED"]
+        },
+        "cancel": {
+          "op": "queue.cancel",
+          "idArg": "responseUrl"
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpointId",
+            "optional": false,
+            "type": "string",
+            "description": "fal model endpoint id, for example fal-ai/flux/schnell or fal-ai/kling-video/v2.1/master/text-to-video. Find ids with models.search."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The model's input fields, for example { prompt: 'a lighthouse at dawn' }. Each model has its own; read them with models.search({ endpointIds: [id], includeOpenApi: true })."
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string",
+            "description": "An https URL fal POSTs the result to when the request completes (signed; see the requests.completed webhook)."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "normal | low",
+            "description": "low puts it behind your other requests to this endpoint."
+          },
+          {
+            "key": "startTimeout",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds fal may wait for a runner before giving up (504). Does not limit run time."
+          },
+          {
+            "key": "hint",
+            "optional": true,
+            "type": "string",
+            "description": "Routing hint: requests with the same hint go to the same runner."
+          },
+          {
+            "key": "noRetry",
+            "optional": true,
+            "type": "boolean",
+            "description": "true turns off fal’s automatic retries for this request."
+          },
+          {
+            "key": "maxQueueLength",
+            "optional": true,
+            "type": "number",
+            "description": "Reject with 429 if this many requests are already queued."
+          },
+          {
+            "key": "waitSeconds",
+            "optional": true,
+            "type": "number",
+            "description": "How long models.run waits after submitting, default 10 and at most 15 seconds."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "fal's raw queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too, so read `state` for the outcome."
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response_url",
+            "optional": false,
+            "type": "string",
+            "description": "Pass to queue.status as responseUrl to follow a run still going."
+          },
+          {
+            "key": "status_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancel_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "queue_position",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{ message: string, timestamp: string, level?: string, labels?: Record<string, any> }[] | null"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{ inference_time?: number | null } | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "IN_QUEUE | IN_PROGRESS | SUCCEEDED | FAILED",
+            "description": "IN_QUEUE or IN_PROGRESS while it runs; SUCCEEDED with output, or FAILED with error, once it is done."
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "The model output. Its shape is model-specific: image models return images[].url, video models video.url, audio models audio.url. fal media URLs expire, so save files you want to keep."
+          }
+        ]
+      }
+    },
+    {
+      "path": "fal.api.models.search",
+      "shortPath": "models.search",
+      "description": "Find fal models by text, category or endpoint id; includeOpenApi returns their input and output fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Free text, for example \"text to video\" or \"upscale\"."
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "For example text-to-image, image-to-image, image-to-video, text-to-video, text-to-speech, speech-to-text, training."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | deprecated"
+          },
+          {
+            "key": "endpointIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Look up these endpoints instead of searching."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "relevant | recent"
+          },
+          {
+            "key": "includeOpenApi",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include each model's OpenAPI document (its input and output fields). Large: use with endpointIds."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "models",
+            "optional": false,
+            "type": "{ endpoint_id: string, metadata?: { display_name?: string, category?: string, description?: string, status?: string, tags?: string[], updated_at?: string, thumbnail_url?: string, model_url?: string, license_type?: string, kind?: string, duration_estimate?: number | null }, retires_at?: string | null, replacement?: string | null, openapi?: Record<string, any> }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fal.api.queue.cancel",
+      "shortPath": "queue.cancel",
+      "description": "Cancel a queued request: removed if still waiting, asked to stop if running",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpointId",
+            "optional": true,
+            "type": "string",
+            "description": "The endpoint id the request was submitted to. Pass it with requestId."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The request_id queue.submit returned. Pass it with endpointId."
+          },
+          {
+            "key": "responseUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Instead of endpointId + requestId: the response_url queue.submit returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "OK | CANCELLATION_REQUESTED | ALREADY_COMPLETED | NOT_FOUND",
+            "description": "OK: removed from the queue, never runs. CANCELLATION_REQUESTED: running, fal asked the runner to stop (it may still finish). ALREADY_COMPLETED or NOT_FOUND: nothing to cancel."
+          }
+        ]
+      }
+    },
+    {
+      "path": "fal.api.queue.result",
+      "shortPath": "queue.result",
+      "description": "The output of a completed queued request",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpointId",
+            "optional": true,
+            "type": "string",
+            "description": "The endpoint id the request was submitted to. Pass it with requestId."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The request_id queue.submit returned. Pass it with endpointId."
+          },
+          {
+            "key": "responseUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Instead of endpointId + requestId: the response_url queue.submit returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "fal.api.queue.status",
+      "shortPath": "queue.status",
+      "description": "Where a queued request stands. Once done it returns state SUCCEEDED with the output, or FAILED with the error.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpointId",
+            "optional": true,
+            "type": "string",
+            "description": "The endpoint id the request was submitted to. Pass it with requestId."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The request_id queue.submit returned. Pass it with endpointId."
+          },
+          {
+            "key": "responseUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Instead of endpointId + requestId: the response_url queue.submit returned."
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include runner logs (only the app owner receives them)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "fal's raw queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too, so read `state` for the outcome."
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancel_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "queue_position",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{ message: string, timestamp: string, level?: string, labels?: Record<string, any> }[] | null"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{ inference_time?: number | null } | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "IN_QUEUE | IN_PROGRESS | SUCCEEDED | FAILED",
+            "description": "IN_QUEUE or IN_PROGRESS while it runs; SUCCEEDED with output, or FAILED with error, once it is done."
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "The model output. Its shape is model-specific: image models return images[].url, video models video.url, audio models audio.url. fal media URLs expire, so save files you want to keep."
+          }
+        ]
+      }
+    },
+    {
+      "path": "fal.api.queue.submit",
+      "shortPath": "queue.submit",
+      "description": "Queue a model run (image, video, audio, 3D…) and get a request id back at once; spends fal credits. Follow it with queue.status until state is SUCCEEDED or FAILED, or pass webhookUrl.",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "response_url",
+        "status": {
+          "op": "queue.status",
+          "idArg": "responseUrl",
+          "statusPath": "state",
+          "done": ["SUCCEEDED"],
+          "failed": ["FAILED"]
+        },
+        "cancel": {
+          "op": "queue.cancel",
+          "idArg": "responseUrl"
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpointId",
+            "optional": false,
+            "type": "string",
+            "description": "fal model endpoint id, for example fal-ai/flux/schnell or fal-ai/kling-video/v2.1/master/text-to-video. Find ids with models.search."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The model's input fields, for example { prompt: 'a lighthouse at dawn' }. Each model has its own; read them with models.search({ endpointIds: [id], includeOpenApi: true })."
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string",
+            "description": "An https URL fal POSTs the result to when the request completes (signed; see the requests.completed webhook)."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "normal | low",
+            "description": "low puts it behind your other requests to this endpoint."
+          },
+          {
+            "key": "startTimeout",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds fal may wait for a runner before giving up (504). Does not limit run time."
+          },
+          {
+            "key": "hint",
+            "optional": true,
+            "type": "string",
+            "description": "Routing hint: requests with the same hint go to the same runner."
+          },
+          {
+            "key": "noRetry",
+            "optional": true,
+            "type": "boolean",
+            "description": "true turns off fal’s automatic retries for this request."
+          },
+          {
+            "key": "maxQueueLength",
+            "optional": true,
+            "type": "number",
+            "description": "Reject with 429 if this many requests are already queued."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "fal's raw queue status: IN_QUEUE, IN_PROGRESS or COMPLETED. A failed or cancelled request is COMPLETED too, so read `state` for the outcome."
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "response_url",
+            "optional": false,
+            "type": "string",
+            "description": "Pass to queue.status as responseUrl to follow the request."
+          },
+          {
+            "key": "status_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancel_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "queue_position",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{ message: string, timestamp: string, level?: string, labels?: Record<string, any> }[] | null"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{ inference_time?: number | null } | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user_queue_position",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "user_queued_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fal.api.requests.deletePayloads",
+      "shortPath": "requests.deletePayloads",
+      "description": "Delete a request's stored input and output payloads and the files it generated on fal's CDN (files it took as input stay)",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cdn_delete_results",
+            "optional": false,
+            "type": "{ link: string, exception?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fal.api.requests.list",
+      "shortPath": "requests.list",
+      "description": "Past requests to given endpoints, with timing and status; optionally their inputs and outputs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpointIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "1 to 50 fal endpoint ids, for example [\"fal-ai/flux/dev\"]."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date or date-time, for example 2026-11-01."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string",
+            "description": "Exclusive end date."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "success | error | user_error"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "includePayloads",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include each request’s input and output."
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "ended_at | duration"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ request_id: string, endpoint_id: string, started_at?: string | null, sent_at?: string | null, ended_at?: string | null, status_code?: number | null, duration?: number | null, json_input?: any, json_output?: any }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fal.api.usage.billingEvents",
+      "shortPath": "usage.billingEvents",
+      "description": "Billed requests one by one, with their cost",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date or date-time, for example 2026-11-01."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string",
+            "description": "Exclusive end date."
+          },
+          {
+            "key": "endpointIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "1 to 50 fal endpoint ids, for example [\"fal-ai/flux/dev\"]."
+          },
+          {
+            "key": "requestIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "billing_events",
+            "optional": false,
+            "type": "{ request_id: string, endpoint_id: string, timestamp: string, quantity?: number | null, unit?: string | null, unit_price?: number | null, cost_total: number, cost_estimate_nano_usd?: number }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fal.api.usage.get",
+      "shortPath": "usage.get",
+      "description": "Usage and cost by endpoint over a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date or date-time, for example 2026-11-01."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string",
+            "description": "Exclusive end date."
+          },
+          {
+            "key": "endpointIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "1 to 50 fal endpoint ids, for example [\"fal-ai/flux/dev\"]."
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "minute | hour | day | week | month"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA time zone, default UTC."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "(time_series | summary | auth_method)[]",
+            "description": "Default time_series. summary adds totals per endpoint."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_series",
+            "optional": true,
+            "type": "{ bucket: string, results: { endpoint_id: string, unit: string, quantity: number, unit_price: number, percent_discount?: number | null, cost_subtotal?: number, cost_discount?: number, cost_total?: number, cost?: number, currency: string, auth_method?: string }[] }[]"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{ endpoint_id: string, unit: string, quantity: number, unit_price: number, percent_discount?: number | null, cost_subtotal?: number, cost_discount?: number, cost_total?: number, cost?: number, currency: string, auth_method?: string }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "fal.webhooks.requests.completed",
+      "shortPath": "requests.completed",
+      "description": "A queued request finished: status OK with the model output, or ERROR with the error. Signed by fal (Ed25519).",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "gateway_request_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The last attempt’s id; differs from request_id when fal retried."
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "OK | ERROR",
+            "description": "OK: payload is the model output. ERROR: payload is the error body."
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "payload_error",
+            "optional": true,
+            "type": "string | null",
+            "description": "Set when fal could not include the output; read it with queue.result."
+          }
+        ]
+      },
+      "responseType": "{ request_id: string, gateway_request_id?: string | null, status: OK | ERROR, payload: Record<string, any> | null, error?: string | null, payload_error?: string | null }",
+      "usageExample": "fal({\n    webhookHooks: {\n        requests: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}
