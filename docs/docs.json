@@ -2615,6 +2615,14 @@
                 ]
               },
               {
+                "group": "OpenGraph.io",
+                "pages": [
+                  "plugins/opengraph/overview",
+                  "plugins/opengraph/api",
+                  "plugins/opengraph/database"
+                ]
+              },
+              {
                 "group": "OpenRouter",
                 "pages": [
                   "plugins/openrouter/overview",
