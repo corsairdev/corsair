@@ -1,0 +1,142 @@
+---
+title: Overview
+description: "Global health data collection platform with CommCare HQ - list and read submitted forms and cases, manage mobile workers and groups, pull report data and lookup tables, submit XForms and run bulk form actions."
+---
+
+Use **CommCare** through Corsair: one client, typed API calls.
+
+Generate an API key in CommCare HQ under Account Settings, API Keys, and set the plugin options `domain` (the HQ project) and `username` (the key's owner). Things to know before you call:
+
+- **API access needs a plan.** The CommCare APIs require a Standard plan or above.
+- **Every endpoint is scoped to one project.** All requests go to `https://www.commcarehq.org/a/{domain}/...`, so set the plugin's `domain` option once.
+- **Two pagination styles.** Most listings use `limit` and `offset` with a `meta.total_count`; `cases.list` uses a cursor you follow from the `next` link, and pages oldest-to-newest.
+- **Async bulk actions.** `forms.bulkAction` accepts up to 5000 form ids for archive, unarchive or permanent delete, and answers a job id; follow with `forms.bulkActionStatus` until status is `complete`.
+- **Credit-bearing writes.** `submissions.submit` posts OpenRosa XForm XML to the receiver; 201 means received, and the `message` field says whether it processed. `users.create` provisions a worker account with an initial password.
+- **Delete is permanent.** `users.delete` removes a worker account, and `forms.bulkAction` with action `delete` permanently removes forms.
+- **OTA restore auth.** `ota.restore` pulls the full case-restore XML; the docs authenticate that endpoint with the worker's Basic credentials, which the plugin does not hold, so it may answer 401 with an API key.
+
+**What you get:**
+
+- 32 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/commcare better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/commcare better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/commcare better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/commcare better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { commcare } from '@corsair-dev/commcare';
+
+export const corsair = createCorsair({
+	plugins: [
+		commcare(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. A call with no saved key throws `AuthMissingError`, which may carry a `connectUrl`. The plugin option `domain` must also be set, and the API key belongs to a CommCare username (ApiKey auth: `Authorization: ApiKey <username>:<key>`).
+
+```ts
+commcare()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'commcare',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List open cases of a type**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.commcare.api.cases.list({ domain: 'my-project', caseType: 'patient' });
+```
+
+
+**Add a mobile worker**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.commcare.api.users.create({
+	domain: 'my-project',
+	username: 'new.worker@my-project.commcarehq.org',
+	password: 'change-me-1',
+	firstName: 'Jordan',
+	lastName: 'Lee',
+});
+```
+
+
+See the full list on the [API](/plugins/commcare/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/commcare/api">
+    Every `commcare.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
