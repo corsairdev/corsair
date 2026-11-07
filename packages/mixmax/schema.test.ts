@@ -106,12 +106,11 @@ describe('Mixmax schema', () => {
 	});
 
 	it('registers the full current Mixmax operation catalog', () => {
-		// Part 1 of the current provider inventory: 135 live operations in the
-		// official reference, implemented across three parts (44 + 41 + 47).
-		// Tightened to the exact count as each part lands.
-		expect(Object.keys(mixmaxEndpointSchemas).length).toBeGreaterThanOrEqual(
-			44,
-		);
+		// The complete current provider inventory: the official reference
+		// declares 154 operations; 19 are deprecated, 3 are limited-beta, and
+		// PATCH /v1/codesnippets/{id} always returns 404 per the provider —
+		// 132 remain and every one of them is registered.
+		expect(Object.keys(mixmaxEndpointSchemas).length).toBe(132);
 	});
 
 	// The factory always builds the validated endpoint tree, so the endpoints
