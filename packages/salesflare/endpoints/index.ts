@@ -55,7 +55,6 @@ export {
 export {
 	createMessage,
 	createMessageFeedback,
-	createMessageFeedbackAlias,
 	deleteMessage,
 	updateMessage,
 } from './messages';

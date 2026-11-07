@@ -71,7 +71,17 @@ describe('Salesflare schema', () => {
 	it('registers the full current Salesflare operation catalog', () => {
 		expect(
 			Object.keys(salesflareEndpointSchemas).length,
-		).toBeGreaterThanOrEqual(71);
+		).toBeGreaterThanOrEqual(70);
+	});
+
+	it('exposes message feedback once, on the canonical plural route', () => {
+		// The spec ships POST /message/{id}/feedback and
+		// POST /messages/{id}/feedback with identical contracts; only the
+		// plural route (matching every other message route) is public.
+		const feedbackOps = Object.keys(salesflareEndpointSchemas).filter((op) =>
+			op.toLowerCase().includes('feedback'),
+		);
+		expect(feedbackOps).toEqual(['messages.createMessageFeedback']);
 	});
 
 	it('provides executable input and output contracts for every operation', () => {
@@ -567,12 +577,6 @@ describe('Salesflare schema', () => {
 				updated: '2024-01-01T00:00:00.000Z',
 			},
 			'accounts.updateAccountContacts': {
-				id: 1,
-				name: 'Real record',
-				created: '2024-01-01T00:00:00.000Z',
-				updated: '2024-01-01T00:00:00.000Z',
-			},
-			'messages.createMessageFeedbackAlias': {
 				id: 1,
 				name: 'Real record',
 				created: '2024-01-01T00:00:00.000Z',

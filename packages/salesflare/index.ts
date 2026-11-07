@@ -23,7 +23,6 @@ import {
 	createMeeting,
 	createMessage,
 	createMessageFeedback,
-	createMessageFeedbackAlias,
 	createOpportunity,
 	createTag,
 	createTask,
@@ -187,7 +186,6 @@ export type SalesflareEndpoints = {
 	updateAccountUsers: SalesflareEndpoint<'updateAccountUsers'>;
 	addAccountContacts: SalesflareEndpoint<'addAccountContacts'>;
 	updateAccountContacts: SalesflareEndpoint<'updateAccountContacts'>;
-	createMessageFeedbackAlias: SalesflareEndpoint<'createMessageFeedbackAlias'>;
 	createMessageFeedback: SalesflareEndpoint<'createMessageFeedback'>;
 	updateCall: SalesflareEndpoint<'updateCall'>;
 	updateMessage: SalesflareEndpoint<'updateMessage'>;
@@ -307,7 +305,6 @@ const salesflareEndpointsNested = {
 	},
 	messages: {
 		createMessage: createMessage,
-		createMessageFeedbackAlias: createMessageFeedbackAlias,
 		createMessageFeedback: createMessageFeedback,
 		updateMessage: updateMessage,
 		deleteMessage: deleteMessage,
@@ -562,10 +559,6 @@ export const salesflareEndpointSchemas = {
 	'accounts.updateAccountContacts': {
 		input: SalesflareEndpointInputSchemas.updateAccountContacts,
 		output: SalesflareEndpointOutputSchemas.updateAccountContacts,
-	},
-	'messages.createMessageFeedbackAlias': {
-		input: SalesflareEndpointInputSchemas.createMessageFeedbackAlias,
-		output: SalesflareEndpointOutputSchemas.createMessageFeedbackAlias,
 	},
 	'messages.createMessageFeedback': {
 		input: SalesflareEndpointInputSchemas.createMessageFeedback,
@@ -853,11 +846,6 @@ const salesflareEndpointMeta = {
 	'accounts.updateAccountContacts': {
 		riskLevel: 'write',
 		description: 'Update the contact links of an account',
-	},
-	'messages.createMessageFeedbackAlias': {
-		riskLevel: 'write',
-		description:
-			"Submit internal-note feedback for a message via the provider's alternate message path",
 	},
 	'messages.createMessageFeedback': {
 		riskLevel: 'write',

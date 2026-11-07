@@ -9,7 +9,6 @@ import {
 	createMeeting,
 	createMessage,
 	createMessageFeedback,
-	createMessageFeedbackAlias,
 	createOpportunity,
 	createTag,
 	createTask,
@@ -892,15 +891,6 @@ describe('Salesflare endpoint request seams', () => {
 			ctx,
 			'/accounts/account_id-1/contacts',
 			{ method: 'PUT', body: { id: 1, _dirty: true, _deleted: true } },
-		);
-		await createMessageFeedbackAlias(ctx, {
-			messageId: 'message_id-1',
-			feedback: 'feedback-1',
-		} as never);
-		expect(request).toHaveBeenCalledWith(
-			ctx,
-			'/message/message_id-1/feedback',
-			{ method: 'POST', body: { feedback: 'feedback-1' } },
 		);
 		await createMessageFeedback(ctx, {
 			messageId: 'message_id-1',
