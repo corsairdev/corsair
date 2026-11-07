@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { mixmaxBooleanFlag } from './flags';
 
 // Templates and their folders (developer.mixmax.com/reference, Templates
 // section). In the backend templates are called snippets and their folders
@@ -34,10 +35,24 @@ const SnippetSharedSchema = z
 // milliseconds.
 export const SnippetSchema = z
 	.object({
-		// The provider declares the id without a fixed type; the documents
-		// carry string ids in practice, so the union keeps the id loosely
-		// typed instead of pinning one shape.
-		_id: z.union([z.string(), z.number()]).optional(),
+		// The provider declares the id without a fixed type. Plain reads
+		// carry string (or legacy numeric) ids, while `expand=snippetId`
+		// returns the id as an expanded `{ _id, tagId }` object, so all three
+		// documented shapes are accepted.
+		_id: z
+			.union([
+				z.string(),
+				z.number(),
+				z
+					.object({
+						_id: z.unknown().optional(),
+						tagId: z.unknown().optional(),
+					})
+					// unknown: the expanded id object's fields are provider-
+					// defined; the documented members are kept untyped.
+					.passthrough(),
+			])
+			.optional(),
 		// The owner; not always the caller, since templates can be shared.
 		userId: z.string().optional(),
 		// The name shown in Mixmax; it is not inserted into emails.
@@ -110,17 +125,17 @@ export const SnippetsListInputSchema = z.object({
 	// Text or operators such as `name:"sales intro"` to filter by.
 	search: z.string().optional(),
 	// False for templates only, true for snippets only.
-	isInline: z.coerce.boolean().optional(),
+	isInline: mixmaxBooleanFlag.optional(),
 	// Any value, even false, lists only templates in the trash; leave it out
 	// otherwise.
-	deletedOnly: z.coerce.boolean().optional(),
+	deletedOnly: mixmaxBooleanFlag.optional(),
 	// Any value, even false, lists only archived templates; leave it out
 	// otherwise.
-	archivedOnly: z.coerce.boolean().optional(),
+	archivedOnly: mixmaxBooleanFlag.optional(),
 	// `name` (the default), `createdAt`, `savedAt`, or an `analytics` field.
 	sort: z.string().optional(),
 	// True to sort ascending.
-	sortAscending: z.coerce.boolean().optional(),
+	sortAscending: mixmaxBooleanFlag.optional(),
 	// Comma-separated: `analytics`, `userId`, or `snippetId`.
 	expand: z.string().optional(),
 	// How many templates per page.
@@ -140,7 +155,7 @@ export type SnippetsListOutput = z.infer<typeof SnippetsListOutputSchema>;
 export const SnippetsGetInputSchema = z.object({
 	id: z.string().min(1),
 	// Any value, even false, also finds templates in the trash.
-	includeDeleted: z.coerce.boolean().optional(),
+	includeDeleted: mixmaxBooleanFlag.optional(),
 	// `snippetId` turns `_id` into {_id, tagId}; `savedBy` adds who last
 	// saved it.
 	expand: z.string().optional(),
@@ -182,7 +197,7 @@ export const SnippetsDeleteInputSchema = z.object({
 	id: z.string().min(1),
 	// Any value, even false, archives instead of trashing; leave it out to
 	// trash.
-	archive: z.coerce.boolean().optional(),
+	archive: mixmaxBooleanFlag.optional(),
 });
 
 export type SnippetsDeleteInput = z.infer<typeof SnippetsDeleteInputSchema>;
@@ -209,10 +224,10 @@ export const SnippetsSendInputSchema = z.object({
 	variables: z.object({}).passthrough().optional(),
 	// When to send, in Unix milliseconds; leave out to send right away.
 	scheduledAt: z.coerce.number().int().optional(),
-	trackingEnabled: z.coerce.boolean().optional(),
-	linkTrackingEnabled: z.coerce.boolean().optional(),
-	fileTrackingEnabled: z.coerce.boolean().optional(),
-	notificationsEnabled: z.coerce.boolean().optional(),
+	trackingEnabled: mixmaxBooleanFlag.optional(),
+	linkTrackingEnabled: mixmaxBooleanFlag.optional(),
+	fileTrackingEnabled: mixmaxBooleanFlag.optional(),
+	notificationsEnabled: mixmaxBooleanFlag.optional(),
 });
 
 export type SnippetsSendInput = z.infer<typeof SnippetsSendInputSchema>;
@@ -227,11 +242,11 @@ export const SnippetTagsListInputSchema = z.object({
 	// Matches folders with a word in the name that starts with this text.
 	search: z.string().optional(),
 	// False for template folders only, true for snippet folders only.
-	isInline: z.coerce.boolean().optional(),
+	isInline: mixmaxBooleanFlag.optional(),
 	// Only `name` is supported; otherwise folders sort by creation date.
 	sort: z.string().optional(),
 	// True to sort ascending.
-	sortAscending: z.coerce.boolean().optional(),
+	sortAscending: mixmaxBooleanFlag.optional(),
 	// Comma-separated: `count` adds template counts, `userId` adds the
 	// owner's email.
 	expand: z.string().optional(),
@@ -255,7 +270,7 @@ export const SnippetTagsCreateInputSchema = z.object({
 	options: SnippetNameOptionsSchema.optional(),
 	// Read from the query string, not the body: pass true to create a
 	// snippet folder.
-	isInline: z.coerce.boolean().optional(),
+	isInline: mixmaxBooleanFlag.optional(),
 });
 
 export type SnippetTagsCreateInput = z.infer<
@@ -323,7 +338,7 @@ export const SnippetTagsListSnippetsInputSchema = z.object({
 	// `name` (the default), `createdAt`, `savedAt`, or an `analytics` field.
 	sort: z.string().optional(),
 	// True to sort ascending.
-	sortAscending: z.coerce.boolean().optional(),
+	sortAscending: mixmaxBooleanFlag.optional(),
 	// Comma-separated: `analytics` adds usage counts, `userId` adds the
 	// owner's email.
 	expand: z.string().optional(),

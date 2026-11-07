@@ -65,6 +65,33 @@ describe('Mixmax snippets endpoints', () => {
 		expect(result).toEqual(PAGE);
 	});
 
+	it('snippets.get parses the expanded snippetId id object', async () => {
+		// With `expand=snippetId` the provider returns the id as an expanded
+		// `{ _id, tagId }` object; the read must not fail the output check
+		// after Mixmax answers successfully.
+		request.mockResolvedValue({
+			_id: { _id: 'snip-1', tagId: 'tag-1' },
+			name: 'Expanded template',
+		});
+		const result = await endpoints.snippets.get(ctx, {
+			id: 'snip-1',
+			expand: 'snippetId',
+		});
+
+		expect(request).toHaveBeenCalledWith(ctx, '/v1/snippets/snip-1', {
+			method: 'GET',
+			query: {
+				includeDeleted: undefined,
+				expand: 'snippetId',
+				fields: undefined,
+			},
+		});
+		expect(result).toEqual({
+			_id: { _id: 'snip-1', tagId: 'tag-1' },
+			name: 'Expanded template',
+		});
+	});
+
 	it('snippets.get sends GET /v1/snippets/:id and rejects unsafe ids', async () => {
 		request.mockResolvedValue(SNIPPET);
 		const result = await endpoints.snippets.get(ctx, {
