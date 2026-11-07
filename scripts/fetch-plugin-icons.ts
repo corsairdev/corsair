@@ -40,6 +40,54 @@ const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
 type IconSource = 'twenty-icons' | 'google-favicon' | 'url-override';
 
+/**
+ * Dark marks on a transparent background that vanish on a dark surface (Lug's
+ * picker draws icons with no tile behind them). These are flattened onto a
+ * white tile with some padding after fetching.
+ */
+const PLUGIN_ICON_LIGHT_TILE = new Set(['api2pdf', 'attio', 'bigml']);
+
+/** Flatten a PNG onto a padded white tile with ImageMagick; unchanged if it isn't installed. */
+function onLightTile(bytes: Buffer): Buffer {
+	const id = randomBytes(8).toString('hex');
+	const inPath = join(tmpdir(), `corsair-icon-${id}-in.png`);
+	const outPath = join(tmpdir(), `corsair-icon-${id}-out.png`);
+	writeFileSync(inPath, bytes);
+	try {
+		for (const cmd of ['magick', 'convert']) {
+			const result = spawnSync(
+				cmd,
+				[
+					inPath,
+					'-trim',
+					'-resize',
+					'200x200',
+					'-background',
+					'white',
+					'-gravity',
+					'center',
+					'-extent',
+					'256x256',
+					'-alpha',
+					'remove',
+					'-alpha',
+					'off',
+					outPath,
+				],
+				{ stdio: 'ignore' },
+			);
+			if (result.status === 0 && existsSync(outPath)) {
+				return readFileSync(outPath);
+			}
+		}
+		console.warn('  light tile skipped: ImageMagick not found');
+		return bytes;
+	} finally {
+		rmSync(inPath, { force: true });
+		rmSync(outPath, { force: true });
+	}
+}
+
 /** Product marks twenty-icons can't distinguish (Docs vs Sheets on docs.google.com). */
 const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	gmail:
@@ -506,7 +554,12 @@ async function main(): Promise<void> {
 				return;
 			}
 
-			writeFileSync(join(iconsDir, `${pluginId}.png`), result.bytes);
+			writeFileSync(
+				join(iconsDir, `${pluginId}.png`),
+				PLUGIN_ICON_LIGHT_TILE.has(pluginId)
+					? onLightTile(result.bytes)
+					: result.bytes,
+			);
 			sources[pluginId] = result.source;
 			console.log(`[plugin-icons] ${pluginId} (${result.source})`);
 		});
