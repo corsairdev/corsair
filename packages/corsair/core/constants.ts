@@ -300,6 +300,7 @@ export const BaseProviders = [
 	'minimax',
 	'monday',
 	'mrscraper',
+	'nanonets',
 	'neon',
 	'netsuite',
 	'nextdns',
@@ -738,6 +739,7 @@ export const ProviderDisplayNames = {
 	minimax: 'MiniMax',
 	monday: 'Monday',
 	mrscraper: 'MrScraper',
+	nanonets: 'Nanonets',
 	neon: 'Neon',
 	netsuite: 'NetSuite',
 	nextdns: 'NextDNS',
@@ -1180,6 +1182,7 @@ export type AllProviders =
 	| 'minimax'
 	| 'monday'
 	| 'mrscraper'
+	| 'nanonets'
 	| 'neon'
 	| 'netsuite'
 	| 'nextdns'
