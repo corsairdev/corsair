@@ -16,8 +16,10 @@ const SalesflareBatchWriteOutputSchema = z.union([
 ]);
 // unknown: delete acknowledgements arrive as an empty 204 body, an empty
 // object, or occasionally a provider-side echo; any of these is a success.
+// Deletes reply 204, an empty object, or (per the spec) a string body.
 const SalesflareEmptyOutputSchema = z.union([
 	z.object({}).passthrough(),
+	z.string(),
 	z.undefined(),
 ]);
 
@@ -102,7 +104,10 @@ const CreateAccountInputSchema = z
 			)
 			.optional(),
 		_dirty: z.boolean().optional(),
-		parent_account: z.number().optional(),
+		// Salesflare takes the parent account as an id or as { id }.
+		parent_account: z
+			.union([z.number(), z.object({ id: z.number() })])
+			.optional(),
 		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		custom: z.record(z.string(), z.unknown()).optional(),
 	})
@@ -227,11 +232,12 @@ const RetrieveCurrentUserInputSchema = z.object({});
 
 const ListOpportunitiesInputSchema = z.object({
 	search: z.string().optional(),
-	id: z.number().optional(),
+	// id, stage, stage.name and tag.name take one value or a list (repeated keys).
+	id: z.union([z.number(), z.array(z.number())]).optional(),
 	name: z.string().optional(),
 	status: z.string().optional(),
-	stage: z.number().optional(),
-	'stage.name': z.string().optional(),
+	stage: z.union([z.number(), z.array(z.number())]).optional(),
+	'stage.name': z.union([z.string(), z.array(z.string())]).optional(),
 	owner: z.number().optional(),
 	team_member: z.number().optional(),
 	owner_group: z.number().optional(),
@@ -248,7 +254,7 @@ const ListOpportunitiesInputSchema = z.object({
 	closed: z.boolean().optional(),
 	done: z.boolean().optional(),
 	tag: z.array(z.number()).optional(),
-	'tag.name': z.string().optional(),
+	'tag.name': z.union([z.string(), z.array(z.string())]).optional(),
 	hotness: z.number().optional(),
 	limit: z.number().optional(),
 	offset: z.number().optional(),
@@ -506,7 +512,10 @@ const UpdateAccountInputSchema = z
 		tags: z.array(z.string()).optional(),
 		links: z.string().optional(),
 		_dirty: z.boolean().optional(),
-		parent_account: z.number().optional(),
+		// Salesflare takes the parent account as an id or as { id }.
+		parent_account: z
+			.union([z.number(), z.object({ id: z.number() })])
+			.optional(),
 		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
 		custom: z.record(z.string(), z.unknown()).optional(),
 		// unknown: the provider leaves this field's shape undocumented; values pass through as-is
@@ -548,7 +557,8 @@ const UpdateContactInputSchema = z
 		name: z.string().optional(),
 		owner: z.number().optional(),
 		picture: z.string().optional(),
-		account: z.number().optional(),
+		// null removes the linked account.
+		account: z.number().nullable().optional(),
 		birth_date: z.string().optional(),
 		'opt-out': z.boolean().optional(),
 		'opt-out_date': z.string().optional(),

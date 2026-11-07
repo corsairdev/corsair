@@ -124,7 +124,7 @@ await corsair.salesflare.api.accounts.createAccount({ name: 'Acme Inc', domain: 
 | `links` | `string` | No | — |
 | `customers` | `object[]` | No | — |
 | `_dirty` | `boolean` | No | — |
-| `parent_account` | `number` | No | — |
+| `parent_account` | `number \| object` | No | — |
 | `custom` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
@@ -174,6 +174,15 @@ await corsair.salesflare.api.accounts.createAccount({ name: 'Acme Inc', domain: 
 }[]
 ```
 </Accordion>
+
+<Accordion title="parent_account full type">
+
+```ts
+number | {
+  id: number
+}
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -203,14 +212,14 @@ await corsair.salesflare.api.accounts.deleteAccount({ accountId: '1234567' });
 
 
 
-**Output:** `object \| undefined`
+**Output:** `object \| string \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | undefined
+} | string | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -413,7 +422,7 @@ await corsair.salesflare.api.accounts.updateAccount({ accountId: '1234567', name
 | `tags` | `string[]` | No | — |
 | `links` | `string` | No | — |
 | `_dirty` | `boolean` | No | — |
-| `parent_account` | `number` | No | — |
+| `parent_account` | `number \| object` | No | — |
 | `custom` | `Record<string, any>` | No | — |
 | `q` | `object` | No | — |
 
@@ -474,6 +483,15 @@ await corsair.salesflare.api.accounts.updateAccount({ accountId: '1234567', name
   archived?: boolean,
   _dirty?: boolean
 }[]
+```
+</Accordion>
+
+<Accordion title="parent_account full type">
+
+```ts
+number | {
+  id: number
+}
 ```
 </Accordion>
 
@@ -865,14 +883,14 @@ await corsair.salesflare.api.contacts.deleteContact({ contactId: '3001' });
 
 
 
-**Output:** `object \| undefined`
+**Output:** `object \| string \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | undefined
+} | string | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -992,7 +1010,7 @@ await corsair.salesflare.api.contacts.updateContact({ contactId: '3001', firstna
 | `name` | `string` | No | — |
 | `owner` | `number` | No | — |
 | `picture` | `string` | No | — |
-| `account` | `number` | No | — |
+| `account` | `number \| null` | No | — |
 | `birth_date` | `string` | No | — |
 | `opt-out` | `boolean` | No | — |
 | `opt-out_date` | `string` | No | — |
@@ -1208,14 +1226,14 @@ await corsair.salesflare.api.customfields.deleteCustomField({ itemClass: 'accoun
 
 
 
-**Output:** `object \| undefined`
+**Output:** `object \| string \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | undefined
+} | string | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -1736,14 +1754,14 @@ await corsair.salesflare.api.meetings.deleteMeeting({ meetingId: '7001' });
 
 
 
-**Output:** `object \| undefined`
+**Output:** `object \| string \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | undefined
+} | string | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -1889,14 +1907,14 @@ await corsair.salesflare.api.messages.deleteMessage({ messageId: '8001' });
 
 
 
-**Output:** `object \| undefined`
+**Output:** `object \| string \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | undefined
+} | string | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -2004,14 +2022,14 @@ await corsair.salesflare.api.opportunities.deleteOpportunity({ id: '4001' });
 
 
 
-**Output:** `object \| undefined`
+**Output:** `object \| string \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | undefined
+} | string | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -2036,11 +2054,11 @@ await corsair.salesflare.api.opportunities.listOpportunities({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `search` | `string` | No | — |
-| `id` | `number` | No | — |
+| `id` | `number \| number[]` | No | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
-| `stage` | `number` | No | — |
-| `stage.name` | `string` | No | — |
+| `stage` | `number \| number[]` | No | — |
+| `stage.name` | `string \| string[]` | No | — |
 | `owner` | `number` | No | — |
 | `team_member` | `number` | No | — |
 | `owner_group` | `number` | No | — |
@@ -2057,7 +2075,7 @@ await corsair.salesflare.api.opportunities.listOpportunities({});
 | `closed` | `boolean` | No | — |
 | `done` | `boolean` | No | — |
 | `tag` | `number[]` | No | — |
-| `tag.name` | `string` | No | — |
+| `tag.name` | `string \| string[]` | No | — |
 | `hotness` | `number` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
@@ -2423,14 +2441,14 @@ await corsair.salesflare.api.tags.deleteTag({ tagId: '5001' });
 
 
 
-**Output:** `object \| undefined`
+**Output:** `object \| string \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | undefined
+} | string | undefined
 ```
 </Accordion>
 </AccordionGroup>
@@ -2604,14 +2622,14 @@ await corsair.salesflare.api.tasks.deleteTask({ id: '6001' });
 
 
 
-**Output:** `object \| undefined`
+**Output:** `object \| string \| undefined`
 
 <AccordionGroup>
 <Accordion title="Output full type">
 
 ```ts
 {
-} | undefined
+} | string | undefined
 ```
 </Accordion>
 </AccordionGroup>

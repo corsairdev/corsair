@@ -752,3 +752,55 @@ describe('Salesflare schema', () => {
 		expect(request).toHaveBeenCalledTimes(invokedOperations);
 	});
 });
+
+describe('Salesflare documented alternative forms', () => {
+	const inputs = SalesflareEndpointInputSchemas;
+
+	it('takes the parent account as an id or as { id }', () => {
+		for (const schema of [inputs.createAccount, inputs.updateAccount]) {
+			const base = schema === inputs.updateAccount ? { accountId: '1' } : {};
+			expect(schema.safeParse({ ...base, parent_account: 7 }).success).toBe(
+				true,
+			);
+			expect(
+				schema.safeParse({ ...base, parent_account: { id: 7 } }).success,
+			).toBe(true);
+			expect(
+				schema.safeParse({ ...base, parent_account: { name: 'x' } }).success,
+			).toBe(false);
+		}
+	});
+
+	it('lets a contact update clear its account with null', () => {
+		const parsed = inputs.updateContact.parse({
+			contactId: '1',
+			account: null,
+		});
+		expect(parsed).toEqual({ contactId: '1', account: null });
+	});
+
+	it('accepts one value or a list for the multi-valued opportunity filters', () => {
+		const parsed = inputs.listOpportunities.parse({
+			id: [1, 2],
+			stage: [3],
+			'stage.name': ['Won', 'Lost'],
+			'tag.name': 'Hot',
+		});
+		expect(parsed).toEqual({
+			id: [1, 2],
+			stage: [3],
+			'stage.name': ['Won', 'Lost'],
+			'tag.name': 'Hot',
+		});
+		expect(inputs.listOpportunities.safeParse({ id: ['1'] }).success).toBe(
+			false,
+		);
+	});
+
+	it('accepts the string body the spec documents for deletes', () => {
+		const output = salesflareEndpointSchemas['accounts.deleteAccount'].output;
+		expect(output.safeParse('').success).toBe(true);
+		expect(output.safeParse(undefined).success).toBe(true);
+		expect(output.safeParse({}).success).toBe(true);
+	});
+});
