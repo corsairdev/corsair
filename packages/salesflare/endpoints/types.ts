@@ -6,6 +6,16 @@ import { z } from 'zod';
 const SalesflareRecordSchema = z.object({}).passthrough();
 const SalesflareListOutputSchema = z.array(SalesflareRecordSchema);
 const SalesflareResourceOutputSchema = SalesflareRecordSchema;
+// POST /contacts takes an array body (a single object is accepted too) and
+// the spec documents its response as an array of created ids: [{ id }].
+const SalesflareCreatedListOutputSchema = z.array(SalesflareRecordSchema);
+// The other array-bodied writes (calls, meetings, account users/contacts)
+// leave their response undocumented; accept a record or a list of records so
+// a successful write is never reported as a parse failure.
+const SalesflareBatchWriteOutputSchema = z.union([
+	SalesflareRecordSchema,
+	z.array(SalesflareRecordSchema),
+]);
 // unknown: delete acknowledgements arrive as an empty 204 body, an empty
 // object, or occasionally a provider-side echo; any of these is a success.
 const SalesflareEmptyOutputSchema = z.union([
@@ -1183,7 +1193,7 @@ export const SalesflareEndpointOutputSchemas = {
 	listAccounts: SalesflareListOutputSchema,
 	createAccount: SalesflareResourceOutputSchema,
 	listContacts: SalesflareListOutputSchema,
-	createContact: SalesflareResourceOutputSchema,
+	createContact: SalesflareCreatedListOutputSchema,
 	listCurrencies: SalesflareListOutputSchema,
 	listGroups: SalesflareListOutputSchema,
 	retrieveCurrentUser: SalesflareResourceOutputSchema,
@@ -1235,13 +1245,13 @@ export const SalesflareEndpointOutputSchemas = {
 	deleteCustomField: SalesflareEmptyOutputSchema,
 	listTagUsage: SalesflareListOutputSchema,
 	listCustomFieldOptions: SalesflareListOutputSchema,
-	createCall: SalesflareResourceOutputSchema,
-	createMeeting: SalesflareResourceOutputSchema,
+	createCall: SalesflareBatchWriteOutputSchema,
+	createMeeting: SalesflareBatchWriteOutputSchema,
 	createMessage: SalesflareResourceOutputSchema,
-	addAccountUsers: SalesflareResourceOutputSchema,
-	updateAccountUsers: SalesflareResourceOutputSchema,
-	addAccountContacts: SalesflareResourceOutputSchema,
-	updateAccountContacts: SalesflareResourceOutputSchema,
+	addAccountUsers: SalesflareBatchWriteOutputSchema,
+	updateAccountUsers: SalesflareBatchWriteOutputSchema,
+	addAccountContacts: SalesflareBatchWriteOutputSchema,
+	updateAccountContacts: SalesflareBatchWriteOutputSchema,
 	createMessageFeedback: SalesflareResourceOutputSchema,
 	updateCall: SalesflareResourceOutputSchema,
 	updateMessage: SalesflareResourceOutputSchema,

@@ -176,6 +176,41 @@ describe('Salesflare schema', () => {
 		).rejects.toThrow('Invalid Salesflare id');
 	});
 
+	it('accepts the array responses of array-bodied writes', async () => {
+		const request = jest.mocked(makeSalesflareRequest);
+		const plugin = salesflare({ key: 'secret' });
+		// never: the fixture provides exactly the context fields these
+		// handlers read; omitted runtime services are not exercised.
+		const ctx = { key: 'secret', options: {} } as never;
+		// unknown: the plugin tree nests every family recursively; only the
+		// accessed leaves are narrowed here.
+		type Leaf = (ctx: unknown, input: unknown) => Promise<unknown>;
+		const endpoints = plugin.endpoints as unknown as {
+			contacts: { createContact: Leaf };
+			meetings: { createMeeting: Leaf };
+			accounts: { addAccountContacts: Leaf };
+		};
+
+		// POST /contacts documents its response as an array of created ids.
+		request.mockResolvedValueOnce([{ id: 42 }]);
+		await expect(
+			endpoints.contacts.createContact(ctx, { email: 'a@example.com' }),
+		).resolves.toEqual([{ id: 42 }]);
+
+		// Undocumented responses of array-bodied writes: list or record.
+		request.mockResolvedValueOnce([{ id: 7 }]);
+		await expect(
+			endpoints.meetings.createMeeting(ctx, {
+				date: '2024-01-01T00:00:00.000Z',
+				participants: [1],
+			}),
+		).resolves.toEqual([{ id: 7 }]);
+		request.mockResolvedValueOnce({ id: 7 });
+		await expect(
+			endpoints.accounts.addAccountContacts(ctx, { accountId: '1', id: 2 }),
+		).resolves.toEqual({ id: 7 });
+	});
+
 	// Per the plugin endpoint-test rule, this table-driven traversal invokes
 	// every registered operation and asserts one request plus response parsing.
 	it('exercises every registered operation through its public boundary', async () => {
@@ -218,12 +253,8 @@ describe('Salesflare schema', () => {
 					updated: '2024-01-01T00:00:00.000Z',
 				},
 			],
-			'contacts.createContact': {
-				id: 1,
-				name: 'Real record',
-				created: '2024-01-01T00:00:00.000Z',
-				updated: '2024-01-01T00:00:00.000Z',
-			},
+			// POST /contacts documents an array of created ids.
+			'contacts.createContact': [{ id: 1 }],
 			'currencies.listCurrencies': [
 				{
 					id: 1,
