@@ -9,18 +9,11 @@
  *
  * `--only` limits which PNGs are fetched; the manifest always lists the full catalog.
  */
-import { spawnSync } from 'node:child_process';
-import { randomBytes } from 'node:crypto';
-import {
-	existsSync,
-	mkdirSync,
-	readFileSync,
-	rmSync,
-	writeFileSync,
-} from 'node:fs';
-import { tmpdir } from 'node:os';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import sharp from 'sharp';
 
 import type { PluginCatalogIndex } from '../explorer/src/types.ts';
 import {
@@ -47,45 +40,33 @@ type IconSource = 'twenty-icons' | 'google-favicon' | 'url-override';
  */
 const PLUGIN_ICON_LIGHT_TILE = new Set(['api2pdf', 'attio', 'bigml']);
 
-/** Flatten a PNG onto a padded white tile with ImageMagick; unchanged if it isn't installed. */
-function onLightTile(bytes: Buffer): Buffer {
-	const id = randomBytes(8).toString('hex');
-	const inPath = join(tmpdir(), `corsair-icon-${id}-in.png`);
-	const outPath = join(tmpdir(), `corsair-icon-${id}-out.png`);
-	writeFileSync(inPath, bytes);
-	try {
-		for (const cmd of ['magick', 'convert']) {
-			const result = spawnSync(
-				cmd,
-				[
-					inPath,
-					'-trim',
-					'-resize',
-					'200x200',
-					'-background',
-					'white',
-					'-gravity',
-					'center',
-					'-extent',
-					'256x256',
-					'-alpha',
-					'remove',
-					'-alpha',
-					'off',
-					outPath,
-				],
-				{ stdio: 'ignore' },
-			);
-			if (result.status === 0 && existsSync(outPath)) {
-				return readFileSync(outPath);
-			}
-		}
-		console.warn('  light tile skipped: ImageMagick not found');
-		return bytes;
-	} finally {
-		rmSync(inPath, { force: true });
-		rmSync(outPath, { force: true });
-	}
+const LIGHT_TILE_SIZE = 256;
+const LIGHT_TILE_MARK = 200;
+
+/**
+ * Trim the transparent margin, fit the mark in 200px and center it on an
+ * opaque 256px white tile. Throws when the image can't be decoded, so the
+ * caller reports the icon as failed instead of keeping the dark original.
+ */
+async function onLightTile(bytes: Buffer): Promise<Buffer> {
+	const { data, info } = await sharp(bytes)
+		.trim()
+		.resize(LIGHT_TILE_MARK, LIGHT_TILE_MARK, { fit: 'inside' })
+		.png()
+		.toBuffer({ resolveWithObject: true });
+	const left = Math.floor((LIGHT_TILE_SIZE - info.width) / 2);
+	const top = Math.floor((LIGHT_TILE_SIZE - info.height) / 2);
+	return sharp(data)
+		.extend({
+			top,
+			bottom: LIGHT_TILE_SIZE - info.height - top,
+			left,
+			right: LIGHT_TILE_SIZE - info.width - left,
+			background: '#ffffff',
+		})
+		.flatten({ background: '#ffffff' })
+		.png()
+		.toBuffer();
 }
 
 /** Product marks twenty-icons can't distinguish (Docs vs Sheets on docs.google.com). */
@@ -350,42 +331,19 @@ function isPng(bytes: Buffer): boolean {
 	);
 }
 
-function isJpeg(bytes: Buffer): boolean {
-	return (
-		bytes.length >= 3 &&
-		bytes[0] === 0xff &&
-		bytes[1] === 0xd8 &&
-		bytes[2] === 0xff
-	);
-}
+/** Raster formats some override CDNs serve instead of PNG. */
+const CONVERTIBLE_FORMATS = new Set(['jpeg', 'webp', 'gif']);
 
-/** Normalize url-override bytes to PNG (some CDNs serve JPEG). */
-function normalizeOverrideToPng(bytes: Buffer): Buffer | null {
+/** Normalize url-override bytes to PNG; null when they aren't a raster image. */
+async function normalizeOverrideToPng(bytes: Buffer): Promise<Buffer | null> {
 	if (isPng(bytes)) return bytes;
-	if (!isJpeg(bytes)) return null;
-
-	const id = randomBytes(8).toString('hex');
-	const inPath = join(tmpdir(), `corsair-icon-${id}.jpg`);
-	const outPath = join(tmpdir(), `corsair-icon-${id}.png`);
-	writeFileSync(inPath, bytes);
-
-	const attempts: Array<[string, string[]]> = [
-		['sips', ['-s', 'format', 'png', inPath, '--out', outPath]],
-		['magick', [inPath, outPath]],
-		['convert', [inPath, outPath]],
-	];
-
 	try {
-		for (const [cmd, args] of attempts) {
-			const result = spawnSync(cmd, args, { stdio: 'ignore' });
-			if (result.status === 0 && existsSync(outPath)) {
-				return readFileSync(outPath);
-			}
-		}
+		const image = sharp(bytes);
+		const { format } = await image.metadata();
+		if (!format || !CONVERTIBLE_FORMATS.has(format)) return null;
+		return await image.png().toBuffer();
+	} catch {
 		return null;
-	} finally {
-		rmSync(inPath, { force: true });
-		rmSync(outPath, { force: true });
 	}
 }
 
@@ -404,7 +362,7 @@ async function fetchDirectIcon(url: string): Promise<FetchResult> {
 		if (raw.length === 0) {
 			return { ok: false, error: 'url-override returned empty body' };
 		}
-		const bytes = normalizeOverrideToPng(raw);
+		const bytes = await normalizeOverrideToPng(raw);
 		if (!bytes) {
 			return { ok: false, error: 'url-override returned no PNG' };
 		}
@@ -554,12 +512,21 @@ async function main(): Promise<void> {
 				return;
 			}
 
-			writeFileSync(
-				join(iconsDir, `${pluginId}.png`),
-				PLUGIN_ICON_LIGHT_TILE.has(pluginId)
-					? onLightTile(result.bytes)
-					: result.bytes,
-			);
+			try {
+				const bytes = PLUGIN_ICON_LIGHT_TILE.has(pluginId)
+					? await onLightTile(result.bytes)
+					: result.bytes;
+				writeFileSync(join(iconsDir, `${pluginId}.png`), bytes);
+			} catch (error) {
+				const message = error instanceof Error ? error.message : String(error);
+				failures.push({
+					id: pluginId,
+					domain,
+					error: `write failed: ${message}`,
+				});
+				console.warn(`[plugin-icons] ${pluginId}: write failed: ${message}`);
+				return;
+			}
 			sources[pluginId] = result.source;
 			console.log(`[plugin-icons] ${pluginId} (${result.source})`);
 		});
@@ -571,11 +538,15 @@ async function main(): Promise<void> {
 		existingSources = existing.sources ?? {};
 	}
 
+	// Listed in catalog order, not fetch-completion order, so reruns diff cleanly.
+	const sortedSources: Record<string, IconSource> = {};
 	for (const pluginId of allPluginIds) {
-		if (sources[pluginId]) continue;
-		if (existsSync(join(iconsDir, `${pluginId}.png`))) {
-			sources[pluginId] = existingSources[pluginId] ?? 'twenty-icons';
-		}
+		const source =
+			sources[pluginId] ??
+			(existsSync(join(iconsDir, `${pluginId}.png`))
+				? (existingSources[pluginId] ?? 'twenty-icons')
+				: undefined);
+		if (source) sortedSources[pluginId] = source;
 	}
 
 	const manifest: Manifest = {
@@ -590,7 +561,7 @@ async function main(): Promise<void> {
 		).length,
 		failed: failures.length,
 		domains,
-		sources,
+		sources: sortedSources,
 		failures,
 	};
 
