@@ -1,76 +1,76 @@
 export {
 	createBrand,
-	retrieveBrand,
-	listBrands,
-	updateBrand,
 	deleteBrand,
+	listBrands,
+	retrieveBrand,
+	updateBrand,
 } from './brands';
 export {
-	listPrograms,
-	createProgram,
-	updateProgram,
-	retrieveProgram,
-} from './programs';
-export {
-	createLocation,
-	retrieveLocation,
-	updateLocation,
-	listLocations,
-	listLocationsByBrand,
-	listLocationsByOffer,
-	deleteLocation,
-} from './locations';
-export {
 	createCard,
-	retrieveCard,
+	deleteCard,
 	listCards,
 	listCardsFromMetadataId,
-	deleteCard,
+	retrieveCard,
 	updateCardMetadata,
 } from './cards';
 export {
-	createBrandWebhook,
-	createProgramWebhook,
-	retrieveWebhook,
-	updateWebhook,
-	listWebhooks,
-	deleteWebhook,
-} from './webhooks';
+	createLocation,
+	deleteLocation,
+	listLocations,
+	listLocationsByBrand,
+	listLocationsByOffer,
+	retrieveLocation,
+	updateLocation,
+} from './locations';
 export {
-	createOffer,
-	updateOffer,
-	retrieveOffer,
-	listOffers,
-	deleteOffer,
-	linkLocationToOffer,
-	linkAllBrandLocationsToOffer,
-	unlinkLocationToOffer,
-	sendOfferToBrand,
-	activateOfferOnCard,
-	unlinkCardFromOffer,
-	retrieveActiveOfferOnCard,
-	listCardsWithActiveOffer,
-} from './offers';
+	createOfferFromMarketplaceOffer,
+	listMarketplaceOffers,
+} from './marketplace';
+export { listMidInsights } from './mid-insights';
 export {
-	createTransactionTest,
-	retrieveTransaction,
-	listTransactions,
-	listTransactionsByCard,
-} from './transactions';
+	createMidRequest,
+	listMidRequests,
+	retrieveMidRequest,
+} from './mid-requests';
 export { listMids } from './mids';
 export {
-	retrieveMidRequest,
-	listMidRequests,
-	createMidRequest,
-} from './mid-requests';
-export {
-	listMarketplaceOffers,
-	createOfferFromMarketplaceOffer,
-} from './marketplace';
-export {
 	createMissingTransactionRequest,
-	retrieveMissingTransactionRequest,
 	listMissingTransactionRequests,
+	retrieveMissingTransactionRequest,
 } from './missing-transaction-requests';
-export { listMidInsights } from './mid-insights';
+export {
+	activateOfferOnCard,
+	createOffer,
+	deleteOffer,
+	linkAllBrandLocationsToOffer,
+	linkLocationToOffer,
+	listCardsWithActiveOffer,
+	listOffers,
+	retrieveActiveOfferOnCard,
+	retrieveOffer,
+	sendOfferToBrand,
+	unlinkCardFromOffer,
+	unlinkLocationToOffer,
+	updateOffer,
+} from './offers';
+export {
+	createProgram,
+	listPrograms,
+	retrieveProgram,
+	updateProgram,
+} from './programs';
+export {
+	createTransactionTest,
+	listTransactions,
+	listTransactionsByCard,
+	retrieveTransaction,
+} from './transactions';
 export * from './types';
+export {
+	createBrandWebhook,
+	createProgramWebhook,
+	deleteWebhook,
+	listWebhooks,
+	retrieveWebhook,
+	updateWebhook,
+} from './webhooks';
