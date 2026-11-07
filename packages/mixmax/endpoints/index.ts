@@ -1,40 +1,69 @@
+import { livefeedEvents, livefeedList } from './livefeed';
 import {
-	messagesList,
 	messagesCreate,
 	messagesGet,
-	messagesUpdate,
-	messagesSend,
+	messagesList,
 	messagesSchedule,
-	messagesUnschedule,
-	messagesTest,
+	messagesSend,
 	messagesSendPlain,
+	messagesTest,
+	messagesUnschedule,
+	messagesUpdate,
 } from './messages';
 import {
+	sequenceFoldersAddSequences,
+	sequenceFoldersCreate,
+	sequenceFoldersDelete,
+	sequenceFoldersGet,
+	sequenceFoldersList,
+	sequenceFoldersRename,
+	sequencesCancel,
+	sequencesCancelAll,
 	sequencesList,
-	sequencesGetRecipients,
-	sequencesAddRecipients,
-	sequencesGet,
-	sequencesCreate,
-	sequencesUpdate,
-	sequencesDelete,
-	sequencesPause,
-	sequencesResume,
+	sequencesRecipientsAdd,
+	sequencesRecipientsList,
+	sequencesSearch,
 } from './sequences';
 import {
-	snippetsList,
-	snippetsGet,
-	snippetsCreate,
-	snippetsUpdate,
 	snippetsDelete,
+	snippetsGet,
+	snippetsList,
+	snippetsSend,
+	snippetsUpdate,
+	snippetTagsAddSnippets,
+	snippetTagsCreate,
+	snippetTagsDelete,
+	snippetTagsGet,
+	snippetTagsList,
+	snippetTagsListSnippets,
+	snippetTagsUpdate,
 } from './snippets';
 import {
-	usersGetMe,
-	usersGet,
-	usersUpdatePassword,
-	usersUpdateSubscription,
+	unsubscribesCreate,
+	unsubscribesList,
+	unsubscribesRemove,
+} from './unsubscribes';
+import {
+	userPreferencesAutoBccAdd,
+	userPreferencesAutoBccExists,
+	userPreferencesAutoBccList,
 	userPreferencesGet,
 	userPreferencesUpdate,
+	usersGetMe,
 } from './users';
+
+export const Users = {
+	getMe: usersGetMe,
+	preferences: {
+		get: userPreferencesGet,
+		update: userPreferencesUpdate,
+		autoBccExcludedEmails: {
+			list: userPreferencesAutoBccList,
+			add: userPreferencesAutoBccAdd,
+			exists: userPreferencesAutoBccExists,
+		},
+	},
+};
 
 export const Messages = {
 	list: messagesList,
@@ -48,35 +77,53 @@ export const Messages = {
 	sendPlain: messagesSendPlain,
 };
 
-export const Sequences = {
-	list: sequencesList,
-	getRecipients: sequencesGetRecipients,
-	addRecipients: sequencesAddRecipients,
-	get: sequencesGet,
-	create: sequencesCreate,
-	update: sequencesUpdate,
-	delete: sequencesDelete,
-	pause: sequencesPause,
-	resume: sequencesResume,
-};
-
 export const Snippets = {
 	list: snippetsList,
 	get: snippetsGet,
-	create: snippetsCreate,
 	update: snippetsUpdate,
 	delete: snippetsDelete,
+	send: snippetsSend,
 };
 
-export const Users = {
-	getMe: usersGetMe,
-	get: usersGet,
-	updatePassword: usersUpdatePassword,
-	updateSubscription: usersUpdateSubscription,
-	preferences: {
-		get: userPreferencesGet,
-		update: userPreferencesUpdate,
+export const SnippetTags = {
+	list: snippetTagsList,
+	create: snippetTagsCreate,
+	get: snippetTagsGet,
+	update: snippetTagsUpdate,
+	delete: snippetTagsDelete,
+	listSnippets: snippetTagsListSnippets,
+	addSnippets: snippetTagsAddSnippets,
+};
+
+export const Sequences = {
+	list: sequencesList,
+	search: sequencesSearch,
+	cancelAll: sequencesCancelAll,
+	cancel: sequencesCancel,
+	recipients: {
+		list: sequencesRecipientsList,
+		add: sequencesRecipientsAdd,
 	},
+};
+
+export const SequenceFolders = {
+	list: sequenceFoldersList,
+	create: sequenceFoldersCreate,
+	get: sequenceFoldersGet,
+	rename: sequenceFoldersRename,
+	delete: sequenceFoldersDelete,
+	addSequences: sequenceFoldersAddSequences,
+};
+
+export const Unsubscribes = {
+	list: unsubscribesList,
+	create: unsubscribesCreate,
+	remove: unsubscribesRemove,
+};
+
+export const Livefeed = {
+	list: livefeedList,
+	events: livefeedEvents,
 };
 
 export * from './types';
