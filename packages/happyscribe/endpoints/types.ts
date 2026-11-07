@@ -205,7 +205,9 @@ export type HappyScribeStyleGuide = z.infer<typeof HappyScribeStyleGuideSchema>;
 
 export const HappyScribeOrganizationSchema = z
 	.object({
-		id: z.number(),
+		// A string, not the number the docs examples show: observed on the
+		// live API (organizations.list answered ids like "123").
+		id: z.string(),
 		name: z.string().nullish(),
 		role: z.string().nullish(),
 		createdAt: z.string().nullish(),

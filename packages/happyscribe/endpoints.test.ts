@@ -348,7 +348,7 @@ describe('organization resources', () => {
 			Organizations.list,
 			{},
 		);
-		expect(result.organizations[0]!.id).toBe(123);
+		expect(result.organizations[0]!.id).toBe('123');
 		expect(lastRequest().path).toBe('/api/v1/organizations');
 	});
 

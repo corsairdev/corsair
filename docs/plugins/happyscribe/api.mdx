@@ -704,7 +704,8 @@ await corsair.happyscribe.api.organizations.list({});
 
 ```ts
 {
-  id: number,
+  // A string on the live API, though the docs examples show a number.
+  id: string,
   name?: string | null,
   role?: string | null,
   createdAt?: string | null,
