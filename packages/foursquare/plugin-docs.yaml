@@ -9,9 +9,9 @@ overviewNote: |
 
   - **Two headers are required, not one.** Besides the Bearer token, every request must send `X-Places-Api-Version`. Without it the API answers `400 "Please provide a valid version."` even with a valid key, which reads like an auth failure. The plugin always sends the documented version.
   - **The host is `places-api.foursquare.com`,** not `api.foursquare.com`. The v3 paths on the old host answer `401 Invalid request token` for every request; `api.foursquare.com/v2` is the separate legacy API and is not wrapped here.
-  - **`fields` decides the response.** Omit it and every Pro field comes back; pass a list and only those fields do. Almost every field is therefore optional in the output types.
+  - **`fields` decides the response.** Omit it and every Pro field comes back; pass a list and only those fields do, so almost every output field is optional. The identifier a response needs is always added back to your selection, because Foursquare returns exactly what you ask for: `fields: ['name']` alone answers `{"results":[{"name":"..."}]}` with no `fsq_place_id`.
   - **Pagination is a response header, not a body field.** The API returns a `link` header holding a URL for the next page. The shared HTTP client does not expose response headers, so `places.search` returns one page with no cursor; page by varying `limit` and the location filters instead.
-  - **`places.match` has four required fields:** `name`, `address`, `city` and `cc` (a 2-digit country code, US only). It answers 400, 404, 422 or 500 depending on how the input fails.
+  - **`places.match` has four required fields:** `name`, `address`, `city` and `cc`, a 2-digit country code. Foursquare states that only English-speaking countries are supported, and a code outside that set is not rejected outright: it answers 404 `Match not found` or a 400 asking for a latitude and longitude. It also answers 400, 422 or 500 depending on how the input fails.
   - **Rate limits** are 50 QPS pay-as-you-go and 100 QPS enterprise, counted across all endpoints. A 429 is retried three times using `Retry-After` when present.
   - **No inbound webhooks.** The Places API does not send any, so this plugin registers none.
 examples:
@@ -53,4 +53,4 @@ apiNotes:
   places.photos: |
     Answers a bare array of photos. Build an image URL by concatenating `prefix`, a size (32, 44, 64, 88, 120 or 512) and `suffix`, as in `{prefix}512{suffix}`.
   places.match: |
-    Answers `{ place, match_score, context }`. `match_score` runs from 0 to 1. `name`, `address`, `city` and `cc` are all required; only English (US) country codes are supported.
+    Answers `{ place, match_score, context }`. `match_score` runs from 0 to 1. `name`, `address`, `city` and `cc` are all required, and `cc` must be a 2-letter code; Foursquare supports English-speaking countries only, and an unsupported code answers 404 `Match not found` rather than a validation error.

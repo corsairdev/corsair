@@ -332,11 +332,11 @@ await corsair.foursquare.api.places.match({ name: 'Wrigley Field', address: '106
 | `city` | `string` | Yes | — |
 | `state` | `string` | No | — |
 | `postal_code` | `string` | No | — |
-| `cc` | `string` | Yes | 2-digit country code, e.g. US. Only English (US) is supported |
+| `cc` | `string` | Yes | 2-digit country code, e.g. US. Foursquare supports English-speaking countries only |
 | `ll` | `string` | No | latitude,longitude |
 | `fields` | `string[]` | No | — |
 
-Answers `{ place, match_score, context }`. `match_score` runs from 0 to 1. `name`, `address`, `city` and `cc` are all required; only English (US) country codes are supported.
+Answers `{ place, match_score, context }`. `match_score` runs from 0 to 1. `name`, `address`, `city` and `cc` are all required, and `cc` must be a 2-letter code; Foursquare supports English-speaking countries only, and an unsupported code answers 404 `Match not found` rather than a validation error.
 
 
 
