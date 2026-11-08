@@ -1408,6 +1408,14 @@
                 ]
               },
               {
+                "group": "CodeREADr",
+                "pages": [
+                  "plugins/codereadr/overview",
+                  "plugins/codereadr/api",
+                  "plugins/codereadr/database"
+                ]
+              },
+              {
                 "group": "Cody",
                 "pages": [
                   "plugins/cody/overview",
