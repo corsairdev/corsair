@@ -395,6 +395,7 @@ export const BaseProviders = [
 	'tinypng',
 	'tinyurl',
 	'tisane',
+	'tldv',
 	'todoist',
 	'toggl',
 	'tokenmetrics',
@@ -834,6 +835,7 @@ export const ProviderDisplayNames = {
 	tinypng: 'TinyPNG',
 	tinyurl: 'TinyURL',
 	tisane: 'Tisane',
+	tldv: 'tl;dv',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	tokenmetrics: 'Token Metrics',
@@ -1279,6 +1281,7 @@ export type AllProviders =
 	| 'tinypng'
 	| 'tinyurl'
 	| 'tisane'
+	| 'tldv'
 	| 'todoist'
 	| 'toggl'
 	| 'tokenmetrics'

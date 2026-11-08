@@ -1,0 +1,59 @@
+displayName: tl;dv
+description: Meeting intelligence with tl;dv - list and read recorded meetings, pull transcripts and AI notes, import a recording from a URL, and search folders.
+domain: tldv.io
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key at https://tldv.io/app/settings/personal-settings/api-keys (you must be signed in), then store it as the account's `api_key`. Every request sends it in an `x-api-key` header.
+
+  Things to know before you call:
+
+  - **A `User-Agent` is mandatory.** tl;dv blocks default library agents before the key is read: a request sent as `Python-urllib/3.11` gets a Cloudflare `403` with `error code: 1010` and no JSON body. The plugin always sends `Corsair-tldv-integration/1.0`.
+  - **The host is `pasta.tldv.io`,** not `api.tldv.io`; the latter answers 404 for every `/v1alpha1` path.
+  - **API access depends on the organizer's plan.** Seeing a meeting in the web app does not grant API access: a meeting organized on a Free plan cannot be exported, and sharing does not change that. Organization-wide automation needs Enterprise.
+  - **Two error shapes, split by status.** A `400` carries `{ message, errors: [{ property, constraints }] }`; `401`, `403`, `404` and `500` carry `{ name, message }`. The plugin throws a `TldvAPIError` with the status, the `name` and the first constraint.
+  - **Timestamps are ISO 8601 strings** while `duration` and transcript offsets are numbers in seconds.
+  - **No recording download.** `GET /meetings/{id}/download` answers a 302 to a signed URL, and the shared HTTP client follows redirects, so it would pull the whole file into memory. Fetch the URL yourself from the meeting's `url` field.
+  - **Webhooks are not signed.** tl;dv publishes no signature scheme for either trigger, so the plugin compares a shared secret you send as `x-corsair-webhook-secret`. Enabling a webhook in the tl;dv app cannot add headers, so a proxy is needed to attach it, or leave the secret unset and accept unverified deliveries.
+examples:
+  read:
+    path: meetings.list
+    title: List recent meetings
+    args:
+      limit: 10
+  write:
+    path: meetings.import
+    title: Import a recording from a URL
+    args:
+      url: 'https://example.org/call-recording.mp4'
+      name: Discovery call
+apiExamples:
+  meetings.list:
+    call: "{ limit: 10, meetingType: 'external' }"
+  meetings.get:
+    call: "{ meetingId: 'meeting-123' }"
+  meetings.transcript:
+    call: "{ meetingId: 'meeting-123' }"
+  meetings.notes:
+    call: "{ meetingId: 'meeting-123' }"
+  meetings.import:
+    call: "{ url: 'https://example.org/call-recording.mp4', name: 'Discovery call', participants: ['jordan@example.org'] }"
+  folders.list:
+    call: "{ query: 'Q3 renewals', limit: 20 }"
+apiNotes:
+  meetings.list: |
+    Answers `{ page, pages, total, pageSize, results }`. `limit` caps at 100. `meetingType: 'internal'` keeps only meetings whose participants are all in your organization; `'external'` keeps the rest. `from` and `to` accept a date or a date-time, and an invalid `meetingType` is a `400` naming every allowed value.
+  meetings.get: |
+    `phoneNumber` and `metadata` are populated here and are absent from the list endpoint; both are set when the meeting was imported or uploaded.
+  meetings.transcript: |
+    Each entry in `data` is one sentence with a `speaker`, `text`, `startTime` and `endTime`, with the offsets in seconds. This is the same object a `TranscriptReady` webhook carries.
+  meetings.notes: |
+    Answers `structuredNotes`, `markdownContent` and `topics`. A note carries a `segmentId`, a `timestamp` in seconds and a `topicId` that matches a topic's `id`.
+  meetings.import: |
+    Starts a processing job and answers `{ success, jobId, message }`. The URL must be publicly reachable and the media must be one of .mp3 .mp4 .wav .m4a .mkv .mov .avi .wma .flac. `metadata` is returned verbatim on the meeting and in the MeetingReady webhook, which is how you correlate your own record ids.
+  folders.list: |
+    Answers `{ page, pages, total, pageSize, results }`, where each folder carries its `meetingIds`. `space` narrows the search to personal, team or organization folders.
+exampleWebhook:
+  path: meetings.meetingReady
+  note: React as soon as a meeting is processed, with its notes and, when included, its transcript.
+  after: |
+    console.log('Meeting ready:', result.data?.data.name, 'notes:', result.data?.data.notes?.structuredNotes?.length);
