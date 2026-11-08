@@ -32,6 +32,9 @@ const ID_RE = /^[a-z0-9][a-z0-9_-]*$/;
 const DOMAIN_RE = /^[a-z0-9][a-z0-9.-]*\.[a-z]{2,}$/i;
 // A PR body can hold 65,536 characters; a generator change can touch every plugin.
 const MAX_LISTED = 60;
+// The catalog fields every build or release moves. Anchored so that a plugin
+// field called generatedAt (`"key": "generatedAt"`) still counts as a change.
+const VOLATILE_LINES = '-I^[[:space:]]*"(generatedAt|corsairVersion)": "';
 
 function git(cwd, args, options = {}) {
 	return execFileSync('git', args, {
@@ -218,15 +221,23 @@ export function icons({
 	};
 	const refSources = showRef(SOURCES);
 	const refManifest = showRef(MANIFEST);
-	const reused = refExists
-		? ids.filter((id) => reuseIcon(cwd, ref, id, refSources))
-		: [];
-	const fresh = ids.filter((id) => !reused.includes(id));
 
-	// Writes the favicon for fresh ids, renders reused curated ones and records
-	// every id's domain in the manifest, which the Brand API lookup needs.
+	// Writes each favicon and records every id's domain in the manifest, which
+	// the checks below need.
 	fetchIcons(cwd, ids);
 	const domains = () => readJson(join(cwd, MANIFEST)).domains ?? {};
+
+	// Keep the branch's icon unless the plugin's domain changed since: the PR asks
+	// reviewers to correct a wrong domain, and that icon came from the wrong site.
+	const reused = refExists
+		? ids.filter(
+				(id) =>
+					refManifest.domains?.[id] === domains()[id] &&
+					reuseIcon(cwd, ref, id, refSources),
+			)
+		: [];
+	if (reused.length > 0) fetchIcons(cwd, reused);
+	const fresh = ids.filter((id) => !reused.includes(id));
 
 	if (hasKey) {
 		const imported = fresh.filter(
@@ -357,7 +368,7 @@ export function renderBody({ plan, repo, sha, sourceSha }) {
 			'| --- | --- | --- | --- | --- | --- |',
 			...plan.icons.map((icon) => iconRow(icon, repo, sha)),
 			'',
-			`To replace one, run \`pnpm import:plugin-icon -- <id> <url-or-file>\` and \`pnpm fetch:plugin-icons\` on \`${BOT_BRANCH}\` and push. Later runs keep it. See \`scripts/plugin-icon-sources/README.md\`.`,
+			`To replace one, run \`pnpm import:plugin-icon -- <id> <url-or-file>\` and \`pnpm fetch:plugin-icons\` on \`${BOT_BRANCH}\` and push. Later runs keep it unless the plugin's domain changes. See \`scripts/plugin-icon-sources/README.md\`.`,
 			'',
 		);
 	}
@@ -395,8 +406,22 @@ function gh(cwd, args) {
 	}).trim();
 }
 
-/** A closed, unmerged bot PR for this exact content means someone said no. */
-function closedWithoutMerging(cwd, repo) {
+function editPr(cwd, repo, number, { title, body }) {
+	gh(cwd, [
+		'pr',
+		'edit',
+		String(number),
+		'-R',
+		repo,
+		'--title',
+		title,
+		'--body',
+		body,
+	]);
+}
+
+/** A closed, unmerged bot PR for this exact commit means someone said no. */
+function closedWithoutMerging(cwd, repo, headSha) {
 	const rows = JSON.parse(
 		gh(cwd, [
 			'pr',
@@ -410,10 +435,10 @@ function closedWithoutMerging(cwd, repo) {
 			'--limit',
 			'1',
 			'--json',
-			'number,mergedAt',
+			'number,mergedAt,headRefOid',
 		]),
 	);
-	return rows.length > 0 && !rows[0].mergedAt;
+	return rows.length > 0 && !rows[0].mergedAt && rows[0].headRefOid === headSha;
 }
 
 function pushBranch(cwd, remoteSha, log) {
@@ -483,8 +508,7 @@ export function publish({ cwd, plan, repo, sourceSha, log = () => {} }) {
 				[
 					'diff',
 					'--exit-code',
-					'-I"generatedAt"',
-					'-I"corsairVersion"',
+					VOLATILE_LINES,
 					remoteSha,
 					'HEAD',
 					'--',
@@ -492,25 +516,23 @@ export function publish({ cwd, plan, repo, sourceSha, log = () => {} }) {
 				],
 				{ cwd, stdio: 'ignore' },
 			).status === 0;
-		if (same && current !== null) return 'unchanged';
-		if (same && closedWithoutMerging(cwd, repo)) return 'declined';
+		if (same && current !== null) {
+			// A run cancelled between its push and its edit leaves the PR's text
+			// behind the branch, so bring it in line. Images stay on the pushed commit.
+			editPr(cwd, repo, current, {
+				title,
+				body: renderBody({ plan, repo, sha: remoteSha, sourceSha }),
+			});
+			return 'unchanged';
+		}
+		if (same && closedWithoutMerging(cwd, repo, remoteSha)) return 'declined';
 	}
 
 	const { recreated } = pushBranch(cwd, remoteSha, log);
 	const sha = git(cwd, ['rev-parse', 'HEAD']);
 	const body = renderBody({ plan, repo, sha, sourceSha });
 	if (current !== null && !recreated) {
-		gh(cwd, [
-			'pr',
-			'edit',
-			String(current),
-			'-R',
-			repo,
-			'--title',
-			title,
-			'--body',
-			body,
-		]);
+		editPr(cwd, repo, current, { title, body });
 		return 'updated';
 	}
 	gh(cwd, [

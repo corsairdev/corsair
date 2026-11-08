@@ -411,6 +411,37 @@ if (args[0] === 'pr' && args[1] === 'list') {
 			assert.equal(out.icons[0].found, true);
 		});
 
+		it('looks again when the plugin domain changed since the branch got its icon', () => {
+			git(['checkout', '-q', '-b', 'bot']);
+			write('explorer/icons/b.png', 'from the wrong site\n');
+			write(
+				'explorer/data/icon-manifest.json',
+				`${JSON.stringify({ domains: { a: 'a.io', b: 'wrong.example' }, sources: { a: 'twenty-icons', b: 'twenty-icons' }, dark: [] })}\n`,
+			);
+			git(['add', '.']);
+			git(['commit', '-q', '-m', 'bot branch']);
+			git(['update-ref', `refs/remotes/origin/${BOT_BRANCH}`, 'HEAD']);
+			git(['checkout', '-q', '--detach', 'main']);
+
+			const asked = [];
+			const out = icons({
+				cwd,
+				plan,
+				hasKey: true,
+				fetchIcons: fakeFetch,
+				importIcon: (_dir, id, domain) => {
+					asked.push([id, domain]);
+					return false;
+				},
+			});
+			assert.deepEqual(asked, [['b', 'b.io']]);
+			assert.equal(
+				readFileSync(join(cwd, 'explorer/icons/b.png'), 'utf-8'),
+				'favicon\n',
+			);
+			assert.equal(out.icons[0].kept, false);
+		});
+
 		it('keeps what the bot branch has, with no Brand API lookup', () => {
 			git(['checkout', '-q', '-b', 'bot']);
 			write('explorer/icons/b.png', 'replaced by a person\n');
@@ -482,6 +513,8 @@ if (args[0] === 'pr' && args[1] === 'list') {
 			writeCatalog([plugin('a'), plugin('b')], '2026-05-05');
 			assert.equal(run(added), 'unchanged');
 			assert.equal(remoteHead(), pushed);
+			// Its text still follows this run, in case an earlier one was cancelled.
+			assert.ok(ghCalls().includes('pr edit 7'));
 		});
 
 		it('leaves an open PR alone when a release moved corsairVersion', () => {
@@ -514,10 +547,36 @@ if (args[0] === 'pr' && args[1] === 'list') {
 			run(added);
 			fetchBranch();
 			resetToMain();
-			setPrs([], [{ number: 7, mergedAt: null }]);
+			setPrs([], [{ number: 7, mergedAt: null, headRefOid: remoteHead() }]);
 			writeCatalog([plugin('a'), plugin('b')]);
 			assert.equal(run(added), 'declined');
 			assert.equal(ghCalls().filter((c) => c === 'pr create').length, 1);
+		});
+
+		it('opens a PR when the closed one was for older content', () => {
+			writeCatalog([plugin('a'), plugin('b')]);
+			run(added);
+			fetchBranch();
+			resetToMain();
+			setPrs([], [{ number: 7, mergedAt: null, headRefOid: 'older' }]);
+			writeCatalog([plugin('a'), plugin('b')]);
+			assert.equal(run(added), 'opened');
+			assert.equal(ghCalls().filter((c) => c === 'pr create').length, 2);
+		});
+
+		it('sees a change to a plugin field called generatedAt', () => {
+			write('explorer/data/plugins/a.json', '{\n  "x": 1\n}\n');
+			run(added);
+			fetchBranch();
+			resetToMain();
+			setPrs([{ number: 7 }]);
+			write(
+				'explorer/data/plugins/a.json',
+				'{\n  "key": "generatedAt",\n  "x": 1\n}\n',
+			);
+			const pushed = remoteHead();
+			assert.equal(run(added), 'updated');
+			assert.notEqual(remoteHead(), pushed);
 		});
 
 		it('closes the PR when main no longer needs it', () => {
@@ -545,7 +604,7 @@ exit 1
 			chmodSync(hook, 0o755);
 			writeCatalog([plugin('a'), plugin('b'), plugin('c')]);
 			assert.equal(run(added), 'opened');
-			assert.ok(ghCalls().includes('pr create'));
+			assert.equal(ghCalls().filter((c) => c === 'pr create').length, 2);
 		});
 
 		it('does not delete a commit pushed between the refusal and the delete', () => {

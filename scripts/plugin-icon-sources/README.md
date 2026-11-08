@@ -48,7 +48,7 @@ The catalog bot (`scripts/catalog-bot.mjs`) gets a first icon for each new
 plugin in its PR on `bot/catalog`: the context.dev Brand API's SVG when it has
 one, else the site's favicon. It shows each one at 256px and 26px next to the
 site's icon. Run the steps above on that branch to replace one, and later runs
-keep your file.
+keep your file unless the plugin's domain changes.
 
 ## Licences
 
