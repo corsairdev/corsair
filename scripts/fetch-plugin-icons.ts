@@ -1,15 +1,28 @@
 /**
- * Downloads plugin brand icons into `explorer/icons/` and writes
+ * Writes plugin brand icons into `explorer/icons/` and
  * `explorer/data/icon-manifest.json`.
+ *
+ * Our own curated SVGs in `scripts/plugin-icon-sources/<id>.svg` come first:
+ * each is a cleaned, reviewed copy (see that folder's README), re-rendered to
+ * `<id>.svg` + `<id>.png` on every run, without the network. Every other icon
+ * is downloaded once as a PNG: a hand-picked URL, else the domain's favicon.
+ * Marks drawn largely in black also get `<id>.dark.png` for dark surfaces.
  *
  * Run after adding plugins or when icons look stale:
  *   pnpm fetch:plugin-icons
  *   pnpm fetch:plugin-icons -- --force
  *   pnpm fetch:plugin-icons -- --only=slack,github
  *
- * `--only` limits which PNGs are fetched; the manifest always lists the full catalog.
+ * `--only` limits which icons are fetched; the manifest always lists the full catalog.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import {
+	existsSync,
+	mkdirSync,
+	readdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -20,6 +33,14 @@ import {
 	buildPluginDomainMap,
 	resolvePluginDomain,
 } from './plugin-icon-domains.ts';
+import {
+	analyzeInk,
+	darkVariantPng,
+	detectTrace,
+	needsDarkVariant,
+	renderSvgToPng,
+	sanitizeSvg,
+} from './plugin-icon-svg.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -31,7 +52,14 @@ const CONCURRENCY = 12;
 
 const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
-type IconSource = 'twenty-icons' | 'google-favicon' | 'url-override';
+type IconSource =
+	| 'curated'
+	| 'twenty-icons'
+	| 'google-favicon'
+	| 'url-override';
+
+/** Our own cleaned SVGs, one per plugin id. */
+const CURATED_DIR = join(__dirname, 'plugin-icon-sources');
 
 /**
  * Dark marks on a transparent background that vanish on a dark surface (Lug's
@@ -69,19 +97,51 @@ async function onLightTile(bytes: Buffer): Promise<Buffer> {
 		.toBuffer();
 }
 
-const COMPOSIO_LOGOS =
-	'https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets';
+/**
+ * Marks drawn on an opaque white square, which shows as a white box on a dark
+ * surface. The white connected to the image edge becomes transparent; white
+ * inside the mark stays.
+ */
+const PLUGIN_ICON_CLEAR_EDGE_WHITE = new Set(['griptape', 'recallai']);
 
-/** Product marks twenty-icons can't distinguish (Docs vs Sheets on docs.google.com). */
+/** A channel value at or above this counts as background white. */
+const EDGE_WHITE_MIN = 236;
+
+async function clearEdgeWhite(bytes: Buffer): Promise<Buffer> {
+	const { data, info } = await sharp(bytes)
+		.ensureAlpha()
+		.raw()
+		.toBuffer({ resolveWithObject: true });
+	const { width, height } = info;
+	const isWhite = (p: number) =>
+		data[p * 4 + 3]! > 0 &&
+		data[p * 4]! >= EDGE_WHITE_MIN &&
+		data[p * 4 + 1]! >= EDGE_WHITE_MIN &&
+		data[p * 4 + 2]! >= EDGE_WHITE_MIN;
+	const seen = new Uint8Array(width * height);
+	const stack: number[] = [];
+	for (let x = 0; x < width; x++) stack.push(x, (height - 1) * width + x);
+	for (let y = 0; y < height; y++) stack.push(y * width, y * width + width - 1);
+	while (stack.length > 0) {
+		const p = stack.pop()!;
+		if (seen[p] || !isWhite(p)) continue;
+		seen[p] = 1;
+		data[p * 4 + 3] = 0;
+		const x = p % width;
+		if (x > 0) stack.push(p - 1);
+		if (x < width - 1) stack.push(p + 1);
+		if (p >= width) stack.push(p - width);
+		if (p < (height - 1) * width) stack.push(p + width);
+	}
+	return sharp(data, { raw: info }).png().toBuffer();
+}
+
+/**
+ * Raster icons chosen by hand: PNG, JPEG or WebP only. A vector mark is not
+ * fetched from a URL; it is imported into scripts/plugin-icon-sources/ with
+ * `pnpm import:plugin-icon`, reviewed, and served from there.
+ */
 const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
-	// svgl's marks fill the square; Google's 96dp PNGs carry wide padding and
-	// look small next to other icons. Hub used these same files until it
-	// started loading icons from corsair.dev.
-	gmail: 'https://svgl.app/library/gmail.svg',
-	googlecalendar: 'https://svgl.app/library/google-calendar.svg',
-	googledrive: 'https://svgl.app/library/drive.svg',
-	googlemeet: 'https://svgl.app/library/google-meet.svg',
-	googlesheets: 'https://svgl.app/library/google-sheets.svg',
 	googledocs:
 		'https://www.gstatic.com/images/branding/product/2x/docs_2020q4_96dp.png',
 	filevine:
@@ -91,37 +151,20 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// starton.io answers 402 and starton.com has no favicon; the GitHub org mark is the public logo.
 	starton: 'https://github.com/starton-io.png?size=200',
 	// twenty-icons only has a 32px blur; the site apple touch icon is 180px.
-	turso: 'https://turso.tech/apple-touch-icon.png',
-	// twenty-icons only has a 32px blur; the site apple touch icon is 180px.
 	browseruse: 'https://browser-use.com/apple-touch-icon.png',
-	// plugin-docs.yaml names graph.microsoft.com (the API host), whose icon is the
-	// Microsoft logo; excel.cloud.microsoft carries Excel's own mark.
-	excel: 'https://twenty-icons.com/excel.cloud.microsoft/128',
-	// graph.microsoft.com gives these three the Microsoft logo, and teams.microsoft.com
-	// an old flat mark; svgl has each product's current mark.
-	onedrive: 'https://svgl.app/library/microsoft-onedrive.svg',
-	outlook: 'https://svgl.app/library/microsoft-outlook.svg',
-	sharepoint: 'https://svgl.app/library/microsoft-sharepoint.svg',
-	teams: 'https://svgl.app/library/microsoft-teams.svg',
-	// These Google APIs got the Google Cloud cloud or the plain G; Composio's
-	// logo-cdn (MIT) has each product's mark. Pinned to a commit.
-	googleaddressvalidation: `${COMPOSIO_LOGOS}/google_address_validation.svg`,
-	googleanalytics: `${COMPOSIO_LOGOS}/google_analytics.svg`,
-	googlebigquery: `${COMPOSIO_LOGOS}/googlebigquery.svg`,
-	googlecloudvision: `${COMPOSIO_LOGOS}/google_cloud_vision.svg`,
-	// App Store tiles, GitHub avatars and wordmarks shrink to a speck in Lug's
-	// 26px picker; Composio's marks fill the square.
-	api2pdf: `${COMPOSIO_LOGOS}/api2pdf.svg`,
-	bigml: `${COMPOSIO_LOGOS}/bigml.svg`,
-	filloutforms: `${COMPOSIO_LOGOS}/fillout_forms.svg`,
-	nextdns: `${COMPOSIO_LOGOS}/nextdns.svg`,
-	recallai: `${COMPOSIO_LOGOS}/recallai.svg`,
-	salesforce: `${COMPOSIO_LOGOS}/salesforce.svg`,
-	slack: `${COMPOSIO_LOGOS}/slack.svg`,
-	slackbot: `${COMPOSIO_LOGOS}/slack.svg`,
-	zoom: `${COMPOSIO_LOGOS}/zoom.svg`,
-	// twenty-icons returns a 32px blur; Google's favicon is the sharp site mark.
-	octen: 'https://www.google.com/s2/favicons?domain=octen.ai&sz=128',
+	// The brand's own large icons: the site's web-app icon, or the App Store
+	// icon where the site only has a small favicon.
+	cal: 'https://cal.com/icon.png',
+	// Clay's 2026 mark (the arch); twenty-icons still has the old "C".
+	clay: 'https://cdn.prod.website-files.com/61477f2c24a826836f969afe/6a3a92ab2ebcb50096cbd51a_dot-com_favicon_2026_512.png',
+	// Griptape's current round mark; the old one was a square tile.
+	griptape:
+		'https://cdn.prod.website-files.com/65d658559223871198e78bca/6995e1929b75bc0cd4eecdfa_griptape%20favicon2.png',
+	postman:
+		'https://www.postman.com/_mk-www-next/icons/android-chrome-512x512.png',
+	recallai:
+		'https://cdn.prod.website-files.com/620d732b1f1f7b244ac89f0e/620d732c1f1f7ba1edc89f35_Favicon%20256.png',
+	zoom: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/fc/d0/96/fcd09664-56c3-f856-4311-da9dcbae1fd2/AppIcon-0-0-1x_U007epad-0-1-0-0-85-220.png/512x512bb.png',
 	// twenty-icons has an old blue and green mark; typesafe.ai's apple touch icon
 	// is the current black knot on pink.
 	typesafe:
@@ -138,12 +181,6 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// current ring of dots.
 	retellai:
 		'https://cdn.prod.website-files.com/64ada0f2685b2d18caa5e699/69d7b35ce160f153aa823cf0_output-Retellai%20(2).png',
-	// twenty-icons has Qdrant's old cube mark; the site's apple touch icon is the
-	// current red hexagon.
-	qdrant: 'https://qdrant.tech/favicon/apple-touch-icon.png',
-	// twenty-icons returns a blur; mem0.ai only has an SVG favicon, and the
-	// GitHub org mark is the same logo as a PNG.
-	mem0: 'https://github.com/mem0ai.png?size=200',
 	// twenty-icons returns a screenshot of the homepage, not the logo.
 	emailoctopus: 'https://emailoctopus.com/apple-touch-icon.png',
 	// twenty-icons only has a 32px blur; the site's 192px favicon is the same mark.
@@ -184,14 +221,8 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// GoDaddy parked-domain icon from claidai.com; Claid is claid.ai.
 	claidai:
 		'https://claid.ai/icons/icon-256x256.png?v=929123789de593fc4153206756197444',
-	// "U4" logo from coda.com, not Coda (coda.io).
-	coda: 'https://cdn.coda.io/icons/png/color/coda-192.png',
 	// MongoDB logo; the plugin is LibreChat's Code Interpreter.
 	codeinterpreter: 'https://www.librechat.ai/apple-touch-icon.png',
-	// 16px mark from cody.com; Cody is meetcody.ai.
-	cody: 'https://twenty-icons.com/meetcody.ai',
-	// 32px mark from convex.com; Convex is convex.dev.
-	convex: 'https://avatars.githubusercontent.com/u/81530787?s=256',
 	// green "e" from exist.com; Exist is exist.io.
 	exist:
 		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/eb/2d/87/eb2d8749-e29e-c363-0b02-515eec684bce/Icon-0-0-1x_U007epad-0-0-0-1-0-0-85-220.png/256x256bb.png',
@@ -200,15 +231,10 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// Fundable crowdfunding "F"; the plugin is Fundable (tryfundable.ai).
 	fundable:
 		'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://tryfundable.ai&size=256',
-	// Blogger logo; Gladia is gladia.io.
-	gladia:
-		'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://gladia.io&size=256',
 	// red "MINIMAX" block from minimax.com; MiniMax AI's mark is the pink waveform.
 	minimax: 'https://github.com/MiniMax-AI.png?size=256',
 	// "Q" mark from orbit.com; the API is Orbit (orbitsearch.com).
 	orbit: 'https://orbitsearch.com/images/apple-touch-icon.png?v=2',
-	// striped mark from prisma.com, not Prisma (prisma.io).
-	prisma: 'https://github.com/prisma.png?size=256',
 	// GoDaddy parked-domain icon from revai.com; Rev AI is rev.ai.
 	revai: 'https://github.com/revdotcom.png?size=256',
 	// GoDaddy parked-domain icon from supadata.com; Supadata is supadata.ai.
@@ -231,11 +257,7 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// App Store icon, the GitHub org avatar, or the site's touch icon.
 	ably: 'https://github.com/ably.png?size=256',
 	abuseipdb: 'https://github.com/abuseipdb.png?size=256',
-	activetrail:
-		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/1e/88/58/1e8858d6-d38d-86f4-eaba-ec0def3a1abf/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/256x256bb.png',
 	agentmail: 'https://github.com/agentmail-to.png?size=256',
-	apipie:
-		'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://apipie.ai&size=256',
 	attio: 'https://github.com/attio.png?size=256',
 	bart: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/a4/ba/9c/a4ba9c69-42da-ea8a-2563-2a61af13b85a/BartAppIcon-0-0-1x_U007emarketing-0-11-0-sRGB-85-220.png/256x256bb.png',
 	beeminder:
@@ -250,7 +272,6 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	brex: 'https://github.com/brexhq.png?size=256',
 	browseai:
 		'https://cdn.prod.website-files.com/628be7c04ab34bfc699e4acb/68b9c656f48bca83e2a16839_webclip.png',
-	calendly: 'https://calendly.com/media/favicon/apple-touch-icon.png',
 	carbone: 'https://github.com/carboneio.png?size=256',
 	chatwork:
 		'https://go.chatwork.com/en/image/common/touch-icon-ipad-retina.png?v=20230526',
@@ -260,49 +281,26 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/04/52/01/045201ed-6725-c7ef-6e2a-d7eb13a7e42e/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/256x256bb.png',
 	contactout: 'https://contactout.com/android-chrome-512x512.png',
 	cosmic: 'https://github.com/cosmicjs.png?size=256',
-	diffbot: 'https://www.diffbot.com/favicon-192.png',
 	docmosis:
 		'https://www.docmosis.com/wp-content/uploads/2021/07/favicon-2-300x300.png',
-	dropbox:
-		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/94/2b/ca/942bcaba-f8db-9467-f3c9-10f6f35267a3/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/256x256bb.png',
-	epicgames: 'https://github.com/EpicGames.png?size=256',
-	firecrawl: 'https://github.com/firecrawl.png?size=256',
-	gitlab: 'https://about.gitlab.com/images/ico/favicon-192x192.png',
-	grafana:
-		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/1a/d7/9d/1ad79d36-8142-fb4a-0b83-61747215388e/AppIcon-0-0-1x_U007ephone-0-1-sRGB-85-220.png/256x256bb.png',
 	heygen: 'https://github.com/HeyGen-Official.png?size=256',
 	jira: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/41/38/ef/4138ef7d-0ec9-9782-6029-04b69aa60f26/AppIcon-0-0-1x_U007epad-0-1-85-220.png/256x256bb.png',
 	kaggle: 'https://github.com/Kaggle.png?size=256',
 	leexi:
 		'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/db/74/d1/db74d11f-37da-68e4-5962-dca0a950dd68/AppIcon-0-0-1x_U007epad-0-1-85-220.png/256x256bb.png',
-	linkedin:
-		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/81/62/17/81621741-aef5-e3e0-c20d-645b83902669/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/256x256bb.png',
-	loyverse:
-		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/9d/74/00/9d740077-094a-1b77-59e9-d71085575fa9/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/256x256bb.png',
 	mailboxlayer: 'https://mailboxlayer.com/images/icons/mailboxlayer_icon.png',
 	openrouter: 'https://openrouter.ai/favicon/glyph.png',
 	pdfco: 'https://pdf.co/favicon.png',
 	pdl: 'https://github.com/peopledatalabs.png?size=256',
-	perplexityai: 'https://github.com/perplexityai.png?size=256',
 	pinecone: 'https://github.com/pinecone-io.png?size=256',
 	pushbullet: 'https://github.com/pushbullet.png?size=256',
 	scaleai: 'https://scale.com/static/global/favicon/v3/apple-touch-icon.png',
-	sentry: 'https://github.com/getsentry.png?size=256',
-	snapchat:
-		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/30/cc/d2/30ccd285-16f5-c44b-1b20-35ba6f52e26f/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/256x256bb.png',
 	spotify: 'https://github.com/spotify.png?size=256',
-	strava: 'https://github.com/strava.png?size=256',
 	tavily: 'https://www.tavily.com/apple-icon.png?apple-icon.2rsjznomrsf77.png',
-	tavilymcp:
-		'https://www.tavily.com/apple-icon.png?apple-icon.2rsjznomrsf77.png',
 	textrazor: 'https://github.com/TextRazor.png?size=256',
-	todoist:
-		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/28/db/77/28db7718-8ed9-e73d-cce4-88879b0e87ae/AppIcon-0-0-1x_U007epad-0-1-85-220.png/256x256bb.png',
 	twentyonerisk:
 		'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://21risk.com&size=256',
 	webscrapingai: 'https://github.com/webscraping-ai.png?size=256',
-	whatsapp:
-		'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/15/eb/39/15eb3965-bec3-4737-950a-9d9df5303e93/AppIcon-0-0-1x_U007epad-0-0-0-1-0-0-sRGB-0-85-220.png/256x256bb.png',
 	witai: 'https://github.com/wit-ai.png?size=256',
 	workday: 'https://github.com/Workday.png?size=256',
 };
@@ -322,6 +320,10 @@ type Manifest = {
 	failed: number;
 	domains: Record<string, string>;
 	sources: Record<string, IconSource>;
+	/** Ids with a vector `<id>.svg` next to the PNG. */
+	svg: string[];
+	/** Ids with an `<id>.dark.png` variant for dark surfaces. */
+	dark: string[];
 	failures: Array<{ id: string; domain: string; error: string }>;
 };
 
@@ -352,26 +354,14 @@ function isPng(bytes: Buffer): boolean {
 /** Raster formats some override CDNs serve instead of PNG. */
 const CONVERTIBLE_FORMATS = new Set(['jpeg', 'webp', 'gif']);
 
-/** Size an SVG override is rendered at. */
-const SVG_RENDER_SIZE = 256;
-
-/** Normalize url-override bytes to PNG; null when they aren't an image. */
+/**
+ * Normalize url-override bytes to PNG: null when they aren't a raster image.
+ * SVG is refused here; vector marks come from scripts/plugin-icon-sources/.
+ */
 async function normalizeOverrideToPng(bytes: Buffer): Promise<Buffer | null> {
 	if (isPng(bytes)) return bytes;
 	try {
-		const { format, width, height } = await sharp(bytes).metadata();
-		if (format === 'svg' && width && height) {
-			// Render at the density that makes the longer side SVG_RENDER_SIZE,
-			// so the PNG is drawn sharp rather than scaled up from 72 dpi.
-			const density = (72 * SVG_RENDER_SIZE) / Math.max(width, height);
-			return await sharp(bytes, { density })
-				.resize(SVG_RENDER_SIZE, SVG_RENDER_SIZE, {
-					fit: 'contain',
-					background: { r: 0, g: 0, b: 0, alpha: 0 },
-				})
-				.png()
-				.toBuffer();
-		}
+		const { format } = await sharp(bytes).metadata();
 		if (!format || !CONVERTIBLE_FORMATS.has(format)) return null;
 		return await sharp(bytes).png().toBuffer();
 	} catch {
@@ -396,12 +386,61 @@ async function fetchDirectIcon(url: string): Promise<FetchResult> {
 		}
 		const bytes = await normalizeOverrideToPng(raw);
 		if (!bytes) {
-			return { ok: false, error: 'url-override returned no PNG' };
+			return {
+				ok: false,
+				error:
+					'url-override returned no raster image (an SVG goes through pnpm import:plugin-icon)',
+			};
 		}
 		return { ok: true, bytes, source: 'url-override' };
 	} catch (error) {
 		const message = error instanceof Error ? error.message : String(error);
 		return { ok: false, error: `url-override failed: ${message}` };
+	}
+}
+
+type CuratedIcon = { svg: string; png: Buffer } | { error: string };
+
+/**
+ * Read our own SVG for a plugin. It is sanitized again (the file is served
+ * from corsair.dev) and refused if it is a trace: a traced file has to be
+ * redrawn or replaced, not shipped.
+ */
+async function readCuratedIcon(pluginId: string): Promise<CuratedIcon> {
+	const raw = readFileSync(join(CURATED_DIR, `${pluginId}.svg`), 'utf8');
+	const trace = detectTrace(raw);
+	if (trace.traced) {
+		return { error: `curated svg looks traced: ${trace.reasons.join('; ')}` };
+	}
+	const clean = sanitizeSvg(raw);
+	if (!clean.ok) return { error: `curated svg: ${clean.error}` };
+	try {
+		return { svg: clean.svg, png: await renderSvgToPng(clean.svg) };
+	} catch (error) {
+		return { error: `curated svg did not render: ${String(error)}` };
+	}
+}
+
+function curatedIds(): Set<string> {
+	if (!existsSync(CURATED_DIR)) return new Set();
+	return new Set(
+		readdirSync(CURATED_DIR)
+			.filter((file) => file.endsWith('.svg'))
+			.map((file) => file.slice(0, -'.svg'.length)),
+	);
+}
+
+/**
+ * `<id>.dark.png` for a mark that is largely black and would vanish on a dark
+ * surface, built from the PNG on disk; removed when the mark doesn't need one.
+ */
+async function writeDarkVariant(iconsDir: string, pluginId: string) {
+	const png = readFileSync(join(iconsDir, `${pluginId}.png`));
+	const darkPath = join(iconsDir, `${pluginId}.dark.png`);
+	if (needsDarkVariant(await analyzeInk(png))) {
+		writeFileSync(darkPath, await darkVariantPng(png));
+	} else {
+		rmSync(darkPath, { force: true });
 	}
 }
 
@@ -522,7 +561,38 @@ async function main(): Promise<void> {
 	const sources: Record<string, IconSource> = {};
 	const failures: Manifest['failures'] = [];
 
+	const curated = curatedIds();
+	for (const id of curated) {
+		if (!allPluginIds.includes(id)) {
+			failures.push({
+				id,
+				domain: '',
+				error: `scripts/plugin-icon-sources/${id}.svg matches no catalog plugin`,
+			});
+		}
+	}
+
+	// Our own files render offline, so they are redone on every run.
+	for (const pluginId of fetchPluginIds.filter((id) => curated.has(id))) {
+		const icon = await readCuratedIcon(pluginId);
+		if ('error' in icon) {
+			failures.push({ id: pluginId, domain: '', error: icon.error });
+			console.warn(`[plugin-icons] ${pluginId}: ${icon.error}`);
+			continue;
+		}
+		writeFileSync(join(iconsDir, `${pluginId}.svg`), icon.svg);
+		writeFileSync(join(iconsDir, `${pluginId}.png`), icon.png);
+		sources[pluginId] = 'curated';
+	}
+	// A vector file with no curated source behind it is left over: remove it.
+	for (const pluginId of allPluginIds) {
+		if (!curated.has(pluginId)) {
+			rmSync(join(iconsDir, `${pluginId}.svg`), { force: true });
+		}
+	}
+
 	const targets = fetchPluginIds.filter((id) => {
+		if (curated.has(id)) return false;
 		if (force) return true;
 		return !existsSync(join(iconsDir, `${id}.png`));
 	});
@@ -547,7 +617,9 @@ async function main(): Promise<void> {
 			try {
 				const bytes = PLUGIN_ICON_LIGHT_TILE.has(pluginId)
 					? await onLightTile(result.bytes)
-					: result.bytes;
+					: PLUGIN_ICON_CLEAR_EDGE_WHITE.has(pluginId)
+						? await clearEdgeWhite(result.bytes)
+						: result.bytes;
 				writeFileSync(join(iconsDir, `${pluginId}.png`), bytes);
 			} catch (error) {
 				const message = error instanceof Error ? error.message : String(error);
@@ -564,6 +636,12 @@ async function main(): Promise<void> {
 		});
 	}
 
+	for (const pluginId of fetchPluginIds) {
+		if (existsSync(join(iconsDir, `${pluginId}.png`))) {
+			await writeDarkVariant(iconsDir, pluginId);
+		}
+	}
+
 	let existingSources: Record<string, IconSource> = {};
 	if (existsSync(manifestPath)) {
 		const existing = JSON.parse(readFileSync(manifestPath, 'utf8')) as Manifest;
@@ -575,6 +653,7 @@ async function main(): Promise<void> {
 	for (const pluginId of allPluginIds) {
 		const source =
 			sources[pluginId] ??
+			(curated.has(pluginId) ? 'curated' : undefined) ??
 			(existsSync(join(iconsDir, `${pluginId}.png`))
 				? (existingSources[pluginId] ?? 'twenty-icons')
 				: undefined);
@@ -594,6 +673,10 @@ async function main(): Promise<void> {
 		failed: failures.length,
 		domains,
 		sources: sortedSources,
+		svg: allPluginIds.filter((id) => existsSync(join(iconsDir, `${id}.svg`))),
+		dark: allPluginIds.filter((id) =>
+			existsSync(join(iconsDir, `${id}.dark.png`)),
+		),
 		failures,
 	};
 
