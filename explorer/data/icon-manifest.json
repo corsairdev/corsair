@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-08T04:12:02.917Z",
+  "generatedAt": "2026-11-08T04:45:34.918Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
@@ -1033,6 +1033,7 @@
     "griptape",
     "here",
     "htmltoimage",
+    "intercom",
     "mailtrap",
     "ollama",
     "prisma",

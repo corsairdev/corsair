@@ -16,19 +16,28 @@ const HREF_ATTRIBUTES = new Set(['href', 'xlink:href']);
 const LOCAL_REFERENCE = /^#[\w.:-]+$/;
 const EMBEDDED_RASTER =
 	/^data:image\/(png|jpeg|webp|gif);base64,[a-z0-9+/=\s]+$/i;
-const EXTERNAL_URL_IN_STYLE = /url\(\s*['"]?(?!#)/i;
+/**
+ * A CSS `url(…)` that points outside the file. The lookahead sits right after
+ * `url(`, so `url('#g')` and `url( #g)` stay local however the spaces fall.
+ */
+const EXTERNAL_CSS_URL = /url\((?!\s*['"]?\s*#)/i;
 
 // One hook on the shared DOMPurify instance: links may only point inside the
 // file (`#id`) or at an embedded raster, never at a URL the browser would fetch.
 DOMPurify.addHook('uponSanitizeAttribute', (_node, data) => {
 	const name = data.attrName.toLowerCase();
+	const value = data.attrValue;
 	if (HREF_ATTRIBUTES.has(name)) {
-		const value = data.attrValue.trim();
-		if (!LOCAL_REFERENCE.test(value) && !EMBEDDED_RASTER.test(value)) {
+		const target = value.trim();
+		if (!LOCAL_REFERENCE.test(target) && !EMBEDDED_RASTER.test(target)) {
 			data.keepAttr = false;
 		}
+		return;
 	}
-	if (name === 'style' && EXTERNAL_URL_IN_STYLE.test(data.attrValue)) {
+	// Every other attribute, not only `style`: presentation attributes such as
+	// `fill` take `url(…)` too. A backslash is a CSS escape (`u\72l(`) that
+	// could hide a URL from this check, and no drawn icon needs one.
+	if (EXTERNAL_CSS_URL.test(value) || value.includes('\\')) {
 		data.keepAttr = false;
 	}
 });
@@ -63,6 +72,9 @@ export function sanitizeSvg(raw: string): SanitizeResult {
 	return { ok: true, svg: `${clean.trim()}\n` };
 }
 
+/** sharp (libvips) accepts SVG densities from 1 to 100000 dpi. */
+const clampDensity = (dpi: number) => Math.min(100_000, Math.max(1, dpi));
+
 /** Render an SVG to a square PNG, the longer side drawn at `size`. */
 export async function renderSvgToPng(
 	svg: string | Buffer,
@@ -73,7 +85,7 @@ export async function renderSvgToPng(
 	if (!width || !height) throw new Error('svg has no size');
 	// Render at the density that makes the longer side `size`, so the PNG is
 	// drawn sharp rather than scaled up from 72 dpi.
-	const density = (72 * size) / Math.max(width, height);
+	const density = clampDensity((72 * size) / Math.max(width, height));
 	return sharp(bytes, { density })
 		.resize(size, size, {
 			fit: 'contain',
@@ -155,12 +167,19 @@ export async function analyzeInk(png: Buffer): Promise<InkAnalysis> {
 
 /**
  * A mark drawn largely in black on transparency (GitHub's octocat, Bubble's
- * "b"), which disappears on a dark surface. A mark in dark brand colours
- * (Datadog's purple) keeps them, and one on its own opaque tile (Vercel's
- * black square) already reads on both.
+ * "b"), which disappears on a dark surface. So does a near-black tile whose
+ * details are cut out to transparency rather than drawn in white (Intercom).
+ * A mark in dark brand colours (Datadog's purple) keeps them, and a dark tile
+ * with details drawn on it (a white triangle on black, a blue mark on a black
+ * square) reads on both.
  */
 export function needsDarkVariant(ink: InkAnalysis): boolean {
-	return ink.coverage > 0.02 && ink.coverage < 0.7 && ink.neutralDark > 0.3;
+	if (ink.coverage <= 0.02) return false;
+	if (ink.coverage < 0.7) return ink.neutralDark > 0.3;
+	// A dense near-black mark with no colour whose details are see-through:
+	// they leave a tenth or more of the canvas empty (Intercom: 79% covered).
+	// A tile with drawn details covers 95% or more and keeps its look.
+	return ink.coverage < 0.9 && ink.neutralDark > 0.9 && ink.colourful < 0.05;
 }
 
 /** The colour with its HSL lightness mirrored (L → 1 − L), hue and saturation kept. */
@@ -307,10 +326,19 @@ export async function normalizeSvg(svg: string): Promise<string> {
 	const [vx, vy, vw, vh] = box as [number, number, number, number];
 	if (!(vw > 0 && vh > 0)) throw new Error('svg has no viewBox or size');
 
+	// Measure on a copy sized exactly like its viewBox: a root width/height
+	// with another aspect ratio would letterbox the drawing, and that padding
+	// would be read as part of the mark.
+	const measured = svg.replace(
+		open[0],
+		open[0]
+			.replace(/\s(width|height)="[^"]*"/g, '')
+			.replace(/^<svg/, `<svg width="${vw}" height="${vh}"`),
+	);
 	const size = 1024;
 	const scale = size / Math.max(vw, vh);
-	const { data, info } = await sharp(Buffer.from(svg), {
-		density: 72 * scale,
+	const { data, info } = await sharp(Buffer.from(measured), {
+		density: clampDensity(72 * scale),
 	})
 		.ensureAlpha()
 		.raw()

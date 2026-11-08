@@ -695,6 +695,8 @@ async function main(): Promise<void> {
 	}
 }
 
+// A rejection can carry any value, not only an Error, so it is typed unknown
+// and printed as is.
 main().catch((error: unknown) => {
 	console.error(error);
 	process.exit(1);

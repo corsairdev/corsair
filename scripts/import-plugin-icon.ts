@@ -88,6 +88,8 @@ async function main(): Promise<void> {
 	if (failed > 0) process.exitCode = 1;
 }
 
+// A rejection can carry any value, not only an Error, so it is typed unknown
+// and printed as is.
 main().catch((error: unknown) => {
 	console.error(error);
 	process.exit(1);

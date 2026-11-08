@@ -64,8 +64,43 @@ test('sanitizeSvg keeps local references, gradients and embedded rasters', () =>
 	assert.equal(result.ok, true);
 	if (!result.ok) return;
 	assert.ok(result.svg.includes('<use href="#p"'));
+	assert.ok(result.svg.includes('fill="url(#g)"'));
 	assert.ok(result.svg.includes('linearGradient'));
 	assert.ok(result.svg.includes('data:image/png;base64'));
+});
+
+test('sanitizeSvg keeps local url() however it is spaced or quoted', () => {
+	for (const style of [
+		"fill:url('#g')",
+		'fill:url( #g)',
+		"fill:url(  '#g' )",
+	]) {
+		const result = sanitizeSvg(svg(`<path d="M0 0h4v4z" style="${style}"/>`));
+		assert.equal(result.ok, true);
+		if (result.ok) assert.ok(result.svg.includes('style='), style);
+	}
+});
+
+test('sanitizeSvg drops outside URLs in any attribute, escaped or not', () => {
+	for (const attr of [
+		'fill="url(https://example.com/p.svg#g)"',
+		'style="fill:url( https://example.com/p.svg#g)"',
+		'style="fill:u\\72l(https://example.com/p.svg#g)"',
+	]) {
+		const result = sanitizeSvg(svg(`<path d="M0 0h4v4z" ${attr}/>`));
+		assert.equal(result.ok, true);
+		if (result.ok)
+			assert.equal(result.svg.includes('example.com'), false, attr);
+	}
+});
+
+test('renderSvgToPng draws a very large viewBox', async () => {
+	const png = await renderSvgToPng(
+		'<svg xmlns="http://www.w3.org/2000/svg" width="20000" height="10000" viewBox="0 0 20000 10000"><rect width="20000" height="10000" fill="#e01e5a"/></svg>',
+	);
+	const meta = await sharp(png).metadata();
+	assert.equal(meta.width, 256);
+	assert.equal(meta.height, 256);
 });
 
 test('sanitizeSvg refuses stylesheets and oversized files', () => {
@@ -95,12 +130,18 @@ async function pixelAt(png: Buffer, x: number, y: number): Promise<number[]> {
 	return [data[i]!, data[i + 1]!, data[i + 2]!, data[i + 3]!];
 }
 
+// Intercom-style: a near-black tile whose details are transparent cutouts.
+const CUTOUT_TILE = svg(
+	'<path fill-rule="evenodd" fill="#0b1d2e" d="M0 0h24v24H0zM6 5h2v10H6zM11 5h2v10h-2zM16 5h2v10h-2z"/>',
+);
+
 test('black marks get a dark variant; dark brand colours and tiles do not', async () => {
 	for (const mark of [
 		BLACK_CIRCLE,
 		IMPLICIT_BLACK,
 		OUTLINED,
 		BLACK_WITH_ACCENT,
+		CUTOUT_TILE,
 	]) {
 		assert.equal(
 			needsDarkVariant(await analyzeInk(await renderSvgToPng(mark))),
@@ -199,6 +240,21 @@ test('normalizeSvg fits a square viewBox tight around the mark', async () => {
 	assert.ok(Math.abs(box[0]! - 10) < 0.2, `x ${box[0]}`);
 	assert.ok(Math.abs(box[1]! - 0) < 0.2, `y ${box[1]}`);
 	assert.equal(detectTrace(out).traced, false);
+});
+
+test('normalizeSvg is not fooled by a root size with another aspect ratio', async () => {
+	// Rendered at 128x128, the 100x50 viewBox is letterboxed; the crop must
+	// still land on the rect in viewBox units.
+	const out = await normalizeSvg(
+		'<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 100 50"><rect x="10" y="10" width="40" height="20" fill="#e01e5a"/></svg>',
+	);
+	const box = out
+		.match(/viewBox="([^"]+)"/)![1]!
+		.split(' ')
+		.map(Number);
+	assert.ok(Math.abs(box[0]! - 10) < 0.2, `x ${box[0]}`);
+	assert.ok(Math.abs(box[1]! - 0) < 0.2, `y ${box[1]}`);
+	assert.ok(Math.abs(box[2]! - 40) < 0.2, `side ${box[2]}`);
 });
 
 const CURATED_DIR = join(
