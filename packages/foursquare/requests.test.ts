@@ -196,6 +196,63 @@ describe('Foursquare request shapes', () => {
 		expect(queryParam('cc')).toBe('US');
 	});
 
+	it('adds the place id to a fields selection', async () => {
+		mockFetch(jsonResponse(searchResponse));
+
+		await endpoints.places.search(makeCtx(), {
+			near: 'Chicago, IL',
+			fields: ['name'],
+		});
+
+		// Verified live: `fields=name` alone answers `{"results":[{"name":...}]}`
+		// with no fsq_place_id, which the output schema requires.
+		expect(queryParam('fields')).toBe('name,fsq_place_id');
+	});
+
+	it('does not duplicate an id the caller already asked for', async () => {
+		mockFetch(jsonResponse(placeDetail));
+
+		await endpoints.places.get(makeCtx(), {
+			fsq_place_id: PLACE_ID,
+			fields: ['fsq_place_id', 'name'],
+		});
+
+		expect(queryParam('fields')).toBe('fsq_place_id,name');
+	});
+
+	it('sends no fields parameter when the caller sets none', async () => {
+		mockFetch(jsonResponse(placeDetail));
+
+		await endpoints.places.get(makeCtx(), { fsq_place_id: PLACE_ID });
+
+		// Omitting it is what asks Foursquare for every Pro field.
+		expect(queryParam('fields')).toBeNull();
+	});
+
+	it('adds the tip id to a tips fields selection', async () => {
+		mockFetch(jsonResponse(tipsResponse));
+
+		await endpoints.places.tips(makeCtx(), {
+			fsq_place_id: PLACE_ID,
+			fields: ['text'],
+		});
+
+		expect(queryParam('fields')).toBe('text,fsq_tip_id');
+	});
+
+	it('rejects a country code that is not two characters', async () => {
+		// Foursquare requires a 2-digit code; `USA` reaches the API and fails.
+		const match = FoursquareEndpointInputSchemas.placesMatch;
+		const base = {
+			name: 'Wrigley Field',
+			address: '1060 W Addison St',
+			city: 'Chicago',
+		};
+		expect(match.safeParse({ ...base, cc: 'US' }).success).toBe(true);
+		expect(match.safeParse({ ...base, cc: '' }).success).toBe(false);
+		expect(match.safeParse({ ...base, cc: 'USA' }).success).toBe(false);
+	});
+
 	it('rejects a match missing the country code, before sending', async () => {
 		// `cc` is required by the API and only English (US) is supported, so a
 		// request without it costs a call and fails. The type system already

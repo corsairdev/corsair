@@ -100,6 +100,20 @@ describeIfKey('Foursquare live smoke', () => {
 		}
 	});
 
+	it('parses a response that asked for only one field', async () => {
+		// The regression Greptile caught: `fields=name` alone returns no
+		// fsq_place_id, so the plugin adds the id back to the selection.
+		const result = await plugin.endpoints!.places.search(ctx, {
+			...CHICAGO,
+			fields: ['name'],
+			limit: 1,
+		});
+
+		expect(result.results.length).toBeGreaterThan(0);
+		expect(typeof result.results[0]?.fsq_place_id).toBe('string');
+		expect(typeof result.results[0]?.name).toBe('string');
+	});
+
 	it('surfaces the documented 404 for an unknown place', async () => {
 		await expect(
 			plugin.endpoints!.places.get(ctx, { fsq_place_id: 'doesnotexist' }),
