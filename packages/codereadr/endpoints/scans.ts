@@ -5,6 +5,7 @@ import { readCount, shapeScans } from './shape';
 import {
 	CodereadrEndpointInputSchemas as Inputs,
 	CodereadrEndpointOutputSchemas as Outputs,
+	SCANS_DEFAULT_LIMIT,
 } from './types';
 
 export const list: CodereadrEndpoints['scansList'] = (ctx, input) =>
@@ -61,16 +62,14 @@ export const list: CodereadrEndpoints['scansList'] = (ctx, input) =>
 		{
 			shape: (root, parsed) => {
 				const count = readCount(root);
-				const pageSize = parsed.limit;
+				// Omitting `limit` does not mean unlimited: the API caps the page at
+				// its documented default of 10,000, so a full default page can still
+				// have more behind it.
+				const pageSize = parsed.limit ?? SCANS_DEFAULT_LIMIT;
 				const offset = parsed.offset ?? 0;
 				return {
 					...shapeScans(root),
-					// Only a paged request has a next page. Without `limit` the API
-					// answers every match at once.
-					next_offset:
-						pageSize !== undefined && (count ?? 0) >= pageSize
-							? offset + pageSize
-							: undefined,
+					next_offset: (count ?? 0) >= pageSize ? offset + pageSize : undefined,
 				};
 			},
 			log: (_, result) => ({ count: result.scans.length }),
