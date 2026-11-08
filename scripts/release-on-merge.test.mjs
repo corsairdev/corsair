@@ -35,6 +35,7 @@ describe('isShippedPath', () => {
 	});
 	it('counts the helpers corsair/tests publishes, and only in corsair', () => {
 		assert.equal(isShippedPath('tests/setup-db.ts', 'packages/corsair'), true);
+		assert.equal(isShippedPath('tests/index.ts', 'packages/corsair'), true);
 		assert.equal(
 			isShippedPath('tests/connect-link.test.ts', 'packages/corsair'),
 			false,
@@ -434,6 +435,22 @@ describe('planRelease on a git repo', () => {
 			registry: registry({ '@x/a': { versions: ['0.1.0'] } }),
 		});
 		assert.deepEqual(plan.bumps, []);
+	});
+
+	it('releases a shipped file with a non-ASCII name', async () => {
+		pkg('packages/a', '@x/a', '0.1.0');
+		write('packages/a/index.ts', '1\n');
+		commit('release');
+		write('packages/a/caf\u00e9.ts', '1\n');
+		commit('add a source file');
+		const plan = await planRelease({
+			cwd,
+			registry: registry({ '@x/a': { versions: ['0.1.0'] } }),
+		});
+		assert.deepEqual(
+			plan.bumps.map((b) => b.files),
+			[['caf\u00e9.ts']],
+		);
 	});
 
 	it('releases dependents of a version raised by hand', async () => {
