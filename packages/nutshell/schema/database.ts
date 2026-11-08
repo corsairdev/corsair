@@ -46,7 +46,10 @@ export const NutshellProductEntitySchema = z
 		name: z.string().optional(),
 		description: z.string().optional(),
 		sku: z.string().optional(),
-		price: z.string().optional(),
+		// products.list and products.get return the price as a money object
+		// (amount/formatted/currency), so a fetched product round-trips through
+		// the database client without rewriting its data.
+		price: NutshellMoneyEntitySchema.optional(),
 	})
 	.catchall(z.unknown()); // Product fields are returned differently in quotes and catalog routes.
 
