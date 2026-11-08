@@ -304,11 +304,13 @@ const memberSpotEndpointMeta = {
 	},
 	'users.findByEmail': {
 		riskLevel: 'read',
-		description: 'Returns one user by email, or null when no such user exists',
+		description:
+			'Returns one user by email; a member that does not exist answers 400 USER_NOT_FOUND rather than an empty result',
 	},
 	'users.findByUid': {
 		riskLevel: 'read',
-		description: 'Returns one user by uid, or null when no such user exists',
+		description:
+			'Returns one user by uid; a uid that does not exist answers an empty body, which fails the output schema rather than returning null',
 	},
 	'users.offers': {
 		riskLevel: 'read',
@@ -316,9 +318,11 @@ const memberSpotEndpointMeta = {
 			'Returns the offers granted to a user with their active state and expiry',
 	},
 	'users.loginToken': {
-		riskLevel: 'read',
+		// Write, not read: the token it mints signs in as the member, so a
+		// read-only caller must not be able to create one.
+		riskLevel: 'write',
 		description:
-			'Mints a token and login URL that signs a user in automatically; the token expires after one hour',
+			'Mints a token and login URL that signs a user in automatically, which is a credential; the token expires after one hour',
 	},
 	'users.grantOffer': {
 		riskLevel: 'write',

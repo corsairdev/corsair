@@ -24,6 +24,9 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		action: string;
 		method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 		query?: MemberSpotQuery;
+		// unknown: each operation's input schema has already validated these fields,
+		// so the record is built from a literal and typed only as far as the
+		// request layer needs. A single DTO type cannot cover 30 different bodies.
 		body?: Record<string, unknown>;
 		/**
 		 * True for reads and for writes the docs describe as idempotent. A 5xx
@@ -54,7 +57,14 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	return result;
 }
 
-/** Drops undefined entries so a body matches the DTO the API documents. */
+/**
+ * Drops undefined entries so a body matches the DTO the API documents.
+ *
+ * Both types are unknown because the fields differ per operation: this runs on a
+ * freshly built literal with a handful of optional keys, and the endpoint's input
+ * schema is what validates them before they arrive. Naming a DTO type per call
+ * site would restate every schema for no check the schema does not already make.
+ */
 export function bodyOf(
 	fields: Record<string, unknown>,
 ): Record<string, unknown> {

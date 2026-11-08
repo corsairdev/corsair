@@ -408,12 +408,31 @@ export type SetCourseStartDateInput = z.input<
 	typeof SetCourseStartDateInputSchema
 >;
 
-const CustomPropertyValueSchema = z.record(z.string(), z.string());
+/**
+ * Keys that select the target rather than name a property. MemberSpot spreads
+ * the property map into the same body as the selector, so a map containing one
+ * of these would retarget the write to a different member.
+ */
+const RESERVED_PROPERTY_KEYS = ['email', 'uid'] as const;
+
+const CustomPropertyValueSchema = z
+	.record(z.string(), z.string())
+	.superRefine((value, ctx) => {
+		for (const reserved of RESERVED_PROPERTY_KEYS) {
+			if (reserved in value) {
+				ctx.addIssue({
+					code: 'custom',
+					path: [reserved],
+					message: `"${reserved}" selects the member, so it cannot also be a property name. Rename the property.`,
+				});
+			}
+		}
+	});
 
 const SetCustomPropertiesInputSchema = z.object({
 	email: EmailSchema,
 	properties: CustomPropertyValueSchema.describe(
-		'Property key to value. A property omitted here is left unchanged.',
+		'Property key to value. A property omitted here is left unchanged. `email` and `uid` are rejected, because they would retarget the write.',
 	),
 });
 
