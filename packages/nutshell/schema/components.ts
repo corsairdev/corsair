@@ -197,6 +197,8 @@ export const NutshellMetaSchema = z
 export const NutshellActivityTypeSchema = z
 	.object({
 		id: z.string().optional(),
+		// unknown: the OpenAPI definition declares no recognized type for the
+		// activity-type name and provider examples vary, so it stays open.
 		name: z.unknown().optional(),
 		modifiedTime: z.number().int().optional(),
 		isBenchmarkable: z.boolean().optional(),
@@ -255,6 +257,9 @@ export const NutshellCustomFieldSchema = z
 
 export const NutshellCustomFieldCreateInputSchema = z
 	.object({
+		// unknown: the OpenAPI definition declares no recognized type for these
+		// fields (name is a localized label, type a provider enum, choices a
+		// dependent collection, isMultiple a flag), so they stay open.
 		name: z.unknown().optional(),
 		type: z.unknown().optional(),
 		choices: z.unknown().optional(),
@@ -435,6 +440,8 @@ export const NutshellUserSchema = z.intersection(
 		z
 			.object({
 				id: z.string().optional(),
+				// unknown: the OpenAPI definition declares no recognized type for
+				// the user name fields; provider examples vary by locale format.
 				name: z.unknown().optional(),
 				firstName: z.unknown().optional(),
 				modifiedTime: z.number().int().optional(),
@@ -446,6 +453,7 @@ export const NutshellUserSchema = z.intersection(
 				canAccessEmailMarketing: z.boolean().optional(),
 				permissions: NutshellPermissionsSchema.optional(),
 				emails: z.array(z.string()).optional(),
+				// unknown: the OpenAPI definition declares no recognized type.
 				phonecallerType: z.unknown().optional(),
 			})
 			.loose(),

@@ -94,10 +94,13 @@ const endpointSchemas =
 
 // unknown: endpoint trees mix nested groups and handlers; narrowed below.
 type NutshellEndpointTree = Record<string, unknown>;
-// unknown: wrappers receive core context/input before Zod parsing.
 type NutshellEndpointHandler = (
+	// unknown: the shared binder hands the wrapper the core context and raw
+	// input; each wrapper narrows both with the endpoint's own schemas.
 	ctx: unknown,
+	// unknown: raw endpoint input before the wrapper's Zod parse.
 	input: unknown,
+	// unknown: handler output before the wrapper's output-schema parse.
 ) => Promise<unknown>;
 
 /**

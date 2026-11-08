@@ -14,6 +14,9 @@ describeLive('Nutshell live API', () => {
 	it('authenticates and parses the stage list', async () => {
 		// The key's presence is already checked by describeLive above.
 		const key = `${email!}:${apiKey!}`;
+		// unknown: the live smoke test only proves authentication, transport,
+		// and envelope parsing; the response body is provider-defined and only
+		// its documented stage envelope is asserted.
 		const response = await makeNutshellRequest<unknown>('/stages', key, {
 			method: 'GET',
 		});

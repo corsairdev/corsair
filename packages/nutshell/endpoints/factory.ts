@@ -17,6 +17,8 @@ export type NutshellEndpointHandler<K extends NutshellOperationKey> = (
 function resolvePath(
 	template: string,
 	pathParams: readonly string[],
+	// Record<string, unknown>: the schema-parsed input object is read by
+	// dynamic path-parameter name, so values are looked up generically.
 	input: Record<string, unknown>,
 ): string {
 	let path = template;
@@ -32,8 +34,13 @@ function resolvePath(
 
 function pickQuery(
 	queryParams: readonly string[],
+	// Record<string, unknown>: the schema-parsed input object is read by
+	// dynamic query-parameter name, so values are looked up generically.
 	input: Record<string, unknown>,
+	// Record<string, unknown>: query values are provider-defined filter, sort,
+	// and pagination inputs forwarded as-is after input-schema validation.
 ): Record<string, unknown> | undefined {
+	// Record<string, unknown>: accumulated provider-defined query values.
 	const query: Record<string, unknown> = {};
 	for (const name of queryParams) {
 		const value = input[name];
@@ -54,7 +61,9 @@ export function defineEndpoint<K extends NutshellOperationKey>(
 
 	return async (ctx, input) => {
 		// The public Corsair binder validates the operation's object input schema.
-		const record = (input ?? {}) as Record<string, unknown>;
+		const record = (input ?? {}) as Record<string, unknown>; // Record<string, unknown>: the schema-parsed input is read by dynamic parameter names.
+		// unknown: the raw transport result before the wrapper's output-schema
+		// parse; its narrowing belongs to the public boundary, not the transport.
 		const result = await makeNutshellRequest<unknown>(
 			resolvePath(operation.path, operation.pathParams, record),
 			ctx.key,

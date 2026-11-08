@@ -7,11 +7,17 @@ import { NUTSHELL_DOCUMENTED_ROUTES } from './routes-fixture';
 
 type JsonSchema = z.core.JSONSchema.JSONSchema;
 type SampleSchema = JsonSchema | JsonSchema[] | boolean;
+// unknown: handlers are walked out of the bound public tree at runtime, so
+// their precise per-operation input/output types cannot be recovered here;
+// each call is schema-validated separately before the handler runs.
 type Handler = (input: unknown) => Promise<unknown>;
 type CapturedRequest = {
 	url: URL;
 	method: string;
 	headers: Headers;
+	// unknown: the captured body is whatever the transport serialized for the
+	// operation under test (JSON object, array, or none); assertions compare
+	// it structurally rather than by a single type.
 	body: unknown;
 };
 
@@ -36,6 +42,9 @@ function sample(
 	schema: SampleSchema,
 	defs: Record<string, JsonSchema>,
 	includeOptional = false,
+	// unknown: the generator maps arbitrary JSON Schema fragments to fixtures,
+	// and JSON Schema can describe values of any shape, so no narrower return
+	// type is possible.
 ): unknown {
 	if (typeof schema === 'boolean') return {};
 	if (Array.isArray(schema))
@@ -152,6 +161,8 @@ function sampleForOperationSchema(
 	schema: z.ZodType,
 	includeOptional = false,
 	io: 'input' | 'output' = 'input',
+	// unknown: the fixture mirrors whatever the operation's JSON Schema allows;
+	// callers validate it against the same schema before use.
 ): unknown {
 	// Zod 4 emits its generic JSON Schema contract for test data generation.
 	const json = z.toJSONSchema(schema, {
@@ -300,6 +311,24 @@ describe('Nutshell REST endpoint contract', () => {
 				Object.entries(record).filter(([name]) => !missing.has(name)),
 			);
 			expect(schema.input.safeParse(invalidInput).success).toBe(false);
+
+			// Prove the rejection happens at the public boundary: the bound
+			// handler must throw before any HTTP request is attempted.
+			const fetchSpy = jest
+				.spyOn(global, 'fetch')
+				.mockImplementation(async () => {
+					throw new Error(
+						`fetch must not be called for invalid ${operation.key} input`,
+					);
+				});
+			try {
+				const handler = handlers.get(operation.key);
+				expect(handler).toBeDefined();
+				await expect(handler?.(invalidInput)).rejects.toThrow();
+				expect(fetchSpy).not.toHaveBeenCalled();
+			} finally {
+				fetchSpy.mockRestore();
+			}
 		},
 	);
 });
