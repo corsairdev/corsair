@@ -1,0 +1,49 @@
+displayName: Databox
+description: Business analytics with Databox - create data sources and datasets, push up to 500 records per call, poll ingestion results, read metrics over date ranges with breakdowns, and list dashboards.
+domain: databox.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key at account.databox.com/profile under Password & Security, API key (Admin users only). Things to know before you send:
+
+  - **The flow is data source, dataset, ingest.** `dataSources.create` makes the container (only a name is required), `datasets.create` defines columns with `schema` and an optional `primaryKey`, and `datasets.ingestData` pushes records keyed by column ID, at most 500 rows per request. The response returns an `ingestionId`; poll it with `datasets.getIngestion` to see how many records were appended, overwritten or rejected. Databox does not document the ingestion status values, so this plugin does not declare a job; poll until the counts settle.
+  - **A primary key changes re-ingestion.** With `primaryKey` set, re-ingesting a matching record overwrites it instead of appending a duplicate. Without one, every ingest appends.
+  - **Deleting a data source cascades.** `dataSources.delete` permanently removes the data source, all of its datasets and all of their records, and cannot be undone.
+  - **Metrics can trigger a sync.** `metrics.getData` may wait for a due or first sync, up to about two minutes, so the plugin raises that call's timeout; `syncInfo.status` says whether it synced, and `inProgress` or `neverSynced` mean call again shortly. It is rate limited to 30 calls per minute per account.
+  - **Retry behavior.** A 429 and a 409 `modification_in_progress` both carry `Retry-After` and are retried, because Databox did not process the request; a 409 `modification_failed` is final and is not. Failed writes are never replayed on a 5xx, since they may have been applied. `idempotencyKey` inputs send Databox's `Idempotency-Key` header, which dedupes creation and ingestion calls for 24 hours.
+  - **Accounts.** Organizations with accounts enabled can pass `accountId` on an operation to act on one account instead of the organization tied to the key.
+examples:
+  read:
+    path: metrics.list
+    title: List the organization's metrics
+    args: {}
+  write:
+    path: datasets.ingestData
+    title: Ingest two transactions
+    args:
+      id: 2345678
+      records:
+        - transaction_id: T-10024
+          transaction_date: 2026-09-18T09:12:00+00:00
+          product_name: Standing Desk
+          quantity: 2
+          unit_price: 249
+        - transaction_id: T-10025
+          transaction_date: 2026-09-18T10:03:00+00:00
+          product_name: Desk Lamp
+          quantity: 1
+          unit_price: 59
+apiExamples:
+  auth.validateKey: {}
+  dataSources.list: "{ page: 0, pageSize: 50 }"
+  dataSources.create: "{ name: 'Sales', timezone: 'Europe/Ljubljana', idempotencyKey: 'create-sales-once' }"
+  dataSources.get: "{ id: 1234567 }"
+  dataSources.delete: "{ id: 1234567 }"
+  datasets.list: "{ dataSourceId: 1234567, type: 'dataset' }"
+  datasets.create: "{ name: 'Transactions', dataSourceId: 1234567, primaryKey: ['transaction_id'], schema: [{ id: 'transaction_id', dataType: 'string' }, { id: 'amount', dataType: 'number' }, { id: 'occurred_at', dataType: 'datetime' }] }"
+  datasets.get: "{ id: 2345678 }"
+  datasets.listData: "{ id: 2345678, page: 0, pageSize: 100 }"
+  datasets.ingestData: "{ id: 2345678, records: [{ transaction_id: 'T-10024', amount: 249, occurred_at: '2026-09-18T09:12:00+00:00' }] }"
+  datasets.getIngestion: "{ id: 2345678, ingestionId: 'a4283796-bfde-42cf-aa65-1830d6692966' }"
+  metrics.list: "{ sourceId: 1234567 }"
+  metrics.getData: "{ id: 'GoogleAnalytics4@sessions', dateRange: { from: '2026-06-01', to: '2026-06-30', granularity: 'daily' } }"
+  dashboards.list: "{ search: 'sales' }"

@@ -1,0 +1,150 @@
+---
+title: Overview
+description: "Business analytics with Databox - create data sources and datasets, push up to 500 records per call, poll ingestion results, read metrics over date ranges with breakdowns, and list dashboards."
+---
+
+Use **Databox** through Corsair: one client, typed API calls.
+
+Create a key at account.databox.com/profile under Password & Security, API key (Admin users only). Things to know before you send:
+
+- **The flow is data source, dataset, ingest.** `dataSources.create` makes the container (only a name is required), `datasets.create` defines columns with `schema` and an optional `primaryKey`, and `datasets.ingestData` pushes records keyed by column ID, at most 500 rows per request. The response returns an `ingestionId`; poll it with `datasets.getIngestion` to see how many records were appended, overwritten or rejected. Databox does not document the ingestion status values, so this plugin does not declare a job; poll until the counts settle.
+- **A primary key changes re-ingestion.** With `primaryKey` set, re-ingesting a matching record overwrites it instead of appending a duplicate. Without one, every ingest appends.
+- **Deleting a data source cascades.** `dataSources.delete` permanently removes the data source, all of its datasets and all of their records, and cannot be undone.
+- **Metrics can trigger a sync.** `metrics.getData` may wait for a due or first sync, up to about two minutes, so the plugin raises that call's timeout; `syncInfo.status` says whether it synced, and `inProgress` or `neverSynced` mean call again shortly. It is rate limited to 30 calls per minute per account.
+- **Retry behavior.** A 429 and a 409 `modification_in_progress` both carry `Retry-After` and are retried, because Databox did not process the request; a 409 `modification_failed` is final and is not. Failed writes are never replayed on a 5xx, since they may have been applied. `idempotencyKey` inputs send Databox's `Idempotency-Key` header, which dedupes creation and ingestion calls for 24 hours.
+- **Accounts.** Organizations with accounts enabled can pass `accountId` on an operation to act on one account instead of the organization tied to the key.
+
+**What you get:**
+
+- 14 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/databox better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/databox better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/databox better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/databox better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { databox } from '@corsair-dev/databox';
+
+export const corsair = createCorsair({
+	plugins: [
+		databox(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair throws `AuthMissingError` (which may carry a `connectUrl`) until an API key is stored for that tenant.
+
+```ts
+databox()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'databox',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the organization's metrics**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.databox.api.metrics.list({});
+```
+
+
+**Ingest two transactions**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.databox.api.datasets.ingestData({
+	id: 2345678,
+	records: [{
+		transaction_id: 'T-10024',
+		transaction_date: '2026-09-18T09:12:00+00:00',
+		product_name: 'Standing Desk',
+		quantity: 2,
+		unit_price: 249,
+	}, {
+		transaction_id: 'T-10025',
+		transaction_date: '2026-09-18T10:03:00+00:00',
+		product_name: 'Desk Lamp',
+		quantity: 1,
+		unit_price: 59,
+	}],
+});
+```
+
+
+See the full list on the [API](/plugins/databox/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/databox/api">
+    Every `databox.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
