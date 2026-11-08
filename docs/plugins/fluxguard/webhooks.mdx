@@ -29,14 +29,20 @@ export async function POST(request: Request) {
     const body = await request.text();
     const result = await processWebhook(corsair, headers, body);
     // `result.response` is a plain object, not a Response. No match means no
-    // plugin claimed the delivery, so answer 404 instead of 200.
+    // plugin claimed the delivery, so answer 404 rather than 200.
+    // `success` is false only when the handler threw, which is how a rejected
+    // signature or an unparseable payload surfaces here.
     return Response.json(result.response ?? { success: false }, {
         status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
     });
 }
 ```
 
-Fluxguard retries nothing on its own and stops at the first non-2xx, so this shape matters: a 500 makes the delivery visible as a failure instead of silently discarding a change alert.
+Three details decide whether a bad delivery is visible:
+
+- **A rejected signature must throw.** `processWebhook` ignores a handler's `statusCode` and answers `{ success: true }` for a returned `success: false`, keeping a failure only when the handler throws. The plugin's handler throws on a bad signature and on an unparseable payload for that reason, so `success` is a reliable failure signal here.
+- **A signature needs the exact body.** Verification is HMAC over `<t>.<raw body>`, so mount the route without a JSON parser in front of it.
+- **Fluxguard does not retry.** It stops at the first non-2xx, so answering 500 surfaces the failure instead of discarding a change alert silently.
 
 ## Events
 
