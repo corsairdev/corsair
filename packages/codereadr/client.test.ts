@@ -26,19 +26,24 @@ type Captured = {
 /** Replaces fetch and records the call the client made. */
 function mockFetch(
 	body: string,
-	options: { status?: number; contentType?: string } = {},
+	options: {
+		status?: number;
+		contentType?: string;
+		retryAfter?: string;
+	} = {},
 ): Captured[] {
 	const captured: Captured[] = [];
 	// unknown: jest's mock signature takes whatever the caller passes, and the
 	// client sends the fetch arguments a real call would.
 	global.fetch = jest.fn(async (url: unknown, init: unknown) => {
 		captured.push({ url: String(url), init: init as RequestInit });
-		return new Response(body, {
-			status: options.status ?? 200,
-			headers: {
-				'Content-Type': options.contentType ?? 'text/xml; charset=utf-8',
-			},
-		});
+		const headers: Record<string, string> = {
+			'Content-Type': options.contentType ?? 'text/xml; charset=utf-8',
+		};
+		if (options.retryAfter !== undefined) {
+			headers['Retry-After'] = options.retryAfter;
+		}
+		return new Response(body, { status: options.status ?? 200, headers });
 	}) as typeof fetch;
 	return captured;
 }
@@ -209,7 +214,7 @@ describe('makeCodereadrRequest', () => {
 	});
 
 	it('keeps a Retry-After delay on the error it wraps', async () => {
-		mockFetch('', { status: 429 });
+		mockFetch('', { status: 429, retryAfter: '2' });
 		const error = await rejection<CodereadrAPIError>(
 			makeCodereadrRequest(API_KEY, {
 				section: 'limits',
@@ -219,6 +224,9 @@ describe('makeCodereadrRequest', () => {
 
 		expect(error.status).toBe(429);
 		expect(error.isRateLimit).toBe(true);
+		// The header has to survive the request layer, or the handler falls back
+		// to a full minute instead of the wait the server asked for.
+		expect(error.retryAfter).toBe(2_000);
 	});
 
 	it('refuses a 200 whose body has no success status', async () => {
@@ -296,6 +304,25 @@ describe('parseCodereadrXml', () => {
 			'<xml><status>1</status><note>a &amp; b &lt;c&gt; &quot;d&quot;</note></xml>',
 		);
 		expect(parsed?.note).toBe('a & b <c> "d"');
+	});
+
+	it('decodes a reference only once', () => {
+		// The provider escaped an ampersand into its own reference, so the
+		// correct value is the literal text `&amp;`, not `&`.
+		const parsed = parseCodereadrXml(
+			'<xml><status>1</status><note>&#38;amp;</note></xml>',
+		);
+		expect(parsed?.note).toBe('&amp;');
+	});
+
+	it('keeps a property whose name matches an inherited property', () => {
+		// `constructor` would otherwise look like a repeat of an inherited value
+		// and be dropped.
+		const parsed = parseCodereadrXml(
+			'<xml><status>1</status><properties><constructor>one</constructor></properties></xml>',
+		);
+		const properties = asRecord(parsed?.properties);
+		expect(properties.constructor).toBe('one');
 	});
 
 	it('skips a leading declaration', () => {

@@ -186,6 +186,37 @@ describe('retry behaviour', () => {
 		}
 	});
 
+	it('retries an HTTP 429 and honors its Retry-After delay', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient({
+			key: 'codereadr-test-key',
+		});
+		try {
+			// A gateway in front of the API answers 429 with a short wait. The
+			// handler must use that instead of its one minute fallback.
+			fetchMock.mockResolvedValueOnce(
+				new Response('', {
+					status: 429,
+					headers: { 'Retry-After': '2' },
+				}),
+			);
+			respondXml(LIMITS_XML);
+
+			const pending = corsair.codereadr.api.limits.retrieve({});
+			await Promise.resolve();
+			await Promise.resolve();
+			// Under the requested wait it has not retried yet.
+			await jest.advanceTimersByTimeAsync(1_000);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+
+			await jest.advanceTimersByTimeAsync(1_500);
+			await pending;
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('pins the no-header delay at the documented minute', async () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient({

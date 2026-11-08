@@ -154,10 +154,16 @@ export const CREATED_XML = `<?xml version="1.0" encoding="UTF-8"?>
 
 /** The error shape: HTTP 200 with `status` 0 and an `<error code>`. */
 export function errorXml(code: number, message: string): string {
+	// The message goes into element text, so the characters that would end the
+	// element or start a new one have to be escaped.
+	const escaped = message
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;');
 	return `<?xml version="1.0" encoding="UTF-8"?>
 <xml>
     <status>0</status>
-    <error code="${code}">${message}</error>
+    <error code="${code}">${escaped}</error>
 </xml>`;
 }
 

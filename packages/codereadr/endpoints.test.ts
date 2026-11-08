@@ -121,7 +121,31 @@ describe('scans.list', () => {
 			Outputs.scansList.parse(
 				shapeScans(shaped('<xml><status>1</status><scan>oops</scan></xml>')),
 			),
-		).toThrow();
+		).toThrow(/instead of fields/);
+	});
+
+	it('rejects a wrong-shaped list on the other list actions too', () => {
+		// Each shaper guards its own element, so a proxy page or a changed
+		// response cannot pass as a list of blank rows.
+		expect(() =>
+			Outputs.servicesList.parse(
+				shapeServices(
+					shaped('<xml><status>1</status><service>x</service></xml>'),
+				),
+			),
+		).toThrow(/instead of fields/);
+		expect(() =>
+			Outputs.databasesList.parse(
+				shapeDatabases(
+					shaped('<xml><status>1</status><database>x</database></xml>'),
+				),
+			),
+		).toThrow(/instead of fields/);
+		expect(() =>
+			Outputs.usersList.parse(
+				shapeUsers(shaped('<xml><status>1</status><user>x</user></xml>')),
+			),
+		).toThrow(/instead of fields/);
 	});
 
 	it('rejects a known field of the wrong type', () => {
@@ -182,6 +206,30 @@ describe('services', () => {
 	it('requires a validation method on create', () => {
 		expect(() => Inputs.servicesCreate.parse({ service_name: 'x' })).toThrow();
 	});
+
+	it('requires a database for a database validation method', () => {
+		expect(() =>
+			Inputs.servicesCreate.parse({ validation_method: 'database' }),
+		).toThrow(/database_id/);
+		expect(() =>
+			Inputs.servicesCreate.parse({ validation_method: 'ondevicedatabase' }),
+		).toThrow(/database_id/);
+	});
+
+	it('requires a postback URL for a postback service', () => {
+		expect(() =>
+			Inputs.servicesCreate.parse({ validation_method: 'postback' }),
+		).toThrow(/postback_url/);
+	});
+
+	it('accepts a database service with its database', () => {
+		expect(() =>
+			Inputs.servicesCreate.parse({
+				validation_method: 'database',
+				database_id: 757,
+			}),
+		).not.toThrow();
+	});
 });
 
 describe('databases', () => {
@@ -221,14 +269,34 @@ describe('databases', () => {
 		const values = Array.from({ length: 101 }, (_, index) => ({
 			value: `v${index}`,
 		}));
-		expect(() => Inputs.databasesUpsertValues.parse({ values })).toThrow();
+		expect(() =>
+			Inputs.databasesUpsertValues.parse({ database_id: 120, values }),
+		).toThrow();
 	});
 
 	it('accepts exactly 100 values', () => {
 		const values = Array.from({ length: 100 }, (_, index) => ({
 			value: `v${index}`,
 		}));
-		expect(() => Inputs.databasesUpsertValues.parse({ values })).not.toThrow();
+		expect(() =>
+			Inputs.databasesUpsertValues.parse({ database_id: 120, values }),
+		).not.toThrow();
+	});
+
+	it('rejects a bulk upsert value with no database to write to', () => {
+		// CodeREADr skips such a value and still answers success, so the write
+		// would look complete while dropping part of the batch.
+		expect(() =>
+			Inputs.databasesUpsertValues.parse({ values: [{ value: 'A1' }] }),
+		).toThrow(/database_id/);
+	});
+
+	it('accepts a per-value database when the request has none', () => {
+		expect(() =>
+			Inputs.databasesUpsertValues.parse({
+				values: [{ value: 'A1', database_id: 121 }],
+			}),
+		).not.toThrow();
 	});
 
 	it('requires at least one value', () => {
@@ -274,6 +342,18 @@ describe('users', () => {
 				password: 'b',
 				device_limit: -1,
 			}),
+		).not.toThrow();
+	});
+
+	it('requires a password for a username that is not an email', () => {
+		expect(() => Inputs.usersCreate.parse({ username: 'scanner' })).toThrow(
+			/password/,
+		);
+	});
+
+	it('allows an email username without a password, which sends an invitation', () => {
+		expect(() =>
+			Inputs.usersCreate.parse({ username: 'scanner@example.com' }),
 		).not.toThrow();
 	});
 });
