@@ -233,24 +233,25 @@ const EXPIRY_SKEW_MS = 60_000;
 
 /**
  * Resolves a usable token for the credentials, reusing a cached one until it is
- * close to expiry. The returned token is what the `accessToken` header carries;
- * the client pair never touches a resource request.
+ * close to expiry. Returns the token **and** its expiry, because the caller
+ * persists both: storing the token alone leaves the next process unable to tell
+ * a live token from an expired one.
  */
 export async function resolveLeigaToken(
 	clientId: string,
 	secretKey: string,
 	now: number = Date.now(),
-): Promise<string> {
+): Promise<LeigaTokenResponse> {
 	const key = `${clientId}\u0000${secretKey}`;
 	if (
 		tokenCache?.key === key &&
 		tokenCache.token.expiresAt - EXPIRY_SKEW_MS > now
 	) {
-		return tokenCache.token.accessToken;
+		return tokenCache.token;
 	}
 	const token = await requestLeigaToken(clientId, secretKey, now);
 	tokenCache = { token, key };
-	return token.accessToken;
+	return token;
 }
 
 /** Clears the cached token. Tests use it; a caller needs it only after an auth error. */

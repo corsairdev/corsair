@@ -2,21 +2,20 @@ import { AuthMissingError } from 'corsair/core';
 import { clearLeigaTokenCache, resolveLeigaToken } from './client';
 
 /**
- * The slice of the account key manager the token resolver needs. Declared
- * structurally because `get_integration_credentials` exists only on `oauth_2`
- * accounts, while Leiga stores its client pair on an `api_key` account. The
- * type is the same shape `zoominfo/auth.ts` uses for the same reason.
+ * The slice of the account key manager this resolver needs. Every field it
+ * reads is an **account**-level accessor from `leigaAuthConfig`, so it exists on
+ * the real `api_key` manager. Declared structurally so the tests can supply a
+ * fixture without a whole `AccountKeyManager`.
  */
 export type LeigaAuthContext = {
 	tenantId?: string;
 	keys: {
+		get_client_id: () => Promise<string | null | undefined>;
+		get_client_secret: () => Promise<string | null | undefined>;
 		get_access_token: () => Promise<string | null | undefined>;
 		get_expires_at: () => Promise<string | null | undefined>;
-		get_integration_credentials: () => Promise<{
-			[key: string]: string | null | undefined;
-		}>;
-		set_access_token: (value: string) => Promise<unknown>;
-		set_expires_at?: (value: string) => Promise<unknown>;
+		set_access_token: (value: string) => Promise<void>;
+		set_expires_at: (value: string) => Promise<void>;
 	};
 };
 
@@ -33,18 +32,21 @@ export function isStoredTokenUsable(
 	now: number = Date.now(),
 ): boolean {
 	if (!accessToken) return false;
-	// A token with no recorded expiry is taken at face value: Leiga's own
-	// examples use a 30-day token, and refusing it would force an exchange on
-	// every call for accounts that stored one by hand.
-	if (!expiresAt) return true;
+	// A token with no recorded expiry cannot be checked, and trusting it forever
+	// means sending an expired token until Leiga answers code 15. Treat it as
+	// stale so it is replaced on the next call.
+	if (!expiresAt) return false;
 	const expiry = Number(expiresAt);
-	if (!Number.isFinite(expiry)) return true;
+	if (!Number.isFinite(expiry)) return false;
 	return expiry - EXPIRY_SKEW_MS > now;
 }
 
 /**
  * Returns the `accessToken` header value for an account, minting a token from
  * the stored client pair only when the cached one is missing or stale.
+ *
+ * Both the token and its expiry are written back, so a later process can skip
+ * the exchange and still know when the token stops working.
  *
  * A pair that is not stored is a not-connected account, so this throws rather
  * than sending an empty header: Leiga answers an empty `accessToken` with
@@ -55,29 +57,34 @@ export async function resolveLeigaAccessToken(
 	ctx: LeigaAuthContext,
 	now: number = Date.now(),
 ): Promise<string> {
-	const [accessToken, expiresAt, credentials] = await Promise.all([
+	const [accessToken, expiresAt, clientId, clientSecret] = await Promise.all([
 		ctx.keys.get_access_token(),
 		ctx.keys.get_expires_at(),
-		ctx.keys.get_integration_credentials(),
+		ctx.keys.get_client_id(),
+		ctx.keys.get_client_secret(),
 	]);
 
 	if (isStoredTokenUsable(accessToken, expiresAt, now)) {
 		return accessToken as string;
 	}
 
-	const clientId = credentials.client_id;
-	const clientSecret = credentials.client_secret;
 	if (!clientId || !clientSecret) {
 		throw new AuthMissingError('leiga', 'api_key');
 	}
 
 	const token = await resolveLeigaToken(clientId, clientSecret, now);
-	// Persist so the next process can skip the exchange. A failed write is not
-	// fatal: this call already has a usable token, and the module cache holds it.
+	// Persist both halves. A failed write is not fatal: this call already has a
+	// usable token and the module cache holds it, but the expiry must be written
+	// or the next process would treat the token as permanently valid.
 	await Promise.resolve()
-		.then(() => ctx.keys.set_access_token(token))
+		.then(() =>
+			Promise.all([
+				ctx.keys.set_access_token(token.accessToken),
+				ctx.keys.set_expires_at(String(token.expiresAt)),
+			]),
+		)
 		.catch(() => undefined);
-	return token;
+	return token.accessToken;
 }
 
 /** Drops the in-memory token cache. Call it after a `15 accessToken error`. */

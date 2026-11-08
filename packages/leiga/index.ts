@@ -158,17 +158,24 @@ export const leigaEndpointSchemas = {
 const defaultAuthType: 'api_key' = 'api_key';
 
 /**
- * `client_id` and `client_secret` are integration-level fields: Leiga issues
- * them per app, not per user. The access token is the account credential.
+ * `client_id` and `client_secret` are **account** fields, not integration ones.
+ * The account key manager is what `keyBuilder` receives, and it only generates
+ * accessors for account-level fields: `get_integration_credentials` exists
+ * solely on `oauth_2` managers, so reading an integration-level pair through an
+ * `api_key` account would throw before any request was sent.
  *
- * `api_key` is the auth type because the token is what every resource call
- * sends. The exchange happens in the key builder, so a caller only stores the
- * pair once and never sees a token.
+ * `api_key` is the auth type because the minted token is what every resource
+ * call sends. The exchange happens in the key builder, so a caller stores the
+ * pair once and never handles a token.
  */
 export const leigaAuthConfig = {
 	api_key: {
-		integration: ['client_id', 'client_secret'] as const,
-		account: ['access_token', 'expires_at'] as const,
+		account: [
+			'client_id',
+			'client_secret',
+			'access_token',
+			'expires_at',
+		] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
