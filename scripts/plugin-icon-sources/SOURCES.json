@@ -45,6 +45,10 @@
     "from": "https://www.ayrshare.com/icon.svg",
     "note": "the brand site's own SVG icon"
   },
+  "benchmarkemail": {
+    "from": "https://media.brand.dev/5f000d94-75ec-47af-be6f-21b23f79161b.svg",
+    "note": "found with the context.dev Brand API for benchmarkemail.com"
+  },
   "bitbucket": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/bitbucket.svg"
   },

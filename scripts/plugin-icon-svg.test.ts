@@ -10,6 +10,7 @@ import {
 	analyzeInk,
 	darkVariantPng,
 	detectTrace,
+	inlineClassStyles,
 	needsDarkVariant,
 	normalizeSvg,
 	renderDifference,
@@ -255,6 +256,43 @@ test('normalizeSvg is not fooled by a root size with another aspect ratio', asyn
 	assert.ok(Math.abs(box[0]! - 10) < 0.2, `x ${box[0]}`);
 	assert.ok(Math.abs(box[1]! - 0) < 0.2, `y ${box[1]}`);
 	assert.ok(Math.abs(box[2]! - 40) < 0.2, `side ${box[2]}`);
+});
+
+test('inlineClassStyles turns simple class rules into attributes', () => {
+	const out = inlineClassStyles(
+		'<svg viewBox="0 0 4 4"><defs><style>.st0 { fill: #911180; }\n .st1, .st2 { fill: #3c247f; opacity: .5 }</style></defs>' +
+			'<path class="st0" d="M0 0h1v1z"/><path class="st1" fill="#000" d="M1 1h1v1z"/></svg>',
+	);
+	assert.ok(out);
+	assert.equal(out!.includes('<style'), false);
+	assert.equal(out!.includes('class='), false);
+	assert.ok(out!.includes('fill="#911180"'));
+	// The rule replaces the element's own fill.
+	assert.ok(
+		out!.includes('opacity=".5" fill="#3c247f"') ||
+			out!.includes('fill="#3c247f" opacity=".5"'),
+	);
+	assert.equal(out!.includes('fill="#000"'), false);
+	assert.equal(sanitizeSvg(out!).ok, true);
+});
+
+test('inlineClassStyles leaves files without a stylesheet alone and refuses complex ones', () => {
+	const plain = svg('<path d="M0 0h1v1z"/>');
+	assert.equal(inlineClassStyles(plain), plain);
+	for (const css of [
+		'@media (prefers-color-scheme: dark) { .a { fill: #fff } }',
+		'.a { fill: url(https://example.com/p.svg#g) }',
+		'path { fill: red }',
+		'.a { display: none }',
+	]) {
+		assert.equal(
+			inlineClassStyles(
+				svg(`<style>${css}</style><path class="a" d="M0 0h1v1z"/>`),
+			),
+			null,
+			css,
+		);
+	}
 });
 
 const CURATED_DIR = join(

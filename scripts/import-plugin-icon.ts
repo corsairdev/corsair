@@ -7,7 +7,12 @@
  * SOURCES.json with where it came from.
  *
  *   pnpm import:plugin-icon -- <id> <url-or-file> [--note="why this file"]
- *   pnpm import:plugin-icon -- --batch=<file.json>   # { "<id>": "<url-or-file>" }
+ *   pnpm import:plugin-icon -- <id> contextdev:<domain>
+ *   pnpm import:plugin-icon -- --batch=<file.json>   # { "<id>": "<source>" }
+ *
+ * `contextdev:<domain>` asks the context.dev Brand API (CONTEXT_DEV_API_KEY)
+ * for the brand's logos and takes its best square SVG icon; it lists the
+ * raster ones it skipped, so a better PNG can still go in as a URL override.
  *
  * Review every result at full size and at 26px before committing it.
  */
@@ -15,7 +20,12 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { detectTrace, normalizeSvg, sanitizeSvg } from './plugin-icon-svg.ts';
+import {
+	detectTrace,
+	inlineClassStyles,
+	normalizeSvg,
+	sanitizeSvg,
+} from './plugin-icon-svg.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SOURCES_DIR = join(__dirname, 'plugin-icon-sources');
@@ -32,9 +42,68 @@ async function load(from: string): Promise<string> {
 	return response.text();
 }
 
-async function importIcon(id: string, from: string): Promise<void> {
+type BrandLogo = {
+	url: string;
+	type: 'icon' | 'logo';
+	mode?: 'light' | 'dark' | 'has_opaque_background';
+	resolution?: { width: number; height: number; aspect_ratio: number };
+};
+
+const CONTEXT_DEV_BRAND = 'https://api.context.dev/v1/brand/retrieve';
+
+/**
+ * The brand's square icon as an SVG URL, from the context.dev Brand API.
+ * Light-mode icons come first: our icons are drawn for light surfaces and the
+ * fetch script derives the dark variant.
+ */
+async function contextDevIcon(domain: string): Promise<string> {
+	const key = process.env.CONTEXT_DEV_API_KEY;
+	if (!key) throw new Error('CONTEXT_DEV_API_KEY is not set');
+	const response = await fetch(CONTEXT_DEV_BRAND, {
+		method: 'POST',
+		headers: {
+			Authorization: `Bearer ${key}`,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ type: 'by_domain', domain }),
+	});
+	if (!response.ok) throw new Error(`context.dev HTTP ${response.status}`);
+	const { brand } = (await response.json()) as {
+		brand?: { logos?: BrandLogo[] };
+	};
+	const icons = (brand?.logos ?? []).filter(
+		(logo) =>
+			logo.type === 'icon' &&
+			Math.abs((logo.resolution?.aspect_ratio ?? 1) - 1) < 0.05,
+	);
+	const isSvg = (logo: BrandLogo) => /\.svg(\?|$)/i.test(logo.url);
+	const svg = icons
+		.filter(isSvg)
+		.sort((a, b) => Number(b.mode === 'light') - Number(a.mode === 'light'))[0];
+	const skipped = icons
+		.filter((logo) => !isSvg(logo))
+		.map((l) => `${l.resolution?.width ?? '?'}px ${l.mode ?? ''} ${l.url}`);
+	if (skipped.length > 0) {
+		console.log(
+			`[import-plugin-icon] ${domain} rasters: ${skipped.join(' | ')}`,
+		);
+	}
+	if (!svg) throw new Error(`context.dev has no square SVG icon for ${domain}`);
+	return svg.url;
+}
+
+async function importIcon(id: string, source: string): Promise<string> {
 	if (!/^[a-z0-9]+$/.test(id)) throw new Error(`bad plugin id "${id}"`);
-	const raw = await load(from);
+	const from = source.startsWith('contextdev:')
+		? await contextDevIcon(source.slice('contextdev:'.length))
+		: source;
+	const loaded = await load(from);
+	const raw = inlineClassStyles(loaded);
+	if (raw === null) {
+		throw new Error(
+			'its stylesheet is more than simple class rules; inline it by hand',
+		);
+	}
 	const trace = detectTrace(raw);
 	if (trace.traced) {
 		throw new Error(`looks traced (${trace.reasons.join('; ')})`);
@@ -44,6 +113,7 @@ async function importIcon(id: string, from: string): Promise<void> {
 	const clean = sanitizeSvg(await normalizeSvg(first.svg));
 	if (!clean.ok) throw new Error(clean.error);
 	writeFileSync(join(SOURCES_DIR, `${id}.svg`), clean.svg);
+	return from;
 }
 
 async function main(): Promise<void> {
@@ -72,9 +142,13 @@ async function main(): Promise<void> {
 	let failed = 0;
 	for (const [id, from] of jobs) {
 		try {
-			await importIcon(id, from);
-			records[id] = note ? { from, note } : { from };
-			console.log(`[import-plugin-icon] ${id} <- ${from}`);
+			const url = await importIcon(id, from);
+			const found = from.startsWith('contextdev:')
+				? `found with the context.dev Brand API for ${from.slice('contextdev:'.length)}`
+				: undefined;
+			const text = [found, note].filter(Boolean).join('; ');
+			records[id] = text ? { from: url, note: text } : { from: url };
+			console.log(`[import-plugin-icon] ${id} <- ${url}`);
 		} catch (error) {
 			failed++;
 			const message = error instanceof Error ? error.message : String(error);

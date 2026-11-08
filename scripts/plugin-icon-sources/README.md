@@ -9,10 +9,16 @@ no file here keeps a downloaded PNG.
 
 ```sh
 pnpm import:plugin-icon -- <id> <url-or-file> [--note="what you changed"]
+pnpm import:plugin-icon -- <id> contextdev:<domain>   # needs CONTEXT_DEV_API_KEY
 pnpm fetch:plugin-icons
 ```
 
-The import sanitizes the file, refuses traces, sets a square viewBox tight around
+`contextdev:<domain>` asks the context.dev Brand API for the brand's logos and
+takes its best square SVG icon; when it only has rasters it prints them, and a
+sharper one can go in as a URL override in `fetch-plugin-icons.ts`.
+
+The import inlines a simple class stylesheet (`.st0 { fill: … }`), sanitizes
+the file, refuses traces, sets a square viewBox tight around
 the mark, drops the fixed size and comments, and records the source in
 `SOURCES.json`. Edit the result by hand when needed (remove a wordmark or a ®,
 inline a stylesheet, fix a colour) and say what you changed in `note`.
@@ -29,7 +35,8 @@ picker), next to the brand's own site icon:
 - No white background square: it shows as a white box on dark surfaces.
 
 Good sources, best first: the brand's own SVG (press kit, the site's
-`favicon.svg` or `icon.svg`), [svgl](https://svgl.app), the drawn files in
+`favicon.svg` or `icon.svg`), the context.dev Brand API, which finds the
+brand's own files, [svgl](https://svgl.app), the drawn files in
 Composio's [logo-cdn](https://github.com/ComposioHQ/logo-cdn), and
 [Simple Icons](https://simpleicons.org) for single-colour marks. Sites that only
 serve a placeholder favicon (create-next-app's triangle, a parked-domain icon, a
@@ -43,6 +50,8 @@ plugins connect to. The files here were cleaned up from:
 - Composio logo-cdn, MIT, Copyright (c) 2025 Composio (licence below).
 - svgl, MIT, Copyright (c) 2022 Pablo Hdez.
 - Simple Icons, CC0 1.0.
+- The context.dev Brand API, whose terms license its output for any lawful use
+  (the logos stay their owners').
 - The brands' own sites and Wikimedia Commons, as listed in `SOURCES.json`.
 
 <details>

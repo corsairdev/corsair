@@ -377,3 +377,77 @@ export async function normalizeSvg(svg: string): Promise<string> {
 		.replace(/\n\s*\n/g, '\n')
 		.trim()}\n`;
 }
+
+/** Presentation properties a class rule may set when it is inlined. */
+const INLINABLE_PROPERTIES = new Set([
+	'fill',
+	'fill-opacity',
+	'fill-rule',
+	'clip-rule',
+	'stroke',
+	'stroke-width',
+	'stroke-linecap',
+	'stroke-linejoin',
+	'stroke-miterlimit',
+	'stroke-opacity',
+	'opacity',
+]);
+
+/**
+ * Turn an SVG's simple class stylesheet into presentation attributes, the way
+ * Illustrator exports often look (`.st0 { fill: #3c247f; }` and
+ * `class="st0"`). Returns the SVG unchanged when it has no `<style>`, and
+ * null when the stylesheet holds anything but single-class rules setting the
+ * properties above (media queries, imports, URLs, other selectors): those
+ * need a person to look at.
+ */
+export function inlineClassStyles(svg: string): string | null {
+	const styles = [...svg.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)];
+	if (styles.length === 0) return svg;
+	const rules = new Map<string, Array<[string, string]>>();
+	for (const [, css] of styles) {
+		const body = css!.replace(/\/\*[\s\S]*?\*\//g, '').trim();
+		if (/[@\\]|url\(/i.test(body)) return null;
+		for (const rule of body.split('}')) {
+			if (!rule.trim()) continue;
+			const [selectors, declarations] = rule.split('{');
+			if (declarations === undefined) return null;
+			const props: Array<[string, string]> = [];
+			for (const declaration of declarations.split(';')) {
+				if (!declaration.trim()) continue;
+				const [name, ...rest] = declaration.split(':');
+				const prop = name!.trim().toLowerCase();
+				const value = rest.join(':').trim();
+				if (
+					!INLINABLE_PROPERTIES.has(prop) ||
+					!/^[#\w.%\s(),-]+$/.test(value)
+				) {
+					return null;
+				}
+				props.push([prop, value]);
+			}
+			for (const selector of selectors!.split(',')) {
+				const name = selector.trim().match(/^\.([\w-]+)$/)?.[1];
+				if (!name) return null;
+				rules.set(name, [...(rules.get(name) ?? []), ...props]);
+			}
+		}
+	}
+	return svg
+		.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+		.replace(/<defs>\s*<\/defs>/g, '')
+		.replace(
+			/<([a-zA-Z]+)\b([^>]*?)\sclass="([^"]*)"([^>]*)>/g,
+			(_m, tag, before, classes, after) => {
+				let attrs = `${before}${after}`;
+				for (const name of String(classes).split(/\s+/)) {
+					for (const [prop, value] of rules.get(name) ?? []) {
+						// A stylesheet rule beats a presentation attribute, so it replaces one.
+						attrs = attrs.replace(new RegExp(`\\s${prop}="[^"]*"`), '');
+						attrs = attrs.replace(/\s*(\/?)$/, ` ${prop}="${value}"$1`);
+					}
+				}
+				return `<${tag}${attrs}>`;
+			},
+		);
+}

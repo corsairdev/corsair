@@ -164,6 +164,11 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 		'https://www.postman.com/_mk-www-next/icons/android-chrome-512x512.png',
 	recallai:
 		'https://cdn.prod.website-files.com/620d732b1f1f7b244ac89f0e/620d732c1f1f7ba1edc89f35_Favicon%20256.png',
+	// The site only has a 32px favicon; the context.dev Brand API has the same
+	// mark at 144px.
+	classmarker:
+		'https://media.brand.dev/90bbd6a6-80a8-44fc-ba31-fbad0b3a875f.png',
+	waboxapp: 'https://media.brand.dev/c94b6487-73cb-4185-8ed1-27d6a2e0c3b0.png',
 	zoom: 'https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/fc/d0/96/fcd09664-56c3-f856-4311-da9dcbae1fd2/AppIcon-0-0-1x_U007epad-0-1-0-0-85-220.png/512x512bb.png',
 	// twenty-icons has an old blue and green mark; typesafe.ai's apple touch icon
 	// is the current black knot on pink.
