@@ -1,0 +1,1452 @@
+[
+  {
+    "package": "@corsair-dev/todoist",
+    "dir": "packages/todoist",
+    "name": "Todoist",
+    "version": null,
+    "date": "2026-10-09",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1852,
+        "title": "Use v1 tasks/quick path for quickAdd"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-09",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1866,
+        "title": "Db table naming"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-09",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1860,
+        "title": "Ignore malformed connect request payloads"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/gemini",
+    "dir": "packages/gemini",
+    "name": "Gemini",
+    "version": null,
+    "date": "2026-10-10",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1750,
+        "title": "Preserve Gemini multipart content"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-11",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1890,
+        "title": "Pin the instance on every hub call"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/ambee",
+    "dir": "packages/ambee",
+    "name": "Ambee",
+    "version": null,
+    "date": "2026-10-12",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1886,
+        "title": "Treat a zoneless ISO timestamp as UTC"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/dropbox",
+    "dir": "packages/dropbox",
+    "name": "Dropbox",
+    "version": null,
+    "date": "2026-10-12",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1885,
+        "title": "Clean up folder row on files.delete"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/github",
+    "dir": "packages/github",
+    "name": "GitHub",
+    "version": null,
+    "date": "2026-10-12",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1883,
+        "title": "Convert write request body keys to snake_case"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/jira",
+    "dir": "packages/jira",
+    "name": "Jira",
+    "version": null,
+    "date": "2026-10-12",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1882,
+        "title": "Correct search pagination and synced creation dates"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/firecrawl",
+    "dir": "packages/firecrawl",
+    "name": "Firecrawl",
+    "version": null,
+    "date": "2026-10-13",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1897,
+        "title": "Add managed pricing auth type"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-13",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1897,
+        "title": "Add managed pricing auth type"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-14",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1898,
+        "title": "Set the permission mode per call, not per plugin"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-14",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1894,
+        "title": "Typed client for the Corsair Cloud management API"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-15",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1899,
+        "title": "One mode and one admin line per link"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/akta",
+    "dir": "packages/akta",
+    "name": "Akta",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/alibaba",
+    "dir": "packages/alibaba",
+    "name": "Alibaba Cloud Model Studio",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/anthropicadministrator",
+    "dir": "packages/anthropicadministrator",
+    "name": "Anthropic Admin",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1430,
+        "title": "Add DB persistence and typed responses"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/apollo",
+    "dir": "packages/apollo",
+    "name": "Apollo.io",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/benzinga",
+    "dir": "packages/benzinga",
+    "name": "Benzinga",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/blackbaud",
+    "dir": "packages/blackbaud",
+    "name": "Blackbaud",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/builtwith",
+    "dir": "packages/builtwith",
+    "name": "BuiltWith",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/bytedance",
+    "dir": "packages/bytedance",
+    "name": "ByteDance",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/callingly",
+    "dir": "packages/callingly",
+    "name": "Callingly",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/callpage",
+    "dir": "packages/callpage",
+    "name": "CallPage",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/celigo",
+    "dir": "packages/celigo",
+    "name": "Celigo",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/chatwork",
+    "dir": "packages/chatwork",
+    "name": "Chatwork",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/claidai",
+    "dir": "packages/claidai",
+    "name": "Claid.ai",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/clay",
+    "dir": "packages/clay",
+    "name": "Clay",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/clicksend",
+    "dir": "packages/clicksend",
+    "name": "ClickSend",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/clickup",
+    "dir": "packages/clickup",
+    "name": "ClickUp",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/cloro",
+    "dir": "packages/cloro",
+    "name": "cloro",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/close",
+    "dir": "packages/close",
+    "name": "Close",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/coda",
+    "dir": "packages/coda",
+    "name": "Coda",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/codeinterpreter",
+    "dir": "packages/codeinterpreter",
+    "name": "Code Interpreter",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/coinmarketcal",
+    "dir": "packages/coinmarketcal",
+    "name": "CoinMarketCal",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/composio",
+    "dir": "packages/composio",
+    "name": "Composio",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/contactout",
+    "dir": "packages/contactout",
+    "name": "ContactOut",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/contextdev",
+    "dir": "packages/contextdev",
+    "name": "Context.dev",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/convex",
+    "dir": "packages/convex",
+    "name": "Convex",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/cuttly",
+    "dir": "packages/cuttly",
+    "name": "Cutt.ly",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/daffy",
+    "dir": "packages/daffy",
+    "name": "Daffy",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/dataforseo",
+    "dir": "packages/dataforseo",
+    "name": "DataForSEO",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/docmosis",
+    "dir": "packages/docmosis",
+    "name": "Docmosis",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/docsumo",
+    "dir": "packages/docsumo",
+    "name": "Docsumo",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/docusign",
+    "dir": "packages/docusign",
+    "name": "DocuSign",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/fixer",
+    "dir": "packages/fixer",
+    "name": "Fixer",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/fundable",
+    "dir": "packages/fundable",
+    "name": "Fundable",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/hunterio",
+    "dir": "packages/hunterio",
+    "name": "Hunter.io",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/keenable",
+    "dir": "packages/keenable",
+    "name": "Keenable",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/kling",
+    "dir": "packages/kling",
+    "name": "Kling",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/litescrape",
+    "dir": "packages/litescrape",
+    "name": "LiteScrape",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/magichour",
+    "dir": "packages/magichour",
+    "name": "Magic Hour",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/minimax",
+    "dir": "packages/minimax",
+    "name": "MiniMax",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/mrscraper",
+    "dir": "packages/mrscraper",
+    "name": "MrScraper",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/octen",
+    "dir": "packages/octen",
+    "name": "Octen",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/orbit",
+    "dir": "packages/orbit",
+    "name": "Orbit",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/pdl",
+    "dir": "packages/pdl",
+    "name": "People Data Labs",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/ploid",
+    "dir": "packages/ploid",
+    "name": "Ploid",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/remoet",
+    "dir": "packages/remoet",
+    "name": "Remoet",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/revai",
+    "dir": "packages/revai",
+    "name": "Rev AI",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/saperly",
+    "dir": "packages/saperly",
+    "name": "Saperly",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/search1api",
+    "dir": "packages/search1api",
+    "name": "Search1API",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/starton",
+    "dir": "packages/starton",
+    "name": "Starton",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/surf",
+    "dir": "packages/surf",
+    "name": "Surf",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/suzanne",
+    "dir": "packages/suzanne",
+    "name": "Suzanne",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/tinyfish",
+    "dir": "packages/tinyfish",
+    "name": "TinyFish",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/tinypng",
+    "dir": "packages/tinypng",
+    "name": "TinyPNG",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/turso",
+    "dir": "packages/turso",
+    "name": "Turso",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/updownio",
+    "dir": "packages/updownio",
+    "name": "Updown.io",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/vaquill",
+    "dir": "packages/vaquill",
+    "name": "Vaquill",
+    "version": null,
+    "date": "2026-10-19",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/coassemble",
+    "dir": "packages/coassemble",
+    "name": "Coassemble",
+    "version": null,
+    "date": "2026-10-22",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/spotify",
+    "dir": "packages/spotify",
+    "name": "Spotify",
+    "version": null,
+    "date": "2026-10-22",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1850,
+        "title": "Use current user playlists endpoint"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/discord",
+    "dir": "packages/discord",
+    "name": "Discord",
+    "version": null,
+    "date": "2026-10-24",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1942,
+        "title": "Buttons, select menus and allowed_mentions on messages"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/gmail",
+    "dir": "packages/gmail",
+    "name": "Gmail",
+    "version": null,
+    "date": "2026-10-24",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1941,
+        "title": "Send metadataHeaders and labelIds as repeated parameters"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/reducto",
+    "dir": "packages/reducto",
+    "name": "Reducto",
+    "version": null,
+    "date": "2026-10-26",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1965,
+        "title": "Accept null chart_data and ocr in parse results"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-27",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1981,
+        "title": "Encrypt data at rest"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-28",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1972,
+        "title": "Sign the cloud runtime's key requests"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/unipile",
+    "dir": "packages/unipile",
+    "name": "Unipile",
+    "version": null,
+    "date": "2026-10-29",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/anyapi",
+    "dir": "packages/anyapi",
+    "name": "AnyAPI",
+    "version": null,
+    "date": "2026-10-30",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/excel",
+    "dir": "packages/excel",
+    "name": "Excel",
+    "version": null,
+    "date": "2026-10-30",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/gmicloud",
+    "dir": "packages/gmicloud",
+    "name": "GMI Cloud",
+    "version": null,
+    "date": "2026-10-30",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/instantly",
+    "dir": "packages/instantly",
+    "name": "Instantly",
+    "version": null,
+    "date": "2026-10-30",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/tikhub",
+    "dir": "packages/tikhub",
+    "name": "TikHub",
+    "version": null,
+    "date": "2026-10-30",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/typesafe",
+    "dir": "packages/typesafe",
+    "name": "TypeSafe",
+    "version": null,
+    "date": "2026-10-30",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-30",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1964,
+        "title": "Charge every managed call"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-31",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2016,
+        "title": "Give back a call whose answer says it failed"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-31",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1973,
+        "title": "Send a job's cap and id, report its start and reads"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-31",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1971,
+        "title": "Report what a per-unit call used"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-10-31",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 1970,
+        "title": "Report failed managed calls so Hub refunds them"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/bonsai",
+    "dir": "packages/bonsai",
+    "name": "Bonsai",
+    "version": null,
+    "date": "2026-11-02",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2019,
+        "title": "Accept key:secret in the API key field"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/chaser",
+    "dir": "packages/chaser",
+    "name": "Chaser",
+    "version": null,
+    "date": "2026-11-02",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2020,
+        "title": "Accept key:secret in the API key field"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/dataforseo",
+    "dir": "packages/dataforseo",
+    "name": "DataForSEO",
+    "version": null,
+    "date": "2026-11-02",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2018,
+        "title": "Accept login:password in the API key field"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/vestaboard",
+    "dir": "packages/vestaboard",
+    "name": "Vestaboard",
+    "version": null,
+    "date": "2026-11-02",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2021,
+        "title": "Accept key:secret in the API key field"
+      }
+    ]
+  },
+  {
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": null,
+    "date": "2026-11-02",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2022,
+        "title": "Give back a call whose answer list came back empty"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/replicate",
+    "dir": "packages/replicate",
+    "name": "Replicate",
+    "version": null,
+    "date": "2026-11-03",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2054,
+        "title": "Declare the jobs its predictions and trainings start"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/browseruse",
+    "dir": "packages/browseruse",
+    "name": "Browser Use",
+    "version": null,
+    "date": "2026-11-04",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/agentql",
+    "dir": "packages/agentql",
+    "name": "AgentQL",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1877,
+        "title": "Stabilize cache keys across parameter order"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/dnsfilter",
+    "dir": "packages/dnsfilter",
+    "name": "DNSFilter",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/esputnik",
+    "dir": "packages/esputnik",
+    "name": "eSputnik",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/figma",
+    "dir": "packages/figma",
+    "name": "Figma",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1887,
+        "title": "Delete local comment row on comments.delete"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/finerworks",
+    "dir": "packages/finerworks",
+    "name": "FinerWorks",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/gitlab",
+    "dir": "packages/gitlab",
+    "name": "GitLab",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1893,
+        "title": "Clean up local records after deletion"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/googlesheets",
+    "dir": "packages/googlesheets",
+    "name": "Google Sheets",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1896,
+        "title": "Persist appendRow via updates.updatedRange"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/lever",
+    "dir": "packages/lever",
+    "name": "Lever",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/reddit",
+    "dir": "packages/reddit",
+    "name": "Reddit",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1848,
+        "title": "Return null post in getComments when the post is missing"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/render",
+    "dir": "packages/render",
+    "name": "Render",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/todoist",
+    "dir": "packages/todoist",
+    "name": "Todoist",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1849,
+        "title": "Send tasks.move to the move route"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/trello",
+    "dir": "packages/trello",
+    "name": "Trello",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1892,
+        "title": "Delete local card and boards"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/turbotpipes",
+    "dir": "packages/turbotpipes",
+    "name": "Turbot Pipes",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/woodpeckerco",
+    "dir": "packages/woodpeckerco",
+    "name": "Woodpecker Co",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/workable",
+    "dir": "packages/workable",
+    "name": "Workable",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/zohodesk",
+    "dir": "packages/zohodesk",
+    "name": "Zoho Desk",
+    "version": null,
+    "date": "2026-11-05",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/codacy",
+    "dir": "packages/codacy",
+    "name": "Codacy",
+    "version": null,
+    "date": "2026-11-06",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/emailoctopus",
+    "dir": "packages/emailoctopus",
+    "name": "EmailOctopus",
+    "version": null,
+    "date": "2026-11-06",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/enginemailer",
+    "dir": "packages/enginemailer",
+    "name": "Enginemailer",
+    "version": null,
+    "date": "2026-11-06",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/enigma",
+    "dir": "packages/enigma",
+    "name": "Enigma",
+    "version": null,
+    "date": "2026-11-06",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/esignatures",
+    "dir": "packages/esignatures",
+    "name": "eSignatures",
+    "version": null,
+    "date": "2026-11-06",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/gumroad",
+    "dir": "packages/gumroad",
+    "name": "Gumroad",
+    "version": null,
+    "date": "2026-11-06",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/mem0",
+    "dir": "packages/mem0",
+    "name": "Mem0",
+    "version": null,
+    "date": "2026-11-06",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/netsuite",
+    "dir": "packages/netsuite",
+    "name": "NetSuite",
+    "version": null,
+    "date": "2026-11-06",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/qdrant",
+    "dir": "packages/qdrant",
+    "name": "Qdrant",
+    "version": null,
+    "date": "2026-11-06",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/recallai",
+    "dir": "packages/recallai",
+    "name": "Recall.ai",
+    "version": null,
+    "date": "2026-11-06",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/retellai",
+    "dir": "packages/retellai",
+    "name": "Retell AI",
+    "version": null,
+    "date": "2026-11-06",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/snowflake",
+    "dir": "packages/snowflake",
+    "name": "Snowflake",
+    "version": null,
+    "date": "2026-11-06",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/ticketmaster",
+    "dir": "packages/ticketmaster",
+    "name": "Ticketmaster",
+    "version": null,
+    "date": "2026-11-06",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/fal",
+    "dir": "packages/fal",
+    "name": "fal",
+    "version": null,
+    "date": "2026-11-07",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/followupboss",
+    "dir": "packages/followupboss",
+    "name": "Follow Up Boss",
+    "version": null,
+    "date": "2026-11-07",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/gmail",
+    "dir": "packages/gmail",
+    "name": "Gmail",
+    "version": null,
+    "date": "2026-11-07",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 1993,
+        "title": "Keep stored messages and labels when listing"
+      }
+    ]
+  },
+  {
+    "package": "@corsair-dev/salesflare",
+    "dir": "packages/salesflare",
+    "name": "Salesflare",
+    "version": null,
+    "date": "2026-11-07",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/timely",
+    "dir": "packages/timely",
+    "name": "Timely",
+    "version": null,
+    "date": "2026-11-07",
+    "isNew": true,
+    "changes": []
+  }
+]
