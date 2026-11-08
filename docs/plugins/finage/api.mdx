@@ -1,0 +1,3332 @@
+---
+title: API
+description: "API reference for Finage: every `finage.api.*` operation with input and output types."
+---
+
+Every `finage.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Market
+
+### convertCrypto
+
+`market.convertCrypto`
+
+Convert an amount between two cryptocurrencies
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.convertCrypto({ from: 'BTC', to: 'ETH', amount: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `value` | `number` | Yes | — |
+| `timestamp` | `number` | Yes | — |
+
+
+
+---
+
+### convertCurrency
+
+`market.convertCurrency`
+
+Convert an amount between two fiat currencies
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.convertCurrency({ from: 'GBP', to: 'USD', amount: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `amount` | `number` | Yes | — |
+| `value` | `number` | Yes | — |
+| `timestamp` | `number` | Yes | — |
+
+
+
+---
+
+### getBalanceSheetStatements
+
+`market.getBalanceSheetStatements`
+
+Retrieve a company balance sheet
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getBalanceSheetStatements({ symbol: 'AAPL', limit: 5, period: 'annual' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `period` | `annual \| quarter` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  date: string,
+  period: string,
+  fillingDate?: string | null,
+  filingDate?: string | null,
+  acceptedDate?: string | null,
+  link?: string | null,
+  finalLink?: string | null,
+  cashAndCashEquivalents?: number | null,
+  shortTermInvestments?: number | null,
+  cashAndShortTermInvestments?: number | null,
+  netReceivables?: number | null,
+  inventory?: number | null,
+  otherCurrentAssets?: number | null,
+  totalCurrentAssets?: number | null,
+  propertyPlantEquipmentNet?: number | null,
+  goodwill?: number | null,
+  intangibleAssets?: number | null,
+  goodwillAndIntangibleAssets?: number | null,
+  doubleTermInvestments?: number | null,
+  taxAssets?: number | null,
+  otherNonCurrentAssets?: number | null,
+  totalNonCurrentAssets?: number | null,
+  otherAssets?: number | null,
+  longTermInvestments?: number | null,
+  totalAssets?: number | null,
+  accountPayables?: number | null,
+  shortTermDebt?: number | null,
+  taxPayables?: number | null,
+  deferredRevenue?: number | null,
+  otherCurrentLiabilities?: number | null,
+  totalCurrentLiabilities?: number | null,
+  longTermDebt?: number | null,
+  doubleTermDebt?: number | null,
+  deferredRevenueNonCurrent?: number | null,
+  deferredTaxLiabilitiesNonCurrent?: number | null,
+  otherNonCurrentLiabilities?: number | null,
+  totalNonCurrentLiabilities?: number | null,
+  otherLiabilities?: number | null,
+  totalLiabilities?: number | null,
+  commonStock?: number | null,
+  retainedEarnings?: number | null,
+  accumulatedOtherComprehensiveIncomeLoss?: number | null,
+  othertotalStockholdersEquity?: number | null,
+  totalStockholdersEquity?: number | null,
+  totalLiabilitiesAndStockholdersEquity?: number | null,
+  totalInvestments?: number | null,
+  totalDebt?: number | null,
+  netDebt?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getBondsRate
+
+`market.getBondsRate`
+
+Retrieve the latest US bond rate for a symbol
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getBondsRate({ symbol: 'DGS1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `value` | `number` | Yes | — |
+| `date` | `string` | Yes | — |
+
+
+
+---
+
+### getCanadaMarketAggregates
+
+`market.getCanadaMarketAggregates`
+
+Retrieve Canadian stock aggregates
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCanadaMarketAggregates({ symbol: 'BB', time: '1day', from: '2025-01-01', to: '2025-02-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `time` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `date_format` | `dt \| ts` | No | — |
+| `dbt_filter` | `boolean` | No | — |
+| `st` | `string` | No | — |
+| `et` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number | string,
+  h: number | string,
+  l: number | string,
+  c: number | string,
+  v?: number | string,
+  t: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCanadaMarketLastPrice
+
+`market.getCanadaMarketLastPrice`
+
+Retrieve the latest Canadian stock price
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCanadaMarketLastPrice({ symbol: 'TBP' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `price` | `number` | Yes | — |
+| `timestamp` | `number \| string` | Yes | — |
+
+
+
+---
+
+### getCashFlowStatements
+
+`market.getCashFlowStatements`
+
+Retrieve a company cash flow statement
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCashFlowStatements({ symbol: 'AAPL', limit: 5, period: 'annual' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `period` | `annual \| quarter` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  date: string,
+  period: string,
+  fillingDate?: string | null,
+  filingDate?: string | null,
+  acceptedDate?: string | null,
+  link?: string | null,
+  finalLink?: string | null,
+  netIncome?: number | null,
+  depreciationAndAmortization?: number | null,
+  deferredIncomeTax?: number | null,
+  stockBasedCompensation?: number | null,
+  changeInWorkingCapital?: number | null,
+  accountsReceivables?: number | null,
+  inventory?: number | null,
+  accountsPayables?: number | null,
+  otherWorkingCapital?: number | null,
+  otherNonCashItems?: number | null,
+  netCashProvidedByOperatingActivities?: number | null,
+  investmentsInPropertyPlantAndEquipment?: number | null,
+  acquisitionsNet?: number | null,
+  purchasesOfInvestments?: number | null,
+  salesMaturitiesOfInvestments?: number | null,
+  otherInvestingActivites?: number | null,
+  netCashUsedForInvestingActivites?: number | null,
+  debtRepayment?: number | null,
+  commonStockIssued?: number | null,
+  commonStockRepurchased?: number | null,
+  dividendsPaid?: number | null,
+  otherFinancingActivites?: number | null,
+  netCashUsedProvidedByFinancingActivities?: number | null,
+  effectOfForexChangesOnCash?: number | null,
+  netChangeInCash?: number | null,
+  cashAtEndOfPeriod?: number | null,
+  cashAtBeginningOfPeriod?: number | null,
+  operatingCashFlow?: number | null,
+  capitalExpenditure?: number | null,
+  freeCashFlow?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCfdEtfLastPrice
+
+`market.getCfdEtfLastPrice`
+
+Retrieve the latest ETF price
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCfdEtfLastPrice({ symbol: 'QQQ' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `price` | `number` | Yes | — |
+| `timestamp` | `number \| string` | Yes | — |
+
+
+
+---
+
+### getCfdEtfMarketAggregates
+
+`market.getCfdEtfMarketAggregates`
+
+Retrieve historical ETF aggregates
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCfdEtfMarketAggregates({ symbol: 'QQQ', time: '1day', from: '2025-01-01', to: '2025-02-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `time` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `date_format` | `dt \| ts` | No | — |
+| `dbt_filter` | `boolean` | No | — |
+| `st` | `string` | No | — |
+| `et` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number | string,
+  h: number | string,
+  l: number | string,
+  c: number | string,
+  v?: number | string,
+  t: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCfdEtfPreviousClose
+
+`market.getCfdEtfPreviousClose`
+
+Retrieve the previous ETF close
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCfdEtfPreviousClose({ symbol: 'QQQ' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number | string,
+  h: number | string,
+  l: number | string,
+  c: number | string,
+  v?: number | string,
+  t: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCfdIndexLastPrice
+
+`market.getCfdIndexLastPrice`
+
+Retrieve the latest index price
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCfdIndexLastPrice({ symbol: 'US2000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `price` | `number` | Yes | — |
+| `timestamp` | `number \| string` | Yes | — |
+
+
+
+---
+
+### getCfdIndexMarketAggregates
+
+`market.getCfdIndexMarketAggregates`
+
+Retrieve historical index aggregates
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCfdIndexMarketAggregates({ symbol: 'US2000', time: '1day', from: '2025-01-01', to: '2025-02-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `time` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `date_format` | `dt \| ts` | No | — |
+| `dbt_filter` | `boolean` | No | — |
+| `st` | `string` | No | — |
+| `et` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number | string,
+  h: number | string,
+  l: number | string,
+  c: number | string,
+  v?: number | string,
+  t: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCfdIndexPreviousClose
+
+`market.getCfdIndexPreviousClose`
+
+Retrieve the previous index close
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCfdIndexPreviousClose({ symbol: 'US2000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number | string,
+  h: number | string,
+  l: number | string,
+  c: number | string,
+  v?: number | string,
+  t: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCountryDetail
+
+`market.getCountryDetail`
+
+Retrieve country details used in market data
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCountryDetail({ country: 'gb' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  country: string,
+  country_code: string,
+  currency: string,
+  currency_code: string,
+  phone_code: string,
+  country_flag: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCryptoAggregates
+
+`market.getCryptoAggregates`
+
+Retrieve historical cryptocurrency aggregates
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCryptoAggregates({ symbol: 'BTCUSD', multiply: 1, time: 'day', from: '2025-01-01', to: '2025-02-01', limit: 100, sort: 'desc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `multiply` | `number` | Yes | — |
+| `time` | `minute \| hour \| day \| week \| month \| quarter \| year` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `sort` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number,
+  h: number,
+  l: number,
+  c: number,
+  v?: number,
+  t: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCryptoDetail
+
+`market.getCryptoDetail`
+
+Retrieve fundamental details for a cryptocurrency
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCryptoDetail({ symbol: 'bitcoin' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `symbol` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `isActive` | `boolean` | Yes | — |
+| `description` | `string` | No | — |
+| `developers` | `object[]` | No | — |
+| `opensource` | `boolean` | No | — |
+| `startedAt` | `string` | No | — |
+| `hashAlgorithm` | `string` | No | — |
+| `links` | `object` | No | — |
+| `thumbnail` | `string` | No | — |
+| `developmentStatus` | `string` | No | — |
+| `hardwareWallet` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="developers full type">
+
+```ts
+{
+  name: string,
+  position: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  explorer?: string[],
+  facebook?: string[],
+  reddit?: string[],
+  source_code?: string[],
+  website?: string[],
+  youtube?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCryptoDetailed
+
+`market.getCryptoDetailed`
+
+Retrieve detailed data for the latest cryptocurrency market state
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCryptoDetailed({ symbol: 'BTCUSD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  name: string,
+  price: number,
+  changesPercentage: number,
+  change: number,
+  high: number,
+  open: number,
+  low: number,
+  close: number,
+  yearHigh: number,
+  yearLow: number,
+  marketCap: number,
+  priceAvg50: number,
+  priceAvg200: number,
+  volume: number,
+  avgVolume: number,
+  exchange: string,
+  sharesOutstanding: number,
+  timestamp: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCryptoLastQuote
+
+`market.getCryptoLastQuote`
+
+Retrieve the latest cryptocurrency quote
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCryptoLastQuote({ symbol: 'BTCUSD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `ask` | `number` | Yes | — |
+| `bid` | `number` | Yes | — |
+| `asize` | `number` | No | — |
+| `bsize` | `number` | No | — |
+| `timestamp` | `number` | Yes | — |
+
+
+
+---
+
+### getCryptoLastTrade
+
+`market.getCryptoLastTrade`
+
+Retrieve the latest cryptocurrency trade
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCryptoLastTrade({ symbol: 'BTCUSD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `price` | `number` | Yes | — |
+| `size` | `number` | No | — |
+| `timestamp` | `number` | Yes | — |
+
+
+
+---
+
+### getCryptoNews
+
+`market.getCryptoNews`
+
+Retrieve news for a cryptocurrency
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCryptoNews({ symbol: 'BTC', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `news` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="news full type">
+
+```ts
+{
+  source: string,
+  title: string,
+  description: string,
+  url: string,
+  date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCryptoPreviousClose
+
+`market.getCryptoPreviousClose`
+
+Retrieve the previous cryptocurrency close
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCryptoPreviousClose({ symbol: 'BTCUSD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number,
+  h: number,
+  l: number,
+  c: number,
+  v?: number,
+  t: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCryptoSnapshot
+
+`market.getCryptoSnapshot`
+
+Retrieve a snapshot of cryptocurrency market data
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCryptoSnapshot({ quotes: true, trades: true, symbols: 'BTCUSD,ETHUSD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quotes` | `boolean` | Yes | — |
+| `trades` | `boolean` | Yes | — |
+| `symbols` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalResults` | `number` | No | — |
+| `lastQuotes` | `object[]` | No | — |
+| `lastTrades` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="lastQuotes full type">
+
+```ts
+{
+  s?: string,
+  symbol?: string,
+  a?: number,
+  b?: number,
+  asz?: number,
+  bsz?: number,
+  t?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="lastTrades full type">
+
+```ts
+{
+  s?: string,
+  symbol?: string,
+  p?: number,
+  price?: number,
+  sz?: number,
+  t?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCurrencyDetail
+
+`market.getCurrencyDetail`
+
+Retrieve fundamental details for a currency
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getCurrencyDetail({ symbol: 'GBPUSD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  from: string,
+  to: string,
+  from_flag: string,
+  to_flag: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDelistedCompanies
+
+`market.getDelistedCompanies`
+
+List delisted companies
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getDelistedCompanies({ limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  company_name: string,
+  exchange: string,
+  ipo_date: string,
+  delisted_date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDividendsCalendar
+
+`market.getDividendsCalendar`
+
+Retrieve the dividend calendar
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getDividendsCalendar({ from: '2025-01-01', to: '2025-12-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  label: string,
+  adj_dividend: number,
+  date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getEarningsCalendar
+
+`market.getEarningsCalendar`
+
+Retrieve the earnings calendar
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getEarningsCalendar({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  eps: number | null,
+  estimated_eps: number | null,
+  revenue: number,
+  estimated_revenue: number | null,
+  time: string,
+  date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getEconomicCalendar
+
+`market.getEconomicCalendar`
+
+Retrieve the economic calendar
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getEconomicCalendar({ from: '2025-01-01', to: '2025-12-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  event: string,
+  date: string,
+  country: string,
+  countryFlag: string,
+  actual: number | null,
+  previous: number | null,
+  change: number | null,
+  changePercentage: number | null,
+  estimate: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFinancialRatios
+
+`market.getFinancialRatios`
+
+Retrieve a company financial ratios
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getFinancialRatios({ symbol: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  date: string,
+  fiscalYear: string,
+  period: string,
+  reportedCurrency: string,
+  grossProfitMargin?: number | null,
+  ebitMargin?: number | null,
+  ebitdaMargin?: number | null,
+  operatingProfitMargin?: number | null,
+  pretaxProfitMargin?: number | null,
+  continuousOperationsProfitMargin?: number | null,
+  netProfitMargin?: number | null,
+  bottomLineProfitMargin?: number | null,
+  receivablesTurnover?: number | null,
+  payablesTurnover?: number | null,
+  inventoryTurnover?: number | null,
+  fixedAssetTurnover?: number | null,
+  assetTurnover?: number | null,
+  currentRatio?: number | null,
+  quickRatio?: number | null,
+  solvencyRatio?: number | null,
+  cashRatio?: number | null,
+  priceToEarningsRatio?: number | null,
+  priceToEarningsGrowthRatio?: number | null,
+  forwardPriceToEarningsGrowthRatio?: number | null,
+  priceToBookRatio?: number | null,
+  priceToSalesRatio?: number | null,
+  priceToFreeCashFlowRatio?: number | null,
+  priceToOperatingCashFlowRatio?: number | null,
+  debtToAssetsRatio?: number | null,
+  debtToEquityRatio?: number | null,
+  debtToCapitalRatio?: number | null,
+  longTermDebtToCapitalRatio?: number | null,
+  financialLeverageRatio?: number | null,
+  workingCapitalTurnoverRatio?: number | null,
+  operatingCashFlowRatio?: number | null,
+  operatingCashFlowSalesRatio?: number | null,
+  freeCashFlowOperatingCashFlowRatio?: number | null,
+  debtServiceCoverageRatio?: number | null,
+  interestCoverageRatio?: number | null,
+  shortTermOperatingCashFlowCoverageRatio?: number | null,
+  operatingCashFlowCoverageRatio?: number | null,
+  capitalExpenditureCoverageRatio?: number | null,
+  dividendPaidAndCapexCoverageRatio?: number | null,
+  dividendPayoutRatio?: number | null,
+  dividendYield?: number | null,
+  dividendYieldPercentage?: number | null,
+  revenuePerShare?: number | null,
+  netIncomePerShare?: number | null,
+  interestDebtPerShare?: number | null,
+  cashPerShare?: number | null,
+  bookValuePerShare?: number | null,
+  tangibleBookValuePerShare?: number | null,
+  shareholdersEquityPerShare?: number | null,
+  operatingCashFlowPerShare?: number | null,
+  capexPerShare?: number | null,
+  freeCashFlowPerShare?: number | null,
+  netIncomePerEBT?: number | null,
+  ebtPerEbit?: number | null,
+  priceToFairValue?: number | null,
+  debtToMarketCap?: number | null,
+  effectiveTaxRate?: number | null,
+  enterpriseValueMultiple?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getForexLastQuote
+
+`market.getForexLastQuote`
+
+Retrieve the latest forex quote
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getForexLastQuote({ symbol: 'GBPUSD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `ask` | `number` | Yes | — |
+| `bid` | `number` | Yes | — |
+| `asize` | `number` | No | — |
+| `bsize` | `number` | No | — |
+| `timestamp` | `number` | Yes | — |
+
+
+
+---
+
+### getForexLastTrade
+
+`market.getForexLastTrade`
+
+Retrieve the latest forex trade
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getForexLastTrade({ symbol: 'GBPUSD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `price` | `number` | Yes | — |
+| `size` | `number` | No | — |
+| `timestamp` | `number` | Yes | — |
+
+
+
+---
+
+### getForexMarketAggregates
+
+`market.getForexMarketAggregates`
+
+Retrieve historical forex aggregates
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getForexMarketAggregates({ symbol: 'GBPUSD', multiply: 1, time: 'day', from: '2025-01-01', to: '2025-02-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `multiply` | `number` | Yes | — |
+| `time` | `minute \| hour \| day \| week \| month \| quarter \| year` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `dbt_filter` | `boolean` | No | — |
+| `st` | `string` | No | — |
+| `et` | `string` | No | — |
+| `date_format` | `dt \| ts` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number,
+  h: number,
+  l: number,
+  c: number,
+  v?: number,
+  t: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getForexNews
+
+`market.getForexNews`
+
+Retrieve news for a forex pair
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getForexNews({ symbol: 'GBP', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `news` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="news full type">
+
+```ts
+{
+  source: string,
+  title: string,
+  description: string,
+  url: string,
+  date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getForexPreviousClose
+
+`market.getForexPreviousClose`
+
+Retrieve the previous forex close
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getForexPreviousClose({ symbol: 'GBPUSD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number,
+  h: number,
+  l: number,
+  c: number,
+  v?: number,
+  t: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getForexSignal
+
+`market.getForexSignal`
+
+Retrieve a forex technical signal
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getForexSignal({ interval: 'daily', symbol: 'EURUSD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `daily \| weekly` | Yes | — |
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | Yes | — |
+| `symbol` | `string` | Yes | — |
+| `signal` | `buy \| sell \| hold` | Yes | — |
+| `confidence` | `number` | Yes | — |
+| `indicators` | `object` | Yes | — |
+| `price` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="indicators full type">
+
+```ts
+{
+  sma_20: number,
+  sma_50: number,
+  rsi: number,
+  macd: number,
+  macd_signal: number,
+  macd_diff: number,
+  bollinger_high: number,
+  bollinger_low: number,
+  ma_crossover: boolean,
+  macd_cross: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getForexSnapshot
+
+`market.getForexSnapshot`
+
+Retrieve a snapshot of forex market data
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getForexSnapshot({ quotes: true, trades: true, symbols: 'EURUSD,GBPUSD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quotes` | `boolean` | Yes | — |
+| `trades` | `boolean` | Yes | — |
+| `symbols` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalResults` | `number` | No | — |
+| `lastQuotes` | `object[]` | No | — |
+| `lastTrades` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="lastQuotes full type">
+
+```ts
+{
+  s?: string,
+  symbol?: string,
+  a?: number,
+  b?: number,
+  asz?: number,
+  bsz?: number,
+  t?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="lastTrades full type">
+
+```ts
+{
+  s?: string,
+  symbol?: string,
+  p?: number,
+  price?: number,
+  sz?: number,
+  t?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getHistoricalDividendsCalendar
+
+`market.getHistoricalDividendsCalendar`
+
+Retrieve a company dividend history
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getHistoricalDividendsCalendar({ symbol: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  label: string,
+  adj_dividend: number,
+  dividend: number,
+  record_date: string,
+  payment_date: string,
+  declaration_date: string,
+  date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getHistoricalStockSplitCalendar
+
+`market.getHistoricalStockSplitCalendar`
+
+Retrieve a company stock split history
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getHistoricalStockSplitCalendar({ symbol: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  numerator_factor: number,
+  denominator_factor: number,
+  label: string,
+  date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getIncomeStatements
+
+`market.getIncomeStatements`
+
+Retrieve company income statements and international filings
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getIncomeStatements({ symbol: 'AAPL', exchange_code: 'TO', limit: 5, period: 'annual' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `period` | `annual \| quarter` | Yes | — |
+| `exchange_code` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  date: string,
+  period: string,
+  fillingDate?: string | null,
+  filingDate?: string | null,
+  acceptedDate?: string | null,
+  link?: string | null,
+  finalLink?: string | null,
+  revenue?: number | null,
+  costOfRevenue?: number | null,
+  grossProfit?: number | null,
+  grossProfitRatio?: number | null,
+  researchAndDevelopmentExpenses?: number | null,
+  generalAndAdministrativeExpenses?: number | null,
+  sellingAndMarketingExpenses?: number | null,
+  otherExpenses?: number | null,
+  operatingExpenses?: number | null,
+  costAndExpenses?: number | null,
+  interestExpense?: number | null,
+  depreciationAndAmortization?: number | null,
+  ebitda?: number | null,
+  ebitdaratio?: number | null,
+  ebitdaRatio?: number | null,
+  operatingIncome?: number | null,
+  operatingIncomeRatio?: number | null,
+  totalOtherIncomeExpensesNet?: number | null,
+  incomeBeforeTax?: number | null,
+  incomeBeforeTaxRatio?: number | null,
+  incomeTaxExpense?: number | null,
+  netIncome?: number | null,
+  netIncomeRatio?: number | null,
+  eps?: number | null,
+  epsdiluted?: number | null,
+  epsDiluted?: number | null,
+  weightedAverageShsOut?: number | null,
+  weightedAverageShsOutDil?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getIndianMarketAggregates
+
+`market.getIndianMarketAggregates`
+
+Retrieve Indian stock aggregates
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getIndianMarketAggregates({ symbol: 'IDEA', time: '1day', from: '2025-01-01', to: '2025-02-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `time` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `date_format` | `dt \| ts` | No | — |
+| `dbt_filter` | `boolean` | No | — |
+| `st` | `string` | No | — |
+| `et` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number | string,
+  h: number | string,
+  l: number | string,
+  c: number | string,
+  v?: number | string,
+  t: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getIndianMarketLastPrice
+
+`market.getIndianMarketLastPrice`
+
+Retrieve the latest Indian stock price
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getIndianMarketLastPrice({ symbol: 'TATAPOWER' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `price` | `number` | Yes | — |
+| `timestamp` | `number \| string` | Yes | — |
+
+
+
+---
+
+### getInstitutionalHolders
+
+`market.getInstitutionalHolders`
+
+List institutional holders for a company
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getInstitutionalHolders({ symbol: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  holder: string,
+  shares: number,
+  change: number,
+  report_date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getIpoCalendar
+
+`market.getIpoCalendar`
+
+Retrieve the IPO calendar
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getIpoCalendar({ from: '2025-01-01', to: '2025-12-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  date: string,
+  exchange: string,
+  status: string,
+  shares: number,
+  price_range: string,
+  market_cap: number,
+  company: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMostActiveStocks
+
+`market.getMostActiveStocks`
+
+List the most active US stocks
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getMostActiveStocks({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  price: string,
+  change: number,
+  change_percentage: string,
+  company_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMutualFundHolders
+
+`market.getMutualFundHolders`
+
+List mutual fund holders for a company
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getMutualFundHolders({ symbol: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  holder: string,
+  shares: number,
+  change: number,
+  report_date: string,
+  weight_percentage: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRussianMarketAggregates
+
+`market.getRussianMarketAggregates`
+
+Retrieve Russian stock aggregates
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getRussianMarketAggregates({ symbol: 'AFKS', time: '1day', from: '2025-01-01', to: '2025-02-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `time` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `date_format` | `dt \| ts` | No | — |
+| `dbt_filter` | `boolean` | No | — |
+| `st` | `string` | No | — |
+| `et` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number | string,
+  h: number | string,
+  l: number | string,
+  c: number | string,
+  v?: number | string,
+  t: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRussianMarketLastPrice
+
+`market.getRussianMarketLastPrice`
+
+Retrieve the latest Russian stock price
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getRussianMarketLastPrice({ symbol: 'AFKS' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `price` | `number` | Yes | — |
+| `timestamp` | `number \| string` | Yes | — |
+
+
+
+---
+
+### getSecRssFeed
+
+`market.getSecRssFeed`
+
+Retrieve the SEC funds RSS feed
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getSecRssFeed({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  title: string,
+  date: string,
+  link: string,
+  cik: string,
+  form_type: string,
+  ticker: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSectorPerformance
+
+`market.getSectorPerformance`
+
+Retrieve US stock sector performance
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getSectorPerformance({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  sector: string,
+  change_percentage: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSharesFloat
+
+`market.getSharesFloat`
+
+Retrieve public float and outstanding shares
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getSharesFloat({ symbol: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  public_float: number,
+  stock_float: number,
+  outstanding_shares: number,
+  date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getStockCompanyDetails
+
+`market.getStockCompanyDetails`
+
+Retrieve company fundamentals for a stock
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getStockCompanyDetails({ symbol: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  logo?: string,
+  name: string,
+  url?: string,
+  description?: string,
+  exchange?: string,
+  ceo?: string,
+  industry?: string,
+  state?: string,
+  address?: string,
+  employees?: number,
+  sector?: string,
+  marketcap?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getStockLastQuote
+
+`market.getStockLastQuote`
+
+Retrieve the latest stock quote
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getStockLastQuote({ symbol: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `ask` | `number` | Yes | — |
+| `bid` | `number` | Yes | — |
+| `asize` | `number` | No | — |
+| `bsize` | `number` | No | — |
+| `timestamp` | `number` | Yes | — |
+
+
+
+---
+
+### getStockLastTrade
+
+`market.getStockLastTrade`
+
+Retrieve the latest stock trade
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getStockLastTrade({ symbol: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `price` | `number` | Yes | — |
+| `size` | `number` | No | — |
+| `timestamp` | `number` | Yes | — |
+
+
+
+---
+
+### getStockMarketAggregates
+
+`market.getStockMarketAggregates`
+
+Retrieve stock market aggregates
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getStockMarketAggregates({ symbol: 'AAPL', multiply: 1, time: 'day', from: '2025-01-01', to: '2025-02-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `multiply` | `number` | Yes | — |
+| `time` | `minute \| hour \| day \| week \| month \| quarter \| year` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `dbt_filter` | `boolean` | No | — |
+| `st` | `string` | No | — |
+| `et` | `string` | No | — |
+| `date_format` | `dt \| ts` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number,
+  h: number,
+  l: number,
+  c: number,
+  v?: number,
+  t: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStockMarketNews
+
+`market.getStockMarketNews`
+
+Retrieve market news for a stock
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getStockMarketNews({ symbol: 'AAPL', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticker` | `string` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `news` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="news full type">
+
+```ts
+{
+  source: string,
+  title: string,
+  description: string,
+  url: string,
+  date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStockMarketStatus
+
+`market.getStockMarketStatus`
+
+Retrieve current market status and schedules
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getStockMarketStatus({
+	country: 'US',
+	currencies: true,
+	holidays: true,
+	trading_hours: true,
+	extended_hours: true,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | — |
+| `currencies` | `boolean` | No | — |
+| `holidays` | `boolean` | No | — |
+| `trading_hours` | `boolean` | No | — |
+| `extended_hours` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `market` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `country` | `string` | No | — |
+| `exchanges` | `Record<string, JsonValue>` | No | — |
+| `currencies` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### getStockPreviousClose
+
+`market.getStockPreviousClose`
+
+Retrieve the previous stock close
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getStockPreviousClose({ symbol: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number,
+  h: number,
+  l: number,
+  c: number,
+  v?: number,
+  t: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStockSnapshot
+
+`market.getStockSnapshot`
+
+Retrieve a snapshot of stock market data
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getStockSnapshot({ quotes: true, trades: true, symbols: 'AAPL,MSFT' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quotes` | `boolean` | Yes | — |
+| `trades` | `boolean` | Yes | — |
+| `symbols` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalResults` | `number` | No | — |
+| `lastQuotes` | `object[]` | No | — |
+| `lastTrades` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="lastQuotes full type">
+
+```ts
+{
+  s?: string,
+  symbol?: string,
+  a?: number,
+  b?: number,
+  asz?: number,
+  bsz?: number,
+  t?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="lastTrades full type">
+
+```ts
+{
+  s?: string,
+  symbol?: string,
+  p?: number,
+  price?: number,
+  sz?: number,
+  t?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStockSplitCalendar
+
+`market.getStockSplitCalendar`
+
+Retrieve the stock split calendar
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getStockSplitCalendar({ from: '2025-01-01', to: '2025-12-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  numerator_factor: number,
+  denominator_factor: number,
+  label: string,
+  date: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTechnicalIndicators
+
+`market.getTechnicalIndicators`
+
+Calculate a technical indicator for a market symbol
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getTechnicalIndicators({ symbol: 'AAPL', type: 'SMA', time: 'daily', period: 14 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `type` | `DEMA \| EMA \| SMA \| WMA \| RSI \| TEMA \| Williams \| ADX` | Yes | — |
+| `time` | `daily \| 1min \| 5min \| 15min \| 30min \| 1hour \| 4hour` | Yes | — |
+| `period` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  type: string,
+  date: string,
+  open: string,
+  high: string,
+  low: string,
+  close: string,
+  volume: string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTopGainers
+
+`market.getTopGainers`
+
+List the top gaining US stocks
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getTopGainers({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  price: string,
+  change: string,
+  change_percentage: string,
+  company_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getTopLosers
+
+`market.getTopLosers`
+
+List the top losing US stocks
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getTopLosers({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  symbol: string,
+  price: string,
+  change: string,
+  change_percentage: string,
+  company_name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUkMarketAggregates
+
+`market.getUkMarketAggregates`
+
+Retrieve UK stock aggregates
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getUkMarketAggregates({ symbol: 'BP', time: '1day', from: '2025-01-01', to: '2025-02-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `time` | `1min \| 5min \| 15min \| 30min \| 45min \| 1h \| 2h \| 4h \| 1day \| 1week \| 1month` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `sort` | `asc \| desc` | No | — |
+| `date_format` | `dt \| ts` | No | — |
+| `dbt_filter` | `boolean` | No | — |
+| `st` | `string` | No | — |
+| `et` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `totalResults` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  o: number | string,
+  h: number | string,
+  l: number | string,
+  c: number | string,
+  v?: number | string,
+  t: number | string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUkMarketLastPrice
+
+`market.getUkMarketLastPrice`
+
+Retrieve the latest UK stock price
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getUkMarketLastPrice({ symbol: 'BP' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+| `price` | `number` | Yes | — |
+| `timestamp` | `number \| string` | Yes | — |
+
+
+
+---
+
+### getUsStocksSignal
+
+`market.getUsStocksSignal`
+
+Retrieve a US stock technical signal
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.getUsStocksSignal({ interval: 'daily', symbol: 'AAPL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interval` | `daily \| weekly` | Yes | — |
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | Yes | — |
+| `symbol` | `string` | Yes | — |
+| `signal` | `buy \| sell \| hold` | Yes | — |
+| `confidence` | `number` | Yes | — |
+| `indicators` | `object` | Yes | — |
+| `price` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="indicators full type">
+
+```ts
+{
+  sma_20: number,
+  sma_50: number,
+  rsi: number,
+  macd: number,
+  macd_signal: number,
+  macd_diff: number,
+  bollinger_high: number,
+  bollinger_low: number,
+  ma_crossover: boolean,
+  macd_cross: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCryptocurrencies
+
+`market.listCryptocurrencies`
+
+List supported cryptocurrencies
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.listCryptocurrencies({ limit: 10, page: 1, sort: 'ASC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+| `sort` | `ASC \| DESC` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  totalResults: number,
+  results: {
+    symbol: string,
+    name: string,
+    thumbnail: string,
+    market_cap: number,
+    ath: number,
+    ath_date: string,
+    order: number
+  }[]
+} | {
+  totalResults: number,
+  results: {
+    symbol: string,
+    name: string,
+    thumbnail: string,
+    market_cap: number,
+    ath: number,
+    ath_date: string,
+    order: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listSymbols
+
+`market.listSymbols`
+
+List symbols for a supported market
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.listSymbols({ market: 'forex', page: 1, search: 'GBP' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `market` | `us-stock \| ca-stock \| in-stock \| ru-stock \| forex \| crypto \| index` | Yes | — |
+| `page` | `number` | No | — |
+| `search` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `symbols` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="symbols full type">
+
+```ts
+{
+  symbol: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchCountry
+
+`market.searchCountry`
+
+Search countries by name or code
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.searchCountry({ query: 'gbp', limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  key: string,
+  limit: number,
+  results: {
+    country: string,
+    country_code: string,
+    currency: string,
+    currency_code: string,
+    phone_code: string,
+    country_flag: string
+  }[]
+} | {
+  key: string,
+  limit: number,
+  results: {
+    country: string,
+    country_code: string,
+    currency: string,
+    currency_code: string,
+    phone_code: string,
+    country_flag: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### searchCryptocurrency
+
+`market.searchCryptocurrency`
+
+Search cryptocurrencies by name or code
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.searchCryptocurrency({ query: 'bitcoin', limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `limit` | `number` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  key: string,
+  limit: number,
+  results: {
+    name: string,
+    symbol: string,
+    type: string,
+    isActive: boolean
+  }[]
+} | {
+  key: string,
+  limit: number,
+  results: {
+    name: string,
+    symbol: string,
+    type: string,
+    isActive: boolean
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### searchCurrency
+
+`market.searchCurrency`
+
+Search currencies by name or code
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.searchCurrency({ query: 'gbp', limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  key: string,
+  limit: number,
+  results: {
+    symbol: string,
+    from: string,
+    to: string,
+    from_flag: string,
+    to_flag: string
+  }[]
+} | {
+  key: string,
+  limit: number,
+  results: {
+    symbol: string,
+    from: string,
+    to: string,
+    from_flag: string,
+    to_flag: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### searchMarket
+
+`market.searchMarket`
+
+Search symbols within a market
+
+**Risk:** `read`
+
+```ts
+await corsair.finage.api.market.searchMarket({ market: 'us', query: 'apple', limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `market` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `limit` | `number` | Yes | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  key: string,
+  market: string,
+  limit: number,
+  results: {
+    symbol: string,
+    description: string,
+    s_type: string
+  }[]
+} | {
+  key: string,
+  market: string,
+  limit: number,
+  results: {
+    symbol: string,
+    description: string,
+    s_type: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

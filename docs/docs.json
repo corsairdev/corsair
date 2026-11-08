@@ -1934,6 +1934,14 @@
                 ]
               },
               {
+                "group": "Finage",
+                "pages": [
+                  "plugins/finage/overview",
+                  "plugins/finage/api",
+                  "plugins/finage/database"
+                ]
+              },
+              {
                 "group": "FinerWorks",
                 "pages": [
                   "plugins/finerworks/overview",
