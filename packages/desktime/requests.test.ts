@@ -134,12 +134,30 @@ describe('request shape per operation', () => {
 		try {
 			respondJson(EMPLOYEE_APPS_FILLED_BODY);
 
-			await corsair.desktime.api.employee.apps({ id: 789760 });
+			await corsair.desktime.api.employee.apps({
+				id: 789760,
+				date: '2026-11-08',
+			});
 
 			const { url } = sentCall();
 			expect(url.pathname).toBe('/api/v2/json/employee/apps');
 			expect(url.searchParams.get('id')).toBe('789760');
-			// Only the id was given, so no date must be sent.
+			expect(url.searchParams.get('date')).toBe('2026-11-08');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('employee.apps omits the date when it is not given', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respondJson(EMPLOYEE_APPS_FILLED_BODY);
+
+			await corsair.desktime.api.employee.apps({ id: 789760 });
+
+			const { url } = sentCall();
+			expect(url.searchParams.get('id')).toBe('789760');
+			// DeskTime defaults to today, so sending an empty date would be wrong.
 			expect(url.searchParams.has('date')).toBe(false);
 		} finally {
 			testDb.cleanup();

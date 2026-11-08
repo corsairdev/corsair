@@ -6,13 +6,13 @@ describe('Desktime schema', () => {
 		expect(DeskTimeSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
+	it('declares an entities map that is a plain object, not an array', () => {
 		expect(typeof DeskTimeSchema.entities).toBe('object');
 		expect(DeskTimeSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(DeskTimeSchema.entities))).toBe(true);
-		for (const entity of Object.values(DeskTimeSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+		// Checking Object.keys() would always be an array and so could never fail;
+		// assert on the entities value itself.
+		expect(Array.isArray(DeskTimeSchema.entities)).toBe(false);
+		expect(DeskTimeSchema.entities).toEqual({});
 	});
 });
 

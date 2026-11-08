@@ -164,6 +164,16 @@ describe('employee.projects', () => {
 		expect(output.projects).toEqual([]);
 	});
 
+	it('reads a populated project row, so a real day cannot fail parsing', () => {
+		const output = Outputs.employeeProjects.parse({
+			...EMPLOYEE,
+			projects: [{ project: 'Website redesign', task: 'Homepage', time: 5400 }],
+		});
+		expect(output.projects).toHaveLength(1);
+		expect(output.projects?.[0]?.project).toBe('Website redesign');
+		expect(output.projects?.[0]?.time).toBe(5400);
+	});
+
 	it('rejects a projects value that is not a list', () => {
 		expect(() =>
 			Outputs.employeeProjects.parse({ ...EMPLOYEE, projects: 'nope' }),

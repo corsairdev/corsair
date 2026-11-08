@@ -78,6 +78,20 @@ describe('error handlers', () => {
 		expect(strategy.maxRetries).toBe(0);
 	});
 
+	it('retries a transport failure that never reached the provider', async () => {
+		const strategy = await strategyFor(
+			new DeskTimeAPIError('fetch failed', { transport: true }),
+		);
+		expect(strategy.maxRetries).toBeGreaterThan(0);
+	});
+
+	it('bounds the transport retries rather than retrying forever', async () => {
+		const strategy = await strategyFor(
+			new DeskTimeAPIError('fetch failed', { transport: true }),
+		);
+		expect(strategy.maxRetries).toBeLessThanOrEqual(3);
+	});
+
 	it('does not retry an unrecognized error', async () => {
 		const strategy = await strategyFor(new Error('something else'));
 		expect(strategy.maxRetries).toBe(0);
@@ -105,6 +119,34 @@ describe('mergeErrorHandlers', () => {
 			merged,
 		);
 		expect(strategy.maxRetries).toBe(0);
+	});
+
+	it('runs a caller handler for a status no builtin covers', async () => {
+		// Under a builtin-first spread DEFAULT would claim this first, because
+		// core takes the first match in key order.
+		const merged = mergeErrorHandlers(errorHandlers, {
+			MY_SERVER: {
+				match: (error: Error) =>
+					error instanceof DeskTimeAPIError && error.status === 500,
+				handler: async () => ({ maxRetries: 7 }),
+			},
+		});
+		const strategy = await strategyFor(
+			new DeskTimeAPIError('Server error', { status: 500 }),
+			merged,
+		);
+		expect(strategy.maxRetries).toBe(7);
+	});
+
+	it('keeps builtin handlers the caller did not name', () => {
+		const merged = mergeErrorHandlers(errorHandlers, {
+			MY_SERVER: {
+				match: () => false,
+				handler: async () => ({ maxRetries: 1 }),
+			},
+		});
+		expect(merged.AUTH_ERROR).toBe(errorHandlers.AUTH_ERROR);
+		expect(merged.TRANSPORT_ERROR).toBe(errorHandlers.TRANSPORT_ERROR);
 	});
 
 	it('returns the builtin handlers unchanged without user handlers', () => {
