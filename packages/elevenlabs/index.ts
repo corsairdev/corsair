@@ -42,7 +42,7 @@ import {
 	ElevenLabsEndpointInputSchemas,
 	ElevenLabsEndpointOutputSchemas,
 } from './endpoints/types';
-import { errorHandlers } from './error-handlers';
+import { withCustomHandlers } from './error-handlers';
 import { ElevenLabsSchema } from './schema';
 import {
 	ConversationWebhooks,
@@ -127,6 +127,7 @@ export type ElevenLabsEndpoints = {
 	voicesEditSettings: ElevenLabsEndpoint<'voicesEditSettings'>;
 	voicesDefaultSettings: ElevenLabsEndpoint<'voicesDefaultSettings'>;
 	voiceDesignDesign: ElevenLabsEndpoint<'voiceDesignDesign'>;
+	voiceDesignGetPreview: ElevenLabsEndpoint<'voiceDesignGetPreview'>;
 	voiceDesignCreate: ElevenLabsEndpoint<'voiceDesignCreate'>;
 	voiceDesignRemix: ElevenLabsEndpoint<'voiceDesignRemix'>;
 	dubbingCreate: ElevenLabsEndpoint<'dubbingCreate'>;
@@ -239,6 +240,7 @@ const elevenLabsEndpointsNested = {
 	},
 	voiceDesign: {
 		design: VoiceDesign.design,
+		getPreview: VoiceDesign.getPreview,
 		create: VoiceDesign.create,
 		remix: VoiceDesign.remix,
 	},
@@ -389,6 +391,10 @@ export const elevenLabsEndpointSchemas = {
 	'voiceDesign.design': {
 		input: ElevenLabsEndpointInputSchemas.voiceDesignDesign,
 		output: ElevenLabsEndpointOutputSchemas.voiceDesignDesign,
+	},
+	'voiceDesign.getPreview': {
+		input: ElevenLabsEndpointInputSchemas.voiceDesignGetPreview,
+		output: ElevenLabsEndpointOutputSchemas.voiceDesignGetPreview,
 	},
 	'voiceDesign.create': {
 		input: ElevenLabsEndpointInputSchemas.voiceDesignCreate,
@@ -605,7 +611,7 @@ const elevenLabsEndpointMeta = {
 	'music.compose': {
 		riskLevel: 'write',
 		description:
-			'Generate a song from a prompt or a composition plan; spends credits by length. ElevenLabs keeps no copy, so the audio comes back in the result. A long song can outlast a script’s 20 s budget on Corsair’s cloud.',
+			'Generate a song from a prompt or a composition plan; spends credits by length. ElevenLabs keeps no copy, so the audio comes back in the result. At the default format, about 24 KB/s, a song over about 31 s is too big to return from a script on Corsair’s cloud, whose cap is 1,000,000 bytes: pick a lower-bitrate outputFormat, or pass contentBase64 to the next operation and return only metadata.',
 	},
 	'music.plan': {
 		riskLevel: 'write',
@@ -669,7 +675,12 @@ const elevenLabsEndpointMeta = {
 	'voiceDesign.design': {
 		riskLevel: 'write',
 		description:
-			'Generate voice previews from a description; spends credits. Pick one and pass its generated_voice_id to voiceDesign.create.',
+			'Generate voice previews from a description; spends credits. Hear one with voiceDesign.getPreview, then pass its generated_voice_id to voiceDesign.create.',
+	},
+	'voiceDesign.getPreview': {
+		riskLevel: 'read',
+		description:
+			"Read a preview's audio by its generated_voice_id, without generating again. Subject to a size limit you can raise with maxBytes.",
 	},
 	'voiceDesign.create': {
 		riskLevel: 'write',
@@ -679,7 +690,7 @@ const elevenLabsEndpointMeta = {
 	'voiceDesign.remix': {
 		riskLevel: 'write',
 		description:
-			'Generate previews of a changed version of an existing voice; spends credits.',
+			'Generate previews of a changed version of an existing voice; spends credits. Hear one with voiceDesign.getPreview.',
 	},
 	'dubbing.create': {
 		riskLevel: 'write',
@@ -835,10 +846,7 @@ export function elevenlabs<const T extends ElevenLabsPluginOptions>(
 		endpointSchemas: elevenLabsEndpointSchemas,
 		webhookSchemas: elevenLabsWebhookSchemas,
 		pluginWebhookMatcher: isElevenLabsWebhook,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: withCustomHandlers(options.errorHandlers),
 		keyBuilder: async (ctx: ElevenLabsKeyBuilderContext, source) => {
 			if (source === 'webhook') {
 				if (options.webhookSecret) return options.webhookSecret;
@@ -884,5 +892,6 @@ export type {
 } from './webhooks/types';
 export {
 	ELEVENLABS_SIGNATURE_TOLERANCE_MS,
+	ElevenLabsWebhookRefusedError,
 	verifyElevenLabsWebhookSignature,
 } from './webhooks/types';

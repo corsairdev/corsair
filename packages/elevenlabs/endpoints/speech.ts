@@ -1,10 +1,11 @@
-import { logEventFromContext } from 'corsair/core';
 import {
 	base64ByteLength,
+	contentOmission,
 	contentTypeOfOutputFormat,
-	DEFAULT_MAX_CONTENT_BYTES,
+	ElevenLabsRequestError,
 	elevenLabsBinary,
 	elevenLabsJsonWithHeaders,
+	logQuietly,
 	pathId,
 	TIMEOUTS_MS,
 	toBinaryResult,
@@ -60,17 +61,12 @@ export const convert: ElevenLabsEndpoints['textToSpeechConvert'] = async (
 			input,
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.textToSpeech.convert',
-		{
-			voiceId: input.voiceId,
-			byteLength: response.byteLength,
-			characterCost: response.characterCost,
-			historyItemId: response.historyItemId,
-		},
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.textToSpeech.convert', {
+		voiceId: input.voiceId,
+		byteLength: response.byteLength,
+		characterCost: response.characterCost,
+		historyItemId: response.historyItemId,
+	});
 	return response;
 };
 
@@ -91,17 +87,14 @@ export const convertWithTimestamps: ElevenLabsEndpoints['textToSpeechConvertWith
 		});
 
 		const { audio_base64: audio, ...rest } = body;
-		const audioBase64 = typeof audio === 'string' ? audio : '';
-		const byteLength = base64ByteLength(audioBase64);
-		// The base64 is already here, so the rule is the same as toBinaryResult's:
-		// left out only when the history item can bring it back.
-		const canDrop = Boolean(metadata.historyItemId);
-		const omitted =
-			canDrop && input.includeContent === false
-				? ('not_requested' as const)
-				: canDrop && byteLength > (input.maxBytes ?? DEFAULT_MAX_CONTENT_BYTES)
-					? ('over_limit' as const)
-					: undefined;
+		if (typeof audio !== 'string' || !audio) {
+			throw new ElevenLabsRequestError(
+				'ElevenLabs answered textToSpeech.convertWithTimestamps with success but no audio_base64. It may have been billed, so check before sending it again.',
+			);
+		}
+		const byteLength = base64ByteLength(audio);
+		// The base64 is already here; the rule is the same as for raw bytes.
+		const omission = contentOmission(byteLength, metadata.historyItemId, input);
 
 		const response =
 			ElevenLabsEndpointOutputSchemas.textToSpeechConvertWithTimestamps.parse({
@@ -109,24 +102,14 @@ export const convertWithTimestamps: ElevenLabsEndpoints['textToSpeechConvertWith
 				...metadata,
 				contentType: contentTypeOfOutputFormat(input.outputFormat),
 				byteLength,
-				...(omitted
-					? {
-							contentOmitted: omitted,
-							note: `Left out of the result (${byteLength} bytes). Read it with history.getAudio({ historyItemId: '${metadata.historyItemId}', maxBytes: ${byteLength} }).`,
-						}
-					: { contentBase64: audioBase64 }),
+				...(omission ?? { contentBase64: audio }),
 			});
-		await logEventFromContext(
-			ctx,
-			'elevenlabs.textToSpeech.convertWithTimestamps',
-			{
-				voiceId: input.voiceId,
-				byteLength,
-				characterCost: response.characterCost,
-				historyItemId: response.historyItemId,
-			},
-			'completed',
-		);
+		await logQuietly(ctx, 'elevenlabs.textToSpeech.convertWithTimestamps', {
+			voiceId: input.voiceId,
+			byteLength,
+			characterCost: response.characterCost,
+			historyItemId: response.historyItemId,
+		});
 		return response;
 	};
 
@@ -160,16 +143,11 @@ export const convertDialogue: ElevenLabsEndpoints['textToDialogueConvert'] =
 					input,
 				),
 			);
-		await logEventFromContext(
-			ctx,
-			'elevenlabs.textToDialogue.convert',
-			{
-				lines: input.inputs.length,
-				byteLength: response.byteLength,
-				characterCost: response.characterCost,
-				historyItemId: response.historyItemId,
-			},
-			'completed',
-		);
+		await logQuietly(ctx, 'elevenlabs.textToDialogue.convert', {
+			lines: input.inputs.length,
+			byteLength: response.byteLength,
+			characterCost: response.characterCost,
+			historyItemId: response.historyItemId,
+		});
 		return response;
 	};

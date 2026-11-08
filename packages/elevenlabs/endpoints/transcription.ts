@@ -1,8 +1,8 @@
-import { logEventFromContext } from 'corsair/core';
 import {
 	appendFields,
 	appendFile,
 	elevenLabsJson,
+	logQuietly,
 	pathId,
 	TIMEOUTS_MS,
 } from '../client';
@@ -54,16 +54,11 @@ export const convert: ElevenLabsEndpoints['speechToTextConvert'] = async (
 			timeoutMs: TIMEOUTS_MS.longGeneration,
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.speechToText.convert',
-		{
-			webhook: input.webhook ?? false,
-			transcriptionId: response.transcription_id,
-			requestId: response.request_id,
-		},
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.speechToText.convert', {
+		webhook: input.webhook ?? false,
+		transcriptionId: response.transcription_id,
+		requestId: response.request_id,
+	});
 	return response;
 };
 
@@ -78,12 +73,9 @@ export const getTranscript: ElevenLabsEndpoints['speechToTextGetTranscript'] =
 					ctx.key,
 				),
 			);
-		await logEventFromContext(
-			ctx,
-			'elevenlabs.speechToText.getTranscript',
-			{ transcriptionId: input.transcriptionId },
-			'completed',
-		);
+		await logQuietly(ctx, 'elevenlabs.speechToText.getTranscript', {
+			transcriptionId: input.transcriptionId,
+		});
 		return response;
 	};
 
@@ -101,12 +93,9 @@ export const deleteTranscript: ElevenLabsEndpoints['speechToTextDeleteTranscript
 					{ method: 'DELETE' },
 				),
 			);
-		await logEventFromContext(
-			ctx,
-			'elevenlabs.speechToText.deleteTranscript',
-			{ transcriptionId: input.transcriptionId },
-			'completed',
-		);
+		await logQuietly(ctx, 'elevenlabs.speechToText.deleteTranscript', {
+			transcriptionId: input.transcriptionId,
+		});
 		return response;
 	};
 
@@ -126,11 +115,8 @@ export const align: ElevenLabsEndpoints['forcedAlignmentCreate'] = async (
 			timeoutMs: TIMEOUTS_MS.longGeneration,
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.forcedAlignment.create',
-		{ words: response.words?.length ?? 0 },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.forcedAlignment.create', {
+		words: response.words?.length ?? 0,
+	});
 	return response;
 };

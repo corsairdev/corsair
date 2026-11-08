@@ -1,9 +1,10 @@
 import type { CorsairWebhook } from 'corsair/core';
-import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
+import { logQuietly } from '../client';
 import type { ElevenLabsContext } from '../index';
 import {
 	CallInitiationFailureEventSchema,
+	ElevenLabsWebhookRefusedError,
 	matchEventType,
 	PostCallAudioEventSchema,
 	PostCallTranscriptionEventSchema,
@@ -16,8 +17,8 @@ import {
 } from './types';
 
 /**
- * One webhook: match by `type`, refuse anything the signature doesn't cover,
- * then log ids only (a transcript or post-call audio can be very large, and is
+ * One webhook: match by `type`, throw on anything the signature doesn't cover or
+ * the schema doesn't accept (see ElevenLabsWebhookRefusedError), then log ids only (a transcript or post-call audio can be very large, and is
  * the customer's content).
  */
 function defineEvent<TEvent>(
@@ -32,23 +33,20 @@ function defineEvent<TEvent>(
 		handler: async (ctx, request) => {
 			const verification = verifyElevenLabsWebhookSignature(request, ctx.key);
 			if (!verification.valid) {
-				return {
-					success: false,
-					statusCode: 401,
-					error:
-						verification.error ||
+				throw new ElevenLabsWebhookRefusedError(
+					verification.error ||
 						'ElevenLabs webhook signature verification failed',
-				};
+					401,
+				);
 			}
 			const parsed = schema.safeParse(request.payload);
 			if (!parsed.success) {
-				return {
-					success: false,
-					statusCode: 400,
-					error: `ElevenLabs ${eventType} event did not match its schema`,
-				};
+				throw new ElevenLabsWebhookRefusedError(
+					`ElevenLabs ${eventType} event did not match its schema`,
+					400,
+				);
 			}
-			await logEventFromContext(ctx, logName, idsOf(parsed.data), 'completed');
+			await logQuietly(ctx, logName, idsOf(parsed.data));
 			return { success: true, data: parsed.data };
 		},
 	};

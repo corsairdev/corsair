@@ -3,8 +3,8 @@
  * none, so they skip). Reads are free. The rest run only with
  * ELEVENLABS_LIVE_GENERATE=1 and spend about 150 credits (about $0.06 on
  * pay-as-you-go), mostly the dub, music and isolation: a few words of speech, 3 s
- * of music, 0.5 s of sound, a 1 s dub. They delete what they create. Voice design costs 200 credits or more and
- * only runs with ELEVENLABS_LIVE_DESIGN=1.
+ * of music, 0.5 s of sound, a 1 s dub. They delete what they create. Voice design costs about 100 credits with this
+ * test's short text and only runs with ELEVENLABS_LIVE_DESIGN=1.
  *
  *   set -a; . ~/pranay-personal/.env; set +a
  *   ELEVENLABS_LIVE_GENERATE=1 pnpm --filter @corsair-dev/elevenlabs test:live
@@ -67,8 +67,21 @@ describeLive('ElevenLabs live API', () => {
 	jest.setTimeout(240_000);
 
 	const createdHistory: string[] = [];
-	let sample = '';
-	let longSample = '';
+	let sampleClip: Promise<string> | undefined;
+
+	/** A short clip made once, by whichever test needs it first, so any test can run alone. */
+	const speechSample = () => {
+		sampleClip ??= TextToSpeech.convert(ctx, {
+			voiceId: VOICE,
+			text: 'Hello from Corsair.',
+			modelId: FLASH,
+			outputFormat: SMALL,
+		}).then((clip) => {
+			createdHistory.push(clip.historyItemId ?? '');
+			return clip.contentBase64 ?? '';
+		});
+		return sampleClip;
+	};
 
 	afterAll(async () => {
 		for (const historyItemId of createdHistory) {
@@ -189,8 +202,9 @@ describeLive('ElevenLabs live API', () => {
 		expect(result.characterCost).toBeGreaterThan(0);
 		expect(result.requestId).toBeTruthy();
 		expect(result.historyItemId).toBeTruthy();
-		sample = result.contentBase64 ?? '';
-		expect(Buffer.from(sample, 'base64').byteLength).toBe(result.byteLength);
+		expect(Buffer.from(result.contentBase64 ?? '', 'base64').byteLength).toBe(
+			result.byteLength,
+		);
 		createdHistory.push(result.historyItemId ?? '');
 	});
 
@@ -261,26 +275,35 @@ describeLive('ElevenLabs live API', () => {
 	});
 
 	itGenerate('speechToText: file, read, delete', async () => {
-		const file = {
-			fileBase64: sample,
+		const transcript = await SpeechToText.convert(ctx, {
+			fileBase64: await speechSample(),
 			fileName: 'sample.mp3',
 			contentType: 'audio/mpeg',
-		};
-		const transcript = await SpeechToText.convert(ctx, {
-			...file,
 			keyterms: ['Corsair'],
 			timestampsGranularity: 'word',
 		});
-		expect(transcript.text?.toLowerCase()).toContain('corsair');
 		const id = transcript.transcription_id ?? '';
-		expect(id).toBeTruthy();
-		const read = await SpeechToText.getTranscript(ctx, { transcriptionId: id });
-		expect(read.text).toBe(transcript.text);
-		await SpeechToText.deleteTranscript(ctx, { transcriptionId: id });
-		const gone = await failure(
-			SpeechToText.getTranscript(ctx, { transcriptionId: id }),
-		);
-		expect(gone.status).toBe(404);
+		let deleted = false;
+		try {
+			expect(transcript.text?.toLowerCase()).toContain('corsair');
+			expect(id).toBeTruthy();
+			const read = await SpeechToText.getTranscript(ctx, {
+				transcriptionId: id,
+			});
+			expect(read.text).toBe(transcript.text);
+			await SpeechToText.deleteTranscript(ctx, { transcriptionId: id });
+			deleted = true;
+			const gone = await failure(
+				SpeechToText.getTranscript(ctx, { transcriptionId: id }),
+			);
+			expect(gone.status).toBe(404);
+		} finally {
+			if (id && !deleted) {
+				await SpeechToText.deleteTranscript(ctx, {
+					transcriptionId: id,
+				}).catch(() => undefined);
+			}
+		}
 	});
 
 	itGenerate('speechToText reads a hosted file by URL', async () => {
@@ -298,7 +321,7 @@ describeLive('ElevenLabs live API', () => {
 
 	itGenerate('forcedAlignment.create times the words', async () => {
 		const result = await ForcedAlignment.create(ctx, {
-			fileBase64: sample,
+			fileBase64: await speechSample(),
 			fileName: 'sample.mp3',
 			contentType: 'audio/mpeg',
 			text: 'Hello from Corsair.',
@@ -309,7 +332,7 @@ describeLive('ElevenLabs live API', () => {
 	itGenerate('voiceChanger.convert speaks it in another voice', async () => {
 		const result = await VoiceChanger.convert(ctx, {
 			voiceId: OTHER_VOICE,
-			fileBase64: sample,
+			fileBase64: await speechSample(),
 			fileName: 'sample.mp3',
 			contentType: 'audio/mpeg',
 			modelId: 'eleven_multilingual_sts_v2',
@@ -328,9 +351,8 @@ describeLive('ElevenLabs live API', () => {
 			outputFormat: SMALL,
 		});
 		createdHistory.push(long.historyItemId ?? '');
-		longSample = long.contentBase64 ?? '';
 		const result = await AudioIsolation.isolate(ctx, {
-			fileBase64: longSample,
+			fileBase64: long.contentBase64 ?? '',
 			fileName: 'long.mp3',
 			contentType: 'audio/mpeg',
 		});
@@ -385,7 +407,7 @@ describeLive('ElevenLabs live API', () => {
 
 	itGenerate('dubbing: create, follow, read, delete', async () => {
 		const dub = await Dubbing.create(ctx, {
-			fileBase64: sample,
+			fileBase64: await speechSample(),
 			fileName: 'sample.mp3',
 			contentType: 'audio/mpeg',
 			targetLang: 'es',
@@ -446,17 +468,23 @@ describeLive('ElevenLabs live API', () => {
 	});
 
 	itDesign(
-		'voiceDesign.design makes previews without keeping their audio',
+		'voiceDesign: previews without their audio, read back with getPreview',
 		async () => {
 			const result = await VoiceDesign.design(ctx, {
 				voiceDescription: 'A calm middle-aged narrator with a warm low voice.',
-				autoGenerateText: true,
+				text: 'This is a short line for a voice preview, just long enough for the design endpoint to accept it here.',
 				outputFormat: SMALL,
-				includeAudio: false,
 			});
 			expect(result.previews.length).toBeGreaterThan(0);
 			expect(result.previews[0]?.generated_voice_id).toBeTruthy();
-			expect(result.previews[0]?.audio_base_64).toBeUndefined();
+			expect('audio_base_64' in (result.previews[0] ?? {})).toBe(false);
+
+			const preview = await VoiceDesign.getPreview(ctx, {
+				generatedVoiceId: result.previews[0]?.generated_voice_id ?? '',
+				maxBytes: 5_000_000,
+			});
+			expect(preview.contentType).toContain('audio');
+			expect(preview.contentBase64).toBeTruthy();
 		},
 	);
 });

@@ -318,21 +318,31 @@ describe.each(events)('%s', (_name, webhook, body) => {
 		expect(result.data).toMatchObject({ type: body.type });
 	});
 
-	it('refuses a forged one with 401', async () => {
-		const result = await handle(
-			ctx,
-			request(signDelivery({ body, secret: 'forged' })),
-		);
-		expect(result).toMatchObject({ success: false, statusCode: 401 });
-		expect(result.data).toBeUndefined();
+	it('throws on a forged one, so it can’t be acknowledged', async () => {
+		await expect(
+			handle(ctx, request(signDelivery({ body, secret: 'forged' }))),
+		).rejects.toMatchObject({
+			name: 'ElevenLabsWebhookRefusedError',
+			statusCode: 401,
+		});
 	});
 
-	it('refuses when no secret is configured', async () => {
-		const result = await handle(
-			{ key: undefined } as never,
-			request(signDelivery({ body })),
-		);
-		expect(result).toMatchObject({ success: false, statusCode: 401 });
+	it('throws when no secret is configured', async () => {
+		await expect(
+			handle({ key: undefined } as never, request(signDelivery({ body }))),
+		).rejects.toMatchObject({
+			statusCode: 401,
+			message: expect.stringMatching(/No ElevenLabs webhook secret/),
+		});
+	});
+
+	it('throws on a signed payload its schema refuses', async () => {
+		await expect(
+			handle(ctx, request(signDelivery({ body: { ...body, type: 1 } }))),
+		).rejects.toMatchObject({
+			name: 'ElevenLabsWebhookRefusedError',
+			statusCode: 400,
+		});
 	});
 
 	it('keeps fields it has not heard of', async () => {

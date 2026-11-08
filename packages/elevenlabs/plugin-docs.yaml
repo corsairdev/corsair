@@ -3,13 +3,13 @@ displayName: ElevenLabs
 description: AI audio platform; generate speech, dialogue, sound effects and music, transcribe and align audio, change or isolate voices, dub video, manage voices and history, and run conversational agents.
 domain: elevenlabs.io
 overviewNote: |
-  Audio comes back as base64 in `contentBase64`, with `contentType`, `byteLength` and what ElevenLabs reports in its headers: `requestId`, `traceId`, `characterCost` (credits charged) and `historyItemId` (`songId` on music). Base64 is expensive in an agent's context, so speech operations (`textToSpeech`, `textToDialogue`, `voiceChanger`) take `includeContent: false` to leave it out, and leave it out on their own above `maxBytes` (default 700000 bytes, about 40 s of 128 kbps mp3, which fits a script result on Corsair's cloud). `contentOmitted` then says why and `note` says how to get it: `history.getAudio({ historyItemId })`. The history item can take a few seconds to appear after the audio returns.
+  Audio comes back as base64 in `contentBase64`, with `contentType`, `byteLength` and what ElevenLabs reports in its headers: `requestId`, `traceId`, `characterCost` (credits charged) and `historyItemId` (`songId` on music). Base64 is expensive in an agent's context, so speech operations (`textToSpeech`, `textToDialogue`, `voiceChanger`) take `includeContent: false` to leave it out, and leave it out on their own above `maxBytes` (default 700000 bytes, about 43 s of 128 kbps mp3). `contentOmitted` then says why and `note` says how to get it: `history.getAudio({ historyItemId })`. The history item can take a few seconds to appear after the audio returns.
 
-  Sound effects, music, stems and isolation have no history item, so ElevenLabs keeps no copy. Their output always comes back in the result, up to 50 MB; don't return it from a script on Corsair's cloud unless it fits the script's 1 MB result, and pass it to the next operation instead. Pick a small `outputFormat` such as `mp3_22050_32` when you can.
+  Sound effects, music, stems and isolation have no history item, so ElevenLabs keeps no copy. Their output always comes back in the result, up to 50 MB.
 
-  Calls here wait for the audio. A script on Corsair's cloud has about 20 s, and only jobs outlast that, so keep generation short there: a few paragraphs of speech with a fast model, a few seconds of music. Long music, stems and isolation can run past it, and a run cut off that way may still finish and bill. `dubbing.create` is the one long operation with a job: follow it with `dubbing.get`, or let `get_job` do it. Transcripts of long files can use `speechToText.convert({ webhook: true })`.
+  Calls here wait for the audio. A script on Corsair's cloud has a 25 s wall and can return at most 1,000,000 bytes, and for what we timed, size is the first limit. Single runs on 2026-11-08: a 10 s sound effect took 2.1 s, 530 characters of speech 1.1 s with eleven_flash_v2_5 and 1.7 s with eleven_multilingual_v2, and 15, 30 and 60 s of music took 3.9, 4.6 and 6.9 s. Music's default format is about 24 KB/s, so its base64 passes the cap at about 31 s of audio: the 30 s result was 960,972 bytes, the 60 s result 1,920,973. To stay under the cap, ask for a lower-bitrate `outputFormat` (`mp3_22050_32` gave 4.05 KB/s in one 6 s run, so about 3 minutes fits), or pass `contentBase64` to the next operation in the same script and return only the metadata. We did not time long transcription, isolation, voice changer or stems. A run the wall cuts off may still finish and bill. `dubbing.create` is the one long operation with a job: follow it with `dubbing.get`, or let `get_job` do it. Transcripts of long files can use `speechToText.convert({ webhook: true })`.
 
-  ElevenLabs has no idempotency keys, so a repeated generation bills again. The plugin retries a generation only when ElevenLabs refused it before running it (429 `rate_limit_exceeded`, `concurrent_limit_exceeded` or `system_busy`, waiting as `Retry-After` says), never on a 5xx, a timeout or a network failure. Reads also retry on 5xx.
+  ElevenLabs has no idempotency keys, so a repeated generation bills again. By default the plugin retries a generation only when ElevenLabs refused it before running it: a 429 with `rate_limit_exceeded`, `concurrent_limit_exceeded`, `system_busy` or the older `too_many_concurrent_requests`, at most 3 times, waiting as `Retry-After` says. If `Retry-After` is over 30 s it doesn't wait and you get the 429. It never retries a generation on a 5xx, a timeout, a network failure or any other 429; those errors say the run may have happened. Reads retry any 429 under the same rules, and a 5xx at most 2 times. A custom handler in `errorHandlers` can change all of this, including retrying a generation after a 5xx, which can bill twice.
 
   Not covered, on purpose: Studio and projects, professional voice training, instant voice cloning from files (consent and verification concerns), websockets, realtime and Speech Engine, streaming variants (an operation returns one value), phone numbers and outbound calls, workspace admin, SMB, and Flows.
 examples:
@@ -29,21 +29,22 @@ examples:
       outputFormat: mp3_22050_32
 exampleWebhook:
   path: speechToText.transcriptionCompleted
-  note: Create a webhook in ElevenLabs under Developers, Webhooks, with HMAC auth, and save the secret it shows you as the account's `webhook_signature` (or pass `webhookSecret`); deliveries are refused until it is set. Tick the events you want, and select the webhook in the agent's settings for post-call events. Hand `processWebhook` the raw body text (`await request.text()`), not parsed JSON, because ElevenLabs signs the exact bytes it sent. Deliveries name no account, so with several tenants put `?tenantId=<id>` on the webhook URL.
+  note: "Create a webhook in ElevenLabs under Developers, Webhooks, with HMAC auth, and save the secret it shows you as the account's `webhook_signature` (or pass `webhookSecret`); deliveries are refused until it is set. Tick the events you want, and select the webhook in the agent's settings for post-call events. Hand `processWebhook` the raw body text (`await request.text()`), not parsed JSON, because ElevenLabs signs the exact bytes it sent. Deliveries name no account, so with several tenants put `?tenantId=<id>` on the webhook URL and pass the URL's query as `processWebhook`'s fourth argument. A delivery with a bad signature or a payload that fails validation comes back from `processWebhook` as `response.success: false`, so answer non-2xx for it."
   after: "if (result.data?.type === 'speech_to_text_transcription') console.log(result.data.data?.request_id, result.data.data?.transcription?.text);"
 apiNotes:
   textToSpeech.convert: Spends credits by text length (`characterCost` says how many). The history item keeps its own stored format, so `history.getAudio` can return a different bitrate from `outputFormat`.
   textToSpeech.convertWithTimestamps: Same audio fields as `textToSpeech.convert`, plus `alignment` and `normalized_alignment`.
   speechToText.convert: Pass `fileBase64` or `sourceUrl`. With `webhook` true it returns `request_id` and `transcription_id` at once and delivers to the workspace's speech-to-text webhooks, which must exist first. `speechToText.getTranscript` answers 404 until the transcript is ready, the same as for a wrong id, which is why this isn't declared as a job.
-  audioIsolation.isolate: ElevenLabs refuses audio under about 4.6 s. No history item, so the output always comes back in the result.
-  music.compose: Pass `prompt` or `compositionPlan`. Defaults to music_v2_5, because the API's own default, music_v1, is removed on 2027-01-31. No `characterCost` header; `account.usageStats` has the cost.
+  audioIsolation.isolate: ElevenLabs refuses audio under about 4.6 s. No history item, so the output always comes back in the result. It takes no `outputFormat`, and a clip of about 7.5 s came back as 302,018 bytes in one run, so in a script hand on anything over about 18 s instead of returning it.
+  music.compose: Pass `prompt` or `compositionPlan`; `musicLengthMs` only works with `prompt`. Defaults to music_v2_5, because the API's own default, music_v1, is removed on 2027-01-31. No `characterCost` header; `account.usageStats` has the cost.
   music.plan: The API's schema allows `chunks` or `sections` in a plan; music_v2_5 answered with `chunks` in our test. Pass the plan back to `music.compose` as `compositionPlan`.
   music.separateStems: Returns a zip with one file per stem. No `characterCost` header; `account.usageStats` has the cost.
   soundEffects.generate: Defaults to eleven_text_to_sound_v3, because the API's own default, eleven_text_to_sound_v2, is removed on 2027-03-01.
   voices.delete: Works on your own voices and library copies. It can't be undone.
   voiceDesign.create: Needs a free voice slot; over `voice_limit` (see `account.subscription`) ElevenLabs answers 400.
-  voiceDesign.design: Costs more than most operations (about 200 credits in our test) whatever the text length, because it generates three previews. Set `includeAudio` false to keep only the ids and durations.
-  voiceDesign.remix: Only works on your own custom voices. It makes previews and leaves the source voice as it is. Costs about 350 credits in our test.
+  voiceDesign.design: Cost follows the preview text, at about a credit a character in our tests (101 credits with a 101-character `text`, 200 with `autoGenerateText`). Audio doesn't come back here. Previews are always made for streaming, which is what lets `voiceDesign.getPreview` read them, and `duration_secs` reads -1 for them.
+  voiceDesign.getPreview: Reading a preview spent no credits in our test, read twice. `outputFormat` on the design or remix sets its format. We didn't test how long a preview stays readable.
+  voiceDesign.remix: Only works on your own custom voices. It makes previews, read with `voiceDesign.getPreview`, and leaves the source voice as it is. In our tests it cost 101 credits with a 101-character `text` and 350 with `autoGenerateText`.
   dubbing.create: Returns at once. Follow `dubbing_id` with `dubbing.get` until `status` is `dubbed` or `failed`. By default dubbing clones the speakers it hears; set `disableVoiceCloning` true to use library voices instead.
   dubbing.getAudio: Audio or video, per `contentType`. Subject to `maxBytes`, so raise it for anything long.
   history.list: Deleted items still count toward a page, so a page can be short or even empty while `has_more` is true. Keep going with `last_history_item_id` until `has_more` is false.
@@ -99,11 +100,13 @@ apiExamples:
   voices.defaultSettings:
     call: "{}"
   voiceDesign.design:
-    call: "{ voiceDescription: 'A calm middle-aged narrator with a warm low voice.', autoGenerateText: true, outputFormat: 'mp3_22050_32', includeAudio: false }"
+    call: "{ voiceDescription: 'A calm middle-aged narrator with a warm low voice.', autoGenerateText: true, outputFormat: 'mp3_22050_32' }"
+  voiceDesign.getPreview:
+    call: "{ generatedVoiceId: '<generated_voice_id>', maxBytes: 2000000 }"
   voiceDesign.create:
     call: "{ voiceName: 'Narrator', voiceDescription: 'A calm middle-aged narrator with a warm low voice.', generatedVoiceId: '<generated_voice_id>' }"
   voiceDesign.remix:
-    call: "{ voiceId: '<your voice id>', voiceDescription: 'A little brighter.', autoGenerateText: true, includeAudio: false }"
+    call: "{ voiceId: '<your voice id>', voiceDescription: 'A little brighter.', autoGenerateText: true }"
   dubbing.create:
     call: "{ sourceUrl: 'https://example.com/clip.mp4', targetLang: 'es', watermark: true }"
   dubbing.get:

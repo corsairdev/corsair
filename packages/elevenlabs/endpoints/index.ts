@@ -52,6 +52,7 @@ import {
 import {
 	createDesigned as voiceDesignCreate,
 	design as voiceDesignDesign,
+	getPreview as voiceDesignGetPreview,
 	remix as voiceDesignRemix,
 	addFromLibrary as voicesAddFromLibrary,
 	defaultSettings as voicesDefaultSettings,
@@ -105,6 +106,7 @@ export const Voices = {
 
 export const VoiceDesign = {
 	design: voiceDesignDesign,
+	getPreview: voiceDesignGetPreview,
 	create: voiceDesignCreate,
 	remix: voiceDesignRemix,
 };

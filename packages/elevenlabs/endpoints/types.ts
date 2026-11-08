@@ -65,7 +65,7 @@ const BinaryControlFields = {
 		.max(50 * 1024 * 1024)
 		.optional()
 		.describe(
-			'Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 40 s of 128 kbps mp3), which fits a script result on Corsair’s cloud. At most 50 MB.',
+			'Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB.',
 		),
 };
 
@@ -389,6 +389,11 @@ const MusicComposeInputSchema = z
 	})
 	.refine((input) => Boolean(input.prompt) !== Boolean(input.compositionPlan), {
 		message: 'Pass exactly one of prompt or compositionPlan.',
+	})
+	.refine((input) => !(input.compositionPlan && input.musicLengthMs), {
+		message:
+			'musicLengthMs only works with prompt; a compositionPlan sets its own length.',
+		path: ['musicLengthMs'],
 	});
 const MusicComposeResponseSchema = BinaryOutputSchema;
 
@@ -579,11 +584,11 @@ const VoicesDefaultSettingsInputSchema = z.object({});
 
 const VoicePreviewSchema = z
 	.object({
-		generated_voice_id: z.string(),
-		audio_base_64: z
+		generated_voice_id: z
 			.string()
-			.nullish()
-			.describe('The preview audio. Missing when contentOmitted is set.'),
+			.describe(
+				'Pass it to voiceDesign.getPreview to hear the preview, or voiceDesign.create to save it.',
+			),
 		media_type: z.string().nullish(),
 		duration_secs: z.number().nullish(),
 		language: z.string().nullish(),
@@ -594,7 +599,6 @@ const VoicePreviewsResponseSchema = z
 	.object({
 		previews: z.array(VoicePreviewSchema),
 		text: z.string().nullish(),
-		contentOmitted: z.enum(['not_requested', 'over_limit']).optional(),
 		note: z.string().optional(),
 	})
 	.loose();
@@ -612,14 +616,9 @@ const PreviewFields = {
 	loudness: z.number().min(-1).max(1).optional(),
 	seed: z.number().int().optional(),
 	guidanceScale: z.number().optional(),
-	outputFormat: OutputFormatSchema,
-	includeAudio: z
-		.boolean()
-		.optional()
-		.describe(
-			'false drops the preview audio from the result and keeps generated_voice_id, duration and so on. Default true.',
-		),
-	maxBytes: BinaryControlFields.maxBytes,
+	outputFormat: OutputFormatSchema.describe(
+		'The format voiceDesign.getPreview will return, for example mp3_22050_32.',
+	),
 };
 
 const VoiceDesignDesignInputSchema = z.object({
@@ -637,6 +636,20 @@ const VoiceDesignDesignInputSchema = z.object({
 	...PreviewFields,
 });
 const VoiceDesignDesignResponseSchema = VoicePreviewsResponseSchema;
+
+const VoiceDesignGetPreviewInputSchema = z.object({
+	generatedVoiceId: z
+		.string()
+		.min(1)
+		.describe(
+			'generated_voice_id from a preview of voiceDesign.design or voiceDesign.remix.',
+		),
+	includeContent: BinaryControlFields.includeContent.describe(
+		'false returns the size and type only. Default true.',
+	),
+	maxBytes: BinaryControlFields.maxBytes,
+});
+const VoiceDesignGetPreviewResponseSchema = BinaryOutputSchema;
 
 const VoiceDesignCreateInputSchema = z.object({
 	voiceName: z.string().min(1),
@@ -1239,6 +1252,12 @@ export type VoiceDesignDesignInput = z.infer<
 export type VoiceDesignDesignResponse = z.infer<
 	typeof VoiceDesignDesignResponseSchema
 >;
+export type VoiceDesignGetPreviewInput = z.infer<
+	typeof VoiceDesignGetPreviewInputSchema
+>;
+export type VoiceDesignGetPreviewResponse = z.infer<
+	typeof VoiceDesignGetPreviewResponseSchema
+>;
 export type VoiceDesignCreateInput = z.infer<
 	typeof VoiceDesignCreateInputSchema
 >;
@@ -1356,6 +1375,7 @@ export type ElevenLabsEndpointInputs = {
 	voicesEditSettings: VoicesEditSettingsInput;
 	voicesDefaultSettings: VoicesDefaultSettingsInput;
 	voiceDesignDesign: VoiceDesignDesignInput;
+	voiceDesignGetPreview: VoiceDesignGetPreviewInput;
 	voiceDesignCreate: VoiceDesignCreateInput;
 	voiceDesignRemix: VoiceDesignRemixInput;
 	dubbingCreate: DubbingCreateInput;
@@ -1408,6 +1428,7 @@ export type ElevenLabsEndpointOutputs = {
 	voicesEditSettings: VoicesEditSettingsResponse;
 	voicesDefaultSettings: VoicesDefaultSettingsResponse;
 	voiceDesignDesign: VoiceDesignDesignResponse;
+	voiceDesignGetPreview: VoiceDesignGetPreviewResponse;
 	voiceDesignCreate: VoiceDesignCreateResponse;
 	voiceDesignRemix: VoiceDesignRemixResponse;
 	dubbingCreate: DubbingCreateResponse;
@@ -1461,6 +1482,7 @@ export const ElevenLabsEndpointInputSchemas = {
 	voicesEditSettings: VoicesEditSettingsInputSchema,
 	voicesDefaultSettings: VoicesDefaultSettingsInputSchema,
 	voiceDesignDesign: VoiceDesignDesignInputSchema,
+	voiceDesignGetPreview: VoiceDesignGetPreviewInputSchema,
 	voiceDesignCreate: VoiceDesignCreateInputSchema,
 	voiceDesignRemix: VoiceDesignRemixInputSchema,
 	dubbingCreate: DubbingCreateInputSchema,
@@ -1514,6 +1536,7 @@ export const ElevenLabsEndpointOutputSchemas = {
 	voicesEditSettings: VoicesEditSettingsResponseSchema,
 	voicesDefaultSettings: VoicesSettingsResponseSchema,
 	voiceDesignDesign: VoiceDesignDesignResponseSchema,
+	voiceDesignGetPreview: VoiceDesignGetPreviewResponseSchema,
 	voiceDesignCreate: VoiceDesignCreateResponseSchema,
 	voiceDesignRemix: VoiceDesignRemixResponseSchema,
 	dubbingCreate: DubbingCreateResponseSchema,

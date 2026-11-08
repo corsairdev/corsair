@@ -54,6 +54,8 @@ describe('ElevenLabs jobs', () => {
 	// A state this list misses would read as "still running" forever, so every
 	// state the API can answer with must be placed.
 	it('sorts every state a dub can be in', () => {
+		expect(job.status.done).toEqual(['dubbed']);
+		expect(job.status.failed).toEqual(['failed']);
 		for (const value of [...job.status.done, ...job.status.failed]) {
 			expect(DUBBING_STATES).toContain(value);
 		}

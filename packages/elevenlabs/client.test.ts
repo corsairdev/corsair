@@ -222,6 +222,29 @@ describe('requests', () => {
 		);
 	});
 
+	it.each(['POST', 'PATCH', 'DELETE'] as const)(
+		'warns a %s that answered 5xx may have run and could bill again',
+		async (method) => {
+			fetchMock.mockResolvedValueOnce(
+				jsonResponse({ detail: { code: 'internal', message: 'Oops' } }, 500),
+			);
+			const error = await failure(elevenLabsJson('/v1/x', KEY, { method }));
+			expect(error.status).toBe(500);
+			expect(error.message).toMatch(/may still have run it/);
+			expect(error.message).toMatch(/a generation bills again/);
+		},
+	);
+
+	it('doesn’t warn on a read that answered 5xx, or a POST refused with 4xx', async () => {
+		fetchMock.mockResolvedValueOnce(jsonResponse({ detail: 'Oops' }, 500));
+		const read = await failure(elevenLabsJson('/v1/x', KEY));
+		expect(read.message).not.toMatch(/may still have run/);
+
+		fetchMock.mockResolvedValueOnce(jsonResponse({ detail: 'Bad' }, 400));
+		const bad = await failure(elevenLabsJson('/v1/x', KEY, { method: 'POST' }));
+		expect(bad.message).not.toMatch(/may still have run/);
+	});
+
 	it('carries Retry-After on the error', async () => {
 		fetchMock.mockResolvedValueOnce(
 			jsonResponse({ detail: { code: 'system_busy', message: 'Busy' } }, 429, {
@@ -387,20 +410,40 @@ describe('toBinaryResult', () => {
 		expect('contentOmitted' in result).toBe(false);
 	});
 
-	it('says so plainly past the hard limit, where it does lose the bytes', () => {
-		const result = toBinaryResult({
-			bytes: Buffer.alloc(0),
-			contentType: 'audio/mpeg',
-		});
-		expect('contentBase64' in result).toBe(true);
+	const oversized = (historyItemId?: string) => ({
+		contentType: 'audio/mpeg',
+		historyItemId,
+		bytes: { byteLength: HARD_MAX_CONTENT_BYTES + 1 } as Buffer,
+	});
 
-		const big = {
-			contentType: 'audio/mpeg',
-			bytes: { byteLength: HARD_MAX_CONTENT_BYTES + 1 } as Buffer,
-		};
-		const over = toBinaryResult(big);
+	it('says plainly past the hard limit that a copy doesn’t exist', () => {
+		const over = toBinaryResult(oversized());
 		expect(over).toMatchObject({ contentOmitted: 'over_limit' });
-		expect((over as { note: string }).note).toMatch(/lost/);
+		expect((over as { note: string }).note).toMatch(
+			/keeps no copy of this output, so it can't be fetched again/,
+		);
+	});
+
+	it('points at the direct download past the hard limit, not a maxBytes the schema rejects', () => {
+		const history = toBinaryResult(oversized('hist/1'));
+		const note = (history as { note: string }).note;
+		expect(note).toContain(
+			'GET https://api.elevenlabs.io/v1/history/hist%2F1/audio',
+		);
+		expect(note).not.toContain('maxBytes');
+
+		const dub = toBinaryResult(oversized(), {
+			refetchable: true,
+			downloadPath: '/v1/dubbing/d1/audio/es',
+		});
+		expect((dub as { note: string }).note).toContain(
+			'GET https://api.elevenlabs.io/v1/dubbing/d1/audio/es',
+		);
+	});
+
+	it('suggests a maxBytes only when the schema would take it', () => {
+		const result = toBinaryResult(fetched(50, 'hist_1'), { maxBytes: 10 });
+		expect((result as { note: string }).note).toContain('maxBytes: 50');
 	});
 
 	it('treats a read as refetchable with no history id', () => {

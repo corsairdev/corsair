@@ -1,5 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
-import { elevenLabsJson, pathId } from '../client';
+import { elevenLabsJson, logQuietly, pathId } from '../client';
 import type { ElevenLabsEndpoints } from '../index';
 import {
 	ElevenLabsEndpointInputSchemas,
@@ -14,12 +13,9 @@ export const listModels: ElevenLabsEndpoints['modelsList'] = async (
 	// unknown: the array before the schema parses it.
 	const models = await elevenLabsJson<unknown[]>('/v1/models', ctx.key);
 	const response = ElevenLabsEndpointOutputSchemas.modelsList.parse({ models });
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.models.list',
-		{ count: response.models.length },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.models.list', {
+		count: response.models.length,
+	});
 	return response;
 };
 
@@ -37,7 +33,7 @@ export const user: ElevenLabsEndpoints['accountUser'] = async (
 		// unknown: the body before the schema parses it; only the two key fields are named here.
 	} = await elevenLabsJson<Record<string, unknown>>('/v1/user', ctx.key);
 	const response = ElevenLabsEndpointOutputSchemas.accountUser.parse(rest);
-	await logEventFromContext(ctx, 'elevenlabs.account.user', {}, 'completed');
+	await logQuietly(ctx, 'elevenlabs.account.user', {});
 	return response;
 };
 
@@ -49,12 +45,9 @@ export const subscription: ElevenLabsEndpoints['accountSubscription'] = async (
 	const response = ElevenLabsEndpointOutputSchemas.accountSubscription.parse(
 		await elevenLabsJson('/v1/user/subscription', ctx.key),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.account.subscription',
-		{ tier: response.tier },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.account.subscription', {
+		tier: response.tier,
+	});
 	return response;
 };
 
@@ -81,12 +74,9 @@ export const usageStats: ElevenLabsEndpoints['accountUsageStats'] = async (
 			},
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.account.usageStats',
-		{ rows: response.rows?.length ?? 0 },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.account.usageStats', {
+		rows: response.rows?.length ?? 0,
+	});
 	return response;
 };
 
@@ -104,11 +94,8 @@ export const createToken: ElevenLabsEndpoints['singleUseTokensCreate'] = async (
 		),
 	);
 	// The token is a credential, so only its type is logged.
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.singleUseTokens.create',
-		{ tokenType: input.tokenType },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.singleUseTokens.create', {
+		tokenType: input.tokenType,
+	});
 	return response;
 };

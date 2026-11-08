@@ -37,7 +37,7 @@ pnpm add @corsair-dev/elevenlabs
 | `history.getAudio` | `elevenlabs.api.history.getAudio` | `read` | Download a history item’s audio as base64, subject to a size limit you can raise with maxBytes. |
 | `history.list` | `elevenlabs.api.history.list` | `read` | List generated speech, newest first by default. |
 | `models.list` | `elevenlabs.api.models.list` | `read` | List available models with their languages and rates. |
-| `music.compose` | `elevenlabs.api.music.compose` | `write` | Generate a song from a prompt or a composition plan; spends credits by length. ElevenLabs keeps no copy, so the audio comes back in the result. A long song can outlast a script’s 20 s budget on Corsair’s cloud. |
+| `music.compose` | `elevenlabs.api.music.compose` | `write` | Generate a song from a prompt or a composition plan; spends credits by length. ElevenLabs keeps no copy, so the audio comes back in the result. At the default format, about 24 KB/s, a song over about 31 s is too big to return from a script on Corsair’s cloud, whose cap is 1,000,000 bytes: pick a lower-bitrate outputFormat, or pass contentBase64 to the next operation and return only metadata. |
 | `music.plan` | `elevenlabs.api.music.plan` | `write` | Draft a composition plan from a prompt, to edit and pass to music.compose. |
 | `music.separateStems` | `elevenlabs.api.music.separateStems` | `write` | Split a song into stems, returned as a zip; spends credits by audio length. |
 | `singleUseTokens.create` | `elevenlabs.api.singleUseTokens.create` | `write` | Mint a single-use token, valid 15 minutes, to give a client instead of the API key. |
@@ -50,8 +50,9 @@ pnpm add @corsair-dev/elevenlabs
 | `textToSpeech.convertWithTimestamps` | `elevenlabs.api.textToSpeech.convertWithTimestamps` | `write` | Turn text into speech with the start and end time of each character; spends credits by text length. Same audio fields as textToSpeech.convert. |
 | `voiceChanger.convert` | `elevenlabs.api.voiceChanger.convert` | `write` | Say the same thing in a different voice, from a base64 audio file; spends credits by audio length. |
 | `voiceDesign.create` | `elevenlabs.api.voiceDesign.create` | `write` | Save a designed preview as a voice in this account; uses a voice slot. |
-| `voiceDesign.design` | `elevenlabs.api.voiceDesign.design` | `write` | Generate voice previews from a description; spends credits. Pick one and pass its generated_voice_id to voiceDesign.create. |
-| `voiceDesign.remix` | `elevenlabs.api.voiceDesign.remix` | `write` | Generate previews of a changed version of an existing voice; spends credits. |
+| `voiceDesign.design` | `elevenlabs.api.voiceDesign.design` | `write` | Generate voice previews from a description; spends credits. Hear one with voiceDesign.getPreview, then pass its generated_voice_id to voiceDesign.create. |
+| `voiceDesign.getPreview` | `elevenlabs.api.voiceDesign.getPreview` | `read` | Read a preview's audio by its generated_voice_id, without generating again. Subject to a size limit you can raise with maxBytes. |
+| `voiceDesign.remix` | `elevenlabs.api.voiceDesign.remix` | `write` | Generate previews of a changed version of an existing voice; spends credits. Hear one with voiceDesign.getPreview. |
 | `voices.addFromLibrary` | `elevenlabs.api.voices.addFromLibrary` | `write` | Add a voice from the shared library to this account; uses a voice slot. |
 | `voices.defaultSettings` | `elevenlabs.api.voices.defaultSettings` | `read` | The settings a voice has by default. |
 | `voices.delete` | `elevenlabs.api.voices.delete` | `destructive` | Delete a voice from this account, for good. |
@@ -72,11 +73,15 @@ Handles 8 webhook events. See the reference for payloads and `webhookHooks`.
 
 ## Audio in results
 
-Audio comes back as base64 in `contentBase64`, with `contentType`, `byteLength`, `requestId`, `traceId`, `characterCost` and `historyItemId`. Speech operations can leave it out with `includeContent: false`, and do so on their own above `maxBytes` (default 700000 bytes); `contentOmitted` says why and `history.getAudio` brings it back. Sound effects, music, stems and isolation have no history item, so their output always comes back, up to 50 MB.
+Audio comes back as base64 in `contentBase64`, with `contentType`, `byteLength`, `requestId`, `traceId`, `characterCost` and `historyItemId`. Speech operations can leave it out with `includeContent: false`, and do so on their own above `maxBytes` (default 700000 bytes); `contentOmitted` says why and `history.getAudio` brings it back. Sound effects, music, stems and isolation have no history item, so their output always comes back, up to 50 MB. Voice previews never come back inline; `voiceDesign.getPreview` reads one by its id.
+
+## Time and size on Corsair's cloud
+
+A script there has a 25 s wall and can return at most 1,000,000 bytes. For what we timed, size is the first limit. Single runs on 2026-11-08: a 10 s sound effect took 2.1 s, 530 characters of speech 1.1 s (eleven_flash_v2_5) and 1.7 s (eleven_multilingual_v2), and 15, 30 and 60 s of music took 3.9, 4.6 and 6.9 s. Music's default format is about 24 KB/s, so its base64 passes the cap at about 31 s. Ask for a lower-bitrate `outputFormat` (`mp3_22050_32` gave 4.05 KB/s in one run), or pass `contentBase64` to the next operation in the same script and return only the metadata. We did not time long transcription, isolation, voice changer or stems.
 
 ## Retries
 
-ElevenLabs has no idempotency keys, so a repeated generation bills again. A generation is retried only when ElevenLabs refused it before running it (429 `rate_limit_exceeded`, `concurrent_limit_exceeded`, `system_busy`), never on a 5xx, a timeout or a network failure. Reads also retry on 5xx.
+ElevenLabs has no idempotency keys, so a repeated generation bills again. By default a generation is retried only when ElevenLabs refused it before running it: a 429 with `rate_limit_exceeded`, `concurrent_limit_exceeded`, `system_busy` or the older `too_many_concurrent_requests`, at most 3 times, waiting as `Retry-After` says. Over 30 s of `Retry-After` it doesn't wait and you get the 429. It never retries a generation on a 5xx, a timeout, a network failure or any other 429. Reads retry any 429 under the same rules, and a 5xx at most 2 times. A custom handler in `errorHandlers` can change this, including retrying a generation after a 5xx, which can bill twice.
 
 ## Not covered
 

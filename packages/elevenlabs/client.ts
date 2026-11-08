@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import type { ApiRequestOptions } from 'corsair/http';
 import { ApiError } from 'corsair/http';
 
@@ -5,8 +6,11 @@ export const ELEVENLABS_API_BASE = 'https://api.elevenlabs.io';
 
 /**
  * How long one call may take, by kind. A timed-out generation can still finish
- * and bill on ElevenLabs' side, so these are generous; the caller's own budget
- * (about 20 s for a script on Corsair's cloud) is usually the shorter limit.
+ * and bill on ElevenLabs' side, so these are generous. A script on Corsair's
+ * cloud has a 25 s wall (SCRIPT_WALL_MS in Hub), which is the shorter limit there.
+ * Single runs on 2026-11-08 took 7 s or less: a 10 s sound effect 2.1 s, 530
+ * characters of speech 1.1 to 1.7 s, 60 s of music 6.9 s. Long transcription,
+ * isolation, voice changer and stems weren't timed.
  */
 export const TIMEOUTS_MS = {
 	read: 30_000,
@@ -37,7 +41,7 @@ export class ElevenLabsAPIError extends ApiError {
 		super(
 			request,
 			{ ...response, ok: false },
-			formatMessage(response.status, parsed),
+			formatMessage(response.status, parsed, request.method),
 			{ retryAfter },
 		);
 		this.name = 'ElevenLabsAPIError';
@@ -64,14 +68,24 @@ type ParsedError = {
 	param?: string;
 };
 
-function formatMessage(status: number, parsed: ParsedError): string {
+/** What to tell a caller when a call that may spend credits ended with no clear answer. */
+const MAY_HAVE_RUN =
+	'ElevenLabs may still have run it, so check before sending it again (a generation bills again).';
+
+function formatMessage(
+	status: number,
+	parsed: ParsedError,
+	method: string,
+): string {
 	const code = parsed.code ? ` ${parsed.code}` : '';
 	const requestId = parsed.requestId ? ` (request id ${parsed.requestId})` : '';
-	const credits =
+	const consequence =
 		status === 402
 			? ' Nothing was generated; add credits in the ElevenLabs dashboard before trying again.'
-			: '';
-	return `ElevenLabs ${status}${code}: ${parsed.message}${credits}${requestId}`;
+			: status >= 500 && method !== 'GET'
+				? ` ${MAY_HAVE_RUN}`
+				: '';
+	return `ElevenLabs ${status}${code}: ${parsed.message}${consequence}${requestId}`;
 }
 
 /**
@@ -198,12 +212,8 @@ async function send(
 		const what = timedOut
 			? `timed out after ${Math.round(timeoutMs / 1000)} s`
 			: `failed: ${scrub(error instanceof Error ? error.message : String(error), apiKey)}`;
-		const consequence =
-			method === 'GET'
-				? ''
-				: ' ElevenLabs may still have run it, so check before sending it again (a generation bills again).';
 		throw new ElevenLabsRequestError(
-			`ElevenLabs ${method} ${path} ${what}.${consequence}`,
+			`ElevenLabs ${method} ${path} ${what}.${method === 'GET' ? '' : ` ${MAY_HAVE_RUN}`}`,
 		);
 	}
 
@@ -221,6 +231,10 @@ async function send(
 		body,
 		response.statusText || 'request failed with no error body',
 	);
+	// By default error-handlers.ts doesn't retry a generation on this error unless
+	// ElevenLabs refused it with a 429 before running it. That's a default: a
+	// matching custom handler in createCorsair's or this plugin's errorHandlers can
+	// still retry it, and then a 5xx that did run bills twice.
 	throw new ElevenLabsAPIError(
 		{ method, url: path },
 		{
@@ -335,9 +349,9 @@ export async function elevenLabsBinary(
 }
 
 /**
- * Most a result carries inline when the bytes can be fetched again, sized so
- * the base64 fits the 1 MB limit on a script's result on Corsair's cloud. About
- * 40 s of mp3 at the default 128 kbps.
+ * Most a result carries inline when the bytes can be fetched again, sized so the
+ * base64 fits the 1,000,000 byte cap on a script's result on Corsair's cloud
+ * (maxResultBytes in Hub). About 43 s of 128 kbps mp3.
  */
 export const DEFAULT_MAX_CONTENT_BYTES = 700_000;
 /** Most any result carries inline, whatever the caller asks. */
@@ -348,52 +362,91 @@ export type BinaryResultOptions = {
 	maxBytes?: number;
 	/** The bytes can be read again from where they came (a read, not a generation). */
 	refetchable?: boolean;
+	/** Where to download them directly when they're over HARD_MAX_CONTENT_BYTES. */
+	downloadPath?: string;
 };
 
+const directDownload = (path: string) =>
+	`Over ${HARD_MAX_CONTENT_BYTES} bytes it can't come back in a result, so download it directly: GET ${ELEVENLABS_API_BASE}${path} with your xi-api-key header.`;
+
 /**
- * Decides whether the bytes go in the result. Audio that can be fetched again
- * (it has a history item, or this call was itself a read) is left out when the
- * caller asks or when it's over the limit, and the result says so and how to
- * get it. Audio that can't be fetched again was paid for and exists nowhere
- * else, so it's returned whatever the options say, up to HARD_MAX_CONTENT_BYTES.
+ * Decides whether the bytes stay out of the result, and says why and how to get
+ * them. Audio that can be fetched again (it has a history item, or this call was
+ * itself a read) is left out when the caller asks or when it's over the limit.
+ * Audio that can't be fetched again was paid for and exists nowhere else, so it's
+ * left out only over HARD_MAX_CONTENT_BYTES, and the note says it's gone.
  */
+export function contentOmission(
+	byteLength: number,
+	historyItemId: string | undefined,
+	options: BinaryResultOptions = {},
+):
+	| { contentOmitted: 'not_requested' | 'over_limit'; note: string }
+	| undefined {
+	const refetchable = options.refetchable || Boolean(historyItemId);
+
+	if (refetchable && options.includeContent === false) {
+		return {
+			contentOmitted: 'not_requested',
+			note: historyItemId
+				? `Left out as asked. Read it with history.getAudio({ historyItemId: '${historyItemId}' }); a new item can take a few seconds to appear.`
+				: 'Left out as asked. Ask again with includeContent true to get it.',
+		};
+	}
+
+	const limit = refetchable
+		? Math.min(
+				options.maxBytes ?? DEFAULT_MAX_CONTENT_BYTES,
+				HARD_MAX_CONTENT_BYTES,
+			)
+		: HARD_MAX_CONTENT_BYTES;
+	if (byteLength <= limit) return undefined;
+
+	const downloadPath =
+		options.downloadPath ??
+		(historyItemId ? `/v1/history/${pathId(historyItemId)}/audio` : undefined);
+	const how = !refetchable
+		? "ElevenLabs keeps no copy of this output, so it can't be fetched again; generate less at a time."
+		: byteLength > HARD_MAX_CONTENT_BYTES && downloadPath
+			? directDownload(downloadPath)
+			: historyItemId
+				? `Read it with history.getAudio({ historyItemId: '${historyItemId}', maxBytes: ${byteLength} }).`
+				: `Read it again with maxBytes: ${byteLength}.`;
+	return {
+		contentOmitted: 'over_limit',
+		note: `${byteLength} bytes is over the ${limit} byte limit for a result. ${how}`,
+	};
+}
+
+/** Puts fetched bytes in a result, unless contentOmission says they stay out. */
 export function toBinaryResult(
 	fetched: FetchedBinary,
 	options: BinaryResultOptions = {},
 ) {
 	const { bytes, ...fields } = fetched;
 	const byteLength = bytes.byteLength;
-	const refetchable = options.refetchable || Boolean(fetched.historyItemId);
+	const omission = contentOmission(byteLength, fetched.historyItemId, options);
+	return omission
+		? { ...fields, byteLength, ...omission }
+		: { ...fields, byteLength, contentBase64: bytes.toString('base64') };
+}
 
-	if (refetchable && options.includeContent === false) {
-		return {
-			...fields,
-			byteLength,
-			contentOmitted: 'not_requested' as const,
-			note: fetched.historyItemId
-				? `Left out as asked. Read it with history.getAudio({ historyItemId: '${fetched.historyItemId}' }); a new item can take a few seconds to appear.`
-				: 'Left out as asked.',
-		};
+/**
+ * Writes the event log without ever failing the call. The work behind a result is
+ * already done and often paid for, so a log entry that can't be written (no KEK
+ * with encryptDataAtRest on, a database fault) must not throw that result away.
+ */
+export async function logQuietly(
+	ctx: Parameters<typeof logEventFromContext>[0],
+	event: string,
+	// unknown: the event's fields, stored as given.
+	payload: Record<string, unknown>,
+) {
+	try {
+		await logEventFromContext(ctx, event, payload, 'completed');
+	} catch {
+		// Nothing depends on the log entry.
 	}
-
-	const limit = refetchable
-		? (options.maxBytes ?? DEFAULT_MAX_CONTENT_BYTES)
-		: HARD_MAX_CONTENT_BYTES;
-	if (byteLength > limit) {
-		const how = !refetchable
-			? 'ElevenLabs keeps no copy of this output, so it is lost; generate less at a time.'
-			: fetched.historyItemId
-				? `Read it with history.getAudio({ historyItemId: '${fetched.historyItemId}', maxBytes: ${byteLength} }).`
-				: `Read it again with maxBytes: ${byteLength}.`;
-		return {
-			...fields,
-			byteLength,
-			contentOmitted: 'over_limit' as const,
-			note: `${byteLength} bytes is over the ${limit} byte limit for a result. ${how}`,
-		};
-	}
-
-	return { ...fields, byteLength, contentBase64: bytes.toString('base64') };
 }
 
 // ── Inputs ──────────────────────────────────────────────────────────────────

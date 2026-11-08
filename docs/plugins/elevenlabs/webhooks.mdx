@@ -33,9 +33,11 @@ export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
     // The raw text: ElevenLabs signs the exact bytes it sent, so don't parse it first.
     const body = await request.text();
-    const result = await processWebhook(corsair, headers, body);
-    // Answer non-2xx when processing failed (no secret stored yet, for example),
-    // so ElevenLabs counts the failure and retries if retries are on.
+    // Carries ?tenantId=<id>, which picks the tenant whose secret checks the signature.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    const result = await processWebhook(corsair, headers, body, query);
+    // Answer non-2xx when processing failed (a bad signature, a payload that fails
+    // validation, no secret stored yet), so ElevenLabs counts it and retries if retries are on.
     return Response.json(result.response ?? { success: false }, {
         status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
     });

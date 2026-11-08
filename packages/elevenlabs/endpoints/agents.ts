@@ -1,5 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
-import { elevenLabsJson, pathId } from '../client';
+import { elevenLabsJson, logQuietly, pathId } from '../client';
 import type { ElevenLabsEndpoints } from '../index';
 import {
 	ElevenLabsEndpointInputSchemas,
@@ -25,12 +24,9 @@ export const list: ElevenLabsEndpoints['agentsList'] = async (
 			},
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.agents.list',
-		{ count: response.agents.length },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.agents.list', {
+		count: response.agents.length,
+	});
 	return response;
 };
 
@@ -45,12 +41,7 @@ export const get: ElevenLabsEndpoints['agentsGet'] = async (ctx, rawInput) => {
 			},
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.agents.get',
-		{ agentId: input.agentId },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.agents.get', { agentId: input.agentId });
 	return response;
 };
 
@@ -71,12 +62,9 @@ export const create: ElevenLabsEndpoints['agentsCreate'] = async (
 			},
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.agents.create',
-		{ agentId: response.agent_id },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.agents.create', {
+		agentId: response.agent_id,
+	});
 	return response;
 };
 
@@ -103,12 +91,7 @@ export const update: ElevenLabsEndpoints['agentsUpdate'] = async (
 			},
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.agents.update',
-		{ agentId: input.agentId },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.agents.update', { agentId: input.agentId });
 	return response;
 };
 
@@ -127,12 +110,7 @@ export const remove: ElevenLabsEndpoints['agentsDelete'] = async (
 			},
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.agents.delete',
-		{ agentId: input.agentId },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.agents.delete', { agentId: input.agentId });
 	return response;
 };
 
@@ -154,12 +132,9 @@ export const conversationsList: ElevenLabsEndpoints['agentsConversationsList'] =
 					},
 				}),
 			);
-		await logEventFromContext(
-			ctx,
-			'elevenlabs.agents.conversationsList',
-			{ count: response.conversations.length },
-			'completed',
-		);
+		await logQuietly(ctx, 'elevenlabs.agents.conversationsList', {
+			count: response.conversations.length,
+		});
 		return response;
 	};
 
@@ -174,12 +149,9 @@ export const conversationGet: ElevenLabsEndpoints['agentsConversationGet'] =
 					ctx.key,
 				),
 			);
-		await logEventFromContext(
-			ctx,
-			'elevenlabs.agents.conversationGet',
-			{ conversationId: input.conversationId },
-			'completed',
-		);
+		await logQuietly(ctx, 'elevenlabs.agents.conversationGet', {
+			conversationId: input.conversationId,
+		});
 		return response;
 	};
 
@@ -195,12 +167,9 @@ export const conversationDelete: ElevenLabsEndpoints['agentsConversationDelete']
 					{ method: 'DELETE' },
 				),
 			);
-		await logEventFromContext(
-			ctx,
-			'elevenlabs.agents.conversationDelete',
-			{ conversationId: input.conversationId },
-			'completed',
-		);
+		await logQuietly(ctx, 'elevenlabs.agents.conversationDelete', {
+			conversationId: input.conversationId,
+		});
 		return response;
 	};
 
@@ -219,11 +188,8 @@ export const signedUrl: ElevenLabsEndpoints['agentsSignedUrl'] = async (
 		}),
 	);
 	// The URL is a credential, so only the agent is logged.
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.agents.signedUrl',
-		{ agentId: input.agentId },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.agents.signedUrl', {
+		agentId: input.agentId,
+	});
 	return response;
 };

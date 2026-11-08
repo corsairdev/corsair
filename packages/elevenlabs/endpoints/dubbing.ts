@@ -1,9 +1,9 @@
-import { logEventFromContext } from 'corsair/core';
 import {
 	appendFields,
 	appendFile,
 	elevenLabsBinary,
 	elevenLabsJson,
+	logQuietly,
 	pathId,
 	TIMEOUTS_MS,
 	toBinaryResult,
@@ -48,12 +48,10 @@ export const create: ElevenLabsEndpoints['dubbingCreate'] = async (
 			timeoutMs: TIMEOUTS_MS.shortGeneration,
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.dubbing.create',
-		{ dubbingId: response.dubbing_id, targetLang: input.targetLang },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.dubbing.create', {
+		dubbingId: response.dubbing_id,
+		targetLang: input.targetLang,
+	});
 	return response;
 };
 
@@ -62,12 +60,10 @@ export const get: ElevenLabsEndpoints['dubbingGet'] = async (ctx, rawInput) => {
 	const response = ElevenLabsEndpointOutputSchemas.dubbingGet.parse(
 		await elevenLabsJson(`/v1/dubbing/${pathId(input.dubbingId)}`, ctx.key),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.dubbing.get',
-		{ dubbingId: input.dubbingId, status: response.status },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.dubbing.get', {
+		dubbingId: input.dubbingId,
+		status: response.status,
+	});
 	return response;
 };
 
@@ -90,12 +86,9 @@ export const list: ElevenLabsEndpoints['dubbingList'] = async (
 			},
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.dubbing.list',
-		{ count: response.dubs.length },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.dubbing.list', {
+		count: response.dubs.length,
+	});
 	return response;
 };
 
@@ -109,12 +102,9 @@ export const remove: ElevenLabsEndpoints['dubbingDelete'] = async (
 			method: 'DELETE',
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.dubbing.delete',
-		{ dubbingId: input.dubbingId },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.dubbing.delete', {
+		dubbingId: input.dubbingId,
+	});
 	return response;
 };
 
@@ -123,22 +113,19 @@ export const getAudio: ElevenLabsEndpoints['dubbingGetAudio'] = async (
 	rawInput,
 ) => {
 	const input = ElevenLabsEndpointInputSchemas.dubbingGetAudio.parse(rawInput);
+	const path = `/v1/dubbing/${pathId(input.dubbingId)}/audio/${pathId(input.languageCode)}`;
 	const response = ElevenLabsEndpointOutputSchemas.dubbingGetAudio.parse(
 		toBinaryResult(
-			await elevenLabsBinary(
-				`/v1/dubbing/${pathId(input.dubbingId)}/audio/${pathId(input.languageCode)}`,
-				ctx.key,
-				{ timeoutMs: TIMEOUTS_MS.shortGeneration },
-			),
-			{ ...input, refetchable: true },
+			await elevenLabsBinary(path, ctx.key, {
+				timeoutMs: TIMEOUTS_MS.shortGeneration,
+			}),
+			{ ...input, refetchable: true, downloadPath: path },
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.dubbing.getAudio',
-		{ dubbingId: input.dubbingId, byteLength: response.byteLength },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.dubbing.getAudio', {
+		dubbingId: input.dubbingId,
+		byteLength: response.byteLength,
+	});
 	return response;
 };
 
@@ -152,11 +139,8 @@ export const getTranscript: ElevenLabsEndpoints['dubbingGetTranscript'] =
 				ctx.key,
 			),
 		);
-		await logEventFromContext(
-			ctx,
-			'elevenlabs.dubbing.getTranscript',
-			{ dubbingId: input.dubbingId },
-			'completed',
-		);
+		await logQuietly(ctx, 'elevenlabs.dubbing.getTranscript', {
+			dubbingId: input.dubbingId,
+		});
 		return response;
 	};

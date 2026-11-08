@@ -512,7 +512,7 @@ await corsair.elevenlabs.api.audioIsolation.isolate({ fileBase64: '<base64 audio
 | `contentType` | `string` | No | Media type of the file, for example audio/mpeg. |
 | `fileFormat` | `pcm_s16le_16 \| other` | No | pcm_s16le_16 for raw 16-bit 16 kHz mono PCM, which is faster. Default other. |
 
-ElevenLabs refuses audio under about 4.6 s. No history item, so the output always comes back in the result.
+ElevenLabs refuses audio under about 4.6 s. No history item, so the output always comes back in the result. It takes no `outputFormat`, and a clip of about 7.5 s came back as 302,018 bytes in one run, so in a script hand on anything over about 18 s instead of returning it.
 
 
 
@@ -671,7 +671,7 @@ await corsair.elevenlabs.api.dubbing.getAudio({ dubbingId: '<dubbing id>', langu
 | `dubbingId` | `string` | Yes | The dubbing_id that dubbing.create returned. |
 | `languageCode` | `string` | Yes | A target language of the dub; for transcripts also `source`. |
 | `includeContent` | `boolean` | No | false returns the size and type only. Default true. |
-| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 40 s of 128 kbps mp3), which fits a script result on Corsair’s cloud. At most 50 MB. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
 
 Audio or video, per `contentType`. Subject to `maxBytes`, so raise it for anything long.
 
@@ -941,7 +941,7 @@ await corsair.elevenlabs.api.history.getAudio({ historyItemId: '<history item id
 |------|------|----------|-------------|
 | `historyItemId` | `string` | Yes | historyItemId from a speech operation, or history_item_id from history.list. |
 | `includeContent` | `boolean` | No | false returns the size and type only. Default true. |
-| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 40 s of 128 kbps mp3), which fits a script result on Corsair’s cloud. At most 50 MB. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
 
 Subject to `maxBytes` (default 700000 bytes), so raise it for anything long. A new item can take a few seconds to appear, and reading it before then answers 400.
 
@@ -1084,7 +1084,7 @@ await corsair.elevenlabs.api.models.list({});
 
 `music.compose`
 
-Generate a song from a prompt or a composition plan; spends credits by length. ElevenLabs keeps no copy, so the audio comes back in the result. A long song can outlast a script’s 20 s budget on Corsair’s cloud.
+Generate a song from a prompt or a composition plan; spends credits by length. ElevenLabs keeps no copy, so the audio comes back in the result. At the default format, about 24 KB/s, a song over about 31 s is too big to return from a script on Corsair’s cloud, whose cap is 1,000,000 bytes: pick a lower-bitrate outputFormat, or pass contentBase64 to the next operation and return only metadata.
 
 **Risk:** `write`
 
@@ -1106,7 +1106,7 @@ await corsair.elevenlabs.api.music.compose({ prompt: 'a calm piano loop', musicL
 | `forceInstrumental` | `boolean` | No | — |
 | `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
 
-Pass `prompt` or `compositionPlan`. Defaults to music_v2_5, because the API's own default, music_v1, is removed on 2027-01-31. No `characterCost` header; `account.usageStats` has the cost.
+Pass `prompt` or `compositionPlan`; `musicLengthMs` only works with `prompt`. Defaults to music_v2_5, because the API's own default, music_v1, is removed on 2027-01-31. No `characterCost` header; `account.usageStats` has the cost.
 
 
 
@@ -1482,7 +1482,7 @@ await corsair.elevenlabs.api.textToDialogue.convert({ inputs: [{ text: 'Are you 
 | `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
 | `enableLogging` | `boolean` | No | false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result. |
 | `includeContent` | `boolean` | No | false leaves contentBase64 out of the result and returns its metadata only, which keeps a long clip out of an agent’s context. Read the audio later with history.getAudio. Default true. |
-| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 40 s of 128 kbps mp3), which fits a script result on Corsair’s cloud. At most 50 MB. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
 
 <AccordionGroup>
 <Accordion title="inputs full type">
@@ -1561,7 +1561,7 @@ await corsair.elevenlabs.api.textToSpeech.convert({ voiceId: 'FGY2WhTYpPnrIDTdsK
 | `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
 | `enableLogging` | `boolean` | No | false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result. |
 | `includeContent` | `boolean` | No | false leaves contentBase64 out of the result and returns its metadata only, which keeps a long clip out of an agent’s context. Read the audio later with history.getAudio. Default true. |
-| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 40 s of 128 kbps mp3), which fits a script result on Corsair’s cloud. At most 50 MB. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
 
 Spends credits by text length (`characterCost` says how many). The history item keeps its own stored format, so `history.getAudio` can return a different bitrate from `outputFormat`.
 
@@ -1643,7 +1643,7 @@ await corsair.elevenlabs.api.textToSpeech.convertWithTimestamps({ voiceId: 'FGY2
 | `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
 | `enableLogging` | `boolean` | No | false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result. |
 | `includeContent` | `boolean` | No | false leaves contentBase64 out of the result and returns its metadata only, which keeps a long clip out of an agent’s context. Read the audio later with history.getAudio. Default true. |
-| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 40 s of 128 kbps mp3), which fits a script result on Corsair’s cloud. At most 50 MB. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
 
 Same audio fields as `textToSpeech.convert`, plus `alignment` and `normalized_alignment`.
 
@@ -1749,7 +1749,7 @@ await corsair.elevenlabs.api.voiceChanger.convert({ voiceId: 'JBFqnCBsd6RMkjVDRZ
 | `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
 | `enableLogging` | `boolean` | No | false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result. |
 | `includeContent` | `boolean` | No | false leaves contentBase64 out of the result and returns its metadata only, which keeps a long clip out of an agent’s context. Read the audio later with history.getAudio. Default true. |
-| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 40 s of 128 kbps mp3), which fits a script result on Corsair’s cloud. At most 50 MB. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
 
 <AccordionGroup>
 <Accordion title="voiceSettings full type">
@@ -1851,12 +1851,12 @@ Needs a free voice slot; over `voice_limit` (see `account.subscription`) ElevenL
 
 `voiceDesign.design`
 
-Generate voice previews from a description; spends credits. Pick one and pass its generated_voice_id to voiceDesign.create.
+Generate voice previews from a description; spends credits. Hear one with voiceDesign.getPreview, then pass its generated_voice_id to voiceDesign.create.
 
 **Risk:** `write`
 
 ```ts
-await corsair.elevenlabs.api.voiceDesign.design({ voiceDescription: 'A calm middle-aged narrator with a warm low voice.', autoGenerateText: true, outputFormat: 'mp3_22050_32', includeAudio: false });
+await corsair.elevenlabs.api.voiceDesign.design({ voiceDescription: 'A calm middle-aged narrator with a warm low voice.', autoGenerateText: true, outputFormat: 'mp3_22050_32' });
 ```
 
 **Input**
@@ -1871,11 +1871,9 @@ await corsair.elevenlabs.api.voiceDesign.design({ voiceDescription: 'A calm midd
 | `loudness` | `number` | No | — |
 | `seed` | `number` | No | — |
 | `guidanceScale` | `number` | No | — |
-| `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
-| `includeAudio` | `boolean` | No | false drops the preview audio from the result and keeps generated_voice_id, duration and so on. Default true. |
-| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 40 s of 128 kbps mp3), which fits a script result on Corsair’s cloud. At most 50 MB. |
+| `outputFormat` | `string` | No | The format voiceDesign.getPreview will return, for example mp3_22050_32. |
 
-Costs more than most operations (about 200 credits in our test) whatever the text length, because it generates three previews. Set `includeAudio` false to keep only the ids and durations.
+Cost follows the preview text, at about a credit a character in our tests (101 credits with a 101-character `text`, 200 with `autoGenerateText`). Audio doesn't come back here. Previews are always made for streaming, which is what lets `voiceDesign.getPreview` read them, and `duration_secs` reads -1 for them.
 
 
 
@@ -1885,7 +1883,6 @@ Costs more than most operations (about 200 credits in our test) whatever the tex
 |------|------|----------|-------------|
 | `previews` | `object[]` | Yes | — |
 | `text` | `string \| null` | No | — |
-| `contentOmitted` | `not_requested \| over_limit` | No | — |
 | `note` | `string` | No | — |
 
 <AccordionGroup>
@@ -1894,7 +1891,6 @@ Costs more than most operations (about 200 credits in our test) whatever the tex
 ```ts
 {
   generated_voice_id: string,
-  audio_base_64?: string | null,
   media_type?: string | null,
   duration_secs?: number | null,
   language?: string | null
@@ -1907,16 +1903,59 @@ Costs more than most operations (about 200 credits in our test) whatever the tex
 
 ---
 
+### getPreview
+
+`voiceDesign.getPreview`
+
+Read a preview's audio by its generated_voice_id, without generating again. Subject to a size limit you can raise with maxBytes.
+
+**Risk:** `read`
+
+```ts
+await corsair.elevenlabs.api.voiceDesign.getPreview({ generatedVoiceId: '<generated_voice_id>', maxBytes: 2000000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `generatedVoiceId` | `string` | Yes | generated_voice_id from a preview of voiceDesign.design or voiceDesign.remix. |
+| `includeContent` | `boolean` | No | false returns the size and type only. Default true. |
+| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB. |
+
+Reading a preview spent no credits in our test, read twice. `outputFormat` on the design or remix sets its format. We didn't test how long a preview stays readable.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The output, base64-encoded. Missing when contentOmitted is set. |
+| `contentType` | `string` | Yes | Media type of the output, for example audio/mpeg. |
+| `byteLength` | `number` | Yes | Size of the output in bytes. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when contentBase64 was left out: includeContent was false, or the output was over the limit. |
+| `note` | `string` | No | How to get output that was left out. |
+| `songId` | `string` | No | The `song-id` header, on generated music. |
+| `requestId` | `string` | No | The `request-id` header. Pass it as previousRequestIds for continuity between clips. |
+| `traceId` | `string` | No | The `x-trace-id` header; quote it to ElevenLabs support. |
+| `characterCost` | `number` | No | Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost. |
+| `historyItemId` | `string` | No | The history item holding this audio. Read it again with history.getAudio. Only speech operations have one. |
+
+
+
+---
+
 ### remix
 
 `voiceDesign.remix`
 
-Generate previews of a changed version of an existing voice; spends credits.
+Generate previews of a changed version of an existing voice; spends credits. Hear one with voiceDesign.getPreview.
 
 **Risk:** `write`
 
 ```ts
-await corsair.elevenlabs.api.voiceDesign.remix({ voiceId: '<your voice id>', voiceDescription: 'A little brighter.', autoGenerateText: true, includeAudio: false });
+await corsair.elevenlabs.api.voiceDesign.remix({ voiceId: '<your voice id>', voiceDescription: 'A little brighter.', autoGenerateText: true });
 ```
 
 **Input**
@@ -1931,11 +1970,9 @@ await corsair.elevenlabs.api.voiceDesign.remix({ voiceId: '<your voice id>', voi
 | `loudness` | `number` | No | — |
 | `seed` | `number` | No | — |
 | `guidanceScale` | `number` | No | — |
-| `outputFormat` | `string` | No | codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan. |
-| `includeAudio` | `boolean` | No | false drops the preview audio from the result and keeps generated_voice_id, duration and so on. Default true. |
-| `maxBytes` | `number` | No | Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 40 s of 128 kbps mp3), which fits a script result on Corsair’s cloud. At most 50 MB. |
+| `outputFormat` | `string` | No | The format voiceDesign.getPreview will return, for example mp3_22050_32. |
 
-Only works on your own custom voices. It makes previews and leaves the source voice as it is. Costs about 350 credits in our test.
+Only works on your own custom voices. It makes previews, read with `voiceDesign.getPreview`, and leaves the source voice as it is. In our tests it cost 101 credits with a 101-character `text` and 350 with `autoGenerateText`.
 
 
 
@@ -1945,7 +1982,6 @@ Only works on your own custom voices. It makes previews and leaves the source vo
 |------|------|----------|-------------|
 | `previews` | `object[]` | Yes | — |
 | `text` | `string \| null` | No | — |
-| `contentOmitted` | `not_requested \| over_limit` | No | — |
 | `note` | `string` | No | — |
 
 <AccordionGroup>
@@ -1954,7 +1990,6 @@ Only works on your own custom voices. It makes previews and leaves the source vo
 ```ts
 {
   generated_voice_id: string,
-  audio_base_64?: string | null,
   media_type?: string | null,
   duration_secs?: number | null,
   language?: string | null

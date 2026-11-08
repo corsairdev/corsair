@@ -227,6 +227,22 @@ export function matchEventType(eventType: string): CorsairWebhookMatcher {
 /** The tolerance ElevenLabs' own SDKs use for `t=`. */
 export const ELEVENLABS_SIGNATURE_TOLERANCE_MS = 30 * 60 * 1000;
 
+/**
+ * A delivery this plugin won't accept. It's thrown rather than returned, because
+ * processWebhook acknowledges anything a handler returns. Thrown, it comes back as
+ * `response.success: false`, the HTTP handler answers non-2xx, no after hook runs
+ * and ElevenLabs can retry.
+ */
+export class ElevenLabsWebhookRefusedError extends Error {
+	constructor(
+		message: string,
+		public readonly statusCode: 400 | 401,
+	) {
+		super(message);
+		this.name = 'ElevenLabsWebhookRefusedError';
+	}
+}
+
 export type ElevenLabsVerifyOptions = {
 	/** Current time in ms, for tests. */
 	now?: number;

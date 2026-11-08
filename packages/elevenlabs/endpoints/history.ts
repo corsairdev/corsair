@@ -1,7 +1,7 @@
-import { logEventFromContext } from 'corsair/core';
 import {
 	elevenLabsBinary,
 	elevenLabsJson,
+	logQuietly,
 	pathId,
 	TIMEOUTS_MS,
 	toBinaryResult,
@@ -34,12 +34,9 @@ export const list: ElevenLabsEndpoints['historyList'] = async (
 			},
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.history.list',
-		{ count: response.history.length },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.history.list', {
+		count: response.history.length,
+	});
 	return response;
 };
 
@@ -48,12 +45,9 @@ export const get: ElevenLabsEndpoints['historyGet'] = async (ctx, rawInput) => {
 	const response = ElevenLabsEndpointOutputSchemas.historyGet.parse(
 		await elevenLabsJson(`/v1/history/${pathId(input.historyItemId)}`, ctx.key),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.history.get',
-		{ historyItemId: input.historyItemId },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.history.get', {
+		historyItemId: input.historyItemId,
+	});
 	return response;
 };
 
@@ -75,12 +69,10 @@ export const getAudio: ElevenLabsEndpoints['historyGetAudio'] = async (
 			{ ...input, refetchable: true },
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.history.getAudio',
-		{ historyItemId: input.historyItemId, byteLength: response.byteLength },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.history.getAudio', {
+		historyItemId: input.historyItemId,
+		byteLength: response.byteLength,
+	});
 	return response;
 };
 
@@ -98,11 +90,8 @@ export const remove: ElevenLabsEndpoints['historyDelete'] = async (
 			},
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.history.delete',
-		{ historyItemId: input.historyItemId },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.history.delete', {
+		historyItemId: input.historyItemId,
+	});
 	return response;
 };

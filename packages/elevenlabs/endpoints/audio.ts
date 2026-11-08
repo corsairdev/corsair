@@ -1,9 +1,9 @@
-import { logEventFromContext } from 'corsair/core';
 import {
 	appendFields,
 	appendFile,
 	elevenLabsBinary,
 	elevenLabsJson,
+	logQuietly,
 	pathId,
 	TIMEOUTS_MS,
 	toBinaryResult,
@@ -39,15 +39,10 @@ export const generateSound: ElevenLabsEndpoints['soundEffectsGenerate'] =
 				}),
 			),
 		);
-		await logEventFromContext(
-			ctx,
-			'elevenlabs.soundEffects.generate',
-			{
-				byteLength: response.byteLength,
-				characterCost: response.characterCost,
-			},
-			'completed',
-		);
+		await logQuietly(ctx, 'elevenlabs.soundEffects.generate', {
+			byteLength: response.byteLength,
+			characterCost: response.characterCost,
+		});
 		return response;
 	};
 
@@ -75,16 +70,11 @@ export const composeMusic: ElevenLabsEndpoints['musicCompose'] = async (
 			}),
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.music.compose',
-		{
-			byteLength: response.byteLength,
-			characterCost: response.characterCost,
-			songId: response.songId,
-		},
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.music.compose', {
+		byteLength: response.byteLength,
+		characterCost: response.characterCost,
+		songId: response.songId,
+	});
 	return response;
 };
 
@@ -105,12 +95,9 @@ export const planMusic: ElevenLabsEndpoints['musicPlan'] = async (
 			timeoutMs: TIMEOUTS_MS.shortGeneration,
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.music.plan',
-		{ parts: (response.chunks ?? response.sections)?.length ?? 0 },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.music.plan', {
+		parts: (response.chunks ?? response.sections)?.length ?? 0,
+	});
 	return response;
 };
 
@@ -133,15 +120,10 @@ export const separateStems: ElevenLabsEndpoints['musicSeparateStems'] = async (
 			}),
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.music.separateStems',
-		{
-			byteLength: response.byteLength,
-			characterCost: response.characterCost,
-		},
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.music.separateStems', {
+		byteLength: response.byteLength,
+		characterCost: response.characterCost,
+	});
 	return response;
 };
 
@@ -163,15 +145,10 @@ export const isolate: ElevenLabsEndpoints['audioIsolationIsolate'] = async (
 			}),
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.audioIsolation.isolate',
-		{
-			byteLength: response.byteLength,
-			characterCost: response.characterCost,
-		},
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.audioIsolation.isolate', {
+		byteLength: response.byteLength,
+		characterCost: response.characterCost,
+	});
 	return response;
 };
 
@@ -208,16 +185,11 @@ export const changeVoice: ElevenLabsEndpoints['voiceChangerConvert'] = async (
 			input,
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.voiceChanger.convert',
-		{
-			voiceId: input.voiceId,
-			byteLength: response.byteLength,
-			characterCost: response.characterCost,
-			historyItemId: response.historyItemId,
-		},
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.voiceChanger.convert', {
+		voiceId: input.voiceId,
+		byteLength: response.byteLength,
+		characterCost: response.characterCost,
+		historyItemId: response.historyItemId,
+	});
 	return response;
 };

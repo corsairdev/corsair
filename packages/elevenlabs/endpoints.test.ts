@@ -1,3 +1,4 @@
+import { HARD_MAX_CONTENT_BYTES } from './client';
 import {
 	Account,
 	Agents,
@@ -177,6 +178,46 @@ describe('textToSpeech', () => {
 		expect(result.contentOmitted).toBe('over_limit');
 	});
 
+	it.each([
+		['missing', {}],
+		['not a string', { audio_base64: 123 }],
+		['empty', { audio_base64: '' }],
+	])(
+		'convertWithTimestamps raises when the audio is %s, and says it may have billed',
+		async (_case, body) => {
+			answerJson(body, SPEECH_HEADERS);
+			await expect(
+				TextToSpeech.convertWithTimestamps(ctx, { voiceId: 'v', text: 'Hi' }),
+			).rejects.toThrow(/no audio_base64\. It may have been billed/);
+		},
+	);
+
+	it('convertWithTimestamps over the hard cap with no history item says it can’t be fetched again', async () => {
+		answerJson({
+			audio_base64: 'A'.repeat(Math.ceil((HARD_MAX_CONTENT_BYTES * 4) / 3) + 8),
+		});
+		const result = await TextToSpeech.convertWithTimestamps(ctx, {
+			voiceId: 'v',
+			text: 'Hi',
+			maxBytes: HARD_MAX_CONTENT_BYTES,
+		});
+		expect(result.contentBase64).toBeUndefined();
+		expect(result.contentOmitted).toBe('over_limit');
+		expect(result.note).toMatch(/can't be fetched again/);
+	});
+
+	it('convertWithTimestamps over the limit names the history item', async () => {
+		answerJson({ audio_base64: 'YWJj' }, SPEECH_HEADERS);
+		const result = await TextToSpeech.convertWithTimestamps(ctx, {
+			voiceId: 'v',
+			text: 'Hi',
+			maxBytes: 1,
+		});
+		expect(result.note).toContain(
+			"history.getAudio({ historyItemId: 'hist_1', maxBytes: 3 })",
+		);
+	});
+
 	it('convertWithTimestamps keeps audio with no history item', async () => {
 		answerJson({ audio_base64: 'YWJj' });
 		const result = await TextToSpeech.convertWithTimestamps(ctx, {
@@ -333,10 +374,12 @@ describe('soundEffects', () => {
 		expect(result.historyItemId).toBeUndefined();
 	});
 
-	it('refuses a length the API refuses', async () => {
+	it('refuses a length the API refuses, before any request', async () => {
+		fetchMock.mockRejectedValue(new Error('Unexpected fetch'));
 		await expect(
 			SoundEffects.generate(ctx, { text: 'x', durationSeconds: 31 }),
-		).rejects.toThrow();
+		).rejects.toThrow(/durationSeconds|expected number/i);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
@@ -363,6 +406,15 @@ describe('music', () => {
 		answerBytes();
 		await Music.compose(ctx, { compositionPlan: { chunks: [] } });
 		expect(lastCall().json).toMatchObject({ composition_plan: { chunks: [] } });
+	});
+
+	it('compose refuses a length with a plan, at that field, before any request', async () => {
+		const error = await Music.compose(ctx, {
+			compositionPlan: { chunks: [] },
+			musicLengthMs: 3000,
+		}).catch((e) => e);
+		expect(error.issues?.[0]?.path).toEqual(['musicLengthMs']);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('compose wants exactly one of prompt and plan', async () => {
@@ -581,7 +633,7 @@ describe('voiceDesign', () => {
 	};
 	const description = 'A calm narrator with a warm low voice.';
 
-	it('design posts the description and returns the previews', async () => {
+	it('design asks for streaming previews and returns ids, never audio', async () => {
 		answerJson(previews);
 		const result = await VoiceDesign.design(ctx, {
 			voiceDescription: description,
@@ -594,31 +646,12 @@ describe('voiceDesign', () => {
 		expect(call.json).toMatchObject({
 			voice_description: description,
 			auto_generate_text: true,
+			stream_previews: true,
 		});
-		expect(result.previews[0]?.audio_base_64).toBe('YWJj');
-		expect(result.contentOmitted).toBeUndefined();
-	});
-
-	it('design drops the audio and keeps the ids when asked', async () => {
-		answerJson(previews);
-		const result = await VoiceDesign.design(ctx, {
-			voiceDescription: description,
-			includeAudio: false,
-		});
-		expect(result.contentOmitted).toBe('not_requested');
 		expect(result.previews[0]?.generated_voice_id).toBe('g1');
-		expect(result.previews[0]?.audio_base_64).toBeUndefined();
 		expect(result.previews[0]?.duration_secs).toBe(15);
-	});
-
-	it('design says so when the previews are over the limit', async () => {
-		answerJson(previews);
-		const result = await VoiceDesign.design(ctx, {
-			voiceDescription: description,
-			maxBytes: 5,
-		});
-		expect(result.contentOmitted).toBe('over_limit');
-		expect(result.note).toMatch(/over the limit/);
+		expect('audio_base_64' in (result.previews[0] ?? {})).toBe(false);
+		expect(result.note).toContain('voiceDesign.getPreview');
 	});
 
 	it('design refuses a description the API refuses', async () => {
@@ -626,6 +659,39 @@ describe('voiceDesign', () => {
 			VoiceDesign.design(ctx, { voiceDescription: 'too short' }),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('getPreview reads the audio by id and costs nothing new', async () => {
+		answerBytes();
+		const result = await VoiceDesign.getPreview(ctx, {
+			generatedVoiceId: 'g/1',
+		});
+		const call = lastCall();
+		expect(call.method).toBe('GET');
+		expect(call.url.pathname).toBe('/v1/text-to-voice/g%2F1/stream');
+		expect(result).toMatchObject({
+			contentBase64: 'YWJj',
+			contentType: 'audio/mpeg',
+			byteLength: 3,
+		});
+	});
+
+	it('getPreview applies the same limits as other reads', async () => {
+		answerBytes();
+		const over = await VoiceDesign.getPreview(ctx, {
+			generatedVoiceId: 'g1',
+			maxBytes: 1,
+		});
+		expect(over.contentOmitted).toBe('over_limit');
+		expect(over.note).toContain('maxBytes: 3');
+
+		answerBytes();
+		const none = await VoiceDesign.getPreview(ctx, {
+			generatedVoiceId: 'g1',
+			includeContent: false,
+		});
+		expect(none.contentOmitted).toBe('not_requested');
+		expect(none.contentBase64).toBeUndefined();
 	});
 
 	it('create saves a preview', async () => {
@@ -645,18 +711,21 @@ describe('voiceDesign', () => {
 		expect(result.voice_id).toBe('v9');
 	});
 
-	it('remix posts the changes to the voice', async () => {
+	it('remix posts the changes to the voice, for streaming previews too', async () => {
 		answerJson(previews);
 		const result = await VoiceDesign.remix(ctx, {
 			voiceId: 'v1',
 			voiceDescription: 'Brighter',
 			autoGenerateText: true,
-			includeAudio: false,
 		});
 		const call = lastCall();
 		expect(call.url.pathname).toBe('/v1/text-to-voice/v1/remix');
-		expect(call.json).toMatchObject({ voice_description: 'Brighter' });
-		expect(result.contentOmitted).toBe('not_requested');
+		expect(call.json).toMatchObject({
+			voice_description: 'Brighter',
+			stream_previews: true,
+		});
+		expect('audio_base_64' in (result.previews[0] ?? {})).toBe(false);
+		expect(result.note).toContain('voiceDesign.getPreview');
 	});
 });
 
@@ -1047,11 +1116,106 @@ describe('singleUseTokens', () => {
 		expect(result.token).toBe('tok');
 	});
 
-	it('refuses an unknown type', async () => {
+	it('refuses an unknown type, before any request', async () => {
+		fetchMock.mockRejectedValue(new Error('Unexpected fetch'));
 		await expect(
 			// @ts-expect-error not a token type
 			SingleUseTokens.create(ctx, { tokenType: 'other' }),
-		).rejects.toThrow();
+		).rejects.toThrow(/tokenType|invalid/i);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('a log entry that can’t be written', () => {
+	const { logEventFromContext } = jest.requireMock('corsair/core') as {
+		logEventFromContext: jest.Mock;
+	};
+	const previewBody = { previews: [{ generated_voice_id: 'g1' }] };
+	const description = 'A calm narrator with a warm low voice.';
+
+	it.each([
+		[
+			'textToSpeech.convert',
+			() => answerBytes(SPEECH_HEADERS),
+			() => TextToSpeech.convert(ctx, { voiceId: 'v', text: 'Hi' }),
+		],
+		[
+			'textToSpeech.convertWithTimestamps',
+			() => answerJson({ audio_base64: 'YWJj' }, SPEECH_HEADERS),
+			() =>
+				TextToSpeech.convertWithTimestamps(ctx, { voiceId: 'v', text: 'Hi' }),
+		],
+		[
+			'textToDialogue.convert',
+			() => answerBytes(SPEECH_HEADERS),
+			() =>
+				TextToDialogue.convert(ctx, {
+					inputs: [{ text: 'Hi', voiceId: 'v' }],
+				}),
+		],
+		[
+			'speechToText.convert',
+			() => answerJson({ text: 'Hi' }),
+			() => SpeechToText.convert(ctx, FILE),
+		],
+		[
+			'forcedAlignment.create',
+			() => answerJson({ words: [] }),
+			() => ForcedAlignment.create(ctx, { ...FILE, text: 'Hi' }),
+		],
+		[
+			'soundEffects.generate',
+			() => answerBytes(),
+			() => SoundEffects.generate(ctx, { text: 'x' }),
+		],
+		[
+			'music.compose',
+			() => answerBytes(),
+			() => Music.compose(ctx, { prompt: 'x' }),
+		],
+		[
+			'music.plan',
+			() => answerJson({ chunks: [] }),
+			() => Music.plan(ctx, { prompt: 'x' }),
+		],
+		[
+			'music.separateStems',
+			() => answerBytes(),
+			() => Music.separateStems(ctx, FILE),
+		],
+		[
+			'audioIsolation.isolate',
+			() => answerBytes(),
+			() => AudioIsolation.isolate(ctx, FILE),
+		],
+		[
+			'voiceChanger.convert',
+			() => answerBytes(SPEECH_HEADERS),
+			() => VoiceChanger.convert(ctx, { ...FILE, voiceId: 'v' }),
+		],
+		[
+			'voiceDesign.design',
+			() => answerJson(previewBody),
+			() => VoiceDesign.design(ctx, { voiceDescription: description }),
+		],
+		[
+			'voiceDesign.remix',
+			() => answerJson(previewBody),
+			() =>
+				VoiceDesign.remix(ctx, { voiceId: 'v', voiceDescription: 'Brighter' }),
+		],
+		[
+			'dubbing.create',
+			() => answerJson({ dubbing_id: 'd1' }),
+			() => Dubbing.create(ctx, { ...FILE, targetLang: 'es' }),
+		],
+	] as const)('doesn’t fail %s after it ran', async (_op, answer, call) => {
+		logEventFromContext.mockRejectedValueOnce(
+			new Error('encryptDataAtRest requires kek'),
+		);
+		answer();
+		await expect(call()).resolves.toBeDefined();
+		expect(logEventFromContext).toHaveBeenCalled();
 	});
 });
 

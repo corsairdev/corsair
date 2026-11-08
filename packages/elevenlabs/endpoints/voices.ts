@@ -1,11 +1,11 @@
-import { logEventFromContext } from 'corsair/core';
 import {
 	appendFields,
-	base64ByteLength,
-	DEFAULT_MAX_CONTENT_BYTES,
+	elevenLabsBinary,
 	elevenLabsJson,
+	logQuietly,
 	pathId,
 	TIMEOUTS_MS,
+	toBinaryResult,
 } from '../client';
 import type { ElevenLabsEndpoints } from '../index';
 import {
@@ -32,12 +32,9 @@ export const list: ElevenLabsEndpoints['voicesList'] = async (
 			},
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.voices.list',
-		{ count: response.voices.length },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.voices.list', {
+		count: response.voices.length,
+	});
 	return response;
 };
 
@@ -46,12 +43,7 @@ export const get: ElevenLabsEndpoints['voicesGet'] = async (ctx, rawInput) => {
 	const response = ElevenLabsEndpointOutputSchemas.voicesGet.parse(
 		await elevenLabsJson(`/v1/voices/${pathId(input.voiceId)}`, ctx.key),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.voices.get',
-		{ voiceId: input.voiceId },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.voices.get', { voiceId: input.voiceId });
 	return response;
 };
 
@@ -81,12 +73,9 @@ export const searchLibrary: ElevenLabsEndpoints['voicesSearchLibrary'] = async (
 			},
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.voices.searchLibrary',
-		{ count: response.voices.length },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.voices.searchLibrary', {
+		count: response.voices.length,
+	});
 	return response;
 };
 
@@ -101,12 +90,9 @@ export const addFromLibrary: ElevenLabsEndpoints['voicesAddFromLibrary'] =
 				{ method: 'POST', json: { new_name: input.newName } },
 			),
 		);
-		await logEventFromContext(
-			ctx,
-			'elevenlabs.voices.addFromLibrary',
-			{ voiceId: response.voice_id },
-			'completed',
-		);
+		await logQuietly(ctx, 'elevenlabs.voices.addFromLibrary', {
+			voiceId: response.voice_id,
+		});
 		return response;
 	};
 
@@ -127,12 +113,7 @@ export const edit: ElevenLabsEndpoints['voicesEdit'] = async (
 			form,
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.voices.edit',
-		{ voiceId: input.voiceId },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.voices.edit', { voiceId: input.voiceId });
 	return response;
 };
 
@@ -146,12 +127,7 @@ export const remove: ElevenLabsEndpoints['voicesDelete'] = async (
 			method: 'DELETE',
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.voices.delete',
-		{ voiceId: input.voiceId },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.voices.delete', { voiceId: input.voiceId });
 	return response;
 };
 
@@ -167,12 +143,9 @@ export const getSettings: ElevenLabsEndpoints['voicesGetSettings'] = async (
 			ctx.key,
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.voices.getSettings',
-		{ voiceId: input.voiceId },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.voices.getSettings', {
+		voiceId: input.voiceId,
+	});
 	return response;
 };
 
@@ -189,12 +162,9 @@ export const editSettings: ElevenLabsEndpoints['voicesEditSettings'] = async (
 			{ method: 'POST', json: input.settings },
 		),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.voices.editSettings',
-		{ voiceId: input.voiceId },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.voices.editSettings', {
+		voiceId: input.voiceId,
+	});
 	return response;
 };
 
@@ -205,50 +175,28 @@ export const defaultSettings: ElevenLabsEndpoints['voicesDefaultSettings'] =
 			ElevenLabsEndpointOutputSchemas.voicesDefaultSettings.parse(
 				await elevenLabsJson('/v1/voices/settings/default', ctx.key),
 			);
-		await logEventFromContext(
-			ctx,
-			'elevenlabs.voices.defaultSettings',
-			{},
-			'completed',
-		);
+		await logQuietly(ctx, 'elevenlabs.voices.defaultSettings', {});
 		return response;
 	};
 
 /**
- * Previews come back as base64 inside the JSON. They can't be read again
- * through this plugin, but the generated_voice_id that creates the voice stays
- * in the result either way.
+ * Design and remix always ask for streaming previews. ElevenLabs only serves a
+ * preview from its /stream endpoint when it was made that way (it answers 400
+ * otherwise), so this is what lets voiceDesign.getPreview read any preview later,
+ * with the usual size limits, instead of base64 for all three landing in a result
+ * that paid for them and may be too big to return.
  */
-function limitPreviews<
+function previewsResult<
 	// unknown: the body before the schema parses it; only the previews are read here.
 	T extends Record<string, unknown>,
->(body: T, input: { includeAudio?: boolean; maxBytes?: number }) {
+>(body: T) {
 	const previews = Array.isArray(body.previews)
 		? (body.previews as Array<Record<string, unknown>>)
 		: [];
-	const total = previews.reduce(
-		(sum, preview) =>
-			sum +
-			(typeof preview.audio_base_64 === 'string'
-				? base64ByteLength(preview.audio_base_64)
-				: 0),
-		0,
-	);
-	const omitted =
-		input.includeAudio === false
-			? ('not_requested' as const)
-			: total > (input.maxBytes ?? DEFAULT_MAX_CONTENT_BYTES)
-				? ('over_limit' as const)
-				: undefined;
-	if (!omitted) return body;
 	return {
 		...body,
 		previews: previews.map(({ audio_base_64: _audio, ...preview }) => preview),
-		contentOmitted: omitted,
-		note:
-			omitted === 'over_limit'
-				? `The previews total ${total} bytes, over the limit for a result. Ask again with a larger maxBytes or a lower outputFormat to hear them; generated_voice_id still creates the voice.`
-				: 'Preview audio left out as asked; generated_voice_id still creates the voice.',
+		note: "Hear a preview with voiceDesign.getPreview({ generatedVoiceId }), which doesn't generate again. voiceDesign.create saves one as a voice.",
 	};
 }
 
@@ -274,19 +222,39 @@ export const design: ElevenLabsEndpoints['voiceDesignDesign'] = async (
 				seed: input.seed,
 				guidance_scale: input.guidanceScale,
 				should_enhance: input.shouldEnhance,
+				stream_previews: true,
 			},
 			timeoutMs: TIMEOUTS_MS.shortGeneration,
 		},
 	);
 	const response = ElevenLabsEndpointOutputSchemas.voiceDesignDesign.parse(
-		limitPreviews(body, input),
+		previewsResult(body),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.voiceDesign.design',
-		{ previews: response.previews.length },
-		'completed',
+	await logQuietly(ctx, 'elevenlabs.voiceDesign.design', {
+		previews: response.previews.length,
+	});
+	return response;
+};
+
+export const getPreview: ElevenLabsEndpoints['voiceDesignGetPreview'] = async (
+	ctx,
+	rawInput,
+) => {
+	const input =
+		ElevenLabsEndpointInputSchemas.voiceDesignGetPreview.parse(rawInput);
+	const path = `/v1/text-to-voice/${pathId(input.generatedVoiceId)}/stream`;
+	const response = ElevenLabsEndpointOutputSchemas.voiceDesignGetPreview.parse(
+		toBinaryResult(
+			await elevenLabsBinary(path, ctx.key, {
+				timeoutMs: TIMEOUTS_MS.shortGeneration,
+			}),
+			{ ...input, refetchable: true, downloadPath: path },
+		),
 	);
+	await logQuietly(ctx, 'elevenlabs.voiceDesign.getPreview', {
+		generatedVoiceId: input.generatedVoiceId,
+		byteLength: response.byteLength,
+	});
 	return response;
 };
 
@@ -307,12 +275,9 @@ export const createDesigned: ElevenLabsEndpoints['voiceDesignCreate'] = async (
 			},
 		}),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.voiceDesign.create',
-		{ voiceId: response.voice_id },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.voiceDesign.create', {
+		voiceId: response.voice_id,
+	});
 	return response;
 };
 
@@ -336,18 +301,17 @@ export const remix: ElevenLabsEndpoints['voiceDesignRemix'] = async (
 				seed: input.seed,
 				guidance_scale: input.guidanceScale,
 				prompt_strength: input.promptStrength,
+				stream_previews: true,
 			},
 			timeoutMs: TIMEOUTS_MS.shortGeneration,
 		},
 	);
 	const response = ElevenLabsEndpointOutputSchemas.voiceDesignRemix.parse(
-		limitPreviews(body, input),
+		previewsResult(body),
 	);
-	await logEventFromContext(
-		ctx,
-		'elevenlabs.voiceDesign.remix',
-		{ voiceId: input.voiceId, previews: response.previews.length },
-		'completed',
-	);
+	await logQuietly(ctx, 'elevenlabs.voiceDesign.remix', {
+		voiceId: input.voiceId,
+		previews: response.previews.length,
+	});
 	return response;
 };
