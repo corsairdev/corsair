@@ -20,6 +20,7 @@
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 export const PACKAGE_ROOTS = ['packages', 'adapters'];
 
@@ -28,6 +29,12 @@ export const PACKAGE_ROOTS = ['packages', 'adapters'];
 // would replace that SDK with packages/app's MCP client adapters. Remove it once
 // someone decides between private, a new name or overwriting.
 export const HELD_PACKAGES = new Set(['@corsair-dev/app']);
+
+// These bundle their devDependencies into the tarball (Studio ships React in its
+// web build), so a change to them changes what consumers get. Elsewhere a
+// devDependency never reaches a consumer, and a bulk bump shouldn't release 400
+// packages. A lockfile-only upgrade within the same range still goes unnoticed.
+export const BUNDLES_DEV_DEPENDENCIES = new Set(['@corsair-dev/studio']);
 
 // Files inside a package that don't reach the npm tarball, or don't change
 // what it does. A change to only these files doesn't release the package.
@@ -52,8 +59,10 @@ export function isShippedPath(path) {
  */
 export function packageJsonChanged(beforeText, afterText) {
 	const strip = (text) => {
-		const { version, devDependencies, ...rest } = JSON.parse(text);
-		return JSON.stringify(rest);
+		const { version, devDependencies, name, ...rest } = JSON.parse(text);
+		return JSON.stringify(
+			BUNDLES_DEV_DEPENDENCIES.has(name) ? { ...rest, devDependencies } : rest,
+		);
 	};
 	return strip(beforeText) !== strip(afterText);
 }
@@ -174,7 +183,17 @@ function versionSetCommit(cwd, dir, version) {
 
 /** Files in the package that changed between `base` and HEAD and can change what ships. */
 function shippedChanges(cwd, base, dir) {
-	const changed = git(cwd, ['diff', '--name-only', base, 'HEAD', '--', dir])
+	// --no-renames: a shipped file moved into tests/ would otherwise show up only
+	// under its new, ignored path.
+	const changed = git(cwd, [
+		'diff',
+		'--no-renames',
+		'--name-only',
+		base,
+		'HEAD',
+		'--',
+		dir,
+	])
 		.split('\n')
 		.filter(Boolean)
 		.map((f) => f.slice(dir.length + 1));
@@ -286,16 +305,20 @@ export async function planRelease({ cwd, registry, log = () => {} }) {
 
 	// pnpm publish pins a workspace dependency to its exact version, so a
 	// package that depends on a bumped one at runtime (cli, mcp and studio on
-	// corsair, corsair on its frpc binaries) is released again to pick it up.
+	// corsair, corsair on its frpc binaries) is released again to pick it up. A
+	// version waiting for npm counts: a minor raised by hand gets no entry in
+	// `bumps`, and once it lands no later run would see a change in its dependents.
+	const pending = new Map(waiting.map((w) => [w.name, w.version]));
+	const newVersion = (name) => bumps.get(name)?.to ?? pending.get(name);
 	for (let grew = true; grew; ) {
 		grew = false;
 		for (const { pkg } of released.values()) {
 			if (bumps.has(pkg.name)) continue;
-			const bumpedDeps = pkg.deps.filter((d) => bumps.has(d));
+			const bumpedDeps = pkg.deps.filter((d) => newVersion(d));
 			if (bumpedDeps.length === 0) continue;
 			await bump(
 				pkg,
-				bumpedDeps.map((d) => `depends on ${d} ${bumps.get(d).to}`),
+				bumpedDeps.map((d) => `depends on ${d} ${newVersion(d)}`),
 			);
 			if (bumps.has(pkg.name)) grew = true;
 		}
@@ -392,7 +415,7 @@ export function npmRegistry(base = 'https://registry.npmjs.org') {
 
 if (
 	process.argv[1] &&
-	import.meta.url === new URL(`file://${process.argv[1]}`).href
+	import.meta.url === pathToFileURL(process.argv[1]).href
 ) {
 	const args = process.argv.slice(2);
 	const dryRun = args.includes('--dry-run');

@@ -64,6 +64,20 @@ describe('packageJsonChanged', () => {
 			false,
 		);
 	});
+	it('counts devDependencies for a package that bundles them', () => {
+		const studio = { ...base, name: '@corsair-dev/studio' };
+		assert.equal(
+			packageJsonChanged(
+				text(studio),
+				text({ ...studio, devDependencies: { b: '2' } }),
+			),
+			true,
+		);
+		assert.equal(
+			packageJsonChanged(text(studio), text({ ...studio, version: '0.1.1' })),
+			false,
+		);
+	});
 	it('sees dependency and metadata changes', () => {
 		assert.equal(
 			packageJsonChanged(
@@ -359,6 +373,75 @@ describe('planRelease on a git repo', () => {
 			plan.bumps.map((b) => b.name),
 			['@x/alpha', '@x/mid', 'core'],
 		);
+	});
+
+	it('releases a package when a shipped file moves into tests/', async () => {
+		pkg('packages/a', '@x/a', '0.1.0');
+		const body = 'export const a = 1;\n'.repeat(20);
+		write('packages/a/helper.ts', body);
+		commit('release');
+		execFileSync(
+			'git',
+			['mv', 'packages/a/helper.ts', 'packages/a/tests-helper.ts'],
+			{ cwd },
+		);
+		mkdirSync(join(cwd, 'packages/a/tests'));
+		execFileSync(
+			'git',
+			['mv', 'packages/a/tests-helper.ts', 'packages/a/tests/helper.ts'],
+			{ cwd },
+		);
+		commit('move helper into tests');
+		const plan = await planRelease({
+			cwd,
+			registry: registry({ '@x/a': { versions: ['0.1.0'] } }),
+		});
+		assert.deepEqual(
+			plan.bumps.map((b) => [b.name, b.files]),
+			[['@x/a', ['helper.ts']]],
+		);
+	});
+
+	it('releases dependents of a version raised by hand', async () => {
+		pkg('packages/core', 'core', '0.1.0');
+		pkg('packages/cli', '@x/cli', '0.1.0', {
+			dependencies: { core: 'workspace:*' },
+		});
+		commit('release');
+		pkg('packages/core', 'core', '0.2.0');
+		commit('core 0.2.0 by hand');
+		const plan = await planRelease({
+			cwd,
+			registry: registry({
+				core: { versions: ['0.1.0'] },
+				'@x/cli': { versions: ['0.1.0'] },
+			}),
+		});
+		assert.deepEqual(
+			plan.waiting.map((w) => w.version),
+			['0.2.0'],
+		);
+		assert.deepEqual(
+			plan.bumps.map((b) => [b.name, b.to, b.files]),
+			[['@x/cli', '0.1.1', ['depends on core 0.2.0']]],
+		);
+	});
+
+	it('does not bump a dependent again while it waits for npm itself', async () => {
+		pkg('packages/core', 'core', '0.2.0');
+		pkg('packages/cli', '@x/cli', '0.1.1', {
+			dependencies: { core: 'workspace:*' },
+		});
+		commit('core and cli, neither published yet');
+		const plan = await planRelease({
+			cwd,
+			registry: registry({
+				core: { versions: ['0.1.0'] },
+				'@x/cli': { versions: ['0.1.0'] },
+			}),
+		});
+		assert.deepEqual(plan.bumps, []);
+		assert.equal(plan.waiting.length, 2);
 	});
 
 	it('never bumps a held package, even when its files changed', async () => {

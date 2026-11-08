@@ -250,6 +250,6 @@ Small docs fixes can be straightforward, but anything larger should have issue c
 
 ## Versions and Releases
 
-You don't need to change a package's version. Every merge to `main` releases the packages it changed: when a package's shipped files differ from its last release, `.github/workflows/release-on-merge.yml` moves it to the next patch version, and `deploy.yml` publishes it to npm. Changes to tests, READMEs, `plugin-docs.yaml` and devDependencies don't release anything.
+You don't need to change a package's version. Every merge to `main` releases the packages it changed: when a package's shipped files differ from its last release, `.github/workflows/release-on-merge.yml` moves it to the next patch version, and `deploy.yml` publishes it to npm. Changes to tests, READMEs, `plugin-docs.yaml` and devDependencies don't release anything. Neither do changes to shared build config such as `tsconfig.base.json`: when one changes what packages ship, raise their versions in the same pull request.
 
 For a minor or major release, raise the version in your pull request. That version is published as it is.
