@@ -22,11 +22,21 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    const body = await request.json();
+    // Read the raw text, not `request.json()`. Fluxguard signs the exact bytes
+    // it sent, and passing the parsed object makes processWebhook rebuild the
+    // body with JSON.stringify, which changes key order and whitespace and
+    // fails verification.
+    const body = await request.text();
     const result = await processWebhook(corsair, headers, body);
-    return result.response;
+    // `result.response` is a plain object, not a Response. No match means no
+    // plugin claimed the delivery, so answer 404 instead of 200.
+    return Response.json(result.response ?? { success: false }, {
+        status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
+    });
 }
 ```
+
+Fluxguard retries nothing on its own and stops at the first non-2xx, so this shape matters: a 500 makes the delivery visible as a failure instead of silently discarding a change alert.
 
 ## Events
 
@@ -60,8 +70,8 @@ A monitored page changed: Fluxguard posts the captured version with references t
 | `page` | `object \| null` | No | — |
 | `siteCategories` | `string[] \| null` | No | Category names, e.g. ["News"] |
 | `pageCategories` | `string[] \| null` | No | Category names, e.g. ["News"] |
-| `files` | `Record<string, any> \| null` | No | — |
-| `alarms` | `Record<string, any>[] \| null` | No | — |
+| `files` | `Record<string, unknown> \| null` | No | Captured file names, e.g. `{ captures: { html, visual, txt }, diffs: { visual } }` |
+| `alarms` | `Record<string, unknown>[] \| null` | No | Account-defined alarms, each with at least `name` and `value` |
 
 <AccordionGroup>
 <Accordion title="site full type">
@@ -131,8 +141,8 @@ A monitored page changed: Fluxguard posts the captured version with references t
   } | null,
   siteCategories?: string[] | null,
   pageCategories?: string[] | null,
-  files?: Record<string, any> | null,
-  alarms?: Record<string, any>[] | null
+  files?: Record<string, unknown> | null,
+  alarms?: Record<string, unknown>[] | null
 }
 ```
 </Accordion>
