@@ -2001,6 +2001,14 @@
                 ]
               },
               {
+                "group": "Foursquare",
+                "pages": [
+                  "plugins/foursquare/overview",
+                  "plugins/foursquare/api",
+                  "plugins/foursquare/database"
+                ]
+              },
+              {
                 "group": "Fundable",
                 "pages": [
                   "plugins/fundable/overview",
