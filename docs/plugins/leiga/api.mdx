@@ -1,0 +1,888 @@
+---
+title: API
+description: "API reference for Leiga: every `leiga.api.*` operation with input and output types."
+---
+
+Every `leiga.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Issues
+
+### fields
+
+`issues.fields`
+
+List the fields one issue type exposes, including custom ones
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.issues.fields({ projectId: 123456, issueTypeId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | Leiga numeric id |
+| `issueTypeId` | `number` | Yes | Leiga numeric id |
+
+Lists the fields one issue type exposes, including the custom fields that appear in an issue's `customFieldData`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  fieldName: string,
+  fieldCode: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`issues.get`
+
+Get one issue by id, with its fields and tags
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.issues.get({ issueId: 987654 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issueId` | `number` | Yes | Issue id |
+
+Takes `issueId` as the `id` query parameter and answers one issue. Custom field values live in `customFieldData`, keyed by codes such as `customfield_1`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Leiga numeric id |
+| `issueNumber` | `string \| null` | No | Human-readable, e.g. SAMPL-23 |
+| `summary` | `string \| null` | No | — |
+| `projectId` | `number \| null` | No | Leiga numeric id |
+| `issueTypeId` | `number \| null` | No | Leiga numeric id |
+| `issueTypeName` | `string \| null` | No | — |
+| `statusId` | `number \| null` | No | Leiga numeric id |
+| `statusName` | `string \| null` | No | — |
+| `statusType` | `number \| null` | No | — |
+| `priorityId` | `number \| null` | No | Leiga numeric id |
+| `priorityName` | `string \| null` | No | — |
+| `assigneeId` | `number \| null` | No | Leiga numeric id |
+| `assigneeName` | `string \| null` | No | — |
+| `assigneeVO` | `object \| null` | No | — |
+| `createBy` | `number \| null` | No | Leiga numeric id |
+| `createByVO` | `object \| null` | No | — |
+| `createTime` | `number \| null` | No | Unix epoch milliseconds |
+| `updateBy` | `number \| null` | No | Leiga numeric id |
+| `updateByVO` | `object \| null` | No | — |
+| `updateTime` | `number \| null` | No | Unix epoch milliseconds |
+| `dueDate` | `number \| null` | No | Unix epoch milliseconds |
+| `startDate` | `number \| null` | No | Unix epoch milliseconds |
+| `description` | `string \| null` | No | HTML |
+| `sprint` | `string \| number \| null` | No | Sprint id, absent when the issue is not in one |
+| `estimateLabour` | `number \| null` | No | — |
+| `totalRemainingLabour` | `number \| null` | No | — |
+| `isArchived` | `number \| null` | No | — |
+| `issueNumberOrAlias` | `string \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `customFieldData` | `Record<string, unknown> \| null` | No | Custom field values keyed by field code, e.g. `customfield_213979997` |
+
+<AccordionGroup>
+<Accordion title="assigneeVO full type">
+
+```ts
+{
+  userId?: number | null,
+  userName?: string | null,
+  profilePicture?: string | null,
+  accountEnabled?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="createByVO full type">
+
+```ts
+{
+  userId?: number | null,
+  userName?: string | null,
+  profilePicture?: string | null,
+  accountEnabled?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="updateByVO full type">
+
+```ts
+{
+  userId?: number | null,
+  userName?: string | null,
+  profilePicture?: string | null,
+  accountEnabled?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  tagName?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByNumber
+
+`issues.getByNumber`
+
+Get one issue by its human-readable number, such as LGC-12
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.issues.getByNumber({ issueNumber: 'LGC-12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issueNumber` | `string` | Yes | Issue number, e.g. LGC-12 |
+
+Looks an issue up by its human-readable number, such as `LGC-12`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Leiga numeric id |
+| `issueNumber` | `string \| null` | No | Human-readable, e.g. SAMPL-23 |
+| `summary` | `string \| null` | No | — |
+| `projectId` | `number \| null` | No | Leiga numeric id |
+| `issueTypeId` | `number \| null` | No | Leiga numeric id |
+| `issueTypeName` | `string \| null` | No | — |
+| `statusId` | `number \| null` | No | Leiga numeric id |
+| `statusName` | `string \| null` | No | — |
+| `statusType` | `number \| null` | No | — |
+| `priorityId` | `number \| null` | No | Leiga numeric id |
+| `priorityName` | `string \| null` | No | — |
+| `assigneeId` | `number \| null` | No | Leiga numeric id |
+| `assigneeName` | `string \| null` | No | — |
+| `assigneeVO` | `object \| null` | No | — |
+| `createBy` | `number \| null` | No | Leiga numeric id |
+| `createByVO` | `object \| null` | No | — |
+| `createTime` | `number \| null` | No | Unix epoch milliseconds |
+| `updateBy` | `number \| null` | No | Leiga numeric id |
+| `updateByVO` | `object \| null` | No | — |
+| `updateTime` | `number \| null` | No | Unix epoch milliseconds |
+| `dueDate` | `number \| null` | No | Unix epoch milliseconds |
+| `startDate` | `number \| null` | No | Unix epoch milliseconds |
+| `description` | `string \| null` | No | HTML |
+| `sprint` | `string \| number \| null` | No | Sprint id, absent when the issue is not in one |
+| `estimateLabour` | `number \| null` | No | — |
+| `totalRemainingLabour` | `number \| null` | No | — |
+| `isArchived` | `number \| null` | No | — |
+| `issueNumberOrAlias` | `string \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `customFieldData` | `Record<string, unknown> \| null` | No | Custom field values keyed by field code, e.g. `customfield_213979997` |
+
+<AccordionGroup>
+<Accordion title="assigneeVO full type">
+
+```ts
+{
+  userId?: number | null,
+  userName?: string | null,
+  profilePicture?: string | null,
+  accountEnabled?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="createByVO full type">
+
+```ts
+{
+  userId?: number | null,
+  userName?: string | null,
+  profilePicture?: string | null,
+  accountEnabled?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="updateByVO full type">
+
+```ts
+{
+  userId?: number | null,
+  userName?: string | null,
+  profilePicture?: string | null,
+  accountEnabled?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  tagName?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`issues.list`
+
+Query the issues in a project, with filters and paging
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.issues.list({ projectId: 123456, statusTypes: [2, 3], pageSize: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | Project to query |
+| `pageNumber` | `number` | No | Page number, from 1 |
+| `pageSize` | `number` | No | Page size |
+| `summary` | `string` | No | Filter on summary text |
+| `orderBy` | `createTime \| updateTime` | No | Field to sort by |
+| `sort` | `ASC \| DESC` | No | Sort direction |
+| `statusTypes` | `number[]` | No | Status types to include: 2 not started, 3 in progress, 4 done |
+
+A POST with the filters in the body, answering `{ total, list }`. `statusTypes` filters by phase (2 not started, 3 in progress, 4 done); `orderBy` accepts `createTime` or `updateTime` and `sort` accepts `ASC` or `DESC`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issues` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="issues full type">
+
+```ts
+{
+  id: number,
+  summary: string,
+  issueTypeId?: number | null,
+  issueTypeName?: string | null,
+  issueTypeVO?: {
+    id?: number | null,
+    code?: string | null,
+    name?: string | null
+  } | null,
+  priorityId?: number | null,
+  priorityName?: string | null,
+  statusType?: number | null,
+  statusName?: string | null,
+  assigneeId?: number | null,
+  assigneeName?: string | null,
+  assigneeVO?: {
+    userId?: number | null,
+    userName?: string | null,
+    profilePicture?: string | null,
+    accountEnabled?: number | null
+  } | null,
+  updateBy?: number | null,
+  updateByVO?: {
+    userId?: number | null,
+    userName?: string | null,
+    profilePicture?: string | null,
+    accountEnabled?: number | null
+  } | null,
+  updateTime?: number | null,
+  dueDate?: number | null,
+  sprintName?: string | null,
+  tags?: {
+    id?: number | null,
+    tagName?: string | null
+  }[] | null,
+  customFieldData?: Record<string, unknown> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### types
+
+`issues.types`
+
+List the issue types a project offers, such as bug or task
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.issues.types({ projectId: 123456 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | Leiga numeric id |
+
+Lists the issue types a project offers, each with an `id`, `code` and `name`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issueTypes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="issueTypes full type">
+
+```ts
+{
+  id: number,
+  code?: string | null,
+  name?: string | null,
+  workflowId?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Members
+
+### list
+
+`members.list`
+
+List the members of a project with their roles
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.members.list({ projectId: 123456 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | Leiga numeric id |
+| `keyword` | `string` | No | Filter on a name or email |
+
+A GET with `projectId` and an optional `keyword` filter, answering each member with their departments and project roles.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  userId: number,
+  userName?: string | null,
+  orgEmail?: string | null,
+  head?: string | null,
+  departmentVOList?: {
+    id?: number | null,
+    deptName?: string | null
+  }[] | null,
+  roleVOList?: {
+    id?: number | null,
+    roleCode?: string | null,
+    roleName?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### get
+
+`projects.get`
+
+Get one project by id, with its metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.projects.get({ projectId: 123456 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | Leiga numeric id |
+
+Takes `projectId` as a query parameter and answers a single project object with `projectName`, `projectKey`, `leader`, `createTime` and `updateTime`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Leiga numeric id |
+| `projectName` | `string` | Yes | — |
+| `projectKey` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `leader` | `string \| null` | No | Leader display name |
+| `leaderId` | `number \| null` | No | Leiga numeric id |
+| `avatar` | `number \| null` | No | — |
+| `url` | `string \| null` | No | Console URL for the project |
+| `archived` | `number \| null` | No | — |
+| `status` | `number \| null` | No | — |
+| `projectCategory` | `number \| null` | No | — |
+| `createBy` | `number \| null` | No | Leiga numeric id |
+| `createTime` | `number \| null` | No | Unix epoch milliseconds |
+| `updateTime` | `number \| null` | No | Unix epoch milliseconds |
+
+
+
+---
+
+### getByKey
+
+`projects.getByKey`
+
+Get one project by its key, such as LGC
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.projects.getByKey({ projectKey: 'LGC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectKey` | `string` | Yes | Project key, e.g. LGC |
+
+The same object as `projects.get`, looked up by `projectKey` instead of id.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Leiga numeric id |
+| `projectName` | `string` | Yes | — |
+| `projectKey` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `leader` | `string \| null` | No | Leader display name |
+| `leaderId` | `number \| null` | No | Leiga numeric id |
+| `avatar` | `number \| null` | No | — |
+| `url` | `string \| null` | No | Console URL for the project |
+| `archived` | `number \| null` | No | — |
+| `status` | `number \| null` | No | — |
+| `projectCategory` | `number \| null` | No | — |
+| `createBy` | `number \| null` | No | Leiga numeric id |
+| `createTime` | `number \| null` | No | Unix epoch milliseconds |
+| `updateTime` | `number \| null` | No | Unix epoch milliseconds |
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List the projects in the organization
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.projects.list({});
+```
+
+**Input:** _empty object_
+
+Answers a bare array of `{ id, pname, pkey, archived }`. `pkey` is the prefix used in issue numbers such as `LGC-12`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  pname: string,
+  pkey: string,
+  archived?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### templates
+
+`projects.templates`
+
+List the project templates available for new projects
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.projects.templates({});
+```
+
+**Input:** _empty object_
+
+Lists the templates that `project add` accepts, each with a `code`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  code: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sprints
+
+### get
+
+`sprints.get`
+
+Get one sprint by id
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.sprints.get({ sprintId: 789 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sprintId` | `number` | Yes | Leiga numeric id |
+
+Answers one sprint by id.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Leiga numeric id |
+| `name` | `string \| null` | No | — |
+| `goal` | `string \| null` | No | — |
+| `projectId` | `string \| number \| null` | No | — |
+| `assignee` | `number \| null` | No | Leiga numeric id |
+| `assigneeName` | `string \| null` | No | — |
+| `startDate` | `number \| null` | No | Unix epoch milliseconds |
+| `endDate` | `number \| null` | No | Unix epoch milliseconds |
+| `started` | `number \| null` | No | 1 once the sprint has started |
+| `status` | `number \| null` | No | 1 planned, 2 active, 3 closed |
+| `estimatePointTotal` | `number \| null` | No | — |
+| `issueTypeCountMap` | `Record<string, number> \| null` | No | — |
+
+
+
+---
+
+### list
+
+`sprints.list`
+
+List a project sprints with per-issue-type counts
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.sprints.list({ projectId: 123456 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | Leiga numeric id |
+
+A POST with `projectId` in the body. Each sprint carries `startDate` and `endDate` in epoch milliseconds plus `issueTypeCountMap`, which groups its issues by type.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sprints` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sprints full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  goal?: string | null,
+  projectId?: string | number | null,
+  assignee?: number | null,
+  assigneeName?: string | null,
+  startDate?: number | null,
+  endDate?: number | null,
+  started?: number | null,
+  status?: number | null,
+  estimatePointTotal?: number | null,
+  issueTypeCountMap?: Record<string, number> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### list
+
+`tags.list`
+
+List the tags defined in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.tags.list({ projectId: 123456 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | Leiga numeric id |
+
+A POST with `projectId` in the body, answering a bare array of `{ id, tagName }`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id: number,
+  tagName: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workflows
+
+### list
+
+`workflows.list`
+
+List the workflow steps a project uses
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.workflows.list({ projectId: 123456 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | Leiga numeric id |
+
+A POST with `projectId` in the body, listing the workflow steps a project uses.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflows` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="workflows full type">
+
+```ts
+{
+  id: number,
+  workflowName: string,
+  workflowDesc?: string | null,
+  defaultValue?: boolean | null,
+  issueTypes?: {
+    id?: number | null,
+    code?: string | null,
+    name?: string | null,
+    description?: string | null
+  }[] | null,
+  states?: {
+    stateId: number,
+    stateName?: string | null,
+    stateCategory?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### nextStates
+
+`workflows.nextStates`
+
+List the states an issue can move to from its current one
+
+**Risk:** `read`
+
+```ts
+await corsair.leiga.api.workflows.nextStates({ projectId: 123456, workflowId: 4321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `number` | Yes | Leiga numeric id |
+| `stateId` | `number` | Yes | Current state id, from a workflow states entry |
+| `defId` | `number` | Yes | Workflow definition id, the workflow itself |
+
+Lists the states reachable from the issue's current workflow step.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `states` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="states full type">
+
+```ts
+{
+  stateId: number,
+  stateName?: string | null,
+  stateCategory?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
