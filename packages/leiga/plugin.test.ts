@@ -38,7 +38,7 @@ function flatten(endpoints: NestedMap): string[] {
 	return paths.sort();
 }
 
-/** A key manager slice: only the four lookups the resolver calls. */
+/** A key manager slice: only the lookups the resolver calls. */
 function authContext(
 	stored: {
 		accessToken?: string | null;
@@ -46,20 +46,23 @@ function authContext(
 		clientId?: string | null;
 		clientSecret?: string | null;
 	} = {},
-): LeigaAuthContext & { written: (string | undefined)[] } {
-	const written: (string | undefined)[] = [];
+): LeigaAuthContext & { written: { token?: string; expiry?: string } } {
+	const written: { token?: string; expiry?: string } = {};
 	return {
 		tenantId: 'default',
 		written,
 		keys: {
 			get_access_token: jest.fn().mockResolvedValue(stored.accessToken ?? null),
 			get_expires_at: jest.fn().mockResolvedValue(stored.expiresAt ?? null),
-			get_integration_credentials: jest.fn().mockResolvedValue({
-				client_id: stored.clientId ?? null,
-				client_secret: stored.clientSecret ?? null,
-			}),
+			get_client_id: jest.fn().mockResolvedValue(stored.clientId ?? null),
+			get_client_secret: jest
+				.fn()
+				.mockResolvedValue(stored.clientSecret ?? null),
 			set_access_token: jest.fn(async (value: string) => {
-				written.push(value);
+				written.token = value;
+			}),
+			set_expires_at: jest.fn(async (value: string) => {
+				written.expiry = value;
 			}),
 		},
 	};
@@ -82,13 +85,13 @@ describe('leiga plugin definition', () => {
 		expect(Object.keys(leigaAuthConfig)).toEqual(['api_key']);
 	});
 
-	it('declares the client pair as integration fields', () => {
-		// Leiga issues the pair per app, so it is not an account credential.
-		expect([...leigaAuthConfig.api_key.integration]).toEqual([
+	it('declares the client pair as account fields the manager can read', () => {
+		// The account manager only generates accessors for account-level fields;
+		// get_integration_credentials exists solely on oauth_2 managers, so the
+		// pair has to be account-level or every call throws before the request.
+		expect([...leigaAuthConfig.api_key.account]).toEqual([
 			'client_id',
 			'client_secret',
-		]);
-		expect([...leigaAuthConfig.api_key.account]).toEqual([
 			'access_token',
 			'expires_at',
 		]);
@@ -170,9 +173,10 @@ describe('leiga stored token reuse', () => {
 		expect(isStoredTokenUsable('tok', String(Date.now() - 1_000))).toBe(false);
 	});
 
-	it('accepts a token with no recorded expiry', () => {
-		// A hand-stored token would otherwise force an exchange on every call.
-		expect(isStoredTokenUsable('tok', null)).toBe(true);
+	it('treats a token with no recorded expiry as stale', () => {
+		// Trusting it forever would keep sending an expired token until Leiga
+		// answered code 15, since nothing would ever trigger an exchange.
+		expect(isStoredTokenUsable('tok', null)).toBe(false);
 	});
 
 	it('returns a stored token without exchanging', async () => {

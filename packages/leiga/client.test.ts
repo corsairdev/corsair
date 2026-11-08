@@ -108,7 +108,8 @@ describe('Leiga token exchange', () => {
 		const first = await resolveLeigaToken('cid', 'secret', 1_000);
 		const second = await resolveLeigaToken('cid', 'secret', 1_100);
 
-		expect(second).toBe(first);
+		expect(second).toEqual(first);
+		expect(second.expiresAt).toBe(first.expiresAt);
 		expect(jest.mocked(globalThis.fetch)).toHaveBeenCalledTimes(1);
 	});
 
@@ -129,7 +130,7 @@ describe('Leiga token exchange', () => {
 			1_000 + 604_800_000 - 30_000,
 		);
 
-		expect(later).toBe('second-token');
+		expect(later.accessToken).toBe('second-token');
 		expect(jest.mocked(globalThis.fetch)).toHaveBeenCalledTimes(2);
 	});
 
@@ -145,6 +146,6 @@ describe('Leiga token exchange', () => {
 		await resolveLeigaToken('cid', 'secret', 1_000);
 		const other = await resolveLeigaToken('other', 'secret', 1_100);
 
-		expect(other).toBe('other-token');
+		expect(other.accessToken).toBe('other-token');
 	});
 });
