@@ -522,9 +522,10 @@ await corsair.foursquare.api.places.search({ query: 'coffee', near: 'Chicago, IL
 | `sort` | `RELEVANCE \| DISTANCE \| RATING` | No | Defaults to RELEVANCE |
 | `tel_format` | `string` | No | E164, INTERNATIONAL or NATIONAL |
 | `fields` | `string[]` | No | Response fields; all Pro fields when omitted |
+| `cursor` | `string` | No | Next-page cursor from a previous response. Omit it for the first page |
 | `limit` | `number` | No | Results per page, max 50, default 10 |
 
-Take a location as `ll` with an optional `radius`, as `near`, or as `ne` and `sw`. With none of them the search falls back to IP biasing. Array filters such as `fsq_category_ids` and `fields` are comma-joined before sending. `limit` caps at 50 and defaults to 10.
+Take a location as `ll` with an optional `radius`, as `near`, or as `ne` and `sw`. With none of them the search falls back to IP biasing. Array filters such as `fsq_category_ids` and `fields` are comma-joined before sending. `limit` caps at 50 and defaults to 10. Each response carries `nextCursor` when more results exist; pass it back as `cursor` to fetch the next page of the same search.
 
 
 
@@ -534,6 +535,7 @@ Take a location as `ll` with an optional `radius`, as `near`, or as `ne` and `sw
 |------|------|----------|-------------|
 | `results` | `object[]` | Yes | — |
 | `context` | `object \| null` | No | — |
+| `nextCursor` | `string \| null` | No | Pass this back as cursor to fetch the next page |
 
 <AccordionGroup>
 <Accordion title="results full type">
