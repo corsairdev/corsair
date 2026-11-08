@@ -67,7 +67,11 @@ export const meetingReady: CorsairWebhook<
 		meetingId: event.data.id,
 		duration: event.data.duration,
 		notes: event.data.notes?.structuredNotes?.length ?? 0,
-		hasTranscript: event.data.transcript !== null,
+		// `!= null` on purpose: the key is absent when `include.transcript` is off
+		// and `null` when the subscription asked but no transcript exists, and
+		// both mean "no transcript". A strict `!== null` reports an absent key as
+		// present, because `undefined !== null` is true.
+		hasTranscript: event.data.transcript != null,
 	}),
 );
 
