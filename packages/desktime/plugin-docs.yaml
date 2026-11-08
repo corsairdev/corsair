@@ -20,9 +20,10 @@ examples:
   read:
     path: employees.list
     title: List one day of tracked time
-    # `period` is an enum, and the validator only matches the unquoted render, so
-    # the value is named in the overview rather than placed in args. Omitting it
-    # leaves the one-day default in place.
+    # Omitting `period` leaves DeskTime's one-day default in place. The validator
+    # compares example args against the unquoted enum render, and a string never
+    # matches `day | week | month`, so the weekly call is shown in apiExamples
+    # instead, where the value may be quoted.
     args:
       date: '2026-11-02'
   # Every operation is a read, so the second example is a narrower read rather

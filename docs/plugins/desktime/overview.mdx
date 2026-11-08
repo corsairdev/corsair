@@ -77,12 +77,15 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup needed up front. A call made with no saved key throws `AuthMissingError`, which may carry a `connectUrl` where the key can be entered, or you can save one yourself:
+No setup needed up front. A call made with no saved key throws `AuthMissingError`, which may carry a `connectUrl` where the key can be entered. You can also supply the key yourself, either when the plugin is registered or once per tenant:
 
 ```ts
-// Pass the key directly, or save it per tenant and let the plugin read it.
-const client = desktime({ key: process.env.DESKTIME_API_KEY });
-await corsair.desktime.keys.set_api_key('the-key');
+// At registration: pass the key into the factory inside the plugins array.
+plugins: [desktime({ key: process.env.DESKTIME_API_KEY })],
+
+// Or per tenant, scoped through withTenant since multiTenancy is on above.
+const tenant = corsair.withTenant('acme');
+await tenant.desktime.keys.set_api_key('the-key');
 ```
 
 More: [API Key](/concepts/api-key)
