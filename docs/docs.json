@@ -1635,6 +1635,14 @@
                 ]
               },
               {
+                "group": "DeskTime",
+                "pages": [
+                  "plugins/desktime/overview",
+                  "plugins/desktime/api",
+                  "plugins/desktime/database"
+                ]
+              },
+              {
                 "group": "Devin MCP",
                 "pages": [
                   "plugins/devinmcp/overview",
