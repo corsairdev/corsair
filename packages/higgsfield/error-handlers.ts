@@ -1,4 +1,4 @@
-import type { CorsairErrorHandler } from 'corsair/core';
+import type { CorsairErrorHandler, RetryStrategy } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { HiggsfieldAPIError, HiggsfieldError } from './client';
 
@@ -6,13 +6,26 @@ import { HiggsfieldAPIError, HiggsfieldError } from './client';
 // than a Corsair script has, so that answer goes back to the caller instead.
 const LONGEST_RETRY_WAIT_MS = 10_000;
 
+/** Retries after the answer's Retry-After, unless that is too long to sleep through. */
+function retryAfterItsWait(error: Error): RetryStrategy {
+	const wait = error instanceof ApiError ? error.retryAfter : undefined;
+	if (wait !== undefined && wait > LONGEST_RETRY_WAIT_MS) {
+		return { maxRetries: 0 };
+	}
+	return {
+		maxRetries: 2,
+		retryStrategy: 'exponential_backoff_jitter',
+		headersRetryAfterMs: wait,
+	};
+}
+
 const hasCode = (error: Error, code: HiggsfieldError['code']) =>
 	error instanceof HiggsfieldError && error.code === code;
 
 /**
  * Core retries by calling the operation again with the same arguments, which
- * is safe for a generation: generations.submit and generations.run keep one
- * Idempotency-Key per argument object until Higgsfield accepts the request
+ * is safe for a generation: a retry of generations.submit or generations.run
+ * reuses the Idempotency-Key its failed attempt put back
  * (endpoints/generations.ts), and Higgsfield answers a repeat with the original
  * request instead of a second charge.
  */
@@ -20,17 +33,7 @@ export const errorHandlers = {
 	// account_queue_full, or an endpoint limit. Nothing was created.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => error instanceof ApiError && error.status === 429,
-		handler: async (error: Error) => {
-			const wait = error instanceof ApiError ? error.retryAfter : undefined;
-			if (wait !== undefined && wait > LONGEST_RETRY_WAIT_MS) {
-				return { maxRetries: 0 };
-			}
-			return {
-				maxRetries: 2,
-				retryStrategy: 'exponential_backoff_jitter' as const,
-				headersRetryAfterMs: wait,
-			};
-		},
+		handler: async (error: Error) => retryAfterItsWait(error),
 	},
 	// 401: missing or wrong key. 403: the balance is too low. Asking again changes neither.
 	AUTH_ERROR: {
@@ -46,16 +49,14 @@ export const errorHandlers = {
 	SERVER_ERROR: {
 		match: (error: Error) => error instanceof ApiError && error.status >= 500,
 		handler: async (error: Error) => {
-			if (
-				error instanceof ApiError &&
-				error.status === 503 &&
-				!(error instanceof HiggsfieldAPIError && error.retryable === true)
-			) {
-				return { maxRetries: 0 };
+			if (error instanceof ApiError && error.status === 503) {
+				return error instanceof HiggsfieldAPIError && error.retryable === true
+					? retryAfterItsWait(error)
+					: { maxRetries: 0 };
 			}
 			return {
 				maxRetries: 2,
-				retryStrategy: 'exponential_backoff_jitter' as const,
+				retryStrategy: 'exponential_backoff_jitter',
 			};
 		},
 	},
@@ -73,9 +74,13 @@ export const errorHandlers = {
 			retryStrategy: 'linear_1s' as const,
 		}),
 	},
-	// 400, 404, 409, 422 and 423: the request needs changing, or time.
+	// 400, 404, 409, 422 and 423: the request needs changing, or time. Core falls
+	// back to DEFAULT by name once nothing else matches, so this one matches
+	// nothing itself. That way its place in the list can't hide another handler:
+	// createCorsair lists a root config's keys first, which would otherwise put a
+	// match-everything DEFAULT ahead of every other handler.
 	DEFAULT: {
-		match: () => true,
+		match: () => false,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;

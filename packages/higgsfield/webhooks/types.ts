@@ -23,6 +23,9 @@ export const WEBHOOK_STATUSES = [
 	'canceled',
 ] as const;
 
+/** The statuses with no output, where a delivery may leave `payload` out. */
+const NO_OUTPUT_STATUSES: readonly string[] = ['failed', 'nsfw', 'canceled'];
+
 const WebhookMediaSchema = z
 	.object({
 		url: z.string().nullish(),
@@ -103,18 +106,28 @@ function parseBody(body: unknown): Record<string, unknown> | null {
  * Deliveries are told apart by their envelope, because headers can't do it: the
  * webhook-* headers are the Standard Webhooks ones any provider may use, and an
  * unsigned delivery has none. The lower-case terminal status keeps fal's
- * similar envelope (status OK or ERROR) out.
+ * similar envelope (status OK or ERROR) out. A failure with no `payload` key has
+ * too little to go on by itself, so that form must also carry a signature.
  */
 export const isHiggsfieldWebhook: CorsairWebhookMatcher = (
 	request: RawWebhookRequest,
 ) => {
 	const body = parseBody(request.body);
+	if (
+		body === null ||
+		typeof body.request_id !== 'string' ||
+		typeof body.status !== 'string' ||
+		!(WEBHOOK_STATUSES as readonly string[]).includes(body.status)
+	) {
+		return false;
+	}
+	if ('payload' in body) return true;
 	return (
-		body !== null &&
-		typeof body.request_id === 'string' &&
-		typeof body.status === 'string' &&
-		(WEBHOOK_STATUSES as readonly string[]).includes(body.status) &&
-		'payload' in body
+		NO_OUTPUT_STATUSES.includes(body.status) &&
+		Boolean(
+			headerValue(request.headers, HIGGSFIELD_WEBHOOK_HEADERS.id) &&
+				headerValue(request.headers, HIGGSFIELD_WEBHOOK_HEADERS.signature),
+		)
 	);
 };
 

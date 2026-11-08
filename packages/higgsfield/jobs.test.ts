@@ -61,6 +61,7 @@ describe('higgsfield jobs', () => {
 			const status =
 				HiggsfieldEndpointOutputSchemas.requestsStatus.shape.status;
 			expect(status).toBeInstanceOf(z.ZodUnion);
+			// unknown: zod's own types don't reach a union's options from `shape`.
 			const known = (status as unknown as z.ZodUnion).options[0];
 			expect(known).toBeInstanceOf(z.ZodEnum);
 			const values = (known as z.ZodEnum).options.map(String);

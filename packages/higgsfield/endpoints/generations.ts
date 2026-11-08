@@ -4,12 +4,17 @@ import {
 	estimatePath,
 	HiggsfieldAPIError,
 	HiggsfieldError,
+	isValidRequestId,
 	makeHiggsfieldRequest,
 	requestPath,
 	submitPath,
 } from '../client';
 import type { HiggsfieldContext, HiggsfieldEndpoints } from '../index';
-import type { GenerationsSubmitInput, RequestsStatusResponse } from './types';
+import type {
+	GenerationsSubmitInput,
+	GenerationsSubmitResponse,
+	RequestsStatusResponse,
+} from './types';
 import {
 	HiggsfieldEndpointInputSchemas,
 	HiggsfieldEndpointOutputSchemas,
@@ -29,27 +34,28 @@ const READ_RESERVE_MS = 1_500;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * The Idempotency-Key of a submit the caller gave no key for, by argument
- * object. Core retries by calling the operation again with the same arguments
+ * Idle Idempotency-Keys by arguments object, for submits the caller gave no key
+ * for. Core retries by calling the operation again with the same arguments
  * (core/endpoints/bind.ts), so a key made per call would make every retry a new
  * generation, and a second charge if the first attempt had in fact gone
- * through. Held until Higgsfield accepts the request: the same object passed
- * again after that is a deliberate second generation and gets a new key.
+ * through. A call takes an idle key or mints one, a failed attempt puts its key
+ * back for its retry, and acceptance drops it. A key in flight isn't idle, so
+ * concurrent calls with one object send different keys and stay two generations.
+ *
+ * This only reaches retries of a live call. A replayed workflow step or a new
+ * script builds a new object and gets a new key, so such a caller must pass its
+ * own idempotencyKey to be safe across attempts.
  */
-const unacceptedKeys = new WeakMap<object, string>();
+const idleKeys = new WeakMap<object, string[]>();
 
-function idempotencyKeyFor(
-	// unknown: the caller's arguments object, used only for its identity.
-	rawInput: unknown,
-	input: GenerationsSubmitInput,
-): string {
-	if (input.idempotencyKey) return input.idempotencyKey;
-	const holder = rawInput as object;
-	const existing = unacceptedKeys.get(holder);
-	if (existing) return existing;
-	const key = randomUUID();
-	unacceptedKeys.set(holder, key);
-	return key;
+function takeKey(holder: object): string {
+	return idleKeys.get(holder)?.pop() ?? randomUUID();
+}
+
+function releaseKey(holder: object, key: string): void {
+	const pool = idleKeys.get(holder);
+	if (pool) pool.push(key);
+	else idleKeys.set(holder, [key]);
 }
 
 /**
@@ -76,7 +82,7 @@ function withIdempotencyKey(error: unknown, idempotencyKey: string): unknown {
 
 /**
  * Sends one generation. Throws only while the request may not have been
- * accepted, and the key stays the same across every retry of that attempt.
+ * accepted, and puts a generated key back for the retry of that attempt.
  */
 async function submitGeneration(
 	apiKey: string,
@@ -84,7 +90,8 @@ async function submitGeneration(
 	rawInput: unknown,
 	input: GenerationsSubmitInput,
 ) {
-	const idempotencyKey = idempotencyKeyFor(rawInput, input);
+	const holder = rawInput as object;
+	const idempotencyKey = input.idempotencyKey ?? takeKey(holder);
 	try {
 		// unknown: checked by the schema just below.
 		const raw = await makeHiggsfieldRequest<
@@ -102,15 +109,19 @@ async function submitGeneration(
 			},
 			timeoutMs: SUBMIT_TIMEOUT_MS,
 		});
-		if (typeof raw?.request_id !== 'string') {
+		// An id that requests.status would refuse is a receipt nobody can follow.
+		if (
+			typeof raw?.request_id !== 'string' ||
+			!isValidRequestId(raw.request_id)
+		) {
 			throw new HiggsfieldError(
-				'Higgsfield answered the submit without a request_id.',
+				'Higgsfield answered the submit without a usable request_id.',
 				'bad_response',
 			);
 		}
 		// With a request_id the generation exists, so a field the schema doesn't
 		// expect must not turn that into an error.
-		const minimal = {
+		const minimal: GenerationsSubmitResponse = {
 			status: typeof raw.status === 'string' ? raw.status : 'queued',
 			request_id: raw.request_id,
 			idempotency_key: idempotencyKey,
@@ -119,9 +130,9 @@ async function submitGeneration(
 			...raw,
 			...minimal,
 		});
-		unacceptedKeys.delete(rawInput as object);
 		return parsed.success ? parsed.data : minimal;
 	} catch (error) {
+		if (!input.idempotencyKey) releaseKey(holder, idempotencyKey);
 		throw withIdempotencyKey(error, idempotencyKey);
 	}
 }
@@ -201,7 +212,9 @@ async function waitForEnd(
 			(await readStatus(
 				apiKey,
 				requestId,
-				Math.min(remaining, READ_TIMEOUT_MS),
+				// AbortSignal.timeout refuses a fraction, and a fractional waitSeconds
+				// makes one here.
+				Math.floor(Math.min(remaining, READ_TIMEOUT_MS)),
 			)) ?? latest;
 		if (latest && TERMINAL_STATUSES.includes(latest.status)) break;
 		interval = Math.min(interval * 1.5, LONGEST_POLL_MS);
@@ -229,13 +242,22 @@ export const run: HiggsfieldEndpoints['generationsRun'] = async (
 		accepted.request_id,
 		startedAt + waitSeconds * 1000,
 	);
+	// `latest` already passed the status schema, so only what the receipt adds
+	// can fail here. The latest status and outputs win either way: an odd field
+	// must not lose a completed output.
+	const fromReceipt = {
+		request_id: accepted.request_id,
+		idempotency_key: accepted.idempotency_key,
+		expires_after: accepted.expires_after,
+	};
 	const merged = HiggsfieldEndpointOutputSchemas.generationsRun.safeParse({
 		...accepted,
 		...latest,
-		request_id: accepted.request_id,
-		idempotency_key: accepted.idempotency_key,
+		...fromReceipt,
 	});
-	const response = merged.success ? merged.data : accepted;
+	const response = merged.success
+		? merged.data
+		: { ...(latest ?? accepted), ...fromReceipt };
 	await logQuietly(ctx, 'higgsfield.generations.run', {
 		modelPath: input.modelPath,
 		requestId: response.request_id,

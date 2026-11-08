@@ -1,4 +1,3 @@
-import { lookup } from 'node:dns/promises';
 import { logEventFromContext } from 'corsair/core';
 import { HiggsfieldAPIError, HiggsfieldError } from './client';
 import {
@@ -30,16 +29,9 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(null),
 }));
 
-jest.mock('node:dns/promises', () => ({
-	lookup: jest
-		.fn()
-		.mockResolvedValue([{ address: '93.184.216.34', family: 4 }]),
-}));
-
-const mockLookup = lookup as unknown as jest.Mock;
 const mockLog = logEventFromContext as jest.Mock;
 
-// Endpoints only read ctx.key; the rest of the context is the runtime's.
+// unknown: endpoints read only ctx.key; the rest of the context is the runtime's.
 const ctx = { key: API_KEY } as unknown as Parameters<
 	typeof generationsSubmit
 >[0];
@@ -59,8 +51,6 @@ beforeEach(() => {
 	fetchMock = jest.spyOn(globalThis, 'fetch');
 	mockLog.mockClear();
 	mockLog.mockResolvedValue(null);
-	mockLookup.mockClear();
-	mockLookup.mockResolvedValue([{ address: '93.184.216.34', family: 4 }]);
 });
 
 afterEach(() => {
@@ -137,6 +127,83 @@ describe('generations.submit', () => {
 		expect(response.idempotency_key).toBe(keys[0]);
 	});
 
+	it('sends different keys for two concurrent calls with one object', async () => {
+		fetchMock.mockImplementation(async () => jsonResponse(acceptedBody));
+		const args = { modelPath: MODEL, input: INPUT };
+		const [one, two] = await Promise.all([
+			generationsSubmit(ctx, args),
+			generationsSubmit(ctx, args),
+		]);
+		expect(callOf(0).init.headers['Idempotency-Key']).not.toBe(
+			callOf(1).init.headers['Idempotency-Key'],
+		);
+		expect(one.idempotency_key).not.toBe(two.idempotency_key);
+	});
+
+	it('lets a failed call keep its own key when its twin is accepted', async () => {
+		fetchMock
+			.mockResolvedValueOnce(jsonResponse(acceptedBody))
+			.mockRejectedValueOnce(new TypeError('fetch failed'))
+			.mockResolvedValueOnce(jsonResponse(acceptedBody));
+		const args = { modelPath: MODEL, input: INPUT };
+		const [won, lost] = await Promise.allSettled([
+			generationsSubmit(ctx, args),
+			generationsSubmit(ctx, args),
+		]);
+		expect(won.status).toBe('fulfilled');
+		expect(lost.status).toBe('rejected');
+		const acceptedKey = callOf(0).init.headers['Idempotency-Key'];
+		const failedKey = callOf(1).init.headers['Idempotency-Key'];
+		expect(failedKey).not.toBe(acceptedKey);
+
+		const retried = await generationsSubmit(ctx, args);
+		expect(callOf(2).init.headers['Idempotency-Key']).toBe(failedKey);
+		expect(retried.idempotency_key).toBe(failedKey);
+	});
+
+	it('gives two failed concurrent calls one key each to retry with', async () => {
+		fetchMock
+			.mockRejectedValueOnce(new TypeError('fetch failed'))
+			.mockRejectedValueOnce(new TypeError('fetch failed'))
+			.mockResolvedValueOnce(jsonResponse(acceptedBody))
+			.mockResolvedValueOnce(jsonResponse(acceptedBody));
+		const args = { modelPath: MODEL, input: INPUT };
+		await Promise.allSettled([
+			generationsSubmit(ctx, args),
+			generationsSubmit(ctx, args),
+		]);
+		await Promise.all([
+			generationsSubmit(ctx, args),
+			generationsSubmit(ctx, args),
+		]);
+		const firstTwo = [0, 1].map(
+			(i) => callOf(i).init.headers['Idempotency-Key'],
+		);
+		const retries = [2, 3].map(
+			(i) => callOf(i).init.headers['Idempotency-Key'],
+		);
+		expect(new Set(firstTwo).size).toBe(2);
+		expect([...retries].sort()).toEqual([...firstTwo].sort());
+	});
+
+	it('does not pool a key the caller passed', async () => {
+		fetchMock
+			.mockRejectedValueOnce(new TypeError('fetch failed'))
+			.mockResolvedValueOnce(jsonResponse(acceptedBody));
+		const args: {
+			modelPath: string;
+			input: typeof INPUT;
+			idempotencyKey?: string;
+		} = { modelPath: MODEL, input: INPUT, idempotencyKey: 'mine' };
+		await expect(generationsSubmit(ctx, args)).rejects.toThrow(
+			'Could not reach',
+		);
+		args.idempotencyKey = undefined;
+		await generationsSubmit(ctx, args);
+		expect(callOf(0).init.headers['Idempotency-Key']).toBe('mine');
+		expect(callOf(1).init.headers['Idempotency-Key']).not.toBe('mine');
+	});
+
 	it('takes the same arguments passed again after acceptance as a new generation', async () => {
 		fetchMock
 			.mockResolvedValueOnce(jsonResponse(acceptedBody))
@@ -203,6 +270,40 @@ describe('generations.submit', () => {
 		expect(error.code).toBe('bad_response');
 		expect(error.idempotencyKey).toBeDefined();
 		expect(error.message).toContain('may have accepted');
+	});
+
+	it.each(['', '../keys', 'a/b', 'has space'])(
+		'treats the unusable request_id %p as possibly accepted, and keeps the key',
+		async (requestId) => {
+			fetchMock
+				.mockResolvedValueOnce(
+					jsonResponse({ status: 'queued', request_id: requestId }),
+				)
+				.mockResolvedValueOnce(jsonResponse(acceptedBody));
+			const args = { modelPath: MODEL, input: INPUT };
+			const error = (await generationsSubmit(ctx, args).catch(
+				(caught: Error) => caught,
+			)) as HiggsfieldError;
+			expect(error.code).toBe('bad_response');
+			expect(error.message).toContain('usable request_id');
+			expect(error.message).toContain('may have accepted');
+			const key = callOf(0).init.headers['Idempotency-Key'];
+			expect(error.idempotencyKey).toBe(key);
+
+			const repeat = await generationsSubmit(ctx, args);
+			expect(callOf(1).init.headers['Idempotency-Key']).toBe(key);
+			expect(repeat.request_id).toBe(REQUEST_ID);
+		},
+	);
+
+	it('reports input it cannot serialize as invalid, sending nothing', async () => {
+		const error = (await generationsSubmit(ctx, {
+			modelPath: MODEL,
+			input: { seed: BigInt(1) },
+		}).catch((caught: Error) => caught)) as HiggsfieldError;
+		expect(error.code).toBe('invalid_input');
+		expect(error.message).not.toContain('may have accepted');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('does not lose a request over a field it did not expect', async () => {
@@ -392,7 +493,7 @@ describe('generations.run', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
-	it('keeps a stray status field from breaking the answer', async () => {
+	it('keeps a completed output when the status read carries an odd field', async () => {
 		fetchMock
 			.mockResolvedValueOnce(jsonResponse(acceptedBody))
 			.mockResolvedValueOnce(
@@ -406,7 +507,35 @@ describe('generations.run', () => {
 			input: INPUT,
 			waitSeconds: 1,
 		});
-		expect(response.request_id).toBe(REQUEST_ID);
+		expect(response.status).toBe('completed');
+		expect(response.images?.[0]?.url).toBe('https://cdn.example.com/boat.png');
+		expect(response.expires_after).toBe(604800);
+	});
+
+	it('keeps a completed output when the receipt carries an odd field', async () => {
+		fetchMock
+			.mockResolvedValueOnce(jsonResponse({ ...acceptedBody, video: 'soon' }))
+			.mockResolvedValueOnce(jsonResponse(completedStatusBody));
+		const response = await generationsRun(ctx, {
+			modelPath: MODEL,
+			input: INPUT,
+			waitSeconds: 1,
+		});
+		expect(response.status).toBe('completed');
+		expect(response.images?.[0]?.url).toBe('https://cdn.example.com/boat.png');
+		expect(response.idempotency_key).toBeDefined();
+	});
+
+	it('reads the status with a fractional waitSeconds', async () => {
+		fetchMock
+			.mockResolvedValueOnce(jsonResponse(acceptedBody))
+			.mockResolvedValueOnce(jsonResponse(completedStatusBody));
+		const response = await generationsRun(ctx, {
+			modelPath: MODEL,
+			input: INPUT,
+			waitSeconds: 0.5678,
+		});
+		expect(response.status).toBe('completed');
 	});
 });
 
@@ -654,192 +783,6 @@ describe('files', () => {
 			}).catch((caught: Error) => caught);
 			expect(error).toMatchObject({ code: 'upload_failed' });
 			expect((error as Error).message).not.toContain('X-Amz');
-		});
-	});
-
-	describe('files.upload from a URL', () => {
-		const SOURCE = 'https://media.example.com/in.png';
-		const source = (body = 'image-bytes', type = 'image/png; charset=x') =>
-			new Response(body, { status: 200, headers: { 'Content-Type': type } });
-
-		it('fetches, uses the source’s type and uploads', async () => {
-			fetchMock
-				.mockResolvedValueOnce(source())
-				.mockResolvedValueOnce(jsonResponse(created))
-				.mockResolvedValueOnce(new Response(null, { status: 200 }));
-			const response = await filesUpload(ctx, { sourceUrl: SOURCE });
-			expect(callOf(0).url).toBe(SOURCE);
-			// The caller's URL gets no Higgsfield credentials.
-			expect(callOf(0).init.headers).toBeUndefined();
-			expect(JSON.parse(callOf(1).init.body)).toEqual({
-				content_type: 'image/png',
-			});
-			expect(Buffer.from(callOf(2).init.body).toString()).toBe('image-bytes');
-			expect(response.size).toBe(11);
-		});
-
-		it('lets contentType overrule a wrong source type', async () => {
-			fetchMock
-				.mockResolvedValueOnce(source('x', 'application/octet-stream'))
-				.mockResolvedValueOnce(jsonResponse(created))
-				.mockResolvedValueOnce(new Response(null, { status: 200 }));
-			const response = await filesUpload(ctx, {
-				sourceUrl: SOURCE,
-				contentType: 'image/png',
-			});
-			expect(response.content_type).toBe('image/png');
-		});
-
-		it('refuses a source type outside the list', async () => {
-			fetchMock.mockResolvedValueOnce(source('x', 'text/html'));
-			await expect(filesUpload(ctx, { sourceUrl: SOURCE })).rejects.toThrow(
-				'does not take text/html',
-			);
-			expect(fetchMock).toHaveBeenCalledTimes(1);
-		});
-
-		it.each([
-			'https://127.0.0.1/x.png',
-			'https://localhost/x.png',
-			'https://sub.localhost/x.png',
-			'https://10.0.0.8/x.png',
-			'https://172.16.0.1/x.png',
-			'https://192.168.1.1/x.png',
-			'https://169.254.169.254/latest/meta-data/',
-			'https://100.64.0.1/x.png',
-			'https://[::1]/x.png',
-			'https://[fd00::1]/x.png',
-			'https://[fe80::1]/x.png',
-			'https://[::ffff:127.0.0.1]/x.png',
-			'https://[::ffff:169.254.169.254]/x.png',
-			'https://2130706433/x.png',
-		])(
-			'refuses the private source %s without fetching it',
-			async (sourceUrl) => {
-				await expect(filesUpload(ctx, { sourceUrl })).rejects.toThrow(
-					/sourceUrl was refused/,
-				);
-				expect(fetchMock).not.toHaveBeenCalled();
-			},
-		);
-
-		it('refuses a host that resolves to a private address', async () => {
-			mockLookup.mockResolvedValueOnce([
-				{ address: '93.184.216.34', family: 4 },
-				{ address: '10.0.0.5', family: 4 },
-			]);
-			await expect(filesUpload(ctx, { sourceUrl: SOURCE })).rejects.toThrow(
-				'private address',
-			);
-			expect(fetchMock).not.toHaveBeenCalled();
-		});
-
-		it('refuses a host that does not resolve', async () => {
-			mockLookup.mockRejectedValueOnce(new Error('ENOTFOUND'));
-			await expect(filesUpload(ctx, { sourceUrl: SOURCE })).rejects.toThrow(
-				'does not resolve',
-			);
-		});
-
-		it('follows a redirect only after checking where it goes', async () => {
-			fetchMock
-				.mockResolvedValueOnce(
-					new Response(null, {
-						status: 302,
-						headers: { Location: 'https://other.example.com/in.png' },
-					}),
-				)
-				.mockResolvedValueOnce(source())
-				.mockResolvedValueOnce(jsonResponse(created))
-				.mockResolvedValueOnce(new Response(null, { status: 200 }));
-			await filesUpload(ctx, { sourceUrl: SOURCE });
-			expect(callOf(0).init.redirect).toBe('manual');
-			expect(callOf(1).url).toBe('https://other.example.com/in.png');
-			expect(mockLookup).toHaveBeenCalledTimes(2);
-		});
-
-		it.each([
-			'https://169.254.169.254/latest/meta-data/',
-			'http://media.example.com/x.png',
-		])('refuses a redirect to %s', async (location) => {
-			fetchMock.mockResolvedValueOnce(
-				new Response(null, { status: 302, headers: { Location: location } }),
-			);
-			await expect(filesUpload(ctx, { sourceUrl: SOURCE })).rejects.toThrow(
-				'sourceUrl was refused',
-			);
-			expect(fetchMock).toHaveBeenCalledTimes(1);
-		});
-
-		it('gives up after too many redirects', async () => {
-			fetchMock.mockImplementation(
-				async () =>
-					new Response(null, {
-						status: 302,
-						headers: { Location: SOURCE },
-					}),
-			);
-			await expect(filesUpload(ctx, { sourceUrl: SOURCE })).rejects.toThrow(
-				'too many',
-			);
-			expect(fetchMock).toHaveBeenCalledTimes(4);
-		});
-
-		it('refuses by Content-Length before reading the body', async () => {
-			const body = new ReadableStream({
-				pull() {
-					throw new Error('the body must not be read');
-				},
-			});
-			fetchMock.mockResolvedValueOnce(
-				new Response(body, {
-					status: 200,
-					headers: {
-						'Content-Type': 'image/png',
-						'Content-Length': String(100 * 1024 * 1024 + 1),
-					},
-				}),
-			);
-			await expect(filesUpload(ctx, { sourceUrl: SOURCE })).rejects.toThrow(
-				'over',
-			);
-			expect(fetchMock).toHaveBeenCalledTimes(1);
-		});
-
-		it('stops reading once the body passes the limit', async () => {
-			let served = 0;
-			const chunk = new Uint8Array(30 * 1024 * 1024);
-			const body = new ReadableStream({
-				pull(controller) {
-					served += 1;
-					controller.enqueue(chunk);
-				},
-			});
-			fetchMock.mockResolvedValueOnce(
-				new Response(body, {
-					status: 200,
-					headers: { 'Content-Type': 'image/png' },
-				}),
-			);
-			await expect(filesUpload(ctx, { sourceUrl: SOURCE })).rejects.toThrow(
-				'over',
-			);
-			expect(served).toBeLessThanOrEqual(5);
-		});
-
-		it('refuses an empty file and a failed fetch', async () => {
-			fetchMock.mockResolvedValueOnce(new Response('', { status: 200 }));
-			await expect(filesUpload(ctx, { sourceUrl: SOURCE })).rejects.toThrow(
-				'empty',
-			);
-			fetchMock.mockResolvedValueOnce(new Response('gone', { status: 404 }));
-			await expect(filesUpload(ctx, { sourceUrl: SOURCE })).rejects.toThrow(
-				'HTTP 404',
-			);
-			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
-			await expect(filesUpload(ctx, { sourceUrl: SOURCE })).rejects.toThrow(
-				'could not be read',
-			);
 		});
 	});
 });

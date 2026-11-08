@@ -24,6 +24,7 @@ jest.mock('corsair/core', () => ({
 const delivery = (
 	rawBody: string,
 	headers: Record<string, string>,
+	// unknown: these tests sign and verify raw bytes; the parsed payload plays no part.
 ): WebhookRequest<unknown> => ({
 	payload: JSON.parse(rawBody),
 	headers,
@@ -164,7 +165,9 @@ describe('verifyHiggsfieldWebhookSignature', () => {
 			}).valid,
 		).toBe(true);
 		expect(
-			verifyHiggsfieldWebhookSignature(request, WEBHOOK_SECRET).valid,
+			verifyHiggsfieldWebhookSignature(request, WEBHOOK_SECRET, {
+				now: (timestampSeconds + 301) * 1000,
+			}).valid,
 		).toBe(false);
 	});
 
@@ -245,7 +248,9 @@ describe('verifyHiggsfieldWebhookSignature', () => {
 });
 
 describe('isHiggsfieldWebhook', () => {
-	const match = (body: unknown) => isHiggsfieldWebhook({ headers: {}, body });
+	// unknown: the matcher sees whatever body a transport hands it.
+	const match = (body: unknown, headers: Record<string, string> = {}) =>
+		isHiggsfieldWebhook({ headers, body });
 
 	it.each([COMPLETED_RAW_BODY, FAILED_RAW_BODY, NSFW_RAW_BODY])(
 		'matches an envelope, parsed or as text: %s',
@@ -269,10 +274,51 @@ describe('isHiggsfieldWebhook', () => {
 	])('leaves %j alone', (body) => {
 		expect(match(body)).toBe(false);
 	});
+
+	describe('a failure with no payload key', () => {
+		const signed = {
+			'webhook-id': 'msg_1',
+			'webhook-timestamp': '1800000000',
+			'webhook-signature': 'v1,AAAA',
+		};
+
+		it.each(['failed', 'nsfw', 'canceled'])(
+			'matches a signed %s delivery',
+			(status) => {
+				expect(match({ request_id: 'x', status }, signed)).toBe(true);
+			},
+		);
+
+		it('reads the signature headers in any case', () => {
+			expect(
+				match(
+					{ request_id: 'x', status: 'failed' },
+					{ 'Webhook-Id': 'msg_1', 'Webhook-Signature': 'v1,AAAA' },
+				),
+			).toBe(true);
+		});
+
+		it('leaves another provider’s unsigned failure alone', () => {
+			expect(match({ request_id: 'x', status: 'failed', error: 'no' })).toBe(
+				false,
+			);
+		});
+
+		it('leaves a signed success with no output alone', () => {
+			expect(match({ request_id: 'x', status: 'completed' }, signed)).toBe(
+				false,
+			);
+		});
+
+		it('leaves another signed provider’s status words alone', () => {
+			expect(match({ request_id: 'x', status: 'ERROR' }, signed)).toBe(false);
+		});
+	});
 });
 
 describe('requests.completed handler', () => {
 	const ctxWith = (key: string | undefined) =>
+		// unknown: the handler reads only ctx.key here; the rest of the context is the runtime's.
 		({ key }) as unknown as Parameters<
 			typeof RequestWebhooks.completed.handler
 		>[0];
@@ -323,24 +369,26 @@ describe('requests.completed handler', () => {
 		expect(result.data?.payload).toHaveProperty('fbx');
 	});
 
-	it('refuses a bad signature without logging it', async () => {
-		const result = await RequestWebhooks.completed.handler(
-			ctxWith(WEBHOOK_SECRET),
-			delivery(COMPLETED_RAW_BODY, {
-				...signedHeaders(COMPLETED_RAW_BODY),
-				'webhook-signature': 'v1,AAAA',
-			}) as never,
-		);
-		expect(result).toMatchObject({ success: false, statusCode: 401 });
+	it('throws on a bad signature, without logging it', async () => {
+		await expect(
+			RequestWebhooks.completed.handler(
+				ctxWith(WEBHOOK_SECRET),
+				delivery(COMPLETED_RAW_BODY, {
+					...signedHeaders(COMPLETED_RAW_BODY),
+					'webhook-signature': 'v1,AAAA',
+				}) as never,
+			),
+		).rejects.toThrow('The signature does not match');
 		expect(logEventFromContext).not.toHaveBeenCalled();
 	});
 
-	it('refuses an unsigned delivery while a secret is set', async () => {
-		const result = await RequestWebhooks.completed.handler(
-			ctxWith(WEBHOOK_SECRET),
-			delivery(COMPLETED_RAW_BODY, {}) as never,
-		);
-		expect(result).toMatchObject({ success: false, statusCode: 401 });
+	it('throws on an unsigned delivery while a secret is set', async () => {
+		await expect(
+			RequestWebhooks.completed.handler(
+				ctxWith(WEBHOOK_SECRET),
+				delivery(COMPLETED_RAW_BODY, {}) as never,
+			),
+		).rejects.toThrow('The delivery is not signed');
 	});
 
 	it('throws with no secret set, so the sender is told to retry', async () => {
@@ -363,12 +411,26 @@ describe('requests.completed handler', () => {
 		expect(result.success).toBe(true);
 	});
 
-	it('refuses a signed body that is not the envelope', async () => {
+	it('throws on a signed body that is not the envelope', async () => {
 		const raw = '{"request_id": 5, "status": "completed", "payload": null}';
+		await expect(
+			RequestWebhooks.completed.handler(
+				ctxWith(WEBHOOK_SECRET),
+				delivery(raw, signedHeaders(raw)) as never,
+			),
+		).rejects.toThrow('does not match the webhook envelope');
+		expect(logEventFromContext).not.toHaveBeenCalled();
+	});
+
+	it('takes a signed failure with no payload key', async () => {
+		const raw = `{"request_id": "${REQUEST_ID}", "status": "failed", "error": "Generation failed"}`;
 		const result = await RequestWebhooks.completed.handler(
 			ctxWith(WEBHOOK_SECRET),
 			delivery(raw, signedHeaders(raw)) as never,
 		);
-		expect(result).toMatchObject({ success: false, statusCode: 400 });
+		expect(result.data).toMatchObject({
+			status: 'failed',
+			error: 'Generation failed',
+		});
 	});
 });

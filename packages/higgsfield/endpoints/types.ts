@@ -112,7 +112,7 @@ const GenerationsSubmitInputSchema = z.object({
 		'An https URL Higgsfield POSTs the result to when the request finishes (see the requests.completed webhook).',
 	),
 	idempotencyKey: IdempotencyKeySchema.optional().describe(
-		'Identifies this one generation. Left out, one is generated and returned as idempotency_key. Repeating the same call with the same key returns the original request with no second charge; the same key with a different modelPath, input, webhookUrl or expiresAfter is a 422.',
+		'Identifies this one generation. Repeating the same call with the same key returns the original request with no second charge; the same key with a different modelPath, input, webhookUrl or expiresAfter is a 422. Left out, one is generated for this call and its retries and returned as idempotency_key. A caller that replays a step or starts a new script gets a new key each time, so it must pass its own to be safe across attempts.',
 	),
 	expiresAfter: z
 		.number()
@@ -156,8 +156,8 @@ export type GenerationsSubmitResponse = z.infer<
 // ── generations.run ─────────────────────────────────────────────────────────
 
 /**
- * Default and longest wait in generations.run. A Corsair script has about 20 s,
- * and the runtime keeps a few of them to wait on the job itself.
+ * Default and longest wait in generations.run. A Corsair script has 25 s, and
+ * the runtime keeps some of them to wait on the job itself.
  */
 export const RUN_DEFAULT_WAIT_S = 10;
 export const RUN_MAX_WAIT_S = 15;
@@ -314,37 +314,15 @@ export type FilesCreateUploadUrlResponse = z.infer<
 	typeof FilesCreateUploadUrlResponseSchema
 >;
 
-const FilesUploadInputSchema = z
-	.object({
-		contentBase64: z
-			.string()
-			.min(1)
-			.optional()
-			.describe(
-				'The file’s bytes, base64 encoded (a data: URL prefix is fine). Needs contentType. Up to 100 MB.',
-			),
-		sourceUrl: HttpsUrlSchema.optional().describe(
-			'Instead of contentBase64: a public https URL to copy the file from. Up to 100 MB; addresses on private networks are refused. A file already at a lasting public https URL can go straight into a model input without this.',
+const FilesUploadInputSchema = z.object({
+	contentBase64: z
+		.string()
+		.min(1)
+		.describe(
+			'The file’s bytes, base64 encoded (a data: URL prefix is fine). Up to 100 MB.',
 		),
-		contentType: UploadContentTypeSchema.optional().describe(
-			'The file’s type. Required with contentBase64; with sourceUrl it defaults to the type the source answers with.',
-		),
-	})
-	.superRefine((value, ctx) => {
-		if (Boolean(value.contentBase64) === Boolean(value.sourceUrl)) {
-			ctx.addIssue({
-				code: 'custom',
-				message: 'Pass contentBase64 or sourceUrl, not both.',
-			});
-		}
-		if (value.contentBase64 && !value.contentType) {
-			ctx.addIssue({
-				code: 'custom',
-				message: 'contentType is required with contentBase64.',
-				path: ['contentType'],
-			});
-		}
-	});
+	contentType: UploadContentTypeSchema.describe('The file’s type.'),
+});
 
 export type FilesUploadInput = z.infer<typeof FilesUploadInputSchema>;
 

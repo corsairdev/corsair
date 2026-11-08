@@ -1,5 +1,7 @@
 import { processWebhook } from 'corsair';
+import type { CorsairErrorHandler } from 'corsair/core';
 import { createCorsair } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { createCorsairOrm } from 'corsair/orm';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { higgsfield } from './index';
@@ -14,12 +16,16 @@ import {
 	WEBHOOK_SECRET,
 } from './test-fixtures';
 
-async function createClient(options: Parameters<typeof higgsfield>[0]) {
+async function createClient(
+	options: Parameters<typeof higgsfield>[0],
+	rootErrorHandlers?: CorsairErrorHandler,
+) {
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'higgsfield', 'default');
 	const corsair = createCorsair({
 		plugins: [higgsfield(options)],
 		database: testDb.db,
+		errorHandlers: rootErrorHandlers,
 		kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
 	});
 	return { corsair, testDb };
@@ -223,6 +229,45 @@ describe('higgsfield plugin through createCorsair', () => {
 			}
 		});
 
+		it('concurrent calls with one object send different keys, and the failed one retries with its own', async () => {
+			const { corsair, testDb } = await createClient({ key: API_KEY });
+			try {
+				fetchMock
+					.mockResolvedValueOnce(jsonResponse(acceptedBody))
+					.mockRejectedValueOnce(new TypeError('fetch failed'))
+					.mockResolvedValueOnce(jsonResponse(acceptedBody));
+				const args = { modelPath: MODEL, input: INPUT };
+				const [one, two] = await Promise.all([
+					corsair.higgsfield.api.generations.submit(args),
+					corsair.higgsfield.api.generations.submit(args),
+				]);
+				const keys = keysSent();
+				expect(keys).toHaveLength(3);
+				expect(keys[0]).not.toBe(keys[1]);
+				expect(keys[2]).toBe(keys[1]);
+				expect(new Set([one.idempotency_key, two.idempotency_key])).toEqual(
+					new Set([keys[0], keys[1]]),
+				);
+			} finally {
+				testDb.cleanup();
+			}
+		}, 20_000);
+
+		it('does not retry input it cannot serialize', async () => {
+			const { corsair, testDb } = await createClient({ key: API_KEY });
+			try {
+				await expect(
+					corsair.higgsfield.api.generations.submit({
+						modelPath: MODEL,
+						input: { seed: BigInt(1) },
+					}),
+				).rejects.toMatchObject({ code: 'invalid_input' });
+				expect(fetchMock).not.toHaveBeenCalled();
+			} finally {
+				testDb.cleanup();
+			}
+		});
+
 		it('two separate calls with equal arguments are two generations', async () => {
 			const { corsair, testDb } = await createClient({ key: API_KEY });
 			try {
@@ -239,6 +284,148 @@ describe('higgsfield plugin through createCorsair', () => {
 			}
 		});
 	});
+});
+
+describe('higgsfield error handlers', () => {
+	const notFound = (error: Error) =>
+		error instanceof ApiError && error.status === 404;
+	const retryOnce = () =>
+		jest.fn(async () => ({ maxRetries: 1, headersRetryAfterMs: 1 }));
+	const answerNotFoundThenStatus = () => {
+		fetchMock
+			.mockResolvedValueOnce(jsonResponse({ detail: 'Not found' }, 404))
+			.mockResolvedValueOnce(jsonResponse(completedStatusBody));
+	};
+
+	it('runs a new handler passed in the plugin options', async () => {
+		const handler = retryOnce();
+		const { corsair, testDb } = await createClient({
+			key: API_KEY,
+			errorHandlers: { CUSTOM_NOT_FOUND: { match: notFound, handler } },
+		});
+		try {
+			answerNotFoundThenStatus();
+			const response = await corsair.higgsfield.api.requests.status({
+				requestId: REQUEST_ID,
+			});
+			expect(handler).toHaveBeenCalledTimes(1);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+			expect(response.status).toBe('completed');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('keeps DEFAULT last, with a custom one replacing its own', () => {
+		const custom = {
+			match: () => true,
+			handler: async () => ({ maxRetries: 0 }),
+		};
+		const handlers = higgsfield({
+			errorHandlers: {
+				DEFAULT: custom,
+				CUSTOM_NOT_FOUND: { match: notFound, handler: retryOnce() },
+			},
+		}).errorHandlers as CorsairErrorHandler;
+		const names = Object.keys(handlers);
+		expect(names.at(-1)).toBe('DEFAULT');
+		expect(names).toContain('CUSTOM_NOT_FOUND');
+		expect(handlers.DEFAULT).toBe(custom);
+	});
+
+	it('runs a new handler even beside a match-everything custom DEFAULT', async () => {
+		const handler = retryOnce();
+		const { corsair, testDb } = await createClient({
+			key: API_KEY,
+			errorHandlers: {
+				DEFAULT: {
+					match: () => true,
+					handler: async () => ({ maxRetries: 0 }),
+				},
+				CUSTOM_NOT_FOUND: { match: notFound, handler },
+			},
+		});
+		try {
+			answerNotFoundThenStatus();
+			await corsair.higgsfield.api.requests.status({ requestId: REQUEST_ID });
+			expect(handler).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('lets the plugin options replace a handler by name', async () => {
+		const handler = jest.fn(async () => ({ maxRetries: 0 }));
+		const { corsair, testDb } = await createClient({
+			key: API_KEY,
+			errorHandlers: {
+				SERVER_ERROR: {
+					match: (error: Error) =>
+						error instanceof ApiError && error.status >= 500,
+					handler,
+				},
+			},
+		});
+		try {
+			fetchMock.mockResolvedValueOnce(jsonResponse({ detail: 'boom' }, 500));
+			await expect(
+				corsair.higgsfield.api.requests.status({ requestId: REQUEST_ID }),
+			).rejects.toThrow('boom');
+			expect(handler).toHaveBeenCalledTimes(1);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('runs a root handler for an error the plugin has no handler for', async () => {
+		const handler = retryOnce();
+		const { corsair, testDb } = await createClient(
+			{ key: API_KEY },
+			{ NOT_FOUND_ERROR: { match: notFound, handler } },
+		);
+		try {
+			answerNotFoundThenStatus();
+			await corsair.higgsfield.api.requests.status({ requestId: REQUEST_ID });
+			expect(handler).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('still retries and runs root handlers when the root config has a DEFAULT', async () => {
+		const rootDefault = jest.fn(async () => ({ maxRetries: 0 }));
+		const rootNotFound = retryOnce();
+		const { corsair, testDb } = await createClient(
+			{ key: API_KEY },
+			{
+				DEFAULT: { match: () => true, handler: rootDefault },
+				NOT_FOUND_ERROR: { match: notFound, handler: rootNotFound },
+			},
+		);
+		try {
+			fetchMock
+				.mockResolvedValueOnce(
+					jsonResponse({ detail: 'queue full' }, 429, { 'Retry-After': '0' }),
+				)
+				.mockResolvedValueOnce(jsonResponse(acceptedBody));
+			await corsair.higgsfield.api.generations.submit({
+				modelPath: MODEL,
+				input: INPUT,
+			});
+			const keys = keysSent();
+			expect(keys).toHaveLength(2);
+			expect(keys[0]).toBe(keys[1]);
+
+			fetchMock.mockClear();
+			answerNotFoundThenStatus();
+			await corsair.higgsfield.api.requests.status({ requestId: REQUEST_ID });
+			expect(rootNotFound).toHaveBeenCalledTimes(1);
+			expect(rootDefault).not.toHaveBeenCalled();
+		} finally {
+			testDb.cleanup();
+		}
+	}, 20_000);
 });
 
 describe('higgsfield webhooks through processWebhook', () => {
@@ -309,6 +496,23 @@ describe('higgsfield webhooks through processWebhook', () => {
 		}
 	});
 
+	it('reports a failure for a signed body that is not the envelope', async () => {
+		const after = jest.fn();
+		const { corsair, testDb } = await createClient({
+			key: API_KEY,
+			webhookSecret: WEBHOOK_SECRET,
+			webhookHooks: { requests: { completed: { after } } },
+		});
+		try {
+			const raw = `{"request_id": "${REQUEST_ID}", "status": "completed", "payload": "not an object"}`;
+			const result = await processWebhook(corsair, signedHeaders(raw), raw);
+			expect(result.response?.success).toBe(false);
+			expect(after).not.toHaveBeenCalled();
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('reports a failure with no secret set, so the HTTP handler answers non-2xx', async () => {
 		const { corsair, testDb } = await createClient({ key: API_KEY });
 		try {
@@ -330,7 +534,25 @@ describe('higgsfield webhooks through processWebhook', () => {
 		}
 	});
 
-	it('does not process a forged, tampered or unsigned delivery', async () => {
+	it('routes a signed failure with no payload key', async () => {
+		const after = jest.fn();
+		const { corsair, testDb } = await createClient({
+			key: API_KEY,
+			webhookSecret: WEBHOOK_SECRET,
+			webhookHooks: { requests: { completed: { after } } },
+		});
+		try {
+			const raw = `{"request_id": "${REQUEST_ID}", "status": "failed", "error": "Generation failed"}`;
+			const result = await processWebhook(corsair, signedHeaders(raw), raw);
+			expect(result.action).toBe('requests.completed');
+			expect(result.response?.success).toBe(true);
+			expect(after.mock.calls[0][1].data.status).toBe('failed');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('reports a failure for a forged, tampered or unsigned delivery, so the sender retries', async () => {
 		const after = jest.fn();
 		const { corsair, testDb } = await createClient({
 			key: API_KEY,
@@ -350,7 +572,10 @@ describe('higgsfield webhooks through processWebhook', () => {
 					COMPLETED_RAW_BODY,
 				],
 			] as const) {
-				await processWebhook(corsair, headers, body);
+				const result = await processWebhook(corsair, headers, body);
+				expect(result.plugin).toBe('higgsfield');
+				expect(result.response?.success).toBe(false);
+				expect(result.response?.error).toContain('Higgsfield webhook refused');
 			}
 			expect(after).not.toHaveBeenCalled();
 			const events = await createCorsairOrm(testDb.database).events.findMany({
@@ -370,11 +595,12 @@ describe('higgsfield webhooks through processWebhook', () => {
 			webhookHooks: { requests: { completed: { after } } },
 		});
 		try {
-			await processWebhook(
+			const result = await processWebhook(
 				corsair,
 				signedHeaders(COMPLETED_RAW_BODY),
 				JSON.parse(COMPLETED_RAW_BODY),
 			);
+			expect(result.response?.success).toBe(false);
 			expect(after).not.toHaveBeenCalled();
 		} finally {
 			testDb.cleanup();

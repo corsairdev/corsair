@@ -34,6 +34,7 @@ describe('authorizationHeader', () => {
 	it.each(['nocolonhere', ':secret', 'id:', 'id:se cret', ''])(
 		'refuses %p without repeating it',
 		(key) => {
+			// unknown: a catch hands over anything; the checks below narrow it.
 			let caught: unknown;
 			try {
 				authorizationHeader(key);
@@ -126,6 +127,17 @@ describe('makeHiggsfieldRequest', () => {
 		expect(init.body).toBe('{"prompt":"p"}');
 		expect(init.headers['Content-Type']).toBe('application/json');
 		expect(answer).toBeUndefined();
+	});
+
+	it('reports a body that cannot be serialized as invalid input, sending nothing', async () => {
+		const circular: Record<string, object> = {};
+		circular.self = circular;
+		for (const body of [{ seed: BigInt(1) }, circular]) {
+			await expect(
+				makeHiggsfieldRequest(API_KEY, '/a/b', { method: 'POST', body }),
+			).rejects.toMatchObject({ code: 'invalid_input' });
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('leaves undefined headers out', async () => {
@@ -233,6 +245,13 @@ describe('makeHiggsfieldRequest', () => {
 			);
 		});
 
+		it('keeps the status when a validation list holds a null', async () => {
+			const error = await failWith(jsonResponse({ detail: [null] }, 422));
+			expect(error).toBeInstanceOf(HiggsfieldAPIError);
+			expect(error.status).toBe(422);
+			expect(error.message).toContain('invalid');
+		});
+
 		it('keeps a plain-text error body', async () => {
 			const error = await failWith(
 				new Response('upstream connect error', { status: 502 }),
@@ -282,6 +301,7 @@ describe('readErrorDetail', () => {
 		[{ other: 1 }, ''],
 		[{ detail: { code: 'c', message: 'm' } }, 'c: m'],
 		[{ detail: [{ msg: 5 }] }, 'invalid'],
+		[{ detail: [null, { msg: 'Field required' }] }, 'invalid; Field required'],
 	])('reads %j as %p', (body, text) => {
 		expect(readErrorDetail(body).text).toBe(text);
 	});
@@ -349,10 +369,12 @@ describe('errorHandlers', () => {
 		});
 
 	const decide = async (error: Error) => {
-		const name = (
-			Object.keys(errorHandlers) as (keyof typeof errorHandlers)[]
-		).find((key) => errorHandlers[key].match(error));
-		const entry = errorHandlers[name ?? 'DEFAULT'] as {
+		// The same pick core makes: the first match, else DEFAULT by name.
+		const name =
+			(Object.keys(errorHandlers) as (keyof typeof errorHandlers)[]).find(
+				(key) => errorHandlers[key].match(error),
+			) ?? 'DEFAULT';
+		const entry = errorHandlers[name] as {
 			handler: (caught: Error) => Promise<RetryStrategy>;
 		};
 		return { name, strategy: await entry.handler(error) };
@@ -413,6 +435,26 @@ describe('errorHandlers', () => {
 		const { name, strategy } = await decide(apiError(status));
 		expect(name).toBe('DEFAULT');
 		expect(strategy.maxRetries).toBe(0);
+	});
+
+	it('holds a retryable 503 to the same Retry-After rule as a 429', async () => {
+		const short = await decide(
+			apiError(503, { retryable: true, retryAfterMs: 2000 }),
+		);
+		expect(short.strategy).toMatchObject({
+			maxRetries: 2,
+			headersRetryAfterMs: 2000,
+		});
+		const long = await decide(
+			apiError(503, { retryable: true, retryAfterMs: 30_000 }),
+		);
+		expect(long.strategy.maxRetries).toBe(0);
+		const notRetryable = await decide(apiError(503, { retryAfterMs: 2000 }));
+		expect(notRetryable.strategy.maxRetries).toBe(0);
+	});
+
+	it('leaves a retry-free answer for what nothing else matches', () => {
+		expect(errorHandlers.DEFAULT.match()).toBe(false);
 	});
 
 	it('retries network failures and timeouts, but not a refused upload', async () => {

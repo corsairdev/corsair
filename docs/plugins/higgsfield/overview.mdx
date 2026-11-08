@@ -11,7 +11,7 @@ Every model takes its own input fields. Find a model with `models.list({ search:
 
 Generations run in the background and often outlast the wait: when measured, a soul/v2 image took about 18 seconds and a two-second video about seven minutes. After submitting, `generations.run` waits up to 10 seconds (at most 15) and answers with the same fields as `requests.status`. `completed`, `failed`, `nsfw` and `canceled` are final; `queued` or `in_progress` is a request to follow with `requests.status({ requestId })` or a `webhookUrl`, and `queued` also covers a read that failed, so the request may have moved on. On Corsair's cloud, `get_job` and the job card do the following for you. `failed` and `nsfw` requests are not charged.
 
-A submit is never charged twice for one call. Each one carries an `Idempotency-Key`, the plugin's own unless you pass `idempotencyKey`, and every retry uses the same one. It comes back as `idempotency_key`, and a failed submit carries it on the error, so you can repeat the call safely. Pass a new key, or none, when you do want another generation.
+Every submit carries an `Idempotency-Key`, and repeating a request with the same key returns the original with no second charge. Pass your own as `idempotencyKey`, or the plugin generates one for that call and its retries. Either way it comes back as `idempotency_key`, and a failed submit carries it on the error. A generated key only covers retries inside one call: a caller that replays a step or starts a new script gets a new key each time, so it must pass its own to be safe across attempts. Pass a new key, or none, when you do want another generation.
 
 Output URLs stop working at `expires_at`, 7 days after the request finished unless you set `expiresAfter`. Copy anything you want to keep.
 
@@ -127,7 +127,7 @@ See the full list on the [API](/plugins/higgsfield/api) page.
 
 ## Webhooks
 
-Pass `webhookUrl` to `generations.submit` and Higgsfield POSTs the result there when the request reaches completed, failed or nsfw. Only signed deliveries are accepted. Higgsfield signs for an account only once its secret has been revealed under Settings in the Higgsfield Console, and sends unsigned deliveries until then, so reveal it and store it with `keys.set_webhook_signature` (or `higgsfield({ webhookSecret })`) before relying on webhooks. Hand `processWebhook` the raw body text (`await request.text()`): a parsed body cannot verify. Duplicates are possible, so deduplicate by `webhook_id`. Nothing in a delivery names the account, so a multi-tenant app passes `?tenantId=` on the webhookUrl.
+Pass `webhookUrl` to `generations.submit` and Higgsfield POSTs the result there when the request reaches completed, failed or nsfw. Only signed deliveries are accepted. Higgsfield signs for an account only once its secret has been revealed under Settings in the Higgsfield Console, and sends unsigned deliveries until then, so reveal it and store it with `keys.set_webhook_signature` (or `higgsfield({ webhookSecret })`) before relying on webhooks. Hand `processWebhook` the raw body text (`await request.text()`): a parsed body cannot verify. A delivery that fails verification makes `processWebhook` report a failure, so an HTTP handler that answers non-2xx gets it retried for up to two hours. Duplicates are possible, so deduplicate by `webhook_id`. Nothing in a delivery names the account, so a multi-tenant app passes `?tenantId=` on the webhookUrl and its HTTP handler forwards the query to `processWebhook`.
 
 ```ts
 higgsfield({

@@ -13,7 +13,7 @@ pnpm add @corsair-dev/higgsfield
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `files.createUploadUrl` | `higgsfield.api.files.createUploadUrl` | `write` | Get a presigned URL to PUT an input file to yourself, and the public URL it will have. For most uses files.upload does both steps. |
-| `files.upload` | `higgsfield.api.files.upload` | `write` | Upload an image, audio or video file from base64 or a public URL, and get the public URL to pass as a model input |
+| `files.upload` | `higgsfield.api.files.upload` | `write` | Upload an image, audio or video file from base64 and get the public URL to pass as a model input. A file already at a public https URL needs no upload: pass that URL to the model. |
 | `generations.estimate` | `higgsfield.api.generations.estimate` | `read` | What a generation with these inputs would cost, in US dollars and credits. Free; nothing runs. |
 | `generations.run` | `higgsfield.api.generations.run` | `write` | Generate and wait up to waitSeconds (default 10, at most 15) for the output; spends account balance when it completes. Answers like requests.status: queued or in_progress is a job to follow with requests.status, and video usually takes longer than the wait. Outputs expire after 7 days by default. |
 | `generations.submit` | `higgsfield.api.generations.submit` | `write` | Queue a generation (image, video…) and get a request id back at once; spends account balance when it completes. Follow it with requests.status until it is completed, failed, nsfw or canceled, or pass webhookUrl. Outputs expire after 7 days by default. Repeating with the returned idempotency_key is never charged twice. |

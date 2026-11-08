@@ -12,9 +12,11 @@ export const completed: HiggsfieldWebhooks['requestCompleted'] = {
 
 	handler: async (ctx, request) => {
 		if (request.hubVerified !== true) {
-			// Throwing makes processWebhook report a failure, so the HTTP handler can
-			// answer non-2xx and Higgsfield retries for two hours, in which time the
-			// secret can be set. A refusal here would be acknowledged and lost.
+			// Every refusal here throws. processWebhook acknowledges a returned
+			// refusal as success, which would lose the delivery; a throw makes it
+			// report a failure, so the HTTP handler can answer non-2xx and Higgsfield
+			// retries for up to two hours, in which time a missing or rotated secret
+			// can be fixed. No after hook runs on a throw.
 			if (!ctx.key) {
 				throw new Error(
 					'No Higgsfield webhook secret is set, so this delivery cannot be verified. Reveal the whsec_ secret under Settings in the Higgsfield Console, then store it with keys.set_webhook_signature or higgsfield({ webhookSecret }).',
@@ -22,13 +24,9 @@ export const completed: HiggsfieldWebhooks['requestCompleted'] = {
 			}
 			const verification = verifyHiggsfieldWebhookSignature(request, ctx.key);
 			if (!verification.valid) {
-				return {
-					success: false,
-					statusCode: 401,
-					error:
-						verification.error ??
-						'Higgsfield webhook signature verification failed',
-				};
+				throw new Error(
+					`Higgsfield webhook refused: ${verification.error ?? 'signature verification failed'}`,
+				);
 			}
 		}
 
@@ -37,11 +35,9 @@ export const completed: HiggsfieldWebhooks['requestCompleted'] = {
 			webhook_id: webhookIdOf(request),
 		});
 		if (!parsed.success) {
-			return {
-				success: false,
-				statusCode: 400,
-				error: 'The delivery does not match the Higgsfield webhook envelope',
-			};
+			throw new Error(
+				'Higgsfield webhook refused: the delivery does not match the webhook envelope',
+			);
 		}
 
 		const event = parsed.data;

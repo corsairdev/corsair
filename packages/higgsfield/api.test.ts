@@ -2,8 +2,9 @@
  * Live tests against Higgsfield. They run when HIGGSFIELD_API_KEY is set (CI has
  * none, so they skip). Everything here but the generation tests is free. The
  * generation tests run only with HIGGSFIELD_LIVE_GENERATE=1 and spend about
- * $0.012 in all (three soul/v2/standard images, plus one canceled while queued,
- * which is refunded); each estimates first and every request is deleted after.
+ * $0.012 in all (three soul/v2/standard images, plus one usually canceled while
+ * queued, which is refunded). Every accepted request is deleted, failed tests
+ * included.
  */
 import { z } from 'zod';
 import { HiggsfieldAPIError, HiggsfieldError } from './client';
@@ -63,8 +64,41 @@ async function followToEnd(requestId: string, timeoutMs = 120_000) {
 const statusOf = (error: unknown) =>
 	error instanceof HiggsfieldAPIError ? error.status : undefined;
 
+// Requests a test got accepted, until their delete has gone through.
+const tracked = new Set<string>();
+
+function track<T extends { request_id: string }>(response: T): T {
+	tracked.add(response.request_id);
+	return response;
+}
+
+async function removeRequest(requestId: string) {
+	const removed = await requestsDelete(ctx, { requestId });
+	tracked.delete(requestId);
+	return removed;
+}
+
+/** The request's end state: the answer in hand if it has ended, else a follow. */
+const untilEnded = async <T extends { status: string; request_id: string }>(
+	response: T,
+) =>
+	TERMINAL_STATUSES.includes(response.status)
+		? response
+		: await followToEnd(response.request_id);
+
 describeLive('Higgsfield live API', () => {
 	jest.setTimeout(240_000);
+
+	// Runs after a failed assertion too, so a failed test leaves no request or
+	// files behind. A cancel first, in case it is still queued and needn't be paid
+	// for; a delete only works once the request has ended.
+	afterEach(async () => {
+		for (const requestId of [...tracked]) {
+			await requestsCancel(ctx, { requestId }).catch(() => undefined);
+			await followToEnd(requestId).catch(() => undefined);
+			await removeRequest(requestId).catch(() => undefined);
+		}
+	});
 
 	it('models.list lists, filters and carries schemas on request', async () => {
 		const all = await modelsList(ctx, {});
@@ -133,6 +167,7 @@ describeLive('Higgsfield live API', () => {
 	});
 
 	it('a wrong key is a 401 and its secret stays out of the error', async () => {
+		// unknown: endpoints read only ctx.key; the rest of the context is the runtime's.
 		const wrongCtx = { key: 'wrong-id:wrong-secret' } as unknown as typeof ctx;
 		const error = await modelsList(wrongCtx, {}).catch(
 			(caught: Error) => caught,
@@ -168,7 +203,7 @@ describeLive('Higgsfield live API', () => {
 		expect(created.upload_url).toMatch(/^https:\/\//);
 	});
 
-	it('files.upload puts base64 bytes at a public URL, and copies from a URL', async () => {
+	it('files.upload puts base64 bytes at a public URL', async () => {
 		const uploaded = await filesUpload(ctx, {
 			contentBase64: PIXEL_PNG,
 			contentType: 'image/png',
@@ -179,11 +214,6 @@ describeLive('Higgsfield live API', () => {
 		expect(Buffer.from(await served.arrayBuffer()).toString('base64')).toBe(
 			PIXEL_PNG,
 		);
-
-		const copied = await filesUpload(ctx, { sourceUrl: uploaded.public_url });
-		expect(copied.content_type).toBe('image/png');
-		expect(copied.size).toBe(uploaded.size);
-		expect(copied.public_url).not.toBe(uploaded.public_url);
 	});
 
 	itGenerate(
@@ -195,12 +225,13 @@ describeLive('Higgsfield live API', () => {
 			});
 			expect(Number(estimate.usd)).toBeLessThan(0.05);
 
-			const submitted = await generationsSubmit(ctx, {
-				modelPath: MODEL,
-				input: PROMPT,
-				expiresAfter: 3600,
-			});
-			expect(submitted.status).toBe('queued');
+			const submitted = track(
+				await generationsSubmit(ctx, {
+					modelPath: MODEL,
+					input: PROMPT,
+					expiresAfter: 3600,
+				}),
+			);
 			expect(submitted.expires_after).toBe(3600);
 
 			const repeat = await generationsSubmit(ctx, {
@@ -219,10 +250,16 @@ describeLive('Higgsfield live API', () => {
 			expect(statusOf(changed)).toBe(422);
 			expect((changed as Error).message).toContain('already used');
 
-			// Deleting while it runs is refused; a request this fresh can't have ended.
+			// A request this fresh is nearly always still running, which is a 409.
+			// If it has already ended, the delete goes through, and that's fine too.
 			const early = await requestsDelete(ctx, {
 				requestId: submitted.request_id,
 			}).catch((caught: Error) => caught);
+			if (!(early instanceof Error)) {
+				expect(early.status).toBe('deleted');
+				tracked.delete(submitted.request_id);
+				return;
+			}
 			expect(statusOf(early)).toBe(409);
 
 			const done = await followToEnd(submitted.request_id);
@@ -237,65 +274,69 @@ describeLive('Higgsfield live API', () => {
 			expect(statusOf(tooLate)).toBe(400);
 			expect((tooLate as Error).message).toContain('Only a queued request');
 
-			const deleted = await requestsDelete(ctx, {
-				requestId: submitted.request_id,
-			});
+			const deleted = await removeRequest(submitted.request_id);
 			expect(deleted.status).toBe('deleted');
-			const again = await requestsDelete(ctx, {
-				requestId: submitted.request_id,
-			});
+			const again = await removeRequest(submitted.request_id);
 			expect(again.status).toBe('deleted');
 		},
 	);
 
 	itGenerate(
-		'generations.run answers the job when the wait runs out, and it finishes',
+		'generations.run answers within its wait, and the request finishes',
 		async () => {
 			const started = Date.now();
-			const running = await generationsRun(ctx, {
-				modelPath: MODEL,
-				input: PROMPT,
-				waitSeconds: 3,
-			});
+			const running = track(
+				await generationsRun(ctx, {
+					modelPath: MODEL,
+					input: PROMPT,
+					waitSeconds: 3,
+				}),
+			);
 			expect(Date.now() - started).toBeLessThan(5000);
-			expect(['queued', 'in_progress']).toContain(running.status);
-			const done = await followToEnd(running.request_id);
+			const done = await untilEnded(running);
 			expect(done.status).toBe('completed');
-			await requestsDelete(ctx, { requestId: running.request_id });
+			await removeRequest(running.request_id);
 		},
 	);
 
 	itGenerate(
-		'generations.run with the longest wait answers the output of a fast model',
+		'generations.run with the longest wait ends with the output',
 		async () => {
-			const response = await generationsRun(ctx, {
-				modelPath: MODEL,
-				input: PROMPT,
-				waitSeconds: 15,
-			});
-			if (response.status === 'completed') {
-				expect(response.images?.[0]?.url).toMatch(/^https:\/\//);
-			} else {
-				expect(['queued', 'in_progress']).toContain(response.status);
-				await followToEnd(response.request_id);
-			}
-			await requestsDelete(ctx, { requestId: response.request_id });
+			const response = track(
+				await generationsRun(ctx, {
+					modelPath: MODEL,
+					input: PROMPT,
+					waitSeconds: 15,
+				}),
+			);
+			const done = await untilEnded(response);
+			expect(done.status).toBe('completed');
+			expect(done.images?.[0]?.url).toMatch(/^https:\/\//);
+			await removeRequest(response.request_id);
 		},
 	);
 
-	itGenerate('requests.cancel cancels a queued request', async () => {
-		const submitted = await generationsSubmit(ctx, {
-			modelPath: MODEL,
-			input: PROMPT,
-		});
-		const canceled = await requestsCancel(ctx, {
-			requestId: submitted.request_id,
-		});
-		expect(canceled.status).toBe('canceled');
-		const current = await requestsStatus(ctx, {
-			requestId: submitted.request_id,
-		});
-		expect(current.status).toBe('canceled');
-		await requestsDelete(ctx, { requestId: submitted.request_id });
-	});
+	itGenerate(
+		'requests.cancel cancels a queued request, or says it has started',
+		async () => {
+			const submitted = track(
+				await generationsSubmit(ctx, { modelPath: MODEL, input: PROMPT }),
+			);
+			const outcome = await requestsCancel(ctx, {
+				requestId: submitted.request_id,
+			}).catch((caught: Error) => caught);
+			if (outcome instanceof Error) {
+				expect(statusOf(outcome)).toBe(400);
+				expect(outcome.message).toContain('Only a queued request');
+			} else {
+				expect(outcome.status).toBe('canceled');
+				const current = await requestsStatus(ctx, {
+					requestId: submitted.request_id,
+				});
+				expect(current.status).toBe('canceled');
+			}
+			await followToEnd(submitted.request_id);
+			await removeRequest(submitted.request_id);
+		},
+	);
 });

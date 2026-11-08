@@ -90,26 +90,16 @@ describe('input schemas', () => {
 		},
 	);
 
-	it('files.upload needs exactly one source, and a type with base64', () => {
+	it('files.upload takes base64 and an allowed type', () => {
 		const upload = HiggsfieldEndpointInputSchemas.filesUpload;
-		expect(upload.safeParse({}).success).toBe(false);
-		expect(upload.safeParse({ contentBase64: 'YWJj' }).success).toBe(false);
 		expect(
 			upload.safeParse({ contentBase64: 'YWJj', contentType: 'image/png' })
 				.success,
 		).toBe(true);
+		expect(upload.safeParse({}).success).toBe(false);
+		expect(upload.safeParse({ contentBase64: 'YWJj' }).success).toBe(false);
 		expect(
-			upload.safeParse({ sourceUrl: 'https://example.com/a.png' }).success,
-		).toBe(true);
-		expect(
-			upload.safeParse({
-				contentBase64: 'YWJj',
-				contentType: 'image/png',
-				sourceUrl: 'https://example.com/a.png',
-			}).success,
-		).toBe(false);
-		expect(
-			upload.safeParse({ sourceUrl: 'http://example.com/a.png' }).success,
+			upload.safeParse({ contentBase64: '', contentType: 'image/png' }).success,
 		).toBe(false);
 		expect(
 			upload.safeParse({

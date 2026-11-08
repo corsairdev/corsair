@@ -201,7 +201,7 @@ export function readErrorDetail(body: unknown): ErrorDetail {
 	if (Array.isArray(detail)) {
 		const parts = detail.map((item) => {
 			// unknown: loc mixes field names and list indexes.
-			const entry = item as { loc?: unknown[]; msg?: unknown };
+			const entry = (item ?? {}) as { loc?: unknown[]; msg?: unknown };
 			const loc = Array.isArray(entry.loc) ? entry.loc.join('.') : '';
 			const msg = typeof entry.msg === 'string' ? entry.msg : 'invalid';
 			return loc ? `${loc}: ${msg}` : msg;
@@ -322,13 +322,25 @@ export async function makeHiggsfieldRequest<T>(
 	}
 	if (body !== undefined) requestHeaders['Content-Type'] = 'application/json';
 
+	// Outside the fetch's try: bad input isn't a network failure, and retrying
+	// the same input can't help.
+	let serialized: string | undefined;
+	try {
+		serialized = body !== undefined ? JSON.stringify(body) : undefined;
+	} catch {
+		throw new HiggsfieldError(
+			'The request body could not be serialized as JSON. A BigInt or a circular reference, for example, cannot be sent.',
+			'invalid_input',
+		);
+	}
+
 	let response: Response;
 	let text: string;
 	try {
 		response = await fetch(url, {
 			method,
 			headers: requestHeaders,
-			body: body !== undefined ? JSON.stringify(body) : undefined,
+			body: serialized,
 			redirect: 'error',
 			signal: AbortSignal.timeout(timeoutMs ?? DEFAULT_TIMEOUT_MS),
 		});

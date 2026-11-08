@@ -249,7 +249,7 @@ const higgsfieldEndpointMeta = {
 	'files.upload': {
 		riskLevel: 'write',
 		description:
-			'Upload an image, audio or video file from base64 or a public URL, and get the public URL to pass as a model input',
+			'Upload an image, audio or video file from base64 and get the public URL to pass as a model input. A file already at a public https URL needs no upload: pass that URL to the model.',
 	},
 	'models.list': {
 		riskLevel: 'read',
@@ -290,6 +290,17 @@ export type InternalHiggsfieldPlugin =
 export type ExternalHiggsfieldPlugin<T extends HiggsfieldPluginOptions> =
 	BaseHiggsfieldPlugin<T>;
 
+/**
+ * Core takes the first handler whose match says yes, in key order, so anything
+ * added after DEFAULT might never run. A custom DEFAULT replaces this plugin's,
+ * and every other custom handler sits ahead of it.
+ */
+function mergeErrorHandlers(custom: CorsairErrorHandler = {}) {
+	const { DEFAULT: ownDefault, ...own } = errorHandlers;
+	const { DEFAULT: customDefault, ...named } = custom;
+	return { ...own, ...named, DEFAULT: customDefault ?? ownDefault };
+}
+
 export function higgsfield<const T extends HiggsfieldPluginOptions>(
 	incomingOptions: HiggsfieldPluginOptions & T = {} as HiggsfieldPluginOptions &
 		T,
@@ -314,10 +325,7 @@ export function higgsfield<const T extends HiggsfieldPluginOptions>(
 		endpointSchemas: higgsfieldEndpointSchemas,
 		webhookSchemas: higgsfieldWebhookSchemas,
 		pluginWebhookMatcher: isHiggsfieldWebhook,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: mergeErrorHandlers(options.errorHandlers),
 		keyBuilder: async (ctx: HiggsfieldKeyBuilderContext, source) => {
 			if (source === 'webhook') {
 				if (options.webhookSecret) return options.webhookSecret;
