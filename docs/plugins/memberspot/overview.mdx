@@ -11,6 +11,7 @@ Things to know before you call:
 
 - **The API is documented as OpenAPI 3.0.** The readable reference is https://api.memberspot.de/api and the machine-readable spec is https://api.memberspot.de/api-json, so the plugin's schemas were built from the spec rather than from prose.
 - **Auth is an `X-API-KEY` header.** A missing key answers 400, not 401; only an invalid key answers 401. The plugin treats both as auth failures and never retries them.
+- **`auth.check` returns `schoolId`, not `id`.** The spec documents that route with no response body, so its shape was taken from the live API. It is the cheapest way to confirm a key works.
 - **`name` means last name.** MemberSpot splits a member into `firstname` and `name`, and this plugin keeps those names exactly. `created` and the other dates are ISO date-times.
 - **Paging uses two different names.** A page request takes `lastLoadedId` and the response returns `nextPage`; the course-progress list calls the inbound cursor `lastLoadedCourseId`. Pass `nextPage` straight back as `lastLoadedId`.
 - **Many operations come in email and uid pairs.** Every write that targets a member exists twice, once keyed by email and once by uid. The uid form needs no email lookup, so prefer it when you already have the uid.

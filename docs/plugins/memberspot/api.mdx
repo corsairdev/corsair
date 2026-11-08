@@ -30,8 +30,8 @@ await corsair.memberspot.api.auth.check({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| null` | No | — |
-| `name` | `string \| null` | No | — |
+| `schoolId` | `string \| null` | No | The school the key belongs to. |
+| `name` | `string \| null` | No | The school name. |
 
 
 
@@ -315,7 +315,15 @@ await corsair.memberspot.api.offers.list({});
 {
   id: string,
   name: string,
-  hasCourseIds?: string[] | null
+  priority?: number | null,
+  allCourses?: boolean | null,
+  hasCourseIds?: string[] | null,
+  hasSpaceIds?: string[] | null,
+  pageIds?: string[] | null,
+  portalIds?: string[] | null,
+  internal?: boolean | null,
+  schoolId?: string | null,
+  updatedAt?: string | null
 }[]
 ```
 </Accordion>
