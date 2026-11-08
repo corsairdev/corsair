@@ -69,6 +69,9 @@ const StatsSchema = z
 
 const RelatedPlacesSchema = z
 	.object({
+		// unknown: a related place is itself a place object, and nesting the full
+		// PlaceSchema here would be recursive. The parent and children are not
+		// used by any operation, so the contents stay open.
 		parent: z.record(z.string(), z.unknown()).nullish(),
 		children: z.array(z.record(z.string(), z.unknown())).nullish(),
 	})
@@ -79,6 +82,9 @@ const HoursSchema = z
 		display: z.string().nullish(),
 		is_local_holiday: z.boolean().nullish(),
 		open_now: z.boolean().nullish(),
+		// unknown: each regular-hours entry is a day-to-segments map whose keys are
+		// weekday names and whose values are open/close pairs, but Foursquare does
+		// not document the exact shape, so it stays open.
 		regular: z.array(z.record(z.string(), z.unknown())).nullish(),
 	})
 	.loose();
@@ -195,6 +201,10 @@ const PlacesSearchResponseSchema = z
 		 */
 		context: z
 			.object({
+				// unknown: the bounds are shaped as `{ circle: { center, radius } }`
+				// today, and Foursquare may add a rectangle form. The value is not
+				// read by any operation, so it stays open rather than breaking a
+				// search when the shape changes.
 				geo_bounds: z.record(z.string(), z.unknown()).nullish(),
 			})
 			.loose()
@@ -365,7 +375,10 @@ const PlacesMatchInputSchema = z.object({
 	postal_code: z.string().optional(),
 	cc: z
 		.string()
-		.describe('2-digit country code, e.g. US. Only English (US) is supported'),
+		.length(2)
+		.describe(
+			'2-digit country code, e.g. US. Foursquare supports English-speaking countries only',
+		),
 	ll: z.string().optional().describe('latitude,longitude'),
 	fields: z.array(z.string()).optional(),
 });
@@ -379,6 +392,8 @@ const PlacesMatchResponseSchema = z
 			.number()
 			.nullish()
 			.describe('How confident the match is, from 0 to 1'),
+		// unknown: match context is provider-defined metadata that differs per
+		// match; no operation reads it, so it stays open.
 		context: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();

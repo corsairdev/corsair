@@ -52,11 +52,36 @@ export function queryOf(
 	);
 }
 
-/** Joins an optional array parameter the way Foursquare expects it. */
+/**
+ * Joins an optional array parameter the way Foursquare expects it. An undefined
+ * or empty list stays undefined so nothing is sent.
+ */
 export function csv(
 	values: readonly (string | number)[] | undefined,
 ): string | undefined {
 	return values === undefined || values.length === 0
 		? undefined
 		: values.join(',');
+}
+
+/**
+ * Joins a `fields` selection, always keeping the identifiers the output schema
+ * requires.
+ *
+ * Foursquare returns **only** the fields asked for, so `fields=name` answers
+ * `{"results":[{"name":"Thalia Hall"}]}` with no `fsq_place_id`, which fails the
+ * output parse. Verified live. Adding the required ids back means a caller's
+ * selection works and still yields a usable object, rather than the plugin
+ * weakening its schema to accept an ID-less place.
+ */
+export function fieldsWith(
+	values: readonly string[] | undefined,
+	required: readonly string[],
+): string | undefined {
+	if (values === undefined) return undefined;
+	const kept = [...values];
+	for (const field of required) {
+		if (!kept.includes(field)) kept.push(field);
+	}
+	return kept.join(',');
 }

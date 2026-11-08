@@ -1,5 +1,5 @@
 import type { FoursquareEndpoints } from '..';
-import { call, csv, queryOf } from './call';
+import { call, csv, fieldsWith, queryOf } from './call';
 import {
 	FoursquareEndpointInputSchemas as Inputs,
 	FoursquareEndpointOutputSchemas as Outputs,
@@ -53,7 +53,7 @@ export const search: FoursquareEndpoints['placesSearch'] = (ctx, input) =>
 				open_at,
 				sort,
 				tel_format,
-				fields: csv(fields),
+				fields: fieldsWith(fields, ['fsq_place_id']),
 				limit,
 			}),
 		}),
@@ -74,7 +74,7 @@ export const get: FoursquareEndpoints['placesGet'] = (ctx, input) =>
 		({ fsq_place_id, fields }) => ({
 			method: 'GET',
 			path: `/places/${encodeURIComponent(fsq_place_id)}`,
-			query: queryOf({ fields: csv(fields) }),
+			query: queryOf({ fields: fieldsWith(fields, ['fsq_place_id']) }),
 		}),
 		{
 			log: (_, result) => ({ fsqPlaceId: result.fsq_place_id }),
@@ -123,7 +123,11 @@ export const tips: FoursquareEndpoints['placesTips'] = (ctx, input) =>
 		({ fsq_place_id, limit, sort, fields }) => ({
 			method: 'GET',
 			path: `/places/${encodeURIComponent(fsq_place_id)}/tips`,
-			query: queryOf({ limit, sort, fields: csv(fields) }),
+			query: queryOf({
+				limit,
+				sort,
+				fields: fieldsWith(fields, ['fsq_tip_id']),
+			}),
 		}),
 		{
 			// The API answers a bare array; the key names what it holds.
@@ -186,7 +190,7 @@ export const match: FoursquareEndpoints['placesMatch'] = (ctx, input) =>
 				postal_code,
 				cc,
 				ll,
-				fields: csv(fields),
+				fields: fieldsWith(fields, ['fsq_place_id']),
 			}),
 		}),
 		{
