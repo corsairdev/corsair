@@ -103,6 +103,9 @@ export type DeskTimeQuery = Record<
  * Sends one action and returns the parsed JSON body. The key travels in the
  * `X-API-Key` header: DeskTime also accepts an `apiKey` query parameter, but a
  * key in a URL is the pattern to avoid.
+ *
+ * The return type is unknown because each endpoint's output schema parses it
+ * immediately; typing it here would mean restating every schema.
  */
 export async function makeDeskTimeRequest(
 	apiKey: string | undefined,

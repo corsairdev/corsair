@@ -1,5 +1,8 @@
 import { makeDeskTimeRequest } from './client';
-import { DeskTimeEndpointOutputSchemas as Outputs } from './endpoints/types';
+import {
+	DeskTimeEndpointOutputSchemas as Outputs,
+	withBuckets,
+} from './endpoints/types';
 
 /**
  * Live smoke tests. CI ignores this file, and it skips without a key:
@@ -28,7 +31,9 @@ describeIfKey('live DeskTime API', () => {
 
 	it('lists employees and validates the nested shape', async () => {
 		const body = await makeDeskTimeRequest(key, 'employees', { period: 'day' });
-		const result = Outputs.employees.parse(body);
+		// The endpoint derives `buckets` before parsing, so the test does the same
+		// rather than hand-building it.
+		const result = Outputs.employees.parse(withBuckets(body));
 		expect(Array.isArray(result.buckets)).toBe(true);
 	});
 

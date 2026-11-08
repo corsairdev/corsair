@@ -118,6 +118,7 @@ describe('keyBuilder', () => {
 
 	it('prefers the key passed in the options', async () => {
 		const configured = desktime({ key: 'inline-key' });
+		// Same cast as above: the factory's public type keeps it optional.
 		const configuredKeyBuilder = configured.keyBuilder as unknown as (
 			ctx: KeyBuilderContext,
 			source: 'endpoint' | 'webhook',

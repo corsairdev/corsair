@@ -1,6 +1,8 @@
 import {
 	DeskTimeEndpointInputSchemas as Inputs,
 	DeskTimeEndpointOutputSchemas as Outputs,
+	withAppsByProductivity,
+	withBuckets,
 } from './endpoints/types';
 import {
 	COMPANY_BODY,
@@ -57,13 +59,13 @@ describe('company', () => {
 
 describe('employees', () => {
 	it('parses the nested date and employee-id maps', () => {
-		const output = Outputs.employees.parse(EMPLOYEES_BODY);
+		const output = Outputs.employees.parse(withBuckets(EMPLOYEES_BODY));
 		expect(Object.keys(output.employees)).toEqual(['2026-11-08']);
 		expect(output.employees['2026-11-08']?.['789760']?.id).toBe(789760);
 	});
 
 	it('flattens buckets newest first for callers', () => {
-		const output = Outputs.employees.parse(EMPLOYEES_WEEK_BODY);
+		const output = Outputs.employees.parse(withBuckets(EMPLOYEES_WEEK_BODY));
 		expect(output.buckets.map((bucket) => bucket.date)).toEqual([
 			'2026-11-08',
 			'2026-11-03',
@@ -72,25 +74,33 @@ describe('employees', () => {
 	});
 
 	it('keeps one employee per bucket on a week response', () => {
-		const output = Outputs.employees.parse(EMPLOYEES_WEEK_BODY);
+		const output = Outputs.employees.parse(withBuckets(EMPLOYEES_WEEK_BODY));
 		expect(output.buckets[0]?.employees).toHaveLength(1);
 		expect(output.buckets[0]?.employees[0]?.id).toBe(789760);
 	});
 
 	it('parses an empty employee set without inventing rows', () => {
-		const output = Outputs.employees.parse({ employees: {} });
+		const output = Outputs.employees.parse(withBuckets({ employees: {} }));
 		expect(output.buckets).toEqual([]);
 	});
 
+	it('rejects a raw body that skips the buckets step', () => {
+		// The endpoint always runs withBuckets first, so a bare provider body
+		// should not parse: that would mean the step was dropped.
+		expect(() => Outputs.employees.parse(EMPLOYEES_BODY)).toThrow();
+	});
+
 	it('rejects an employees value that is an array instead of a map', () => {
-		expect(() => Outputs.employees.parse({ employees: [] })).toThrow();
+		expect(() =>
+			Outputs.employees.parse(withBuckets({ employees: [] })),
+		).toThrow();
 	});
 
 	it('rejects a malformed known field such as a non-numeric id', () => {
 		expect(() =>
-			Outputs.employees.parse({
-				employees: { '2026-11-08': { '1': { id: 'abc' } } },
-			}),
+			Outputs.employees.parse(
+				withBuckets({ employees: { '2026-11-08': { '1': { id: 'abc' } } } }),
+			),
 		).toThrow();
 	});
 });
@@ -134,26 +144,32 @@ describe('employee', () => {
 
 describe('employee.apps', () => {
 	it('relabels the productivity keys', () => {
-		const output = Outputs.employeeApps.parse(EMPLOYEE_APPS_FILLED_BODY);
+		const output = Outputs.employeeApps.parse(
+			withAppsByProductivity(EMPLOYEE_APPS_FILLED_BODY),
+		);
 		expect(output.apps_by_productivity?.productive?.[0]?.app).toBe('VS Code');
 		expect(output.apps_by_productivity?.neutral?.[0]?.app).toBe('Slack');
 		expect(output.apps_by_productivity?.unrated?.[0]?.app).toBe('Safari');
 	});
 
 	it('keeps the raw apps map under its original keys', () => {
-		const output = Outputs.employeeApps.parse(EMPLOYEE_APPS_FILLED_BODY);
+		const output = Outputs.employeeApps.parse(
+			withAppsByProductivity(EMPLOYEE_APPS_FILLED_BODY),
+		);
 		expect(output.apps?.['-1']?.[0]?.app).toBe('Safari');
 		expect(output.apps?.['1']?.[0]?.app).toBe('VS Code');
 	});
 
 	it('handles the empty arrays the API sends on an idle day', () => {
-		const output = Outputs.employeeApps.parse(EMPLOYEE_APPS_BODY);
+		const output = Outputs.employeeApps.parse(
+			withAppsByProductivity(EMPLOYEE_APPS_BODY),
+		);
 		expect(output.apps_by_productivity?.productive).toEqual([]);
 		expect(output.apps_by_productivity?.neutral).toEqual([]);
 	});
 
 	it('leaves the labelled map undefined when apps is absent', () => {
-		const output = Outputs.employeeApps.parse(EMPLOYEE);
+		const output = Outputs.employeeApps.parse(withAppsByProductivity(EMPLOYEE));
 		expect(output.apps_by_productivity).toBeUndefined();
 	});
 });

@@ -24,6 +24,11 @@ async function createClient(options: Parameters<typeof desktime>[0] = {}) {
 
 let fetchMock: jest.SpyInstance;
 
+/**
+ * Queues one JSON response. `body` is unknown because each fixture is a plain
+ * object of arbitrary shape; the output schema under test is what validates it,
+ * so a per-call-site type would add ceremony without adding a check.
+ */
 function respondJson(body: unknown, status = 200) {
 	fetchMock.mockResolvedValueOnce(
 		new Response(JSON.stringify(body), {

@@ -10,12 +10,19 @@ import {
 	MISSING_KEY_ERROR,
 	PING_BODY,
 } from './test-fixtures';
+import { rejection } from './test-helpers';
 
 const API_KEY = 'test-api-key-abcdef123456';
 
 type Captured = { url: string; init: RequestInit };
 
-/** unknown: jest's mock takes whatever the caller passes, which is what fetch gets. */
+/**
+ * Replaces fetch and records the call. The mock's arguments are unknown because
+ * jest hands through whatever the code under test passes, which is the same
+ * pair a real fetch call receives; narrowing them here would only restate what
+ * the client already builds. `body` is unknown because each fixture is a plain
+ * object of arbitrary shape, validated by the output schema under test.
+ */
 function mockJson(
 	body: unknown,
 	status = 200,
@@ -100,8 +107,8 @@ describe('makeDeskTimeRequest', () => {
 
 	it('surfaces the provider code and description on an error', async () => {
 		mockJson(INVALID_KEY_ERROR, 401);
-		const error = await makeDeskTimeRequest(API_KEY, 'company').catch(
-			(caught: unknown) => caught,
+		const error = await rejection<DeskTimeAPIError>(
+			makeDeskTimeRequest(API_KEY, 'company'),
 		);
 
 		expect(error).toBeInstanceOf(DeskTimeAPIError);
@@ -113,14 +120,14 @@ describe('makeDeskTimeRequest', () => {
 
 	it('distinguishes a missing key from an invalid one in the message', async () => {
 		mockJson(MISSING_KEY_ERROR, 401);
-		const missing = (await makeDeskTimeRequest(API_KEY, 'company').catch(
-			(caught: unknown) => caught,
-		)) as DeskTimeAPIError;
+		const missing = await rejection<DeskTimeAPIError>(
+			makeDeskTimeRequest(API_KEY, 'company'),
+		);
 
 		mockJson(INVALID_KEY_ERROR, 401);
-		const invalid = (await makeDeskTimeRequest(API_KEY, 'company').catch(
-			(caught: unknown) => caught,
-		)) as DeskTimeAPIError;
+		const invalid = await rejection<DeskTimeAPIError>(
+			makeDeskTimeRequest(API_KEY, 'company'),
+		);
 
 		expect(missing.message).toContain('missing');
 		expect(invalid.message).toContain('invalid');
@@ -130,9 +137,9 @@ describe('makeDeskTimeRequest', () => {
 		mockJson({ error: { code: 429, description: 'Too many requests' } }, 429, {
 			'Retry-After': '3',
 		});
-		const error = (await makeDeskTimeRequest(API_KEY, 'company').catch(
-			(caught: unknown) => caught,
-		)) as DeskTimeAPIError;
+		const error = await rejection<DeskTimeAPIError>(
+			makeDeskTimeRequest(API_KEY, 'company'),
+		);
 
 		expect(error.isRateLimit).toBe(true);
 		expect(error.retryAfter).toBe(3_000);
@@ -140,18 +147,18 @@ describe('makeDeskTimeRequest', () => {
 
 	it('does not treat a 403 as a rate limit', async () => {
 		mockJson({ error: { code: 403, description: 'Forbidden' } }, 403);
-		const error = (await makeDeskTimeRequest(API_KEY, 'company').catch(
-			(caught: unknown) => caught,
-		)) as DeskTimeAPIError;
+		const error = await rejection<DeskTimeAPIError>(
+			makeDeskTimeRequest(API_KEY, 'company'),
+		);
 
 		expect(error.isRateLimit).toBe(false);
 	});
 
 	it('never leaks the key into the message, a stringified error or inspect', async () => {
 		mockJson(INVALID_KEY_ERROR, 401);
-		const error = (await makeDeskTimeRequest(API_KEY, 'company').catch(
-			(caught: unknown) => caught,
-		)) as DeskTimeAPIError;
+		const error = await rejection<DeskTimeAPIError>(
+			makeDeskTimeRequest(API_KEY, 'company'),
+		);
 
 		expect(error.message).not.toContain(API_KEY);
 		// The ApiError cause is dropped, so neither the stringified error nor
