@@ -1,0 +1,106 @@
+﻿# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "Finage"
+description: Finage market-data plugin exposing 70 current read-only REST route operations for stocks, forex, crypto, currencies, countries, market discovery, news, bonds, and indicators.
+domain: finage.co.uk
+recommendedAuth: api_key
+examples:
+  read:
+    path: market.getStockLastQuote
+    title: Fetch the latest stock quote
+    args:
+      symbol: AAPL
+apiExamples:
+  market.convertCrypto: { from: BTC, to: ETH, amount: 1 }
+  market.convertCurrency: { from: GBP, to: USD, amount: 100 }
+  # call form: the docs generator can't match a string to the period union.
+  market.getBalanceSheetStatements:
+    call: "{ symbol: 'AAPL', limit: 5, period: 'annual' }"
+  market.getBondsRate: { symbol: DGS1 }
+  # call form: time and sort are literal unions the docs generator can't read.
+  market.getCanadaMarketAggregates:
+    call: "{ symbol: 'BB', time: '1day', from: '2025-01-01', to: '2025-02-01' }"
+  market.getCanadaMarketLastPrice: { symbol: TBP }
+  market.getCashFlowStatements:
+    call: "{ symbol: 'AAPL', limit: 5, period: 'annual' }"
+  market.getCfdEtfLastPrice: { symbol: QQQ }
+  market.getCfdEtfMarketAggregates:
+    call: "{ symbol: 'QQQ', time: '1day', from: '2025-01-01', to: '2025-02-01' }"
+  market.getCfdEtfPreviousClose: { symbol: QQQ }
+  market.getCfdIndexLastPrice: { symbol: US2000 }
+  market.getCfdIndexMarketAggregates:
+    call: "{ symbol: 'US2000', time: '1day', from: '2025-01-01', to: '2025-02-01' }"
+  market.getCfdIndexPreviousClose: { symbol: US2000 }
+  market.getCountryDetail: { country: gb }
+  market.getCryptoAggregates:
+    call: "{ symbol: 'BTCUSD', multiply: 1, time: 'day', from: '2025-01-01', to: '2025-02-01', limit: 100, sort: 'desc' }"
+  market.getCryptoDetail: { symbol: bitcoin }
+  market.getCryptoDetailed: { symbol: BTCUSD }
+  market.getCryptoLastQuote: { symbol: BTCUSD }
+  market.getCryptoLastTrade: { symbol: BTCUSD }
+  market.getCryptoNews: { symbol: BTC, limit: 10 }
+  market.getCryptoPreviousClose: { symbol: BTCUSD }
+  market.getCryptoSnapshot: { quotes: true, trades: true, symbols: 'BTCUSD,ETHUSD' }
+  market.getCurrencyDetail: { symbol: GBPUSD }
+  market.getDelistedCompanies: { limit: 100 }
+  market.getDividendsCalendar: { from: '2025-01-01', to: '2025-12-31' }
+  market.getEarningsCalendar: {}
+  market.getEconomicCalendar: { from: '2025-01-01', to: '2025-12-31' }
+  market.getFinancialRatios: { symbol: AAPL }
+  market.getForexLastQuote: { symbol: GBPUSD }
+  market.getForexLastTrade: { symbol: GBPUSD }
+  market.getForexMarketAggregates:
+    call: "{ symbol: 'GBPUSD', multiply: 1, time: 'day', from: '2025-01-01', to: '2025-02-01' }"
+  market.getForexNews: { symbol: GBP, limit: 10 }
+  market.getForexPreviousClose: { symbol: GBPUSD }
+  # call form: interval is a literal union.
+  market.getForexSignal:
+    call: "{ interval: 'daily', symbol: 'EURUSD' }"
+  market.getForexSnapshot: { quotes: true, trades: true, symbols: 'EURUSD,GBPUSD' }
+  market.getHistoricalDividendsCalendar: { symbol: AAPL }
+  market.getHistoricalStockSplitCalendar: { symbol: AAPL }
+  market.getIncomeStatements:
+    call: "{ symbol: 'AAPL', exchange_code: 'TO', limit: 5, period: 'annual' }"
+  market.getIndianMarketAggregates:
+    call: "{ symbol: 'IDEA', time: '1day', from: '2025-01-01', to: '2025-02-01' }"
+  market.getIndianMarketLastPrice: { symbol: TATAPOWER }
+  market.getInstitutionalHolders: { symbol: AAPL }
+  market.getIpoCalendar: { from: '2025-01-01', to: '2025-12-31' }
+  market.getMostActiveStocks: {}
+  market.getMutualFundHolders: { symbol: AAPL }
+  market.getRussianMarketAggregates:
+    call: "{ symbol: 'AFKS', time: '1day', from: '2025-01-01', to: '2025-02-01' }"
+  market.getRussianMarketLastPrice: { symbol: AFKS }
+  market.getSecRssFeed: {}
+  market.getSectorPerformance: {}
+  market.getSharesFloat: { symbol: AAPL }
+  market.getStockCompanyDetails: { symbol: AAPL }
+  market.getStockLastQuote: { symbol: AAPL }
+  market.getStockLastTrade: { symbol: AAPL }
+  market.getStockMarketAggregates:
+    call: "{ symbol: 'AAPL', multiply: 1, time: 'day', from: '2025-01-01', to: '2025-02-01' }"
+  market.getStockMarketNews: { symbol: AAPL, limit: 10 }
+  market.getStockMarketStatus: { country: US, currencies: true, holidays: true, trading_hours: true, extended_hours: true }
+  market.getStockPreviousClose: { symbol: AAPL }
+  market.getStockSnapshot: { quotes: true, trades: true, symbols: 'AAPL,MSFT' }
+  market.getStockSplitCalendar: { from: '2025-01-01', to: '2025-12-31' }
+  # call form: type and time are literal unions.
+  market.getTechnicalIndicators:
+    call: "{ symbol: 'AAPL', type: 'SMA', time: 'daily', period: 14 }"
+  market.getTopGainers: {}
+  market.getTopLosers: {}
+  market.getUkMarketAggregates:
+    call: "{ symbol: 'BP', time: '1day', from: '2025-01-01', to: '2025-02-01' }"
+  market.getUkMarketLastPrice: { symbol: BP }
+  # call form: interval is a literal union.
+  market.getUsStocksSignal:
+    call: "{ interval: 'daily', symbol: 'AAPL' }"
+  # call form: sort is a literal union.
+  market.listCryptocurrencies:
+    call: "{ limit: 10, page: 1, sort: 'ASC' }"
+  # call form: market is a literal union.
+  market.listSymbols:
+    call: "{ market: 'forex', page: 1, search: 'GBP' }"
+  market.searchCountry: { query: gbp, limit: 5 }
+  market.searchCryptocurrency: { query: bitcoin, limit: 5 }
+  market.searchCurrency: { query: gbp, limit: 5 }
+  market.searchMarket: { market: us, query: apple, limit: 5 }
