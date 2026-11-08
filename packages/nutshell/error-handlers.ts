@@ -35,8 +35,10 @@ export const errorHandlers = {
 			return {
 				maxRetries: 5,
 				retryStrategy: 'exponential_backoff' as const,
-				headersRetryAfterMs:
-					retryAfter !== undefined ? Math.min(retryAfter, 60_000) : undefined,
+				// Preserve the provider-requested delay in full. Capping it made
+				// reads retry while Nutshell still considered them blocked, which
+				// could burn the whole retry budget during a long rate window.
+				headersRetryAfterMs: retryAfter,
 			};
 		},
 	},
