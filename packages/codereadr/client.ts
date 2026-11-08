@@ -13,9 +13,6 @@ import { ApiError, request } from 'corsair/http';
  */
 export const CODEREADR_API_BASE = 'https://api.codereadr.com/api/';
 
-/** The barcode image generator is a separate host. */
-export const CODEREADR_BARCODE_API_BASE = 'https://barcode.codereadr.com/api/';
-
 /**
  * API limits reset every minute (documented codes 111 and 113), and the docs
  * tell callers to resend after a limit clears, so a short wait is the expected
