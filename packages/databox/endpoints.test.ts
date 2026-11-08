@@ -182,6 +182,19 @@ describe('dataSources.list', () => {
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 
+	it('rejects a body without items rather than reading an empty page', async () => {
+		respond({
+			requestId: 'r',
+			status: 'success',
+			data: { pagination: { page: 0, pageSize: 100, totalItems: 5 } },
+		});
+
+		await expect(invoke(DataSources.list, {})).rejects.toMatchObject({
+			name: 'ZodError',
+		});
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
 	it('rejects a malformed known field', async () => {
 		respond({
 			requestId: 'r',
@@ -481,6 +494,18 @@ describe('datasets.listData', () => {
 		});
 	});
 
+	it('rejects a body without items rather than reading an empty page', async () => {
+		respond({
+			requestId: 'r',
+			status: 'success',
+			data: { pagination: { page: 0, pageSize: 100, totalItems: 1 } },
+		});
+
+		await expect(invoke(Datasets.listData, { id: 1 })).rejects.toMatchObject({
+			name: 'ZodError',
+		});
+	});
+
 	it('surfaces a modification in progress', async () => {
 		respond(conflictInProgress, 409, { 'Retry-After': '5' });
 
@@ -744,6 +769,28 @@ describe('metrics.getData', () => {
 		}).catch((e: unknown) => e);
 
 		expect(error).toMatchObject({ status: 502, replaySafe: true });
+	});
+
+	it('rejects a body without dataPoints rather than reading as no data', async () => {
+		respond({
+			requestId: 'r',
+			status: 'success',
+			data: {
+				metric: { id: 'GoogleAnalytics4@sessions', name: 'Sessions' },
+				syncInfo: { status: 'synced' },
+			},
+		});
+
+		await expect(
+			invoke(Metrics.getData, {
+				id: 'GoogleAnalytics4@sessions',
+				dateRange: {
+					from: '2026-06-01',
+					to: '2026-06-30',
+					granularity: 'daily',
+				},
+			}),
+		).rejects.toMatchObject({ name: 'ZodError' });
 	});
 
 	it.each([

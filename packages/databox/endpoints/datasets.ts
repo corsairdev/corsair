@@ -123,11 +123,13 @@ export const listData: DataboxEndpoints['datasetsListData'] = (ctx, input) =>
 		{
 			// Unlike the other lists, records sit beside schema and
 			// lastUpdatedAt inside data, and the item key is records, not items.
+			// items passes through unchecked so a body without it fails the
+			// output parse instead of reading as an empty page.
 			shape: (raw) => {
 				const data = envelopeData(raw);
 				const { page, pageSize, totalItems } = readPagination(data);
 				return {
-					records: Array.isArray(data?.items) ? data.items : [],
+					records: data?.items,
 					schema: data?.schema,
 					page,
 					pageSize,

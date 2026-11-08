@@ -57,9 +57,10 @@ export function nextPageOf(
 
 /**
  * Builds the shape callback for a list endpoint: pulls `items` and
- * `pagination` out of the envelope and adds a computed `nextPage`. `page` and
- * `pageSize` stay required in the output schema, so a body without the
- * pagination block fails the output parse instead of reading as an empty list.
+ * `pagination` out of the envelope and adds a computed `nextPage`. `items`,
+ * `page` and `pageSize` stay required in the output schema, so a body that
+ * lacks any of them fails the output parse instead of reading as an empty
+ * page.
  */
 export function shapeList(itemsKey: string) {
 	// unknown: the envelope is documented but a proxy can answer anything.
@@ -67,7 +68,7 @@ export function shapeList(itemsKey: string) {
 		const data = envelopeData(raw);
 		const { page, pageSize, totalItems } = readPagination(data);
 		return {
-			[itemsKey]: Array.isArray(data?.items) ? data.items : [],
+			[itemsKey]: data?.items,
 			page,
 			pageSize,
 			totalItems,

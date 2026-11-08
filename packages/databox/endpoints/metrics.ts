@@ -61,7 +61,9 @@ export const getData: DataboxEndpoints['metricsGetData'] = (ctx, input) =>
 				const data = envelopeData(raw);
 				return {
 					metric: asRecord(data?.metric),
-					dataPoints: Array.isArray(data?.dataPoints) ? data.dataPoints : [],
+					// dataPoints passes through unchecked so a body without it
+					// fails the output parse instead of reading as no data.
+					dataPoints: data?.dataPoints,
 					syncInfo: data?.syncInfo,
 				};
 			},
