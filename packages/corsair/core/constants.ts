@@ -188,6 +188,7 @@ export const BaseProviders = [
 	'cuttly',
 	'dadataru',
 	'daffy',
+	'databox',
 	'databricks',
 	'datadog',
 	'dataforseo',
@@ -628,6 +629,7 @@ export const ProviderDisplayNames = {
 	cuttly: 'Cutt.ly',
 	dadataru: 'Dadataru',
 	daffy: 'Daffy',
+	databox: 'Databox',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
 	dataforseo: 'DataForSEO',
@@ -1073,6 +1075,7 @@ export type AllProviders =
 	| 'cuttly'
 	| 'dadataru'
 	| 'daffy'
+	| 'databox'
 	| 'databricks'
 	| 'datadog'
 	| 'dataforseo'
