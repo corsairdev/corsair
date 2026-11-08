@@ -31,9 +31,9 @@ const event = JSON.parse(
 );
 const repo = process.env.GITHUB_REPOSITORY ?? '';
 
-// Triggered either by pull_request_review (same-repo PRs) or issue_comment
-// (Greptile edits its summary comment each review; this event runs with
-// base-repo permissions even for fork PRs). Normalize to a PR object.
+// Triggered by issue_comment (Greptile edits its summary comment each review;
+// this event runs with base-repo permissions even for fork PRs). Normalize to a
+// PR object.
 if (!event.pull_request && event.issue?.pull_request) {
 	event.pull_request = JSON.parse(
 		gh(['api', `repos/${repo}/pulls/${event.issue.number}`]),

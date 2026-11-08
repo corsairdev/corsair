@@ -1,17 +1,13 @@
 name: Plugin PR Review Loop
 
 on:
-  pull_request_review:
-    types: [submitted]
-  # Fork PRs: pull_request_review runs get a read-only token and no
-  # secrets/vars. Greptile edits its summary comment every review, and
-  # issue_comment runs in base context with full permissions for any PR.
+  # Greptile edits its summary comment on every review, and issue_comment runs in
+  # base context with full permissions for any PR, fork or not. Don't add
+  # pull_request_review back: each review fires both events a second apart, the
+  # later run cancels the earlier one, and only the review run's check lands on
+  # the PR head, so every reviewed PR shows a cancelled "triage".
   issue_comment:
     types: [created, edited]
-
-concurrency:
-  group: review-loop-${{ github.event.pull_request.number || github.event.issue.number }}-${{ github.event_name == 'pull_request_review' && github.event.pull_request.head.repo.full_name != github.repository && 'fork-review' || 'base' }}
-  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -21,13 +17,13 @@ permissions:
 jobs:
   triage:
     if: >-
-      (github.event_name == 'pull_request_review' &&
-       github.event.review.user.login == 'greptile-apps[bot]' &&
-       github.event.pull_request.draft == false &&
-       github.event.pull_request.head.repo.full_name == github.repository) ||
-      (github.event_name == 'issue_comment' &&
-       github.event.comment.user.login == 'greptile-apps[bot]' &&
-       github.event.issue.pull_request != null)
+      github.event.comment.user.login == 'greptile-apps[bot]' &&
+      github.event.issue.pull_request != null
+    # On the job, so a comment from anyone else (its run is skipped) can't cancel
+    # a triage in progress.
+    concurrency:
+      group: review-loop-${{ github.event.issue.number }}
+      cancel-in-progress: true
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
