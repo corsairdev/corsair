@@ -1,0 +1,65 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: fal
+description: Generative media platform with hundreds of image, video, audio and 3D models; queue or run models, follow requests, look up models and prices, track usage and upload input files.
+domain: fal.ai
+overviewNote: |
+  Every model on fal takes its own input fields. Look them up with `models.search({ endpointIds: ['<endpoint id>'], includeOpenApi: true })`, then pass them as `input`.
+
+  Video, audio and training runs usually take minutes. After submitting, `models.run` waits up to 10 seconds (at most 15). When it sees the run end within the wait, it answers a final `state`: SUCCEEDED with `output`, or FAILED with `error` (bad input or a model error), and there is nothing to follow. Any other answer carries the run's `response_url` and IN_PROGRESS or IN_QUEUE. IN_QUEUE also covers a read that failed or ran out of time, so the run may already have started or even finished at fal. Follow every IN_QUEUE or IN_PROGRESS answer with `queue.status({ responseUrl })` until it says SUCCEEDED or FAILED, or pass `webhookUrl` and let fal post the result. On Corsair's cloud, `get_job` and the job card do the following for you.
+examples:
+  read:
+    path: models.search
+    title: Find text-to-video models
+    args:
+      category: text-to-video
+      limit: 5
+  write:
+    path: queue.submit
+    title: Generate an image
+    args:
+      endpointId: fal-ai/flux/schnell
+      input:
+        prompt: A watercolor lighthouse on a cliff at dawn
+        image_size: square_hd
+exampleWebhook:
+  path: requests.completed
+  note: Pass `webhookUrl` to `queue.submit` and fal POSTs the result there when the request finishes. Hand `processWebhook` the raw body text (`await request.text()`), not parsed JSON. fal signs the exact bytes it sent; a parsed body is rebuilt as a best effort, which fails for outputs with whole-number floats or integers past 2^53. To hold deliveries to one fal account, store its fal user id (the `x-fal-webhook-user-id` header) as the account's `user_id`.
+  after: "if (result.data?.status === 'OK') console.log(result.data.request_id, result.data.payload);"
+apiNotes:
+  models.run: Goes through fal's queue, so a run that outlasts `waitSeconds` is not lost. It answers with the same fields as `queue.status`. SUCCEEDED and FAILED are final; only IN_QUEUE or IN_PROGRESS need following, with `queue.status({ responseUrl })`.
+  queue.status: Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` returned. fal marks failed requests COMPLETED as well, so once it does this reads the result and answers `state` SUCCEEDED with `output`, or FAILED with `error`.
+  queue.result: Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` returned. Errors with the model's own error (422 for bad input) when the request failed.
+  queue.cancel: Pass `endpointId` and `requestId`, or the `responseUrl` that `queue.submit` returned. A request that already finished answers ALREADY_COMPLETED instead of an error.
+  usage.get: Needs a fal key with billing read access (the BILLING, READONLY or FULL preset); other keys get 403.
+  usage.billingEvents: Needs a fal key with billing read access (the BILLING, READONLY or FULL preset); other keys get 403.
+  account.billing: Needs a fal key with billing read access (the BILLING, READONLY or FULL preset); other keys get 403.
+  requests.deletePayloads: Needs a full-access fal key; inference-only keys get 403. Deletes the request's stored input and output payloads and the files it generated, for good. Files the request took as input (uploads, shared URLs) stay on fal's CDN. A file fal could not delete comes back with a non-null `exception` in `cdn_delete_results` rather than an error, so check each entry.
+apiExamples:
+  queue.submit:
+    call: "{ endpointId: 'fal-ai/kling-video/v2.1/master/text-to-video', input: { prompt: 'A red kite over a beach at sunset', duration: '5' }, webhookUrl: 'https://example.com/webhooks/fal' }"
+  queue.status:
+    call: "{ endpointId: 'fal-ai/flux/schnell', requestId: '<request id>' }"
+  queue.result:
+    call: "{ responseUrl: 'https://queue.fal.run/fal-ai/flux/requests/<request id>' }"
+  queue.cancel:
+    call: "{ endpointId: 'fal-ai/flux/schnell', requestId: '<request id>' }"
+  models.run:
+    call: "{ endpointId: 'fal-ai/flux/schnell', input: { prompt: 'A paper boat on a pond', image_size: 'square' }, waitSeconds: 10 }"
+  models.search:
+    call: "{ query: 'upscale', category: 'image-to-image', limit: 10 }"
+  models.pricing:
+    call: "{ endpointIds: ['fal-ai/flux/schnell', 'fal-ai/flux/dev'] }"
+  models.estimateCost:
+    call: "{ estimateType: 'unit_price', endpoints: { 'fal-ai/flux/dev': { quantity: 100 } } }"
+  requests.list:
+    call: "{ endpointIds: ['fal-ai/flux/schnell'], status: 'success', limit: 20 }"
+  requests.deletePayloads:
+    call: "{ requestId: '<request id>' }"
+  usage.get:
+    call: "{ start: '2026-11-01', end: '2026-12-01', expand: ['summary'] }"
+  usage.billingEvents:
+    call: "{ start: '2026-11-01', limit: 50 }"
+  account.billing:
+    call: "{}"
+  files.upload:
+    call: "{ contentBase64: '<base64 bytes>', contentType: 'image/png', fileName: 'reference.png' }"

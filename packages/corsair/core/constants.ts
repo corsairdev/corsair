@@ -224,6 +224,7 @@ export const BaseProviders = [
 	'exist',
 	'extractaai',
 	'facebook',
+	'fal',
 	'faraday',
 	'figma',
 	'filevine',
@@ -234,6 +235,7 @@ export const BaseProviders = [
 	'fixer',
 	'flexisign',
 	'flutterwave',
+	'followupboss',
 	'formbricks',
 	'fundable',
 	'gemini',
@@ -347,6 +349,7 @@ export const BaseProviders = [
 	'revai',
 	'rootly',
 	'runpod',
+	'salesflare',
 	'salesforce',
 	'saperly',
 	'sapsuccessfactors',
@@ -387,6 +390,7 @@ export const BaseProviders = [
 	'tikhub',
 	'timecamp',
 	'timelink',
+	'timely',
 	'tinyfish',
 	'tinypng',
 	'tinyurl',
@@ -660,6 +664,7 @@ export const ProviderDisplayNames = {
 	exist: 'Exist',
 	extractaai: 'Extracta.ai',
 	facebook: 'Facebook',
+	fal: 'fal',
 	faraday: 'Faraday',
 	figma: 'Figma',
 	filevine: 'Filevine',
@@ -670,6 +675,7 @@ export const ProviderDisplayNames = {
 	fixer: 'Fixer',
 	flexisign: 'Flexisign',
 	flutterwave: 'Flutterwave',
+	followupboss: 'Follow Up Boss',
 	formbricks: 'Formbricks',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
@@ -782,6 +788,7 @@ export const ProviderDisplayNames = {
 	revai: 'RevAI',
 	rootly: 'Rootly',
 	runpod: 'RunPod',
+	salesflare: 'Salesflare',
 	salesforce: 'Salesforce',
 	saperly: 'Saperly',
 	sapsuccessfactors: 'SAP SuccessFactors',
@@ -822,6 +829,7 @@ export const ProviderDisplayNames = {
 	tikhub: 'TikHub',
 	timecamp: 'TimeCamp',
 	timelink: 'Timelink',
+	timely: 'Timely',
 	tinyfish: 'TinyFish',
 	tinypng: 'TinyPNG',
 	tinyurl: 'TinyURL',
@@ -1100,6 +1108,7 @@ export type AllProviders =
 	| 'exist'
 	| 'extractaai'
 	| 'facebook'
+	| 'fal'
 	| 'faraday'
 	| 'figma'
 	| 'filevine'
@@ -1110,6 +1119,7 @@ export type AllProviders =
 	| 'fixer'
 	| 'flexisign'
 	| 'flutterwave'
+	| 'followupboss'
 	| 'formbricks'
 	| 'fundable'
 	| 'gemini'
@@ -1223,6 +1233,7 @@ export type AllProviders =
 	| 'revai'
 	| 'rootly'
 	| 'runpod'
+	| 'salesflare'
 	| 'salesforce'
 	| 'saperly'
 	| 'sapsuccessfactors'
@@ -1263,6 +1274,7 @@ export type AllProviders =
 	| 'tikhub'
 	| 'timecamp'
 	| 'timelink'
+	| 'timely'
 	| 'tinyfish'
 	| 'tinypng'
 	| 'tinyurl'

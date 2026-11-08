@@ -1,0 +1,144 @@
+---
+title: Overview
+description: "Real-estate CRM with Follow Up Boss - manage people, deals, appointments, calls, texts, notes and tasks, push lead events into its routing, read smart lists and automations data, manage webhook subscriptions, and read delivered webhook events by ID."
+---
+
+Use **Follow Up Boss** through Corsair: one client, typed API calls.
+
+Create a key in Follow Up Boss under Admin, API. Things to know before you call:
+
+- **Basic auth, not Bearer.** The API key is the username and the password is empty; the plugin builds the documented `Authorization: Basic` header. Bearer is only for OAuth integrations.
+- **Lead intake runs through `events.create`.** FUB's docs advise pushing leads via `POST /events`: it creates or matches the person and runs their action plans. `people.create` only writes the contact without routing.
+- **Identification headers.** Every request carries `X-System` (defaults to `corsair`) and, when you set `systemKey`, `X-System-Key` from your system registration. Registered systems get the higher rate limits (global 250 per 10s instead of 125).
+- **Rate limits are per 10-second window** per context (events GET 20, notes 10, PUT /people 25, global 250). FUB answers 429 with `Retry-After`; the plugin waits that long and retries up to five times.
+- **Paging.** Lists take `limit` (max 100) and `offset`; responses carry a `_metadata` block whose `next` keyset cursor FUB enforces for deep pagination.
+- **Deleting.** Most deletes answer 200 (the plugin returns the echoed resource when FUB sends one). `appointments.delete` and `people.ignoreUnclaimed` answer 204. Deleting an appointment type requires `assignTypeId`: the type its existing appointments move to.
+- **`people.claim` and `people.ignoreUnclaimed`** work on unclaimed leads only, and a claim of a lead that is no longer unclaimed answers 409.
+- **Text messages are logged, not sent.** `textMessages.create` records a message on a person; FUB does not send SMS through the API.
+- **Webhooks.** The plugin manages webhook subscriptions (`/webhooks`) and reads a webhook's delivered events by ID with `webhookEvents.get`; it does not receive webhook deliveries.
+
+**What you get:**
+
+- 156 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/followupboss
+```
+```bash yarn
+yarn add corsair @corsair-dev/followupboss
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/followupboss
+```
+```bash bun
+bun add corsair @corsair-dev/followupboss
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { followupboss } from '@corsair-dev/followupboss';
+
+export const corsair = createCorsair({
+	plugins: [
+		followupboss(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+followupboss()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'followupboss',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the newest people**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.followupboss.api.people.list({ limit: 10 });
+```
+
+
+**Push a registration lead into FUB routing**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.followupboss.api.events.create({
+	source: 'Zillow',
+	system: 'corsair',
+	type: 'Registration',
+	person: {
+		firstName: 'Jordan',
+		lastName: 'Rivera',
+		emails: [{ value: 'jordan@acme-logistics.com', type: 'home' }],
+		phones: [{ value: '888-555-0123', type: 'mobile' }],
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/followupboss/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/followupboss/api">
+    Every `followupboss.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

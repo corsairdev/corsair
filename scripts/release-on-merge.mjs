@@ -287,7 +287,7 @@ export async function planRelease({ cwd, registry, log = () => {} }) {
 				pkg,
 				bumpedDeps.map((d) => `depends on ${d} ${bumps.get(d).to}`),
 			);
-			grew = bumps.has(pkg.name);
+			if (bumps.has(pkg.name)) grew = true;
 		}
 	}
 

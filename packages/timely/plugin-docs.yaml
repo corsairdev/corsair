@@ -1,0 +1,118 @@
+displayName: Timely
+description: "Log, edit and report time in Timely: time entries, timers, projects, clients, tags, people and signed webhooks."
+domain: timely.com
+recommendedAuth: oauth_2
+overviewNote: |
+  Timely only offers OAuth 2.0; there are no API keys or personal access tokens. Register an app under **Settings → API Access** in Timely (`https://app.timelyapp.com/<workspace id>/oauth_applications`), then store its client ID and secret. Timely access tokens do not expire; refresh tokens rotate on every use.
+
+  Every call is scoped to a workspace. Operations take an optional `accountId`; without one the plugin uses `timely({ accountId })`, then the account's stored `account_id`, then the only workspace the token can reach. When the user belongs to several workspaces, pass `accountId` (from `accounts.list`).
+factory:
+  note: "`accountId` is optional when the connected user has a single Timely workspace."
+  options:
+    accountId: 123456
+examples:
+  read:
+    path: timeEntries.list
+    title: List this week's time entries
+    args:
+      since: "2026-11-02"
+      upto: "2026-11-08"
+      per_page: 100
+  write:
+    path: timeEntries.create
+    title: Log 1h 30m on a project
+    args:
+      project_id: 987654
+      day: "2026-11-06"
+      hours: 1
+      minutes: 30
+      note: "Code review"
+exampleWebhook:
+  path: timeEntries.created
+  note: "Timely sends a thin reference (`entity_id`, `entity_type`, `date`), not the full entry. Fetch the entry with `timeEntries.get`. Create the Timely webhook with a `secret_token` and store the same value as the account's `webhook_signature`: unsigned deliveries are rejected."
+  after: |
+    console.log('Time entry logged:', result.data?.payload.entity_id);
+apiNotes:
+  timeEntries.list: "Pass `since` and `upto` together for a range, or `day` for one day. Without either, Timely returns today's entries."
+  timeEntries.create: "The user must be a member of the project, and `label_ids` only work on projects that allow tags. Give the duration as `hours`/`minutes`/`seconds` or as `from`/`to`."
+  timeEntries.update: "Fields you leave out keep their value. Billed (`billed: true`) and locked entries can't be edited."
+  timeEntries.bulk: "Up to 100 records. Timely answers 200 even when some records fail: check `errors.create`, `errors.update` and `errors.delete` (each item has the record `index` and `messages`). Batches over 20 records run asynchronously and return a `job`."
+  projects.create: "Timely needs a `client_id`. The creating user is added to the project automatically."
+  projects.update: "Passing `users` replaces the project's member list: anyone left out can no longer log time on it."
+  clients.update: "Timely has no client delete; set `active: false` to archive a client."
+  reports.filter: "`scope: events` returns the matching time entries instead of grouped totals."
+  webhooks.create: "Timely signs each delivery with `X-Signature` (hex HMAC-SHA256 of the `payload` object, keyed with `secret_token`). Timely currently answers 500 to `custom_headers`, so the plugin doesn't send them."
+apiExamples:
+  accounts.get: {}
+  clients.get:
+    id: 54321
+  clients.create:
+    name: "Acme Inc."
+    external_id: "crm-42"
+  clients.update:
+    id: 54321
+    active: false
+  projects.get:
+    id: 987654
+  # Raw `call` form: the docs checker can't type-check enum values in args yet.
+  projects.create:
+    call: "{ name: 'Website redesign', rate_type: 'project', hour_rate: 150, client_id: 54321 }"
+  projects.update:
+    call: "{ id: 987654, budget_type: 'H', budget: 40 }"
+  projects.delete:
+    id: 987654
+  timeEntries.create:
+    project_id: 987654
+    day: "2026-11-06"
+    hours: 1
+    minutes: 30
+    note: "Code review"
+  timeEntries.get:
+    id: 112233445
+  timeEntries.update:
+    id: 112233445
+    note: "Code review (PR 42)"
+  timeEntries.delete:
+    id: 112233445
+  timeEntries.bulk:
+    create:
+      - project_id: 987654
+        day: "2026-11-06"
+        hours: 2
+        note: "Planning"
+    delete: [112233446]
+  timeEntries.startTimer:
+    id: 112233445
+  timeEntries.stopTimer:
+    id: 112233445
+  tags.get:
+    id: 4321
+  tags.create:
+    name: "Design"
+  tags.update:
+    id: 4321
+    name: "UX design"
+  tags.delete:
+    id: 4321
+  teams.get:
+    id: 1
+  users.get:
+    id: 7654
+  reports.totals:
+    since: "2026-11-01"
+    until: "2026-11-07"
+  reports.filter:
+    since: "2026-11-01"
+    until: "2026-11-07"
+    group_by: [users, days]
+  webhooks.get:
+    id: 1001
+  webhooks.create:
+    url: "https://example.com/api/webhook"
+    subscriptions: ["hours:created", "hours:updated", "hours:deleted"]
+    secret_token: "a-long-random-signing-secret"
+  webhooks.update:
+    id: 1001
+    active: false
+  webhooks.delete:
+    id: 1001

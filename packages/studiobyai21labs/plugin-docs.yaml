@@ -1,2 +1,3 @@
-displayName: ElevenLabs Studio
-description: AI audio studio for voice generation, dubbing, and long-form spoken content production.
+displayName: AI21 Studio
+description: "AI21 Labs' model platform: Jamba chat completions, Maestro runs, and a file library to ground answers in your documents."
+domain: ai21.com

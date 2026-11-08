@@ -128,6 +128,7 @@ jobs:
           scripts/pr-review/pr-scope.test.ts
           scripts/plugin-docs-requirements.test.ts
           scripts/release-on-merge.test.mjs
+          scripts/plugin-icon-svg.test.ts
 
       # ts-jest only transpiles (isolatedModules in tsconfig.base.json), so test
       # types are checked by each package's own tsc build. This covers the
