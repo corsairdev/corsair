@@ -154,20 +154,22 @@ function readElement(
 	return undefined;
 }
 
-// A record with children stays a record; a leaf keeps its text. Attributes are
-// kept under `@` so an id can be read next to the text it labels.
+// A record with children stays a record; a leaf keeps its text verbatim.
+// Attributes are kept under `@` so an id can be read next to the text it
+// labels.
+//
+// Leaf text is not trimmed. A barcode stored as `' A1 '` with `trim_value` off
+// must come back exactly as stored, or the caller cannot use it as the key it
+// was written under. Whitespace is only used to decide whether a node holds
+// meaningful text at all: the text beside child elements is pure formatting.
 function nodeToValue(node: XmlNode): XmlValue {
 	const hasChildren = Object.keys(node.children).length > 0;
-	const trimmed = node.text.trim();
 	const hasAttributes = Object.keys(node.attributes).length > 0;
-	if (!hasChildren && !hasAttributes) return trimmed;
+	const hasText = node.text.trim().length > 0;
+	if (!hasChildren && !hasAttributes) return node.text;
 	const value: XmlRecord = { ...node.children };
 	if (hasAttributes) value['@'] = { ...node.attributes };
-	if (hasChildren) {
-		if (trimmed.length > 0) value['#text'] = trimmed;
-	} else {
-		value['#text'] = trimmed;
-	}
+	if (hasText) value['#text'] = node.text;
 	return value;
 }
 
@@ -234,12 +236,19 @@ export class CodereadrAPIError extends Error {
 	readonly code?: number;
 	/** The HTTP status; only set when the transport itself failed. */
 	readonly status?: number;
+	/** Milliseconds from a Retry-After header, when the server sent one. */
+	readonly retryAfter?: number;
 	/**
 	 * True when repeating the request cannot apply the operation twice. Every
 	 * call is a POST here, so the method says nothing about replay safety.
 	 */
 	readonly replaySafe: boolean;
-	/** True for codes 111 and 113, the per-minute and per-day API limits. */
+	/**
+	 * True for codes 111 and 113, the per-minute and per-day API limits, and
+	 * for an HTTP 429. The documented limits arrive in the body with a 200, but
+	 * a gateway in front of the API can answer 429 before CodeREADr sees the
+	 * call, so both forms have to be recognized.
+	 */
 	readonly isRateLimit: boolean;
 
 	constructor(
@@ -247,6 +256,7 @@ export class CodereadrAPIError extends Error {
 		options: {
 			code?: number;
 			status?: number;
+			retryAfter?: number;
 			replaySafe?: boolean;
 			cause?: Error;
 		} = {},
@@ -255,10 +265,12 @@ export class CodereadrAPIError extends Error {
 		this.name = 'CodereadrAPIError';
 		this.code = options.code;
 		this.status = options.status;
+		this.retryAfter = options.retryAfter;
 		this.replaySafe = options.replaySafe ?? false;
 		this.isRateLimit =
-			options.code !== undefined &&
-			CODEREADR_RATE_LIMIT_CODES.has(options.code);
+			options.status === 429 ||
+			(options.code !== undefined &&
+				CODEREADR_RATE_LIMIT_CODES.has(options.code));
 	}
 }
 
@@ -339,15 +351,25 @@ export async function makeCodereadrRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// The cause is dropped on purpose. ApiError keeps the request it was
+			// built from, and this request's body is the form carrying `api_key`
+			// and, on user writes, the new `password`. Attaching it would put both
+			// into anything that stringifies the error, including app logs. Only
+			// the parts a caller can act on are copied across.
 			throw new CodereadrAPIError(
 				`CodeREADr HTTP ${error.status}: ${error.statusText || error.message}`,
-				{ status: error.status, replaySafe: options.replaySafe, cause: error },
+				{
+					status: error.status,
+					retryAfter: error.retryAfter,
+					replaySafe: options.replaySafe,
+				},
 			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new CodereadrAPIError(error.message, {
 				replaySafe: options.replaySafe,
+				// This error came from fetch itself, so it never held the form.
 				cause: error,
 			});
 		}
@@ -365,9 +387,19 @@ export async function makeCodereadrRequest(
 		);
 	}
 
+	// A response only counts as success when it says so. A 200 whose body is
+	// something else entirely, such as a proxy's HTML error page, parses to a
+	// record with no `status`, and treating that as success would let a delete
+	// report `success: true` for a call the provider never processed.
 	const status = parsed.status;
-	if (typeof status === 'string' && status !== CODEREADR_STATUS_OK) {
+	if (status !== CODEREADR_STATUS_OK) {
 		const { code, text: message } = readErrorNode(parsed);
+		if (code === undefined && typeof status !== 'string') {
+			throw new CodereadrAPIError(
+				'CodeREADr returned a response without a status',
+				{ replaySafe: options.replaySafe },
+			);
+		}
 		const label = code !== undefined ? ` (code ${code})` : '';
 		throw new CodereadrAPIError(
 			`CodeREADr error${label}: ${message ?? 'the call failed'}`,
