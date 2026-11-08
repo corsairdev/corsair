@@ -13,17 +13,20 @@ function codeOf(error: Error): number | undefined {
  * signal; there is no status to classify on.
  */
 export const errorHandlers = {
-	// Codes 111 (per-minute) and 113 (per-day). The docs say blocked calls are
-	// reset every minute and can be resent, so a retry is the documented
-	// behavior. The minute counter resets at the top of each minute, which the
-	// handler cannot know, so it waits the documented window.
+	// Codes 111 (per-minute) and 113 (per-day), plus an HTTP 429 from a gateway
+	// in front of the API. The docs say blocked calls reset every minute and can
+	// be resent, so a retry is the documented behavior. A real Retry-After wins
+	// when the server sent one; a minute is the fallback because the minute
+	// counter resets at a boundary the handler cannot know.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
 			error instanceof CodereadrAPIError && error.isRateLimit,
 		handler: async (error: Error) => ({
 			maxRetries: 2,
-			// No Retry-After header exists; a minute is the documented window.
-			headersRetryAfterMs: 60_000,
+			headersRetryAfterMs:
+				error instanceof CodereadrAPIError && error.retryAfter !== undefined
+					? error.retryAfter
+					: 60_000,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -70,15 +73,28 @@ export const errorHandlers = {
 // last even when the caller adds or overrides handlers. A user handler under a
 // new name has to come before the builtin keys, or a builtin match would claim
 // the error first and the caller's retry policy would never run.
+//
+// A caller that reuses a builtin name, such as `RATE_LIMIT_ERROR`, must also
+// win on values. A plain `{ ...user, ...builtin }` would keep the caller's
+// position but restore the builtin handler under it, silently ignoring a
+// `maxRetries: 0` that was meant to turn retries off.
 export function mergeErrorHandlers(
 	builtin: CorsairErrorHandler,
 	user: CorsairErrorHandler | undefined,
 ): CorsairErrorHandler {
 	if (!user) return builtin;
-	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
-	const { DEFAULT: userDefault, ...userRest } = user;
-	const fallback = userDefault ?? builtinDefault;
-	return fallback
-		? { ...userRest, ...builtinRest, DEFAULT: fallback }
-		: { ...userRest, ...builtinRest };
+	const merged: CorsairErrorHandler = {};
+	const keys = [
+		...Object.keys(user).filter((key) => key !== 'DEFAULT'),
+		...Object.keys(builtin).filter(
+			(key) => key !== 'DEFAULT' && !(key in user),
+		),
+	];
+	for (const key of keys) {
+		const entry = key in user ? user[key] : builtin[key];
+		if (entry) merged[key] = entry;
+	}
+	const fallback = user.DEFAULT ?? builtin.DEFAULT;
+	if (fallback) merged.DEFAULT = fallback;
+	return merged;
 }
