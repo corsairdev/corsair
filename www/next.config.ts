@@ -1,6 +1,13 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+	// The icon route reads these by a computed path, which the build can't trace.
+	outputFileTracingIncludes: {
+		'/plugin-icons/[id]': [
+			'../explorer/icons/**/*',
+			'../explorer/data/icon-manifest.json',
+		],
+	},
 	images: {
 		remotePatterns: [
 			{
