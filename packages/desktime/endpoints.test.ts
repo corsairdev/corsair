@@ -1,0 +1,228 @@
+import {
+	DeskTimeEndpointInputSchemas as Inputs,
+	DeskTimeEndpointOutputSchemas as Outputs,
+} from './endpoints/types';
+import {
+	COMPANY_BODY,
+	EMPLOYEE,
+	EMPLOYEE_APPS_BODY,
+	EMPLOYEE_APPS_FILLED_BODY,
+	EMPLOYEE_ARRIVED,
+	EMPLOYEE_PROJECTS_BODY,
+	EMPLOYEES_BODY,
+	EMPLOYEES_WEEK_BODY,
+	PING_BODY,
+	PROJECTS_BODY,
+} from './test-fixtures';
+
+describe('ping', () => {
+	it('reads the pong timestamp', () => {
+		const output = Outputs.ping.parse(PING_BODY);
+		expect(output.pong).toBe('1794135987');
+		expect(output.__request_time).toBe('1794135987');
+	});
+
+	it('rejects a body without a pong', () => {
+		expect(() => Outputs.ping.parse({})).toThrow();
+	});
+});
+
+describe('company', () => {
+	it('reads the account work settings', () => {
+		const output = Outputs.company.parse(COMPANY_BODY);
+		expect(output.name).toBe('corsair test company');
+		expect(output.work_starts).toBe('08:00:00');
+		expect(output.work_ends).toBe('18:00:00');
+		expect(output.timezone_identifier).toBe('Asia/Kolkata');
+	});
+
+	it('accepts work_duration as the string the API sends', () => {
+		const output = Outputs.company.parse(COMPANY_BODY);
+		expect(output.work_duration).toBe('28800');
+	});
+
+	it('accepts work_duration as a number too, since the type allows both', () => {
+		const output = Outputs.company.parse({
+			...COMPANY_BODY,
+			work_duration: 28800,
+		});
+		expect(output.work_duration).toBe(28800);
+	});
+
+	it('keeps unknown fields, so a new setting cannot fail a call', () => {
+		const output = Outputs.company.parse({ ...COMPANY_BODY, newSetting: 'x' });
+		expect(output).toMatchObject({ newSetting: 'x' });
+	});
+});
+
+describe('employees', () => {
+	it('parses the nested date and employee-id maps', () => {
+		const output = Outputs.employees.parse(EMPLOYEES_BODY);
+		expect(Object.keys(output.employees)).toEqual(['2026-11-08']);
+		expect(output.employees['2026-11-08']?.['789760']?.id).toBe(789760);
+	});
+
+	it('flattens buckets newest first for callers', () => {
+		const output = Outputs.employees.parse(EMPLOYEES_WEEK_BODY);
+		expect(output.buckets.map((bucket) => bucket.date)).toEqual([
+			'2026-11-08',
+			'2026-11-03',
+			'2026-11-02',
+		]);
+	});
+
+	it('keeps one employee per bucket on a week response', () => {
+		const output = Outputs.employees.parse(EMPLOYEES_WEEK_BODY);
+		expect(output.buckets[0]?.employees).toHaveLength(1);
+		expect(output.buckets[0]?.employees[0]?.id).toBe(789760);
+	});
+
+	it('parses an empty employee set without inventing rows', () => {
+		const output = Outputs.employees.parse({ employees: {} });
+		expect(output.buckets).toEqual([]);
+	});
+
+	it('rejects an employees value that is an array instead of a map', () => {
+		expect(() => Outputs.employees.parse({ employees: [] })).toThrow();
+	});
+
+	it('rejects a malformed known field such as a non-numeric id', () => {
+		expect(() =>
+			Outputs.employees.parse({
+				employees: { '2026-11-08': { '1': { id: 'abc' } } },
+			}),
+		).toThrow();
+	});
+});
+
+describe('employee', () => {
+	it('accepts the boolean false DeskTime sends before an arrival', () => {
+		// The help-center example shows a timestamp here. The API sends `false`,
+		// which a plain string schema would reject on every fresh day.
+		const output = Outputs.employeeBasic.parse(EMPLOYEE);
+		expect(output.arrived).toBe(false);
+		expect(output.left).toBe(false);
+		expect(output.work_starts).toBe(false);
+		expect(output.work_ends).toBe(false);
+	});
+
+	it('accepts timestamps once the employee has arrived', () => {
+		const output = Outputs.employeeBasic.parse(EMPLOYEE_ARRIVED);
+		expect(output.arrived).toBe('2026-11-08 05:13:00');
+		expect(output.productivity).toBe(63.98);
+	});
+
+	it('reads the camelCase fields exactly as sent', () => {
+		const output = Outputs.employeeBasic.parse(EMPLOYEE);
+		expect(output.groupId).toBe(0);
+		expect(output.isOnline).toBe(false);
+		expect(output.onlineTime).toBe(0);
+		expect(output.profileUrl).toContain('desktime.com');
+	});
+
+	it('reads the snake_case fields alongside the camelCase ones', () => {
+		const output = Outputs.employeeBasic.parse(EMPLOYEE);
+		expect(output.timezone).toBe('Asia/Kolkata');
+		expect(output.notes).toEqual([]);
+		expect(output.activeProject).toEqual([]);
+	});
+
+	it('requires an id, since every other field is optional', () => {
+		expect(() => Outputs.employeeBasic.parse({ name: 'x' })).toThrow();
+	});
+});
+
+describe('employee.apps', () => {
+	it('relabels the productivity keys', () => {
+		const output = Outputs.employeeApps.parse(EMPLOYEE_APPS_FILLED_BODY);
+		expect(output.apps_by_productivity?.productive?.[0]?.app).toBe('VS Code');
+		expect(output.apps_by_productivity?.neutral?.[0]?.app).toBe('Slack');
+		expect(output.apps_by_productivity?.unrated?.[0]?.app).toBe('Safari');
+	});
+
+	it('keeps the raw apps map under its original keys', () => {
+		const output = Outputs.employeeApps.parse(EMPLOYEE_APPS_FILLED_BODY);
+		expect(output.apps?.['-1']?.[0]?.app).toBe('Safari');
+		expect(output.apps?.['1']?.[0]?.app).toBe('VS Code');
+	});
+
+	it('handles the empty arrays the API sends on an idle day', () => {
+		const output = Outputs.employeeApps.parse(EMPLOYEE_APPS_BODY);
+		expect(output.apps_by_productivity?.productive).toEqual([]);
+		expect(output.apps_by_productivity?.neutral).toEqual([]);
+	});
+
+	it('leaves the labelled map undefined when apps is absent', () => {
+		const output = Outputs.employeeApps.parse(EMPLOYEE);
+		expect(output.apps_by_productivity).toBeUndefined();
+	});
+});
+
+describe('employee.projects', () => {
+	it('reads the projects array', () => {
+		const output = Outputs.employeeProjects.parse(EMPLOYEE_PROJECTS_BODY);
+		expect(output.projects).toEqual([]);
+	});
+
+	it('rejects a projects value that is not a list', () => {
+		expect(() =>
+			Outputs.employeeProjects.parse({ ...EMPLOYEE, projects: 'nope' }),
+		).toThrow();
+	});
+});
+
+describe('projects', () => {
+	it('reads an empty project list', () => {
+		const output = Outputs.projects.parse(PROJECTS_BODY);
+		expect(output.projects).toEqual([]);
+	});
+
+	it('reads a project row', () => {
+		const output = Outputs.projects.parse({
+			projects: [{ id: 1, name: 'Website redesign' }],
+		});
+		expect(output.projects[0]?.name).toBe('Website redesign');
+	});
+
+	it('rejects a body with no projects key', () => {
+		expect(() => Outputs.projects.parse({})).toThrow();
+	});
+});
+
+describe('input validation', () => {
+	it('accepts each documented period', () => {
+		for (const period of ['day', 'week', 'month'] as const) {
+			expect(() => Inputs.employees.parse({ period })).not.toThrow();
+		}
+	});
+
+	it('rejects a period outside the documented set', () => {
+		expect(() => Inputs.employees.parse({ period: 'quarter' })).toThrow();
+	});
+
+	it('accepts an ISO date', () => {
+		expect(() => Inputs.employees.parse({ date: '2026-11-08' })).not.toThrow();
+	});
+
+	it('rejects a date in another format', () => {
+		expect(() => Inputs.employees.parse({ date: '08/11/2026' })).toThrow();
+	});
+
+	it('rejects an impossible calendar date, which DeskTime would silently ignore', () => {
+		expect(() => Inputs.employees.parse({ date: '2026-13-01' })).toThrow();
+		expect(() => Inputs.employees.parse({ date: '2026-02-30' })).toThrow();
+	});
+
+	it('accepts a real leap day', () => {
+		expect(() => Inputs.employees.parse({ date: '2024-02-29' })).not.toThrow();
+	});
+
+	it('rejects a non-positive or fractional employee id', () => {
+		expect(() => Inputs.employeeBasic.parse({ id: 0 })).toThrow();
+		expect(() => Inputs.employeeBasic.parse({ id: 1.5 })).toThrow();
+	});
+
+	it('allows omitting the employee id, which defaults to the key owner', () => {
+		expect(() => Inputs.employeeBasic.parse({})).not.toThrow();
+	});
+});
