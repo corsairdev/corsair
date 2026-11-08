@@ -120,7 +120,7 @@ const deskTimeEndpointMeta = {
 	'ping.get': {
 		riskLevel: 'read',
 		description:
-			'Check that the DeskTime API answers, which works without a key',
+			'Check that the DeskTime API answers. A configured key is still required, because the runtime resolves the account key before any endpoint runs',
 	},
 	'company.get': {
 		riskLevel: 'read',

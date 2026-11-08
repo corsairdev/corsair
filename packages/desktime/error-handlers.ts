@@ -55,6 +55,17 @@ export const errorHandlers = {
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
+	// A connection reset, DNS failure or timeout never reached DeskTime, so the
+	// call had no effect. Bounded like the 5xx path, and left non-retryable for
+	// any error that does carry a status, because that one did reach the server.
+	TRANSPORT_ERROR: {
+		match: (error: Error) =>
+			error instanceof DeskTimeAPIError && error.transport,
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
 	// A 403 that is not about the key, and any other 4xx, is a rejected request.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
@@ -72,16 +83,26 @@ export const errorHandlers = {
 } satisfies CorsairErrorHandler;
 
 // Handlers match in key order and DEFAULT matches everything, so it stays last.
-// Builtin first, caller second, so a caller override wins on both key and value.
+//
+// Caller keys go first, then any builtin the caller did not name. With a plain
+// `{ ...builtin, ...user }` spread the builtins keep their position, and because
+// core takes the first match in key order, a caller handler for a status no
+// builtin covers would never run: the trailing DEFAULT claims it first. A caller
+// passing errorHandlers opted in explicitly, so their handler has to win. The
+// tradeoff is that a caller's broad handler can shadow a builtin; that is their
+// stated preference and it is visible in their own config.
 export function mergeErrorHandlers(
 	builtin: CorsairErrorHandler,
 	user: CorsairErrorHandler | undefined,
 ): CorsairErrorHandler {
 	if (!user) return builtin;
-	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
 	const { DEFAULT: userDefault, ...userRest } = user;
+	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
+	const merged: CorsairErrorHandler = { ...userRest };
+	for (const [name, entry] of Object.entries(builtinRest)) {
+		if (!(name in merged)) merged[name] = entry;
+	}
 	const fallback = userDefault ?? builtinDefault;
-	return fallback
-		? { ...builtinRest, ...userRest, DEFAULT: fallback }
-		: { ...builtinRest, ...userRest };
+	if (fallback) merged.DEFAULT = fallback;
+	return merged;
 }

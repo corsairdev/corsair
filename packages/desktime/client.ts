@@ -44,6 +44,8 @@ export class DeskTimeAPIError extends Error {
 	readonly isRateLimit: boolean;
 	/** True when the request is safe to repeat without duplicating an effect. */
 	readonly replaySafe: boolean;
+	/** True when the request never reached DeskTime: a reset, DNS or abort. */
+	readonly transport: boolean;
 
 	constructor(
 		message: string,
@@ -52,6 +54,7 @@ export class DeskTimeAPIError extends Error {
 			status?: number;
 			retryAfter?: number;
 			replaySafe?: boolean;
+			transport?: boolean;
 			cause?: Error;
 		} = {},
 	) {
@@ -60,6 +63,7 @@ export class DeskTimeAPIError extends Error {
 		this.code = options.code;
 		this.status = options.status;
 		this.retryAfter = options.retryAfter;
+		this.transport = options.transport ?? false;
 		// Every operation in this plugin is a GET that changes nothing, so a
 		// replay can never duplicate a write.
 		this.replaySafe = options.replaySafe ?? true;
@@ -141,7 +145,13 @@ export async function makeDeskTimeRequest(
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
-			throw new DeskTimeAPIError(error.message, { cause: error });
+			// No HTTP status means the request never got an answer: a reset, DNS
+			// failure or abort. Nothing reached DeskTime, so the call cannot have
+			// had an effect and is safe to repeat.
+			throw new DeskTimeAPIError(error.message, {
+				transport: true,
+				cause: error,
+			});
 		}
 		throw new DeskTimeAPIError('Unknown DeskTime error');
 	}
