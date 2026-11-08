@@ -21,9 +21,11 @@ import {
 } from './test-fixtures';
 
 describe('auth.check', () => {
-	it('reads the school the key belongs to', () => {
+	it('reads the school the key belongs to, keyed as schoolId', () => {
+		// The spec documents no response for this route; the live field is schoolId.
 		const output = Outputs.authCheck.parse(AUTH_CHECK_BODY);
-		expect(output.id).toBe('school-1');
+		expect(output.schoolId).toBe('8PQuQExdc4cPIMsJNoFW');
+		expect(output.name).toBe('test');
 	});
 });
 
@@ -33,6 +35,20 @@ describe('catalog reads', () => {
 		const output = Outputs.offersList.parse(OFFERS_BODY);
 		expect(output).toHaveLength(1);
 		expect(output[0]?.hasCourseIds).toEqual(['course-1']);
+	});
+
+	it('offers.list reads the fields the spec omits', () => {
+		const output = Outputs.offersList.parse(OFFERS_BODY);
+		expect(output[0]?.allCourses).toBe(false);
+		expect(output[0]?.priority).toBe(0);
+		expect(output[0]?.internal).toBe(false);
+	});
+
+	it('offers.list keeps an unknown extra field rather than failing', () => {
+		const output = Outputs.offersList.parse([
+			{ id: 'o', name: 'n', brandNewField: 'x' },
+		]);
+		expect(output[0]).toMatchObject({ brandNewField: 'x' });
 	});
 
 	it('courses.list reads the data envelope', () => {

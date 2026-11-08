@@ -59,7 +59,7 @@ describe('retry behaviour', () => {
 			await jest.advanceTimersByTimeAsync(61_000);
 			const result = await pending;
 
-			expect(result.id).toBe('school-1');
+			expect(result.schoolId).toBe('8PQuQExdc4cPIMsJNoFW');
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();

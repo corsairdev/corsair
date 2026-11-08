@@ -5,9 +5,13 @@
  * missing key and 401 for an invalid one.
  */
 
+/**
+ * `/api-auth` has no response schema in the spec, so this is the live shape.
+ * The field is `schoolId`, not `id`.
+ */
 export const AUTH_CHECK_BODY = {
-	id: 'school-1',
-	name: 'Acme Academy',
+	schoolId: '8PQuQExdc4cPIMsJNoFW',
+	name: 'test',
 };
 
 export const USER = {
@@ -31,8 +35,21 @@ export const USERS_LIST_LAST_PAGE_BODY = {
 	data: [USER],
 };
 
+/** The live offer carries eleven fields; the spec listed three. */
 export const OFFERS_BODY = [
-	{ id: 'offer-1', name: 'Pro membership', hasCourseIds: ['course-1'] },
+	{
+		id: '6af066fe007fac5285648dc8',
+		name: 'Pro membership',
+		hasCourseIds: ['course-1'],
+		priority: 0,
+		allCourses: false,
+		schoolId: '8PQuQExdc4cPIMsJNoFW',
+		updatedAt: '2026-11-08T12:11:42.448Z',
+		hasSpaceIds: [],
+		internal: false,
+		pageIds: [],
+		portalIds: [],
+	},
 ];
 
 export const COURSES_BODY = {
