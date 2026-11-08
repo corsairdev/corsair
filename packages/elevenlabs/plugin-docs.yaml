@@ -1,0 +1,154 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: ElevenLabs
+description: AI audio platform; generate speech, dialogue, sound effects and music, transcribe and align audio, change or isolate voices, dub video, manage voices and history, and run conversational agents.
+domain: elevenlabs.io
+overviewNote: |
+  Audio comes back as base64 in `contentBase64`, with `contentType`, `byteLength` and what ElevenLabs reports in its headers: `requestId`, `traceId`, `characterCost` (credits charged) and `historyItemId` (`songId` on music). Base64 is expensive in an agent's context, so speech operations (`textToSpeech`, `textToDialogue`, `voiceChanger`) take `includeContent: false` to leave it out, and leave it out on their own above `maxBytes` (default 700000 bytes, about 40 s of 128 kbps mp3, which fits a script result on Corsair's cloud). `contentOmitted` then says why and `note` says how to get it: `history.getAudio({ historyItemId })`. The history item can take a few seconds to appear after the audio returns.
+
+  Sound effects, music, stems and isolation have no history item, so ElevenLabs keeps no copy. Their output always comes back in the result, up to 50 MB; don't return it from a script on Corsair's cloud unless it fits the script's 1 MB result, and pass it to the next operation instead. Pick a small `outputFormat` such as `mp3_22050_32` when you can.
+
+  Calls here wait for the audio. A script on Corsair's cloud has about 20 s, and only jobs outlast that, so keep generation short there: a few paragraphs of speech with a fast model, a few seconds of music. Long music, stems and isolation can run past it, and a run cut off that way may still finish and bill. `dubbing.create` is the one long operation with a job: follow it with `dubbing.get`, or let `get_job` do it. Transcripts of long files can use `speechToText.convert({ webhook: true })`.
+
+  ElevenLabs has no idempotency keys, so a repeated generation bills again. The plugin retries a generation only when ElevenLabs refused it before running it (429 `rate_limit_exceeded`, `concurrent_limit_exceeded` or `system_busy`, waiting as `Retry-After` says), never on a 5xx, a timeout or a network failure. Reads also retry on 5xx.
+
+  Not covered, on purpose: Studio and projects, professional voice training, instant voice cloning from files (consent and verification concerns), websockets, realtime and Speech Engine, streaming variants (an operation returns one value), phone numbers and outbound calls, workspace admin, SMB, and Flows.
+examples:
+  read:
+    path: voices.list
+    title: Find a voice
+    args:
+      search: narrator
+      pageSize: 5
+  write:
+    path: textToSpeech.convert
+    title: Speak a sentence
+    args:
+      voiceId: FGY2WhTYpPnrIDTdsKH5
+      text: Your order has shipped.
+      modelId: eleven_flash_v2_5
+      outputFormat: mp3_22050_32
+exampleWebhook:
+  path: speechToText.transcriptionCompleted
+  note: Create a webhook in ElevenLabs under Developers, Webhooks, with HMAC auth, and save the secret it shows you as the account's `webhook_signature` (or pass `webhookSecret`); deliveries are refused until it is set. Tick the events you want, and select the webhook in the agent's settings for post-call events. Hand `processWebhook` the raw body text (`await request.text()`), not parsed JSON, because ElevenLabs signs the exact bytes it sent. Deliveries name no account, so with several tenants put `?tenantId=<id>` on the webhook URL.
+  after: "if (result.data?.type === 'speech_to_text_transcription') console.log(result.data.data?.request_id, result.data.data?.transcription?.text);"
+apiNotes:
+  textToSpeech.convert: Spends credits by text length (`characterCost` says how many). The history item keeps its own stored format, so `history.getAudio` can return a different bitrate from `outputFormat`.
+  textToSpeech.convertWithTimestamps: Same audio fields as `textToSpeech.convert`, plus `alignment` and `normalized_alignment`.
+  speechToText.convert: Pass `fileBase64` or `sourceUrl`. With `webhook` true it returns `request_id` and `transcription_id` at once and delivers to the workspace's speech-to-text webhooks, which must exist first. `speechToText.getTranscript` answers 404 until the transcript is ready, the same as for a wrong id, which is why this isn't declared as a job.
+  audioIsolation.isolate: ElevenLabs refuses audio under about 4.6 s. No history item, so the output always comes back in the result.
+  music.compose: Pass `prompt` or `compositionPlan`. Defaults to music_v2_5, because the API's own default, music_v1, is removed on 2027-01-31. No `characterCost` header; `account.usageStats` has the cost.
+  music.plan: The API's schema allows `chunks` or `sections` in a plan; music_v2_5 answered with `chunks` in our test. Pass the plan back to `music.compose` as `compositionPlan`.
+  music.separateStems: Returns a zip with one file per stem. No `characterCost` header; `account.usageStats` has the cost.
+  soundEffects.generate: Defaults to eleven_text_to_sound_v3, because the API's own default, eleven_text_to_sound_v2, is removed on 2027-03-01.
+  voices.delete: Works on your own voices and library copies. It can't be undone.
+  voiceDesign.create: Needs a free voice slot; over `voice_limit` (see `account.subscription`) ElevenLabs answers 400.
+  voiceDesign.design: Costs more than most operations (about 200 credits in our test) whatever the text length, because it generates three previews. Set `includeAudio` false to keep only the ids and durations.
+  voiceDesign.remix: Only works on your own custom voices. It makes previews and leaves the source voice as it is. Costs about 350 credits in our test.
+  dubbing.create: Returns at once. Follow `dubbing_id` with `dubbing.get` until `status` is `dubbed` or `failed`. By default dubbing clones the speakers it hears; set `disableVoiceCloning` true to use library voices instead.
+  dubbing.getAudio: Audio or video, per `contentType`. Subject to `maxBytes`, so raise it for anything long.
+  history.list: Deleted items still count toward a page, so a page can be short or even empty while `has_more` is true. Keep going with `last_history_item_id` until `has_more` is false.
+  history.getAudio: Subject to `maxBytes` (default 700000 bytes), so raise it for anything long. A new item can take a few seconds to appear, and reading it before then answers 400.
+  account.user: The API reports the key (or part of it) here, and those fields are removed from the result.
+  account.usageStats: For workspaces billed in credits. One billed by cost gets a 400 naming a different report.
+  agents.create: "`conversationConfig` keeps the API's field names and is passed through as sent. An empty agent is fine; `agent.prompt.prompt` and `agent.first_message` are the usual place to start."
+  agents.signedUrl: The URL lets a client talk to the agent, and that conversation spends credits. Treat it as a secret. This plugin doesn't hold the conversation itself.
+  singleUseTokens.create: Works once and expires after 15 minutes. Treat it as a secret until it's used.
+apiExamples:
+  textToSpeech.convert:
+    call: "{ voiceId: 'FGY2WhTYpPnrIDTdsKH5', text: 'Your order has shipped.', modelId: 'eleven_flash_v2_5', outputFormat: 'mp3_22050_32' }"
+  textToSpeech.convertWithTimestamps:
+    call: "{ voiceId: 'FGY2WhTYpPnrIDTdsKH5', text: 'Hi there.', modelId: 'eleven_flash_v2_5' }"
+  textToDialogue.convert:
+    call: "{ inputs: [{ text: 'Are you ready?', voiceId: 'FGY2WhTYpPnrIDTdsKH5' }, { text: 'Always.', voiceId: 'JBFqnCBsd6RMkjVDRZzb' }], outputFormat: 'mp3_22050_32' }"
+  speechToText.convert:
+    call: "{ sourceUrl: 'https://example.com/call.mp3', diarize: true }"
+  speechToText.getTranscript:
+    call: "{ transcriptionId: '<transcription id>' }"
+  speechToText.deleteTranscript:
+    call: "{ transcriptionId: '<transcription id>' }"
+  forcedAlignment.create:
+    call: "{ fileBase64: '<base64 audio>', fileName: 'line.mp3', contentType: 'audio/mpeg', text: 'Hello from Corsair.' }"
+  soundEffects.generate:
+    call: "{ text: 'a door creaking open', durationSeconds: 2, outputFormat: 'mp3_22050_32' }"
+  music.compose:
+    call: "{ prompt: 'a calm piano loop', musicLengthMs: 10000, forceInstrumental: true, outputFormat: 'mp3_22050_32' }"
+  music.plan:
+    call: "{ prompt: 'an upbeat jingle', musicLengthMs: 15000 }"
+  music.separateStems:
+    call: "{ fileBase64: '<base64 song>', fileName: 'song.mp3', stemVariationId: 'two_stems_v1' }"
+  audioIsolation.isolate:
+    call: "{ fileBase64: '<base64 audio>', fileName: 'noisy.mp3', contentType: 'audio/mpeg' }"
+  voiceChanger.convert:
+    call: "{ voiceId: 'JBFqnCBsd6RMkjVDRZzb', fileBase64: '<base64 audio>', modelId: 'eleven_multilingual_sts_v2' }"
+  voices.list:
+    call: "{ search: 'narrator', pageSize: 10 }"
+  voices.get:
+    call: "{ voiceId: 'FGY2WhTYpPnrIDTdsKH5' }"
+  voices.searchLibrary:
+    call: "{ search: 'calm narrator', language: 'en', pageSize: 10 }"
+  voices.addFromLibrary:
+    call: "{ publicUserId: '<public_owner_id>', voiceId: '<voice id>', newName: 'Narrator' }"
+  voices.edit:
+    call: "{ voiceId: '<voice id>', name: 'Narrator', description: 'For product videos' }"
+  voices.delete:
+    call: "{ voiceId: '<voice id>' }"
+  voices.getSettings:
+    call: "{ voiceId: 'FGY2WhTYpPnrIDTdsKH5' }"
+  voices.editSettings:
+    call: "{ voiceId: '<voice id>', settings: { stability: 0.4, similarity_boost: 0.7 } }"
+  voices.defaultSettings:
+    call: "{}"
+  voiceDesign.design:
+    call: "{ voiceDescription: 'A calm middle-aged narrator with a warm low voice.', autoGenerateText: true, outputFormat: 'mp3_22050_32', includeAudio: false }"
+  voiceDesign.create:
+    call: "{ voiceName: 'Narrator', voiceDescription: 'A calm middle-aged narrator with a warm low voice.', generatedVoiceId: '<generated_voice_id>' }"
+  voiceDesign.remix:
+    call: "{ voiceId: '<your voice id>', voiceDescription: 'A little brighter.', autoGenerateText: true, includeAudio: false }"
+  dubbing.create:
+    call: "{ sourceUrl: 'https://example.com/clip.mp4', targetLang: 'es', watermark: true }"
+  dubbing.get:
+    call: "{ dubbingId: '<dubbing id>' }"
+  dubbing.list:
+    call: "{ pageSize: 20, dubbingStatus: 'dubbed' }"
+  dubbing.delete:
+    call: "{ dubbingId: '<dubbing id>' }"
+  dubbing.getAudio:
+    call: "{ dubbingId: '<dubbing id>', languageCode: 'es', maxBytes: 10000000 }"
+  dubbing.getTranscript:
+    call: "{ dubbingId: '<dubbing id>', languageCode: 'es', formatType: 'srt' }"
+  history.list:
+    call: "{ pageSize: 20, source: 'TTS' }"
+  history.get:
+    call: "{ historyItemId: '<history item id>' }"
+  history.getAudio:
+    call: "{ historyItemId: '<history item id>', maxBytes: 5000000 }"
+  history.delete:
+    call: "{ historyItemId: '<history item id>' }"
+  models.list:
+    call: "{}"
+  account.user:
+    call: "{}"
+  account.subscription:
+    call: "{}"
+  account.usageStats:
+    call: "{ startTime: 1793750400000, endTime: 1794355200000, groupBy: ['product_type'] }"
+  agents.list:
+    call: "{ pageSize: 20, search: 'support' }"
+  agents.get:
+    call: "{ agentId: '<agent id>' }"
+  agents.create:
+    call: "{ name: 'Support', conversationConfig: { agent: { first_message: 'Hi, how can I help?', prompt: { prompt: 'You answer questions about orders.' } } } }"
+  agents.update:
+    call: "{ agentId: '<agent id>', name: 'Support v2', tags: ['support'] }"
+  agents.delete:
+    call: "{ agentId: '<agent id>' }"
+  agents.conversationsList:
+    call: "{ agentId: '<agent id>', pageSize: 20 }"
+  agents.conversationGet:
+    call: "{ conversationId: '<conversation id>' }"
+  agents.conversationDelete:
+    call: "{ conversationId: '<conversation id>' }"
+  agents.signedUrl:
+    call: "{ agentId: '<agent id>' }"
+  singleUseTokens.create:
+    call: "{ tokenType: 'tts_websocket' }"

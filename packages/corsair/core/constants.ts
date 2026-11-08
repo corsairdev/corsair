@@ -209,11 +209,12 @@ export const BaseProviders = [
 	'dreamstudio',
 	'dripcel',
 	'dropbox',
-	'enginemailer',
 	'dropboxsign',
 	'dynapictures',
+	'elevenlabs',
 	'emailoctopus',
 	'emelia',
+	'enginemailer',
 	'enigma',
 	'epicgames',
 	'esignatures',
@@ -649,11 +650,12 @@ export const ProviderDisplayNames = {
 	dreamstudio: 'DreamStudio',
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
-	enginemailer: 'Enginemailer',
 	dropboxsign: 'Dropbox Sign',
 	dynapictures: 'Dynapictures',
+	elevenlabs: 'ElevenLabs',
 	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
+	enginemailer: 'Enginemailer',
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
 	esignatures: 'eSignatures',
@@ -1093,11 +1095,12 @@ export type AllProviders =
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
-	| 'enginemailer'
 	| 'dropboxsign'
 	| 'dynapictures'
+	| 'elevenlabs'
 	| 'emailoctopus'
 	| 'emelia'
+	| 'enginemailer'
 	| 'enigma'
 	| 'epicgames'
 	| 'esignatures'
