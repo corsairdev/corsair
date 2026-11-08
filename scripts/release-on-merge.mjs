@@ -47,9 +47,23 @@ const NOT_SHIPPED = [
 	/(^|\/)node_modules\//,
 ];
 
-/** True when a path (relative to the package) can change the published package. */
-export function isShippedPath(path) {
+// corsair/tests is a published entry point (tests.ts), and plugin tests import
+// these helpers from it, so they ship even though they live under tests/.
+export const SHIPPED_TEST_HELPERS = new Map([
+	[
+		'packages/corsair',
+		new Set([
+			'tests/index.ts',
+			'tests/plugins-test-utils.ts',
+			'tests/setup-db.ts',
+		]),
+	],
+]);
+
+/** True when a path (relative to the package in `dir`) can change the published package. */
+export function isShippedPath(path, dir) {
 	if (path === 'package.json') return true;
+	if (SHIPPED_TEST_HELPERS.get(dir)?.has(path)) return true;
 	return !NOT_SHIPPED.some((re) => re.test(path));
 }
 
@@ -201,7 +215,7 @@ function shippedChanges(cwd, base, dir) {
 		.filter(Boolean)
 		.map((f) => f.slice(dir.length + 1));
 	return changed.filter((f) => {
-		if (!isShippedPath(f)) return false;
+		if (!isShippedPath(f, dir)) return false;
 		if (f !== 'package.json') return true;
 		const before = tryGit(cwd, ['show', `${base}:${dir}/package.json`]);
 		const after = readFileSync(join(cwd, dir, 'package.json'), 'utf-8');

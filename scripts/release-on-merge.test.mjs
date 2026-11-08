@@ -18,6 +18,7 @@ import {
 	nextPatch,
 	packageJsonChanged,
 	planRelease,
+	SHIPPED_TEST_HELPERS,
 	topLevelVersionRange,
 } from './release-on-merge.mjs';
 
@@ -31,6 +32,26 @@ describe('isShippedPath', () => {
 		]) {
 			assert.equal(isShippedPath(p), true, p);
 		}
+	});
+	it('counts the helpers corsair/tests publishes, and only in corsair', () => {
+		assert.equal(isShippedPath('tests/setup-db.ts', 'packages/corsair'), true);
+		assert.equal(
+			isShippedPath('tests/connect-link.test.ts', 'packages/corsair'),
+			false,
+		);
+		assert.equal(isShippedPath('tests/setup-db.ts', 'packages/gmail'), false);
+	});
+	it('lists every file corsair/tests exports', () => {
+		const index = readFileSync(
+			new URL('../packages/corsair/tests/index.ts', import.meta.url),
+			'utf-8',
+		);
+		const exported = [...index.matchAll(/from '\.\/([^']+)'/g)].map(
+			(m) => `tests/${m[1]}.ts`,
+		);
+		assert.ok(exported.length > 0);
+		const listed = SHIPPED_TEST_HELPERS.get('packages/corsair');
+		for (const file of exported) assert.ok(listed.has(file), file);
 	});
 	it('ignores tests, docs and test config', () => {
 		for (const p of [
