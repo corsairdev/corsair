@@ -848,7 +848,7 @@ List the states an issue can move to from its current one
 **Risk:** `read`
 
 ```ts
-await corsair.leiga.api.workflows.nextStates({ projectId: 123456, workflowId: 4321 });
+await corsair.leiga.api.workflows.nextStates({ projectId: 123456, stateId: 213980052, defId: 213980057 });
 ```
 
 **Input**
@@ -859,7 +859,7 @@ await corsair.leiga.api.workflows.nextStates({ projectId: 123456, workflowId: 43
 | `stateId` | `number` | Yes | Current state id, from a workflow states entry |
 | `defId` | `number` | Yes | Workflow definition id, the workflow itself |
 
-Lists the states reachable from the issue's current workflow step.
+Needs all three of `projectId`, `stateId` and `defId`: Leiga answers a bare state id with `code 100 "defId should not be null"` on HTTP 200. `defId` is the workflow id, which `issues.types` reports as `workflowId`, and `stateId` is one of that workflow's `states` entries.
 
 
 

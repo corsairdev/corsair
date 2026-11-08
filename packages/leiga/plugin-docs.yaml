@@ -50,7 +50,7 @@ apiExamples:
   workflows.list:
     call: "{ projectId: 123456 }"
   workflows.nextStates:
-    call: "{ projectId: 123456, workflowId: 4321 }"
+    call: "{ projectId: 123456, stateId: 213980052, defId: 213980057 }"
   tags.list:
     call: "{ projectId: 123456 }"
   members.list:
@@ -81,7 +81,7 @@ apiNotes:
   workflows.list: |
     A POST with `projectId` in the body, listing the workflow steps a project uses.
   workflows.nextStates: |
-    Lists the states reachable from the issue's current workflow step.
+    Needs all three of `projectId`, `stateId` and `defId`: Leiga answers a bare state id with `code 100 "defId should not be null"` on HTTP 200. `defId` is the workflow id, which `issues.types` reports as `workflowId`, and `stateId` is one of that workflow's `states` entries.
   tags.list: |
     A POST with `projectId` in the body, answering a bare array of `{ id, tagName }`.
   members.list: |
