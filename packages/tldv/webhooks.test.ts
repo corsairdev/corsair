@@ -1,4 +1,10 @@
+jest.mock('corsair/core', () => {
+	const actual = jest.requireActual('corsair/core');
+	return { ...actual, logEventFromContext: jest.fn().mockResolvedValue('evt') };
+});
+
 import type { WebhookRequest } from 'corsair/core';
+import { logEventFromContext } from 'corsair/core';
 import { tldv } from './index';
 import {
 	meetingReadyEvent,
@@ -18,6 +24,8 @@ import {
 
 const SECRET = 'tldv-webhook-test-secret';
 
+// unknown: the helper signs whatever body a test passes, including deliberately
+// malformed payloads no schema would accept, so the payload stays untyped.
 function request(
 	payload: unknown,
 	secret: string | null = SECRET,
@@ -187,6 +195,45 @@ describe('tl;dv webhook handlers', () => {
 				request({ id: 'x', event: 'TranscriptReady' }) as never,
 			),
 		).rejects.toThrow(/Invalid tl;dv TranscriptReady payload/);
+	});
+
+	it('logs no transcript when the key is absent', async () => {
+		// `include.transcript` off leaves the key out entirely, and an absent key
+		// must not read as a present transcript.
+		const logSpy = jest.mocked(logEventFromContext);
+		logSpy.mockClear();
+
+		await plugin.webhooks!.meetings.meetingReady.handler(
+			{ key: SECRET } as never,
+			request(meetingReadyWithoutTranscript) as never,
+		);
+
+		const fields = logSpy.mock.calls[0]?.[2];
+		expect(fields).toMatchObject({ hasTranscript: false });
+	});
+
+	it('logs no transcript when the key is explicitly null', async () => {
+		const logSpy = jest.mocked(logEventFromContext);
+		logSpy.mockClear();
+
+		await plugin.webhooks!.meetings.meetingReady.handler(
+			{ key: SECRET } as never,
+			request(meetingReadyNullTranscript) as never,
+		);
+
+		expect(logSpy.mock.calls[0]?.[2]).toMatchObject({ hasTranscript: false });
+	});
+
+	it('logs a present transcript when the key carries sentences', async () => {
+		const logSpy = jest.mocked(logEventFromContext);
+		logSpy.mockClear();
+
+		await plugin.webhooks!.meetings.meetingReady.handler(
+			{ key: SECRET } as never,
+			request(meetingReadyEvent) as never,
+		);
+
+		expect(logSpy.mock.calls[0]?.[2]).toMatchObject({ hasTranscript: true });
 	});
 });
 

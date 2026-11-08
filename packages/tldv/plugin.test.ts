@@ -21,6 +21,16 @@ const WEBHOOKS = [
  */
 type NestedMap = Record<string, Record<string, unknown>>;
 
+/**
+ * `endpointMeta`, `endpoints` and `webhooks` are typed as optionals on
+ * `CorsairPlugin`, so the assertions below widen them one cast at a time.
+ * unknown: only their keys are walked or their risk fields read, so typing each
+ * leaf precisely would mean restating the whole plugin surface in the test.
+ */
+function asNested(value: unknown): NestedMap {
+	return value as NestedMap;
+}
+
 function flatten(tree: NestedMap): string[] {
 	const paths: string[] = [];
 	for (const [group, members] of Object.entries(tree)) {
@@ -31,6 +41,7 @@ function flatten(tree: NestedMap): string[] {
 
 describe('tldv plugin definition', () => {
 	const plugin = tldv();
+	// unknown: same widening as `asNested`, for the meta map.
 	const meta = plugin.endpointMeta as unknown as Record<
 		string,
 		{ riskLevel: string; description: string; irreversible?: boolean }
@@ -48,15 +59,11 @@ describe('tldv plugin definition', () => {
 	});
 
 	it('registers exactly the six operations', () => {
-		expect(flatten(plugin.endpoints as unknown as NestedMap)).toEqual([
-			...OPERATIONS,
-		]);
+		expect(flatten(asNested(plugin.endpoints))).toEqual([...OPERATIONS]);
 	});
 
 	it('registers exactly the two webhook triggers', () => {
-		expect(flatten(plugin.webhooks as unknown as NestedMap)).toEqual([
-			...WEBHOOKS,
-		]);
+		expect(flatten(asNested(plugin.webhooks))).toEqual([...WEBHOOKS]);
 	});
 
 	it('accepts every delivery at the plugin level', () => {
