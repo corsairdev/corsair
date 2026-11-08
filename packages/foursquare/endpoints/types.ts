@@ -180,6 +180,12 @@ const PlacesSearchInputSchema = z.object({
 		.array(z.string())
 		.optional()
 		.describe('Response fields; all Pro fields when omitted'),
+	cursor: z
+		.string()
+		.optional()
+		.describe(
+			'Next-page cursor from a previous response. Omit it for the first page',
+		),
 	limit: z
 		.number()
 		.int()
@@ -209,6 +215,15 @@ const PlacesSearchResponseSchema = z
 			})
 			.loose()
 			.nullish(),
+		/**
+		 * Cursor for the next page, parsed from Foursquare's `link` response
+		 * header. Absent on the last page. Pass it back as `cursor` to continue
+		 * the same search.
+		 */
+		nextCursor: z
+			.string()
+			.nullish()
+			.describe('Pass this back as cursor to fetch the next page'),
 	})
 	.loose();
 

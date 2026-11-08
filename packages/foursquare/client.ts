@@ -157,22 +157,135 @@ export async function makeFoursquareRequest(
 			rateLimitConfig: FOURSQUARE_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof FoursquareAPIError) throw error;
-		if (error instanceof ApiError) {
-			throw new FoursquareAPIError(
-				describeFoursquareError(error.status, error.body, error.message),
-				{
-					cause: error,
-					status: error.status,
-					retryAfter: error.retryAfter,
-					method,
-				},
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new FoursquareAPIError(error.message, { cause: error, method });
-		}
-		throw new FoursquareAPIError('Unknown Foursquare error', { method });
+		throw toFoursquareError(error, method);
 	}
+}
+
+/** Normalises anything thrown during a request into a `FoursquareAPIError`. */
+function toFoursquareError(error: unknown, method: string): FoursquareAPIError {
+	if (error instanceof FoursquareAPIError) return error;
+	if (error instanceof ApiError) {
+		return new FoursquareAPIError(
+			describeFoursquareError(error.status, error.body, error.message),
+			{
+				cause: error,
+				status: error.status,
+				retryAfter: error.retryAfter,
+				method,
+			},
+		);
+	}
+	// DOMException (fetch timeouts) can fail instanceof Error across realms.
+	if (error instanceof Error || error instanceof DOMException) {
+		return new FoursquareAPIError(error.message, { cause: error, method });
+	}
+	return new FoursquareAPIError('Unknown Foursquare error', { method });
+}
+
+/** The next-page cursor parsed out of Foursquare's `link` response header. */
+export type FoursquarePage<T> = {
+	body: T;
+	/**
+	 * The `cursor` from the `link: <...?cursor=...>; rel="next"` header, or
+	 * undefined on the last page.
+	 */
+	nextCursor?: string;
+};
+
+/**
+ * Extracts the cursor from a `link` header. The header looks like
+ * `<https://places-api.foursquare.com/places/search?limit=3&near=...&cursor=c3I6Mw>; rel="next"`.
+ * Verified live against the real API.
+ */
+export function cursorFromLinkHeader(
+	link: string | null | undefined,
+): string | undefined {
+	if (!link) return undefined;
+	const match = link.match(/[?&]cursor=([^&>\s]+)/);
+	if (!match?.[1]) return undefined;
+	try {
+		return decodeURIComponent(match[1]);
+	} catch {
+		return match[1];
+	}
+}
+
+/**
+ * Fetches a page together with its next cursor.
+ *
+ * `corsair/http` cannot serve this: `ApiResult.body` is
+ * `responseHeader ?? responseBody`, so reading a header discards the body, and
+ * its `fetch` call sets no `redirect` option. Pagination needs both, so this
+ * makes the request directly with the same config the shared client builds.
+ *
+ * Errors are normalised to `FoursquareAPIError`, which is what the plugin's
+ * error handlers match on, so retries and rate-limit policy behave exactly as
+ * they do for every other operation.
+ */
+export async function makeFoursquarePageRequest<T>(
+	apiKey: string,
+	{
+		path,
+		query,
+	}: {
+		path: string;
+		query?: Record<string, string | number | boolean | undefined>;
+	},
+	parse: (body: unknown) => T,
+): Promise<FoursquarePage<T>> {
+	const config = configWith(apiKey);
+	const url = new URL(`${config.BASE}${path}`);
+	for (const [key, value] of Object.entries(query ?? {})) {
+		if (value !== undefined) url.searchParams.set(key, String(value));
+	}
+
+	const headers: Record<string, string> = { ...config.HEADERS };
+	const response = await fetch(url, {
+		method: 'GET',
+		headers,
+		signal: AbortSignal.timeout(config.TIMEOUT ?? 20_000),
+	}).catch((error: unknown) => {
+		throw toFoursquareError(error, 'GET');
+	});
+
+	const text = await response.text();
+	// unknown: the body is untyped until the caller's output schema parses it.
+	let body: unknown;
+	try {
+		body = text.length > 0 ? JSON.parse(text) : {};
+	} catch {
+		body = text;
+	}
+
+	if (!response.ok) {
+		throw toFoursquareError(
+			new ApiError(
+				{ method: 'GET', url: `${url.pathname}${url.search}` },
+				{
+					url: url.toString(),
+					ok: false,
+					status: response.status,
+					statusText: response.statusText,
+					body,
+				},
+				describeFoursquareError(response.status, body, response.statusText),
+				{ retryAfter: parseRetryAfter(response.headers.get('retry-after')) },
+			),
+			'GET',
+		);
+	}
+
+	return {
+		body: parse(body),
+		nextCursor: cursorFromLinkHeader(response.headers.get('link')),
+	};
+}
+
+/** Reads a `Retry-After` header as milliseconds. */
+function parseRetryAfter(value: string | null): number | undefined {
+	if (!value) return undefined;
+	const seconds = Number(value);
+	if (Number.isFinite(seconds)) return Math.round(seconds * 1000);
+	const date = Date.parse(value);
+	return Number.isNaN(date) ? undefined : Math.max(0, date - Date.now());
 }

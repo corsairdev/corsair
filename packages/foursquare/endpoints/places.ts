@@ -1,66 +1,62 @@
+import { logEventFromContext } from 'corsair/core';
 import type { FoursquareEndpoints } from '..';
+import { makeFoursquarePageRequest } from '../client';
 import { call, csv, fieldsWith, queryOf } from './call';
 import {
 	FoursquareEndpointInputSchemas as Inputs,
 	FoursquareEndpointOutputSchemas as Outputs,
 } from './types';
 
-export const search: FoursquareEndpoints['placesSearch'] = (ctx, input) =>
-	call(
-		ctx,
+export const search: FoursquareEndpoints['placesSearch'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = Inputs.placesSearch.parse(input ?? {});
+	const { body, nextCursor } = await makeFoursquarePageRequest(
+		ctx.key,
 		{
-			event: 'places.search',
-			input: Inputs.placesSearch,
-			output: Outputs.placesSearch,
-		},
-		input,
-		({
-			query,
-			ll,
-			near,
-			ne,
-			sw,
-			radius,
-			fsq_category_ids,
-			fsq_chain_ids,
-			exclude_fsq_chain_ids,
-			exclude_all_chains,
-			min_price,
-			max_price,
-			open_now,
-			open_at,
-			sort,
-			tel_format,
-			fields,
-			limit,
-		}) => ({
-			method: 'GET',
 			path: '/places/search',
 			query: queryOf({
-				query,
-				ll,
-				near,
-				ne,
-				sw,
-				radius,
-				fsq_category_ids: csv(fsq_category_ids),
-				fsq_chain_ids: csv(fsq_chain_ids),
-				exclude_fsq_chain_ids: csv(exclude_fsq_chain_ids),
-				exclude_all_chains,
-				min_price,
-				max_price,
-				open_now,
-				open_at,
-				sort,
-				tel_format,
-				fields: fieldsWith(fields, ['fsq_place_id']),
-				limit,
+				query: parsed.query,
+				ll: parsed.ll,
+				near: parsed.near,
+				ne: parsed.ne,
+				sw: parsed.sw,
+				radius: parsed.radius,
+				fsq_category_ids: csv(parsed.fsq_category_ids),
+				fsq_chain_ids: csv(parsed.fsq_chain_ids),
+				exclude_fsq_chain_ids: csv(parsed.exclude_fsq_chain_ids),
+				exclude_all_chains: parsed.exclude_all_chains,
+				min_price: parsed.min_price,
+				max_price: parsed.max_price,
+				open_now: parsed.open_now,
+				open_at: parsed.open_at,
+				sort: parsed.sort,
+				tel_format: parsed.tel_format,
+				fields: fieldsWith(parsed.fields, ['fsq_place_id']),
+				// The cursor from a previous response. Passing it back continues
+				// the same search; verified live, it returns a different page.
+				cursor: parsed.cursor,
+				limit: parsed.limit,
 			}),
-		}),
-		{
-			log: (_, result) => ({ count: result.results.length }),
 		},
+		// unknown: the raw body is validated by the output schema below.
+		(raw) => raw,
 	);
+
+	const result = Outputs.placesSearch.parse({
+		...(body as Record<string, unknown>),
+		...(nextCursor === undefined ? {} : { nextCursor }),
+	});
+
+	await logEventFromContext(
+		ctx,
+		'foursquare.places.search',
+		{ count: result.results.length, hasNextPage: nextCursor !== undefined },
+		'completed',
+	);
+	return result;
+};
 
 export const get: FoursquareEndpoints['placesGet'] = (ctx, input) =>
 	call(
