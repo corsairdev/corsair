@@ -189,12 +189,15 @@ function shippedChanges(cwd, base, dir) {
 		'diff',
 		'--no-renames',
 		'--name-only',
+		// NUL-delimited: otherwise git quotes a non-ASCII path, and the closing
+		// quote stops the suffix checks below from matching.
+		'-z',
 		base,
 		'HEAD',
 		'--',
 		dir,
 	])
-		.split('\n')
+		.split('\0')
 		.filter(Boolean)
 		.map((f) => f.slice(dir.length + 1));
 	return changed.filter((f) => {

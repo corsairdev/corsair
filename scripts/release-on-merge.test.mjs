@@ -402,6 +402,19 @@ describe('planRelease on a git repo', () => {
 		);
 	});
 
+	it('ignores a test file with a non-ASCII name', async () => {
+		pkg('packages/a', '@x/a', '0.1.0');
+		write('packages/a/index.ts', '1\n');
+		commit('release');
+		write('packages/a/caf\u00e9.test.ts', '1\n');
+		commit('add a test');
+		const plan = await planRelease({
+			cwd,
+			registry: registry({ '@x/a': { versions: ['0.1.0'] } }),
+		});
+		assert.deepEqual(plan.bumps, []);
+	});
+
 	it('releases dependents of a version raised by hand', async () => {
 		pkg('packages/core', 'core', '0.1.0');
 		pkg('packages/cli', '@x/cli', '0.1.0', {
