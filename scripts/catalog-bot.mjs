@@ -15,6 +15,7 @@
 import { execFileSync, spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 export const BOT_BRANCH = 'bot/catalog';
 export const MARKER = '<!-- corsair-catalog-bot -->';
@@ -529,7 +530,7 @@ export function publish({ cwd, plan, repo, sourceSha, log = () => {} }) {
 
 if (
 	process.argv[1] &&
-	import.meta.url === new URL(`file://${process.argv[1]}`).href
+	import.meta.url === pathToFileURL(process.argv[1]).href
 ) {
 	const [command, ...args] = process.argv.slice(2);
 	const flag = (name) => {
