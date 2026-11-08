@@ -1,0 +1,160 @@
+---
+title: Webhooks
+description: "Fluxguard incoming webhooks: event paths, payloads, and response data."
+---
+
+The Fluxguard plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/fluxguard/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `change`
+  - `detected` (`change.detected`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Change
+
+### Detected
+
+`change.detected`
+
+A monitored page changed: Fluxguard posts the captured version with references to its HTML, screenshot and diff files
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string \| null` | No | URL where the change was detected |
+| `finalUrl` | `string \| null` | No | URL after redirects |
+| `capturedAt` | `string \| null` | No | When the version was captured |
+| `comparisonType` | `string \| null` | No | HTML, visual, text or network |
+| `orgId` | `string \| null` | No | — |
+| `orgName` | `string \| null` | No | — |
+| `title` | `string \| null` | No | Title of the page |
+| `statusCode` | `number \| null` | No | — |
+| `aiFlagged` | `string \| null` | No | warning for a significant change, serenity otherwise |
+| `summary` | `string \| null` | No | AI summary of the captured version |
+| `diffSummary` | `string \| null` | No | AI summary of what changed since the previous version |
+| `diffUrl` | `string \| null` | No | Console URL for this version |
+| `fileBaseUrl` | `string \| null` | No | Prefix to append every filename under files to |
+| `site` | `object \| null` | No | — |
+| `session` | `object \| null` | No | — |
+| `page` | `object \| null` | No | — |
+| `siteCategories` | `string[] \| null` | No | Category names, e.g. ["News"] |
+| `pageCategories` | `string[] \| null` | No | Category names, e.g. ["News"] |
+| `files` | `Record<string, any> \| null` | No | — |
+| `alarms` | `Record<string, any>[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="site full type">
+
+```ts
+{
+  id?: string | null,
+  origin?: string | null,
+  nickname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="session full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  id?: string | null,
+  path?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  url?: string | null,
+  finalUrl?: string | null,
+  capturedAt?: string | null,
+  comparisonType?: string | null,
+  orgId?: string | null,
+  orgName?: string | null,
+  title?: string | null,
+  statusCode?: number | null,
+  aiFlagged?: string | null,
+  summary?: string | null,
+  diffSummary?: string | null,
+  diffUrl?: string | null,
+  fileBaseUrl?: string | null,
+  site?: {
+    id?: string | null,
+    origin?: string | null,
+    nickname?: string | null
+  } | null,
+  session?: {
+    id?: string | null,
+    name?: string | null
+  } | null,
+  page?: {
+    id?: string | null,
+    path?: string | null
+  } | null,
+  siteCategories?: string[] | null,
+  pageCategories?: string[] | null,
+  files?: Record<string, any> | null,
+  alarms?: Record<string, any>[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+fluxguard({
+    webhookHooks: {
+        change: {
+            detected: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

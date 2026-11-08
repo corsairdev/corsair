@@ -1985,6 +1985,15 @@
                 ]
               },
               {
+                "group": "Fluxguard",
+                "pages": [
+                  "plugins/fluxguard/overview",
+                  "plugins/fluxguard/api",
+                  "plugins/fluxguard/database",
+                  "plugins/fluxguard/webhooks"
+                ]
+              },
+              {
                 "group": "Follow Up Boss",
                 "pages": [
                   "plugins/followupboss/overview",
