@@ -90,8 +90,7 @@ test('sanitizeSvg drops outside URLs in any attribute, escaped or not', () => {
 	]) {
 		const result = sanitizeSvg(svg(`<path d="M0 0h4v4z" ${attr}/>`));
 		assert.equal(result.ok, true);
-		if (result.ok)
-			assert.equal(result.svg.includes('example.com'), false, attr);
+		if (result.ok) assert.doesNotMatch(result.svg, /url\(\s*['"]?https/, attr);
 	}
 });
 
@@ -293,6 +292,26 @@ test('inlineClassStyles leaves files without a stylesheet alone and refuses comp
 			css,
 		);
 	}
+});
+
+test('inlineClassStyles follows stylesheet order and refuses single quotes', () => {
+	const out = inlineClassStyles(
+		'<svg viewBox="0 0 4 4"><style>.b { fill: blue } .a { fill: red }</style><path class="a b" d="M0 0h1v1z"/></svg>',
+	);
+	assert.ok(out?.includes('fill="red"'), out ?? 'null');
+	assert.equal(out?.includes('fill="blue"'), false);
+	assert.equal(
+		inlineClassStyles(
+			'<svg viewBox="0 0 4 4"><style>.a { fill: red }</style><path class=\'a\' d="M0 0h1v1z"/></svg>',
+		),
+		null,
+	);
+	assert.equal(
+		inlineClassStyles(
+			'<svg viewBox="0 0 4 4"><style>.a { fill: red }</style><path class="a" fill=\'blue\' d="M0 0h1v1z"/></svg>',
+		),
+		null,
+	);
 });
 
 const CURATED_DIR = join(

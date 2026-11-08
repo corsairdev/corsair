@@ -300,6 +300,20 @@ export function detectTrace(svg: string): TraceCheck {
 	return { traced: reasons.length > 0, reasons };
 }
 
+/**
+ * Remove every match, repeating until none is left, so removing one match
+ * can't join the text around it into a new one (`<!<!---->--` → `<!--`).
+ */
+function removeAll(text: string, pattern: RegExp): string {
+	let previous: string;
+	let current = text;
+	do {
+		previous = current;
+		current = current.replace(pattern, '');
+	} while (current !== previous);
+	return current;
+}
+
 /** Up to three decimals, trailing zeros dropped (`12.5`, never `12.50`). */
 const formatNumber = (n: number) => String(Number(n.toFixed(3)));
 
@@ -371,9 +385,8 @@ export async function normalizeSvg(svg: string): Promise<string> {
 			'',
 		)
 		.replace(/^<svg/, '');
-	return `${svg
+	return `${removeAll(svg, /<!--[\s\S]*?-->/g)
 		.replace(open[0], `<svg viewBox="${viewBox}"${rest}`)
-		.replace(/<!--[\s\S]*?-->/g, '')
 		.replace(/\n\s*\n/g, '\n')
 		.trim()}\n`;
 }
@@ -404,9 +417,16 @@ const INLINABLE_PROPERTIES = new Set([
 export function inlineClassStyles(svg: string): string | null {
 	const styles = [...svg.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)];
 	if (styles.length === 0) return svg;
-	const rules = new Map<string, Array<[string, string]>>();
+	// Only double-quoted class and presentation attributes are rewritten
+	// below; a file quoting them otherwise is left to a person.
+	const attributeNames = ['class', ...INLINABLE_PROPERTIES].join('|');
+	if (new RegExp(`\\s(${attributeNames})\\s*=\\s*'`, 'i').test(svg))
+		return null;
+	// Rules in stylesheet order: a later rule wins over an earlier one for the
+	// same property, whatever order the element lists its classes in.
+	const rules: Array<{ name: string; props: Array<[string, string]> }> = [];
 	for (const [, css] of styles) {
-		const body = css!.replace(/\/\*[\s\S]*?\*\//g, '').trim();
+		const body = removeAll(css!, /\/\*[\s\S]*?\*\//g).trim();
 		if (/[@\\]|url\(/i.test(body)) return null;
 		for (const rule of body.split('}')) {
 			if (!rule.trim()) continue;
@@ -429,19 +449,20 @@ export function inlineClassStyles(svg: string): string | null {
 			for (const selector of selectors!.split(',')) {
 				const name = selector.trim().match(/^\.([\w-]+)$/)?.[1];
 				if (!name) return null;
-				rules.set(name, [...(rules.get(name) ?? []), ...props]);
+				rules.push({ name, props });
 			}
 		}
 	}
-	return svg
-		.replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '')
+	return removeAll(svg, /<style\b[^>]*>[\s\S]*?<\/style>/gi)
 		.replace(/<defs>\s*<\/defs>/g, '')
 		.replace(
 			/<([a-zA-Z]+)\b([^>]*?)\sclass="([^"]*)"([^>]*)>/g,
 			(_m, tag, before, classes, after) => {
+				const names = new Set(String(classes).trim().split(/\s+/));
 				let attrs = `${before}${after}`;
-				for (const name of String(classes).split(/\s+/)) {
-					for (const [prop, value] of rules.get(name) ?? []) {
+				for (const rule of rules) {
+					if (!names.has(rule.name)) continue;
+					for (const [prop, value] of rule.props) {
 						// A stylesheet rule beats a presentation attribute, so it replaces one.
 						attrs = attrs.replace(new RegExp(`\\s${prop}="[^"]*"`), '');
 						attrs = attrs.replace(/\s*(\/?)$/, ` ${prop}="${value}"$1`);
