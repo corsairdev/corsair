@@ -10,6 +10,7 @@ Find your API key at https://desktime.com/app/api, under Settings, API. The same
 Things to know before you call:
 
 - **Every operation reads.** DeskTime's v2 API has no write surface at all, so nothing here can change an account. All seven operations are `read` and none is irreversible.
+- **Every call needs a saved key.** `ping` is served openly by DeskTime, but the Corsair runtime resolves the account key before any endpoint runs, so a call without one raises `AuthMissingError` like the rest.
 - **The API returns mixed field casing.** `groupId` and `onlineTime` are camelCase while `work_starts` and `notes` are snake_case, and this plugin keeps the names exactly as sent.
 - **`arrived`, `left`, `work_starts` and `work_ends` are timestamps or the boolean `false`.** The help-center examples only show the timestamp form, so a schema that assumes a string rejects every response for an employee who has not clocked in yet.
 - **A bad date or period is ignored, not rejected.** DeskTime answers with today's data instead of an error, so this plugin validates both before sending. Dates must be real calendar days, not just the right shape.
@@ -79,7 +80,9 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 No setup needed up front. A call made with no saved key throws `AuthMissingError`, which may carry a `connectUrl` where the key can be entered, or you can save one yourself:
 
 ```ts
-desktime()
+// Pass the key directly, or save it per tenant and let the plugin read it.
+const client = desktime({ key: process.env.DESKTIME_API_KEY });
+await corsair.desktime.keys.set_api_key('the-key');
 ```
 
 More: [API Key](/concepts/api-key)
@@ -106,7 +109,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**List a week of tracked time**
+**List one day of tracked time**
 
 ```ts
 const tenant = corsair.withTenant('acme');

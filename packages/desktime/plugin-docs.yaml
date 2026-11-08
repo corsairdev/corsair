@@ -8,6 +8,7 @@ overviewNote: |
   Things to know before you call:
 
   - **Every operation reads.** DeskTime's v2 API has no write surface at all, so nothing here can change an account. All seven operations are `read` and none is irreversible.
+  - **Every call needs a saved key.** `ping` is served openly by DeskTime, but the Corsair runtime resolves the account key before any endpoint runs, so a call without one raises `AuthMissingError` like the rest.
   - **The API returns mixed field casing.** `groupId` and `onlineTime` are camelCase while `work_starts` and `notes` are snake_case, and this plugin keeps the names exactly as sent.
   - **`arrived`, `left`, `work_starts` and `work_ends` are timestamps or the boolean `false`.** The help-center examples only show the timestamp form, so a schema that assumes a string rejects every response for an employee who has not clocked in yet.
   - **A bad date or period is ignored, not rejected.** DeskTime answers with today's data instead of an error, so this plugin validates both before sending. Dates must be real calendar days, not just the right shape.
@@ -18,9 +19,10 @@ overviewNote: |
 examples:
   read:
     path: employees.list
-    title: List a week of tracked time
+    title: List one day of tracked time
     # `period` is an enum, and the validator only matches the unquoted render, so
-    # the value is named here rather than placed in args.
+    # the value is named in the overview rather than placed in args. Omitting it
+    # leaves the one-day default in place.
     args:
       date: '2026-11-02'
   # Every operation is a read, so the second example is a narrower read rather
