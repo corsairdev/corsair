@@ -25,6 +25,8 @@ function sign(body: string, timestamp = Math.floor(Date.now() / 1000)) {
 	return `${FLUXGUARD_SIGNATURE_HEADER} t=${timestamp},v1=${signature}`;
 }
 
+// unknown: the helper signs whatever body a test passes, including deliberately
+// malformed payloads that no schema would accept.
 function request(
 	body: unknown,
 	timestamp?: number,

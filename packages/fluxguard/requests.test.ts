@@ -283,13 +283,15 @@ describe('Fluxguard HTTP requests', () => {
 
 	it('reads the sample delivery with GET /account/webhook/sample', async () => {
 		fetchMock.mockResolvedValueOnce(
-			jsonResponse({ url: 'https://example.org/' }),
+			jsonResponse([{ url: 'https://example.org/' }]),
 		);
 
-		await endpoints.webhooks.sample(makeCtx(), {});
+		const result = await endpoints.webhooks.sample(makeCtx(), {});
 
 		expect(lastCall().url).toBe(`${BASE}/account/webhook/sample`);
 		expect(lastCall().init.method).toBe('GET');
+		// The endpoint answers a bare array, so one sample in means one out.
+		expect(result.samples).toHaveLength(1);
 	});
 
 	it('lists categories with GET /account/category', async () => {

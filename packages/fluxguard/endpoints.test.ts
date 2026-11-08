@@ -28,6 +28,7 @@ function makeCtx(): FluxguardContext {
 	return { ...subset, db: {}, endpoints: {} } as FluxguardContext;
 }
 
+// unknown: response bodies are arbitrary JSON, so each test states its own.
 function jsonResponse(body: unknown, init: ResponseInit = {}): Response {
 	return new Response(JSON.stringify(body), {
 		status: 200,
@@ -147,6 +148,20 @@ describe('Fluxguard response parsing', () => {
 		expect(result.pageCategories).toEqual([]);
 	});
 
+	it('rejects a page whose category field is not a name array', async () => {
+		fetchMock.mockResolvedValueOnce(
+			jsonResponse({ ...pageResponse, siteCategories: 'News' }),
+		);
+
+		await expect(
+			endpoints.monitoring.getPage(makeCtx(), {
+				siteId: 's1',
+				sessionId: 'se1',
+				pageId: 'p1',
+			}),
+		).rejects.toThrow(/unexpected siteCategories/);
+	});
+
 	it('parses the bare webhook array', async () => {
 		fetchMock.mockResolvedValueOnce(jsonResponse(webhookListResponse));
 
@@ -211,6 +226,32 @@ describe('Fluxguard response parsing', () => {
 		const result = await endpoints.categories.list(makeCtx(), {});
 
 		expect(result.categories).toEqual([]);
+	});
+
+	it('rejects a category map whose values are not objects', async () => {
+		fetchMock.mockResolvedValueOnce(jsonResponse({ abc123: 'Marketing' }));
+
+		await expect(endpoints.categories.list(makeCtx(), {})).rejects.toThrow(
+			/unexpected category list body/,
+		);
+	});
+
+	it('rejects a webhook list where an entry is not an object', async () => {
+		fetchMock.mockResolvedValueOnce(jsonResponse(['not-a-webhook']));
+
+		await expect(endpoints.webhooks.list(makeCtx(), {})).rejects.toThrow(
+			/unexpected webhook list body/,
+		);
+	});
+
+	it('rejects an error envelope instead of reading it as an empty list', async () => {
+		// The whole point of the strict shape check: `{ message: ... }` is a
+		// failed response, not an account with no webhooks.
+		fetchMock.mockResolvedValueOnce(jsonResponse({ message: 'Forbidden' }));
+
+		await expect(endpoints.webhooks.list(makeCtx(), {})).rejects.toThrow(
+			/unexpected webhook list body/,
+		);
 	});
 
 	it('parses the sample array', async () => {

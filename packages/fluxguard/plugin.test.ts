@@ -35,7 +35,11 @@ type KeyBuilder = (
 	source: 'endpoint' | 'webhook',
 ) => Promise<string>;
 
-/** Nested `group -> function` maps, as the plugin registers them. */
+/**
+ * Nested `group -> function` maps, as the plugin registers them.
+ * unknown: the values are endpoint handlers whose exact signatures come from
+ * the plugin's own types; this only walks the keys, so the leaf type is unused.
+ */
 type Nested = Record<string, Record<string, unknown>>;
 
 function flatten(endpoints: Nested): string[] {
@@ -76,6 +80,9 @@ function keyContext(
 	return { ctx, keys };
 }
 
+// unknown: the plugin's own types expose `keyBuilder` and `endpointMeta` as
+// optionals, so the helpers narrow them one cast at a time. Typing them
+// precisely here would mean restating the whole plugin surface in the test.
 function keyBuilderOf(plugin: { keyBuilder?: unknown }): KeyBuilder {
 	return plugin.keyBuilder as KeyBuilder;
 }
@@ -205,6 +212,7 @@ describe('fluxguard plugin definition', () => {
 
 describe('fluxguard key builder', () => {
 	const build = (
+		// unknown: same optional-`keyBuilder` widening as `keyBuilderOf`.
 		plugin: { keyBuilder?: unknown },
 		ctx: FluxguardKeyBuilderContext,
 	) => keyBuilderOf(plugin)(ctx, 'endpoint');
