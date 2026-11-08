@@ -15,7 +15,7 @@ Things to know before you call:
 - **Two error shapes, split by status.** A `400` carries `{ message, errors: [{ property, constraints }] }`; `401`, `403`, `404` and `500` carry `{ name, message }`. The plugin throws a `TldvAPIError` with the status, the `name` and the first constraint.
 - **Timestamps are ISO 8601 strings** while `duration` and transcript offsets are numbers in seconds.
 - **No recording download.** `GET /meetings/{id}/download` answers a 302 to a signed URL, and the shared HTTP client follows redirects, so it would pull the whole file into memory. Fetch the URL yourself from the meeting's `url` field.
-- **Webhooks are not signed.** tl;dv publishes no signature scheme for either trigger, so the plugin compares a shared secret you send as `x-corsair-webhook-secret`. Enabling a webhook in the tl;dv app cannot add headers, so a proxy is needed to attach it, or leave the secret unset and accept unverified deliveries.
+- **Webhooks are not signed.** tl;dv publishes no signature scheme for either trigger, so the plugin compares a shared secret you send as `x-corsair-webhook-secret`. A webhook configured in the tl;dv app cannot attach headers, so a proxy that adds this header is required. The plugin rejects every delivery when no secret is configured, so leaving it unset means none are accepted rather than unverified ones.
 
 **What you get:**
 
