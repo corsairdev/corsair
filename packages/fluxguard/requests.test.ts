@@ -42,6 +42,8 @@ describe('Fluxguard HTTP requests', () => {
 		return { url: String(url), init: init! };
 	}
 
+	// unknown: the request body is JSON of whatever shape the operation sent,
+	// so the assertion helper reads it as an open record rather than one type.
 	function sentBody(): Record<string, unknown> {
 		const body = lastCall().init.body;
 		if (typeof body !== 'string') {

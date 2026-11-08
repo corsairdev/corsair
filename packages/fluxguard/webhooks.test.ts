@@ -186,24 +186,26 @@ describe('Fluxguard change webhook handler', () => {
 		expect(result.data?.orgId).toBe(changeEvent.orgId);
 	});
 
-	it('answers 401 when the signature does not verify', async () => {
-		const result = await plugin.webhooks!.change.detected.handler(
-			{ key: 'wrong-secret' } as never,
-			request(changeEvent),
-		);
-
-		expect(result.success).toBe(false);
-		expect(result.statusCode).toBe(401);
+	it('throws when the signature does not verify', async () => {
+		// processWebhook answers { success: true } for a returned failure and
+		// keeps only the message of a thrown one, so a throw is the only way a
+		// forged delivery is reported as failed.
+		await expect(
+			plugin.webhooks!.change.detected.handler(
+				{ key: 'wrong-secret' } as never,
+				request(changeEvent),
+			),
+		).rejects.toThrow('Invalid webhook signature');
 	});
 
-	it('answers 400 when the payload does not parse', async () => {
+	it('throws when the payload does not parse', async () => {
 		const body = { url: 42, capturedAt: 'not-a-date' };
-		const result = await plugin.webhooks!.change.detected.handler(
-			{ key: SECRET } as never,
-			request(body),
-		);
 
-		expect(result.success).toBe(false);
-		expect(result.statusCode).toBe(400);
+		await expect(
+			plugin.webhooks!.change.detected.handler(
+				{ key: SECRET } as never,
+				request(body),
+			),
+		).rejects.toThrow('Invalid Fluxguard change payload');
 	});
 });
