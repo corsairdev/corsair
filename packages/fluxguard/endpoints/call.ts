@@ -40,20 +40,34 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 
 /**
  * Fluxguard documents keyed collections ("an object indexed by category ID")
- * but the API is in beta and may also answer with a flat array. Accept either
- * and reject anything else, so a wrong shape fails instead of becoming an
- * empty list.
+ * but the API is in beta and may also answer with a flat array. Accept exactly
+ * those two shapes and reject anything else, so a wrong response fails instead
+ * of turning into an empty list the caller cannot tell from a real one.
  */
 export function toArray(
 	raw: unknown,
 	label: string,
 ): Record<string, unknown>[] {
-	if (Array.isArray(raw)) return raw as Record<string, unknown>[];
+	if (Array.isArray(raw)) {
+		for (const [index, value] of raw.entries()) {
+			if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+				throw new Error(
+					`Fluxguard returned an unexpected ${label} body: entry ${index} is not an object`,
+				);
+			}
+		}
+		return raw as Record<string, unknown>[];
+	}
 	if (raw !== null && typeof raw === 'object') {
-		return Object.values(raw as Record<string, unknown>).filter(
-			(value): value is Record<string, unknown> =>
-				value !== null && typeof value === 'object' && !Array.isArray(value),
-		);
+		const values = Object.values(raw as Record<string, unknown>);
+		for (const [index, value] of values.entries()) {
+			if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+				throw new Error(
+					`Fluxguard returned an unexpected ${label} body: value ${index} is not an object`,
+				);
+			}
+		}
+		return values as Record<string, unknown>[];
 	}
 	throw new Error(`Fluxguard returned an unexpected ${label} body`);
 }

@@ -12,14 +12,27 @@ import {
  * `{}`. A flat array is accepted too, since the API is in beta.
  */
 export function normalizeCategories(raw: unknown): Record<string, unknown>[] {
-	if (Array.isArray(raw)) return raw as Record<string, unknown>[];
+	if (Array.isArray(raw)) {
+		for (const [index, value] of raw.entries()) {
+			if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+				throw new Error(
+					`Fluxguard returned an unexpected category list body: entry ${index} is not an object`,
+				);
+			}
+		}
+		return raw as Record<string, unknown>[];
+	}
 	const record = asRecord(raw);
 	if (!record)
 		throw new Error('Fluxguard returned an unexpected category list body');
-	return Object.entries(record).flatMap(([id, value]) => {
+	return Object.entries(record).map(([id, value]) => {
 		const category = asRecord(value);
-		if (!category) return [];
-		return [{ id, ...category }];
+		if (!category) {
+			throw new Error(
+				`Fluxguard returned an unexpected category list body: category ${id} is not an object`,
+			);
+		}
+		return { id, ...category };
 	});
 }
 

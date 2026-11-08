@@ -106,22 +106,36 @@ export const getPage: FluxguardEndpoints['monitoringGetPage'] = (ctx, input) =>
 
 /**
  * The page carries `siteCategories` and `pageCategories` as arrays of category
- * names, but a page created before a category existed can omit the key.
- * Normalise to an empty array so the declared schema always holds.
+ * names, but a page created before a category existed omits the key. Treat a
+ * genuinely absent key as empty, and reject anything else: a string or an
+ * object where a name array belongs means the response is not what we think,
+ * and collapsing it to `[]` would hide that.
  */
 export function normalizePage(raw: unknown): unknown {
 	const page = asRecord(raw);
 	if (!page) return raw;
 	return {
 		...page,
-		siteCategories: toNameArray(page.siteCategories),
-		pageCategories: toNameArray(page.pageCategories),
+		siteCategories: toNameArray(page.siteCategories, 'siteCategories'),
+		pageCategories: toNameArray(page.pageCategories, 'pageCategories'),
 	};
 }
 
-function toNameArray(value: unknown): string[] {
-	if (value === undefined || value === null) return [];
-	return Array.isArray(value) ? (value as string[]) : [];
+function toNameArray(value: unknown, field: string): string[] {
+	if (value === undefined) return [];
+	if (!Array.isArray(value)) {
+		throw new Error(
+			`Fluxguard page has an unexpected ${field}: expected an array of names`,
+		);
+	}
+	for (const [index, name] of value.entries()) {
+		if (typeof name !== 'string') {
+			throw new Error(
+				`Fluxguard page has an unexpected ${field}: entry ${index} is not a string`,
+			);
+		}
+	}
+	return value;
 }
 
 export const removePage: FluxguardEndpoints['monitoringDeletePage'] = (
