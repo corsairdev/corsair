@@ -1,0 +1,81 @@
+displayName: Fluxguard
+description: Website change monitoring with Fluxguard - add and delete monitored pages, start crawls, read captured page data, and manage the webhooks and site categories that deliver change alerts.
+domain: fluxguard.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in Fluxguard under Account Settings (https://app.fluxguard.com/settings) and send it as the `x-api-key` header. The API is in beta, and the key stops working as soon as it is removed there.
+
+  Things to know before you send:
+
+  - **Adding a page writes to your account.** `monitoring.addPage` adds a URL to monitoring and returns the `siteId`, `sessionId` and `pageId`. Pass `siteId` and `sessionId` together to add the page to an existing site. When you do, Fluxguard rejects `siteNickname` and every category option with 400 ("Site settings (categories, nickname) cannot be specified as the site already exists"), so the plugin refuses that combination before sending. Omit both to create a new site, optionally with `siteNickname` and a category.
+  - **Crawls run in the background and spend credits.** `monitoring.startCrawl` answers 204 as soon as the crawl is queued. Read the capture with `monitoring.getPage`; the trigger response repeats the ids it accepted.
+  - **Deletes cannot be undone.** `monitoring.deletePage` drops the page and every version captured for it, and `monitoring.deleteSite` drops the site with all of its sessions, pages and versions. Both answer 204. A deleted page still answers `monitoring.getPage`, with `status: 'ignore'`, so the id keeps resolving.
+  - **Webhooks fire on every change.** `webhooks.create` takes a URL and returns an `id`; from then on every detected change is POSTed there, which is a lot of data on an active account. Only `url` is honoured: `siteCategories` and `categories` are accepted and silently ignored, so assign categories in the console. `webhooks.delete` takes the `id` in the request body, and `webhooks.sample` returns an array of example changes from your own account.
+  - **`categories.create` makes site categories only.** Site and page categories are stored separately and each row carries a `for` field saying which. `categories.list` restores the id Fluxguard keeps only as the map key. Pages report their categories as arrays of names, not ids.
+  - **Rate limits and errors.** Fluxguard does not document a limit or a `Retry-After` header, and fifteen parallel requests all answered 200, so no limit was observed. The plugin retries a 429 up to three times with backoff if one appears, and never retries a 403: that status covers a bad key (`Forbidden`) and a route that does not exist (`Missing Authentication Token`). Every error body is `{ message }`.
+  - **Inbound webhooks.** Fluxguard signs each delivery with the webhook's own secret key: `fluxguard-signature: t=<unix seconds>,v1=<hex HMAC-SHA256>` over `<t>.<raw body>`. Set `webhookSecret`, or store the key with `keys.set_webhook_signature`. Verification needs the untouched request body, so mount the webhook route without a JSON parser. Deliveries are routed to a tenant by `orgId`.
+examples:
+  read:
+    path: monitoring.getPage
+    title: Read a monitored page
+    args:
+      siteId: '0123jdq6th8dc'
+      sessionId: '0123jdqze3cbg'
+      pageId: '0123jdu8r4724'
+  write:
+    path: monitoring.addPage
+    title: Monitor a new URL
+    args:
+      url: 'https://example.org/pricing'
+      siteNickname: Pricing
+apiExamples:
+  account.get: {}
+  monitoring.addPage:
+    call: "{ url: 'https://example.org/pricing', categories: ['0123jdq6th8dc'], siteNickname: 'Pricing' }"
+  monitoring.startCrawl:
+    call: "{ siteId: '0123jdq6th8dc', sessionId: '0123jdqze3cbg' }"
+  monitoring.getPage:
+    call: "{ siteId: '0123jdq6th8dc', sessionId: '0123jdqze3cbg', pageId: '0123jdu8r4724' }"
+  monitoring.deletePage:
+    call: "{ siteId: '0123jdq6th8dc', sessionId: '0123jdqze3cbg', pageId: '0123jdu8r4724' }"
+  monitoring.deleteSite:
+    call: "{ siteId: '0123jdq6th8dc' }"
+  webhooks.list: {}
+  webhooks.create:
+    call: "{ url: 'https://example.org/hooks/fluxguard' }"
+  webhooks.delete:
+    call: "{ id: '0123jdxabuzn2' }"
+  webhooks.sample: {}
+  categories.list: {}
+  categories.create:
+    call: "{ name: 'Marketing' }"
+apiNotes:
+  account.get: |
+    `flags` maps each severity label to the colour the console shows it in; the same labels appear as `aiFlagged` on a change.
+  monitoring.addPage: |
+    `siteId` and `sessionId` must be given together. The API answers 400 when only one is set, and 400 when `siteNickname` or a category option is set alongside an existing site, so the plugin rejects both cases before sending.
+  monitoring.startCrawl: |
+    Answers 204 with no body. The crawl runs in the background and spends account credits; read the capture with `monitoring.getPage`.
+  monitoring.getPage: |
+    An unknown site, session or page answers 204 with no body, not 404, so the plugin throws instead of returning an empty page. A deleted page still answers 200 with `status: 'ignore'`.
+  monitoring.deletePage: |
+    Answers 204. Fluxguard keeps the row with `status: 'ignore'` rather than removing it, so the id keeps resolving.
+  monitoring.deleteSite: |
+    Answers 204. Deleting an already-deleted site answers 204 too.
+  webhooks.create: |
+    Only `url` is honoured. `siteCategories` and `categories` are silently ignored, so assign categories in the console instead.
+  webhooks.delete: |
+    The `id` travels in the request body. A query parameter is ignored and a request without a body answers 400, so the plugin always sends `{ id }`. Deleting an unknown id answers 204.
+  webhooks.list: |
+    Each webhook's `secret` is its own HMAC signing key for deliveries, and Fluxguard shows the same value behind the key icon beside the webhook URL in Account Settings. Pass it as `webhookSecret`, or store it with `keys.set_webhook_signature`, to verify incoming deliveries.
+  webhooks.sample: |
+    Returns an array of example changes from your own account, or seeded data on a new one.
+  categories.list: |
+    Fluxguard indexes categories by id and leaves the id out of each value, so the plugin restores it as an `id` field. An account with no categories answers `{}`.
+  categories.create: |
+    Creates a site category. Page categories exist separately and the API cannot create them.
+exampleWebhook:
+  path: change.detected
+  note: React to a detected change the moment Fluxguard captures it.
+  after: |
+    console.log('Change on', result.data?.url, 'flagged', result.data?.aiFlagged);
