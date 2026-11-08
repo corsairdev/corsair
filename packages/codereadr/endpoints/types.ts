@@ -13,9 +13,11 @@ const IdSchema = z.number().int().positive();
 const IdListSchema = z.union([z.array(IdSchema).min(1), z.literal('all')]);
 
 /** Scan status: 1 valid, 0 invalid, -1 could not be validated offline. */
-const SCAN_STATUSES = [1, 0, -1] as const;
-
-const ScanStatusSchema = z.union([z.enum(['1', '0', '-1']), z.null()]);
+// A string rather than the enum: an unknown status must not fail a read.
+const ScanStatusSchema = z
+	.string()
+	.nullish()
+	.describe('`1` valid, `0` invalid, `-1` could not be validated offline.');
 
 // ── scans.list ────────────────────────────────────────────────────────────
 
@@ -447,33 +449,59 @@ const ServiceScanBehaviour = {
 		),
 };
 
-const ServicesCreateInputSchema = z.object({
-	validation_method: ValidationMethodSchema.describe(
-		'How scans are validated.',
-	),
-	database_id: IdSchema.optional().describe(
-		'Required when `validation_method` is `database` or `ondevicedatabase`.',
-	),
-	postback_url: z
-		.string()
-		.optional()
-		.describe('Required when `validation_method` is `postback`.'),
-	description: z
-		.string()
-		.optional()
-		.describe(
-			'Web content for `webview` services: HTML, or a URL wrapped as `<curl>https://…</curl>`.',
+const ServicesCreateInputSchema = z
+	.object({
+		validation_method: ValidationMethodSchema.describe(
+			'How scans are validated.',
 		),
-	service_name: z
-		.string()
-		.optional()
-		.describe('Defaults to `Service N` for the next free number.'),
-	duplicate_value: z
-		.union([z.literal(0), z.literal(1)])
-		.optional()
-		.describe('Status to give a duplicate scan. Defaults to 1 (valid).'),
-	...ServiceScanBehaviour,
-});
+		database_id: IdSchema.optional().describe(
+			'Required when `validation_method` is `database` or `ondevicedatabase`.',
+		),
+		postback_url: z
+			.string()
+			.optional()
+			.describe('Required when `validation_method` is `postback`.'),
+		description: z
+			.string()
+			.optional()
+			.describe(
+				'Web content for `webview` services: HTML, or a URL wrapped as `<curl>https://…</curl>`.',
+			),
+		service_name: z
+			.string()
+			.optional()
+			.describe('Defaults to `Service N` for the next free number.'),
+		duplicate_value: z
+			.union([z.literal(0), z.literal(1)])
+			.optional()
+			.describe('Status to give a duplicate scan. Defaults to 1 (valid).'),
+		...ServiceScanBehaviour,
+	})
+	.superRefine((value, ctx) => {
+		// The API requires the companion field for three of the six methods and
+		// rejects the request without it, which also spends an API call.
+		if (
+			(value.validation_method === 'database' ||
+				value.validation_method === 'ondevicedatabase') &&
+			value.database_id === undefined
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['database_id'],
+				message: `database_id is required for a ${value.validation_method} service`,
+			});
+		}
+		if (
+			value.validation_method === 'postback' &&
+			value.postback_url === undefined
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['postback_url'],
+				message: 'postback_url is required for a postback service',
+			});
+		}
+	});
 
 export type ServicesCreateInput = z.input<typeof ServicesCreateInputSchema>;
 
@@ -733,22 +761,39 @@ export type DatabasesUpsertValueInput = z.input<
 	typeof DatabasesUpsertValueInputSchema
 >;
 
-const DatabasesUpsertValuesInputSchema = z.object({
-	database_id: IdSchema.optional().describe(
-		'Database for every value that does not name its own. A value with neither is skipped.',
-	),
-	trim_value: z
-		.boolean()
-		.optional()
-		.describe(
-			'Trim surrounding whitespace for values that do not set their own.',
+const DatabasesUpsertValuesInputSchema = z
+	.object({
+		database_id: IdSchema.optional().describe(
+			'Database for every value that does not name its own. A value with neither is skipped.',
 		),
-	values: z
-		.array(DatabaseValueWriteSchema)
-		.min(1)
-		.max(100)
-		.describe('Up to 100 values to insert or update in one request.'),
-});
+		trim_value: z
+			.boolean()
+			.optional()
+			.describe(
+				'Trim surrounding whitespace for values that do not set their own.',
+			),
+		values: z
+			.array(DatabaseValueWriteSchema)
+			.min(1)
+			.max(100)
+			.describe('Up to 100 values to insert or update in one request.'),
+	})
+	.superRefine((value, ctx) => {
+		// The API silently ignores a value with no database of its own and no
+		// request-wide one to fall back on, then still answers success. Catching it
+		// here keeps a partial write from looking like a complete one.
+		if (value.database_id !== undefined) return;
+		value.values.forEach((entry, index) => {
+			if (entry.database_id === undefined) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['values', index, 'database_id'],
+					message:
+						'Needs a database_id here or a request-wide database_id, or CodeREADr skips this value',
+				});
+			}
+		});
+	});
 
 export type DatabasesUpsertValuesInput = z.input<
 	typeof DatabasesUpsertValuesInputSchema
@@ -779,6 +824,16 @@ const UsersListInputSchema = z.object({
 	user_id: IdListSchema.optional().describe('Users to list. `all` by default.'),
 });
 
+/**
+ * CodeREADr decides invitation versus password account by whether the username
+ * looks like an email address, so the same test is used here. It is a simple
+ * shape check rather than full validation: the provider is the authority, and
+ * rejecting a real address it would accept is worse than passing one through.
+ */
+function isEmailUsername(username: string): boolean {
+	return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username);
+}
+
 export type UsersListInput = z.input<typeof UsersListInputSchema>;
 
 const UsersListResponseSchema = z.object({
@@ -787,26 +842,40 @@ const UsersListResponseSchema = z.object({
 
 export type UsersListResponse = z.infer<typeof UsersListResponseSchema>;
 
-const UsersCreateInputSchema = z.object({
-	username: z
-		.string()
-		.min(1)
-		.describe(
-			'Identifying name. An email address sends an invitation and ignores `password`; otherwise `password` is required.',
-		),
-	password: z
-		.string()
-		.optional()
-		.describe('Required unless `username` is an email address.'),
-	device_limit: z
-		.number()
-		.int()
-		.min(-1)
-		.optional()
-		.describe(
-			'Devices allowed per billing period. `0` unlimited (the default), `-1` blocks sign-in entirely.',
-		),
-});
+const UsersCreateInputSchema = z
+	.object({
+		username: z
+			.string()
+			.min(1)
+			.describe(
+				'Identifying name. An email address sends an invitation and ignores `password`; otherwise `password` is required.',
+			),
+		password: z
+			.string()
+			.optional()
+			.describe('Required unless `username` is an email address.'),
+		device_limit: z
+			.number()
+			.int()
+			.min(-1)
+			.optional()
+			.describe(
+				'Devices allowed per billing period. `0` unlimited (the default), `-1` blocks sign-in entirely.',
+			),
+	})
+	.superRefine((value, ctx) => {
+		// CodeREADr ignores `password` for an email address, which becomes an
+		// invitation, and requires it for every other username. Catching the gap
+		// here keeps a request that would be rejected from spending an API call.
+		if (value.password !== undefined) return;
+		if (isEmailUsername(value.username)) return;
+		ctx.addIssue({
+			code: 'custom',
+			path: ['password'],
+			message:
+				'password is required unless username is an email address, which sends an invitation instead',
+		});
+	});
 
 export type UsersCreateInput = z.input<typeof UsersCreateInputSchema>;
 
@@ -911,7 +980,7 @@ const QuestionsCreateInputSchema = z.object({
 		.enum(QUESTION_TYPES)
 		.optional()
 		.describe(
-			'Defaults to `manual`. A type that is not recognized also becomes `manual` with no error, so check the created question. `checkbox`, `dropdown`, `option` and `webcollect` need answer options added afterwards.',
+			'Defaults to `manual`. A value outside this list is rejected here before the request is sent. `checkbox`, `dropdown`, `option` and `webcollect` need answer options added afterward.',
 		),
 });
 

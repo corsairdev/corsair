@@ -54,6 +54,18 @@ export const errorHandlers = {
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
+	// A connection reset, DNS failure or timeout never reached CodeREADr, so the
+	// call did not happen and replaying it cannot duplicate anything. Retrying
+	// still requires `replaySafe`, because a write whose response was lost may
+	// already have been applied on the server.
+	TRANSPORT_ERROR: {
+		match: (error: Error) =>
+			error instanceof CodereadrAPIError && error.transport && error.replaySafe,
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
 	// Every other documented code is a request the provider rejected: a missing
 	// or invalid variable, an unknown record, a duplicate name, a URL that is
 	// not absolute. Zod failures land here too. Resending sends the same request.
