@@ -47,7 +47,7 @@ List dashboards with their tags and the integrations they use
 **Risk:** `read`
 
 ```ts
-await corsair.databox.api.dashboards.list({});
+await corsair.databox.api.dashboards.list({ search: 'sales' });
 ```
 
 **Input**
@@ -100,7 +100,7 @@ Create a dataset in a data source with column definitions and an optional primar
 **Risk:** `write`
 
 ```ts
-await corsair.databox.api.datasets.create({});
+await corsair.databox.api.datasets.create({ name: 'Transactions', dataSourceId: 1234567, primaryKey: ['transaction_id'], schema: [{ id: 'transaction_id', dataType: 'string' }, { id: 'amount', dataType: 'number' }, { id: 'occurred_at', dataType: 'datetime' }] });
 ```
 
 **Input**
@@ -186,7 +186,7 @@ Read one dataset with its status, sync and verification info
 **Risk:** `read`
 
 ```ts
-await corsair.databox.api.datasets.get({});
+await corsair.databox.api.datasets.get({ id: 2345678 });
 ```
 
 **Input**
@@ -256,7 +256,7 @@ Read one ingestion's status and record counts: how many records were appended, o
 **Risk:** `read`
 
 ```ts
-await corsair.databox.api.datasets.getIngestion({});
+await corsair.databox.api.datasets.getIngestion({ id: 2345678, ingestionId: 'a4283796-bfde-42cf-aa65-1830d6692966' });
 ```
 
 **Input**
@@ -320,7 +320,7 @@ Submit up to 500 records for ingestion; the response carries an ingestionId to p
 **Risk:** `write`
 
 ```ts
-await corsair.databox.api.datasets.ingestData({});
+await corsair.databox.api.datasets.ingestData({ id: 2345678, records: [{ transaction_id: 'T-10024', amount: 249, occurred_at: '2026-09-18T09:12:00+00:00' }] });
 ```
 
 **Input**
@@ -355,7 +355,7 @@ List datasets, optionally filtered by data source or type (API-created or merged
 **Risk:** `read`
 
 ```ts
-await corsair.databox.api.datasets.list({});
+await corsair.databox.api.datasets.list({ dataSourceId: 1234567, type: 'dataset' });
 ```
 
 **Input**
@@ -435,7 +435,7 @@ Read a page of a dataset's records with the column schema; records are keyed by 
 **Risk:** `read`
 
 ```ts
-await corsair.databox.api.datasets.listData({});
+await corsair.databox.api.datasets.listData({ id: 2345678, page: 0, pageSize: 100 });
 ```
 
 **Input**
@@ -493,7 +493,7 @@ Create a data source for pushing custom data through the API; only a name is req
 **Risk:** `write`
 
 ```ts
-await corsair.databox.api.dataSources.create({});
+await corsair.databox.api.dataSources.create({ name: 'Sales', timezone: 'Europe/Ljubljana', idempotencyKey: 'create-sales-once' });
 ```
 
 **Input**
@@ -556,7 +556,7 @@ Permanently delete a data source and every dataset and record it holds; this can
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.databox.api.dataSources.delete({});
+await corsair.databox.api.dataSources.delete({ id: 1234567 });
 ```
 
 **Input**
@@ -587,7 +587,7 @@ Read one data source, including its status and sync interval
 **Risk:** `read`
 
 ```ts
-await corsair.databox.api.dataSources.get({});
+await corsair.databox.api.dataSources.get({ id: 1234567 });
 ```
 
 **Input**
@@ -648,7 +648,7 @@ List the data sources in the organization, with search, connection filter, sorti
 **Risk:** `read`
 
 ```ts
-await corsair.databox.api.dataSources.list({});
+await corsair.databox.api.dataSources.list({ page: 0, pageSize: 50 });
 ```
 
 **Input**
@@ -720,7 +720,7 @@ Read a metric's values over a date range with granularity, dimension breakdowns 
 **Risk:** `read`
 
 ```ts
-await corsair.databox.api.metrics.getData({});
+await corsair.databox.api.metrics.getData({ id: 'GoogleAnalytics4@sessions', dateRange: { from: '2026-06-01', to: '2026-06-30', granularity: 'daily' } });
 ```
 
 **Input**
@@ -820,7 +820,7 @@ List the organization's metrics with their dimensions, optionally filtered by so
 **Risk:** `read`
 
 ```ts
-await corsair.databox.api.metrics.list({});
+await corsair.databox.api.metrics.list({ sourceId: 1234567 });
 ```
 
 **Input**

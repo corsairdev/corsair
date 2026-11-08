@@ -34,16 +34,29 @@ examples:
           unit_price: 59
 apiExamples:
   auth.validateKey: {}
-  dataSources.list: "{ page: 0, pageSize: 50 }"
-  dataSources.create: "{ name: 'Sales', timezone: 'Europe/Ljubljana', idempotencyKey: 'create-sales-once' }"
-  dataSources.get: "{ id: 1234567 }"
-  dataSources.delete: "{ id: 1234567 }"
-  datasets.list: "{ dataSourceId: 1234567, type: 'dataset' }"
-  datasets.create: "{ name: 'Transactions', dataSourceId: 1234567, primaryKey: ['transaction_id'], schema: [{ id: 'transaction_id', dataType: 'string' }, { id: 'amount', dataType: 'number' }, { id: 'occurred_at', dataType: 'datetime' }] }"
-  datasets.get: "{ id: 2345678 }"
-  datasets.listData: "{ id: 2345678, page: 0, pageSize: 100 }"
-  datasets.ingestData: "{ id: 2345678, records: [{ transaction_id: 'T-10024', amount: 249, occurred_at: '2026-09-18T09:12:00+00:00' }] }"
-  datasets.getIngestion: "{ id: 2345678, ingestionId: 'a4283796-bfde-42cf-aa65-1830d6692966' }"
-  metrics.list: "{ sourceId: 1234567 }"
-  metrics.getData: "{ id: 'GoogleAnalytics4@sessions', dateRange: { from: '2026-06-01', to: '2026-06-30', granularity: 'daily' } }"
-  dashboards.list: "{ search: 'sales' }"
+  dataSources.list:
+    call: "{ page: 0, pageSize: 50 }"
+  dataSources.create:
+    call: "{ name: 'Sales', timezone: 'Europe/Ljubljana', idempotencyKey: 'create-sales-once' }"
+  dataSources.get:
+    call: "{ id: 1234567 }"
+  dataSources.delete:
+    call: "{ id: 1234567 }"
+  datasets.list:
+    call: "{ dataSourceId: 1234567, type: 'dataset' }"
+  datasets.create:
+    call: "{ name: 'Transactions', dataSourceId: 1234567, primaryKey: ['transaction_id'], schema: [{ id: 'transaction_id', dataType: 'string' }, { id: 'amount', dataType: 'number' }, { id: 'occurred_at', dataType: 'datetime' }] }"
+  datasets.get:
+    call: "{ id: 2345678 }"
+  datasets.listData:
+    call: "{ id: 2345678, page: 0, pageSize: 100 }"
+  datasets.ingestData:
+    call: "{ id: 2345678, records: [{ transaction_id: 'T-10024', amount: 249, occurred_at: '2026-09-18T09:12:00+00:00' }] }"
+  datasets.getIngestion:
+    call: "{ id: 2345678, ingestionId: 'a4283796-bfde-42cf-aa65-1830d6692966' }"
+  metrics.list:
+    call: "{ sourceId: 1234567 }"
+  metrics.getData:
+    call: "{ id: 'GoogleAnalytics4@sessions', dateRange: { from: '2026-06-01', to: '2026-06-30', granularity: 'daily' } }"
+  dashboards.list:
+    call: "{ search: 'sales' }"
