@@ -4,6 +4,37 @@ import type { NutshellOperationKey } from '../operations';
 // Request and response schemas are generated from each current Nutshell REST
 // reference OpenAPI definition. Recursive provider schemas are permissive at
 // the recursion boundary because a finite Zod value cannot encode them inline.
+
+// JSON Patch (RFC 6902) operation values may be any JSON value: Nutshell PATCH
+// routes legitimately send numbers (employeeCount), booleans, arrays (phones),
+// objects, and null as values, so the value field cannot be a string.
+type NutshellJsonValue =
+	| string
+	| number
+	| boolean
+	| null
+	| NutshellJsonValue[]
+	| { [key: string]: NutshellJsonValue };
+const NutshellJsonValueSchema: z.ZodType<NutshellJsonValue> = z.lazy(() =>
+	z.union([
+		z.string(),
+		z.number(),
+		z.boolean(),
+		z.null(),
+		z.array(NutshellJsonValueSchema),
+		z.record(z.string(), NutshellJsonValueSchema),
+	]),
+);
+
+// Shared item shape of the JSON Patch arrays every Nutshell PATCH route takes.
+const NutshellJsonPatchOperationSchema = z
+	.object({
+		op: z.enum(['add', 'remove', 'replace', 'move', 'copy']).optional(),
+		path: z.string().optional(),
+		value: NutshellJsonValueSchema.optional(),
+	})
+	.loose();
+
 const NutshellStagesListInputSchema = z.object({}).strict();
 const NutshellStagesListOutputSchema = z
 	.object({
@@ -1627,8 +1658,55 @@ const NutshellTasksListInputSchema = z
 		'page[page]': z.string().optional(),
 	})
 	.strict();
-const NutshellTasksListOutputSchema =
-	z.unknown() /* response schema is not documented */;
+// Nutshell documents the /tasks list and create routes only as "a list of
+// tasks"; both answer with the shared {meta?, links, tasks} envelope. The
+// envelope is validated and the item fields mirror the documented /tasks/{id}
+// response, kept loose for provider-added fields.
+const NutshellTasksEnvelopeSchema = z
+	.object({
+		meta: z
+			.object({
+				instanceId: z.string().optional(),
+				siteId: z.string().optional(),
+			})
+			.loose()
+			.optional(),
+		links: z.object({}).loose(),
+		tasks: z.array(
+			z.intersection(
+				z
+					.object({
+						htmlUrl: z.string().optional(),
+						htmlUrlPath: z.string().optional(),
+					})
+					.loose(),
+				z
+					.object({
+						id: z.string().optional(),
+						recurrenceRule: z
+							.intersection(
+								z
+									.object({
+										htmlUrl: z.string().optional(),
+										htmlUrlPath: z.string().optional(),
+									})
+									.loose(),
+								z
+									.object({
+										rule: z.string().optional(),
+										mode: z.enum(['dueDate', 'completion']).optional(),
+										id: z.string().optional(),
+									})
+									.loose(),
+							)
+							.optional(),
+					})
+					.loose(),
+			),
+		),
+	})
+	.loose();
+const NutshellTasksListOutputSchema = NutshellTasksEnvelopeSchema;
 
 const NutshellContactsCreateInputSchema = z
 	.object({
@@ -2166,21 +2244,7 @@ const NutshellLeadsListItemsOutputSchema = z
 const NutshellProductMapsUpdateInputSchema = z
 	.object({
 		id: z.string().min(1),
-		body: z.array(
-			z
-				.object({
-					op: z
-						.unknown() /* OpenAPI schema has no recognized type */
-						.optional(),
-					path: z
-						.unknown() /* OpenAPI schema has no recognized type */
-						.optional(),
-					value: z
-						.unknown() /* OpenAPI schema has no recognized type */
-						.optional(),
-				})
-				.loose(),
-		),
+		body: z.array(NutshellJsonPatchOperationSchema),
 	})
 	.strict();
 const NutshellProductMapsUpdateOutputSchema = z.undefined();
@@ -2441,8 +2505,14 @@ const NutshellEmailsGetInputSchema = z
 		id: z.string().min(1),
 	})
 	.strict();
-const NutshellEmailsGetOutputSchema =
-	z.unknown() /* response schema is not documented */;
+// Nutshell does not document the GET /emails/{id} body; the route answers
+// with the email entity itself, so validate that object shape and keep the
+// message fields loose.
+const NutshellEmailsGetOutputSchema = z
+	.object({
+		id: z.string().optional(),
+	})
+	.loose();
 
 const NutshellDashboardsListFieldsInputSchema = z.object({}).strict();
 const NutshellDashboardsListFieldsOutputSchema = z
@@ -2483,15 +2553,7 @@ const NutshellDashboardsListFieldsOutputSchema = z
 const NutshellAccountsUpdateInputSchema = z
 	.object({
 		id: z.string().min(1),
-		body: z.array(
-			z
-				.object({
-					op: z.enum(['add', 'remove', 'replace', 'move', 'copy']).optional(),
-					path: z.string().optional(),
-					value: z.string().optional(),
-				})
-				.loose(),
-		),
+		body: z.array(NutshellJsonPatchOperationSchema),
 	})
 	.strict();
 const NutshellAccountsUpdateOutputSchema = z.undefined();
@@ -2651,15 +2713,7 @@ const NutshellNotesUndeleteOutputSchema = z.intersection(
 const NutshellLeadsUpdateInputSchema = z
 	.object({
 		id: z.string().min(1),
-		body: z.array(
-			z
-				.object({
-					op: z.enum(['add', 'remove', 'replace', 'move', 'copy']).optional(),
-					path: z.string().optional(),
-					value: z.string().optional(),
-				})
-				.loose(),
-		),
+		body: z.array(NutshellJsonPatchOperationSchema),
 	})
 	.strict();
 const NutshellLeadsUpdateOutputSchema = z.undefined();
@@ -2839,8 +2893,7 @@ const NutshellTasksCreateInputSchema = z
 			.loose(),
 	})
 	.strict();
-const NutshellTasksCreateOutputSchema =
-	z.unknown() /* response schema is not documented */;
+const NutshellTasksCreateOutputSchema = NutshellTasksEnvelopeSchema;
 
 const NutshellTodosListInputSchema = z
 	.object({
@@ -4396,8 +4449,14 @@ const NutshellLeadsCreateCustomFieldInputSchema = z
 			.loose(),
 	})
 	.strict();
-const NutshellLeadsCreateCustomFieldOutputSchema =
-	z.unknown() /* response schema is not documented */;
+// Nutshell does not document the created-field body; the route answers with
+// the created custom field, validated around its known identifier and name.
+const NutshellLeadsCreateCustomFieldOutputSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+	})
+	.loose();
 
 const NutshellEventsListInputSchema = z
 	.object({
@@ -4687,8 +4746,21 @@ const NutshellFiltersListInputSchema = z
 		filter: z.string().optional(),
 	})
 	.strict();
-const NutshellFiltersListOutputSchema =
-	z.unknown() /* response schema is not documented */;
+// Nutshell does not document the GET /filters body; saved filters are keyed
+// under the conventional plural like every other list route, so validate that
+// envelope and keep per-filter fields loose.
+const NutshellFiltersListOutputSchema = z
+	.object({
+		filters: z.array(
+			z
+				.object({
+					id: z.string().optional(),
+					name: z.string().optional(),
+				})
+				.loose(),
+		),
+	})
+	.loose();
 
 const NutshellAccountsCreateCustomFieldInputSchema = z
 	.object({
@@ -4712,8 +4784,14 @@ const NutshellAccountsCreateCustomFieldInputSchema = z
 			.loose(),
 	})
 	.strict();
-const NutshellAccountsCreateCustomFieldOutputSchema =
-	z.unknown() /* response schema is not documented */;
+// Nutshell does not document the created-field body; the route answers with
+// the created custom field, validated around its known identifier and name.
+const NutshellAccountsCreateCustomFieldOutputSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+	})
+	.loose();
 
 const NutshellContactsListFieldsInputSchema = z.object({}).strict();
 const NutshellContactsListFieldsOutputSchema = z
@@ -5104,15 +5182,7 @@ const NutshellCompetitorMapsGetOutputSchema = z
 const NutshellCompetitorMapsUpdateInputSchema = z
 	.object({
 		id: z.string().min(1),
-		body: z.array(
-			z
-				.object({
-					op: z.enum(['add', 'remove', 'replace', 'move', 'copy']).optional(),
-					path: z.string().optional(),
-					value: z.string().optional(),
-				})
-				.loose(),
-		),
+		body: z.array(NutshellJsonPatchOperationSchema),
 	})
 	.strict();
 const NutshellCompetitorMapsUpdateOutputSchema = z.undefined();
@@ -5257,7 +5327,10 @@ const NutshellLeadsReportInputSchema = z
 		'filter[name]': z.string().optional(),
 		q: z.string().optional(),
 		sort: z.string().optional(),
-		format: z.enum(['json', 'csv', 'pdf', 'png', 'html']).optional(),
+		// pdf/png are excluded on purpose: the shared transport returns
+		// non-JSON bodies as decoded text, so binary export bytes cannot be
+		// represented faithfully. csv and html exports arrive as text.
+		format: z.enum(['json', 'csv', 'html']).optional(),
 		gap: z.enum(['d', 'w', 'm', 'y', 'q']).optional(),
 		groupByField: z.string().optional(),
 		pivotFacet: z.string().optional(),
@@ -5287,7 +5360,7 @@ const NutshellLeadsReportInputSchema = z
 		useConfidence: z.boolean().optional(),
 	})
 	.strict();
-const NutshellLeadsReportOutputSchema = z
+const NutshellLeadsReportJsonObjectSchema = z
 	.object({
 		reports: z
 			.array(
@@ -5372,6 +5445,13 @@ const NutshellLeadsReportOutputSchema = z
 			.optional(),
 	})
 	.loose();
+
+// json reports arrive as the object above; csv/html exports arrive as text
+// (the shared transport returns non-JSON bodies as strings).
+const NutshellLeadsReportOutputSchema = z.union([
+	NutshellLeadsReportJsonObjectSchema,
+	z.string(),
+]);
 
 const NutshellContactsUndeleteInputSchema = z
 	.object({
@@ -5736,15 +5816,7 @@ const NutshellActivitiesUpdateOutputSchema = z.intersection(
 const NutshellContactsUpdateInputSchema = z
 	.object({
 		id: z.string().min(1),
-		body: z.array(
-			z
-				.object({
-					op: z.enum(['add', 'remove', 'replace', 'move', 'copy']).optional(),
-					path: z.string().optional(),
-					value: z.string().optional(),
-				})
-				.loose(),
-		),
+		body: z.array(NutshellJsonPatchOperationSchema),
 	})
 	.strict();
 const NutshellContactsUpdateOutputSchema = z.undefined();
@@ -6817,8 +6889,14 @@ const NutshellContactsCreateCustomFieldInputSchema = z
 			.loose(),
 	})
 	.strict();
-const NutshellContactsCreateCustomFieldOutputSchema =
-	z.unknown() /* response schema is not documented */;
+// Nutshell does not document the created-field body; the route answers with
+// the created custom field, validated around its known identifier and name.
+const NutshellContactsCreateCustomFieldOutputSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+	})
+	.loose();
 
 const NutshellProductCategoriesGetInputSchema = z
 	.object({
@@ -7141,15 +7219,7 @@ const NutshellTagsUndeleteOutputSchema = z
 const NutshellTasksUpdateInputSchema = z
 	.object({
 		id: z.string().min(1),
-		body: z.array(
-			z
-				.object({
-					op: z.enum(['add', 'remove', 'replace', 'move', 'copy']).optional(),
-					path: z.string().optional(),
-					value: z.string().optional(),
-				})
-				.loose(),
-		),
+		body: z.array(NutshellJsonPatchOperationSchema),
 	})
 	.strict();
 const NutshellTasksUpdateOutputSchema = z.undefined();
