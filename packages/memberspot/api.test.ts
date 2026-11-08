@@ -109,4 +109,40 @@ describeIfKey('live MemberSpot API', () => {
 		);
 		expect(() => Outputs.usersCourseProgressByUid.parse(body)).not.toThrow();
 	});
+
+	it('login-token returns a real credential, which is why it is a write', async () => {
+		const page = await makeMemberSpotRequest(key, '/v1/users/list', {
+			query: { pageLength: 1 },
+		});
+		const uid = Outputs.usersList.parse(page).data[0]?.uid;
+		if (!uid) return;
+
+		const body = await makeMemberSpotRequest(
+			key,
+			`/v1/users/login-token/${encodeURIComponent(uid)}`,
+		);
+		const result = Outputs.usersLoginToken.parse(body);
+		// A token long enough to be a signed credential, not an opaque id.
+		expect(result.token.length).toBeGreaterThan(100);
+		expect(result.loginUrl).toContain('memberspot');
+	});
+
+	it('reports USER_NOT_FOUND for an unknown email, rather than null', async () => {
+		// Confirmed against the live API: 400 with this exact message.
+		await expect(
+			makeMemberSpotRequest(
+				key,
+				'/v1/users/find-by-mail/nobody%40nowhere.example',
+			),
+		).rejects.toMatchObject({ status: 400 });
+	});
+
+	it('rejects an empty body from find-by-uid, which is what an unknown uid sends', async () => {
+		const body = await makeMemberSpotRequest(
+			key,
+			'/v1/users/find-by-uid/does-not-exist',
+		);
+		// 200 with an empty body, so the schema fails rather than returning null.
+		expect(() => Outputs.usersFindByUid.parse(body)).toThrow();
+	});
 });

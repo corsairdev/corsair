@@ -113,6 +113,13 @@ describe('single user reads', () => {
 		expect(() => Outputs.usersFindByEmail.parse(null)).toThrow();
 	});
 
+	it('rejects an empty body, which is what find-by-uid sends for an unknown uid', () => {
+		// The live API answers 200 with an empty body, not null, so the parse fails
+		// loudly rather than handing back a blank user.
+		expect(() => Outputs.usersFindByUid.parse(undefined)).toThrow();
+		expect(() => Outputs.usersFindByUid.parse('')).toThrow();
+	});
+
 	it('users.offers reads grants with their active state', () => {
 		const output = Outputs.usersOffers.parse(USER_OFFERS_BODY);
 		expect(output.offers[0]?.active).toBe(true);

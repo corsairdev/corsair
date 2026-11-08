@@ -78,12 +78,16 @@ describe('endpoint metadata', () => {
 			'users.findByEmail',
 			'users.findByUid',
 			'users.offers',
-			'users.loginToken',
 			'users.courseProgress',
 			'users.courseProgressDetail',
 		] as const) {
 			expect(meta[path]?.riskLevel).toBe('read');
 		}
+	});
+
+	it('marks login-token as a write, because the token is a credential', () => {
+		// A read-only caller must not be able to mint a sign-in token.
+		expect(meta['users.loginToken']?.riskLevel).toBe('write');
 	});
 
 	it('marks only the delete routes destructive and irreversible', () => {

@@ -498,6 +498,50 @@ describe('request shape per operation', () => {
 });
 
 describe('input validation before sending', () => {
+	it('rejects a property map that tries to retarget an email write', async () => {
+		// MemberSpot spreads the map into the same body as the selector, so an
+		// `email` key would send the update to a different member.
+		await expect(
+			api.users.setCustomProperties(makeCtx(), {
+				email: 'a@acme.example',
+				properties: { email: 'b@acme.example', department: 'Sales' },
+			}),
+		).rejects.toThrow(/selects the member/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a property map that tries to retarget a uid write', async () => {
+		await expect(
+			api.users.setCustomPropertiesByUid(makeCtx(), {
+				uid: 'uid-1',
+				properties: { uid: 'uid-2', department: 'Sales' },
+			}),
+		).rejects.toThrow(/selects the member/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts a property map with ordinary keys', async () => {
+		respondJson({ success: true });
+		await expect(
+			api.users.setCustomProperties(makeCtx(), {
+				email: 'a@acme.example',
+				properties: { department: 'Sales', region: 'EMEA' },
+			}),
+		).resolves.toBeDefined();
+	});
+
+	it('keeps the selector when the map has no reserved key', async () => {
+		respondJson({ success: true });
+		await api.users.setCustomProperties(makeCtx(), {
+			email: 'a@acme.example',
+			properties: { department: 'Sales' },
+		});
+		expect(bodyOf()).toEqual({
+			email: 'a@acme.example',
+			department: 'Sales',
+		});
+	});
+
 	it('rejects a delete list over the documented 10-user cap', async () => {
 		const emails = Array.from({ length: 11 }, (_, i) => `u${i}@acme.example`);
 		await expect(api.users.delete(makeCtx(), { emails })).rejects.toThrow();
