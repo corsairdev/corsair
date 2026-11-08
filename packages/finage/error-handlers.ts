@@ -7,10 +7,21 @@ type StatusError = ApiError | FinageAPIError;
 const isStatusError = (error: Error): error is StatusError =>
 	error instanceof ApiError || error instanceof FinageAPIError;
 
+// A Retry-After past this budget is treated as "not now": retrying would hold
+// the call unreasonably long, and delays above Node's 2^31-1 ms timer limit
+// fire almost immediately instead of waiting.
+const MAX_RETRY_AFTER_MS = 5 * 60_000;
+
 // Single retry owner for 429s: the transport stays single-attempt (see
 // client.ts) and only this policy retries, honoring Retry-After.
 function retryStrategyFor(error: Error): RetryStrategy {
 	if (isStatusError(error) && error.status === 429) {
+		if (
+			error.retryAfter !== undefined &&
+			error.retryAfter > MAX_RETRY_AFTER_MS
+		) {
+			return { maxRetries: 0 };
+		}
 		return { maxRetries: 5, headersRetryAfterMs: error.retryAfter };
 	}
 	return { maxRetries: 0 };

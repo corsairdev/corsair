@@ -58,6 +58,22 @@ describe('Finage error handlers', () => {
 		});
 	});
 
+	it('does not retry when Retry-After exceeds the wait budget', async () => {
+		const error = new FinageAPIError(
+			'rate_limited: Too many requests',
+			429,
+			'rate_limited',
+			24 * 60 * 60_000,
+		);
+
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({ maxRetries: 0 });
+		await expect(errorHandlers.DEFAULT.handler(error)).resolves.toEqual({
+			maxRetries: 0,
+		});
+	});
+
 	it('does not retry authentication failures', async () => {
 		const error = new FinageAPIError('Unauthorized', 401);
 		const handler = errorHandlers.AUTH_ERROR;
