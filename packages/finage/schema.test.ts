@@ -146,6 +146,45 @@ describe('Finage schema', () => {
 		).toBe(false);
 	});
 
+	it('accepts null earnings revenue without failing the calendar', () => {
+		expect(
+			FinageOutputSchemas.getEarningsCalendar.safeParse([
+				{
+					symbol: 'AAPL',
+					eps: null,
+					estimated_eps: 1,
+					revenue: null,
+					estimated_revenue: null,
+					time: 'amc',
+					date: '2025-01-10',
+				},
+			]).success,
+		).toBe(true);
+	});
+
+	it('rejects empty snapshot entries but keeps empty results valid', () => {
+		const snapshot = FinageOutputSchemas.getStockSnapshot;
+
+		expect(
+			snapshot.safeParse({ totalResults: 1, lastQuotes: [{}] }).success,
+		).toBe(false);
+		expect(
+			snapshot.safeParse({ totalResults: 1, lastTrades: [{}] }).success,
+		).toBe(false);
+		expect(
+			snapshot.safeParse({ totalResults: 0, lastQuotes: [], lastTrades: [] })
+				.success,
+		).toBe(true);
+		expect(snapshot.safeParse({}).success).toBe(true);
+		expect(
+			snapshot.safeParse({
+				totalResults: 1,
+				lastQuotes: [{ s: 'AAPL', a: 1, b: 2, asz: 1, bsz: 2, t: 1 }],
+				lastTrades: [{ s: 'AAPL', p: 1, sz: 1, t: 1 }],
+			}).success,
+		).toBe(true);
+	});
+
 	it('rejects malformed aggregate data with missing required fields', () => {
 		const result = FinageOutputSchemas.getStockMarketAggregates.safeParse({
 			symbol: 'AAPL',

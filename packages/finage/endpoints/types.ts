@@ -214,7 +214,17 @@ const snapshotQuote = z
 		bsz: z.number().optional(),
 		t: z.number().optional(),
 	})
-	.catchall(finageJsonValue);
+	.catchall(finageJsonValue)
+	// Every documented quote carries at least one price or size; an empty entry
+	// would otherwise decode to a quote with no market data at all.
+	.refine(
+		(entry) =>
+			entry.a !== undefined ||
+			entry.b !== undefined ||
+			entry.asz !== undefined ||
+			entry.bsz !== undefined,
+		{ message: 'snapshot quote needs one of a, b, asz, bsz' },
+	);
 const snapshotTrade = z
 	.object({
 		s: text.optional(),
@@ -224,7 +234,14 @@ const snapshotTrade = z
 		sz: z.number().optional(),
 		t: z.number().optional(),
 	})
-	.catchall(finageJsonValue);
+	.catchall(finageJsonValue)
+	.refine(
+		(entry) =>
+			entry.p !== undefined ||
+			entry.price !== undefined ||
+			entry.sz !== undefined,
+		{ message: 'snapshot trade needs one of p, price, sz' },
+	);
 const snapshotResponse = z
 	.object({
 		totalResults: z.number().optional(),

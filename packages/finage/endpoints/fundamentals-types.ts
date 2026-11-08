@@ -317,7 +317,9 @@ export const FinageFundamentalOutputSchemas = {
 			symbol: text,
 			eps: z.number().nullable(),
 			estimated_eps: z.number().nullable(),
-			revenue: z.number(),
+			// Finage can omit the reported revenue for announcements that have not
+			// reported yet, so one null record must not fail the whole calendar.
+			revenue: z.number().nullable(),
 			estimated_revenue: z.number().nullable(),
 			time: text,
 			date: text,
