@@ -48,11 +48,29 @@ export const UserSchema = z
 
 export type MemberSpotUser = z.infer<typeof UserSchema>;
 
+/**
+ * The spec lists only `id`, `name` and `hasCourseIds`, but the live response
+ * carries eleven fields. The extras are declared because they are useful, and
+ * `.loose()` keeps any further addition from failing the parse.
+ */
 const OfferSchema = z
 	.object({
 		id: z.string(),
 		name: z.string(),
+		priority: z.number().nullish(),
+		allCourses: z
+			.boolean()
+			.nullish()
+			.describe(
+				'True when the offer grants every course, including future ones.',
+			),
 		hasCourseIds: z.array(z.string()).nullish(),
+		hasSpaceIds: z.array(z.string()).nullish(),
+		pageIds: z.array(z.string()).nullish(),
+		portalIds: z.array(z.string()).nullish(),
+		internal: z.boolean().nullish(),
+		schoolId: z.string().nullish(),
+		updatedAt: z.string().nullish(),
 	})
 	.loose();
 
@@ -130,10 +148,15 @@ const AuthCheckInputSchema = z.object({});
 
 export type AuthCheckInput = z.input<typeof AuthCheckInputSchema>;
 
+/**
+ * `/api-auth` is the one route the OpenAPI spec documents with no response
+ * schema, so this shape comes from the live API: `{ schoolId, name }`. It is
+ * kept loose because the spec could add fields without notice.
+ */
 const AuthCheckResponseSchema = z
 	.object({
-		id: z.string().nullish(),
-		name: z.string().nullish(),
+		schoolId: z.string().nullish().describe('The school the key belongs to.'),
+		name: z.string().nullish().describe('The school name.'),
 	})
 	.loose();
 

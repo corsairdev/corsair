@@ -18,7 +18,7 @@ export const authCheck: MemberSpotEndpoints['authCheck'] = (ctx, input) =>
 		},
 		input,
 		() => ({ action: '/api-auth', replaySafe: true }),
-		{ log: (_, result) => ({ schoolId: result.id ?? undefined }) },
+		{ log: (_, result) => ({ schoolId: result.schoolId ?? undefined }) },
 	);
 
 // ── catalog reads ─────────────────────────────────────────────────────────
