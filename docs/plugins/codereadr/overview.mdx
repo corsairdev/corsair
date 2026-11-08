@@ -14,7 +14,7 @@ Things to know before you call:
 - **Scans are the records you retrieve.** `scans.list` searches by date range, service, device, user, validation status, barcode value and stored properties, and pages with `limit`/`offset`. It returns `next_offset` while a page comes back full.
 - **Nothing is mirrored locally.** The plugin reads the live API and stores no entities, so a retrieved scan always reflects the account as it is now.
 - **Deletes cannot be undone.** `scans.delete`, `services.delete`, `databases.delete`, `databases.clear` and `users.delete` are marked destructive and irreversible. `services.delete` and `users.delete` also accept `all`, which removes every service or every app user except the account owner.
-- **Rate limits.** The API allows a fixed number of calls per minute and per day, and answers error code 111 or 113 when exceeded. The counters reset every minute, and the docs say blocked calls can be resent, so this plugin retries those codes with a one minute wait. Every other error code is a rejected request and is not retried.
+- **Rate limits.** The API allows a fixed number of calls per minute and per day, and answers error code 111 or 113 when exceeded. The two windows reset differently: the per-minute counter at the start of each minute, the per-day counter at midnight. The plugin retries both, waiting whatever `Retry-After` the server sends and one minute when it sends none, so a call blocked by the daily limit keeps failing until midnight. Check `limits.retrieve` before a long run. Every other error code is a rejected request and is not retried.
 - **Writes are not replayed on server errors.** Only reads, and the database upserts, which are idempotent, are repeated after a transient failure.
 - **No webhooks.** CodeREADr can post scan data to your own URL (Postback URL or Direct Scan URL), which is configured on the service rather than received by the plugin.
 
@@ -76,7 +76,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup needed up front. A call made with no saved key throws `AuthMissingError`, which may carry a `connectUrl` where the key can be entered, or you can save one yourself:
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 codereadr()
@@ -106,7 +106,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**List today's valid scans for a service**
+**List valid scans for a service since a fixed date**
 
 ```ts
 const tenant = corsair.withTenant('acme');

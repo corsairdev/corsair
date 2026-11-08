@@ -460,7 +460,7 @@ await corsair.codereadr.api.questions.create({ question_text: 'Which dock?', que
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `question_text` | `string` | Yes | The question shown to the app user. |
-| `question_type` | `barcode \| barcodemultiline \| barcodenumeric \| checkbox \| dropboximage \| dropdown \| gps \| manual \| manualmultiline \| manualnumeric \| option \| webcollect` | No | Defaults to `manual`. A type that is not recognized also becomes `manual` with no error, so check the created question. `checkbox`, `dropdown`, `option` and `webcollect` need answer options added afterwards. |
+| `question_type` | `barcode \| barcodemultiline \| barcodenumeric \| checkbox \| dropboximage \| dropdown \| gps \| manual \| manualmultiline \| manualnumeric \| option \| webcollect` | No | Defaults to `manual`. A value outside this list is rejected here before the request is sent. `checkbox`, `dropdown`, `option` and `webcollect` need answer options added afterward. |
 
 
 
@@ -576,7 +576,7 @@ await corsair.codereadr.api.scans.list({ service_id: [927], status: ['1'], start
 | `device_id` | `number[] \| all` | No | Devices that made the scans. `all` by default. |
 | `user_id` | `number[] \| all` | No | Users who made the scans. `all` by default. |
 | `scan_id` | `number[] \| all` | No | Only these scans. |
-| `status` | `(0 \| 1 \| -1)[]` | No | '1' valid, '0' invalid, '-1' could not be validated offline. `all` by default. |
+| `status` | `('0' \| '1' \| '-1')[]` | No | '1' valid, '0' invalid, '-1' could not be validated offline. `all` by default. |
 | `start_date` | `string` | No | YYYY-MM-DD. Scans made on or after this date. |
 | `start_time` | `string` | No | HH:mm:ss, 24-hour. Only valid with `start_date`. |
 | `end_date` | `string` | No | YYYY-MM-DD. Scans made on or before this date. |
@@ -618,7 +618,7 @@ await corsair.codereadr.api.scans.list({ service_id: [927], status: ['1'], start
   id?: number | null,
   barcode_value?: string | null,
   response?: string | null,
-  status: 0 | 1 | -1 | null,
+  status?: string | null,
   timestamp?: string | null,
   timestamp_received?: string | null,
   timestamp_modified?: string | null,
