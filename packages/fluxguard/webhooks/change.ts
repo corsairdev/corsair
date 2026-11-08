@@ -8,6 +8,15 @@ import {
 	verifyFluxguardSignature,
 } from './types';
 
+/**
+ * A rejected delivery throws instead of returning `success: false`.
+ * `processWebhook` reads only `returnToSender`, `responseHeaders` and (on a
+ * throw) the error message, then answers `{ success: true }` regardless. So a
+ * returned `statusCode: 401` never reaches the HTTP handler, and a forged
+ * delivery would be acknowledged as accepted. Throwing is the only path that
+ * makes `processWebhook` report `success: false`, which is what `fal` does for
+ * the same reason.
+ */
 export const changeDetected: CorsairWebhook<
 	FluxguardContext,
 	FluxguardChangeEvent,
@@ -18,20 +27,14 @@ export const changeDetected: CorsairWebhook<
 	handler: async (ctx, request) => {
 		const verification = verifyFluxguardSignature(request, ctx.key);
 		if (!verification.valid) {
-			return {
-				success: false,
-				statusCode: 401,
-				error: verification.error ?? 'Fluxguard webhook verification failed',
-			};
+			throw new Error(
+				verification.error ?? 'Fluxguard webhook verification failed',
+			);
 		}
 
 		const parsed = FluxguardChangeEventSchema.safeParse(request.payload);
 		if (!parsed.success) {
-			return {
-				success: false,
-				statusCode: 400,
-				error: 'Invalid Fluxguard change payload',
-			};
+			throw new Error('Invalid Fluxguard change payload');
 		}
 
 		const event = parsed.data;
