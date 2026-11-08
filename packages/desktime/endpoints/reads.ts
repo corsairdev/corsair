@@ -3,6 +3,8 @@ import { call } from './call';
 import {
 	DeskTimeEndpointInputSchemas as Inputs,
 	DeskTimeEndpointOutputSchemas as Outputs,
+	withAppsByProductivity,
+	withBuckets,
 } from './types';
 
 /**
@@ -63,6 +65,12 @@ export const employees: DeskTimeEndpoints['employees'] = (ctx, input) =>
 			query: { date: parsed.date, period: parsed.period },
 		}),
 		{
+			shape: (raw) =>
+				withBuckets(
+					raw as {
+						employees: Record<string, Record<string, never>>;
+					},
+				),
 			log: (_, result) => ({
 				buckets: result.buckets.length,
 				employees: result.buckets.reduce(
@@ -107,6 +115,10 @@ export const employeeApps: DeskTimeEndpoints['employeeApps'] = (ctx, input) =>
 			query: { id: parsed.id, date: parsed.date },
 		}),
 		{
+			shape: (raw) =>
+				withAppsByProductivity(
+					raw as { apps?: Record<string, never[]> | null },
+				),
 			log: (_, result) => ({
 				employeeId: result.id,
 				productiveApps: result.apps_by_productivity?.productive?.length ?? 0,

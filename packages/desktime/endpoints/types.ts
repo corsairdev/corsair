@@ -143,24 +143,47 @@ export type EmployeesInput = z.input<typeof EmployeesInputSchema>;
 /**
  * The response nests by date, then by employee id, so a week or month request
  * returns several buckets. Both levels are keyed objects, not arrays.
+ *
+ * `buckets` is a flattened view, newest date first, built before parsing so the
+ * schema below can describe it. A `.transform()` would hide the field from the
+ * docs generator, which reads the input side of a transform.
+ *
+ * `value` is loosely typed because a test may hand it a deliberately malformed
+ * body; the output schema is what rejects that, which is the point of the test.
  */
-const EmployeesResponseSchema = z
-	.object({
-		employees: z.record(z.string(), z.record(z.string(), EmployeeSchema)),
-		__request_time: z.string().nullish(),
-	})
-	.loose()
-	.transform((value) => ({
-		...value,
-		// A flat view for callers, newest bucket first. The date stays on each
-		// entry so a multi-day response is unambiguous.
-		buckets: Object.entries(value.employees)
+export function withBuckets(value: unknown): {
+	buckets: { date: string; employees: unknown[] }[];
+} & Record<string, unknown> {
+	const employees = (
+		value as { employees?: Record<string, Record<string, unknown>> }
+	).employees;
+	return {
+		...(value as Record<string, unknown>),
+		buckets: Object.entries(employees ?? {})
 			.sort(([a], [b]) => b.localeCompare(a))
 			.map(([date, byId]) => ({
 				date,
 				employees: Object.values(byId),
 			})),
-	}));
+	};
+}
+
+const EmployeesResponseSchema = z
+	.object({
+		employees: z.record(z.string(), z.record(z.string(), EmployeeSchema)),
+		buckets: z
+			.array(
+				z.object({
+					date: z.string(),
+					employees: z.array(EmployeeSchema),
+				}),
+			)
+			.describe(
+				'The same employees flattened out of the two-level map, newest date first, with the date kept on each entry so a multi-day response stays unambiguous.',
+			),
+		__request_time: z.string().nullish(),
+	})
+	.loose();
 
 export type EmployeesResponse = z.infer<typeof EmployeesResponseSchema>;
 
@@ -195,6 +218,30 @@ const TrackedAppSchema = z
 	})
 	.loose();
 
+/**
+ * `apps_by_productivity` relabels the provider's `-1`, `0` and `1` keys. It is
+ * built before parsing so the schema can describe it; a `.transform()` would
+ * hide the field from the docs generator, which reads a transform's input side.
+ *
+ * `value` is loosely typed because a test may hand it a deliberately malformed
+ * body, which the output schema then rejects.
+ */
+export function withAppsByProductivity(
+	value: unknown,
+): Record<string, unknown> {
+	const apps = (value as { apps?: Record<string, unknown[]> | null }).apps;
+	return {
+		...(value as Record<string, unknown>),
+		apps_by_productivity: apps
+			? {
+					unrated: apps['-1'],
+					neutral: apps['0'],
+					productive: apps['1'],
+				}
+			: undefined,
+	};
+}
+
 const EmployeeAppsResponseSchema = EmployeeSchema.extend({
 	apps: z
 		.record(z.string(), z.array(TrackedAppSchema))
@@ -202,20 +249,17 @@ const EmployeeAppsResponseSchema = EmployeeSchema.extend({
 		.describe(
 			'Tracked apps keyed by productivity class, where `-1` is unrated, `0` neutral and `1` productive.',
 		),
-})
-	.loose()
-	.transform((value) => ({
-		...value,
-		// The keys are productivity classes. Hand them over labelled so a caller
-		// does not have to know the convention.
-		apps_by_productivity: value.apps
-			? {
-					unrated: value.apps['-1'],
-					neutral: value.apps['0'],
-					productive: value.apps['1'],
-				}
-			: undefined,
-	}));
+	apps_by_productivity: z
+		.object({
+			unrated: z.array(TrackedAppSchema).optional(),
+			neutral: z.array(TrackedAppSchema).optional(),
+			productive: z.array(TrackedAppSchema).optional(),
+		})
+		.optional()
+		.describe(
+			'The same apps relabelled from the numeric productivity keys to `unrated`, `neutral` and `productive`.',
+		),
+}).loose();
 
 export type EmployeeAppsResponse = z.infer<typeof EmployeeAppsResponseSchema>;
 
