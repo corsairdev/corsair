@@ -23,6 +23,12 @@ import { join } from 'node:path';
 
 export const PACKAGE_ROOTS = ['packages', 'adapters'];
 
+// Never bumped here, whatever changes. @corsair-dev/app: npm's 0.1.2 to 0.1.5
+// are a different package (the old hosted repo's typed SDK), so the next patch
+// would replace that SDK with packages/app's MCP client adapters. Remove it once
+// someone decides between private, a new name or overwriting.
+export const HELD_PACKAGES = new Set(['@corsair-dev/app']);
+
 // Files inside a package that don't reach the npm tarball, or don't change
 // what it does. A change to only these files doesn't release the package.
 const NOT_SHIPPED = [
@@ -257,6 +263,10 @@ export async function planRelease({ cwd, registry, log = () => {} }) {
 
 	const bumps = new Map();
 	const bump = async (pkg, files) => {
+		if (HELD_PACKAGES.has(pkg.name)) {
+			log(`SKIP ${pkg.name}: held, see HELD_PACKAGES`);
+			return;
+		}
 		const npm = await npmVersions(pkg.name);
 		if (!parseVersion(pkg.version)) {
 			log(`SKIP ${pkg.name}: ${pkg.version} is not a plain x.y.z version`);

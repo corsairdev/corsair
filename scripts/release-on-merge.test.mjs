@@ -329,6 +329,53 @@ describe('planRelease on a git repo', () => {
 		);
 	});
 
+	it('keeps releasing dependents when a later package in the pass is skipped', async () => {
+		pkg('packages/core', 'core', '0.1.157');
+		write('packages/core/index.ts', '1\n');
+		// Sorted before the package it depends on, so it needs a second pass.
+		pkg('packages/alpha', '@x/alpha', '0.1.0', {
+			dependencies: { '@x/mid': 'workspace:*' },
+		});
+		pkg('packages/mid', '@x/mid', '0.1.0', {
+			dependencies: { core: 'workspace:*' },
+		});
+		// Sorted after @x/mid, and bump() refuses a prerelease.
+		pkg('packages/zeta', '@x/zeta', '0.1.0-beta.1', {
+			dependencies: { core: 'workspace:*' },
+		});
+		commit('release');
+		write('packages/core/index.ts', '2\n');
+		commit('fix core');
+		const plan = await planRelease({
+			cwd,
+			registry: registry({
+				core: { versions: ['0.1.157'] },
+				'@x/alpha': { versions: ['0.1.0'] },
+				'@x/mid': { versions: ['0.1.0'] },
+				'@x/zeta': { versions: ['0.1.0-beta.1'] },
+			}),
+		});
+		assert.deepEqual(
+			plan.bumps.map((b) => b.name),
+			['@x/alpha', '@x/mid', 'core'],
+		);
+	});
+
+	it('never bumps a held package, even when its files changed', async () => {
+		pkg('packages/app', '@corsair-dev/app', '0.1.1');
+		write('packages/app/index.ts', '1\n');
+		commit('release');
+		write('packages/app/index.ts', '2\n');
+		commit('change app');
+		const plan = await planRelease({
+			cwd,
+			registry: registry({
+				'@corsair-dev/app': { versions: ['0.1.1', '0.1.5'], latest: '0.1.5' },
+			}),
+		});
+		assert.deepEqual(plan.bumps, []);
+	});
+
 	it('tags the commit that set the top-level version, not a nested one', async () => {
 		pkg('packages/a', '@x/a', '0.1.0');
 		write('packages/a/index.ts', '1\n');
