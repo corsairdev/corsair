@@ -12,6 +12,8 @@ function keyContext(
 		options: {},
 		keys: { get_api_key: getKey },
 		tenantId: 'default',
+		// unknown: this test builds only the fields the key builder reads, so the
+		// partial key manager is narrowed to the full context after construction.
 	} as unknown as FinageKeyBuilderContext;
 }
 

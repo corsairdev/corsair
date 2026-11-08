@@ -31,12 +31,16 @@ const RATE_LIMIT_CONFIG: RateLimitConfig = {
 	headerNames: { retryAfter: 'Retry-After' },
 };
 
+// unknown: provider error bodies arrive as unparsed JSON, so callers narrow each
+// field they read instead of asserting a provider shape up front.
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null;
 }
 
 // Finage documents error bodies as { error: { code, message } }; surface those
 // fields on the plugin error instead of discarding the provider's own message.
+// unknown: the transport hands back unparsed JSON, and providerError narrows
+// only the documented fields rather than trusting the whole body.
 function providerError(body: unknown): { code?: string; message?: string } {
 	if (!isRecord(body)) return {};
 	const nested = isRecord(body.error) ? body.error : body;

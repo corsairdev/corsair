@@ -408,6 +408,8 @@ function makeEndpoint<Name extends FinageOperationName>(name: Name) {
 		const parsed = FinageEndpointInputSchemas[name].parse(input);
 		const requestInput = toRequestInput(parsed);
 		const spec = specs[name];
+		// unknown: the transport returns unparsed JSON, so the operation-specific
+		// output schema below validates it before the typed result is returned.
 		const response: unknown = await makeFinageRequest<
 			FinageEndpointOutputs[Name]
 		>(spec.path(requestInput), ctx.key, spec.query?.(requestInput) ?? {});
