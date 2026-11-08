@@ -13,7 +13,7 @@
 // `publish` commits to the bot branch and opens or updates the PR. A person
 // looks at the new icons and merges it. Nothing here merges anything.
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -202,6 +202,20 @@ function reuseIcon(cwd, ref, id, sources) {
 	return true;
 }
 
+function removeIcon(cwd, id) {
+	for (const path of [
+		`explorer/icons/${id}.png`,
+		`explorer/icons/${id}.dark.png`,
+		`explorer/icons/${id}.svg`,
+		`scripts/plugin-icon-sources/${id}.svg`,
+	]) {
+		rmSync(join(cwd, path), { force: true });
+	}
+	const sourcesPath = join(cwd, SOURCES);
+	const { [id]: removed, ...rest } = readJson(sourcesPath);
+	if (removed) writeJson(sourcesPath, rest);
+}
+
 export function icons({
 	cwd,
 	plan,
@@ -222,21 +236,23 @@ export function icons({
 	const refSources = showRef(SOURCES);
 	const refManifest = showRef(MANIFEST);
 
-	// Writes each favicon and records every id's domain in the manifest, which
-	// the checks below need.
+	const restored = refExists
+		? ids.filter((id) => reuseIcon(cwd, ref, id, refSources))
+		: [];
+
+	// Downloads a favicon only for ids still without a PNG, renders restored
+	// curated files and records every id's domain in the manifest.
 	fetchIcons(cwd, ids);
 	const domains = () => readJson(join(cwd, MANIFEST)).domains ?? {};
 
-	// Keep the branch's icon unless the plugin's domain changed since: the PR asks
-	// reviewers to correct a wrong domain, and that icon came from the wrong site.
-	const reused = refExists
-		? ids.filter(
-				(id) =>
-					refManifest.domains?.[id] === domains()[id] &&
-					reuseIcon(cwd, ref, id, refSources),
-			)
-		: [];
-	if (reused.length > 0) fetchIcons(cwd, reused);
+	// Give back an icon whose plugin changed domain since: the PR asks reviewers to
+	// correct a wrong domain, and that icon came from the wrong site.
+	const stale = restored.filter(
+		(id) => refManifest.domains?.[id] !== domains()[id],
+	);
+	for (const id of stale) removeIcon(cwd, id);
+	if (stale.length > 0) fetchIcons(cwd, stale);
+	const reused = restored.filter((id) => !stale.includes(id));
 	const fresh = ids.filter((id) => !reused.includes(id));
 
 	if (hasKey) {

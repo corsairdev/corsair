@@ -463,7 +463,11 @@ if (args[0] === 'pr' && args[1] === 'list') {
 				cwd,
 				plan,
 				hasKey: true,
-				fetchIcons: fakeFetch,
+				fetchIcons: (dir, ids) => {
+					// A PNG already on disk is what stops the real script downloading.
+					assert.ok(existsSync(join(dir, 'explorer/icons/b.png')));
+					fakeFetch(dir, ids);
+				},
 				importIcon: () => assert.fail('already have it'),
 			});
 			assert.equal(
