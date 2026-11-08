@@ -570,7 +570,7 @@ await corsair.memberspot.api.users.deleteByUid({ uids: ['uid-1'] });
 
 `users.findByEmail`
 
-Returns one user by email, or null when no such user exists
+Returns one user by email; a member that does not exist answers 400 USER_NOT_FOUND rather than an empty result
 
 **Risk:** `read`
 
@@ -622,7 +622,7 @@ await corsair.memberspot.api.users.findByEmail({ email: 'jordan@acme.example' })
 
 `users.findByUid`
 
-Returns one user by uid, or null when no such user exists
+Returns one user by uid; a uid that does not exist answers an empty body, which fails the output schema rather than returning null
 
 **Risk:** `read`
 
@@ -835,9 +835,9 @@ await corsair.memberspot.api.users.list({ pageLength: 25, courseId: 'course-1' }
 
 `users.loginToken`
 
-Mints a token and login URL that signs a user in automatically; the token expires after one hour
+Mints a token and login URL that signs a user in automatically, which is a credential; the token expires after one hour
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
 await corsair.memberspot.api.users.loginToken({ uid: 'uid-1' });
@@ -957,7 +957,7 @@ await corsair.memberspot.api.users.setCustomProperties({ email: 'jordan@acme.exa
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `email` | `string` | Yes | — |
-| `properties` | `Record<string, string>` | Yes | Property key to value. A property omitted here is left unchanged. |
+| `properties` | `Record<string, string>` | Yes | Property key to value. A property omitted here is left unchanged. `email` and `uid` are rejected, because they would retarget the write. |
 
 
 
