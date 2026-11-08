@@ -110,6 +110,8 @@ describe('retry behaviour', () => {
 			const error = await withFakeTimers(
 				corsair.codereadr.api.limits
 					.retrieve({})
+					// unknown: a rejection can be any value; the assertion below
+					// narrows it to the fields it checks.
 					.catch((caught: unknown) => caught),
 			);
 

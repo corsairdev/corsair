@@ -77,6 +77,29 @@ describe('CodeREADr plugin through createCorsair', () => {
 		}
 	});
 
+	it('prefers an inline key over the stored one', async () => {
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'codereadr', 'default');
+		const corsair = createCorsair({
+			plugins: [codereadr({ key: 'inline-key' })],
+			database: testDb.db,
+			kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+		});
+		try {
+			await corsair.codereadr.keys.issue_new_dek();
+			await corsair.codereadr.keys.set_api_key('stored-key');
+			respondXml(SUCCESS_XML);
+
+			await corsair.codereadr.api.limits.retrieve({});
+
+			const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+			const form = new URLSearchParams(String(init.body));
+			expect(form.get('api_key')).toBe('inline-key');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('lists scans with the configured key', async () => {
 		const { corsair, testDb } = await createClient({
 			key: 'codereadr-test-key',

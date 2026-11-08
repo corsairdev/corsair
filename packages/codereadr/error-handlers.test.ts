@@ -107,6 +107,27 @@ describe('error handlers', () => {
 		const strategy = await strategyFor(error);
 		expect(strategy.maxRetries).toBe(0);
 	});
+
+	it('retries an HTTP 429, which never carries a body code', async () => {
+		const error = new CodereadrAPIError('CodeREADr HTTP 429', { status: 429 });
+		const strategy = await strategyFor(error);
+		expect(strategy.maxRetries).toBeGreaterThan(0);
+	});
+
+	it('uses a real Retry-After delay instead of the one minute fallback', async () => {
+		const error = new CodereadrAPIError('CodeREADr HTTP 429', {
+			status: 429,
+			retryAfter: 2_500,
+		});
+		const strategy = await strategyFor(error);
+		expect(strategy.headersRetryAfterMs).toBe(2_500);
+	});
+
+	it('falls back to one minute when the server sent no Retry-After', async () => {
+		const error = new CodereadrAPIError('CodeREADr HTTP 429', { status: 429 });
+		const strategy = await strategyFor(error);
+		expect(strategy.headersRetryAfterMs).toBe(60_000);
+	});
 });
 
 describe('mergeErrorHandlers', () => {
@@ -132,6 +153,31 @@ describe('mergeErrorHandlers', () => {
 		expect(keys.indexOf('MY_RATE_LIMIT')).toBeLessThan(
 			keys.indexOf('RATE_LIMIT_ERROR'),
 		);
+	});
+
+	it('lets a user handler that reuses a builtin name win on its values', async () => {
+		// The caller turning retries off must not be silently restored by the
+		// builtin handler sitting under the same key.
+		const merged = mergeErrorHandlers(errorHandlers, {
+			RATE_LIMIT_ERROR: {
+				match: (error: Error) =>
+					error instanceof CodereadrAPIError && error.isRateLimit,
+				handler: async () => ({ maxRetries: 0 }),
+			},
+		});
+		const strategy = await strategyFor(providerError(111), merged);
+		expect(strategy.maxRetries).toBe(0);
+	});
+
+	it('keeps builtin handlers the caller did not override', () => {
+		const merged = mergeErrorHandlers(errorHandlers, {
+			CUSTOM: {
+				match: () => false,
+				handler: async () => ({ maxRetries: 1 }),
+			},
+		});
+		expect(merged.AUTH_ERROR).toBe(errorHandlers.AUTH_ERROR);
+		expect(merged.SERVER_ERROR).toBe(errorHandlers.SERVER_ERROR);
 	});
 
 	it('returns the builtin handlers unchanged without user handlers', () => {

@@ -14,6 +14,7 @@ import {
 	SCANS_XML,
 	SUCCESS_XML,
 } from './test-fixtures';
+import { asArray, asRecord, rejection } from './test-helpers';
 
 const API_KEY = 'test-api-key-abcdef123456';
 
@@ -28,6 +29,8 @@ function mockFetch(
 	options: { status?: number; contentType?: string } = {},
 ): Captured[] {
 	const captured: Captured[] = [];
+	// unknown: jest's mock signature takes whatever the caller passes, and the
+	// client sends the fetch arguments a real call would.
 	global.fetch = jest.fn(async (url: unknown, init: unknown) => {
 		captured.push({ url: String(url), init: init as RequestInit });
 		return new Response(body, {
@@ -127,24 +130,27 @@ describe('makeCodereadrRequest', () => {
 
 	it('carries the provider error code and message', async () => {
 		mockFetch(AUTH_ERROR_XML);
-		const error = await makeCodereadrRequest(API_KEY, {
-			section: 'limits',
-			action: 'retrieve',
-		}).catch((caught: unknown) => caught);
+		const error = await rejection<CodereadrAPIError>(
+			makeCodereadrRequest(API_KEY, {
+				section: 'limits',
+				action: 'retrieve',
+			}),
+		);
 
 		expect(error).toBeInstanceOf(CodereadrAPIError);
-		const apiError = error as CodereadrAPIError;
-		expect(apiError.code).toBe(100);
-		expect(apiError.message).toContain('The API key is invalid.');
-		expect(apiError.isRateLimit).toBe(false);
+		expect(error.code).toBe(100);
+		expect(error.message).toContain('The API key is invalid.');
+		expect(error.isRateLimit).toBe(false);
 	});
 
 	it('marks the documented limit codes as rate limits', async () => {
 		mockFetch(RATE_LIMIT_ERROR_XML);
-		const error = (await makeCodereadrRequest(API_KEY, {
-			section: 'limits',
-			action: 'retrieve',
-		}).catch((caught: unknown) => caught)) as CodereadrAPIError;
+		const error = await rejection<CodereadrAPIError>(
+			makeCodereadrRequest(API_KEY, {
+				section: 'limits',
+				action: 'retrieve',
+			}),
+		);
 
 		expect(error.code).toBe(111);
 		expect(error.isRateLimit).toBe(true);
@@ -152,10 +158,12 @@ describe('makeCodereadrRequest', () => {
 
 	it('wraps a transport failure and keeps the HTTP status', async () => {
 		mockFetch('<html>bad gateway</html>', { status: 502 });
-		const error = (await makeCodereadrRequest(API_KEY, {
-			section: 'limits',
-			action: 'retrieve',
-		}).catch((caught: unknown) => caught)) as CodereadrAPIError;
+		const error = await rejection<CodereadrAPIError>(
+			makeCodereadrRequest(API_KEY, {
+				section: 'limits',
+				action: 'retrieve',
+			}),
+		);
 
 		expect(error).toBeInstanceOf(CodereadrAPIError);
 		expect(error.status).toBe(502);
@@ -170,30 +178,87 @@ describe('makeCodereadrRequest', () => {
 
 	it('never leaks the key into the error message or cause', async () => {
 		mockFetch(AUTH_ERROR_XML);
-		const error = (await makeCodereadrRequest(API_KEY, {
-			section: 'limits',
-			action: 'retrieve',
-		}).catch((caught: unknown) => caught)) as CodereadrAPIError;
+		const error = await rejection<CodereadrAPIError>(
+			makeCodereadrRequest(API_KEY, {
+				section: 'limits',
+				action: 'retrieve',
+			}),
+		);
 
 		expect(error.message).not.toContain(API_KEY);
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
 		expect(String(error.cause)).not.toContain(API_KEY);
 	});
 
+	it('drops the transport cause so the request body cannot leak the key', async () => {
+		// A 500 makes the client wrap an ApiError, which holds the request whose
+		// form body carries api_key and, on user writes, the password.
+		mockFetch('<html>oops</html>', { status: 500 });
+		const error = await rejection<CodereadrAPIError>(
+			makeCodereadrRequest(API_KEY, {
+				section: 'users',
+				action: 'create',
+				password: 'user-password',
+			}),
+		);
+
+		expect(error.cause).toBeUndefined();
+		const serialized = `${JSON.stringify(error)}${error.message}${String(error.stack)}`;
+		expect(serialized).not.toContain(API_KEY);
+		expect(serialized).not.toContain('user-password');
+	});
+
+	it('keeps a Retry-After delay on the error it wraps', async () => {
+		mockFetch('', { status: 429 });
+		const error = await rejection<CodereadrAPIError>(
+			makeCodereadrRequest(API_KEY, {
+				section: 'limits',
+				action: 'retrieve',
+			}),
+		);
+
+		expect(error.status).toBe(429);
+		expect(error.isRateLimit).toBe(true);
+	});
+
+	it('refuses a 200 whose body has no success status', async () => {
+		// A proxy error page parses as XML but never says status 1, so treating
+		// the absence of a failure as success would make a delete look applied.
+		mockFetch('<html><body>Unavailable</body></html>');
+		await expect(
+			makeCodereadrRequest(API_KEY, { section: 'scans', action: 'delete' }),
+		).rejects.toThrow(/without a status/);
+	});
+
+	it('preserves whitespace inside a leaf so a stored value round-trips', async () => {
+		mockFetch('<xml><status>1</status><value><id> A1 </id></value></xml>');
+		const root = await makeCodereadrRequest(API_KEY, {
+			section: 'databases',
+			action: 'showvalues',
+		});
+		const values = asRecord(root.value);
+		// A leaf without attributes is returned as its text, untrimmed.
+		expect(values.id).toBe(' A1 ');
+	});
+
 	it('reports replay safety on the error so a write is not retried blindly', async () => {
 		mockFetch(AUTH_ERROR_XML);
-		const readError = (await makeCodereadrRequest(
-			API_KEY,
-			{ section: 'scans', action: 'retrieve' },
-			{ replaySafe: true },
-		).catch((caught: unknown) => caught)) as CodereadrAPIError;
+		const readError = await rejection<CodereadrAPIError>(
+			makeCodereadrRequest(
+				API_KEY,
+				{ section: 'scans', action: 'retrieve' },
+				{ replaySafe: true },
+			),
+		);
 		expect(readError.replaySafe).toBe(true);
 
 		mockFetch(AUTH_ERROR_XML);
-		const writeError = (await makeCodereadrRequest(API_KEY, {
-			section: 'scans',
-			action: 'delete',
-		}).catch((caught: unknown) => caught)) as CodereadrAPIError;
+		const writeError = await rejection<CodereadrAPIError>(
+			makeCodereadrRequest(API_KEY, {
+				section: 'scans',
+				action: 'delete',
+			}),
+		);
 		expect(writeError.replaySafe).toBe(false);
 	});
 
@@ -211,9 +276,8 @@ describe('makeCodereadrRequest', () => {
 describe('parseCodereadrXml', () => {
 	it('reads repeated nodes as an array and a single node as an object', () => {
 		const parsed = parseCodereadrXml(SCANS_XML);
-		const scans = parsed?.scan;
-		expect(Array.isArray(scans)).toBe(true);
-		expect((scans as unknown[]).length).toBe(2);
+		const scans = asArray(parsed?.scan);
+		expect(scans).toHaveLength(2);
 	});
 
 	it('keeps a node that appears once as an object', () => {
@@ -250,7 +314,7 @@ describe('parseCodereadrXml', () => {
 	it('does not confuse a nested status with the root status', () => {
 		const parsed = parseCodereadrXml(SCANS_XML);
 		expect(parsed?.status).toBe('1');
-		const scans = parsed?.scan as Record<string, unknown>[];
+		const scans = asArray(parsed?.scan).map(asRecord);
 		expect(scans[1]?.status).toBe('0');
 	});
 });
