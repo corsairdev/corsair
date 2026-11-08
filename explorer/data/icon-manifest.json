@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-08T05:06:40.716Z",
+  "generatedAt": "2026-11-08T06:36:29.790Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
@@ -480,7 +480,7 @@
     "amcards": "curated",
     "amplitude": "curated",
     "anchorbrowser": "twenty-icons",
-    "anonyflow": "curated",
+    "anonyflow": "url-override",
     "anthropicadministrator": "twenty-icons",
     "anyapi": "twenty-icons",
     "apaleo": "twenty-icons",
@@ -893,7 +893,6 @@
     "alphavantage",
     "amcards",
     "amplitude",
-    "anonyflow",
     "apify",
     "apipie",
     "asana",

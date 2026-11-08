@@ -152,6 +152,9 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	starton: 'https://github.com/starton-io.png?size=200',
 	// twenty-icons only has a 32px blur; the site apple touch icon is 180px.
 	browseruse: 'https://browser-use.com/apple-touch-icon.png',
+	// The site's own logo (header, favicon and touch icon), a green lock. Its
+	// /icon.svg is an unreferenced purple shield, not the brand's mark.
+	anonyflow: 'https://anonyflow.com/anonyflow-logo.avif',
 	// The brand's own large icons: the site's web-app icon, or the App Store
 	// icon where the site only has a small favicon.
 	cal: 'https://cal.com/icon.png',
@@ -356,8 +359,8 @@ function isPng(bytes: Buffer): boolean {
 	);
 }
 
-/** Raster formats some override CDNs serve instead of PNG. */
-const CONVERTIBLE_FORMATS = new Set(['jpeg', 'webp', 'gif']);
+/** Raster formats some override CDNs serve instead of PNG (heif covers AVIF). */
+const CONVERTIBLE_FORMATS = new Set(['jpeg', 'webp', 'gif', 'heif']);
 
 /**
  * Normalize url-override bytes to PNG: null when they aren't a raster image.

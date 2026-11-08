@@ -27,12 +27,8 @@
   "amplitude": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/amplitude.svg"
   },
-  "anonyflow": {
-    "from": "https://anonyflow.com/icon.svg",
-    "note": "the brand site's own SVG icon"
-  },
   "apify": {
-    "from": "https://apify.com/favicon.svg",
+    "from": "https://apify.com/icon0.svg",
     "note": "the brand site's own SVG icon"
   },
   "apipie": {
@@ -242,7 +238,7 @@
   },
   "octen": {
     "from": "https://octen.ai/static/favicon.svg",
-    "note": "the brand site's own SVG icon"
+    "note": "the brand site's own SVG icon, recoloured from its dark-site accent #70FE7E to its favicon green #039855"
   },
   "ollama": {
     "from": "https://svgl.app/library/ollama_light.svg"
