@@ -433,8 +433,8 @@ function pushBranch(cwd, remoteSha, log) {
 		throw new Error(`pushing ${BOT_BRANCH} failed:\n${push.stderr}`);
 	}
 	log(`Force-push to ${BOT_BRANCH} refused; replacing the branch.`);
-	git(cwd, ['push', 'origin', '--delete', BOT_BRANCH]);
-	git(cwd, ['push', 'origin', refspec]);
+	git(cwd, ['push', lease, 'origin', `:refs/heads/${BOT_BRANCH}`]);
+	git(cwd, ['push', `--force-with-lease=${BOT_BRANCH}:`, 'origin', refspec]);
 	return { recreated: true };
 }
 
@@ -475,7 +475,8 @@ export function publish({ cwd, plan, repo, sourceSha, log = () => {} }) {
 	git(cwd, ['commit', '-q', '-m', title]);
 
 	if (remoteSha) {
-		// Every build moves generatedAt, which is no reason to touch an open PR.
+		// Every build moves generatedAt and each release moves corsairVersion, which
+		// is no reason to touch an open PR or reopen a closed one.
 		const same =
 			spawnSync(
 				'git',
@@ -483,6 +484,7 @@ export function publish({ cwd, plan, repo, sourceSha, log = () => {} }) {
 					'diff',
 					'--exit-code',
 					'-I"generatedAt"',
+					'-I"corsairVersion"',
 					remoteSha,
 					'HEAD',
 					'--',

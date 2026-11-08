@@ -208,10 +208,14 @@ describe('on a git repo', () => {
 		mkdirSync(dirname(full), { recursive: true });
 		writeFileSync(full, text);
 	};
-	const writeCatalog = (plugins, generatedAt = '2026-01-01') =>
+	const writeCatalog = (
+		plugins,
+		generatedAt = '2026-01-01',
+		corsairVersion = '0.1.0',
+	) =>
 		write(
 			'explorer/data/catalog.json',
-			`${JSON.stringify(catalog(plugins, { generatedAt }), null, 2)}\n`,
+			`${JSON.stringify(catalog(plugins, { generatedAt, corsairVersion }), null, 2)}\n`,
 		);
 	const ghCalls = () =>
 		existsSync(ghLog)
@@ -480,6 +484,18 @@ if (args[0] === 'pr' && args[1] === 'list') {
 			assert.equal(remoteHead(), pushed);
 		});
 
+		it('leaves an open PR alone when a release moved corsairVersion', () => {
+			writeCatalog([plugin('a'), plugin('b')]);
+			run(added);
+			const pushed = remoteHead();
+			fetchBranch();
+			resetToMain();
+			setPrs([{ number: 7 }]);
+			writeCatalog([plugin('a'), plugin('b')], '2026-05-05', '0.1.1');
+			assert.equal(run(added), 'unchanged');
+			assert.equal(remoteHead(), pushed);
+		});
+
 		it('force-pushes and updates the PR when the content changed', () => {
 			writeCatalog([plugin('a'), plugin('b')]);
 			run(added);
@@ -530,6 +546,50 @@ exit 1
 			writeCatalog([plugin('a'), plugin('b'), plugin('c')]);
 			assert.equal(run(added), 'opened');
 			assert.ok(ghCalls().includes('pr create'));
+		});
+
+		it('does not delete a commit pushed between the refusal and the delete', () => {
+			writeCatalog([plugin('a'), plugin('b')]);
+			run(added);
+			fetchBranch();
+			const person = join(root, 'person');
+			execFileSync('git', ['clone', '-q', '-b', BOT_BRANCH, remote, person], {
+				stdio: 'ignore',
+			});
+			writeFileSync(join(person, 'explorer/icons/b.png'), 'by hand\n');
+			git(['add', '.'], person);
+			git(
+				[
+					'-c',
+					'user.name=P',
+					'-c',
+					'user.email=p@x',
+					'commit',
+					'-q',
+					'-m',
+					'icon',
+				],
+				person,
+			);
+			git(['push', '-q', 'origin', 'HEAD:refs/heads/person'], person);
+			const theirs = git(['rev-parse', 'refs/heads/person'], remote);
+			resetToMain();
+			setPrs([{ number: 7 }]);
+			const hook = join(remote, 'hooks/update');
+			writeFileSync(
+				hook,
+				`#!/bin/sh
+case "$2" in 0000000*) exit 0;; esac
+case "$3" in 0000000*) exit 0;; esac
+git update-ref refs/heads/${BOT_BRANCH} refs/heads/person
+echo "refusing to allow a GitHub App to create or update workflow without workflows permission" >&2
+exit 1
+`,
+			);
+			chmodSync(hook, 0o755);
+			writeCatalog([plugin('a'), plugin('b'), plugin('c')]);
+			assert.throws(() => run(added));
+			assert.equal(remoteHead(), theirs);
 		});
 
 		it('does not delete the branch when someone pushed to it first', () => {
