@@ -1,0 +1,223 @@
+import type { WebhookRequest } from 'corsair/core';
+import { tldv } from './index';
+import {
+	meetingReadyEvent,
+	meetingReadyNullTranscript,
+	meetingReadyWithoutTranscript,
+	transcriptReadyEvent,
+} from './test-fixtures';
+import { matchTldvTenantWebhook } from './webhooks/tenant-matcher';
+import type { TldvWebhookOutputs } from './webhooks/types';
+import {
+	MeetingReadyEventSchema,
+	matchTldvEvent,
+	TLDV_WEBHOOK_SECRET_HEADER,
+	TranscriptReadyEventSchema,
+	verifyTldvWebhook,
+} from './webhooks/types';
+
+const SECRET = 'tldv-webhook-test-secret';
+
+function request(
+	payload: unknown,
+	secret: string | null = SECRET,
+): WebhookRequest<unknown> {
+	return {
+		payload,
+		rawBody: JSON.stringify(payload),
+		// null means "send no header"; undefined would trigger the default above.
+		headers: secret === null ? {} : { [TLDV_WEBHOOK_SECRET_HEADER]: secret },
+	};
+}
+
+describe('tl;dv webhook verification', () => {
+	it('accepts a delivery carrying the configured secret', () => {
+		expect(verifyTldvWebhook(request(meetingReadyEvent), SECRET)).toEqual({
+			valid: true,
+		});
+	});
+
+	it('rejects a delivery with the wrong secret', () => {
+		const result = verifyTldvWebhook(
+			request(meetingReadyEvent, 'wrong'),
+			SECRET,
+		);
+
+		expect(result.valid).toBe(false);
+		expect(result.error).toBe('Invalid webhook secret');
+	});
+
+	it('rejects a delivery with no header', () => {
+		const result = verifyTldvWebhook(request(meetingReadyEvent, null), SECRET);
+
+		expect(result.valid).toBe(false);
+		expect(result.error).toContain(TLDV_WEBHOOK_SECRET_HEADER);
+	});
+
+	it('rejects everything when no secret is configured', () => {
+		// Fail closed: tl;dv does not sign deliveries, so a delivery that arrives
+		// without a secret cannot be authenticated at all.
+		const result = verifyTldvWebhook(request(meetingReadyEvent), undefined);
+
+		expect(result.valid).toBe(false);
+		expect(result.error).toContain('No tl;dv webhook secret is set');
+	});
+
+	it('trusts a hub-verified delivery without the header', () => {
+		const result = verifyTldvWebhook(
+			{ ...request(meetingReadyEvent, null), hubVerified: true },
+			undefined,
+		);
+
+		expect(result).toEqual({ valid: true });
+	});
+
+	it('compares in constant time across different lengths', () => {
+		// timingSafeEqual throws on unequal buffers; the guard keeps that a
+		// plain false instead of an exception escaping.
+		const result = verifyTldvWebhook(request(meetingReadyEvent, 'x'), SECRET);
+		expect(result.valid).toBe(false);
+	});
+});
+
+describe('tl;dv webhook matching', () => {
+	it('matches MeetingReady by its event field', () => {
+		expect(
+			matchTldvEvent('MeetingReady')({ headers: {}, body: meetingReadyEvent }),
+		).toBe(true);
+		expect(
+			matchTldvEvent('MeetingReady')({
+				headers: {},
+				body: transcriptReadyEvent,
+			}),
+		).toBe(false);
+	});
+
+	it('matches TranscriptReady by its event field', () => {
+		expect(
+			matchTldvEvent('TranscriptReady')({
+				headers: {},
+				body: transcriptReadyEvent,
+			}),
+		).toBe(true);
+	});
+
+	it('does not match a body with no event field', () => {
+		expect(matchTldvEvent('MeetingReady')({ headers: {}, body: {} })).toBe(
+			false,
+		);
+	});
+});
+
+describe('tl;dv webhook payloads', () => {
+	it('parses a MeetingReady delivery with a transcript', () => {
+		const parsed = MeetingReadyEventSchema.safeParse(meetingReadyEvent);
+
+		expect(parsed.success).toBe(true);
+		expect(parsed.data?.data.transcript?.data).toHaveLength(2);
+	});
+
+	it('parses a MeetingReady delivery with no transcript key', () => {
+		// The key is absent unless the subscription asked for `include.transcript`.
+		const parsed = MeetingReadyEventSchema.safeParse(
+			meetingReadyWithoutTranscript,
+		);
+
+		expect(parsed.success).toBe(true);
+		expect(parsed.data?.data.transcript).toBeUndefined();
+	});
+
+	it('parses a MeetingReady delivery whose transcript is null', () => {
+		// Null means the subscription asked but the meeting has no transcript yet.
+		const parsed = MeetingReadyEventSchema.safeParse(
+			meetingReadyNullTranscript,
+		);
+
+		expect(parsed.success).toBe(true);
+		expect(parsed.data?.data.transcript).toBeNull();
+	});
+
+	it('parses a TranscriptReady delivery', () => {
+		const parsed = TranscriptReadyEventSchema.safeParse(transcriptReadyEvent);
+
+		expect(parsed.success).toBe(true);
+		expect(parsed.data?.data.meetingId).toBe('meeting-123');
+	});
+
+	it('rejects a MeetingReady body whose event is wrong', () => {
+		const parsed = MeetingReadyEventSchema.safeParse({
+			...meetingReadyEvent,
+			event: 'TranscriptReady',
+		});
+
+		expect(parsed.success).toBe(false);
+	});
+});
+
+describe('tl;dv webhook handlers', () => {
+	const plugin = tldv({ key: 'api', webhookSecret: SECRET });
+
+	it('returns the event when the secret verifies', async () => {
+		const result = await plugin.webhooks!.meetings.meetingReady.handler(
+			{ key: SECRET } as never,
+			request(meetingReadyEvent) as never,
+		);
+
+		expect(result.success).toBe(true);
+		expect((result.data as TldvWebhookOutputs['meetingReady']).data.id).toBe(
+			'meeting-123',
+		);
+	});
+
+	it('throws on a wrong secret so the route can answer non-2xx', async () => {
+		// processWebhook answers { success: true } for a returned failure and keeps
+		// only a thrown error, so a throw is the only path that reports a failure.
+		await expect(
+			plugin.webhooks!.meetings.meetingReady.handler(
+				{ key: 'wrong' } as never,
+				request(meetingReadyEvent) as never,
+			),
+		).rejects.toThrow('Invalid webhook secret');
+	});
+
+	it('throws on a payload that does not parse', async () => {
+		await expect(
+			plugin.webhooks!.transcripts.transcriptReady.handler(
+				{ key: SECRET } as never,
+				request({ id: 'x', event: 'TranscriptReady' }) as never,
+			),
+		).rejects.toThrow(/Invalid tl;dv TranscriptReady payload/);
+	});
+});
+
+describe('tl;dv tenant routing', () => {
+	it('routes by the organizer email', () => {
+		expect(
+			matchTldvTenantWebhook({ headers: {}, body: meetingReadyEvent }),
+		).toEqual({
+			linkType: 'tenant_external_id',
+			externalId: 'jordan@example.org',
+		});
+	});
+
+	it('parses a raw string body', () => {
+		expect(
+			matchTldvTenantWebhook({
+				headers: {},
+				body: JSON.stringify(meetingReadyEvent),
+			}),
+		).toEqual({
+			linkType: 'tenant_external_id',
+			externalId: 'jordan@example.org',
+		});
+	});
+
+	it('returns null when there is no organizer email', () => {
+		expect(
+			matchTldvTenantWebhook({
+				headers: {},
+				body: { event: 'TranscriptReady', data: {} },
+			}),
+		).toBeNull();
+	});
+});
