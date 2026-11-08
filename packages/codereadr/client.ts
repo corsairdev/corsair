@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 /**
@@ -107,7 +111,10 @@ function readElement(
 	if (xml[at] !== '>') return undefined;
 	at++;
 
-	const children: XmlRecord = {};
+	// A null prototype keeps a tag named `constructor` or `toString` from
+	// matching an inherited property, which would make the first occurrence
+	// look like a repeat and drop the value.
+	const children: XmlRecord = Object.create(null) as XmlRecord;
 	let text = '';
 	while (at < xml.length) {
 		const next = xml.indexOf('<', at);
@@ -174,7 +181,10 @@ function nodeToValue(node: XmlNode): XmlValue {
 }
 
 function addChild(record: XmlRecord, name: string, value: XmlValue): void {
-	const existing = record[name];
+	// Only an own key counts as an earlier occurrence. A name such as
+	// `constructor` resolves through the prototype chain, and treating that as
+	// an existing value would turn the first real occurrence into an array.
+	const existing = Object.hasOwn(record, name) ? record[name] : undefined;
 	if (existing === undefined) {
 		record[name] = value;
 		return;
@@ -186,20 +196,43 @@ function addChild(record: XmlRecord, name: string, value: XmlValue): void {
 	record[name] = [existing, value];
 }
 
+/**
+ * Decodes character and entity references in one pass. Doing it in sequence
+ * with replace() would decode a reference twice: `&#38;amp;` must become
+ * `&amp;` (the literal text the provider sent), not `&`.
+ */
 function decodeXmlText(text: string): string {
 	if (!text.includes('&')) return text;
-	return text
-		.replace(/&lt;/g, '<')
-		.replace(/&gt;/g, '>')
-		.replace(/&quot;/g, '"')
-		.replace(/&apos;/g, "'")
-		.replace(/&#(\d+);/g, (_, code: string) =>
-			String.fromCodePoint(Number.parseInt(code, 10)),
-		)
-		.replace(/&#x([0-9a-f]+);/gi, (_, code: string) =>
-			String.fromCodePoint(Number.parseInt(code, 16)),
-		)
-		.replace(/&amp;/g, '&');
+	return text.replace(
+		/&(?:#(\d+)|#x([0-9a-f]+)|(lt|gt|quot|apos|amp));/gi,
+		(
+			match,
+			decimal: string | undefined,
+			hex: string | undefined,
+			named: string | undefined,
+		) => {
+			if (decimal !== undefined) {
+				return String.fromCodePoint(Number.parseInt(decimal, 10));
+			}
+			if (hex !== undefined) {
+				return String.fromCodePoint(Number.parseInt(hex, 16));
+			}
+			switch (named?.toLowerCase()) {
+				case 'lt':
+					return '<';
+				case 'gt':
+					return '>';
+				case 'quot':
+					return '"';
+				case 'apos':
+					return "'";
+				case 'amp':
+					return '&';
+				default:
+					return match;
+			}
+		},
+	);
 }
 
 function parseXmlDocument(xml: string): XmlRecord | undefined {
@@ -239,6 +272,12 @@ export class CodereadrAPIError extends Error {
 	/** Milliseconds from a Retry-After header, when the server sent one. */
 	readonly retryAfter?: number;
 	/**
+	 * True when the request never got an answer: a connection reset, DNS
+	 * failure, or abort. Nothing reached the provider, so the call did not
+	 * happen and a replay cannot duplicate it.
+	 */
+	readonly transport: boolean;
+	/**
 	 * True when repeating the request cannot apply the operation twice. Every
 	 * call is a POST here, so the method says nothing about replay safety.
 	 */
@@ -257,6 +296,7 @@ export class CodereadrAPIError extends Error {
 			code?: number;
 			status?: number;
 			retryAfter?: number;
+			transport?: boolean;
 			replaySafe?: boolean;
 			cause?: Error;
 		} = {},
@@ -266,6 +306,7 @@ export class CodereadrAPIError extends Error {
 		this.code = options.code;
 		this.status = options.status;
 		this.retryAfter = options.retryAfter;
+		this.transport = options.transport ?? false;
 		this.replaySafe = options.replaySafe ?? false;
 		this.isRateLimit =
 			options.status === 429 ||
@@ -347,7 +388,7 @@ export async function makeCodereadrRequest(
 	try {
 		raw = await request<unknown>(config, requestOptions, {
 			// error-handlers.ts owns retries; the client makes one attempt.
-			rateLimitConfig: { ...NO_RETRY, enabled: true },
+			rateLimitConfig: NO_RETRY,
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
@@ -369,6 +410,7 @@ export async function makeCodereadrRequest(
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new CodereadrAPIError(error.message, {
 				replaySafe: options.replaySafe,
+				transport: true,
 				// This error came from fetch itself, so it never held the form.
 				cause: error,
 			});
@@ -411,9 +453,15 @@ export async function makeCodereadrRequest(
 }
 
 // One attempt on every request: retries belong to error-handlers.ts.
-const NO_RETRY = {
+//
+// `retryAfter` still has to be listed here even though no retry happens. The
+// request layer reads the header through this config before it raises the
+// error, and an empty `headerNames` would leave `retryAfter` unset, so the
+// handler would never see the server's requested wait.
+const NO_RETRY: RateLimitConfig = {
+	enabled: true,
 	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
-	headerNames: {},
-} as const;
+	headerNames: { retryAfter: 'retry-after' },
+};

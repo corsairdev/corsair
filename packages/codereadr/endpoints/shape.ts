@@ -84,6 +84,26 @@ export function readCount(root: XmlRecord): number | undefined {
 	return numberFrom(textOf(root.count));
 }
 
+/**
+ * A repeated element whose body is bare text rather than child nodes means the
+ * response is not the shape the docs describe. Returning an empty record would
+ * let a wrong-shaped body parse as a list of blank rows, so it fails here.
+ */
+function requireRecords(
+	nodes: XmlValue[],
+	element: string,
+): (XmlRecord | undefined)[] {
+	return nodes.map((node) => {
+		const record = asRecord(node);
+		if (!record) {
+			throw new Error(
+				`CodeREADr returned a <${element}> node with text instead of fields`,
+			);
+		}
+		return record;
+	});
+}
+
 // ── scans ─────────────────────────────────────────────────────────────────
 
 export function shapeScans(root: XmlRecord): {
@@ -92,7 +112,7 @@ export function shapeScans(root: XmlRecord): {
 } {
 	return {
 		count: readCount(root),
-		scans: asArray(root.scan).map((scan) => {
+		scans: requireRecords(asArray(root.scan), 'scan').map((scan) => {
 			const answers = asArray(childOf(scan, 'answer')).map((answer) => ({
 				question_id: attributeNumber(answer, 'qid'),
 				question_text: attrsOf(answer).qtext,
@@ -129,18 +149,20 @@ export function shapeScans(root: XmlRecord): {
 
 export function shapeServices(root: XmlRecord): unknown {
 	return {
-		services: asArray(root.service).map((service) => ({
-			id: attributeNumber(service, 'id'),
-			name: textOf(childOf(service, 'name')),
-			validation_method: textOf(childOf(service, 'validationmethod')),
-			postback_url: textOf(childOf(service, 'postback')),
-			database_id: numberFrom(textOf(childOf(service, 'database'))),
-			duplicate_scan_value: numberFrom(
-				textOf(childOf(service, 'duplicateScanValue')),
-			),
-			user_ids: idList(childOf(service, 'user')),
-			question_ids: idList(childOf(service, 'question')),
-		})),
+		services: requireRecords(asArray(root.service), 'service').map(
+			(service) => ({
+				id: attributeNumber(service, 'id'),
+				name: textOf(childOf(service, 'name')),
+				validation_method: textOf(childOf(service, 'validationmethod')),
+				postback_url: textOf(childOf(service, 'postback')),
+				database_id: numberFrom(textOf(childOf(service, 'database'))),
+				duplicate_scan_value: numberFrom(
+					textOf(childOf(service, 'duplicateScanValue')),
+				),
+				user_ids: idList(childOf(service, 'user')),
+				question_ids: idList(childOf(service, 'question')),
+			}),
+		),
 	};
 }
 
@@ -148,12 +170,14 @@ export function shapeServices(root: XmlRecord): unknown {
 
 export function shapeDatabases(root: XmlRecord): unknown {
 	return {
-		databases: asArray(root.database).map((database) => ({
-			id: attributeNumber(database, 'id'),
-			name: textOf(childOf(database, 'name')),
-			count: numberFrom(textOf(childOf(database, 'count'))),
-			service_ids: idList(childOf(database, 'service')),
-		})),
+		databases: requireRecords(asArray(root.database), 'database').map(
+			(database) => ({
+				id: attributeNumber(database, 'id'),
+				name: textOf(childOf(database, 'name')),
+				count: numberFrom(textOf(childOf(database, 'count'))),
+				service_ids: idList(childOf(database, 'service')),
+			}),
+		),
 	};
 }
 
@@ -163,7 +187,7 @@ export function shapeDatabaseValues(root: XmlRecord): {
 } {
 	return {
 		count: readCount(root),
-		values: asArray(root.value).map((value) => ({
+		values: requireRecords(asArray(root.value), 'value').map((value) => ({
 			value: textOf(childOf(value, 'id')),
 			response: textOf(childOf(value, 'response')),
 			validity: attributeNumber(value, 'validity'),
@@ -176,7 +200,7 @@ export function shapeDatabaseValues(root: XmlRecord): {
 /** The docs call the device limit `<limit>` and `limit`; `limit` is the newer node. */
 export function shapeUsers(root: XmlRecord): unknown {
 	return {
-		users: asArray(root.user).map((user) => ({
+		users: requireRecords(asArray(root.user), 'user').map((user) => ({
 			id: attributeNumber(user, 'id'),
 			username: textOf(childOf(user, 'username')),
 			service_ids: idList(childOf(user, 'service')),
@@ -192,15 +216,17 @@ export function shapeUsers(root: XmlRecord): unknown {
 
 export function shapeQuestions(root: XmlRecord): unknown {
 	return {
-		questions: asArray(root.question).map((question) => ({
-			id: attributeNumber(question, 'id'),
-			text: textOf(childOf(question, 'text')),
-			type: textOf(childOf(question, 'type')),
-			answers: asArray(childOf(question, 'answer')).map((answer) => ({
-				id: attributeNumber(answer, 'id'),
-				name: textOf(answer),
-			})),
-		})),
+		questions: requireRecords(asArray(root.question), 'question').map(
+			(question) => ({
+				id: attributeNumber(question, 'id'),
+				text: textOf(childOf(question, 'text')),
+				type: textOf(childOf(question, 'type')),
+				answers: asArray(childOf(question, 'answer')).map((answer) => ({
+					id: attributeNumber(answer, 'id'),
+					name: textOf(answer),
+				})),
+			}),
+		),
 	};
 }
 
@@ -208,7 +234,7 @@ export function shapeQuestions(root: XmlRecord): unknown {
 
 export function shapeDevices(root: XmlRecord): unknown {
 	return {
-		devices: asArray(root.device).map((device) => ({
+		devices: requireRecords(asArray(root.device), 'device').map((device) => ({
 			id: attributeNumber(device, 'id'),
 			udid: textOf(childOf(device, 'udid')),
 			name: textOf(childOf(device, 'devicename')),
@@ -226,7 +252,7 @@ export function shapeUploads(root: XmlRecord): {
 } {
 	return {
 		count: readCount(root),
-		uploads: asArray(root.upload).map((upload) => ({
+		uploads: requireRecords(asArray(root.upload), 'upload').map((upload) => ({
 			id: attributeNumber(upload, 'id'),
 			device_id: attributeNumber(upload, 'device_id'),
 			service_id: attributeNumber(upload, 'service_id'),
