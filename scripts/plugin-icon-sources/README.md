@@ -42,6 +42,14 @@ Composio's [logo-cdn](https://github.com/ComposioHQ/logo-cdn), and
 serve a placeholder favicon (create-next-app's triangle, a parked-domain icon, a
 globe) are no evidence of the brand's mark.
 
+## New plugins
+
+The catalog bot (`scripts/catalog-bot.mjs`) gets a first icon for each new
+plugin in its PR on `bot/catalog`: the context.dev Brand API's SVG when it has
+one, else the site's favicon. It shows each one at 256px and 26px next to the
+site's icon. Run the steps above on that branch to replace one, and later runs
+keep your file.
+
 ## Licences
 
 Logos are trademarks of their owners and are used to identify the services the
