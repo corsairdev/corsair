@@ -196,6 +196,25 @@ describe('Foursquare request shapes', () => {
 		expect(queryParam('cc')).toBe('US');
 	});
 
+	it('passes a cursor through to continue a search', async () => {
+		mockFetch(jsonResponse(searchResponse));
+
+		await endpoints.places.search(makeCtx(), {
+			near: 'Chicago, IL',
+			cursor: 'c3I6Mw',
+		});
+
+		expect(queryParam('cursor')).toBe('c3I6Mw');
+	});
+
+	it('omits the cursor on a first page', async () => {
+		mockFetch(jsonResponse(searchResponse));
+
+		await endpoints.places.search(makeCtx(), { near: 'Chicago, IL' });
+
+		expect(queryParam('cursor')).toBeNull();
+	});
+
 	it('adds the place id to a fields selection', async () => {
 		mockFetch(jsonResponse(searchResponse));
 

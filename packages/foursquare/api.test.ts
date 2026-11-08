@@ -114,6 +114,32 @@ describeIfKey('Foursquare live smoke', () => {
 		expect(typeof result.results[0]?.name).toBe('string');
 	});
 
+	it('pages a search with nextCursor and gets different places', async () => {
+		const first = await plugin.endpoints!.places.search(ctx, {
+			...CHICAGO,
+			limit: 3,
+		});
+
+		expect(first.results).toHaveLength(3);
+		// The cursor comes from the `link` response header, which the plugin reads
+		// itself because the shared client cannot return a header and a body.
+		expect(typeof first.nextCursor).toBe('string');
+
+		const second = await plugin.endpoints!.places.search(ctx, {
+			...CHICAGO,
+			limit: 3,
+			// nextCursor is nullish on the last page; this page has one.
+			cursor: first.nextCursor ?? undefined,
+		});
+
+		expect(second.results).toHaveLength(3);
+		const firstIds = first.results.map((place) => place.fsq_place_id);
+		const secondIds = second.results.map((place) => place.fsq_place_id);
+		expect(secondIds).not.toEqual(firstIds);
+		// No overlap: the second page continues rather than repeating.
+		expect(secondIds.some((id) => firstIds.includes(id))).toBe(false);
+	});
+
 	it('surfaces the documented 404 for an unknown place', async () => {
 		await expect(
 			plugin.endpoints!.places.get(ctx, { fsq_place_id: 'doesnotexist' }),
