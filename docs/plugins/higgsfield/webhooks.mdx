@@ -1,0 +1,138 @@
+---
+title: Webhooks
+description: "Higgsfield incoming webhooks: event paths, payloads, and response data."
+---
+
+The Higgsfield plugin handles incoming webhooks. Higgsfield has no account-wide subscription. Pass your Corsair HTTP handler URL as `webhookUrl` to `generations.submit` or `generations.run` for each request, and Higgsfield POSTs the result there when the request reaches completed, failed or nsfw (see [Overview](/plugins/higgsfield/overview) for setup).
+
+Only signed deliveries are accepted. Higgsfield signs for an account once its secret has been revealed under **Settings** in the [Higgsfield Console](https://console.higgsfield.ai), and sends unsigned deliveries until then. Store the `whsec_` secret with `corsair.higgsfield.keys.set_webhook_signature(secret)` or `higgsfield({ webhookSecret })`. With no secret set, `processWebhook` reports a failure for every delivery, and the handler below answers 500 so that Higgsfield retries for up to two hours.
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `requests`
+  - `completed` (`requests.completed`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // The raw text: Higgsfield signs the exact bytes it sent, so don't parse it first.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body);
+    // Answer non-2xx when processing failed (no signing secret set, for one),
+    // so Higgsfield delivers again.
+    return Response.json(result.response ?? { success: false }, {
+        status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
+    });
+}
+```
+
+## Events
+
+## Requests
+
+### Completed
+
+`requests.completed`
+
+A request reached completed (with its output), failed or nsfw. Signed with Standard Webhooks; only signed deliveries are accepted.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `status` | `string` | Yes | completed: the output is in payload. failed: see error. nsfw: moderation rejected the input or output. Failed and nsfw requests are not charged. |
+| `error` | `string \| Record<string, any> \| null` | No | — |
+| `expires_at` | `string \| null` | No | When the files in payload are deleted and their URLs stop working: 7 days after the request finished by default. Download them before then. |
+| `payload` | `object \| null` | No | The output, present when status is completed. Some video and 3D operations add artifacts such as zip, mov, jsx, fbx or ply. |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  images?: {
+    url?: string | null,
+    content_type?: string | null
+  }[] | null,
+  video?: {
+    url?: string | null,
+    content_type?: string | null
+  } | null,
+  audio?: {
+    url?: string | null,
+    content_type?: string | null
+  } | null,
+  audios?: {
+    url?: string | null,
+    content_type?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  request_id: string,
+  status: string,
+  error?: string | Record<string, any> | null,
+  expires_at?: string | null,
+  payload?: {
+    images?: {
+      url?: string | null,
+      content_type?: string | null
+    }[] | null,
+    video?: {
+      url?: string | null,
+      content_type?: string | null
+    } | null,
+    audio?: {
+      url?: string | null,
+      content_type?: string | null
+    } | null,
+    audios?: {
+      url?: string | null,
+      content_type?: string | null
+    }[] | null
+  } | null,
+  webhook_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+higgsfield({
+    webhookHooks: {
+        requests: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
