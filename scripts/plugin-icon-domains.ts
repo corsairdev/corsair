@@ -68,7 +68,7 @@ const PLUGIN_DOMAIN_OVERRIDES: Record<string, string> = {
 	scrapegraphai: 'scrapegraphai.com',
 	serpapi: 'serpapi.com',
 	stripe: 'stripe.com',
-	studiobyai21labs: 'elevenlabs.io',
+	studiobyai21labs: 'ai21.com',
 	synthflowai: 'synthflow.ai',
 	tavilymcp: 'tavily.com',
 	veriphone: 'veriphone.io',
