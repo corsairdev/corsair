@@ -1,0 +1,162 @@
+---
+title: Overview
+description: "Meeting intelligence with tl;dv - list and read recorded meetings, pull transcripts and AI notes, import a recording from a URL, and search folders."
+---
+
+Use **tl;dv** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Create an API key at https://tldv.io/app/settings/personal-settings/api-keys (you must be signed in), then store it as the account's `api_key`. Every request sends it in an `x-api-key` header.
+
+Things to know before you call:
+
+- **A `User-Agent` is mandatory.** tl;dv blocks default library agents before the key is read: a request sent as `Python-urllib/3.11` gets a Cloudflare `403` with `error code: 1010` and no JSON body. The plugin always sends `Corsair-tldv-integration/1.0`.
+- **The host is `pasta.tldv.io`,** not `api.tldv.io`; the latter answers 404 for every `/v1alpha1` path.
+- **API access depends on the organizer's plan.** Seeing a meeting in the web app does not grant API access: a meeting organized on a Free plan cannot be exported, and sharing does not change that. Organization-wide automation needs Enterprise.
+- **Two error shapes, split by status.** A `400` carries `{ message, errors: [{ property, constraints }] }`; `401`, `403`, `404` and `500` carry `{ name, message }`. The plugin throws a `TldvAPIError` with the status, the `name` and the first constraint.
+- **Timestamps are ISO 8601 strings** while `duration` and transcript offsets are numbers in seconds.
+- **No recording download.** `GET /meetings/{id}/download` answers a 302 to a signed URL, and the shared HTTP client follows redirects, so it would pull the whole file into memory. Fetch the URL yourself from the meeting's `url` field.
+- **Webhooks are not signed.** tl;dv publishes no signature scheme for either trigger, so the plugin compares a shared secret you send as `x-corsair-webhook-secret`. Enabling a webhook in the tl;dv app cannot add headers, so a proxy is needed to attach it, or leave the secret unset and accept unverified deliveries.
+
+**What you get:**
+
+- 6 typed API operations
+- 2 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/tldv better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/tldv better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/tldv better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/tldv better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { tldv } from '@corsair-dev/tldv';
+
+export const corsair = createCorsair({
+	plugins: [
+		tldv(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. A call with no key throws `AuthMissingError`; create one at https://tldv.io/app/settings/personal-settings/api-keys and store it with `keys.set_api_key(key)` or pass it as `tldv({ key })`.
+
+```ts
+tldv()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'tldv',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List recent meetings**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.tldv.api.meetings.list({ limit: 10 });
+```
+
+
+**Import a recording from a URL**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.tldv.api.meetings.import({ url: 'https://example.org/call-recording.mp4', name: 'Discovery call' });
+```
+
+
+See the full list on the [API](/plugins/tldv/api) page.
+
+## Webhooks
+
+React as soon as a meeting is processed, with its notes and, when included, its transcript.
+
+```ts
+tldv({
+    webhookHooks: {
+        meetings: {
+            meetingReady: {
+                after: async (ctx, result) => {
+                    console.log('Meeting ready:', result.data?.data.name, 'notes:', result.data?.data.notes?.structuredNotes?.length);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/tldv/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/tldv/api">
+    Every `tldv.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/tldv/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
