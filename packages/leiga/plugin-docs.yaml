@@ -1,0 +1,88 @@
+displayName: Leiga
+description: Project and issue tracking with Leiga - list projects and issues, read issue detail by id or number, and pull sprints, workflow steps, tags and project members.
+domain: leiga.com
+recommendedAuth: api_key
+overviewNote: |
+  Leiga authenticates in two steps. Create a client pair under **Settings, OpenAPI** in Leiga (https://guide.leiga.com/settings/openapi), then store it as the integration's `client_id` and `client_secret`. Every call exchanges the pair for an access token and sends it in an `accessToken` header, so you never handle the token yourself.
+
+  Things to know before you call:
+
+  - **Every error is HTTP 200.** Leiga reports failures as `{ "code": "...", "msg": "..." }` with a 200 status. A `code` other than `"0"` is a failure, and the plugin throws a `LeigaAPIError` carrying that code rather than returning an empty result. `15` means the access token is missing or expired, `18` a rejected client id, `100` a missing required field.
+  - **Ids are numbers, timestamps are epoch milliseconds.** `createTime` and `updateTime` are milliseconds since 1970, not ISO strings, and a project id is a number rather than a string.
+  - **Some lists are POSTs.** `issues.list`, `sprints.list`, `workflows.list`, `workflows.nextStates` and `tags.list` take their filter or project id in a JSON body, not a query string.
+  - **`issues.list` is the only paged response.** It returns `{ total, list }` and takes `pageNumber` and `pageSize`; every other list returns a bare array with no paging.
+  - **Status types.** `statusTypes` on `issues.list` filters by phase rather than by step name: `2` not started, `3` in progress, `4` done.
+examples:
+  read:
+    path: issues.list
+    title: Query the open issues in a project
+    args:
+      projectId: 123456
+      statusTypes:
+        - 2
+        - 3
+  write:
+    path: projects.get
+    title: Read one project by id
+    args:
+      projectId: 123456
+apiExamples:
+  projects.list: {}
+  projects.get:
+    call: "{ projectId: 123456 }"
+  projects.getByKey:
+    call: "{ projectKey: 'LGC' }"
+  projects.templates: {}
+  issues.list:
+    call: "{ projectId: 123456, statusTypes: [2, 3], pageSize: 25 }"
+  issues.get:
+    call: "{ issueId: 987654 }"
+  issues.getByNumber:
+    call: "{ issueNumber: 'LGC-12' }"
+  issues.types:
+    call: "{ projectId: 123456 }"
+  issues.fields:
+    call: "{ projectId: 123456, issueTypeId: 1 }"
+  sprints.list:
+    call: "{ projectId: 123456 }"
+  sprints.get:
+    call: "{ sprintId: 789 }"
+  workflows.list:
+    call: "{ projectId: 123456 }"
+  workflows.nextStates:
+    call: "{ projectId: 123456, workflowId: 4321 }"
+  tags.list:
+    call: "{ projectId: 123456 }"
+  members.list:
+    call: "{ projectId: 123456 }"
+apiNotes:
+  projects.list: |
+    Answers a bare array of `{ id, pname, pkey, archived }`. `pkey` is the prefix used in issue numbers such as `LGC-12`.
+  projects.get: |
+    Takes `projectId` as a query parameter and answers a single project object with `projectName`, `projectKey`, `leader`, `createTime` and `updateTime`.
+  projects.getByKey: |
+    The same object as `projects.get`, looked up by `projectKey` instead of id.
+  projects.templates: |
+    Lists the templates that `project add` accepts, each with a `code`.
+  issues.list: |
+    A POST with the filters in the body, answering `{ total, list }`. `statusTypes` filters by phase (2 not started, 3 in progress, 4 done); `orderBy` accepts `createTime` or `updateTime` and `sort` accepts `ASC` or `DESC`.
+  issues.get: |
+    Takes `issueId` as the `id` query parameter and answers one issue. Custom field values live in `customFieldData`, keyed by codes such as `customfield_1`.
+  issues.getByNumber: |
+    Looks an issue up by its human-readable number, such as `LGC-12`.
+  issues.types: |
+    Lists the issue types a project offers, each with an `id`, `code` and `name`.
+  issues.fields: |
+    Lists the fields one issue type exposes, including the custom fields that appear in an issue's `customFieldData`.
+  sprints.list: |
+    A POST with `projectId` in the body. Each sprint carries `startDate` and `endDate` in epoch milliseconds plus `issueTypeCountMap`, which groups its issues by type.
+  sprints.get: |
+    Answers one sprint by id.
+  workflows.list: |
+    A POST with `projectId` in the body, listing the workflow steps a project uses.
+  workflows.nextStates: |
+    Lists the states reachable from the issue's current workflow step.
+  tags.list: |
+    A POST with `projectId` in the body, answering a bare array of `{ id, tagName }`.
+  members.list: |
+    A GET with `projectId` and an optional `keyword` filter, answering each member with their departments and project roles.
