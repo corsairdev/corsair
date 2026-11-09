@@ -35,12 +35,12 @@ describe('Missive schema', () => {
 
 	it('registers all Part 1 operations exactly once with matching schemas', () => {
 		const keys = MISSIVE_OPERATIONS.map(({ key }) => key);
-		expect(keys).toHaveLength(29);
+		expect(keys).toHaveLength(42);
 		expect(new Set(keys).size).toBe(keys.length);
 		expect(
 			new Set(MISSIVE_OPERATIONS.map(({ method, path }) => `${method} ${path}`))
 				.size,
-		).toBe(29);
+		).toBe(42);
 		expect(endpointKeys(missiveEndpoints).sort()).toEqual(keys.sort());
 		expect(Object.keys(MissiveEndpointInputSchemas).sort()).toEqual(
 			keys.slice().sort(),

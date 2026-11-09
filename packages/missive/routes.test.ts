@@ -172,6 +172,63 @@ const INPUT_FIXTURES: Record<MissiveOperationKey, unknown> = {
 		},
 	},
 	'posts.delete': { id: 'ee31f156-db95-4158-923f-b26450e0dbf7' },
+	'sharedLabels.create': {
+		body: [
+			{
+				name: 'Heroku',
+				organization: '0d9bab85-a74f-4ece-9142-0f9b9f36ff92',
+				color: '#430098',
+			},
+		],
+	},
+	'sharedLabels.update': {
+		ids: ['ee31f156-db95-4158-923f-b26450e0dbf7'],
+		body: [
+			{ id: 'ee31f156-db95-4158-923f-b26450e0dbf7', name: 'Updated Label' },
+		],
+	},
+	'sharedLabels.list': { organization: '0d9bab85-a74f-4ece-9142-0f9b9f36ff92' },
+	'teams.list': { organization: '0d9bab85-a74f-4ece-9142-0f9b9f36ff92' },
+	'teams.create': {
+		body: [
+			{
+				name: 'Support',
+				organization: '0d9bab85-a74f-4ece-9142-0f9b9f36ff92',
+				active_members: ['1ce8117e-ae42-4304-b953-c81656da4bd1'],
+			},
+		],
+	},
+	'teams.update': {
+		ids: ['d75aecb6-96a2-4b5f-afa6-19d1916052ea'],
+		body: [
+			{ id: 'd75aecb6-96a2-4b5f-afa6-19d1916052ea', name: 'Customer Support' },
+		],
+	},
+	'users.list': { limit: 50 },
+	'tasks.list': {
+		organization: '0d9bab85-a74f-4ece-9142-0f9b9f36ff92',
+		state: 'todo',
+	},
+	'tasks.get': { id: '75ad834a-9bd6-4008-b9e6-fc9fa2e7770b' },
+	'tasks.create': {
+		body: {
+			organization: '0d9bab85-a74f-4ece-9142-0f9b9f36ff92',
+			title: 'Review pull request',
+			team: '0e24f298-965d-4475-9220-b32636a1e2c3',
+		},
+	},
+	'tasks.update': {
+		id: '75ad834a-9bd6-4008-b9e6-fc9fa2e7770b',
+		body: { state: 'in_progress' },
+	},
+	'hooks.create': {
+		body: {
+			type: 'new_comment',
+			url: 'https://hooks.example.com/callback',
+			organization: '0d9bab85-a74f-4ece-9142-0f9b9f36ff92',
+		},
+	},
+	'hooks.delete': { id: 'd75aecb6-96a2-4b5f-afa6-19d1916052ea' },
 };
 
 // Spec-derived response fixtures: the envelope each reference-page example
@@ -337,22 +394,129 @@ const RESPONSE_FIXTURES: Record<MissiveOperationKey, unknown> = {
 		},
 	},
 	'posts.delete': undefined,
+	'sharedLabels.create': {
+		shared_labels: [
+			{
+				id: '6960dfv2-4382-4230-aa70-933a1c62040b',
+				name: 'Heroku',
+				name_with_parent_names: 'Invoices/Heroku',
+			},
+		],
+	},
+	'sharedLabels.update': {
+		shared_labels: [
+			{ id: 'ee31f156-db95-4158-923f-b26450e0dbf7', name: 'Updated Label' },
+		],
+	},
+	'sharedLabels.list': {
+		shared_labels: [
+			{
+				id: 'b45a00fd-353s-89l2-a487-2465c35c3r91',
+				name: 'Invoices',
+				name_with_parent_names: 'Invoices',
+			},
+		],
+	},
+	'teams.list': {
+		teams: [
+			{
+				id: 'd75aecb6-96a2-4b5f-afa6-19d1916052ea',
+				name: 'Sales',
+				active_members: [],
+				observers: [],
+				team_inbox_enabled: true,
+				chat_room_enabled: true,
+				team_mention_behavior: 'all_members',
+				user_reply_behavior: 'assign_user',
+				received_reply_behavior: 'show_in_assignee_inbox',
+				team_sidebar_behavior: 'show_team_space',
+			},
+		],
+	},
+	'teams.create': {
+		teams: [{ id: 'd75aecb6-96a2-4b5f-afa6-19d1916052ea', name: 'Support' }],
+	},
+	'teams.update': {
+		teams: [
+			{
+				id: 'd75aecb6-96a2-4b5f-afa6-19d1916052ea',
+				name: 'Customer Support',
+			},
+		],
+	},
+	'users.list': {
+		users: [
+			{
+				id: 'a41a00fd-453d-49d7-a487-9765c35a3b70',
+				me: true,
+				name: 'Philippe Lehoux',
+			},
+		],
+	},
+	'tasks.list': {
+		tasks: [
+			{
+				id: '75ad834a-9bd6-4008-b9e6-fc9fa2e7770b',
+				title: 'Review pull request',
+				state: 'todo',
+				type: 'task',
+				assignees: ['1ce8117e-ae42-4304-b953-c81656da4bd1'],
+			},
+		],
+	},
+	'tasks.get': {
+		tasks: {
+			id: '75ad834a-9bd6-4008-b9e6-fc9fa2e7770b',
+			title: 'Review pull request',
+			state: 'todo',
+			type: 'task',
+			assignees: [
+				{ id: '1ce8117e-ae42-4304-b953-c81656da4bd1', name: 'John Doe' },
+			],
+			team: {
+				id: '0e24f298-965d-4475-9220-b32636a1e2c3',
+				name: 'Engineering',
+			},
+		},
+	},
+	'tasks.create': {
+		tasks: {
+			id: '75ad834a-9bd6-4008-b9e6-fc9fa2e7770b',
+			title: 'Review pull request',
+			state: 'todo',
+			type: 'task',
+			assignees: ['1ce8117e-ae42-4304-b953-c81656da4bd1'],
+		},
+	},
+	'tasks.update': {
+		tasks: {
+			id: '75ad834a-9bd6-4008-b9e6-fc9fa2e7770b',
+			title: 'Updated task title',
+			state: 'in_progress',
+			type: 'task',
+			assignees: ['1ce8117e-ae42-4304-b953-c81656da4bd1'],
+		},
+	},
+	'hooks.create': {
+		hooks: { id: 'd75aecb6-96a2-4b5f-afa6-19d1916052ea' },
+	},
+	'hooks.delete': undefined,
 };
 
 const AUTH_HEADER = `Bearer ${TOKEN}`;
 
 describe('Missive REST endpoint contract', () => {
 	it('matches the shipped operation catalog', () => {
-		expect(MISSIVE_OPERATIONS).toHaveLength(29);
-		expect(handlers.size).toBe(29);
+		expect(MISSIVE_OPERATIONS).toHaveLength(42);
+		expect(handlers.size).toBe(42);
 		expect([...handlers.keys()].sort()).toEqual(
 			MISSIVE_OPERATIONS.map(({ key }) => key).sort(),
 		);
-		expect(new Set(MISSIVE_OPERATIONS.map(({ key }) => key)).size).toBe(29);
+		expect(new Set(MISSIVE_OPERATIONS.map(({ key }) => key)).size).toBe(42);
 		expect(
 			new Set(MISSIVE_OPERATIONS.map(({ method, path }) => `${method} ${path}`))
 				.size,
-		).toBe(29);
+		).toBe(42);
 	});
 
 	it.each(Object.entries(INPUT_FIXTURES))(

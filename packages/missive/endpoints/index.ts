@@ -4,14 +4,19 @@ import { endpoints as contactGroupsEndpoints } from './contact-groups';
 import { endpoints as contactsEndpoints } from './contacts';
 import { endpoints as conversationsEndpoints } from './conversations';
 import { endpoints as draftsEndpoints } from './drafts';
+import { endpoints as hooksEndpoints } from './hooks';
 import { endpoints as messagesEndpoints } from './messages';
 import { endpoints as organizationsEndpoints } from './organizations';
 import { endpoints as postsEndpoints } from './posts';
 import { endpoints as responsesEndpoints } from './responses';
+import { endpoints as sharedLabelsEndpoints } from './shared-labels';
+import { endpoints as tasksEndpoints } from './tasks';
+import { endpoints as teamsEndpoints } from './teams';
 import {
 	MissiveEndpointInputSchemas,
 	MissiveEndpointOutputSchemas,
 } from './types';
+import { endpoints as usersEndpoints } from './users';
 
 export const missiveEndpoints = {
 	analytics: analyticsEndpoints,
@@ -24,6 +29,11 @@ export const missiveEndpoints = {
 	organizations: organizationsEndpoints,
 	responses: responsesEndpoints,
 	posts: postsEndpoints,
+	sharedLabels: sharedLabelsEndpoints,
+	teams: teamsEndpoints,
+	users: usersEndpoints,
+	tasks: tasksEndpoints,
+	hooks: hooksEndpoints,
 } as const;
 
 export const missiveEndpointMeta = {
@@ -164,6 +174,69 @@ export const missiveEndpointMeta = {
 		irreversible: true,
 		description: 'Delete a post from its conversation',
 	},
+	'sharedLabels.create': {
+		riskLevel: 'write',
+		description: 'Create one or more shared labels in an organization',
+	},
+	'sharedLabels.update': {
+		riskLevel: 'write',
+		description:
+			'Update one or more shared labels; visibility and sharing are admin-only fields',
+	},
+	'sharedLabels.list': {
+		riskLevel: 'read',
+		description:
+			'List shared labels in organizations the authenticated user has access to',
+	},
+	'teams.list': {
+		riskLevel: 'read',
+		description:
+			'List teams in organizations the authenticated user has access to',
+	},
+	'teams.create': {
+		riskLevel: 'write',
+		description:
+			'Create a team in an organization; the token owner must be an admin or owner',
+	},
+	'teams.update': {
+		riskLevel: 'write',
+		description:
+			'Update one or more teams; the token owner must be an admin or owner',
+	},
+	'users.list': {
+		riskLevel: 'read',
+		description:
+			'List users in organizations the authenticated user is part of; user status is not exposed by the API',
+	},
+	'tasks.list': {
+		riskLevel: 'read',
+		description:
+			'List tasks the token owner has access to, filtered by organization, team, assignee, state, type, or due window',
+	},
+	'tasks.get': {
+		riskLevel: 'read',
+		description: 'Fetch a task with full assignee and team details by id',
+	},
+	'tasks.create': {
+		riskLevel: 'write',
+		description:
+			'Create a standalone task, tasked conversation, or conversation subtask',
+	},
+	'tasks.update': {
+		riskLevel: 'write',
+		description:
+			'Update a task title, description, state, assignees, team, or due date',
+	},
+	'hooks.create': {
+		riskLevel: 'write',
+		description:
+			'Create a webhook subscription for incoming-message or new-comment events, backed by a Missive rule',
+	},
+	'hooks.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a webhook subscription and its backing rule',
+	},
 } as const;
 
 export { MissiveEndpointInputSchemas, MissiveEndpointOutputSchemas };
@@ -286,6 +359,58 @@ export const missiveEndpointSchemas = {
 	'posts.delete': {
 		input: MissiveEndpointInputSchemas['posts.delete'],
 		output: MissiveEndpointOutputSchemas['posts.delete'],
+	},
+	'sharedLabels.create': {
+		input: MissiveEndpointInputSchemas['sharedLabels.create'],
+		output: MissiveEndpointOutputSchemas['sharedLabels.create'],
+	},
+	'sharedLabels.update': {
+		input: MissiveEndpointInputSchemas['sharedLabels.update'],
+		output: MissiveEndpointOutputSchemas['sharedLabels.update'],
+	},
+	'sharedLabels.list': {
+		input: MissiveEndpointInputSchemas['sharedLabels.list'],
+		output: MissiveEndpointOutputSchemas['sharedLabels.list'],
+	},
+	'teams.list': {
+		input: MissiveEndpointInputSchemas['teams.list'],
+		output: MissiveEndpointOutputSchemas['teams.list'],
+	},
+	'teams.create': {
+		input: MissiveEndpointInputSchemas['teams.create'],
+		output: MissiveEndpointOutputSchemas['teams.create'],
+	},
+	'teams.update': {
+		input: MissiveEndpointInputSchemas['teams.update'],
+		output: MissiveEndpointOutputSchemas['teams.update'],
+	},
+	'users.list': {
+		input: MissiveEndpointInputSchemas['users.list'],
+		output: MissiveEndpointOutputSchemas['users.list'],
+	},
+	'tasks.list': {
+		input: MissiveEndpointInputSchemas['tasks.list'],
+		output: MissiveEndpointOutputSchemas['tasks.list'],
+	},
+	'tasks.get': {
+		input: MissiveEndpointInputSchemas['tasks.get'],
+		output: MissiveEndpointOutputSchemas['tasks.get'],
+	},
+	'tasks.create': {
+		input: MissiveEndpointInputSchemas['tasks.create'],
+		output: MissiveEndpointOutputSchemas['tasks.create'],
+	},
+	'tasks.update': {
+		input: MissiveEndpointInputSchemas['tasks.update'],
+		output: MissiveEndpointOutputSchemas['tasks.update'],
+	},
+	'hooks.create': {
+		input: MissiveEndpointInputSchemas['hooks.create'],
+		output: MissiveEndpointOutputSchemas['hooks.create'],
+	},
+	'hooks.delete': {
+		input: MissiveEndpointInputSchemas['hooks.delete'],
+		output: MissiveEndpointOutputSchemas['hooks.delete'],
 	},
 } as const;
 
