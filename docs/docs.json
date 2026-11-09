@@ -3034,6 +3034,14 @@
                 ]
               },
               {
+                "group": "ServiceNow",
+                "pages": [
+                  "plugins/servicenow/overview",
+                  "plugins/servicenow/api",
+                  "plugins/servicenow/database"
+                ]
+              },
+              {
                 "group": "SharePoint",
                 "pages": [
                   "plugins/sharepoint/overview",

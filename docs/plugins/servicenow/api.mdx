@@ -1,0 +1,228 @@
+---
+title: API
+description: "API reference for ServiceNow: every `servicenow.api.*` operation with input and output types."
+---
+
+Every `servicenow.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Records
+
+### create
+
+`records.create`
+
+Create a record in any table, which triggers its business rules and notifications
+
+**Risk:** `write`
+
+```ts
+await corsair.servicenow.api.records.create({ table: 'incident', fields: { short_description: 'Printer offline', caller_id: '6816f79cc0a8016401c5a33be7409464' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `table` | `string` | Yes | — |
+| `fields` | `Record<string, unknown>` | Yes | Column values for the new record, e.g. &#123; short_description: "..." &#125; |
+| `sysparm_input_display_value` | `boolean` | No | Treat the supplied values as display values |
+| `sysparm_display_value` | `true \| false \| all` | No | — |
+
+Sends `fields` as the request body and answers the created record from `result`, whose `sys_id` identifies it. Business rules and notifications fire, so the response can differ from what you sent.
+
+
+
+**Output:** `Record<string, unknown>`
+
+
+---
+
+### delete
+
+`records.delete`
+
+Delete one record. ServiceNow keeps no undo, and a deleted record takes its references with it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.servicenow.api.records.delete({ table: 'incident', sys_id: '9d385017c611228701d22104cc95c371' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `table` | `string` | Yes | — |
+| `sys_id` | `string` | Yes | ServiceNow sys_id |
+
+Answers 204 with no body, so the plugin reports the identifiers it deleted rather than parsing one. The record and its references are gone; there is no undo.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `table` | `string` | Yes | — |
+| `sys_id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`records.get`
+
+Read one record by its sys_id
+
+**Risk:** `read`
+
+```ts
+await corsair.servicenow.api.records.get({ table: 'incident', sys_id: '9d385017c611228701d22104cc95c371' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `table` | `string` | Yes | — |
+| `sys_id` | `string` | Yes | ServiceNow sys_id |
+| `sysparm_fields` | `string` | No | Comma-separated fields to return, e.g. "number,short_description,state" |
+| `sysparm_display_value` | `true \| false \| all` | No | — |
+
+Answers the record object directly from `result`. Reference fields come back as objects with `value` and `link` unless `sysparm_exclude_reference_link` is set.
+
+
+
+**Output:** `Record<string, unknown>`
+
+
+---
+
+### list
+
+`records.list`
+
+Query any table with an encoded query, field selection and offset paging
+
+**Risk:** `read`
+
+```ts
+await corsair.servicenow.api.records.list({ table: 'incident', sysparm_query: 'active=true', sysparm_limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `table` | `string` | Yes | Table name, e.g. incident, change_request |
+| `sysparm_query` | `string` | No | Encoded query, e.g. "active=true^priority=1^ORDERBYDESCsys_created_on". Operators: = != &gt; &lt; &gt;= &lt;= LIKE STARTSWITH ENDSWITH IN ISEMPTY ISNOTEMPTY BETWEEN |
+| `sysparm_fields` | `string` | No | Comma-separated fields to return, e.g. "number,short_description,state" |
+| `sysparm_display_value` | `true \| false \| all` | No | false (default) returns raw values; true returns display values; all returns both |
+| `sysparm_exclude_reference_link` | `boolean` | No | Omit the per-field reference link objects |
+| `sysparm_no_count` | `boolean` | No | Skip the total; makes the call faster on large tables |
+| `sysparm_limit` | `number` | No | Records per page. ServiceNow defaults to 10000 when omitted |
+| `sysparm_offset` | `number` | No | Records to skip. Add sysparm_limit per page to walk a table |
+
+Answers `{ records: [...] }` from the `result` array. `sysparm_display_value` takes `false` for raw values, `true` for display values, or `all` for both; each value is a string or an object, so a record stays an open map. Setting `sysparm_no_count` skips the total and is faster on a large table.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `Record<string, unknown>[]` | Yes | — |
+
+
+
+---
+
+### update
+
+`records.update`
+
+Patch fields on one record, which triggers its business rules and notifications
+
+**Risk:** `write`
+
+```ts
+await corsair.servicenow.api.records.update({ table: 'incident', sys_id: '9d385017c611228701d22104cc95c371', fields: { state: '2' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `table` | `string` | Yes | — |
+| `sys_id` | `string` | Yes | ServiceNow sys_id |
+| `fields` | `Record<string, unknown>` | Yes | — |
+| `sysparm_input_display_value` | `boolean` | No | — |
+
+Sends a PATCH with `fields` as the body, which changes only the fields you name. Answers the updated record. Business rules and notifications fire.
+
+
+
+**Output:** `Record<string, unknown>`
+
+
+---
+
+## Tables
+
+### list
+
+`tables.list`
+
+List the tables this account can read, to find a name to query
+
+**Risk:** `read`
+
+```ts
+await corsair.servicenow.api.tables.list({ sysparm_limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sysparm_query` | `string` | No | Encoded query, e.g. "active=true^priority=1^ORDERBYDESCsys_created_on". Operators: = != &gt; &lt; &gt;= &lt;= LIKE STARTSWITH ENDSWITH IN ISEMPTY ISNOTEMPTY BETWEEN |
+| `sysparm_fields` | `string` | No | Comma-separated fields to return, e.g. "number,short_description,state" |
+| `sysparm_limit` | `number` | No | Records per page. ServiceNow defaults to 10000 when omitted |
+| `sysparm_offset` | `number` | No | Records to skip. Add sysparm_limit per page to walk a table |
+
+Reads `sys_db_object`, the table that describes every table, selecting `name`, `label`, `super_class` and `sys_id` by default. Pass `sysparm_query` to narrow it, for example `nameSTARTSWITHu_` for a custom application's tables.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tables` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  name: string,
+  label?: string | null,
+  super_class?: string | null,
+  sys_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
