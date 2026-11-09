@@ -15,39 +15,53 @@ export function withNextOffset(
 	key = 'data',
 ): unknown {
 	const record = asRecord(raw);
-	const items = record?.[key];
+	if (!record) {
+		throw new OnedeskAPIError('Expected an object in the OneDesk response.');
+	}
+	const items = record[key];
 	if (items !== undefined && !Array.isArray(items)) {
 		throw new OnedeskAPIError(
 			`Expected ${key} to be an array in the OneDesk response.`,
 		);
 	}
-	const returned = Array.isArray(items) ? items.length : 0;
 	// unknown: totalNum is the provider's own count field, untyped until here.
-	const total = record?.totalNum;
+	const total = record.totalNum;
+	const totalCount = typeof total === 'number' ? total : null;
+	// A missing list with records still to come is a broken page, not an empty
+	// one: returning `[]` would look like the end of the data.
+	if (items === undefined && totalCount !== null && totalCount > 0) {
+		throw new OnedeskAPIError(
+			`The OneDesk response has no ${key} array but reports ${totalCount} rows.`,
+		);
+	}
+	const returned = Array.isArray(items) ? items.length : 0;
 	return {
 		...record,
 		data: items ?? [],
-		nextOffset: nextOffsetFor(
-			returned,
-			typeof total === 'number' ? total : null,
-			offset ?? 0,
-		),
+		nextOffset: nextOffsetFor(returned, totalCount, offset ?? 0),
 	};
 }
 
 /**
  * Normalises an update response. OneDesk answers a bare code string on some
- * resources and an empty body on others, so both become `{ code: 'SUCCESS' }`
- * for the shared output schema.
+ * resources and an empty 200 on others, so both become `{ code }` for the
+ * shared output schema. A structured body without a `code` is neither: it is
+ * a shape this plugin does not understand, so it fails rather than reporting
+ * a success that was never confirmed.
  */
 // unknown: the transport returns an untyped body.
 export function updateCode(raw: unknown): { code: string } {
-	if (typeof raw === 'string') return { code: raw };
-	const record = asRecord(raw);
-	if (typeof record?.code === 'string') return { code: record.code };
+	if (typeof raw === 'string' && raw.length > 0) return { code: raw };
 	// An empty 200 is a success: the client has already thrown on any error
-	// code it could read.
-	return { code: 'SUCCESS' };
+	// code it could read, and OneDesk sends nothing else here.
+	if (raw === undefined || raw === null || raw === '') {
+		return { code: 'SUCCESS' };
+	}
+	const code = asRecord(raw)?.code;
+	if (typeof code === 'string' && code.length > 0) return { code };
+	throw new OnedeskAPIError(
+		'The OneDesk update response carried no code, so it cannot be read as a success.',
+	);
 }
 
 /** Reads the created record's external id from a create envelope. */

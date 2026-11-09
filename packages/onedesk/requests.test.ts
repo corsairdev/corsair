@@ -146,6 +146,16 @@ describe('items', () => {
 		expect(result.nextOffset).toBeNull();
 	});
 
+	it('items.filter rejects a page that lost its data array', async () => {
+		// A missing array with rows still to come is a broken page, not an
+		// empty one: returning [] would look like the end of the data.
+		respond({ code: 'SUCCESS', totalNum: 12 });
+
+		await expect(
+			invoke(Records.itemsFilter, { itemType: ['Ticket'] }),
+		).rejects.toThrow(/no data array but reports 12 rows/);
+	});
+
 	it('items.get uses the external id path when given one', async () => {
 		respond(itemResult);
 
@@ -184,6 +194,19 @@ describe('items', () => {
 		expect(request.body).toMatchObject({ name: 'Broken button', priority: 80 });
 	});
 
+	it('items.create accepts a string array for a tags-style custom field', async () => {
+		respond(createdRecord);
+
+		await invoke(Records.itemsCreate, {
+			name: 'Tagged work item',
+			customFields: { Tags: ['a', 'b'], Severity: 3, Flagged: true },
+		});
+
+		expect(lastRequest().body).toMatchObject({
+			customFields: { Tags: ['a', 'b'], Severity: 3, Flagged: true },
+		});
+	});
+
 	it('items.create rejects a priority the API does not accept', async () => {
 		await expect(
 			invoke(Records.itemsCreate, { name: 'x', priority: 50 }),
@@ -204,6 +227,26 @@ describe('items', () => {
 		const request = lastRequest();
 		expect(request.path).toBe('/rest/public/items/externalId/i-1');
 		expect(request.body).toEqual({ name: 'Renamed', percentComplete: 50 });
+	});
+
+	it('items.update rejects a structured response that carries no code', async () => {
+		// Neither a bare code nor an empty 200 is a confirmed success.
+		respond({ data: 'something else' });
+
+		await expect(
+			invoke(Records.itemsUpdate, { externalId: 'i-1', name: 'Renamed' }),
+		).rejects.toThrow(/carried no code/);
+	});
+
+	it('items.update reads an empty 200 as success', async () => {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 200 }));
+
+		const result = (await invoke(Records.itemsUpdate, {
+			externalId: 'i-1',
+			name: 'Renamed',
+		})) as { code: string };
+
+		expect(result.code).toBe('SUCCESS');
 	});
 
 	it('items.update rejects a call with no target identifier', async () => {
@@ -240,6 +283,9 @@ describe('users', () => {
 		};
 
 		expect(result.data[0]?.profile?.email).toBe(user.profile.email);
+		const request = lastRequest();
+		expect(request.method).toBe('POST');
+		expect(request.path).toBe('/rest/public/users/filter/details');
 	});
 
 	it('users.get reads by external id', async () => {
@@ -317,6 +363,9 @@ describe('projects and portfolios', () => {
 		};
 
 		expect(result.data[0]?.name).toBe(project.name);
+		const request = lastRequest();
+		expect(request.method).toBe('POST');
+		expect(request.path).toBe('/rest/public/projects/filter/details');
 	});
 
 	it('projects.get reads by external id', async () => {
@@ -336,6 +385,15 @@ describe('projects and portfolios', () => {
 		});
 
 		expect(lastRequest().body).toMatchObject({ invoiceType: 'flat fee' });
+	});
+
+	it('projects.create does not log the submitted name', async () => {
+		respond(createdRecord);
+
+		await invoke(Records.projectsCreate, { name: 'Confidential acquisition' });
+
+		const saved = JSON.stringify(mockLog.mock.calls.at(-1)?.[2]);
+		expect(saved).not.toContain('Confidential acquisition');
 	});
 
 	it('projects.create rejects an unknown invoice type', async () => {
@@ -391,6 +449,15 @@ describe('projects and portfolios', () => {
 		expect(lastRequest().path).toBe('/rest/public/portfolios/externalId/pf-1');
 	});
 
+	it('portfolios.create does not log the submitted name', async () => {
+		respond(createdRecord);
+
+		await invoke(Records.portfoliosCreate, { name: 'Client X portfolio' });
+
+		const saved = JSON.stringify(mockLog.mock.calls.at(-1)?.[2]);
+		expect(saved).not.toContain('Client X portfolio');
+	});
+
 	it('portfolios.create posts the parent ids', async () => {
 		respond(createdRecord);
 
@@ -443,6 +510,15 @@ describe('teams', () => {
 		await invoke(Records.teamsGet, { externalId: 't-1' });
 
 		expect(lastRequest().path).toBe('/rest/public/teams/externalId/t-1');
+	});
+
+	it('teams.create does not log the submitted name', async () => {
+		respond(createdRecord);
+
+		await invoke(Records.teamsCreate, { name: 'Internal escalation' });
+
+		const saved = JSON.stringify(mockLog.mock.calls.at(-1)?.[2]);
+		expect(saved).not.toContain('Internal escalation');
 	});
 
 	it('teams.create posts the members', async () => {
@@ -579,6 +655,9 @@ describe('customers and organizations', () => {
 		};
 
 		expect(result.data[0]?.email).toBe(customer.email);
+		const request = lastRequest();
+		expect(request.method).toBe('POST');
+		expect(request.path).toBe('/rest/public/customers/filter/details');
 	});
 
 	it('customers.get reads by external id', async () => {
@@ -645,6 +724,18 @@ describe('customers and organizations', () => {
 		expect(lastRequest().path).toBe(
 			'/rest/public/customer-organizations/externalId/co-1',
 		);
+	});
+
+	it('organizations.create does not log the submitted name', async () => {
+		respond(createdRecord);
+
+		await invoke(Crm.organizationsCreate, { name: 'Analytical Engines' });
+
+		const saved = JSON.stringify(mockLog.mock.calls.at(-1)?.[2]);
+		expect(saved).not.toContain('Analytical Engines');
+		expect(mockLog.mock.calls.at(-1)?.[2]).toEqual({
+			externalId: createdRecord.data,
+		});
 	});
 
 	it('organizations.create posts the domains', async () => {
@@ -985,6 +1076,17 @@ describe('activities and attachments', () => {
 		expect((file as File).name).toBe('note.txt');
 		expect((file as File).type).toBe('text/plain');
 		expect(await (file as File).text()).toBe('hello');
+	});
+
+	it('attachments.upload rejects content that is not base64', async () => {
+		// Buffer.from would truncate this silently and upload a corrupt file.
+		await expect(
+			invoke(Attachments.attachmentsUpload, {
+				fileName: 'bad.txt',
+				contentBase64: 'not base64!!',
+			}),
+		).rejects.toThrow(/not valid base64/);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('attachments.upload rejects content that decodes to nothing', async () => {

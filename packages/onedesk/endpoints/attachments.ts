@@ -1,3 +1,4 @@
+import { File } from 'node:buffer';
 import type { OnedeskEndpoints } from '..';
 import { OnedeskAPIError } from '../client';
 import { call } from './call';
@@ -7,27 +8,42 @@ import {
 	OnedeskEndpointOutputSchemas as Outputs,
 } from './types';
 
+/** The base64 alphabet, padded to a multiple of four. */
+const BASE64_PATTERN = /^[A-Za-z0-9+/]*={0,2}$/;
+
 /**
  * OneDesk takes attachment bytes as multipart, the same way for a bare upload
  * and for attaching to a record. The base64 input is decoded here so the
  * caller can pass a file straight from an agent's tool output.
  *
- * The part is a `File`, not a `Blob`: a File carries its name into the
- * multipart `Content-Disposition`, which is what OneDesk records as the
- * attachment name. A nameless Blob would arrive as "blob" and lose the
- * extension the upload was given.
+ * The part keeps its filename: a `Blob` has no name, and OneDesk records the
+ * part name as the attachment name, so the name travels both in the part
+ * metadata and as its own field.
  */
 function multipartFile(parsed: {
 	fileName: string;
 	contentType?: string;
 	contentBase64: string;
 }): Record<string, string | Blob> {
-	const bytes = Buffer.from(parsed.contentBase64, 'base64');
+	// base64 is a fixed alphabet in groups of four. A string outside it is
+	// truncated silently by Buffer.from, which would upload a corrupt file.
+	const normalised = parsed.contentBase64.replace(/\s+/g, '');
+	if (!BASE64_PATTERN.test(normalised)) {
+		throw new OnedeskAPIError(
+			'The attachment is not valid base64: contentBase64 must use the base64 alphabet and be a multiple of four characters.',
+		);
+	}
+	const bytes = Buffer.from(normalised, 'base64');
 	if (bytes.length === 0) {
 		throw new OnedeskAPIError(
 			'The attachment is empty: contentBase64 did not decode to any bytes.',
 		);
 	}
+	// A File, not the bare global: imported from node:buffer so the builtin is
+	// resolved per runtime rather than taken from whatever global scope the
+	// caller has. A File carries its name into the multipart part, which is
+	// what OneDesk records; a plain Blob would arrive as "blob" and lose the
+	// extension.
 	return {
 		file: new File([new Uint8Array(bytes)], parsed.fileName, {
 			type: parsed.contentType ?? 'application/octet-stream',

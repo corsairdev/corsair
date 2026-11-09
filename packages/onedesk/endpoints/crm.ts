@@ -196,8 +196,9 @@ export const organizationsCreate: OnedeskEndpoints['organizationsCreate'] = (
 			body: parsed,
 		}),
 		{
-			log: (parsed, result) => ({
-				name: parsed.name,
+			// The submitted name is the customer's own text and does not belong in
+			// the event log; the new record's id is what identifies it.
+			log: (_, result) => ({
 				externalId: result.data ?? undefined,
 			}),
 		},

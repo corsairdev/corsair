@@ -121,6 +121,47 @@ describe('OneDesk plugin through createCorsair', () => {
 		}
 	});
 
+	it('does not repeat a throttled timer action', async () => {
+		// timers.start is a GET but not idempotent: a replayed start bills the
+		// same work twice, so a 429 has to be reported, not retried.
+		const { corsair, testDb } = await createClient({ key: 'od-key' });
+		try {
+			await corsair.onedesk.keys.issue_new_dek();
+			respond({ message: 'Rate limit reached' }, 429);
+			respond({ message: 'Rate limit reached' }, 429);
+
+			await expect(
+				corsair.onedesk.api.timers.start({
+					timerExternalId: 'tm-1',
+					itemExternalId: 'i-1',
+				}),
+			).rejects.toThrow();
+			expect(calls()).toBe(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('still retries a throttled read', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient({ key: 'od-key' });
+		try {
+			await corsair.onedesk.keys.issue_new_dek();
+			respond({ message: 'Rate limit reached' }, 429);
+			respond(pagedIds);
+
+			const pending = corsair.onedesk.api.items.filter({
+				itemType: ['Ticket'],
+			});
+			await jest.advanceTimersByTimeAsync(2000);
+			await expect(pending).resolves.toMatchObject({ code: 'SUCCESS' });
+			expect(calls()).toBe(2);
+		} finally {
+			testDb.cleanup();
+			jest.useRealTimers();
+		}
+	});
+
 	it('does not retry a rejected key', async () => {
 		const { corsair, testDb } = await createClient({ key: 'od-key' });
 		try {

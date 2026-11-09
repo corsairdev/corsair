@@ -1139,7 +1139,7 @@ await corsair.onedesk.api.customers.update({ externalId: '35650e86-0000-0000-000
 | `deactivate` | `boolean` | No | Deactivate the customer, which stops them signing in. |
 | `pictureAttachmentExternalId` | `string` | No | — |
 | `customerOrganizationExternalId` | `string` | No | — |
-| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean \| string[]>` | No | — |
 
 <AccordionGroup>
 <Accordion title="address full type">
@@ -1458,7 +1458,7 @@ await corsair.onedesk.api.items.create({ name: 'The blue button does not work', 
 | `plannedHour` | `number` | No | — |
 | `plannedStart` | `string` | No | — |
 | `plannedFinish` | `string` | No | — |
-| `customFields` | `Record<string, string \| number \| boolean>` | No | Custom field name to value. |
+| `customFields` | `Record<string, string \| number \| boolean \| string[]>` | No | Custom field name to value. |
 | `authorExternalId` | `string \| null` | No | — |
 
 
@@ -1822,7 +1822,7 @@ await corsair.onedesk.api.items.update({ externalId: '0abb5fgh-0000-0000-0000-c7
 | `blockedByItemExternalIds` | `object` | No | — |
 | `precededByItemExternalIds` | `object` | No | — |
 | `succeededByItemExternalIds` | `object` | No | — |
-| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean \| string[]>` | No | — |
 | `lifecycleStatusName` | `string` | No | New lifecycle status by name. Read the valid names with organization.lifecycleStatus. |
 | `attachmentExternalIds` | `object` | No | — |
 | `plannedStart` | `string` | No | — |
@@ -2848,7 +2848,7 @@ await corsair.onedesk.api.organizations.update({ externalId: '04969ee3-f2b0-45b2
 | `attachments` | `object` | No | — |
 | `domains` | `object` | No | — |
 | `customers` | `object` | No | — |
-| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean \| string[]>` | No | — |
 
 <AccordionGroup>
 <Accordion title="address full type">
@@ -3587,7 +3587,7 @@ await corsair.onedesk.api.projects.update({ externalId: 'e150be49-b53c-4d81-a25d
 | `invoiceType` | `actual work performed \| flat fee \| prepaid hours \| no invoice planned` | No | — |
 | `portfolioExternalIds` | `object` | No | — |
 | `attachmentExternalIds` | `object` | No | — |
-| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean \| string[]>` | No | — |
 | `archived` | `boolean` | No | — |
 
 A lifecycle status name must be one the organization defines; read them with `organization.lifecycleStatus`, which returns objects whose `name` is the value to pass.
@@ -4596,7 +4596,7 @@ await corsair.onedesk.api.timesheets.create({ userExternalId: '67475168-7241-4a7
 | `percentCompleted` | `number` | Yes | — |
 | `start` | `string` | No | — |
 | `finish` | `string` | Yes | When the work finished. |
-| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean \| string[]>` | No | — |
 | `authorExternalId` | `string \| null` | No | — |
 
 
@@ -4896,7 +4896,7 @@ await corsair.onedesk.api.timesheets.update({ externalId: 'ff87a554-0000-0000-00
 | `teamAndCustomerOrganizationRequesterExternalIds` | `object` | No | — |
 | `invoiceableCustomerOrganizationExternalId` | `string` | No | — |
 | `serviceType` | `string` | No | — |
-| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean \| string[]>` | No | — |
 
 <AccordionGroup>
 <Accordion title="userAndCustomerRequesterExternalIds full type">
@@ -5284,7 +5284,7 @@ await corsair.onedesk.api.users.update({ externalId: '67475168-7241-4a76-8bd5-dc
 | `title` | `string` | No | — |
 | `pictureAttachmentExternalId` | `string` | No | — |
 | `teamExternalIds` | `object` | No | — |
-| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean \| string[]>` | No | — |
 
 <AccordionGroup>
 <Accordion title="address full type">

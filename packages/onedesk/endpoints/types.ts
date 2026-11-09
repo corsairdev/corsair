@@ -214,6 +214,18 @@ const LifecycleStatusSchema = z
 	})
 	.loose();
 
+/**
+ * A custom-field map on a write. OneDesk's field types include Choice and
+ * Tags, whose values are lists, so an array of strings is accepted beside the
+ * scalars.
+ */
+const CustomFieldInputSchema = z
+	.record(
+		z.string(),
+		z.union([z.string(), z.number(), z.boolean(), z.array(z.string())]),
+	)
+	.optional();
+
 /** `[0,20,40,60,80,100]` are 0 to 5 stars. Nothing between is accepted. */
 export const ONEDESK_PRIORITIES = [0, 20, 40, 60, 80, 100] as const;
 
@@ -352,10 +364,7 @@ const ItemsCreateInputSchema = z.object({
 	plannedHour: z.number().min(0).optional(),
 	plannedStart: z.string().optional(),
 	plannedFinish: z.string().optional(),
-	customFields: z
-		.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-		.optional()
-		.describe('Custom field name to value.'),
+	customFields: CustomFieldInputSchema.describe('Custom field name to value.'),
 	authorExternalId: z.string().nullish(),
 });
 
@@ -383,9 +392,7 @@ const ItemsUpdateInputSchema = z
 		blockedByItemExternalIds: listUpdate.optional(),
 		precededByItemExternalIds: listUpdate.optional(),
 		succeededByItemExternalIds: listUpdate.optional(),
-		customFields: z
-			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-			.optional(),
+		customFields: CustomFieldInputSchema,
 		lifecycleStatusName: z
 			.string()
 			.min(1)
@@ -530,9 +537,7 @@ const UsersUpdateInputSchema = z
 		title: z.string().optional(),
 		pictureAttachmentExternalId: z.string().optional(),
 		teamExternalIds: listUpdate.optional(),
-		customFields: z
-			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-			.optional(),
+		customFields: CustomFieldInputSchema,
 	})
 	.superRefine((value, ctx) => {
 		if (value.externalId === undefined && value.id === undefined) {
@@ -653,9 +658,7 @@ const ProjectsUpdateInputSchema = z
 		invoiceType: InvoiceTypeSchema.optional(),
 		portfolioExternalIds: listUpdate.optional(),
 		attachmentExternalIds: listUpdate.optional(),
-		customFields: z
-			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-			.optional(),
+		customFields: CustomFieldInputSchema,
 		archived: z.boolean().optional(),
 	})
 	.superRefine((value, ctx) => {
@@ -923,9 +926,7 @@ const CustomersUpdateInputSchema = z
 			.describe('Deactivate the customer, which stops them signing in.'),
 		pictureAttachmentExternalId: z.string().optional(),
 		customerOrganizationExternalId: z.string().optional(),
-		customFields: z
-			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-			.optional(),
+		customFields: CustomFieldInputSchema,
 	})
 	.superRefine((value, ctx) => {
 		if (value.externalId === undefined && value.id === undefined) {
@@ -1038,9 +1039,7 @@ const OrganizationsUpdateInputSchema = z.object({
 	attachments: listUpdate.optional(),
 	domains: listUpdate.optional(),
 	customers: listUpdate.optional(),
-	customFields: z
-		.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-		.optional(),
+	customFields: CustomFieldInputSchema,
 });
 
 export type OrganizationsUpdateInput = z.input<
@@ -1133,9 +1132,7 @@ const TimesheetsCreateInputSchema = z.object({
 	percentCompleted: z.number().int().min(0).max(100),
 	start: z.string().optional(),
 	finish: z.string().describe('When the work finished.'),
-	customFields: z
-		.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-		.optional(),
+	customFields: CustomFieldInputSchema,
 	authorExternalId: z.string().nullish(),
 });
 
@@ -1163,9 +1160,7 @@ const TimesheetsUpdateInputSchema = z
 		teamAndCustomerOrganizationRequesterExternalIds: listUpdate.optional(),
 		invoiceableCustomerOrganizationExternalId: z.string().optional(),
 		serviceType: z.string().optional(),
-		customFields: z
-			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-			.optional(),
+		customFields: CustomFieldInputSchema,
 	})
 	.superRefine((value, ctx) => {
 		if (value.externalId === undefined && value.id === undefined) {

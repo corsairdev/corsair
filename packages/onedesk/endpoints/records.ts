@@ -296,8 +296,9 @@ export const projectsCreate: OnedeskEndpoints['projectsCreate'] = (
 		input,
 		(parsed) => ({ method: 'POST', path: '/projects/', body: parsed }),
 		{
-			log: (parsed, result) => ({
-				name: parsed.name,
+			// The submitted name is the customer's own text and does not belong in
+			// the event log; the new record's id is what identifies it.
+			log: (_, result) => ({
 				externalId: result.data ?? undefined,
 			}),
 		},
@@ -402,8 +403,9 @@ export const portfoliosCreate: OnedeskEndpoints['portfoliosCreate'] = (
 		input,
 		(parsed) => ({ method: 'POST', path: '/portfolios/', body: parsed }),
 		{
-			log: (parsed, result) => ({
-				name: parsed.name,
+			// The submitted name is the customer's own text and does not belong in
+			// the event log; the new record's id is what identifies it.
+			log: (_, result) => ({
 				externalId: result.data ?? undefined,
 			}),
 		},
@@ -499,8 +501,9 @@ export const teamsCreate: OnedeskEndpoints['teamsCreate'] = (ctx, input) =>
 		input,
 		(parsed) => ({ method: 'POST', path: '/teams/', body: parsed }),
 		{
-			log: (parsed, result) => ({
-				name: parsed.name,
+			// The submitted name is the customer's own text and does not belong in
+			// the event log; the new record's id is what identifies it.
+			log: (_, result) => ({
 				externalId: result.data ?? undefined,
 			}),
 		},

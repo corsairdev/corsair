@@ -208,6 +208,19 @@ describe('makeOnedeskRequest', () => {
 		expect(error.isDestructive).toBe(true);
 	});
 
+	it('redacts a key the provider echoes back in the body', async () => {
+		// The message is thrown and also written to corsair_events, so the key
+		// must not survive in either.
+		respond({ message: `Invalid key ${API_KEY} for this endpoint` }, 403);
+
+		const error = await failure(
+			makeOnedeskRequest(API_KEY, { method: 'GET', path: '/items/id/1' }),
+		);
+
+		expect(error.message).not.toContain(API_KEY);
+		expect(error.message).toContain('[redacted]');
+	});
+
 	it('keeps the key out of the message and out of inspect output', async () => {
 		respond({ message: 'Invalid key' }, 401);
 
@@ -238,6 +251,18 @@ describe('resolveBase', () => {
 		expect(() => resolveBase('https://user:pw@acme.example')).toThrow(
 			/credentials/,
 		);
+	});
+
+	it('rejects a host with a path, which would shift every route', () => {
+		// `/rest/public` would be appended after the path and reach a 404.
+		expect(() => resolveBase('https://acme.example/onedesk')).toThrow(
+			/no path/,
+		);
+	});
+
+	it('accepts a root path with or without a trailing slash', () => {
+		expect(resolveBase('https://acme.example')).toBe('https://acme.example');
+		expect(resolveBase('https://acme.example/')).toBe('https://acme.example');
 	});
 });
 
@@ -276,11 +301,17 @@ describe('envelopeCode', () => {
 		}
 	});
 
-	it('leaves INTERNAL_ERROR alone rather than guessing it is a failure', () => {
-		// INTERNAL_ERROR does not carry the ERROR_ prefix the success check
-		// keys on, so it is passed through; a caller sees the code in the body.
+	it('treats INTERNAL_ERROR as a failure even without the ERROR_ prefix', () => {
+		// It is a documented failure code, so an unhandled shape must not be
+		// returned as if the call had succeeded.
 		expect(() =>
 			throwIfEnvelopeFailed({ code: 'INTERNAL_ERROR' }, { method: 'POST' }),
+		).toThrow(/INTERNAL_ERROR/);
+	});
+
+	it('passes an unrecognised code through rather than guessing', () => {
+		expect(() =>
+			throwIfEnvelopeFailed({ code: 'SOMETHING_ELSE' }, { method: 'POST' }),
 		).not.toThrow();
 	});
 });

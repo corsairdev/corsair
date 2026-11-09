@@ -20,6 +20,12 @@ const ONEDESK_TIMEOUT_MS = 60_000;
 
 // error-handlers.ts owns retries, so the transport makes one attempt and only
 // reads Retry-After into the error.
+//
+// The Retry-After value is parsed by core (`async-core/rate-limit.ts`), which
+// uses parseInt and therefore ignores an HTTP-date form. That parser cannot be
+// reached from here and core is outside a plugin PR's scope (R1), so the
+// plugin keeps the numeric form it can get and relies on its own backoff when
+// the header is a date. See the PR notes for the follow-up.
 const ONEDESK_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 0,
@@ -108,10 +114,10 @@ export function envelopeCode(raw: unknown): string | undefined {
 }
 
 /**
- * Turns a 2xx response that says `code !== 'SUCCESS'` into an error. Every
- * failure code OneDesk documents starts with `ERROR_`, and `SUCCESS` is the
- * only success value, so anything else is passed through untouched rather than
- * guessed at.
+ * Turns a 2xx response that says the call failed into an error. OneDesk's
+ * success value is `SUCCESS`; every documented failure code is either
+ * `ERROR_*` or `INTERNAL_ERROR`, so anything else is passed through rather
+ * than guessed at.
  */
 // unknown: see envelopeCode.
 export function throwIfEnvelopeFailed(
@@ -119,7 +125,11 @@ export function throwIfEnvelopeFailed(
 	context: { method?: string; path?: string },
 ): void {
 	const code = envelopeCode(raw);
-	if (!code || code === 'SUCCESS' || !code.startsWith('ERROR_')) return;
+	if (!code || code === 'SUCCESS') return;
+	// A bare string body is the code itself; an object's `code` is only a
+	// failure when it says so.
+	const isFailure = code.startsWith('ERROR_') || code === 'INTERNAL_ERROR';
+	if (!isFailure) return;
 	throw new OnedeskAPIError(`OneDesk returned ${code}`, {
 		status: 200,
 		code,
@@ -168,7 +178,14 @@ export function resolveBase(host: string | undefined): string {
 			'The OneDesk host must not carry credentials, a query or a fragment.',
 		);
 	}
-	return `${url.origin}${url.pathname.replace(/\/+$/, '')}`;
+	// A path would be prepended to `/rest/public/...` and silently reach the
+	// wrong route, so only the origin (with a trailing slash) is accepted.
+	if (url.pathname !== '/' && url.pathname !== '') {
+		throw new OnedeskAPIError(
+			`"${host}" must be an origin with no path. Pass something like https://acme.onedesk.com.`,
+		);
+	}
+	return url.origin;
 }
 
 /**
@@ -224,7 +241,7 @@ export async function makeOnedeskRequest(
 		if (error instanceof OnedeskAPIError) throw error;
 		if (error instanceof ApiError) {
 			throw new OnedeskAPIError(
-				describeOnedeskError(error.status, error.body),
+				describeOnedeskError(error.status, error.body, apiKey),
 				{
 					status: error.status,
 					retryAfter: error.retryAfter,
@@ -243,18 +260,34 @@ export async function makeOnedeskRequest(
 /**
  * OneDesk answers 401 with an empty body, so a status with no message has to
  * become one a caller can act on.
+ *
+ * A provider that echoes the request back can put the key in the body, and
+ * this message is both thrown **and** written to `corsair_events`, so the key
+ * is stripped here rather than at either destination.
  */
 // unknown: an error body is untyped until asRecord narrows it.
-function describeOnedeskError(status: number, body: unknown): string {
+function describeOnedeskError(
+	status: number,
+	body: unknown,
+	apiKey: string,
+): string {
 	const record = asRecord(body);
 	for (const key of ['message', 'error', 'detail'] as const) {
 		const value = record?.[key];
 		if (typeof value === 'string' && value.length > 0) {
-			return `OneDesk HTTP ${status}: ${value}`;
+			return redactKey(`OneDesk HTTP ${status}: ${value}`, apiKey);
 		}
 	}
 	if (status === 401) {
 		return 'OneDesk rejected the API key: check that it is active and allowed to reach this endpoint.';
 	}
 	return `OneDesk HTTP ${status}`;
+}
+
+/** Removes the key from text that is about to be thrown or stored. */
+export function redactKey(message: string, apiKey: string): string {
+	if (!apiKey) return message;
+	// Escape the key: it may contain characters that are regex operators.
+	const escaped = apiKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+	return message.replace(new RegExp(escaped, 'g'), '[redacted]');
 }
