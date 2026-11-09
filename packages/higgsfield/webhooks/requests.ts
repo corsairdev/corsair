@@ -14,8 +14,8 @@ export const completed: HiggsfieldWebhooks['requestCompleted'] = {
 		if (request.hubVerified !== true) {
 			// Every refusal here throws. processWebhook acknowledges a returned
 			// refusal as success, which would lose the delivery; a throw makes it
-			// report a failure, so the HTTP handler can answer non-2xx and Higgsfield
-			// retries for up to two hours, in which time a missing or rotated secret
+			// report a failure, so the HTTP handler can answer 5xx and Higgsfield
+			// retries for up to two hours (it never retries a 4xx), in which time a missing or rotated secret
 			// can be fixed. No after hook runs on a throw.
 			if (!ctx.key) {
 				throw new Error(

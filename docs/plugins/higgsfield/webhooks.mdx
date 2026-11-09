@@ -3,9 +3,9 @@ title: Webhooks
 description: "Higgsfield incoming webhooks: event paths, payloads, and response data."
 ---
 
-The Higgsfield plugin handles incoming webhooks. Higgsfield has no account-wide subscription. Pass your Corsair HTTP handler URL as `webhookUrl` to `generations.submit` or `generations.run` for each request, and Higgsfield POSTs the result there when the request reaches completed, failed or nsfw (see [Overview](/plugins/higgsfield/overview) for setup). In a multi-tenant app, put `?tenantId=<tenant>` on that URL: nothing in a delivery names the account, and the handler below forwards the query to `processWebhook`. The signature covers the body but not the URL, so `?tenantId=` only picks which tenant's secret checks a delivery. When tenants share a secret, because they use one Higgsfield account or the `webhookSecret` option, anyone holding a signed delivery under 5 minutes old can resend it with another `tenantId`, and that tenant's hooks run on it. Give each tenant its own secret, or check in the hook that the `request_id` is one that tenant submitted.
+The Higgsfield plugin handles incoming webhooks. Higgsfield has no account-wide subscription. Pass your Corsair HTTP handler URL as `webhookUrl` to `generations.submit` or `generations.run` for each request, and Higgsfield POSTs the result there when the request reaches completed, failed or nsfw (see [Overview](/plugins/higgsfield/overview) for setup). In a multi-tenant app, put `?tenantId=<tenant>` on that URL: nothing in a delivery names the account, and the handler below forwards the query to `processWebhook`. The signature covers the body but not the URL, so `?tenantId=` only picks which tenant's secret checks a delivery. When tenants share a secret, because they use one Higgsfield account or the `webhookSecret` option, anyone holding a signed delivery under 5 minutes old can resend it with another `tenantId`, and that tenant's hooks run on it. Give each tenant its own secret, or check in an `after` hook that the `request_id` is one that tenant submitted before acting on it. By then the plugin has logged the event under that tenant. A `before` hook runs ahead of the signature check, so it can receive an unsigned or forged delivery. Keep side effects in `after`.
 
-Only signed deliveries are accepted. Higgsfield signs for an account once its secret has been revealed under **Settings** in the [Higgsfield Console](https://console.higgsfield.ai), and sends unsigned deliveries until then. Store the `whsec_` secret with `corsair.higgsfield.keys.set_webhook_signature(secret)` or `higgsfield({ webhookSecret })`. If no secret is set, or a delivery fails verification, `processWebhook` reports a failure and no hook runs after it. The handler below then answers 500, and Higgsfield retries for up to two hours.
+Only signed deliveries are accepted. Higgsfield signs for an account once its secret has been revealed under **Settings** in the [Higgsfield Console](https://console.higgsfield.ai), and sends unsigned deliveries until then. Store the `whsec_` secret with `corsair.higgsfield.keys.set_webhook_signature(secret)` or `higgsfield({ webhookSecret })`. If no secret is set, or a delivery fails verification, `processWebhook` reports a failure and no hook runs after it. The handler below then answers 500, and Higgsfield retries for up to two hours. It doesn't retry a 4xx.
 
 <Info>
 **New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
@@ -29,8 +29,8 @@ export async function POST(request: Request) {
     // The query carries ?tenantId=, which picks the tenant's signing secret.
     const query = Object.fromEntries(new URL(request.url).searchParams);
     const result = await processWebhook(corsair, headers, body, query);
-    // Answer non-2xx when processing failed (no signing secret, or a delivery
-    // that failed verification), so Higgsfield delivers again.
+    // Answer 500 when processing failed (no signing secret, or a delivery
+    // that failed verification). Higgsfield retries a 5xx, never a 4xx.
     return Response.json(result.response ?? { success: false }, {
         status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
     });
