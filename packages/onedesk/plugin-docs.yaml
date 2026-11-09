@@ -1,0 +1,79 @@
+displayName: OneDesk
+description: Help desk and project management in one platform, with a public API over tickets, tasks, projects, timesheets, invoices, quotes and customer conversations.
+domain: onedesk.com
+recommendedAuth: api_key
+overviewNote: |
+  OneDesk merges help desk and project management, so one account holds
+  tickets, tasks, projects, timesheets and invoices together.
+
+  Two things shape this plugin. First, OneDesk has no single "list" endpoint:
+  each resource is queried through a POST filter body, and the details variant
+  is what returns full records rather than ids. Second, a failure can arrive
+  with **HTTP 200** and a `code` of `ERROR_*`, so the plugin treats that as a
+  failed call rather than returning it as data.
+
+  Item and user writes need names the organization defines. Read them first
+  with `organization.itemTypes`, `organization.userTypes` and
+  `organization.lifecycleStatus`.
+
+  A white-label or self-hosted account sets the `host` option; it defaults to
+  https://app.onedesk.com.
+examples:
+  read:
+    path: items.filterDetails
+    title: List open tickets with their details
+    args:
+      itemType: Ticket
+      limit: 10
+  write:
+    path: items.create
+    title: Create a ticket
+    args:
+      name: The blue button does not work
+      type: Ticket
+apiExamples:
+  items.create:
+    call: |
+      {
+        name: 'The blue button does not work',
+        type: 'Ticket',
+        priority: 80,
+        description: 'Reported by the customer on the checkout page.',
+      }
+  items.filter:
+    call: |
+      {
+        itemType: 'Ticket',
+        properties: [
+          { property: 'lifecycleStatus', operation: 'EQ', value: 'Open' },
+        ],
+        limit: 50,
+        offset: 0,
+      }
+  timesheets.create:
+    call: |
+      {
+        userExternalId: '1534596f4-0000-0000-0000-cb0e42b1db19',
+        taskExternalId: '1ac35fgh-24e2-4b56-8b5e-c75df7969bad',
+        works: 2.5,
+        percentCompleted: 100,
+        finish: '2024-05-14T11:30:00Z',
+      }
+  attachments.attachToItem:
+    call: |
+      {
+        externalId: '1ac35fgh-24e2-4b56-8b5e-c75df7969bad',
+        fileName: 'screenshot.png',
+        contentType: 'image/png',
+        contentBase64: '<base64 bytes>',
+      }
+apiNotes:
+  items.filter: The itemType name must be one this organization defines; read the valid names with `organization.itemTypes`. This returns external ids only. Use `items.filterDetails` for full records, which caps `limit` at 50.
+  items.filterDetails: Returns full item records. OneDesk caps `limit` at 50 on the details variants, against 200 on the id variants.
+  items.update: Related and assigned lists take a replace, add or remove object rather than an array, so an existing value can be kept.
+  timers.start: A timer is identified by the external id you choose, so starting the same id again resumes that timer.
+  timers.cancel: Cancels the timer and discards the work recorded in that run; there is no undo.
+  attachments.upload: OneDesk takes multipart uploads, so the file is passed as base64 bytes with a filename. There is no import-from-URL endpoint.
+  users.create: Creating a user sends them an invitation to the account.
+  customers.create: The email is the customer's identity; a second create with the same address fails with ERROR_USER_ALREADY_EXIST.
+  projects.update: A lifecycle status name must be one the organization defines; read them with `organization.lifecycleStatus`.

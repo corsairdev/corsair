@@ -2632,6 +2632,14 @@
                 ]
               },
               {
+                "group": "OneDesk",
+                "pages": [
+                  "plugins/onedesk/overview",
+                  "plugins/onedesk/api",
+                  "plugins/onedesk/database"
+                ]
+              },
+              {
                 "group": "OpenAI",
                 "pages": [
                   "plugins/openai/overview",

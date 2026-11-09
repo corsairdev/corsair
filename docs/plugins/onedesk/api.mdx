@@ -1,0 +1,5339 @@
+---
+title: API
+description: "API reference for OneDesk: every `onedesk.api.*` operation with input and output types."
+---
+
+Every `onedesk.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Activities
+
+### filterDetails
+
+`activities.filterDetails`
+
+List activity log entries by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.activities.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  activityType?: string | null,
+  created?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Attachments
+
+### attachToItem
+
+`attachments.attachToItem`
+
+Upload a file and attach it to a work item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.attachments.attachToItem({
+  externalId: '1ac35fgh-24e2-4b56-8b5e-c75df7969bad',
+  fileName: 'screenshot.png',
+  contentType: 'image/png',
+  contentBase64: '<base64 bytes>',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string` | Yes | Filename to record, including its extension. |
+| `contentType` | `string` | No | MIME type, for example application/pdf. |
+| `contentBase64` | `string` | Yes | The file contents, base64 encoded. |
+| `externalId` | `string` | Yes | External id of the item, project, portfolio or organization. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### attachToOrganization
+
+`attachments.attachToOrganization`
+
+Upload a file and attach it to a customer organization
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.attachments.attachToOrganization({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string` | Yes | Filename to record, including its extension. |
+| `contentType` | `string` | No | MIME type, for example application/pdf. |
+| `contentBase64` | `string` | Yes | The file contents, base64 encoded. |
+| `externalId` | `string` | Yes | External id of the item, project, portfolio or organization. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### attachToPortfolio
+
+`attachments.attachToPortfolio`
+
+Upload a file and attach it to a portfolio
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.attachments.attachToPortfolio({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string` | Yes | Filename to record, including its extension. |
+| `contentType` | `string` | No | MIME type, for example application/pdf. |
+| `contentBase64` | `string` | Yes | The file contents, base64 encoded. |
+| `externalId` | `string` | Yes | External id of the item, project, portfolio or organization. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### attachToProject
+
+`attachments.attachToProject`
+
+Upload a file and attach it to a project
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.attachments.attachToProject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string` | Yes | Filename to record, including its extension. |
+| `contentType` | `string` | No | MIME type, for example application/pdf. |
+| `contentBase64` | `string` | Yes | The file contents, base64 encoded. |
+| `externalId` | `string` | Yes | External id of the item, project, portfolio or organization. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### filter
+
+`attachments.filter`
+
+List attachment external ids by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.attachments.filter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`attachments.filterDetails`
+
+List attachments with their names
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.attachments.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`attachments.get`
+
+Read one attachment record by external id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.attachments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | Yes | The attachment's external id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`attachments.upload`
+
+Upload a file to the account and get its external id for attaching later
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.attachments.upload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string` | Yes | Filename to record, including its extension. |
+| `contentType` | `string` | No | MIME type, for example application/pdf. |
+| `contentBase64` | `string` | Yes | The file contents, base64 encoded. |
+
+OneDesk takes multipart uploads, so the file is passed as base64 bytes with a filename. There is no import-from-URL endpoint.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+## Conversations
+
+### create
+
+`conversations.create`
+
+Open a conversation on a work item or project, optionally with its first messages
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.conversations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `itemExternalId` | `string` | No | Work item external id. |
+| `projectExternalId` | `string` | No | — |
+| `publicConversation` | `boolean` | No | — |
+| `messages` | `object[]` | No | — |
+| `authorExternalId` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  content?: string,
+  attachmentExternalIds?: string[],
+  authorExternalId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### filter
+
+`conversations.filter`
+
+List conversation external ids by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.conversations.filter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`conversations.filterDetails`
+
+List conversations with their open and lock state
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.conversations.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  externalId?: string | null,
+  itemExternalId?: string | null,
+  projectExternalId?: string | null,
+  publicConversation?: boolean | null,
+  open?: boolean | null,
+  lock?: boolean | null,
+  author?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`conversations.get`
+
+Read one conversation by external id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.conversations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | Yes | The conversation's external id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  externalId?: string | null,
+  itemExternalId?: string | null,
+  projectExternalId?: string | null,
+  publicConversation?: boolean | null,
+  open?: boolean | null,
+  lock?: boolean | null,
+  author?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`conversations.update`
+
+Close, reopen or lock a conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.conversations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | Yes | The conversation's external id. |
+| `open` | `boolean` | No | — |
+| `lock` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+---
+
+## Customers
+
+### create
+
+`customers.create`
+
+Create a customer, optionally inside a customer organization
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.customers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Email of the customer. |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `type` | `string` | No | — |
+| `customerOrganization` | `string` | No | Customer organization external id. |
+
+The email is the customer's identity; a second create with the same address fails with ERROR_USER_ALREADY_EXIST.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### filter
+
+`customers.filter`
+
+List customer external ids by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.customers.filter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | — |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+| `customFields` | `object[]` | No | Custom field comparisons. Use null as the value to match fields with no value. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`customers.filterDetails`
+
+List customers with their contact details and organization
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.customers.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | — |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+| `customFields` | `object[]` | No | Custom field comparisons. Use null as the value to match fields with no value. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  type?: string | null,
+  priority?: number | null,
+  title?: string | null,
+  address?: {
+    address1?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null,
+    country?: string | null
+  } | null,
+  organization?: {
+    externalId?: string | null,
+    name?: string | null
+  } | null,
+  customFieldsData?: {
+    name?: string | null,
+    value?: string | number | boolean | (string | number | boolean)[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Read one customer by external id or numeric id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.customers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  phoneNumber?: string | null,
+  type?: string | null,
+  priority?: number | null,
+  title?: string | null,
+  address?: {
+    address1?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null,
+    country?: string | null
+  } | null,
+  organization?: {
+    externalId?: string | null,
+    name?: string | null
+  } | null,
+  customFieldsData?: {
+    name?: string | null,
+    value?: string | number | boolean | (string | number | boolean)[] | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Change a customer, including deactivating them so they can no longer sign in
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.customers.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `id` | `number` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phoneNumber` | `string` | No | — |
+| `type` | `string` | No | — |
+| `priority` | `0 \| 20 \| 40 \| 60 \| 80 \| 100` | No | Star rating: 0, 20, 40, 60, 80 or 100 for zero to five stars. No other value is accepted. |
+| `address` | `object` | No | — |
+| `title` | `string` | No | — |
+| `deactivate` | `boolean` | No | Deactivate the customer, which stops them signing in. |
+| `pictureAttachmentExternalId` | `string` | No | — |
+| `customerOrganizationExternalId` | `string` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  address1?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+---
+
+## Invoices
+
+### filter
+
+`invoices.filter`
+
+List invoice external ids by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.invoices.filter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`invoices.filterDetails`
+
+List invoices with their status and totals
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.invoices.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  displayNumber?: string | null,
+  status?: string | null,
+  dueDate?: string | null,
+  total?: number | null,
+  balance?: number | null,
+  created?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`invoices.get`
+
+Read one invoice by external id or numeric id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.invoices.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  displayNumber?: string | null,
+  status?: string | null,
+  dueDate?: string | null,
+  total?: number | null,
+  balance?: number | null,
+  created?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`invoices.update`
+
+Change an invoice: its status, due date and line items. A 'void' status cannot be undone
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.invoices.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `id` | `number` | No | — |
+| `displayNumber` | `string` | No | — |
+| `status` | `draft \| open \| sent \| paid \| not collectible \| void` | No | — |
+| `dueDate` | `string` | No | — |
+| `basicLineItemsToAdd` | `Record<string, string \| number \| boolean \| null>[]` | No | — |
+| `serviceLineItemsToAdd` | `Record<string, string \| number \| boolean \| null>[]` | No | — |
+| `prepaidHoursLineItemToAdd` | `Record<string, string \| number \| boolean \| null>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+---
+
+## Items
+
+### create
+
+`items.create`
+
+Create a work item such as a ticket or task, optionally with requesters, followers, a project and custom fields
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.items.create({
+  name: 'The blue button does not work',
+  type: 'Ticket',
+  priority: 80,
+  description: 'Reported by the customer on the checkout page.',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the work item. |
+| `type` | `string` | No | Work item type name, for example 'Ticket'. Read the valid names with organization.itemTypes. |
+| `description` | `string` | No | — |
+| `attachmentExternalIds` | `string[]` | No | — |
+| `projectExternalId` | `string` | No | — |
+| `priority` | `0 \| 20 \| 40 \| 60 \| 80 \| 100` | No | Star rating: 0, 20, 40, 60, 80 or 100 for zero to five stars. No other value is accepted. |
+| `requesterExternalIds` | `string[]` | No | — |
+| `requesterEmails` | `string[]` | No | — |
+| `followerExternalIds` | `string[]` | No | — |
+| `plannedHour` | `number` | No | — |
+| `plannedStart` | `string` | No | — |
+| `plannedFinish` | `string` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean>` | No | Custom field name to value. |
+| `authorExternalId` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### filter
+
+`items.filter`
+
+List work item external ids by type and filter, with paging and a total count
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.items.filter({
+  itemType: 'Ticket',
+  properties: [
+    { property: 'lifecycleStatus', operation: 'EQ', value: 'Open' },
+  ],
+  limit: 50,
+  offset: 0,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+| `itemType` | `string` | Yes | The work item type to list, for example 'Ticket' or 'Task'. Read the valid names with organization.itemTypes. |
+| `customFields` | `object[]` | No | — |
+
+The itemType name must be one this organization defines; read the valid names with `organization.itemTypes`. This returns external ids only. Use `items.filterDetails` for full records, which caps `limit` at 50.
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`items.filterDetails`
+
+List work items with their details by type and filter, including assignees and lifecycle status
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.items.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+| `itemType` | `string` | Yes | The work item type to list, for example 'Ticket' or 'Task'. Read the valid names with organization.itemTypes. |
+| `customFields` | `object[]` | No | — |
+
+Returns full item records. OneDesk caps `limit` at 50 on the details variants, against 200 on the id variants.
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  type?: {
+    name?: string | null
+  } | null,
+  lifecycleStatus?: {
+    name?: string | null,
+    externalId?: string | null,
+    state?: string | null
+  } | null,
+  priority?: number | null,
+  created?: string | null,
+  edited?: string | null,
+  latestInProgress?: string | null,
+  latestClose?: string | null,
+  author?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  } | null,
+  assignees?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  }[] | null,
+  project?: {
+    externalId?: string | null,
+    name?: string | null
+  } | null,
+  timesheets?: string[] | null,
+  agilePoints?: number | null,
+  customFieldsData?: {
+    name?: string | null,
+    value?: string | number | boolean | (string | number | boolean)[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`items.get`
+
+Read one work item by external id or numeric id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.items.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | The item's external id. |
+| `id` | `number` | No | The item's numeric id in this organization. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  type?: {
+    name?: string | null
+  } | null,
+  lifecycleStatus?: {
+    name?: string | null,
+    externalId?: string | null,
+    state?: string | null
+  } | null,
+  priority?: number | null,
+  created?: string | null,
+  edited?: string | null,
+  latestInProgress?: string | null,
+  latestClose?: string | null,
+  author?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  } | null,
+  assignees?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  }[] | null,
+  project?: {
+    externalId?: string | null,
+    name?: string | null
+  } | null,
+  timesheets?: string[] | null,
+  agilePoints?: number | null,
+  customFieldsData?: {
+    name?: string | null,
+    value?: string | number | boolean | (string | number | boolean)[] | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`items.update`
+
+Change a work item: name, status, assignment, priority, dates, links and custom fields
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.items.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | The item's external id. |
+| `id` | `number` | No | The item's numeric id. |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `type` | `string` | No | — |
+| `projectExternalId` | `string` | No | — |
+| `agilePoints` | `number` | No | — |
+| `priority` | `0 \| 20 \| 40 \| 60 \| 80 \| 100` | No | Star rating: 0, 20, 40, 60, 80 or 100 for zero to five stars. No other value is accepted. |
+| `percentComplete` | `number` | No | — |
+| `relatedItemExternalIds` | `object` | No | — |
+| `duplicatesItemExternalIds` | `object` | No | — |
+| `duplicatedByItemExternalIds` | `object` | No | — |
+| `blocksItemExternalIds` | `object` | No | — |
+| `blockedByItemExternalIds` | `object` | No | — |
+| `precededByItemExternalIds` | `object` | No | — |
+| `succeededByItemExternalIds` | `object` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+| `lifecycleStatusName` | `string` | No | New lifecycle status by name. Read the valid names with organization.lifecycleStatus. |
+| `attachmentExternalIds` | `object` | No | — |
+| `plannedStart` | `string` | No | — |
+| `plannedFinish` | `string` | No | — |
+| `plannedHours` | `number` | No | — |
+| `actualStart` | `string` | No | — |
+| `actualFinish` | `string` | No | — |
+| `actualHours` | `number` | No | — |
+| `followerUserAndCustomerExternalIds` | `object` | No | — |
+| `followerTeamAndCustomerOrganizationExternalIds` | `object` | No | — |
+| `assignedUserExternalIds` | `object` | No | — |
+| `assignedTeamExternalIds` | `object` | No | — |
+| `requesterUserAndCustomerExternalIds` | `object` | No | — |
+| `requesterTeamAndCustomerOrganizationExternalIds` | `object` | No | — |
+| `archived` | `boolean` | No | — |
+
+Related and assigned lists take a replace, add or remove object rather than an array, so an existing value can be kept.
+
+<AccordionGroup>
+<Accordion title="relatedItemExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="duplicatesItemExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="duplicatedByItemExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="blocksItemExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="blockedByItemExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="precededByItemExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="succeededByItemExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="attachmentExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="followerUserAndCustomerExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="followerTeamAndCustomerOrganizationExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="assignedUserExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="assignedTeamExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="requesterUserAndCustomerExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="requesterTeamAndCustomerOrganizationExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+---
+
+## Messages
+
+### create
+
+`messages.create`
+
+Post a message into a conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.messages.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationExternalId` | `string` | Yes | Conversation to post into. |
+| `content` | `string` | No | — |
+| `attachmentExternalIds` | `string[]` | No | — |
+| `authorExternalId` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### filter
+
+`messages.filter`
+
+List conversation message external ids by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.messages.filter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`messages.filterDetails`
+
+List conversation messages with their content and author
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.messages.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  externalId?: string | null,
+  conversationExternalId?: string | null,
+  content?: string | null,
+  author?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  } | null,
+  created?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`messages.get`
+
+Read one conversation message by external id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.messages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | Yes | The message's external id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  externalId?: string | null,
+  conversationExternalId?: string | null,
+  content?: string | null,
+  author?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  } | null,
+  created?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`messages.update`
+
+Change a message body or its attachments
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.messages.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | Yes | The message's external id. |
+| `content` | `string` | No | — |
+| `attachmentExternalIds` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attachmentExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+---
+
+## Organization
+
+### containerTypes
+
+`organization.containerTypes`
+
+List the organization container type names
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.organization.containerTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### itemTypes
+
+`organization.itemTypes`
+
+List the organization work item type names that create and filter calls require
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.organization.itemTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### lifecycleStatus
+
+`organization.lifecycleStatus`
+
+List the lifecycle status names an item or project can be moved to
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.organization.lifecycleStatus({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+
+
+
+---
+
+### profile
+
+`organization.profile`
+
+Read the organization profile and its policy settings
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.organization.profile({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string | null,
+  timeZone?: string | null,
+  currency?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### userTypes
+
+`organization.userTypes`
+
+List the organization user type names that user create calls accept
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.organization.userTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### create
+
+`organizations.create`
+
+Create a customer organization
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.organizations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the customer organization. |
+| `domains` | `string[]` | No | — |
+| `customers` | `string[]` | No | Customer external ids. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### filter
+
+`organizations.filter`
+
+List customer organization external ids by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.organizations.filter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | — |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+| `customFields` | `object[]` | No | Custom field comparisons. Use null as the value to match fields with no value. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`organizations.filterDetails`
+
+List customer organizations with their domains and customers
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.organizations.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | — |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+| `customFields` | `object[]` | No | Custom field comparisons. Use null as the value to match fields with no value. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  phoneNumber?: string | null,
+  address?: {
+    address1?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null,
+    country?: string | null
+  } | null,
+  domains?: {
+    domain?: string | null,
+    externalId?: string | null
+  }[] | null,
+  customers?: {
+    externalId?: string | null,
+    email?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`organizations.get`
+
+Read one customer organization by external id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.organizations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | Yes | The organization's external id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  phoneNumber?: string | null,
+  address?: {
+    address1?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null,
+    country?: string | null
+  } | null,
+  domains?: {
+    domain?: string | null,
+    externalId?: string | null
+  }[] | null,
+  customers?: {
+    externalId?: string | null,
+    email?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`organizations.update`
+
+Change a customer organization, its domains or its customers
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.organizations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | Yes | The organization's external id. |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `phoneNumber` | `string` | No | — |
+| `address` | `object` | No | — |
+| `attachments` | `object` | No | — |
+| `domains` | `object` | No | — |
+| `customers` | `object` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  address1?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="domains full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="customers full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+---
+
+## Portfolios
+
+### create
+
+`portfolios.create`
+
+Create a portfolio, optionally nested under others
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.portfolios.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the portfolio. |
+| `description` | `string` | No | — |
+| `type` | `string` | No | — |
+| `parentPortfolioExternalIds` | `string[]` | No | — |
+| `attachmentExternalIds` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### filter
+
+`portfolios.filter`
+
+List portfolio external ids by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.portfolios.filter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`portfolios.filterDetails`
+
+List portfolios with their details
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.portfolios.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  type?: string | null,
+  parentExternalIds?: string[] | null,
+  attachments?: {
+    externalId?: string | null,
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`portfolios.get`
+
+Read one portfolio by external id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.portfolios.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | Yes | The portfolio's external id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  type?: string | null,
+  parentExternalIds?: string[] | null,
+  attachments?: {
+    externalId?: string | null,
+    name?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`portfolios.update`
+
+Change a portfolio name, parents or attachments
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.portfolios.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | Yes | The portfolio's external id. |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `type` | `string` | No | — |
+| `parentPortfolioExternalIds` | `object` | No | — |
+| `attachmentExternalIds` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="parentPortfolioExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="attachmentExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project, optionally under portfolios
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the project. |
+| `type` | `string` | No | — |
+| `description` | `string` | No | — |
+| `parentPortfolioExternalIds` | `string[]` | No | — |
+| `attachmentsExternalIds` | `string[]` | No | — |
+| `userFollowerExternalIds` | `string[]` | No | — |
+| `customerFollowerExternalIds` | `string[]` | No | — |
+| `customerRequesterExternalId` | `string` | No | — |
+| `invoiceType` | `actual work performed \| flat fee \| prepaid hours \| no invoice planned` | No | — |
+| `plannedStart` | `string` | No | — |
+| `dueDate` | `string` | No | — |
+| `authorExternalId` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### filter
+
+`projects.filter`
+
+List project external ids by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.projects.filter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | — |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+| `customFields` | `object[]` | No | Custom field comparisons. Use null as the value to match fields with no value. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`projects.filterDetails`
+
+List projects with their lifecycle status and invoice type
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.projects.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | — |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+| `customFields` | `object[]` | No | Custom field comparisons. Use null as the value to match fields with no value. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  created?: string | null,
+  archivedDate?: string | null,
+  type?: string | null,
+  invoiceType?: string | null,
+  lifecycleStatus?: {
+    name?: string | null,
+    externalId?: string | null,
+    state?: string | null
+  } | null,
+  author?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  } | null,
+  discoverable?: boolean | null,
+  parentExternalIds?: string[] | null,
+  customFields?: {
+    name?: string | null,
+    value?: string | number | boolean | (string | number | boolean)[] | null
+  }[] | null,
+  attachments?: {
+    externalId?: string | null,
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Read one project by external id or numeric id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  created?: string | null,
+  archivedDate?: string | null,
+  type?: string | null,
+  invoiceType?: string | null,
+  lifecycleStatus?: {
+    name?: string | null,
+    externalId?: string | null,
+    state?: string | null
+  } | null,
+  author?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  } | null,
+  discoverable?: boolean | null,
+  parentExternalIds?: string[] | null,
+  customFields?: {
+    name?: string | null,
+    value?: string | number | boolean | (string | number | boolean)[] | null
+  }[] | null,
+  attachments?: {
+    externalId?: string | null,
+    name?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Change a project: name, lifecycle status, portfolios and custom fields
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `description` | `string` | No | — |
+| `lifecycleStatus` | `string` | No | — |
+| `invoiceType` | `actual work performed \| flat fee \| prepaid hours \| no invoice planned` | No | — |
+| `portfolioExternalIds` | `object` | No | — |
+| `attachmentExternalIds` | `object` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+| `archived` | `boolean` | No | — |
+
+A lifecycle status name must be one the organization defines; read them with `organization.lifecycleStatus`.
+
+<AccordionGroup>
+<Accordion title="portfolioExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="attachmentExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+---
+
+## Quotes
+
+### filter
+
+`quotes.filter`
+
+List quote external ids by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.quotes.filter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`quotes.filterDetails`
+
+List quotes with their status and totals
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.quotes.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  displayNumber?: string | null,
+  status?: string | null,
+  expirationDate?: string | null,
+  total?: number | null,
+  created?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`quotes.get`
+
+Read one quote by external id or numeric id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.quotes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  displayNumber?: string | null,
+  status?: string | null,
+  expirationDate?: string | null,
+  total?: number | null,
+  created?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`quotes.update`
+
+Change a quote: its status, expiration date and line items
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.quotes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `id` | `number` | No | — |
+| `displayNumber` | `string` | No | — |
+| `status` | `draft \| open \| sent \| accepted \| cancelled \| convert to invoice` | No | — |
+| `expirationDate` | `string` | No | — |
+| `basicLineItemsToAdd` | `Record<string, string \| number \| boolean \| null>[]` | No | — |
+| `serviceLineItemsToAdd` | `Record<string, string \| number \| boolean \| null>[]` | No | — |
+| `prepaidHoursLineItemToAdd` | `Record<string, string \| number \| boolean \| null>[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+---
+
+## Teams
+
+### create
+
+`teams.create`
+
+Create a team with an initial set of members
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.teams.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the team. |
+| `users` | `string[]` | No | User external ids. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### filter
+
+`teams.filter`
+
+List team external ids by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.teams.filter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`teams.filterDetails`
+
+List teams with their members
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.teams.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  name?: string | null,
+  users?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`teams.get`
+
+Read one team by external id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.teams.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | Yes | The team's external id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  name?: string | null,
+  users?: {
+    typeName?: string | null,
+    displayName?: string | null,
+    email?: string | null,
+    teamName?: string | null,
+    externalId?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`teams.update`
+
+Rename a team or change its members
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.teams.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | Yes | The team's external id. |
+| `name` | `string` | No | — |
+| `users` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+---
+
+## Timers
+
+### cancel
+
+`timers.cancel`
+
+Cancel a work timer, discarding the work recorded in that run
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.onedesk.api.timers.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timerExternalId` | `string` | Yes | Timer external id. |
+
+Cancels the timer and discards the work recorded in that run; there is no undo.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  reason?: string | null,
+  amountOfWork?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filter
+
+`timers.filter`
+
+List timer external ids by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.timers.filter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`timers.filterDetails`
+
+List timers with their status and accumulated work
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.timers.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | Property comparisons to apply. |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  status?: string | null,
+  works?: number | null,
+  start?: string | null,
+  finish?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`timers.get`
+
+Read one timer by external id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.timers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | Yes | The timer's external id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  status?: string | null,
+  works?: number | null,
+  start?: string | null,
+  finish?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pause
+
+`timers.pause`
+
+Pause a running work timer
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.timers.pause({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timerExternalId` | `string` | Yes | Timer external id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  reason?: string | null,
+  amountOfWork?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resume
+
+`timers.resume`
+
+Resume a paused work timer
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.timers.resume({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timerExternalId` | `string` | Yes | Timer external id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  reason?: string | null,
+  amountOfWork?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`timers.start`
+
+Start a work timer on a work item
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.timers.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timerExternalId` | `string` | Yes | Timer external id: the same value resumes the same timer later. |
+| `itemExternalId` | `string` | Yes | Work item the timer is for. |
+
+A timer is identified by the external id you choose, so starting the same id again resumes that timer.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  reason?: string | null,
+  amountOfWork?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Timesheets
+
+### create
+
+`timesheets.create`
+
+Book work against a work item for a user
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.timesheets.create({
+  userExternalId: '1534596f4-0000-0000-0000-cb0e42b1db19',
+  taskExternalId: '1ac35fgh-24e2-4b56-8b5e-c75df7969bad',
+  works: 2.5,
+  percentCompleted: 100,
+  finish: '2024-05-14T11:30:00Z',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userExternalId` | `string` | Yes | User the work belongs to. |
+| `taskExternalId` | `string` | Yes | Work item the time is booked to. |
+| `works` | `number` | Yes | Amount of work in hours. |
+| `billable` | `boolean` | No | — |
+| `note` | `string` | No | — |
+| `lifecycleStatusName` | `string` | No | — |
+| `percentCompleted` | `number` | Yes | — |
+| `start` | `string` | No | — |
+| `finish` | `string` | Yes | When the work finished. |
+| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+| `authorExternalId` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### filter
+
+`timesheets.filter`
+
+List timesheet external ids by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.timesheets.filter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | — |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+| `customFields` | `object[]` | No | Custom field comparisons. Use null as the value to match fields with no value. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`timesheets.filterDetails`
+
+List timesheets with their hours, dates and approval status
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.timesheets.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | — |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+| `customFields` | `object[]` | No | Custom field comparisons. Use null as the value to match fields with no value. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  works?: number | null,
+  billable?: boolean | null,
+  note?: string | null,
+  status?: string | null,
+  completion?: number | null,
+  start?: string | null,
+  finish?: string | null,
+  customFieldsData?: {
+    name?: string | null,
+    value?: string | number | boolean | (string | number | boolean)[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`timesheets.get`
+
+Read one timesheet by external id or numeric id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.timesheets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  works?: number | null,
+  billable?: boolean | null,
+  note?: string | null,
+  status?: string | null,
+  completion?: number | null,
+  start?: string | null,
+  finish?: string | null,
+  customFieldsData?: {
+    name?: string | null,
+    value?: string | number | boolean | (string | number | boolean)[] | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`timesheets.update`
+
+Change a timesheet, including approving or declining it and marking it billable
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.timesheets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `id` | `number` | No | — |
+| `works` | `number` | No | — |
+| `billable` | `boolean` | No | — |
+| `note` | `string` | No | — |
+| `status` | `approved \| not approved yet \| declined` | No | — |
+| `completion` | `number` | No | — |
+| `start` | `string` | No | — |
+| `finish` | `string` | No | — |
+| `invoiceWork` | `number` | No | — |
+| `userAndCustomerRequesterExternalIds` | `object` | No | — |
+| `teamAndCustomerOrganizationRequesterExternalIds` | `object` | No | — |
+| `invoiceableCustomerOrganizationExternalId` | `string` | No | — |
+| `serviceType` | `string` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+
+<AccordionGroup>
+<Accordion title="userAndCustomerRequesterExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="teamAndCustomerOrganizationRequesterExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Create a user, which sends them an invitation to the account
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.users.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Login email of the new user. |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `type` | `string` | No | User type name, for example full-time. Read the valid names with organization.userTypes. |
+| `teams` | `string[]` | No | Team external ids. |
+| `isAdmin` | `boolean` | No | — |
+
+Creating a user sends them an invitation to the account.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### filter
+
+`users.filter`
+
+List user external ids by filter
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.users.filter({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | — |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+| `customFields` | `object[]` | No | Custom field comparisons. Use null as the value to match fields with no value. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `string[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterDetails
+
+`users.filterDetails`
+
+List users with their profile, address and teams
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.users.filterDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `properties` | `object[]` | No | — |
+| `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
+| `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
+| `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
+| `customFields` | `object[]` | No | Custom field comparisons. Use null as the value to match fields with no value. |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="customFields full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `totalNum` | `number \| null` | No | — |
+| `appliedPropertyFilters` | `object[] \| null` | No | — |
+| `appliedCustomFieldFilters` | `object[] \| null` | No | — |
+| `notAppliedPropertyFilters` | `string[] \| null` | No | — |
+| `notAppliedCustomFieldFilters` | `string[] \| null` | No | — |
+| `nextOffset` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  userType?: string | null,
+  created?: string | null,
+  priority?: number | null,
+  registered?: boolean | null,
+  profile?: {
+    firstName?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    phoneNumber?: string | null,
+    title?: string | null
+  } | null,
+  address?: {
+    address1?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null,
+    country?: string | null
+  } | null,
+  customFieldsData?: {
+    name?: string | null,
+    value?: string | number | boolean | (string | number | boolean)[] | null
+  }[] | null,
+  teams?: {
+    externalId?: string | null,
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="appliedPropertyFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="appliedCustomFieldFilters full type">
+
+```ts
+{
+  property: string,
+  operation: EQ | NE | GT | LT | GE | LE | CONTAINS | NOT_CONTAINS,
+  value: string | number | boolean | string[] | number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`users.get`
+
+Read one user by external id or numeric id
+
+**Risk:** `read`
+
+```ts
+await corsair.onedesk.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `id` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  externalId?: string | null,
+  userType?: string | null,
+  created?: string | null,
+  priority?: number | null,
+  registered?: boolean | null,
+  profile?: {
+    firstName?: string | null,
+    lastName?: string | null,
+    email?: string | null,
+    phoneNumber?: string | null,
+    title?: string | null
+  } | null,
+  address?: {
+    address1?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null,
+    country?: string | null
+  } | null,
+  customFieldsData?: {
+    name?: string | null,
+    value?: string | number | boolean | (string | number | boolean)[] | null
+  }[] | null,
+  teams?: {
+    externalId?: string | null,
+    name?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`users.update`
+
+Change a user profile, teams or custom fields
+
+**Risk:** `write`
+
+```ts
+await corsair.onedesk.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `externalId` | `string` | No | — |
+| `id` | `number` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phoneNumber` | `string` | No | — |
+| `type` | `string` | No | — |
+| `priority` | `0 \| 20 \| 40 \| 60 \| 80 \| 100` | No | Star rating: 0, 20, 40, 60, 80 or 100 for zero to five stars. No other value is accepted. |
+| `address` | `object` | No | — |
+| `title` | `string` | No | — |
+| `pictureAttachmentExternalId` | `string` | No | — |
+| `teamExternalIds` | `object` | No | — |
+| `customFields` | `Record<string, string \| number \| boolean>` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  address1?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  state?: string | null,
+  zip?: string | null,
+  country?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="teamExternalIds full type">
+
+```ts
+{
+  replace?: string[],
+  add?: string[],
+  remove?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+---
+
