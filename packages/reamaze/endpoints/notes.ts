@@ -97,8 +97,15 @@ export const remove: ReamazeEndpoints['notesDelete'] = (ctx, input) =>
 		}),
 		{
 			// A successful delete answers 200 with no body, so the identifiers are
-			// echoed back rather than parsed from one.
+			// echoed back rather than parsed from one. A non-empty string body is
+			// not a success and is rejected: before this, any string was reported as
+			// a completed delete.
 			shape: (raw, { contact, id }) => {
+				if (typeof raw === 'string' && raw.trim().length > 0) {
+					throw new Error(
+						`Re:amaze returned an unexpected note delete body: ${raw.slice(0, 120)}`,
+					);
+				}
 				if (raw !== undefined && raw !== null && typeof raw === 'object') {
 					unwrapObject(raw, 'note delete');
 				}

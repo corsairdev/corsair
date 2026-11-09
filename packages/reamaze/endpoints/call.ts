@@ -47,19 +47,35 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const host = await resolveHost(ctx);
-	const raw = await makeReamazeRequest(host, ctx.key, toRequest(parsed));
-	const result = operation.output.parse(
-		options.shape ? options.shape(raw, parsed) : raw,
-	);
 
-	await logEventFromContext(
-		ctx,
-		`reamaze.${operation.event}`,
-		options.log?.(parsed, result) ?? {},
-		'completed',
-	);
-	return result;
+	try {
+		const host = await resolveHost(ctx);
+		const raw = await makeReamazeRequest(host, ctx.key, toRequest(parsed));
+		const result = operation.output.parse(
+			options.shape ? options.shape(raw, parsed) : raw,
+		);
+
+		await logEventFromContext(
+			ctx,
+			`reamaze.${operation.event}`,
+			options.log?.(parsed, result) ?? {},
+			'completed',
+		);
+		return result;
+	} catch (error) {
+		// Record the failure against the same event, then rethrow the original.
+		// A logging failure must not mask the real error, so it is swallowed.
+		await logEventFromContext(
+			ctx,
+			`reamaze.${operation.event}`,
+			{
+				failed: true,
+				error: error instanceof Error ? error.message : String(error),
+			},
+			'failed',
+		).catch(() => undefined);
+		throw error;
+	}
 }
 
 /**

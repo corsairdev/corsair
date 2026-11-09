@@ -301,7 +301,9 @@ const defaultAuthType: 'api_key' = 'api_key';
  */
 export const reamazeAuthConfig = {
 	api_key: {
-		account: ['host', 'webhook_signature'] as const,
+		// `webhook_signature` is already an api_key base field, so declaring it
+		// again would duplicate it; only the brand host is plugin-specific.
+		account: ['host'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

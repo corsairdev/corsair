@@ -25,7 +25,12 @@ describe('Re:amaze error handler matching', () => {
 		const strategy = await handler('RATE_LIMIT_ERROR').handler(error);
 
 		expect(strategy).toMatchObject({ maxRetries: 3 });
-		expect(strategy).not.toHaveProperty('headersRetryAfterMs', 5000);
+		// Assert absence, not "not equal to 5000": `not.toHaveProperty(key, value)`
+		// still passes when the key exists with any other value. Spread into a
+		// record because the declared strategy type omits the optional field.
+		expect(
+			(strategy as Record<string, unknown>).headersRetryAfterMs,
+		).toBeUndefined();
 	});
 
 	it('never retries a 401 or 403', async () => {
