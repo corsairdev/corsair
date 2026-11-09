@@ -22,7 +22,9 @@ export type GongRequestOptions = {
 	credentials: GongCredentials;
 	method: ApiRequestOptions['method'];
 	path: string;
+	// Gong's provider-defined query values vary by operation and are validated at the endpoint boundary.
 	query?: Record<string, unknown>;
+	// Some Gong routes accept opaque JSON bodies whose nested fields differ by endpoint.
 	body?: unknown;
 	formData?: Record<string, Blob | string>;
 };
@@ -30,6 +32,7 @@ export type GongRequestOptions = {
 function appendQueryValue(
 	params: URLSearchParams,
 	key: string,
+	// Query values are recursively flattened, so provider-specific nested values stay opaque here.
 	value: unknown,
 ): void {
 	if (value === undefined || value === null) return;
@@ -38,6 +41,7 @@ function appendQueryValue(
 		return;
 	}
 	if (typeof value === 'object') {
+		// The object branch above narrows this to an enumerable provider query record.
 		for (const [childKey, childValue] of Object.entries(
 			value as Record<string, unknown>,
 		)) {
@@ -73,6 +77,7 @@ function parseResponseBody(
 /** Sends the one Gong GET operation whose documented contract includes a JSON body. */
 export function requestGetWithBody<T>(
 	url: string,
+	// The caller's registered input schema validates the opaque CRM body before transport.
 	body: unknown,
 	headers: Record<string, string>,
 ): Promise<T> {

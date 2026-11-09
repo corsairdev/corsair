@@ -31,6 +31,7 @@ const ctx = {
 };
 const profile = { name: 'Profile', description: 'D' };
 const access = { callAccessList: [{ callId: '123', userIds: ['u1'] }] };
+// Operation inputs and response envelopes vary by provider route and are asserted against the registered schemas.
 const ops: Array<
 	[
 		string,

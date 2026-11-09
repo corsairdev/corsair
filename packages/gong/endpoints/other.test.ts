@@ -33,6 +33,7 @@ const ctx = {
 	$getAccountId: async () => 'account',
 };
 
+// Operation inputs and response envelopes vary by provider route and are asserted against the registered schemas.
 const ops: Array<
 	[
 		string,

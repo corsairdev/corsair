@@ -50,6 +50,7 @@ describe('Gong Engage Flows request contracts', () => {
 			}).success,
 		).toBe(true);
 	});
+	// Endpoint signatures and provider envelopes vary across this table; public schemas validate the test inputs and outputs.
 	const cases: Array<
 		[
 			string,

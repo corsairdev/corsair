@@ -18,7 +18,7 @@ export function gongCredentials(ctx: GongFamilyContext): GongCredentials {
 		throw new Error('Gong Basic authentication requires an API key secret');
 	return {
 		type: 'basic',
-		accessKey: ctx.key,
+		accessKey: ctx.options.accessKey || ctx.key,
 		accessKeySecret: ctx.options.accessKeySecret,
 	};
 }

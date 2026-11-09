@@ -30,6 +30,7 @@ function baseUrl(ctx: GongContext): string {
 	return parsed.toString().replace(/\/$/, '');
 }
 
+// Gong call filters and records are provider-defined; registered Zod schemas validate each public operation.
 async function call<T>(
 	ctx: GongContext,
 	method: 'GET' | 'POST',
