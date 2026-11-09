@@ -1,5 +1,6 @@
 import { asRecord } from 'corsair/core';
 import type { CoinMarketCapContext, CoinMarketCapEndpoints } from '..';
+import { CoinMarketCapAPIError } from '../client';
 import { call, joinCsv } from './call';
 import {
 	COINMARKETCAP_DEFAULT_LISTINGS_LIMIT,
@@ -10,6 +11,26 @@ import {
 // unknown: `data` is the provider's payload, which the output schema validates.
 function dataOf(raw: unknown): unknown {
 	return asRecord(raw)?.data;
+}
+
+/**
+ * The provider's payload, which must be present.
+ *
+ * CoinMarketCap sends `data` on every successful call, and an empty result is
+ * `data: []` rather than a missing field, verified against a filter that matched
+ * nothing. So a body with no `data` at all is malformed, and turning it into an
+ * empty list would make a broken response look like a real empty page.
+ */
+// unknown: same open body as dataOf.
+function requireData(raw: unknown): unknown {
+	const record = asRecord(raw);
+	if (!record || !('data' in record)) {
+		throw new CoinMarketCapAPIError(
+			'CoinMarketCap reported success but sent no data field.',
+			{ method: 'GET' },
+		);
+	}
+	return record.data;
 }
 
 /** The `status` object, kept on the shaped result so credits stay visible. */
@@ -59,7 +80,7 @@ export const listings: CoinMarketCapEndpoints['cryptocurrencyListings'] = (
 		}),
 		{
 			shape: (raw) => ({
-				assets: dataOf(raw) ?? [],
+				assets: requireData(raw),
 				status: statusOf(raw),
 			}),
 			log: (parsed, result) => ({
@@ -93,7 +114,7 @@ export const map: CoinMarketCapEndpoints['cryptocurrencyMap'] = (ctx, input) =>
 		}),
 		{
 			shape: (raw) => ({
-				cryptocurrencies: dataOf(raw) ?? [],
+				cryptocurrencies: requireData(raw),
 				status: statusOf(raw),
 			}),
 			log: (parsed, result) => ({
@@ -130,7 +151,7 @@ export const quotes: CoinMarketCapEndpoints['cryptocurrencyQuotes'] = (
 		}),
 		{
 			shape: (raw) => ({
-				quotes: dataOf(raw) ?? [],
+				quotes: requireData(raw),
 				status: statusOf(raw),
 			}),
 			log: (parsed, result) => ({
@@ -228,7 +249,7 @@ export const globalMetrics: CoinMarketCapEndpoints['globalMetricsQuotes'] = (
 		}),
 		{
 			shape: (raw) => ({
-				metrics: dataOf(raw) ?? {},
+				metrics: requireData(raw),
 				status: statusOf(raw),
 			}),
 			log: (parsed) => ({ convert: joinCsv(parsed.convert) }),
@@ -242,9 +263,8 @@ export const globalMetrics: CoinMarketCapEndpoints['globalMetricsQuotes'] = (
  */
 // unknown: the raw response body; the schema validates the result.
 export function toConversionList(raw: unknown): unknown {
-	const data = dataOf(raw);
-	if (Array.isArray(data)) return data;
-	return data === undefined || data === null ? [] : [data];
+	const data = requireData(raw);
+	return Array.isArray(data) ? data : [data];
 }
 
 export const priceConversion: CoinMarketCapEndpoints['toolsPriceConversion'] = (
@@ -329,8 +349,16 @@ export const keyInfo: CoinMarketCapEndpoints['keyInfo'] = (ctx, input) =>
 		() => ({ method: 'GET', path: '/v1/key/info' }),
 		{
 			shape: (raw, _parsed) => {
-				// unknown: `data` is the provider's `{ plan, usage }` object.
-				const data = asRecord(dataOf(raw)) ?? {};
+				// unknown: the provider's `{ plan, usage }`, which requireData checks.
+				const data = asRecord(requireData(raw));
+				if (!data) {
+					throw new CoinMarketCapAPIError(
+						'CoinMarketCap sent a key info payload that is not an object.',
+						{ method: 'GET' },
+					);
+				}
+				// plan and usage are required by the documented model, so a body
+				// missing one is malformed rather than empty.
 				return {
 					plan: data.plan ?? {},
 					usage: data.usage ?? {},

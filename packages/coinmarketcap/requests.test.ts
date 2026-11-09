@@ -539,6 +539,65 @@ describe('a 200 body that reports a failure', () => {
 	});
 });
 
+describe('an empty result against a present envelope', () => {
+	it('returns an empty list for data: [], which the API really sends', async () => {
+		// Verified live: a listings filter that matches nothing answers HTTP 200
+		// with data: [] and error_code "0". That is a real empty page.
+		respond({
+			data: [],
+			status: {
+				timestamp: '2026-11-09T15:11:10.762Z',
+				error_code: '0',
+				error_message: '',
+				elapsed: 6,
+				credit_count: 1,
+			},
+		});
+
+		const result = (await invoke(listings, {
+			price_min: 999_999_999,
+			limit: 5,
+		})) as ListingsLatestResponse;
+
+		expect(result.assets).toEqual([]);
+		expect(result.status?.credit_count).toBe(1);
+	});
+
+	it('throws when the envelope carries no data field at all', async () => {
+		// A body with a success status and no data is malformed. Returning [] here
+		// would make a broken response look like a genuine empty page.
+		respond({
+			status: {
+				timestamp: '2026-11-09T15:11:10.762Z',
+				error_code: '0',
+				error_message: '',
+				elapsed: 6,
+				credit_count: 0,
+			},
+		});
+
+		await expect(invoke(listings, { limit: 5 })).rejects.toBeInstanceOf(
+			CoinMarketCapAPIError,
+		);
+	});
+
+	it('throws for the same reason on the quotes route', async () => {
+		respond({ status: { error_code: '0', error_message: '' } });
+
+		await expect(invoke(quotes, { id: ['1'] })).rejects.toBeInstanceOf(
+			CoinMarketCapAPIError,
+		);
+	});
+
+	it('throws on a conversion that carries no data', async () => {
+		respond({ status: { error_code: 0, error_message: null } });
+
+		await expect(
+			invoke(priceConversion, { amount: 1, id: 1 }),
+		).rejects.toBeInstanceOf(CoinMarketCapAPIError);
+	});
+});
+
 describe('an HTTP error', () => {
 	it('surfaces as CoinMarketCapAPIError with the status and code', async () => {
 		respond(errorResponse, 400);

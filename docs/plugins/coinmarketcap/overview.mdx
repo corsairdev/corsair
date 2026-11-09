@@ -15,6 +15,7 @@ Things that shape the results:
 - **Credits.** A listing costs one credit per 250 assets returned and one more per extra `convert` currency. `key.info` reports the plan limits and what is left this minute, today and this month.
 - **Rate limits.** CoinMarketCap answers 429 with an `error_code` that says which limit was hit. 1008 (per minute) and 1011 (per IP) are retried up to twice, using `Retry-After` when present and the documented 60 second window otherwise. 1009 (daily limit), 1010 (monthly limit) and 1022 (anonymous allowance) are not retried, because waiting out one window cannot clear them.
 - **Plans.** `exchange.info` needs a paid plan: a Basic key gets 403 `error_code` 1005 for it. Every other operation here works on Basic.
+- **Empty results.** A filter that matches nothing is a success: the route answers `data: []` with `error_code` `"0"`, and this plugin returns an empty list. A body with a success status and no `data` field at all is malformed, and the call throws instead of reporting an empty page.
 - **`key.info` costs no credits.** On a paid plan it reports `rate_limit_minute` and `credit_limit_monthly`, plus what is left this minute and this month. The daily object carries `credits_used` only, with no `credits_left`, so this plugin types that field as optional.
 
 The keyless public API at `/public-api` is not used here: every operation goes through the keyed Pro API, so a key is always required.
