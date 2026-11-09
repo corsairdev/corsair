@@ -1,8 +1,20 @@
-import type { CorsairErrorHandler } from 'corsair/core';
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { CraftmypdfAPIError } from './client';
 
 function statusOf(error: Error): number | undefined {
 	return error instanceof CraftmypdfAPIError ? error.status : undefined;
+}
+
+/**
+ * The operations that destroy provider state. They are excluded from the
+ * server-error replay below whatever method they use: CraftMyPDF deletes a
+ * template over `GET /delete-template`, so gating on the HTTP method alone
+ * would replay a deletion that may already have happened.
+ */
+const DESTRUCTIVE_OPERATIONS = new Set(['templates.delete']);
+
+function isDestructive(context: ErrorContext | undefined): boolean {
+	return context !== undefined && DESTRUCTIVE_OPERATIONS.has(context.operation);
 }
 
 /**
@@ -46,13 +58,16 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// Only reads are replayed: a create call that failed on a 5xx may still
-	// have produced (and billed) a PDF.
+	// Only reads are replayed. CraftMyPDF deletes a template over GET, so the
+	// method alone is not enough: destructive operations are excluded by name,
+	// because a failed delete may already have happened. Generation calls are
+	// all POSTs, so they fall through to DEFAULT and are never replayed.
 	SERVER_ERROR: {
-		match: (error: Error) =>
+		match: (error: Error, context: ErrorContext) =>
 			error instanceof CraftmypdfAPIError &&
 			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			(error.status ?? 0) >= 500 &&
+			!isDestructive(context),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

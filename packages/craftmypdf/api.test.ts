@@ -2,10 +2,10 @@
  * Live CraftMyPDF tests. These run only when `CRAFTMYPDF_API_KEY` is set;
  * otherwise they are skipped so CI stays green without credentials.
  *
- * Most calls are reads and cost nothing. The generation and editing tests do
- * spend credits (one per generated file, half for a merge), so they are gated
- * separately on `CRAFTMYPDF_TEMPLATE_ID`: without a template id there is
- * nothing to generate from and they are skipped rather than failed.
+ * Most calls are reads and cost nothing. Generation and PDF editing do spend
+ * credits (one per generated file, half for a merge), so every spending test
+ * is gated on `CRAFTMYPDF_TEMPLATE_ID` as well: a key alone never charges the
+ * account. Without the template id they skip rather than fail.
  *
  * Run with:
  *   CRAFTMYPDF_API_KEY=... CRAFTMYPDF_TEMPLATE_ID=... \
@@ -22,7 +22,10 @@ const LIVE_KEY = process.env.CRAFTMYPDF_API_KEY ?? '';
 const TEMPLATE_ID = process.env.CRAFTMYPDF_TEMPLATE_ID ?? '';
 
 const describeLive = LIVE_KEY.length > 0 ? describe : describe.skip;
-const describeGeneration =
+// Generation, PDF editing and the template-management writes all either
+// charge credits or change the account, so they need the explicit template id
+// opt-in rather than a key alone.
+const describeSpending =
 	LIVE_KEY.length > 0 && TEMPLATE_ID.length > 0 ? describe : describe.skip;
 
 if (LIVE_KEY.length === 0) {
@@ -31,7 +34,7 @@ if (LIVE_KEY.length === 0) {
 	);
 } else if (TEMPLATE_ID.length === 0) {
 	console.warn(
-		'CRAFTMYPDF_TEMPLATE_ID is not set: the live generation tests are skipped. Set it to a template id from a CraftMyPDF account to run them, noting that each test spends credits.',
+		'CRAFTMYPDF_TEMPLATE_ID is not set: the live generation and PDF editing tests are skipped. Set it to a template id from a CraftMyPDF account to run them, noting that each spending test costs credits.',
 	);
 }
 
@@ -105,7 +108,7 @@ describeLive('CraftMyPDF live API: reads', () => {
 	});
 });
 
-describeGeneration('CraftMyPDF live API: generation', () => {
+describeSpending('CraftMyPDF live API: generation', () => {
 	it('generates a PDF and reports its page count and size', async () => {
 		const raw = await makeCraftmypdfRequest(LIVE_KEY, {
 			method: 'POST',
@@ -187,7 +190,9 @@ describeGeneration('CraftMyPDF live API: generation', () => {
 	});
 });
 
-describeLive('CraftMyPDF live API: PDF editing', () => {
+// These edit a public sample PDF, but each call still spends a credit, so they
+// sit behind the same opt-in as generation rather than the key alone.
+describeSpending('CraftMyPDF live API: PDF editing', () => {
 	it('adds a watermark', async () => {
 		const raw = await makeCraftmypdfRequest(LIVE_KEY, {
 			method: 'POST',
@@ -263,7 +268,8 @@ describeLive('CraftMyPDF live API: PDF editing', () => {
 	});
 });
 
-describeGeneration('CraftMyPDF live API: templates', () => {
+// Mostly free reads, but every case needs a template id to read.
+describeSpending('CraftMyPDF live API: templates', () => {
 	it('reads the template and its sample JSON', async () => {
 		const raw = await makeCraftmypdfRequest(LIVE_KEY, {
 			method: 'GET',

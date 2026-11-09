@@ -33,9 +33,14 @@ async function run(
 	};
 }
 
-function firstMatch(error: Error): string | undefined {
+function firstMatch(
+	error: Error,
+	operation = context.operation,
+): string | undefined {
+	// unknown: the matchers may read any field, but only `operation` differs
+	// between these cases.
 	return Object.entries(handlers).find(([, entry]) =>
-		entry?.match(error, context),
+		entry?.match(error, { ...context, operation }),
 	)?.[0];
 }
 
@@ -108,6 +113,23 @@ describe('craftmypdf error handlers', () => {
 		await expect(run('SERVER_ERROR', error)).resolves.toMatchObject({
 			maxRetries: 2,
 		});
+	});
+
+	it('never replays a destructive delete, which CraftMyPDF sends over GET', async () => {
+		// A failed delete may already have removed the template; running it
+		// again would report the template as missing instead of the real error.
+		const error = apiError(503, 'Service Unavailable', 'GET');
+
+		expect(firstMatch(error, 'templates.delete')).not.toBe('SERVER_ERROR');
+		await expect(run('DEFAULT', error)).resolves.toMatchObject({
+			maxRetries: 0,
+		});
+	});
+
+	it('still replays a non-destructive GET when the context names one', async () => {
+		const error = apiError(503, 'Service Unavailable', 'GET');
+
+		expect(firstMatch(error, 'templates.list')).toBe('SERVER_ERROR');
 	});
 
 	it('never replays a write that failed with a 5xx', async () => {

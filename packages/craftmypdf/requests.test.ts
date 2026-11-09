@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { Account, Editor, Pdf, Templates } from './endpoints';
+import { redactUrls } from './endpoints/call';
 import {
 	accountInfo,
 	asyncAccepted,
@@ -709,6 +710,42 @@ describe('account and transactions', () => {
 	});
 });
 
+describe('redactUrls', () => {
+	it('drops a signed query string but keeps host and path', () => {
+		expect(
+			redactUrls(
+				'Failed to load: https://bucket.s3.amazonaws.com/a/out.pdf?X-Amz-Signature=abc',
+			),
+		).toBe(
+			'Failed to load: https://bucket.s3.amazonaws.com/a/out.pdf?redacted',
+		);
+	});
+
+	it('keeps a URL that carries no credential unchanged', () => {
+		expect(redactUrls('Failed to load: https://example.com/data.json')).toBe(
+			'Failed to load: https://example.com/data.json',
+		);
+	});
+
+	it('drops userinfo from a URL that carries it', () => {
+		expect(redactUrls('see https://user:pw@example.com/x')).toBe(
+			'see https://example.com/x?redacted',
+		);
+	});
+
+	it('redacts several URLs in one message', () => {
+		const message =
+			'first https://a.example.com/x?k=1 then https://b.example.com/y?k=2';
+		expect(redactUrls(message)).toBe(
+			'first https://a.example.com/x?redacted then https://b.example.com/y?redacted',
+		);
+	});
+
+	it('leaves a message with no URL alone', () => {
+		expect(redactUrls('Template ID not found')).toBe('Template ID not found');
+	});
+});
+
 describe('regions and logging', () => {
 	it('sends the request to the region the options name', async () => {
 		respond(accountInfo);
@@ -729,6 +766,28 @@ describe('regions and logging', () => {
 		const logged = mockLog.mock.calls.at(-1);
 		expect(logged?.[1]).toBe('craftmypdf.account.getInfo');
 		expect(logged?.[3]).toBe('failed');
+	});
+
+	it('strips a signed URL from the error it saves, but not from what it throws', async () => {
+		const signed =
+			'https://craftmypdf-gen.s3.ap-southeast-1.amazonaws.com/abc/out.pdf?X-Amz-Signature=SECRET-SIG&X-Amz-Credential=SECRET-KEY';
+		// The live API echoes the URL it was given in this message.
+		respond({ status: 'error', message: `Failed to load: ${signed}` }, 400);
+
+		const thrown = await invoke(Pdf.merge, { urls: [signed] }).catch(
+			(e: unknown) => e,
+		);
+
+		// The caller keeps the real message so it can act on it.
+		expect((thrown as Error).message).toContain('SECRET-SIG');
+
+		// The saved event must not hold the credential.
+		const logged = mockLog.mock.calls.at(-1);
+		const saved = JSON.stringify(logged?.[2]);
+		expect(saved).not.toContain('SECRET-SIG');
+		expect(saved).not.toContain('SECRET-KEY');
+		expect(saved).toContain('craftmypdf-gen.s3.ap-southeast-1.amazonaws.com');
+		expect(saved).toContain('redacted');
 	});
 
 	it('never logs the template data that was sent', async () => {
