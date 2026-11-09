@@ -1022,6 +1022,8 @@ const AccountGetInfoResponseSchema = z
 	.object({
 		status: z.string().nullish(),
 		username: z.string().nullish(),
+		// Not in the OpenAPI spec; the live API sends it.
+		is_team: z.boolean().nullish(),
 		quota_counter: CountSchema.nullish(),
 		quota_max: CountSchema.nullish(),
 		template_counter: CountSchema.nullish(),

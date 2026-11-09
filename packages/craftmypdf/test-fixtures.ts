@@ -99,6 +99,8 @@ export const newTemplate = {
 export const accountInfo = {
 	status: 'success',
 	username: 'hello@craftmypdf.com',
+	// The live API sends this; the OpenAPI spec omits it.
+	is_team: false,
 	// The spec types quota_counter as float and template_counter as string.
 	quota_counter: 35,
 	quota_max: 100,

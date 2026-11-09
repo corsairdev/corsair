@@ -175,6 +175,29 @@ describe('makeCraftmypdfRequest', () => {
 		expect(error.message).toBe('fetch failed');
 	});
 
+	it('keeps the details line some failures add', async () => {
+		respond(
+			{
+				status: 'error',
+				message: 'Failed to load: https://example.com/d.json',
+				details: 'Failed to load from remote URL',
+			},
+			400,
+		);
+
+		const error = await failure(
+			makeCraftmypdfRequest(API_KEY, {
+				method: 'POST',
+				path: '/create',
+				body: {},
+			}),
+		);
+
+		expect(error.message).toBe(
+			'Failed to load: https://example.com/d.json (Failed to load from remote URL)',
+		);
+	});
+
 	it('falls back to the status when the body has no message', async () => {
 		respond('<html>Gateway</html>', 502);
 

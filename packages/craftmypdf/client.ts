@@ -41,16 +41,27 @@ const CRAFTMYPDF_RATE_LIMIT_CONFIG: RateLimitConfig = {
 // unknown: the body is an untyped error body until asRecord narrows it.
 function readMessage(body: unknown): string | undefined {
 	const record = asRecord(body);
-	const message = record?.message;
-	return typeof message === 'string' && message.length > 0
-		? message
-		: undefined;
+	const message = readString(record, 'message');
+	// Some failures add a `details` explanation, for example
+	// "Failed to load from remote URL" beside the message.
+	const details = readString(record, 'details');
+	if (!message) return undefined;
+	return details ? `${message} (${details})` : message;
 }
 
 // unknown: same open error body as readMessage.
 function readStatus(body: unknown): string | undefined {
 	const status = asRecord(body)?.status;
 	return typeof status === 'string' ? status : undefined;
+}
+
+// unknown: same open error body as readMessage.
+function readString(
+	record: Record<string, unknown> | null | undefined,
+	key: string,
+): string | undefined {
+	const value = record?.[key];
+	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
 /**
