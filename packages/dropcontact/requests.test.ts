@@ -38,11 +38,11 @@ const API_KEY = 'dc-test-key';
 // never parameters: every concrete endpoint is assignable to this because
 // parameters are contravariant. Each endpoint returns its own output type, so
 // the shared return is unknown.
-type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
+type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>; // unknown: see above.
 
-// Safe: the fake context carries only what the endpoints read (ctx.key).
+// Safe: the fake context carries only ctx.key, which is all any endpoint reads.
 function invoke(endpoint: AnyEndpoint, input: unknown) {
-	// unknown: negative cases pass values no schema accepts.
+	// unknown: negative cases pass invalid values.
 	return endpoint({ key: API_KEY, db: undefined } as never, input as never);
 }
 
@@ -337,7 +337,7 @@ describe('enrichment.results', () => {
 			success: boolean;
 			reason?: string | null;
 			status: string;
-			records: unknown[];
+			records: unknown[]; // unknown: not-ready bodies carry no typed records.
 		}; // unknown: not-ready bodies carry no typed records.
 
 		expect(result.success).toBe(false);

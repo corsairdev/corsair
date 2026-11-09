@@ -149,7 +149,7 @@ export type DropcontactInputRecord = z.infer<typeof InputRecordSchema>;
 export const DROPCONTACT_MAX_RECORD_BYTES = 15_000;
 
 /** UTF-8 byte length of one submitted record, as it will be serialized. */
-export function recordBytes(record: unknown): number {
+export function recordBytes(record: DropcontactInputRecord): number {
 	return new TextEncoder().encode(JSON.stringify(record) ?? '').length;
 }
 
