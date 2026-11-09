@@ -19,13 +19,20 @@ export const list: ServicenowEndpoints['tablesList'] = (ctx, input) =>
 			output: Outputs.tablesList,
 		},
 		input,
-		({ sysparm_query, sysparm_fields, sysparm_limit, sysparm_offset }) => ({
+		({
+			sysparm_query,
+			sysparm_fields,
+			sysparm_exclude_reference_link,
+			sysparm_limit,
+			sysparm_offset,
+		}) => ({
 			method: 'GET',
 			path: '/table/sys_db_object',
 			query: queryOf({
 				sysparm_query,
 				// Without a selection this table returns dozens of columns per row.
 				sysparm_fields: sysparm_fields ?? 'name,label,super_class,sys_id',
+				sysparm_exclude_reference_link,
 				sysparm_limit,
 				sysparm_offset,
 			}),

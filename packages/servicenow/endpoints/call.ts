@@ -16,11 +16,12 @@ export async function resolveHost(ctx: ServicenowContext): Promise<string> {
 	if (fromOptions) return normalizeServicenowHost(fromOptions);
 
 	// unknown: `get_host` exists only when the plugin declares it in authConfig,
-	// and the context type does not surface optional accessors on every manager.
-	const keys = ctx.keys as unknown as {
-		get_host?: () => Promise<string | null | undefined>;
-	};
-	const fromKeys = (await keys.get_host?.())?.trim();
+	// and `ctx.keys` itself is absent on a context built without a key manager
+	// (as the live tests and a bare `key` option both do).
+	const keys = ctx.keys as unknown as
+		| { get_host?: () => Promise<string | null | undefined> }
+		| undefined;
+	const fromKeys = (await keys?.get_host?.())?.trim();
 	if (fromKeys) return normalizeServicenowHost(fromKeys);
 
 	throw new Error(

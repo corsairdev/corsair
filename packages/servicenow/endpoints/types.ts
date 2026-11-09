@@ -176,16 +176,42 @@ export type RecordsDeleteResponse = z.infer<typeof RecordsDeleteResponseSchema>;
 const TablesListInputSchema = z.object({
 	sysparm_query: SysparmQuerySchema.optional(),
 	sysparm_fields: SysparmFieldsSchema.optional(),
+	sysparm_exclude_reference_link: z
+		.boolean()
+		.optional()
+		.describe(
+			'Return a reference column as a bare sys_id instead of { link, value }',
+		),
 	...PagingSchema,
 });
 
 export type TablesListInput = z.input<typeof TablesListInputSchema>;
 
+/**
+ * A reference field. Verified live: by default ServiceNow returns
+ * `{ link, value }`, and only a plain string with
+ * `sysparm_exclude_reference_link=true`. So a reference column must accept both
+ * or it rejects every real response.
+ */
+const ReferenceOrStringSchema = z
+	.union([
+		z.string(),
+		z
+			.object({
+				link: z.string().nullish(),
+				value: z.string().nullish(),
+			})
+			.loose(),
+	])
+	.nullish();
+
 const TableSchema = z
 	.object({
 		name: z.string().describe('Table name, to pass as `table`'),
 		label: z.string().nullish(),
-		super_class: z.string().nullish(),
+		// A reference to the parent table, so it arrives as `{ link, value }`
+		// unless reference links are excluded.
+		super_class: ReferenceOrStringSchema,
 		sys_id: z.string().nullish(),
 	})
 	.loose();

@@ -29,11 +29,19 @@ export const errorHandlers = {
 			error instanceof ServicenowAPIError && error.isAuthError,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 404 on the Table API is almost always a table name that does not exist, or
-	// a sys_id that was deleted between the read and the write.
+	// 404 is a record that does not exist, or one an ACL hides. It is always
+	// terminal: the same read returns the same answer.
 	NOT_FOUND_ERROR: {
 		match: (error: Error) =>
 			error instanceof ServicenowAPIError && error.isNotFound,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// Verified live: a table name that does not exist answers **400**
+	// `"Invalid table <name>"`, not 404, so it has to be matched by message or it
+	// falls through to DEFAULT and reads as a generic validation failure.
+	INVALID_TABLE_ERROR: {
+		match: (error: Error) =>
+			statusOf(error) === 400 && /invalid table/i.test(error.message),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	VALIDATION_ERROR: {
