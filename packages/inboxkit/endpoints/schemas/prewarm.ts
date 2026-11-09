@@ -117,7 +117,103 @@ export const PrewarmInputSchemas = {
 		.object({
 			workspaceId: WorkspaceId,
 			domains: z
-				.array(z.string())
+				.array(
+					z
+						.object({
+							domain_id: z
+								.string()
+								.optional()
+								.describe(
+									"The domain's `_id` from Search Domains. Send `domain_id` or `domain_name`.",
+								),
+							domain_name: z
+								.string()
+								.optional()
+								.describe(
+									'The domain name. Send `domain_id` or `domain_name`.',
+								),
+							consent_screen_url: z
+								.string()
+								.optional()
+								.describe(
+									'An app consent link starting with `http://` or `https://`. After the handover, every mailbox on the domain signs in and approves it, so your app gets access. An empty string means none.',
+								),
+							domain_redirect_url: z
+								.string()
+								.optional()
+								.describe(
+									'Where visitors to the domain are forwarded. Must start with `http://` or `https://`. An empty string means none.',
+								),
+							mailboxes: z
+								.array(
+									z
+										.object({
+											mailbox_id: z
+												.string()
+												.optional()
+												.describe(
+													'Picks the mailbox by its `_id` or `uid` from Search Mailboxes.',
+												),
+											username: z
+												.string()
+												.optional()
+												.describe(
+													'Picks the mailbox by its current username (the part before the @). It does not rename the mailbox.',
+												),
+											email: z
+												.string()
+												.optional()
+												.describe(
+													'Picks the mailbox by its current address on this domain. It does not rename the mailbox.',
+												),
+											new_username: z
+												.string()
+												.optional()
+												.describe(
+													'Renames the mailbox to this username. Use lowercase letters, numbers, dots, hyphens or underscores, starting and ending with a letter or number, up to 64 characters.',
+												),
+											first_name: z
+												.string()
+												.optional()
+												.describe(
+													'The first name to set. Same as `new_first_name`. If you send both, `new_first_name` is used.',
+												),
+											new_first_name: z
+												.string()
+												.optional()
+												.describe('The first name to set.'),
+											last_name: z
+												.string()
+												.optional()
+												.describe(
+													'The last name to set. Same as `new_last_name`. If you send both, `new_last_name` is used.',
+												),
+											new_last_name: z
+												.string()
+												.optional()
+												.describe('The last name to set.'),
+											profile_picture: z
+												.string()
+												.optional()
+												.describe(
+													'The photo to set: a public image URL or a base64 data URI such as `data:image/png;base64,...`. Same as `new_profile_picture`. If you send both, `new_profile_picture` is used.',
+												),
+											new_profile_picture: z
+												.string()
+												.optional()
+												.describe(
+													'The photo to set: a public image URL or a base64 data URI.',
+												),
+										})
+										.strict(),
+								)
+								.optional()
+								.describe(
+									'Changes for individual mailboxes. Leave it out to keep every mailbox as it is.',
+								),
+						})
+						.strict(),
+				)
 				.min(1)
 				.describe('The domains to buy, at least one.'),
 			sequencer_uid: z

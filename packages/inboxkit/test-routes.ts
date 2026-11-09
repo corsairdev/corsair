@@ -6,8 +6,11 @@ export type TestRoute = {
 	method: string;
 	path: string;
 	workspace: boolean;
+	// unknown: a sample of any type, checked by the operation's own schema.
 	input: Record<string, unknown>;
+	// unknown: as above.
 	query: Record<string, unknown>;
+	// unknown: as above.
 	body: Record<string, unknown>;
 	hasBody: boolean;
 };
@@ -335,13 +338,11 @@ export const TEST_ROUTES: readonly TestRoute[] = [
 		path: '/v1/api/domains/search',
 		workspace: false,
 		input: {
-			page: 1,
 			num: 1,
 			keyword: 'sample',
 		},
 		query: {},
 		body: {
-			page: 1,
 			num: 1,
 			keyword: 'sample',
 		},
@@ -1832,11 +1833,11 @@ export const TEST_ROUTES: readonly TestRoute[] = [
 		path: '/v1/api/prewarm/buy-domain',
 		workspace: true,
 		input: {
-			domains: ['example.com'],
+			domains: [{}],
 		},
 		query: {},
 		body: {
-			domains: ['example.com'],
+			domains: [{}],
 		},
 		hasBody: true,
 	},
@@ -2651,6 +2652,13 @@ export const RETURNS_SECRETS: readonly string[] = [
 	'mailboxes.showCredentials',
 	'mailboxes.generateTotp',
 	'warmup.createConnectLink',
+];
+
+/** Everything that gives a person or an app access to mailboxes. */
+export const GRANTS_ACCESS: readonly string[] = [
+	'workspaces.inviteMember',
+	'consentRequests.initiate',
+	'clientIdRequests.initiate',
 ];
 
 /** Everything that sends the team's mail, webhooks or credentials to an outside address. */

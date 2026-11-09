@@ -171,7 +171,6 @@ export const MailboxesInputSchemas = {
 			uid: z.string().describe('Mailbox UID'),
 			first_name: z.string().optional().describe('First name'),
 			last_name: z.string().optional().describe('Last name'),
-			user_name: z.string().optional().describe('Username'),
 			profile_picture: z.string().optional().describe('Profile picture URL'),
 			tags: z.array(z.string()).optional().describe('Tags for the mailbox'),
 		})

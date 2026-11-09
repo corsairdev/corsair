@@ -1,5 +1,3 @@
-import { createHash } from 'node:crypto';
-
 export const API_KEY = 'ik_test_key_not_a_real_key';
 export const WORKSPACE = '8b2d4c6e-0000-4000-8000-000000000010';
 export const DOMAIN_UID = 'c7a1d2e3-0000-4000-8000-000000000020';
@@ -11,7 +9,9 @@ export const PLAINTEXT_PASSWORD = 'plaintext-mailbox-password';
 export const PLAINTEXT_APP_PASSWORD = 'plaintext-app-password';
 export const PLAINTEXT_SECRET = 'plaintext-2fa-secret';
 
-export const SIGNATURE = `sha256=${createHash('sha256').update(API_KEY).digest('hex')}`;
+// `sha256=` and the SHA-256 of API_KEY, written out. webhooks.test.ts checks it against the key.
+export const SIGNATURE =
+	'sha256=d6592b05ce8ca75df802c0c637176bd86070b5c8ac94bd918d9b05e8ef97991d';
 
 // unknown: response bodies are arbitrary JSON.
 export function jsonResponse(

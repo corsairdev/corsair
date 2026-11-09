@@ -74,6 +74,7 @@ export const DomainsInputSchemas = {
 				.number()
 				.int()
 				.min(1)
+				.optional()
 				.describe('Page number for pagination. Default 1.'),
 			num: z
 				.number()
@@ -83,6 +84,7 @@ export const DomainsInputSchemas = {
 				.describe('Number of domains to return'),
 			keyword: z
 				.string()
+				.optional()
 				.describe('Search keyword (required if domain not provided)'),
 			domain: z
 				.string()
@@ -117,7 +119,10 @@ export const DomainsInputSchemas = {
 				.describe('Number of years for registration. Default 1.'),
 			tlds: z.array(z.string()).optional().describe('Specific TLDs to search'),
 		})
-		.strict(),
+		.strict()
+		.refine((input) => Boolean(input.keyword || input.domain), {
+			message: 'Pass keyword or domain.',
+		}),
 	domainsCheckWorkspaceAvailability: z
 		.object({
 			domains: z

@@ -11,11 +11,6 @@ export const WorkspacesInputSchemas = {
 	workspacesCreate: z
 		.object({
 			name: z.string().describe('Workspace name'),
-			webhook_url: z
-				.string()
-				.nullable()
-				.optional()
-				.describe('Webhook URL for notifications'),
 			admins_only: z
 				.boolean()
 				.optional()

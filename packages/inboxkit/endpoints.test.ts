@@ -231,13 +231,18 @@ describe('answers the docs get wrong', () => {
 		fetchMock.mockResolvedValueOnce(
 			jsonResponse({ mailboxes: 'not a list', order_uid: 'order-1' }),
 		);
+		// unknown: the result's fields are each checked by the assertions below.
 		const result = (await endpointFor('mailboxes.buy')(ctx(), {
 			workspaceId: WORKSPACE,
 			mailboxes: [],
-			// unknown: a test double; the real types add nothing to this check.
 		})) as Record<string, unknown>;
-		expect(result.order_uid).toBe('order-1');
+		expect(result.raw).toEqual({
+			mailboxes: 'not a list',
+			order_uid: 'order-1',
+		});
 		expect(result.parse_warning).toContain('Do not repeat mailboxes.buy');
+		// A caller reading the usual field can't trip over the wrong shape.
+		expect(result.mailboxes).toBeUndefined();
 	});
 
 	it('keeps fields the docs do not list', async () => {

@@ -668,9 +668,9 @@ await corsair.inboxkit.api.clientIdRequests.getStatus({});
 
 `clientIdRequests.initiate`
 
-Authorize an app's client ID on a domain, as a trusted app or with domain-wide delegation on Google, or tenant-wide consent on Microsoft. The domain needs an admin mailbox.
+Authorize an app's client ID on a domain, as a trusted app or with domain-wide delegation on Google, or tenant-wide consent on Microsoft. This can give the app access to every mailbox on the domain. The domain needs an admin mailbox.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.inboxkit.api.clientIdRequests.initiate({});
@@ -688,6 +688,8 @@ await corsair.inboxkit.api.clientIdRequests.initiate({});
 | `scopes` | `string[]` | No | Delegated OAuth scopes to grant - permissions that apply when a signed-in user acts through the app. |
 | `platform` | `GOOGLE \| MICROSOFT \| AZURE` | No | Which platform this client ID is for. Only needed when the domain has admin mailboxes on more than one platform - otherwise the platform is read from the domain's admin mailbox and a value that contradicts it is… |
 | `app_roles` | `string[]` | No | MICROSOFT/AZURE only. Application permissions to grant, assigned as appRoleAssignments so the app can act as itself with a client-credentials (app-only) token. |
+
+A Microsoft application role such as `Mail.Read` can reach every mailbox in the tenant. Check the client ID, scopes and roles before you call this.
 
 
 
@@ -1196,9 +1198,9 @@ await corsair.inboxkit.api.consentRequests.getStatus({});
 
 `consentRequests.initiate`
 
-Start an OAuth consent request for a mailbox, by uid or username and domain.
+Process an OAuth consent URL for a mailbox, by uid or username and domain, which can give that app access to the mailbox.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.inboxkit.api.consentRequests.initiate({});
@@ -1214,6 +1216,8 @@ await corsair.inboxkit.api.consentRequests.initiate({});
 | `domain` | `string` | No | Domain of the mailbox (required with username if not using mailbox_uid) |
 | `consent_url` | `string` | Yes | The consent URL to be processed |
 | `request_data` | `Record<string, any>` | No | Additional data for the consent request |
+
+Can give the app behind `consent_url` access to the mailbox, so check that URL before you call this.
 
 
 
@@ -1510,9 +1514,9 @@ await corsair.inboxkit.api.dns.list({});
 
 `dns.repair`
 
-Fix missing or broken email DNS records on one or more domains.
+Fix missing or broken email DNS records on one or more domains. Run dns.verify first to see what would change.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.inboxkit.api.dns.repair({});
@@ -1527,6 +1531,8 @@ await corsair.inboxkit.api.dns.repair({});
 | `uid` | `string` | No | Domain UID to repair. Use this when fixing a single domain by its UID. |
 | `domains` | `string[]` | No | Array of domain names to repair in bulk. You can include up to 50 domains per request. |
 | `uids` | `string[]` | No | Array of domain UIDs to repair in bulk. You can include up to 50 UIDs per request. |
+
+Changes the domain's email DNS records. Run `dns.verify` first to see what's wrong.
 
 
 
@@ -2923,9 +2929,9 @@ await corsair.inboxkit.api.domains.search({ page: 1, num: 10, keyword: 'acme', t
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | Yes | Page number for pagination. Default 1. |
+| `page` | `number` | No | Page number for pagination. Default 1. |
 | `num` | `number` | Yes | Number of domains to return |
-| `keyword` | `string` | Yes | Search keyword (required if domain not provided) |
+| `keyword` | `string` | No | Search keyword (required if domain not provided) |
 | `domain` | `string` | No | Specific domain to search (required if keyword not provided) |
 | `show_unavailable` | `boolean` | No | Include unavailable domains in results. Default false. |
 | `check_banned` | `boolean` | No | Check if domains are banned from registration. Default true. |
@@ -2933,6 +2939,8 @@ await corsair.inboxkit.api.domains.search({ page: 1, num: 10, keyword: 'acme', t
 | `check_ms365_workspace_availability` | `boolean` | No | Check Microsoft 365 availability. Default true. |
 | `registration_years` | `number` | No | Number of years for registration. Default 1. |
 | `tlds` | `string[]` | No | Specific TLDs to search |
+
+Needs at least one of `keyword` or `domain`. InboxKit's docs mark `keyword` and `page` as required, but the API doesn't.
 
 
 
@@ -7931,7 +7939,7 @@ await corsair.inboxkit.api.mailboxes.uncancel({});
 
 `mailboxes.update`
 
-Update a mailbox's name, username, profile picture or tags.
+Update a mailbox's first or last name, profile picture or tags. To change its address, use mailboxes.changeUsername.
 
 **Risk:** `write`
 
@@ -7947,9 +7955,10 @@ await corsair.inboxkit.api.mailboxes.update({});
 | `uid` | `string` | Yes | Mailbox UID |
 | `first_name` | `string` | No | First name |
 | `last_name` | `string` | No | Last name |
-| `user_name` | `string` | No | Username |
 | `profile_picture` | `string` | No | Profile picture URL |
 | `tags` | `string[]` | No | Tags for the mailbox |
+
+InboxKit's API also takes `user_name` here. The plugin leaves it out because it can change a live mailbox's address; use `mailboxes.changeUsername`.
 
 
 
@@ -8102,11 +8111,37 @@ await corsair.inboxkit.api.prewarm.buy({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workspaceId` | `string` | No | Which workspace, as a uid from workspaces.list. Leave out to use the plugin's workspaceId option or, failing that, the team's only workspace. |
-| `domains` | `string[]` | Yes | The domains to buy, at least one. |
+| `domains` | `object[]` | Yes | The domains to buy, at least one. |
 | `sequencer_uid` | `string` | No | Connect the mailboxes to this sequencer after the handover. |
 | `keep_warming` | `boolean` | No | Keep warming the mailboxes for up to 12 weeks after the handover. Defaults to `true`. |
 
 Spends money. The price is charged to the wallet when the order is placed, and the handover runs in the background; follow it with `prewarm.getOrderStatus`. Never repeat after a timeout without checking.
+
+<AccordionGroup>
+<Accordion title="domains full type">
+
+```ts
+{
+  domain_id?: string,
+  domain_name?: string,
+  consent_screen_url?: string,
+  domain_redirect_url?: string,
+  mailboxes?: {
+    mailbox_id?: string,
+    username?: string,
+    email?: string,
+    new_username?: string,
+    first_name?: string,
+    new_first_name?: string,
+    last_name?: string,
+    new_last_name?: string,
+    profile_picture?: string,
+    new_profile_picture?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -8447,7 +8482,7 @@ await corsair.inboxkit.api.prewarm.searchMailboxes({});
 
 `sequencers.add`
 
-Connect a sequencer account such as Instantly, Smartlead or Lemlist, using the fields sequencers.listPlatforms names.
+Connect a sequencer account such as Instantly, Smartlead or Lemlist, using the fields sequencers.listPlatforms names. Nothing is sent to it until sequencers.exportMailboxes.
 
 **Risk:** `write`
 
@@ -8474,9 +8509,10 @@ await corsair.inboxkit.api.sequencers.add({});
 | `warmup_enable_custom_tracking` | `boolean` | No | Use custom tracking domains during warmup. Requires a valid API key. |
 | `warmup_limit` | `number` | No | Maximum number of warmup emails sent per mailbox per day. Requires a valid API key. |
 | `warmup_replyrate` | `number` | No | Target reply rate for warmup emails, as a percentage (0–100). Requires a valid API key. |
-| `warmup_increment` | `"1" \| "2" \| "3" \| "4" \| "5" \| "6" \| "7" \| "8" \| "disabled` | No | How many additional warmup emails to add each day. For Smartlead the minimum is "5". For Instantly the maximum is "4". Requires a valid API key. |
+| `warmup_increment` | `1 \| 2 \| 3 \| 4 \| 5 \| 6 \| 7 \| 8 \| disable \| disabled` | No | How many additional warmup emails to add each day. For Smartlead the minimum is "5". For Instantly the maximum is "4". Requires a valid API key. |
 | `auto_reconnect_mailboxes` | `boolean` | No | Automatically reconnect mailboxes to this sequencer if they get disconnected. Setting this to true requires an API key on the sequencer (the platform's API is used to perform the reconnect). |
-| `auto_export_enabled` | `boolean` | No | Automatically export newly added mailboxes into this sequencer. |
+
+InboxKit's API also takes `auto_export_enabled`. The plugin leaves it out because it sends new mailboxes' credentials to the sequencer with no further call; turn it on in the dashboard if you want it. InboxKit's docs write `warmup_increment` with stray quotes and its MCP server says `disable` where the docs say `disabled`, so both spellings are accepted.
 
 
 
@@ -8543,7 +8579,7 @@ await corsair.inboxkit.api.sequencers.delete({});
 
 Send mailboxes into a sequencer, which receives their credentials. Runs in the background; follow it with sequencers.getExportStatus.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.inboxkit.api.sequencers.exportMailboxes({ sequencer_uid: '<sequencer uid>', mailbox_uids: ['<mailbox uid>'] });
@@ -8884,7 +8920,7 @@ await corsair.inboxkit.api.sequencers.listPlatforms({});
 
 `sequencers.update`
 
-Rename a sequencer, rotate its credentials or change its auto-reconnect and auto-export settings.
+Rename a sequencer, rotate its credentials or change its auto-reconnect setting.
 
 **Risk:** `write`
 
@@ -8905,7 +8941,8 @@ await corsair.inboxkit.api.sequencers.update({});
 | `api_key` | `string` | No | API key for the sequencer account. Validated against the platform when changed. |
 | `workspace_name` | `string` | No | Workspace or organization name for platforms that have multiple workspaces. Pass an empty string to clear. |
 | `auto_reconnect_mailboxes` | `boolean` | No | Automatically reconnect mailboxes to this sequencer if they get disconnected. Setting this to true requires the sequencer to have an API key (either already saved or supplied in this request). |
-| `auto_export_enabled` | `boolean` | No | Automatically export newly added mailboxes into this sequencer. |
+
+InboxKit's API also takes `auto_export_enabled`. The plugin leaves it out for the same reason as on `sequencers.add`.
 
 
 
@@ -10354,7 +10391,7 @@ await corsair.inboxkit.api.warmup.updateSettings({});
 
 `workspaces.create`
 
-Create a workspace, with an optional webhook URL. All team members are copied into it unless admins_only is set.
+Create a workspace. All team members are copied into it unless admins_only is set. Set a webhook URL afterwards with workspaces.updateWebhook.
 
 **Risk:** `write`
 
@@ -10367,8 +10404,9 @@ await corsair.inboxkit.api.workspaces.create({ name: 'Client A' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | Workspace name |
-| `webhook_url` | `string \| null` | No | Webhook URL for notifications |
 | `admins_only` | `boolean` | No | Optional. If true, only team members with role=admin are copied into the new workspace as initial members; member-role rows (people invited to specific previous workspaces) are skipped. Default false. |
+
+InboxKit's API also takes `webhook_url` here. The plugin leaves it out because that URL can receive mailbox passwords; set it with `workspaces.updateWebhook`.
 
 
 

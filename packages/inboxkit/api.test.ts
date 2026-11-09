@@ -24,7 +24,7 @@ const key = KEY.data ?? '';
 const ctx = (workspaceId?: string) =>
 	({ key, options: { workspaceId } }) as never;
 
-// unknown: each operation's arguments and answer are checked by its own schemas.
+// any: each operation's answer is checked by its own schema at run time, and these tests read nested fields.
 type Live = (ctx: never, input?: unknown) => Promise<Record<string, any>>;
 const api = inboxkit({ key: key || 'none' }).endpoints as unknown as Record<
 	string,
@@ -110,6 +110,15 @@ describeLive('InboxKit, reads', () => {
 			domain: 'corsair-plugin-test-available-check.com',
 		});
 		noWarning(answer);
+	});
+
+	it('searches by domain alone, which the docs wrongly refuse', async () => {
+		noWarning(
+			await run('domains.search', ctx(), {
+				num: 2,
+				domain: 'corsair-plugin-test-available-check.com',
+			}),
+		);
 	});
 
 	it('reports a missing mailbox as InboxKit words it', async () => {

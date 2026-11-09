@@ -138,6 +138,113 @@ describe('through createCorsair', () => {
 	});
 });
 
+describe('a root error handler that asks for retries', () => {
+	const retryEverything = {
+		DEFAULT: {
+			match: () => true,
+			handler: async () => ({ maxRetries: 2, headersRetryAfterMs: 1 }),
+		},
+	};
+
+	async function createRetryingClient() {
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'inboxkit', 'default');
+		const corsair = createCorsair({
+			plugins: [inboxkit({ key: API_KEY, workspaceId: WORKSPACE })],
+			database: testDb.db,
+			kek: KEK,
+			errorHandlers: retryEverything,
+		});
+		await corsair.inboxkit.keys.issue_new_dek();
+		return { corsair, testDb };
+	}
+
+	it.each([
+		['a 500', () => jsonResponse({ message: 'broken' }, 500)],
+		[
+			'a timeout',
+			() =>
+				Promise.reject(
+					Object.assign(new Error('aborted'), { name: 'TimeoutError' }),
+				),
+		],
+	])('cannot buy twice after %s', async (_label, answer) => {
+		const { corsair, testDb } = await createRetryingClient();
+		try {
+			fetchMock.mockImplementation(answer);
+			await expect(
+				corsair.inboxkit.api.mailboxes.buy({ ...purchase }),
+			).rejects.toThrow('may still have gone through');
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('can retry a refusal, since nothing was done', async () => {
+		const { corsair, testDb } = await createRetryingClient();
+		try {
+			fetchMock
+				.mockResolvedValueOnce(jsonResponse({ message: 'slow down' }, 429))
+				.mockResolvedValueOnce(jsonResponse({ order_uid: 'order-1' }));
+			await expect(
+				corsair.inboxkit.api.mailboxes.buy({ ...purchase }),
+			).resolves.toMatchObject({ order_uid: 'order-1' });
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('still lets a deliberate repeat through, with a new arguments object', async () => {
+		const { corsair, testDb } = await createRetryingClient();
+		try {
+			fetchMock.mockResolvedValueOnce(jsonResponse({ message: 'broken' }, 500));
+			await expect(
+				corsair.inboxkit.api.mailboxes.buy({ ...purchase }),
+			).rejects.toThrow();
+			fetchMock.mockResolvedValueOnce(jsonResponse({ order_uid: 'order-1' }));
+			await expect(
+				corsair.inboxkit.api.mailboxes.buy({ ...purchase }),
+			).resolves.toMatchObject({ order_uid: 'order-1' });
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('still sends another operation that shares the arguments object', async () => {
+		const { corsair, testDb } = await createRetryingClient();
+		const args = { uids: [MAILBOX_UID] };
+		try {
+			fetchMock.mockResolvedValueOnce(jsonResponse({ message: 'broken' }, 500));
+			await expect(
+				corsair.inboxkit.api.mailboxes.cancel(args),
+			).rejects.toThrow();
+			fetchMock.mockResolvedValueOnce(jsonResponse({ error: false }));
+			await expect(
+				corsair.inboxkit.api.mailboxes.uncancel(args),
+			).resolves.toBeTruthy();
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('leaves reads to retry as usual', async () => {
+		const { corsair, testDb } = await createRetryingClient();
+		try {
+			fetchMock
+				.mockResolvedValueOnce(jsonResponse({ message: 'broken' }, 500))
+				.mockResolvedValueOnce(jsonResponse({ uid: 'team' }));
+			await expect(corsair.inboxkit.api.account.get({})).resolves.toMatchObject(
+				{ uid: 'team' },
+			);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
+
 describe('permissions', () => {
 	it.each(['strict', 'readonly'] as const)(
 		'%s mode stops a purchase before anything is sent',
@@ -219,6 +326,69 @@ describe('through processWebhook', () => {
 				await corsair.inboxkit.db.mailboxes.findByEntityId(MAILBOX_UID);
 			expect(row?.data).toMatchObject({ email: 'jane@example.com' });
 			expect(JSON.stringify(row)).not.toContain(PLAINTEXT_PASSWORD);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('keeps what a list saved when a status event arrives', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			fetchMock.mockResolvedValueOnce(
+				jsonResponse({
+					mailboxes: [{ ...mailboxRow, forwarding_email: 'fwd@example.com' }],
+				}),
+			);
+			await corsair.inboxkit.api.mailboxes.list({});
+			await processWebhook(
+				corsair,
+				signedHeaders('mailbox.status_changed'),
+				JSON.stringify({
+					...mailboxDelivery,
+					data: {
+						...mailboxDelivery.data,
+						mailbox: { ...mailboxDelivery.data.mailbox, status: 'suspended' },
+					},
+				}),
+			);
+			const mailbox =
+				await corsair.inboxkit.db.mailboxes.findByEntityId(MAILBOX_UID);
+			expect(mailbox?.data).toMatchObject({
+				status: 'suspended',
+				domain_name: 'example.com',
+				sequencer_status: 'connected',
+				forwarding_email: 'fwd@example.com',
+			});
+
+			fetchMock.mockResolvedValueOnce(jsonResponse({ domains: [domainRow] }));
+			await corsair.inboxkit.api.domains.list({});
+			await processWebhook(
+				corsair,
+				signedHeaders('domain.status_changed'),
+				JSON.stringify(domainDelivery),
+			);
+			const domain =
+				await corsair.inboxkit.db.domains.findByEntityId(DOMAIN_UID);
+			expect(domain?.data).toMatchObject({
+				assigned_mailboxes: 2,
+				nameserver_match_status: 'matched',
+			});
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it("saves the domain from a mailbox event's metadata when no list has run", async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			await processWebhook(
+				corsair,
+				signedHeaders('mailbox.status_changed'),
+				JSON.stringify(mailboxDelivery),
+			);
+			const mailbox =
+				await corsair.inboxkit.db.mailboxes.findByEntityId(MAILBOX_UID);
+			expect(mailbox?.data).toMatchObject({ domain_name: 'example.com' });
 		} finally {
 			testDb.cleanup();
 		}

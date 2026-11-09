@@ -113,17 +113,7 @@ export const SequencersInputSchemas = {
 					'Target reply rate for warmup emails, as a percentage (0–100). Requires a valid API key.',
 				),
 			warmup_increment: z
-				.enum([
-					'"1"',
-					'"2"',
-					'"3"',
-					'"4"',
-					'"5"',
-					'"6"',
-					'"7"',
-					'"8"',
-					'"disabled',
-				])
+				.enum(['1', '2', '3', '4', '5', '6', '7', '8', 'disable', 'disabled'])
 				.optional()
 				.describe(
 					'How many additional warmup emails to add each day. For Smartlead the minimum is "5". For Instantly the maximum is "4". Requires a valid API key.',
@@ -133,12 +123,6 @@ export const SequencersInputSchemas = {
 				.optional()
 				.describe(
 					"Automatically reconnect mailboxes to this sequencer if they get disconnected. Setting this to true requires an API key on the sequencer (the platform's API is used to perform the reconnect).",
-				),
-			auto_export_enabled: z
-				.boolean()
-				.optional()
-				.describe(
-					'Automatically export newly added mailboxes into this sequencer.',
 				),
 		})
 		.strict(),
@@ -183,12 +167,6 @@ export const SequencersInputSchemas = {
 				.optional()
 				.describe(
 					'Automatically reconnect mailboxes to this sequencer if they get disconnected. Setting this to true requires the sequencer to have an API key (either already saved or supplied in this request).',
-				),
-			auto_export_enabled: z
-				.boolean()
-				.optional()
-				.describe(
-					'Automatically export newly added mailboxes into this sequencer.',
 				),
 		})
 		.strict(),

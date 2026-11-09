@@ -46,6 +46,14 @@ afterEach(() => {
 	jest.restoreAllMocks();
 });
 
+describe('the signature fixture', () => {
+	it('is sha256= and the SHA-256 of the key', () => {
+		expect(SIGNATURE).toBe(
+			`sha256=${createHash('sha256').update(API_KEY).digest('hex')}`,
+		);
+	});
+});
+
 describe('verifyInboxkitSignature', () => {
 	const headers = (signature: string) => ({
 		'x-inboxkit-signature': signature,
@@ -230,6 +238,21 @@ describe('handlers', () => {
 		).resolves.toMatchObject({ success: true });
 	});
 
+	it('throw when the local save fails, so InboxKit delivers the event again', async () => {
+		const db = {
+			domains: {
+				findByEntityId: jest.fn().mockResolvedValue(null),
+				upsertByEntityId: jest.fn().mockRejectedValue(new Error('disk full')),
+			},
+		};
+		await expect(
+			StatusWebhooks.domainStatusChanged.handler(
+				ctx(API_KEY, db),
+				request(domainDelivery),
+			),
+		).rejects.toThrow('disk full');
+	});
+
 	it('handle consent and client ID requests', async () => {
 		await expect(
 			StatusWebhooks.consentRequestStatusChanged.handler(
@@ -287,8 +310,9 @@ describe('mailbox credentials go no further than the handler', () => {
 
 	it('does not store them', async () => {
 		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const findByEntityId = jest.fn().mockResolvedValue(null);
 		await StatusWebhooks.mailboxStatusChanged.handler(
-			ctx(API_KEY, { mailboxes: { upsertByEntityId } }),
+			ctx(API_KEY, { mailboxes: { findByEntityId, upsertByEntityId } }),
 			request(mailboxDelivery),
 		);
 		expect(upsertByEntityId).toHaveBeenCalledTimes(1);

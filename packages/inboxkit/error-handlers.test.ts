@@ -111,7 +111,7 @@ describe('nothing that is not a read is ever sent twice', () => {
 					input?: unknown,
 					// unknown: a test double; the real types add nothing to this check.
 				) => Promise<unknown>
-			)(ctx, route.input)
+			)(ctx, { ...route.input })
 		);
 	};
 

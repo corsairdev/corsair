@@ -18,6 +18,8 @@ export const list = z.array(z.unknown()).nullish();
 export const freeForm = () => z.record(z.string(), z.unknown());
 // unknown: a value the docs leave untyped, or give several shapes.
 export const untyped = z.unknown().optional();
+// unknown: an input the docs leave untyped, passed to InboxKit as given.
+export const anyValue = z.unknown();
 /** For the few routes whose docs show no response fields. */
 export const looseResult = z.object({}).loose();
 

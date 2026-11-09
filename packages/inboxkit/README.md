@@ -25,7 +25,7 @@ pnpm add @corsair-dev/inboxkit
 | `billing.listTransactions` | `inboxkit.api.billing.listTransactions` | `read` | Wallet transactions, newest first, with the balance after each one. Send next_cursor back as cursor for the next page. |
 | `billing.updateAutoTopup` | `inboxkit.api.billing.updateAutoTopup` | `destructive` | CAN SPEND MONEY. Turn automatic wallet top-ups on or off and set the threshold and amount. While on, InboxKit charges the saved card with no further call. |
 | `clientIdRequests.getStatus` | `inboxkit.api.clientIdRequests.getStatus` | `read` | Current status of a client ID request. Microsoft stays processing for minutes, so poll. |
-| `clientIdRequests.initiate` | `inboxkit.api.clientIdRequests.initiate` | `write` | Authorize an app's client ID on a domain, as a trusted app or with domain-wide delegation on Google, or tenant-wide consent on Microsoft. The domain needs an admin mailbox. |
+| `clientIdRequests.initiate` | `inboxkit.api.clientIdRequests.initiate` | `destructive` | Authorize an app's client ID on a domain, as a trusted app or with domain-wide delegation on Google, or tenant-wide consent on Microsoft. This can give the app access to every mailbox on the domain. The domain needs an admin mailbox. |
 | `clientIdRequests.list` | `inboxkit.api.clientIdRequests.list` | `read` | Client ID requests, filtered by status or domain. |
 | `cloudflare.connect` | `inboxkit.api.cloudflare.connect` | `write` | Connect domains from a Cloudflare account, using an API token or global API key. Limited to 10 requests per 5 minutes. |
 | `cloudflare.disconnect` | `inboxkit.api.cloudflare.disconnect` | `destructive` | Disconnect Cloudflare domains from the workspace. |
@@ -33,12 +33,12 @@ pnpm add @corsair-dev/inboxkit
 | `cloudflare.list` | `inboxkit.api.cloudflare.list` | `read` | Domains connected through Cloudflare. |
 | `cloudflare.listZones` | `inboxkit.api.cloudflare.listZones` | `read` | Zones in the connected Cloudflare account. |
 | `consentRequests.getStatus` | `inboxkit.api.consentRequests.getStatus` | `read` | Current status of a consent request. |
-| `consentRequests.initiate` | `inboxkit.api.consentRequests.initiate` | `write` | Start an OAuth consent request for a mailbox, by uid or username and domain. |
+| `consentRequests.initiate` | `inboxkit.api.consentRequests.initiate` | `destructive` | Process an OAuth consent URL for a mailbox, by uid or username and domain, which can give that app access to the mailbox. |
 | `consentRequests.list` | `inboxkit.api.consentRequests.list` | `read` | Consent requests, filtered by mailbox or status. |
 | `dns.add` | `inboxkit.api.dns.add` | `write` | Add DNS records to a domain. |
 | `dns.deleteRecords` | `inboxkit.api.dns.deleteRecords` | `destructive` | Delete DNS records from a domain, by id or all of them. Removing MX, SPF, DKIM or DMARC records stops mail from working. |
 | `dns.list` | `inboxkit.api.dns.list` | `read` | DNS records of one domain, by name or uid. |
-| `dns.repair` | `inboxkit.api.dns.repair` | `write` | Fix missing or broken email DNS records on one or more domains. |
+| `dns.repair` | `inboxkit.api.dns.repair` | `destructive` | Fix missing or broken email DNS records on one or more domains. Run dns.verify first to see what would change. |
 | `dns.update` | `inboxkit.api.dns.update` | `write` | Update DNS records on a domain. |
 | `dns.verify` | `inboxkit.api.dns.verify` | `read` | Check the health of the email DNS records of one or more domains. Nothing changes. |
 | `domains.checkAvailability` | `inboxkit.api.domains.checkAvailability` | `read` | Whether one domain can be registered, with its price and ban status. Takes no workspace. |
@@ -147,7 +147,7 @@ pnpm add @corsair-dev/inboxkit
 | `mailboxes.resetup` | `inboxkit.api.mailboxes.resetup` | `destructive` | Schedule a renewal-resetup for Google Workspace mailboxes. Mail delivery on the domain is paused for up to 24 hours while it runs. |
 | `mailboxes.showCredentials` | `inboxkit.api.mailboxes.showCredentials` | `destructive` | A mailbox's plaintext password, secret and app password, by uid or email. Keep the result out of logs and shared chats. |
 | `mailboxes.uncancel` | `inboxkit.api.mailboxes.uncancel` | `destructive` | CAN SPEND MONEY. Undo a scheduled cancellation for Google Workspace mailboxes within the 10-day recovery window, so billing continues. |
-| `mailboxes.update` | `inboxkit.api.mailboxes.update` | `write` | Update a mailbox's name, username, profile picture or tags. |
+| `mailboxes.update` | `inboxkit.api.mailboxes.update` | `write` | Update a mailbox's first or last name, profile picture or tags. To change its address, use mailboxes.changeUsername. |
 | `mailboxes.updateProfilePicture` | `inboxkit.api.mailboxes.updateProfilePicture` | `write` | Set a mailbox's profile picture from a URL. |
 | `orders.place` | `inboxkit.api.orders.place` | `destructive` | SPENDS MONEY. Order new domains and their mailboxes in one request, charged to the wallet. Never repeat after a timeout without checking domains.list first. |
 | `prewarm.buy` | `inboxkit.api.prewarm.buy` | `destructive` | SPENDS MONEY. Buy prewarmed domains with every active mailbox on them, charged to the wallet when the order is placed. Never repeat after a timeout without checking first. |
@@ -155,14 +155,14 @@ pnpm add @corsair-dev/inboxkit
 | `prewarm.getOrderStatus` | `inboxkit.api.prewarm.getOrderStatus` | `read` | Status of a prewarmed domain order. |
 | `prewarm.searchDomains` | `inboxkit.api.prewarm.searchDomains` | `read` | Search prewarmed domains for sale. |
 | `prewarm.searchMailboxes` | `inboxkit.api.prewarm.searchMailboxes` | `read` | Search prewarmed mailboxes for sale. |
-| `sequencers.add` | `inboxkit.api.sequencers.add` | `write` | Connect a sequencer account such as Instantly, Smartlead or Lemlist, using the fields sequencers.listPlatforms names. |
+| `sequencers.add` | `inboxkit.api.sequencers.add` | `write` | Connect a sequencer account such as Instantly, Smartlead or Lemlist, using the fields sequencers.listPlatforms names. Nothing is sent to it until sequencers.exportMailboxes. |
 | `sequencers.delete` | `inboxkit.api.sequencers.delete` | `destructive` | Remove sequencers from the workspace. Mailboxes can no longer be exported to them. |
-| `sequencers.exportMailboxes` | `inboxkit.api.sequencers.exportMailboxes` | `write` | Send mailboxes into a sequencer, which receives their credentials. Runs in the background; follow it with sequencers.getExportStatus. |
+| `sequencers.exportMailboxes` | `inboxkit.api.sequencers.exportMailboxes` | `destructive` | Send mailboxes into a sequencer, which receives their credentials. Runs in the background; follow it with sequencers.getExportStatus. |
 | `sequencers.getExportStatus` | `inboxkit.api.sequencers.getExportStatus` | `read` | Status of mailbox exports, with the error if a connection failed. |
 | `sequencers.getTags` | `inboxkit.api.sequencers.getTags` | `read` | Tags on a sequencer account, using its platform and API key. Only Instantly has them today. |
 | `sequencers.list` | `inboxkit.api.sequencers.list` | `read` | Sequencers connected to the workspace, filtered by platform, status, keyword or uid. |
 | `sequencers.listPlatforms` | `inboxkit.api.sequencers.listPlatforms` | `read` | Every sequencer platform InboxKit supports, with the fields each one needs to connect. |
-| `sequencers.update` | `inboxkit.api.sequencers.update` | `write` | Rename a sequencer, rotate its credentials or change its auto-reconnect and auto-export settings. |
+| `sequencers.update` | `inboxkit.api.sequencers.update` | `write` | Rename a sequencer, rotate its credentials or change its auto-reconnect setting. |
 | `sequencers.verifyLemlistOtp` | `inboxkit.api.sequencers.verifyLemlistOtp` | `write` | Resume a Lemlist connection paused with verification_required, using the link and code from its email. |
 | `tags.assign` | `inboxkit.api.tags.assign` | `write` | Add, remove or replace tags on domains or mailboxes in bulk. |
 | `tags.create` | `inboxkit.api.tags.create` | `write` | Create a tag in the workspace. |
@@ -186,7 +186,7 @@ pnpm add @corsair-dev/inboxkit
 | `warmup.pause` | `inboxkit.api.warmup.pause` | `write` | Pause warmup for mailboxes. |
 | `warmup.resume` | `inboxkit.api.warmup.resume` | `write` | Resume warmup for mailboxes. |
 | `warmup.updateSettings` | `inboxkit.api.warmup.updateSettings` | `write` | Change warmup settings for mailboxes. Only the settings you send change. |
-| `workspaces.create` | `inboxkit.api.workspaces.create` | `write` | Create a workspace, with an optional webhook URL. All team members are copied into it unless admins_only is set. |
+| `workspaces.create` | `inboxkit.api.workspaces.create` | `write` | Create a workspace. All team members are copied into it unless admins_only is set. Set a webhook URL afterwards with workspaces.updateWebhook. |
 | `workspaces.delete` | `inboxkit.api.workspaces.delete` | `destructive` | Delete a workspace permanently. |
 | `workspaces.get` | `inboxkit.api.workspaces.get` | `read` | One workspace by uid. |
 | `workspaces.inviteMember` | `inboxkit.api.workspaces.inviteMember` | `destructive` | Invite someone to a workspace, or resend an invite. Sends them an email and gives them access to its domains and mailboxes. |

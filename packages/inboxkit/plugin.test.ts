@@ -7,6 +7,7 @@ import {
 import { inboxkit, inboxkitEndpointSchemas } from './index';
 import { InboxkitSchema } from './schema';
 import {
+	GRANTS_ACCESS,
 	RETURNS_SECRETS,
 	SENDS_ELSEWHERE,
 	SPENDS_MONEY,
@@ -127,9 +128,39 @@ describe('risk levels', () => {
 	});
 
 	it.each(SENDS_ELSEWHERE.map((path) => [path]))(
-		'%s can send mail or credentials elsewhere, so it is never a read',
+		'%s can send mail or credentials elsewhere, so cautious mode asks',
 		(path) => {
-			expect(entryFor(path).riskLevel).not.toBe('read');
+			expect(entryFor(path).riskLevel).toBe('destructive');
+		},
+	);
+
+	it.each(GRANTS_ACCESS.map((path) => [path]))(
+		'%s gives a person or an app access to mailboxes, so cautious mode asks',
+		(path) => {
+			expect(entryFor(path).riskLevel).toBe('destructive');
+		},
+	);
+
+	it('has found every way access is granted', () => {
+		expect([...GRANTS_ACCESS].sort()).toEqual([
+			'clientIdRequests.initiate',
+			'consentRequests.initiate',
+			'workspaces.inviteMember',
+		]);
+	});
+
+	it.each([
+		['mailboxes.cancel'],
+		['dns.repair'],
+		['sequencers.exportMailboxes'],
+	])("%s is on InboxKit's own confirm-first list", (path) => {
+		expect(entryFor(path).riskLevel).toBe('destructive');
+	});
+
+	it.each([['dns.add'], ['dns.update']])(
+		'%s stays a write, as on our other DNS plugins',
+		(path) => {
+			expect(entryFor(path).riskLevel).toBe('write');
 		},
 	);
 
@@ -141,6 +172,101 @@ describe('risk levels', () => {
 			if (entry.riskLevel === 'read' && !allowed.has(path)) {
 				expect(path).not.toMatch(verbs);
 			}
+		}
+	});
+});
+
+describe('inputs', () => {
+	const input = (operation: string) =>
+		inboxkitEndpointSchemas[operation as keyof typeof inboxkitEndpointSchemas]
+			.input;
+
+	it.each([
+		['workspaces.create', { name: 'n', webhook_url: 'https://example.com' }],
+		['mailboxes.update', { uid: 'u', user_name: 'new' }],
+		[
+			'sequencers.add',
+			{
+				name: 'n',
+				platform: 'instantly',
+				sequencer_login: 'l',
+				sequencer_password: 'p',
+				auto_export_enabled: true,
+			},
+		],
+		[
+			'sequencers.update',
+			{ uid: 'u', name: 'n', platform: 'instantly', auto_export_enabled: true },
+		],
+	])(
+		'%s leaves out the field that needs approval elsewhere',
+		(operation, args) => {
+			expect(input(operation).safeParse(args).success).toBe(false);
+		},
+	);
+
+	const sequencer = (warmup_increment: string) => ({
+		name: 'n',
+		platform: 'instantly',
+		sequencer_login: 'l',
+		sequencer_password: 'p',
+		warmup_increment,
+	});
+
+	it.each(['1', '4', '8', 'disable', 'disabled'])(
+		'takes warmup_increment %s, without the stray quotes in the docs',
+		(value) => {
+			expect(input('sequencers.add').safeParse(sequencer(value)).success).toBe(
+				true,
+			);
+		},
+	);
+
+	it.each(['"4"', '"disabled', '9'])('refuses warmup_increment %s', (value) => {
+		expect(input('sequencers.add').safeParse(sequencer(value)).success).toBe(
+			false,
+		);
+	});
+
+	it('prewarm.buy takes domains as objects, with mailbox changes', () => {
+		expect(
+			input('prewarm.buy').safeParse({
+				domains: [
+					{
+						domain_name: 'example.com',
+						domain_redirect_url: 'https://example.org',
+						mailboxes: [{ username: 'jane', new_username: 'j.doe' }],
+					},
+				],
+			}).success,
+		).toBe(true);
+		expect(
+			input('prewarm.buy').safeParse({ domains: ['example.com'] }).success,
+		).toBe(false);
+	});
+
+	it.each([
+		['a keyword', { num: 3, keyword: 'acme' }],
+		['a domain', { num: 3, domain: 'example.com' }],
+		['both, with a page', { page: 2, num: 3, keyword: 'a', domain: 'b.com' }],
+	])('domains.search takes %s', (_label, args) => {
+		expect(input('domains.search').safeParse(args).success).toBe(true);
+	});
+
+	it('domains.search refuses neither, as the API does', () => {
+		expect(input('domains.search').safeParse({ num: 3 }).success).toBe(false);
+	});
+});
+
+describe('a response that fits nothing', () => {
+	it('still fits every output type once it is under raw', () => {
+		for (const [operation, schemas] of Object.entries(
+			inboxkitEndpointSchemas,
+		)) {
+			expect([
+				operation,
+				schemas.output.safeParse({ parse_warning: 'x', raw: { a: 1 } }).success,
+			]).toEqual([operation, true]);
 		}
 	});
 });

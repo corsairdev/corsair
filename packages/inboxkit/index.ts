@@ -1388,7 +1388,7 @@ const inboxkitEndpointMeta = {
 	'workspaces.create': {
 		riskLevel: 'write',
 		description:
-			'Create a workspace, with an optional webhook URL. All team members are copied into it unless admins_only is set.',
+			'Create a workspace. All team members are copied into it unless admins_only is set. Set a webhook URL afterwards with workspaces.updateWebhook.',
 	},
 	'workspaces.update': {
 		riskLevel: 'destructive',
@@ -1581,9 +1581,9 @@ const inboxkitEndpointMeta = {
 			'Check the health of the email DNS records of one or more domains. Nothing changes.',
 	},
 	'dns.repair': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Fix missing or broken email DNS records on one or more domains.',
+			'Fix missing or broken email DNS records on one or more domains. Run dns.verify first to see what would change.',
 	},
 	'mailboxes.list': {
 		riskLevel: 'read',
@@ -1632,7 +1632,8 @@ const inboxkitEndpointMeta = {
 	},
 	'mailboxes.update': {
 		riskLevel: 'write',
-		description: "Update a mailbox's name, username, profile picture or tags.",
+		description:
+			"Update a mailbox's first or last name, profile picture or tags. To change its address, use mailboxes.changeUsername.",
 	},
 	'mailboxes.updateProfilePicture': {
 		riskLevel: 'write',
@@ -1739,12 +1740,12 @@ const inboxkitEndpointMeta = {
 	'sequencers.add': {
 		riskLevel: 'write',
 		description:
-			'Connect a sequencer account such as Instantly, Smartlead or Lemlist, using the fields sequencers.listPlatforms names.',
+			'Connect a sequencer account such as Instantly, Smartlead or Lemlist, using the fields sequencers.listPlatforms names. Nothing is sent to it until sequencers.exportMailboxes.',
 	},
 	'sequencers.update': {
 		riskLevel: 'write',
 		description:
-			'Rename a sequencer, rotate its credentials or change its auto-reconnect and auto-export settings.',
+			'Rename a sequencer, rotate its credentials or change its auto-reconnect setting.',
 	},
 	'sequencers.delete': {
 		riskLevel: 'destructive',
@@ -1752,7 +1753,7 @@ const inboxkitEndpointMeta = {
 			'Remove sequencers from the workspace. Mailboxes can no longer be exported to them.',
 	},
 	'sequencers.exportMailboxes': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Send mailboxes into a sequencer, which receives their credentials. Runs in the background; follow it with sequencers.getExportStatus.',
 	},
@@ -1832,9 +1833,9 @@ const inboxkitEndpointMeta = {
 			'Disconnect a mailbox you connected yourself and cancel its warmup. Connecting it again charges a new first month.',
 	},
 	'consentRequests.initiate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Start an OAuth consent request for a mailbox, by uid or username and domain.',
+			'Process an OAuth consent URL for a mailbox, by uid or username and domain, which can give that app access to the mailbox.',
 	},
 	'consentRequests.getStatus': {
 		riskLevel: 'read',
@@ -1845,9 +1846,9 @@ const inboxkitEndpointMeta = {
 		description: 'Consent requests, filtered by mailbox or status.',
 	},
 	'clientIdRequests.initiate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			"Authorize an app's client ID on a domain, as a trusted app or with domain-wide delegation on Google, or tenant-wide consent on Microsoft. The domain needs an admin mailbox.",
+			"Authorize an app's client ID on a domain, as a trusted app or with domain-wide delegation on Google, or tenant-wide consent on Microsoft. This can give the app access to every mailbox on the domain. The domain needs an admin mailbox.",
 	},
 	'clientIdRequests.getStatus': {
 		riskLevel: 'read',
