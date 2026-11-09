@@ -274,6 +274,7 @@ export const BaseProviders = [
 	'imagior',
 	'imejisio',
 	'imgbb',
+	'inboxkit',
 	'insightoai',
 	'instagram',
 	'instantly',
@@ -714,6 +715,7 @@ export const ProviderDisplayNames = {
 	imagior: 'Imagior',
 	imejisio: 'Imejis.io',
 	imgbb: 'ImgBB',
+	inboxkit: 'InboxKit',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	instantly: 'Instantly',
@@ -1158,6 +1160,7 @@ export type AllProviders =
 	| 'imagior'
 	| 'imejisio'
 	| 'imgbb'
+	| 'inboxkit'
 	| 'insightoai'
 	| 'instagram'
 	| 'instantly'
