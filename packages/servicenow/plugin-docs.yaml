@@ -10,7 +10,9 @@ overviewNote: |
   Things to know before you call:
 
   - **Tables are not typed.** Every instance extends the base tables with its own columns, and `sysparm_fields` decides what comes back, so a record is an open map of fields. Read the base columns for a table before writing to it.
-  - **Every success is `{ result }`.** A read returns `result` as an object, a list as an array. A failure returns `{ error: { message, detail }, status: "failure" }` with a real HTTP status, so the plugin throws a `ServicenowAPIError` carrying both `message` and `detail`.
+  - **Every success is `{ result }`.** A read returns `result` as an object, a list as an array. A failure returns `{ error: { message, detail }, status: "failure" }` with a real HTTP status, so the plugin throws a `ServicenowAPIError` carrying both `message` and `detail`. `detail` can be `null`.
+  - **A table name that does not exist is a 400, not a 404.** The answer is `{"error":{"message":"Invalid table <name>","detail":null}}`, so the plugin matches it by message as `INVALID_TABLE_ERROR`; a 404 means a record is missing or an ACL hides it.
+  - **Reference fields are objects.** A column like `super_class` or `caller_id` arrives as `{ link, value }` by default and as a bare sys_id only with `sysparm_exclude_reference_link=true`, so both shapes are accepted.
   - **Paging is offset-based.** Pass `sysparm_limit` and `sysparm_offset`; there is no cursor. ServiceNow caps a response at 10,000 records by default, so a large table needs several calls. `records.list` returns the records it received, not a total.
   - **`sysparm_query` is its own syntax.** An encoded query joins conditions with `^`, as in `active=true^priority=1^ORDERBYDESCsys_created_on`. Operators include `= != > < >= <= LIKE STARTSWITH ENDSWITH IN ISEMPTY ISNOTEMPTY BETWEEN`.
   - **Writes run business rules.** A create or update fires the table's business rules, notifications and flows, so a write can change more than the fields you sent.
@@ -47,7 +49,7 @@ apiExamples:
     call: "{ sysparm_limit: 50 }"
 apiNotes:
   records.list: |
-    Answers `{ records: [...] }` from the `result` array. `sysparm_display_value` takes `false` for raw values, `true` for display values, or `all` for both; each value is a string or an object, so a record stays an open map. Setting `sysparm_no_count` skips the total and is faster on a large table.
+    Answers `{ records: [...] }` from the `result` array. Every raw value is a string, including numbers and booleans (`state: "2"`, `active: "true"`), and a reference field is an object unless `sysparm_exclude_reference_link` is set. `sysparm_display_value` takes `false` for raw values, `true` for display values, or `all` for both; each value is a string or an object, so a record stays an open map. Setting `sysparm_no_count` skips the total and is faster on a large table.
   records.get: |
     Answers the record object directly from `result`. Reference fields come back as objects with `value` and `link` unless `sysparm_exclude_reference_link` is set.
   records.create: |

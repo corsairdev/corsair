@@ -131,7 +131,7 @@ await corsair.servicenow.api.records.list({ table: 'incident', sysparm_query: 'a
 | `sysparm_limit` | `number` | No | Records per page. ServiceNow defaults to 10000 when omitted |
 | `sysparm_offset` | `number` | No | Records to skip. Add sysparm_limit per page to walk a table |
 
-Answers `{ records: [...] }` from the `result` array. `sysparm_display_value` takes `false` for raw values, `true` for display values, or `all` for both; each value is a string or an object, so a record stays an open map. Setting `sysparm_no_count` skips the total and is faster on a large table.
+Answers `{ records: [...] }` from the `result` array. Every raw value is a string, including numbers and booleans (`state: "2"`, `active: "true"`), and a reference field is an object unless `sysparm_exclude_reference_link` is set. `sysparm_display_value` takes `false` for raw values, `true` for display values, or `all` for both; each value is a string or an object, so a record stays an open map. Setting `sysparm_no_count` skips the total and is faster on a large table.
 
 
 
@@ -195,6 +195,7 @@ await corsair.servicenow.api.tables.list({ sysparm_limit: 50 });
 |------|------|----------|-------------|
 | `sysparm_query` | `string` | No | Encoded query, e.g. "active=true^priority=1^ORDERBYDESCsys_created_on". Operators: = != &gt; &lt; &gt;= &lt;= LIKE STARTSWITH ENDSWITH IN ISEMPTY ISNOTEMPTY BETWEEN |
 | `sysparm_fields` | `string` | No | Comma-separated fields to return, e.g. "number,short_description,state" |
+| `sysparm_exclude_reference_link` | `boolean` | No | Return a reference column as a bare sys_id instead of &#123; link, value &#125; |
 | `sysparm_limit` | `number` | No | Records per page. ServiceNow defaults to 10000 when omitted |
 | `sysparm_offset` | `number` | No | Records to skip. Add sysparm_limit per page to walk a table |
 
@@ -215,7 +216,10 @@ Reads `sys_db_object`, the table that describes every table, selecting `name`, `
 {
   name: string,
   label?: string | null,
-  super_class?: string | null,
+  super_class?: string | {
+    link?: string | null,
+    value?: string | null
+  } | null,
   sys_id?: string | null
 }[]
 ```
