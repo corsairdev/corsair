@@ -19,8 +19,17 @@ type Entry = {
 };
 const handlers = errorHandlers as unknown as Record<HandlerName, Entry>; // unknown: see Entry.
 
-// unknown: the handlers read only the error; core builds the real context.
+// unknown: the handlers read only the error and the operation; core builds the
+// rest of the context.
 const context = {} as ErrorContext;
+
+/** The one operation that spends credits, so replay safety depends on it. */
+const submissionContext = {
+	pluginId: 'dropcontact',
+	operation: 'enrichment.enrich',
+	input: {},
+	originalError: new Error('unused'),
+} as ErrorContext;
 
 /** Mirrors core: the first handler whose match() passes, in key order. */
 function classify(error: Error): HandlerName {
@@ -125,7 +134,7 @@ describe('RATE_LIMIT_ERROR', () => {
 });
 
 describe('SERVER_ERROR', () => {
-	it('replays a 5xx', async () => {
+	it('replays a 5xx on a read', async () => {
 		const error = apiError(503, { detail: 'Service Unavailable' });
 		expect(classify(error)).toBe('SERVER_ERROR');
 		expect(await strategy(error)).toEqual({
@@ -134,31 +143,55 @@ describe('SERVER_ERROR', () => {
 		});
 	});
 
+	it('does not replay a 5xx on the submission', async () => {
+		// A 5xx can arrive after Dropcontact accepted the batch, so a replay would
+		// spend the credits twice and create a second request_id.
+		const error = apiError(503, { detail: 'Service Unavailable' });
+		expect(
+			await handlers.SERVER_ERROR?.handler(error, submissionContext),
+		).toEqual({ maxRetries: 0, retryStrategy: 'exponential_backoff' });
+	});
+
 	it('does not catch a 4xx', async () => {
 		expect(classify(apiError(400, tooManyRecords))).not.toBe('SERVER_ERROR');
 	});
 });
 
 describe('TIMEOUT_ERROR and NETWORK_ERROR', () => {
-	it('replays a dropped GET', async () => {
+	it('replays a dropped read', async () => {
 		const error = apiError(undefined, {}, { method: 'GET' });
 		error.name = 'TimeoutError';
 		expect(classify(error)).toBe('TIMEOUT_ERROR');
-		expect(await strategy(error)).toEqual({ maxRetries: 2 });
+		expect(await handlers.TIMEOUT_ERROR?.handler(error, context)).toEqual({
+			maxRetries: 2,
+		});
 	});
 
-	it('does not replay a dropped write', async () => {
+	it('does not replay a dropped submission', async () => {
 		// Enrichment spends credits, so a request that may have landed is not
 		// sent again.
 		const error = apiError(undefined, {}, { method: 'POST' });
 		expect(classify(error)).toBe('NETWORK_ERROR');
-		expect(await strategy(error)).toEqual({ maxRetries: 0 });
+		expect(
+			await handlers.NETWORK_ERROR?.handler(error, submissionContext),
+		).toEqual({ maxRetries: 0 });
 	});
 
-	it('replays a dropped PUT only through the network handler rules', async () => {
+	it('does not replay a dropped PUT either', async () => {
+		// webhook.set is idempotent, but a dropped connection may or may not have
+		// landed, and the caller can read it back with webhook.get.
 		const error = apiError(undefined, {}, { method: 'PUT' });
 		expect(classify(error)).toBe('NETWORK_ERROR');
-		expect(await strategy(error)).toEqual({ maxRetries: 0 });
+		expect(await handlers.NETWORK_ERROR?.handler(error, context)).toEqual({
+			maxRetries: 2,
+		});
+	});
+
+	it('does not replay a dropped timeout on the submission', async () => {
+		const error = apiError(408, {}, { method: 'POST' });
+		expect(
+			await handlers.TIMEOUT_ERROR?.handler(error, submissionContext),
+		).toEqual({ maxRetries: 0 });
 	});
 });
 

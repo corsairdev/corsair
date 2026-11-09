@@ -87,23 +87,40 @@ export const results: DropcontactEndpoints['enrichmentResults'] = (
 			shape: (raw) => {
 				const record = asRecord(raw) ?? {};
 				const { error, success, creditsLeft } = envelopeOf(raw);
-				// The spec defaults this to true, so a body without it succeeded.
-				const succeeded = success ?? true;
+				const data = dataOf(raw);
+				const records = Array.isArray(data) ? data : [];
+
+				// A body that carries neither success nor the data field is not a
+				// finished batch. This guards against a 2xx from a proxy or a
+				// truncated response being reported as `ready`.
+				const hasBatchData = Array.isArray(data);
+				const hasEnvelope = typeof success === 'boolean';
+
 				// The provider only sets `status` when `force_results` is passed, so
 				// it is derived here when absent. That keeps it readable on every
 				// poll, which is what the declared job follows.
-				const status =
-					typeof record.status === 'string'
-						? record.status
-						: succeeded
-							? 'ready'
-							: 'in_progress';
+				const providerStatus =
+					typeof record.status === 'string' ? record.status : undefined;
+				// ready needs both a successful envelope and batch data. Without
+				// them the batch stays pending: `success` may be true while a forced
+				// read is still `in_progress`.
+				const finished =
+					providerStatus !== undefined
+						? providerStatus === 'ready'
+						: hasEnvelope
+							? success === true && hasBatchData
+							: false;
+				const status = providerStatus ?? (finished ? 'ready' : 'in_progress');
+
 				return {
-					records: dataOf(raw) ?? [],
+					records,
 					status,
-					reason: record.reason,
+					reason:
+						record.reason ??
+						(hasEnvelope ? undefined : 'Dropcontact sent no success flag'),
 					error,
-					success: succeeded,
+					// A body with no success flag is not treated as a success.
+					success: success ?? false,
 					creditsLeft,
 				};
 			},
@@ -147,11 +164,19 @@ export const getWebhook: DropcontactEndpoints['webhookGet'] = (ctx, input) =>
 		input,
 		() => ({ method: 'GET', path: '/v1/enrich/webhook' }),
 		{
-			shape: (raw) => ({
-				callback_url: asRecord(raw)?.callback_url,
-				...envelopeOf(raw),
+			shape: (raw) => {
+				// An account that is not set up, or has no callback, can answer
+				// success: false; that is a provider error, not "unconfigured".
+				throwIfFailed(raw);
+				return {
+					callback_url: asRecord(raw)?.callback_url,
+					...envelopeOf(raw),
+				};
+			},
+			log: (_, result) => ({
+				// An omitted callback_url is as unconfigured as a null one.
+				configured: result.callback_url != null,
 			}),
-			log: (_, result) => ({ configured: result.callback_url !== null }),
 		},
 	);
 

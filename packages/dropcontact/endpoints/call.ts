@@ -12,6 +12,23 @@ import {
 type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
+ * The two encryption fields the runtime adds to a plugin context but
+ * `CorsairPluginContext` does not declare.
+ *
+ * `logEventFromContext` reads them the same way, through its own structural
+ * `EventLoggingContext`, so this mirrors that rather than casting to a type the
+ * core does not export.
+ */
+function unsafeEncryptionConfig(ctx: DropcontactContext): {
+	encryptDataAtRest?: boolean;
+	kek?: string;
+} {
+	// unknown: the fields are absent from the declared context type but present
+	// at runtime, so the shape is stated here instead of widened on the context.
+	return ctx as unknown as { encryptDataAtRest?: boolean; kek?: string };
+}
+
+/**
  * Validates the input, sends the request, shapes and validates the response,
  * then logs the event.
  *
@@ -35,6 +52,18 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
+
+	// Checked before the request, not after it. logEventFromContext throws when
+	// encryptDataAtRest is on and no kek was configured, and for the enrich route
+	// that would happen once Dropcontact had already accepted the batch and spent
+	// its credits. Failing here means the misconfiguration costs nothing.
+	const encryption = unsafeEncryptionConfig(ctx);
+	if (encryption.encryptDataAtRest && !encryption.kek) {
+		throw new Error(
+			`encryptDataAtRest is enabled but no kek is configured, so ${operation.event} was not sent.`,
+		);
+	}
+
 	const raw = await makeDropcontactRequest(ctx.key, toRequest(parsed));
 	const result = operation.output.parse(options.shape(raw, parsed));
 

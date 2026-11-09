@@ -157,7 +157,7 @@ await corsair.dropcontact.api.enrichment.results({ request_id: 'qzmxkpvlrtdnhwa'
 | `request_id` | `string` | Yes | The id `enrichment.enrich` returned. |
 | `force_results` | `boolean` | No | Return whatever has already been enriched instead of asking you to retry. Adds a `status` per record (`ready` or `in_progress`). |
 
-`success: false` with a `reason` means the batch is still processing, not that the call failed. Poll again in about 30 seconds, or pass `force_results: true` for the records already done.
+`status` says whether the batch is done: `in_progress` while Dropcontact is still working, `ready` once it has finished. `success` only says whether this read returned usable records, so a forced partial read can be `success: true` with `status: in_progress`. A `success: false` answer with a `reason` is a normal poll result, not a failure.
 
 
 
@@ -169,7 +169,7 @@ await corsair.dropcontact.api.enrichment.results({ request_id: 'qzmxkpvlrtdnhwa'
 | `creditsLeft` | `number \| null` | No | — |
 | `status` | `string` | Yes | `ready` once the batch has finished, `in_progress` while Dropcontact is still processing. Dropcontact sets this field only when `force_results` is passed, so it is derived from `success` otherwise. |
 | `error` | `boolean \| null` | No | — |
-| `success` | `boolean` | Yes | False while the batch is still processing. The call itself succeeds, so the endpoint returns rather than throwing. |
+| `success` | `boolean` | Yes | Whether this read returned usable records. It is not a completion flag: a forced partial read is successful with `status: in_progress`. A false value is a normal poll result while a batch runs, so the call returns rather than throwing. |
 | `reason` | `string \| null` | No | Present when `success` is false, such as "Request not ready yet". |
 
 <AccordionGroup>

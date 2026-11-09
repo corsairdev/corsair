@@ -137,6 +137,22 @@ const InputRecordSchema = z
 
 export type DropcontactInputRecord = z.infer<typeof InputRecordSchema>;
 
+/**
+ * Dropcontact's documented ceiling is 15 kB of data per record, `custom_fields`
+ * included, and it answers 400
+ * `Data size is too big, you can only submit up to 15 kB of data in a single record`.
+ *
+ * Measured as UTF-8 bytes of the serialized record, which is what goes on the
+ * wire. The provider does not say whether it counts bytes or characters; bytes
+ * is the stricter reading, so a record it accepts is never rejected here.
+ */
+export const DROPCONTACT_MAX_RECORD_BYTES = 15_000;
+
+/** UTF-8 byte length of one submitted record, as it will be serialized. */
+export function recordBytes(record: unknown): number {
+	return new TextEncoder().encode(JSON.stringify(record) ?? '').length;
+}
+
 /** Up to 15 kB of data per record, `custom_fields` included. */
 export const DROPCONTACT_MAX_RECORDS = 250;
 
@@ -145,42 +161,56 @@ export const DROPCONTACT_RATE_LIMIT_PER_SECOND = 60;
 
 // ── enrichment.enrich ───────────────────────────────────────────────────────
 
-const EnrichInputSchema = z.object({
-	data: z
-		.array(InputRecordSchema)
-		.min(1)
-		.max(
-			DROPCONTACT_MAX_RECORDS,
-			`Dropcontact accepts at most ${DROPCONTACT_MAX_RECORDS} records per request; split larger batches.`,
-		)
-		.describe(
-			`Up to ${DROPCONTACT_MAX_RECORDS} contacts. Enrichment runs as a batch, so the call returns a request_id rather than results.`,
-		),
-	siren: z
-		.boolean()
-		.optional()
-		.describe('Ask for French SIREN company data. Defaults to false.'),
-	language: z
-		.string()
-		.min(2)
-		.optional()
-		.describe(
-			'Language for the qualifications and civility in the result, such as "en" or "fr". Defaults to "fr".',
-		),
-	custom_callback_url: z
-		.url()
-		.max(2083)
-		.optional()
-		.describe(
-			'Where to POST the results once the batch finishes. Overrides the account default for this request only.',
-		),
-	hashed_inputs: z
-		.boolean()
-		.optional()
-		.describe(
-			'Ask for the hashed inputs in the response. Sent as the `hashedInputs` query parameter.',
-		),
-});
+const EnrichInputSchema = z
+	.object({
+		data: z
+			.array(InputRecordSchema)
+			.min(1)
+			.max(
+				DROPCONTACT_MAX_RECORDS,
+				`Dropcontact accepts at most ${DROPCONTACT_MAX_RECORDS} records per request; split larger batches.`,
+			)
+			.describe(
+				`Up to ${DROPCONTACT_MAX_RECORDS} contacts. Enrichment runs as a batch, so the call returns a request_id rather than results.`,
+			),
+		siren: z
+			.boolean()
+			.optional()
+			.describe('Ask for French SIREN company data. Defaults to false.'),
+		language: z
+			.string()
+			.min(2)
+			.optional()
+			.describe(
+				'Language for the qualifications and civility in the result, such as "en" or "fr". Defaults to "fr".',
+			),
+		custom_callback_url: z
+			.url()
+			.max(2083)
+			.optional()
+			.describe(
+				'Where to POST the results once the batch finishes. Overrides the account default for this request only.',
+			),
+		hashed_inputs: z
+			.boolean()
+			.optional()
+			.describe(
+				'Ask for the hashed inputs in the response. Sent as the `hashedInputs` query parameter.',
+			),
+	})
+	.superRefine((value, ctx) => {
+		// Checked at this level rather than per record, because only this level
+		// knows the index, which is what names the offending record.
+		value.data.forEach((record, index) => {
+			const bytes = recordBytes(record);
+			if (bytes <= DROPCONTACT_MAX_RECORD_BYTES) return;
+			ctx.addIssue({
+				code: 'custom',
+				path: ['data', index],
+				message: `Record ${index} is ${bytes} bytes; Dropcontact accepts at most ${DROPCONTACT_MAX_RECORD_BYTES} per record, custom_fields included.`,
+			});
+		});
+	});
 
 export type EnrichInput = z.input<typeof EnrichInputSchema>;
 
@@ -287,7 +317,7 @@ const ResultsResponseSchema = z.object({
 	success: z
 		.boolean()
 		.describe(
-			'False while the batch is still processing. The call itself succeeds, so the endpoint returns rather than throwing.',
+			'Whether this read returned usable records. It is not a completion flag: a forced partial read is successful with `status: in_progress`. A false value is a normal poll result while a batch runs, so the call returns rather than throwing.',
 		),
 	reason: z
 		.string()

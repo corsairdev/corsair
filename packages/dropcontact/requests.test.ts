@@ -14,6 +14,7 @@ import {
 	enrichWithHashedInputs,
 	enrichWithRecordWarnings,
 	resultsForcedInProgress,
+	resultsForcedReady,
 	resultsNotReady,
 	resultsOnlyContactData,
 	resultsOnlyOrganizationData,
@@ -37,7 +38,6 @@ const API_KEY = 'dc-test-key';
 // never parameters: every concrete endpoint is assignable to this because
 // parameters are contravariant. Each endpoint returns its own output type, so
 // the shared return is unknown.
-// unknown: each endpoint returns its own output type, so the shared return is unknown.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
 // Safe: the fake context carries only what the endpoints read (ctx.key).
@@ -166,6 +166,43 @@ describe('enrichment.enrich', () => {
 		const data = Array.from({ length: 251 }, () => ({ email: 'a@b.co' }));
 		await expect(invoke(enrich, { data })).rejects.toThrow(/250/);
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a record over 15 kB and names its index', async () => {
+		// The provider answers 400 "Data size is too big, you can only submit up to
+		// 15 kB of data in a single record", so the limit is checked here.
+		const huge = {
+			email: 'a@b.co',
+			custom_fields: { note: 'x'.repeat(16_000) },
+		};
+		const error = await invoke(enrich, {
+			data: [{ email: 'ok@b.co' }, huge],
+		}).catch(
+			// unknown: a rejection can be any value until it is narrowed below.
+			(caught: unknown) => caught,
+		);
+
+		const issues = (
+			error as { issues?: { path: (string | number)[]; message: string }[] }
+		).issues;
+		// The path names the offending record, so a caller knows which one to fix.
+		expect(issues?.[0]?.path).toEqual(['data', 1]);
+		expect(issues?.[0]?.message).toContain('Record 1');
+		expect(issues?.[0]?.message).toContain('15000');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts a record just under 15 kB', async () => {
+		// custom_fields is what usually pushes a record over the limit.
+		const fits = {
+			email: 'a@b.co',
+			custom_fields: { note: 'x'.repeat(14_000) },
+		};
+		respond(enrichAccepted);
+
+		await invoke(enrich, { data: [fits] });
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
 	it('accepts exactly 250 records', async () => {
@@ -325,14 +362,16 @@ describe('enrichment.results', () => {
 	});
 
 	it('reports ready once the forced batch has finished', async () => {
-		respond(resultsReady);
+		respond(resultsForcedReady);
 
 		const result = (await invoke(results, {
 			request_id: 'qzmxkpvlrtdnhwa',
 			force_results: true,
-		})) as { status: string };
+		})) as { status: string; records: { status?: string | null }[] };
 
 		expect(result.status).toBe('ready');
+		// The provider's own per-record status survives the shaping.
+		expect(result.records[0]?.status).toBe('ready');
 	});
 
 	it('keeps the per-record errors a successful request can carry', async () => {
@@ -364,6 +403,50 @@ describe('enrichment.results', () => {
 	it('requires a request_id', async () => {
 		await expect(invoke(results, {})).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('does not report ready for a body with no success flag and no data', async () => {
+		// A 2xx with neither is not a finished batch; treating it as one would
+		// hand the caller an empty result as if the batch had produced nothing.
+		respond({});
+
+		const result = (await invoke(results, {
+			request_id: 'qzmxkpvlrtdnhwa',
+		})) as { success: boolean; status: string };
+
+		expect(result.success).toBe(false);
+		expect(result.status).toBe('in_progress');
+	});
+
+	it('does not report ready when success is true but no data field arrived', async () => {
+		respond({ success: true, credits_left: 10 });
+
+		const result = (await invoke(results, {
+			request_id: 'qzmxkpvlrtdnhwa',
+		})) as { status: string };
+
+		expect(result.status).toBe('in_progress');
+	});
+
+	it('reports ready for a successful response that carries batch data', async () => {
+		respond(resultsReady);
+
+		const result = (await invoke(results, {
+			request_id: 'qzmxkpvlrtdnhwa',
+		})) as { status: string };
+
+		expect(result.status).toBe('ready');
+	});
+
+	it('keeps a not-ready batch pending even though success is false', async () => {
+		respond(resultsNotReady);
+
+		const result = (await invoke(results, {
+			request_id: 'qzmxkpvlrtdnhwa',
+		})) as { status: string; reason?: string | null };
+
+		expect(result.status).toBe('in_progress');
+		expect(result.reason).toContain('not ready');
 	});
 });
 
@@ -399,6 +482,17 @@ describe('webhook.get', () => {
 		};
 
 		expect(result.callback_url).toBeNull();
+	});
+
+	it('throws when the provider answers 200 with success false', async () => {
+		// An account that is not set up answers this way; that is a provider error,
+		// not a null callback, so it must not be shaped into one.
+		respond({ error: true, success: false, reason: 'Unknown account' });
+
+		await expect(invoke(getWebhook, {})).rejects.toBeInstanceOf(
+			DropcontactAPIError,
+		);
+		expect(mockLog).not.toHaveBeenCalled();
 	});
 });
 
@@ -485,5 +579,61 @@ describe('logging', () => {
 
 		const [, , fields] = mockLog.mock.calls.at(-1) ?? [];
 		expect(fields).toMatchObject({ ready: true });
+	});
+
+	it('logs an omitted callback_url as unconfigured', async () => {
+		// The provider omits the field rather than sending null when none is set.
+		respond({ error: false, success: true });
+
+		await invoke(getWebhook, {});
+
+		const [, , fields] = mockLog.mock.calls.at(-1) ?? [];
+		expect(fields).toMatchObject({ configured: false });
+	});
+
+	it('logs a configured callback URL as configured', async () => {
+		respond(webhookConfigured);
+
+		await invoke(getWebhook, {});
+
+		const [, , fields] = mockLog.mock.calls.at(-1) ?? [];
+		expect(fields).toMatchObject({ configured: true });
+	});
+});
+
+describe('a missing kek', () => {
+	it('fails before the request, not after Dropcontact accepted the batch', async () => {
+		// logEventFromContext throws when encryptDataAtRest is on with no kek. For
+		// enrich that would be after the batch was accepted and its credits spent,
+		// so the check runs first.
+		let fetched = false;
+		fetchMock.mockImplementation(async () => {
+			fetched = true;
+			return new Response(JSON.stringify(enrichAccepted), { status: 200 });
+		});
+
+		await expect(
+			enrich(
+				// unknown: only the fields the endpoint reads are supplied.
+				{ key: API_KEY, encryptDataAtRest: true, kek: undefined } as never,
+				// unknown: a valid input, so the schema cannot be the reason it fails.
+				{ data: [{ email: 'a@b.co' }] } as never,
+			),
+		).rejects.toThrow(/kek/);
+
+		expect(fetched).toBe(false);
+	});
+
+	it('sends the request when the kek is present', async () => {
+		respond(enrichAccepted);
+
+		await enrich(
+			// unknown: as above.
+			{ key: API_KEY, encryptDataAtRest: true, kek: 'a'.repeat(32) } as never,
+			// unknown: as above.
+			{ data: [{ email: 'a@b.co' }] } as never,
+		);
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 });

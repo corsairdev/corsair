@@ -3,7 +3,6 @@ import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { dropcontact } from './index';
 import {
 	creditsResponse,
-	enrichAccepted,
 	rateLimited,
 	resultsNotReady,
 	resultsReady,
@@ -84,18 +83,34 @@ describe('retries through the bound client', () => {
 		}
 	});
 
-	it('retries a 5xx on the write route too, and returns the request id', async () => {
+	it('replays a 5xx on a read but not on the submission', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			// A read is replayed: the first 500 is retried and the second answers.
+			respond({ detail: 'An error occurred. Please retry later.' }, 500);
+			respond(creditsResponse);
+
+			const result = await corsair.dropcontact.api.account.credits({});
+			expect(result.credits).toBe(15277);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('does not resubmit the batch after a 5xx', async () => {
+		// A 5xx can arrive after Dropcontact accepted the batch, so a replay would
+		// spend the credits twice and return a request_id the caller never sees.
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({ detail: 'An error occurred. Please retry later.' }, 500);
-			respond(enrichAccepted);
 
-			const result = await corsair.dropcontact.api.enrichment.enrich({
-				data: [{ email: 'dc@dropcontact.io' }],
-			});
-
-			expect(result.request_id).toBe('qzmxkpvlrtdnhwa');
-			expect(fetchMock).toHaveBeenCalledTimes(2);
+			await expect(
+				corsair.dropcontact.api.enrichment.enrich({
+					data: [{ email: 'dc@dropcontact.io' }],
+				}),
+			).rejects.toMatchObject({ status: 500 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
 		}

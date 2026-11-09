@@ -8,7 +8,7 @@ overviewNote: |
   Things that shape how enrichment behaves:
 
   - **It is a batch job.** `enrichment.enrich` submits up to 250 contacts and returns a `request_id`, not results. `enrichment.results` reads them back, usually 30 to 60 seconds later.
-  - **Polling is a normal state, not an error.** Before the batch is ready, `enrichment.results` answers HTTP 200 with `success: false` and a `reason`. This plugin returns that rather than throwing, so check `success` before using `records`. `status` reads `in_progress` until the batch finishes, and `ready` after.
+  - **Polling is a normal state, not an error.** Before the batch is ready, `enrichment.results` answers HTTP 200 with `success: false` and a `reason`. This plugin returns that rather than throwing, so check the response before using `records`. Use `status` to decide whether the batch is done: it reads `in_progress` while Dropcontact is still working and `ready` once it has finished. `success` describes whether this read returned usable records, which is a different question: a forced partial read returns `success: true` with `status: in_progress`.
   - **`force_results` returns partial data.** Pass it to get whatever has already been enriched instead of a not-ready answer; each record then carries its own `status`.
   - **Credits.** One credit per contact for enrichment, refunded when no email is found; an email validation always spends one. `account.credits` costs nothing and reports the balance.
   - **Input and output differ on two names.** A record needs at least one company identifier (`company`, `website`, `company_linkedin`, `num_siren`, `siret`), an `email`, or a `linkedin` URL. `num_siren` comes back as `siren`, and `email` comes back as a list of objects with a `qualification` such as `nominatif@pro`.
@@ -40,6 +40,6 @@ apiExamples:
     call: "{ callback_url: 'https://example.com/dropcontact/results' }"
   webhook.remove: {}
 apiNotes:
-  enrichment.results: '`success: false` with a `reason` means the batch is still processing, not that the call failed. Poll again in about 30 seconds, or pass `force_results: true` for the records already done.'
+  enrichment.results: '`status` says whether the batch is done: `in_progress` while Dropcontact is still working, `ready` once it has finished. `success` only says whether this read returned usable records, so a forced partial read can be `success: true` with `status: in_progress`. A `success: false` answer with a `reason` is a normal poll result, not a failure.'
   enrichment.enrich: 'Spends one credit per contact and has no cancel operation. Every record needs a company identifier, an email, or a LinkedIn URL.'
   webhook.remove: 'Deletes the account default callback URL permanently. Only requests that carry their own `custom_callback_url` notify anything afterwards.'

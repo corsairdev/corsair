@@ -1,4 +1,4 @@
-import type { CorsairErrorHandler } from 'corsair/core';
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { DropcontactAPIError } from './client';
 
 function statusOf(error: Error): number | undefined {
@@ -7,6 +7,16 @@ function statusOf(error: Error): number | undefined {
 
 function reasonOf(error: Error): string | undefined {
 	return error instanceof DropcontactAPIError ? error.reason : undefined;
+}
+
+/**
+ * The one operation that spends credits and creates server-side state.
+ *
+ * Decided by operation name, not by HTTP method: the bound client knows which
+ * endpoint ran, and every handler that decides replay safety asks this.
+ */
+function isSubmission(context: ErrorContext | undefined): boolean {
+	return context?.operation === 'enrichment.enrich';
 }
 
 // A 404 from `DELETE /v1/enrich/webhook` means there was nothing to delete,
@@ -66,42 +76,41 @@ export const errorHandlers = {
 				2_000,
 		}),
 	},
-	// 5xx from Dropcontact or the network in front of it. Enrichment is the only
-	// non-read here and it is safe to replay: a batch that did go through is
-	// addressable by the request_id it returned, and a duplicate submission is
-	// billed per email actually found, so a lost response is the worse outcome.
+	// 5xx from Dropcontact or the network in front of it. Reads are replayed; a
+	// submission is not, because a 5xx may arrive after Dropcontact accepted the
+	// batch, and a replay would spend the credits twice and create a second
+	// request_id the caller never learns about.
 	SERVER_ERROR: {
-		match: (error: Error) => {
+		match: (error: Error, context: ErrorContext) => {
 			const status = statusOf(error);
 			return status !== undefined && status >= 500;
 		},
-		handler: async () => ({
-			maxRetries: 2,
+		handler: async (_error: Error, context: ErrorContext) => ({
+			maxRetries: isSubmission(context) ? 0 : 2,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// A dropped connection never reached the provider, so a GET is replayed and a
-	// write waits for the caller instead. Only this plugin's own error type can
-	// tell a transport failure from a schema error, so both handlers require it.
+	// submission waits for the caller instead. Only this plugin's own error type
+	// can tell a transport failure from a schema error, so both handlers require
+	// it.
 	TIMEOUT_ERROR: {
 		match: (error: Error) =>
 			error instanceof DropcontactAPIError &&
 			(error.status === 408 || error.name === 'TimeoutError'),
-		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof DropcontactAPIError && error.method === 'GET' ? 2 : 0,
+		handler: async (_error: Error, context: ErrorContext) => ({
+			maxRetries: isSubmission(context) ? 0 : 2,
 		}),
 	},
-	// A connection failure has no status at all. Reads are replayed; a write is
-	// not, because the request may have landed.
+	// A connection failure has no status at all. Reads are replayed; a submission
+	// is not, because the request may have landed.
 	NETWORK_ERROR: {
 		match: (error: Error) =>
 			error instanceof DropcontactAPIError &&
 			error.status === undefined &&
 			error.method !== undefined,
-		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof DropcontactAPIError && error.method === 'GET' ? 2 : 0,
+		handler: async (_error: Error, context: ErrorContext) => ({
+			maxRetries: isSubmission(context) ? 0 : 2,
 		}),
 	},
 	DEFAULT: {
