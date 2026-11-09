@@ -79,6 +79,30 @@ export function unwrapResult(raw: unknown, label: string): unknown {
 	return record.result;
 }
 
+/**
+ * Joins a `fields` selection, always keeping the identifiers the output schema
+ * requires.
+ *
+ * ServiceNow returns **only** the fields asked for, so `sysparm_fields=sys_id`
+ * answers a record with no `name`, which would fail the output parse. Verified
+ * against a live instance. Adding the required field back means a caller's
+ * selection still yields a usable object, rather than the plugin weakening its
+ * schema to accept an unusable one.
+ */
+export function fieldsWith(
+	values: string | undefined,
+	required: readonly string[],
+): string | undefined {
+	if (values === undefined) return undefined;
+	const kept = values
+		.split(',')
+		.map((field) => field.trim())
+		.filter((field) => field.length > 0);
+	for (const field of required) {
+		if (!kept.includes(field)) kept.push(field);
+	}
+	return kept.join(',');
+}
 /** Drops unset query values so nothing empty is sent. */
 export function queryOf(
 	values: Record<string, string | number | boolean | undefined>,

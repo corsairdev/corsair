@@ -187,6 +187,16 @@ describe('ServiceNow request shapes', () => {
 		expect(queryParam('sysparm_fields')).toBe('name,label');
 	});
 
+	it('keeps name in a selection that omits it', async () => {
+		mockFetch(jsonResponse(tablesResponse));
+
+		await endpoints.tables.list(makeCtx(), { sysparm_fields: 'sys_id,label' });
+
+		// ServiceNow returns only the fields asked for, and `name` is what a
+		// caller passes as `table`, so it must survive the selection.
+		expect(queryParam('sysparm_fields')).toBe('sys_id,label,name');
+	});
+
 	it('sends a credential pair the client can parse', async () => {
 		// The pair travels JSON-encoded because keyBuilder returns one string.
 		expect(JSON.parse(TEST_KEY)).toEqual({

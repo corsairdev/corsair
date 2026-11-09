@@ -1,5 +1,5 @@
 import type { ServicenowEndpoints } from '..';
-import { call, queryOf, unwrapResult } from './call';
+import { call, fieldsWith, queryOf, unwrapResult } from './call';
 import {
 	ServicenowEndpointInputSchemas as Inputs,
 	ServicenowEndpointOutputSchemas as Outputs,
@@ -31,7 +31,12 @@ export const list: ServicenowEndpoints['tablesList'] = (ctx, input) =>
 			query: queryOf({
 				sysparm_query,
 				// Without a selection this table returns dozens of columns per row.
-				sysparm_fields: sysparm_fields ?? 'name,label,super_class,sys_id',
+				// `name` is what a caller passes as `table`, so it is kept in any
+				// selection: ServiceNow returns only the fields asked for.
+				sysparm_fields:
+					sysparm_fields === undefined
+						? 'name,label,super_class,sys_id'
+						: fieldsWith(sysparm_fields, ['name']),
 				sysparm_exclude_reference_link,
 				sysparm_limit,
 				sysparm_offset,

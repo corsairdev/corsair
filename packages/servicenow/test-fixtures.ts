@@ -67,7 +67,7 @@ export const tablesResponse = {
 			super_class: 'task',
 		},
 		{
-			sys_id: '6b2c3d4e5f60718293a4b5c6d7e8f90a1',
+			sys_id: '6b2c3d4e5f60718293a4b5c6d7e8f901',
 			name: 'u_custom_asset',
 			label: 'Custom Asset',
 			super_class: '',

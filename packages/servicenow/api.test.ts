@@ -116,6 +116,9 @@ describeIfKey('ServiceNow live smoke', () => {
 
 	it('creates an incident, then updates and deletes it', async () => {
 		const { corsair, testDb } = await createClient();
+		// Declared outside the try so the remote record is removed even when an
+		// assertion fails partway; otherwise a broken run leaves incidents behind.
+		let remoteSysId: string | undefined;
 		try {
 			const created = await corsair.servicenow.api.records.create({
 				table: 'incident',
@@ -125,23 +128,24 @@ describeIfKey('ServiceNow live smoke', () => {
 				},
 			});
 
-			const sysId = created.sys_id as string;
-			expect(typeof sysId).toBe('string');
+			remoteSysId = created.sys_id as string;
+			expect(typeof remoteSysId).toBe('string');
 			// The create answers the full record with its assigned number.
 			expect(typeof created.number).toBe('string');
 
 			const updated = await corsair.servicenow.api.records.update({
 				table: 'incident',
-				sys_id: sysId,
+				sys_id: remoteSysId,
 				fields: { state: '2' },
 			});
 			expect(updated.state).toBe('2');
 
 			const deleted = await corsair.servicenow.api.records.delete({
 				table: 'incident',
-				sys_id: sysId,
+				sys_id: remoteSysId,
 			});
 			expect(deleted.deleted).toBe(true);
+			remoteSysId = undefined;
 
 			// The record is really gone: a read now answers 404.
 			await expect(
@@ -151,6 +155,13 @@ describeIfKey('ServiceNow live smoke', () => {
 				}),
 			).rejects.toThrow(/No Record found/);
 		} finally {
+			// Best effort: if the delete above never ran, remove the record here so
+			// repeated failed runs cannot accumulate test incidents.
+			if (remoteSysId) {
+				await corsair.servicenow.api.records
+					.delete({ table: 'incident', sys_id: remoteSysId })
+					.catch(() => undefined);
+			}
 			testDb.cleanup();
 		}
 	});
