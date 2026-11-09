@@ -1740,7 +1740,7 @@ const inboxkitEndpointMeta = {
 	'sequencers.add': {
 		riskLevel: 'write',
 		description:
-			'Connect a sequencer account such as Instantly, Smartlead or Lemlist, using the fields sequencers.listPlatforms names. No mailboxes go to it until sequencers.exportMailboxes.',
+			'Connect a sequencer account such as Instantly, Smartlead or Lemlist, with the fields sequencers.listPlatforms names for that platform. Most take a login and password, and a few take only an API key. No mailboxes go to it until sequencers.exportMailboxes, unless Auto Export is on for it in the InboxKit dashboard.',
 	},
 	'sequencers.update': {
 		riskLevel: 'write',

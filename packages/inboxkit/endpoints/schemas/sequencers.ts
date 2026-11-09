@@ -46,11 +46,13 @@ export const SequencersInputSchemas = {
 				),
 			sequencer_login: z
 				.string()
+				.optional()
 				.describe(
 					'Username or email for the sequencer account. Some platforms use a different field name — check List sequencer platforms for the exact name.',
 				),
 			sequencer_password: z
 				.string()
+				.optional()
 				.describe('Password for the sequencer account.'),
 			sequencer_workspace: z
 				.string()
@@ -124,8 +126,22 @@ export const SequencersInputSchemas = {
 				.describe(
 					"Automatically reconnect mailboxes to this sequencer if they get disconnected. Setting this to true requires an API key on the sequencer (the platform's API is used to perform the reconnect).",
 				),
+			sender_name: z
+				.string()
+				.optional()
+				.describe('Sender name for the mailboxes. MailToaster requires it.'),
 		})
-		.strict(),
+		.strict()
+		.refine(
+			(input) =>
+				Boolean(
+					(input.sequencer_login && input.sequencer_password) || input.api_key,
+				),
+			{
+				message:
+					'Pass sequencer_login and sequencer_password, or api_key, as sequencers.listPlatforms lists for this platform.',
+			},
+		),
 	sequencersUpdate: z
 		.object({
 			workspaceId: WorkspaceId,

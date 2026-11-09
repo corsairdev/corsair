@@ -205,6 +205,28 @@ describe('inputs', () => {
 		},
 	);
 
+	// The fields GET sequencers/platforms marks required, by kind of platform.
+	it.each([
+		[
+			'a login and password',
+			{ sequencer_login: 'l', sequencer_password: 'p' },
+			true,
+		],
+		['an API key alone, as SendKit takes', { api_key: 'k' }, true],
+		[
+			'MailToaster’s sender name',
+			{ sequencer_login: 'l', sequencer_password: 'p', sender_name: 'S' },
+			true,
+		],
+		['a login with no password or key', { sequencer_login: 'l' }, false],
+		['no credentials', {}, false],
+	])('sequencers.add with %s', (_label, fields, accepted) => {
+		expect(
+			input('sequencers.add').safeParse({ name: 'n', platform: 'p', ...fields })
+				.success,
+		).toBe(accepted);
+	});
+
 	const sequencer = (warmup_increment: string) => ({
 		name: 'n',
 		platform: 'instantly',

@@ -201,6 +201,21 @@ describe('choosing the workspace', () => {
 		);
 	});
 
+	it('sends an API-key-only sequencer with no login or password', async () => {
+		fetchMock.mockResolvedValueOnce(jsonResponse({ success: true }));
+		await endpointFor('sequencers.add')(ctx(), {
+			workspaceId: WORKSPACE,
+			name: 'SendKit',
+			platform: 'sendkit',
+			api_key: 'sk',
+		});
+		expect(JSON.parse(String(callArgs().init.body))).toEqual({
+			name: 'SendKit',
+			platform: 'sendkit',
+			api_key: 'sk',
+		});
+	});
+
 	it('does not look anything up for team-level operations', async () => {
 		fetchMock.mockResolvedValueOnce(jsonResponse({ uid: 'team' }));
 		await endpointFor('account.get')(ctx(), {});

@@ -8482,7 +8482,7 @@ await corsair.inboxkit.api.prewarm.searchMailboxes({});
 
 `sequencers.add`
 
-Connect a sequencer account such as Instantly, Smartlead or Lemlist, using the fields sequencers.listPlatforms names. No mailboxes go to it until sequencers.exportMailboxes.
+Connect a sequencer account such as Instantly, Smartlead or Lemlist, with the fields sequencers.listPlatforms names for that platform. Most take a login and password, and a few take only an API key. No mailboxes go to it until sequencers.exportMailboxes, unless Auto Export is on for it in the InboxKit dashboard.
 
 **Risk:** `write`
 
@@ -8497,8 +8497,8 @@ await corsair.inboxkit.api.sequencers.add({});
 | `workspaceId` | `string` | No | Which workspace, as a uid from workspaces.list. Leave out to use the plugin's workspaceId option or, failing that, the team's only workspace. |
 | `name` | `string` | Yes | Display name for the sequencer in your workspace. |
 | `platform` | `string` | Yes | Sequencer platform identifier (for example: instantly, smartlead, lemlist, emailbison). Use List sequencer platforms to discover supported values. |
-| `sequencer_login` | `string` | Yes | Username or email for the sequencer account. Some platforms use a different field name — check List sequencer platforms for the exact name. |
-| `sequencer_password` | `string` | Yes | Password for the sequencer account. |
+| `sequencer_login` | `string` | No | Username or email for the sequencer account. Some platforms use a different field name — check List sequencer platforms for the exact name. |
+| `sequencer_password` | `string` | No | Password for the sequencer account. |
 | `sequencer_workspace` | `string` | No | Workspace or organization name on the sequencer. Used by platforms with multiple workspaces (instantly, emailbison, lemlist, plusvibe, reachinbox, manyreach, hothawk, automailer). |
 | `workspace_id` | `string` | No | Workspace identifier on the sequencer. Used by salesforge and warmforge (optional) and by masterinbox, where it is REQUIRED. |
 | `app_url` | `string` | No | Application URL for self-hosted instances (e.g., your EmailBison subdomain). |
@@ -8511,6 +8511,7 @@ await corsair.inboxkit.api.sequencers.add({});
 | `warmup_replyrate` | `number` | No | Target reply rate for warmup emails, as a percentage (0–100). Requires a valid API key. |
 | `warmup_increment` | `1 \| 2 \| 3 \| 4 \| 5 \| 6 \| 7 \| 8 \| disable \| disabled` | No | How many additional warmup emails to add each day. For Smartlead the minimum is "5". For Instantly the maximum is "4". Requires a valid API key. |
 | `auto_reconnect_mailboxes` | `boolean` | No | Automatically reconnect mailboxes to this sequencer if they get disconnected. Setting this to true requires an API key on the sequencer (the platform's API is used to perform the reconnect). |
+| `sender_name` | `string` | No | Sender name for the mailboxes. MailToaster requires it. |
 
 InboxKit's API also takes `auto_export_enabled`. The plugin leaves it out because it sends new mailboxes' credentials to the sequencer with no further call; turn it on in the dashboard if you want it. InboxKit's docs write `warmup_increment` with stray quotes and its MCP server says `disable` where the docs say `disabled`, so both spellings are accepted.
 
