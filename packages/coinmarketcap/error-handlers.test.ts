@@ -12,7 +12,11 @@ type Entry = {
 	handler: (error: Error, context: ErrorContext) => Promise<RetryStrategy>;
 };
 
-const handlers = errorHandlers as unknown as Record<HandlerName, Entry>;
+// The builtin map is a `Partial` over a wide key union, so its value type
+// cannot be indexed for a call; this view states the one signature core uses.
+// unknown: the builtin map is a Partial over a wide key union; this view
+// states the one signature core calls it with.
+const handlers = errorHandlers as unknown as Record<HandlerName, Entry>; // unknown: see above.
 
 /** Mirrors core: the first handler whose match() passes, in key order. */
 function classify(error: Error): HandlerName {

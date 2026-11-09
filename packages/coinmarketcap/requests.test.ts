@@ -10,6 +10,7 @@ import {
 	priceConversion,
 	quotes,
 } from './endpoints';
+import type { ListingsLatestResponse } from './endpoints/types';
 import {
 	conversionByIdResponse,
 	conversionBySymbolResponse,
@@ -173,6 +174,18 @@ describe('cryptocurrency.listings', () => {
 			expect.objectContaining({ count: 1 }),
 			'completed',
 		);
+	});
+
+	it('types the price so a caller can read it without a cast', async () => {
+		respond(listingsResponse);
+
+		const result = (await invoke(listings, {})) as ListingsLatestResponse;
+
+		// `quote` is declared on the asset, not left to `.loose()`, so this is
+		// a typed read rather than an unknown one.
+		const usd = result.assets[0]?.quote.find((entry) => entry.symbol === 'USD');
+		expect(usd?.price).toBe(74630.75941364496);
+		expect(usd?.market_cap).toBe(1500819646178.2788);
 	});
 });
 

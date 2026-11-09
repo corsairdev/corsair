@@ -134,7 +134,19 @@ const CryptoAssetFields = {
 	minted_market_cap: z.number().nullish(),
 };
 
-const CryptoAssetSchema = z.object(CryptoAssetFields).loose();
+/**
+ * A listing entry. The market data lives in `quote`, which the `/v3` route
+ * returns as an array with one entry per requested currency, so it is declared
+ * here rather than left to `.loose()` as an unknown key.
+ */
+const ListingAssetSchema = z
+	.object({
+		...CryptoAssetFields,
+		quote: z.array(QuoteObjectSchema),
+	})
+	.loose();
+
+export type ListingAsset = z.infer<typeof ListingAssetSchema>;
 
 // ── cryptocurrency.listings ──────────────────────────────────────────────────
 
@@ -230,7 +242,7 @@ const ListingsLatestInputSchema = z.object({
 export type ListingsLatestInput = z.input<typeof ListingsLatestInputSchema>;
 
 const ListingsLatestResponseSchema = z.object({
-	assets: z.array(CryptoAssetSchema),
+	assets: z.array(ListingAssetSchema),
 	status: ApiStatusSchema.optional(),
 });
 

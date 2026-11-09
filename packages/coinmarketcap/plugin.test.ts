@@ -13,8 +13,16 @@ const OPERATIONS = [
 	'tools.priceConversion',
 ] as const;
 
+// The plugin's own endpoint map is nested and each leaf is a distinct
+// CorsairEndpoint, so its inferred type cannot be walked generically. These
+// three structural views are what the assertions actually read.
+type EndpointsView = Record<string, Record<string, unknown>>; // unknown: leaves are functions of differing types.
+// unknown: a schema pair is a zod schema, and the assertions only check that
+// one is present, never parse through it.
+type SchemaPair = { input?: unknown; output?: unknown }; // unknown: a zod schema; only presence is asserted.
+type SchemaView = Record<string, SchemaPair>;
 type EndpointMeta = { riskLevel: string; description: string };
-type SchemaPair = { input?: unknown; output?: unknown };
+type MetaView = Record<string, EndpointMeta>;
 type KeyBuilder = (
 	ctx: CoinMarketCapKeyBuilderContext,
 	source: string,
@@ -31,10 +39,10 @@ function required<T>(source: Record<string, T>, key: string): T {
 	return value;
 }
 
-function flatten(endpoints: Record<string, unknown>): string[] {
+function flatten(endpoints: EndpointsView): string[] {
 	const paths: string[] = [];
 	for (const [group, members] of Object.entries(endpoints)) {
-		for (const name of Object.keys(members as Record<string, unknown>)) {
+		for (const name of Object.keys(members)) {
 			paths.push(`${group}.${name}`);
 		}
 	}
@@ -49,17 +57,19 @@ function keyContext(stored: string | undefined) {
 		keys: {
 			get_api_key: async () => stored,
 		},
-	} as unknown as CoinMarketCapKeyBuilderContext;
+	} as unknown as CoinMarketCapKeyBuilderContext; // unknown: a partial AccountKeyManager.
 }
 
 describe('coinmarketcap plugin', () => {
 	const plugin = coinmarketcap();
-	const meta = plugin.endpointMeta as unknown as Record<string, EndpointMeta>;
-	const schemas = plugin.endpointSchemas as unknown as Record<
-		string,
-		SchemaPair
-	>;
+	// The declared types are exact (a readonly map of const-typed entries), so
+	// each view is a widening cast that keeps the assertions readable.
+	const endpoints = plugin.endpoints as EndpointsView;
+	const meta = plugin.endpointMeta as unknown as MetaView; // unknown: widening a readonly const map.
+	const schemas = plugin.endpointSchemas as unknown as SchemaView; // unknown: see meta.
+	// keyBuilder is optional on the plugin type; it is always supplied here.
 	const keyBuilderOf = (candidate: { keyBuilder?: unknown }): KeyBuilder =>
+		// unknown: optional on the plugin type.
 		candidate.keyBuilder as KeyBuilder;
 
 	it('has the id the constants file registers', () => {
@@ -71,9 +81,7 @@ describe('coinmarketcap plugin', () => {
 	});
 
 	it('registers exactly the eight documented operations', () => {
-		expect(flatten(plugin.endpoints as Record<string, unknown>)).toEqual([
-			...OPERATIONS,
-		]);
+		expect(flatten(endpoints)).toEqual([...OPERATIONS]);
 	});
 
 	it('declares every operation as a read', () => {
@@ -101,14 +109,14 @@ describe('coinmarketcap plugin', () => {
 
 	it('receives no webhooks', () => {
 		expect(plugin.webhooks).toEqual({});
-		// The matcher takes a delivery the plugin never expects.
 		const matcher = plugin.pluginWebhookMatcher;
 		expect(matcher).toBeDefined();
+		// The matcher takes a delivery the plugin never expects.
 		expect(matcher?.({} as never)).toBe(false);
 	});
 
 	it('registers an error handler map with DEFAULT last', () => {
-		const handlers = plugin.errorHandlers as unknown as Record<string, unknown>;
+		const handlers = plugin.errorHandlers as Record<string, unknown>; // unknown: key order is all this reads.
 		expect(Object.keys(handlers).at(-1)).toBe('DEFAULT');
 	});
 
@@ -137,15 +145,16 @@ describe('coinmarketcap plugin', () => {
 			// authConfig fields, so get_api_key is the only method that exists.
 			// This fails if the keyBuilder reaches for another one.
 			const calls: string[] = [];
-			const ctx = {
-				authType: 'api_key',
-				keys: {
-					get_api_key: async () => {
-						calls.push('get_api_key');
-						return 'stored';
-					},
-				},
-			} as unknown as CoinMarketCapKeyBuilderContext;
+			const ctx = keyContext('stored');
+			// unknown: the fixture carries only get_api_key, not a full manager.
+			const keys = ctx.keys as unknown as {
+				// unknown: the fixture only carries get_api_key.
+				get_api_key: () => Promise<string | null>;
+			};
+			keys.get_api_key = async () => {
+				calls.push('get_api_key');
+				return 'stored';
+			};
 
 			await keyBuilderOf(plugin)(ctx, 'endpoint');
 			expect(calls).toEqual(['get_api_key']);

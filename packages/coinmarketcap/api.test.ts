@@ -1,4 +1,8 @@
-import { COINMARKETCAP_API_BASE, makeCoinMarketCapRequest } from './client';
+import {
+	COINMARKETCAP_API_BASE,
+	CoinMarketCapAPIError,
+	makeCoinMarketCapRequest,
+} from './client';
 
 /**
  * Live smoke tests against the real API. Gated on CoinMarketCap's own
@@ -29,7 +33,7 @@ async function get(path: string, query?: Record<string, string | number>) {
 		method: 'GET',
 		path,
 		query,
-	})) as Record<string, unknown>;
+	})) as Record<string, unknown>; // unknown: see the comment above get().
 }
 
 // unknown: as above, one level deeper.
@@ -150,8 +154,29 @@ describeIfKey('CoinMarketCap live API', () => {
 		const raw = await get('/v1/exchange/info', {
 			slug: 'binance',
 			aux: 'logo,urls,description',
-		});
-		const bySlug = dataOf(raw) as Record<
+		}).catch(
+			// unknown: the rejection is a CoinMarketCapAPIError, narrowed below.
+			(caught: unknown) => caught,
+		);
+
+		// A Basic key gets 403 error_code 1005 for this route. That is a plan
+		// limit, not a defect, so the test reports the skip instead of failing
+		// and every other failure still surfaces.
+		if (
+			raw instanceof CoinMarketCapAPIError &&
+			raw.status === 403 &&
+			raw.code === 1005
+		) {
+			console.warn(
+				'exchange.info skipped: this key is on a plan that does not include the route (403 error_code 1005).',
+			);
+			return;
+		}
+		if (raw instanceof Error) throw raw;
+
+		// unknown: raw JSON, narrowed to the fields this test reads.
+		const bySlug = dataOf(raw as Record<string, unknown>) as Record<
+			// unknown: raw JSON from get().
 			string,
 			{
 				id: number;

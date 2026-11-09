@@ -207,6 +207,7 @@ export async function makeCoinMarketCapRequest(
 	};
 
 	try {
+		// unknown: the body is untyped here; callers parse it with a zod schema.
 		return await request<unknown>(config, requestOptions, {
 			// unknown: see the return type.
 			rateLimitConfig: COINMARKETCAP_RATE_LIMIT_CONFIG,

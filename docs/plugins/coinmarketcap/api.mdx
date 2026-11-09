@@ -191,7 +191,34 @@ await corsair.coinmarketcap.api.cryptocurrency.listings({ limit: 10, sort: 'mark
   self_reported_market_cap?: number | null,
   unlocked_circulating_supply?: number | null,
   unlocked_market_cap?: number | null,
-  minted_market_cap?: number | null
+  minted_market_cap?: number | null,
+  quote: {
+    id?: number,
+    symbol?: string,
+    price?: number | null,
+    volume_24h?: number | null,
+    cex_volume_24h?: number | null,
+    dex_volume_24h?: number | null,
+    volume_24h_reported?: number | null,
+    volume_7d?: number | null,
+    volume_7d_reported?: number | null,
+    volume_30d?: number | null,
+    volume_30d_reported?: number | null,
+    volume_change_24h?: number | null,
+    percent_change_1h?: number | null,
+    percent_change_24h?: number | null,
+    percent_change_7d?: number | null,
+    percent_change_30d?: number | null,
+    percent_change_60d?: number | null,
+    percent_change_90d?: number | null,
+    market_cap?: number | null,
+    market_cap_dominance?: number | null,
+    fully_diluted_market_cap?: number | null,
+    minted_market_cap?: number | null,
+    market_cap_by_total_supply?: number | null,
+    tvl?: number | null,
+    last_updated?: string | null
+  }[]
 }[]
 ```
 </Accordion>
@@ -225,7 +252,7 @@ Resolve tickers, slugs or a page of the full asset list to the stable CoinMarket
 **Risk:** `read`
 
 ```ts
-await corsair.coinmarketcap.api.cryptocurrency.map({ symbol: ['BTC', 'ETH'], aux: 'platform,first_historical_data' });
+await corsair.coinmarketcap.api.cryptocurrency.map({ symbol: ['BTC', 'ETH'] });
 ```
 
 **Input**
@@ -239,7 +266,7 @@ await corsair.coinmarketcap.api.cryptocurrency.map({ symbol: ['BTC', 'ETH'], aux
 | `symbol` | `string[]` | No | Tickers to resolve to CMC IDs, such as ["BTC", "ETH"]. When set, every other option is ignored by the API. |
 | `aux` | `string` | No | Comma-separated supplemental fields: platform, first_historical_data, last_historical_data, is_active, status. |
 
-When `symbol` is set, CoinMarketCap ignores every other option, so this operation rejects that combination rather than sending a request that would silently return the wrong rows.
+When `symbol` is set, CoinMarketCap ignores every other option, so this operation rejects that combination rather than sending a request that would silently return the wrong rows. To page the full asset list with `aux` fields, omit `symbol`.
 
 
 
