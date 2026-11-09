@@ -60,10 +60,20 @@ export const get: ServicenowEndpoints['recordsGet'] = (ctx, input) =>
 			output: Outputs.recordsGet,
 		},
 		input,
-		({ table, sys_id, sysparm_fields, sysparm_display_value }) => ({
+		({
+			table,
+			sys_id,
+			sysparm_fields,
+			sysparm_display_value,
+			sysparm_exclude_reference_link,
+		}) => ({
 			method: 'GET',
 			path: `/table/${encodeURIComponent(table)}/${encodeURIComponent(sys_id)}`,
-			query: queryOf({ sysparm_fields, sysparm_display_value }),
+			query: queryOf({
+				sysparm_fields,
+				sysparm_display_value,
+				sysparm_exclude_reference_link,
+			}),
 		}),
 		{
 			shape: (raw) => unwrapResult(raw, 'record'),

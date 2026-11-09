@@ -145,12 +145,12 @@ const servicenowEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete one record. ServiceNow keeps no undo, and a deleted record takes its references with it',
+			'Delete one record. ServiceNow keeps no undo, and what happens to referencing records depends on the table reference cascade rule',
 	},
 	'tables.list': {
 		riskLevel: 'read',
 		description:
-			'List the tables this account can read, to find a name to query',
+			'List visible table metadata from sys_db_object, to find a table name to query',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof servicenowEndpointsNested
@@ -200,6 +200,9 @@ export function servicenow<const T extends ServicenowPluginOptions>(
 				throw new AuthMissingError('servicenow', 'api_key');
 			}
 			if (options.key) return options.key;
+			// A context with no key manager is an unconfigured account, not a crash:
+			// fall through to the same AuthMissingError as a missing stored key.
+			if (!ctx.keys) throw new AuthMissingError('servicenow', 'api_key');
 			const stored = await ctx.keys.get_api_key();
 			if (stored) return stored;
 			throw new AuthMissingError('servicenow', 'api_key');

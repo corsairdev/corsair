@@ -103,6 +103,12 @@ const RecordsGetInputSchema = z.object({
 	sysparm_display_value: z
 		.union([z.literal('true'), z.literal('false'), z.literal('all')])
 		.optional(),
+	sysparm_exclude_reference_link: z
+		.boolean()
+		.optional()
+		.describe(
+			'Return a reference column as a bare sys_id instead of { link, value }',
+		),
 });
 
 export type RecordsGetInput = z.input<typeof RecordsGetInputSchema>;
