@@ -34,7 +34,7 @@ pnpm add @corsair-dev/onedesk
 | `invoices.filter` | `onedesk.api.invoices.filter` | `read` | List invoice external ids by filter |
 | `invoices.filterDetails` | `onedesk.api.invoices.filterDetails` | `read` | List invoices with their status and totals |
 | `invoices.get` | `onedesk.api.invoices.get` | `read` | Read one invoice by external id or numeric id |
-| `invoices.update` | `onedesk.api.invoices.update` | `write` | Change an invoice: its status, due date and line items. A 'void' status cannot be undone |
+| `invoices.update` | `onedesk.api.invoices.update` | `destructive` | Change an invoice: its status, due date and line items. Setting the status to 'void' cannot be undone |
 | `items.create` | `onedesk.api.items.create` | `write` | Create a work item such as a ticket or task, optionally with requesters, followers, a project and custom fields |
 | `items.filter` | `onedesk.api.items.filter` | `read` | List work item external ids by type and filter, with paging and a total count |
 | `items.filterDetails` | `onedesk.api.items.filterDetails` | `read` | List work items with their details by type and filter, including assignees and lifecycle status |

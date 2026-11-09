@@ -361,48 +361,62 @@ const ItemsCreateInputSchema = z.object({
 
 export type ItemsCreateInput = z.input<typeof ItemsCreateInputSchema>;
 
-const ItemsUpdateInputSchema = z.object({
-	externalId: z.string().min(1).optional().describe("The item's external id."),
-	id: z.number().int().optional().describe("The item's numeric id."),
-	name: z.string().min(1).optional(),
-	description: z.string().optional(),
-	type: z.string().min(1).optional(),
-	projectExternalId: z.string().optional(),
-	agilePoints: z.number().int().optional(),
-	priority: PrioritySchema.optional(),
-	percentComplete: z.number().int().min(0).max(100).optional(),
-	relatedItemExternalIds: listUpdate.optional(),
-	duplicatesItemExternalIds: listUpdate.optional(),
-	duplicatedByItemExternalIds: listUpdate.optional(),
-	blocksItemExternalIds: listUpdate.optional(),
-	blockedByItemExternalIds: listUpdate.optional(),
-	precededByItemExternalIds: listUpdate.optional(),
-	succeededByItemExternalIds: listUpdate.optional(),
-	customFields: z
-		.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-		.optional(),
-	lifecycleStatusName: z
-		.string()
-		.min(1)
-		.optional()
-		.describe(
-			'New lifecycle status by name. Read the valid names with organization.lifecycleStatus.',
-		),
-	attachmentExternalIds: listUpdate.optional(),
-	plannedStart: z.string().optional(),
-	plannedFinish: z.string().optional(),
-	plannedHours: z.number().min(0).optional(),
-	actualStart: z.string().optional(),
-	actualFinish: z.string().optional(),
-	actualHours: z.number().min(0).optional(),
-	followerUserAndCustomerExternalIds: listUpdate.optional(),
-	followerTeamAndCustomerOrganizationExternalIds: listUpdate.optional(),
-	assignedUserExternalIds: listUpdate.optional(),
-	assignedTeamExternalIds: listUpdate.optional(),
-	requesterUserAndCustomerExternalIds: listUpdate.optional(),
-	requesterTeamAndCustomerOrganizationExternalIds: listUpdate.optional(),
-	archived: z.boolean().optional(),
-});
+const ItemsUpdateInputSchema = z
+	.object({
+		externalId: z
+			.string()
+			.min(1)
+			.optional()
+			.describe("The item's external id."),
+		id: z.number().int().optional().describe("The item's numeric id."),
+		name: z.string().min(1).optional(),
+		description: z.string().optional(),
+		type: z.string().min(1).optional(),
+		projectExternalId: z.string().optional(),
+		agilePoints: z.number().int().optional(),
+		priority: PrioritySchema.optional(),
+		percentComplete: z.number().int().min(0).max(100).optional(),
+		relatedItemExternalIds: listUpdate.optional(),
+		duplicatesItemExternalIds: listUpdate.optional(),
+		duplicatedByItemExternalIds: listUpdate.optional(),
+		blocksItemExternalIds: listUpdate.optional(),
+		blockedByItemExternalIds: listUpdate.optional(),
+		precededByItemExternalIds: listUpdate.optional(),
+		succeededByItemExternalIds: listUpdate.optional(),
+		customFields: z
+			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+			.optional(),
+		lifecycleStatusName: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'New lifecycle status by name. Read the valid names with organization.lifecycleStatus.',
+			),
+		attachmentExternalIds: listUpdate.optional(),
+		plannedStart: z.string().optional(),
+		plannedFinish: z.string().optional(),
+		plannedHours: z.number().min(0).optional(),
+		actualStart: z.string().optional(),
+		actualFinish: z.string().optional(),
+		actualHours: z.number().min(0).optional(),
+		followerUserAndCustomerExternalIds: listUpdate.optional(),
+		followerTeamAndCustomerOrganizationExternalIds: listUpdate.optional(),
+		assignedUserExternalIds: listUpdate.optional(),
+		assignedTeamExternalIds: listUpdate.optional(),
+		requesterUserAndCustomerExternalIds: listUpdate.optional(),
+		requesterTeamAndCustomerOrganizationExternalIds: listUpdate.optional(),
+		archived: z.boolean().optional(),
+	})
+	.superRefine((value, ctx) => {
+		if (value.externalId === undefined && value.id === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['externalId'],
+				message: 'Pass externalId or id.',
+			});
+		}
+	});
 
 export type ItemsUpdateInput = z.input<typeof ItemsUpdateInputSchema>;
 
@@ -502,23 +516,33 @@ const UsersCreateInputSchema = z.object({
 
 export type UsersCreateInput = z.input<typeof UsersCreateInputSchema>;
 
-const UsersUpdateInputSchema = z.object({
-	externalId: z.string().min(1).optional(),
-	id: z.number().int().optional(),
-	firstName: z.string().optional(),
-	lastName: z.string().optional(),
-	email: z.email().optional(),
-	phoneNumber: z.string().optional(),
-	type: z.string().min(1).optional(),
-	priority: PrioritySchema.optional(),
-	address: AddressSchema.optional(),
-	title: z.string().optional(),
-	pictureAttachmentExternalId: z.string().optional(),
-	teamExternalIds: listUpdate.optional(),
-	customFields: z
-		.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-		.optional(),
-});
+const UsersUpdateInputSchema = z
+	.object({
+		externalId: z.string().min(1).optional(),
+		id: z.number().int().optional(),
+		firstName: z.string().optional(),
+		lastName: z.string().optional(),
+		email: z.email().optional(),
+		phoneNumber: z.string().optional(),
+		type: z.string().min(1).optional(),
+		priority: PrioritySchema.optional(),
+		address: AddressSchema.optional(),
+		title: z.string().optional(),
+		pictureAttachmentExternalId: z.string().optional(),
+		teamExternalIds: listUpdate.optional(),
+		customFields: z
+			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+			.optional(),
+	})
+	.superRefine((value, ctx) => {
+		if (value.externalId === undefined && value.id === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['externalId'],
+				message: 'Pass externalId or id.',
+			});
+		}
+	});
 
 export type UsersUpdateInput = z.input<typeof UsersUpdateInputSchema>;
 
@@ -618,21 +642,31 @@ const ProjectsCreateInputSchema = z.object({
 
 export type ProjectsCreateInput = z.input<typeof ProjectsCreateInputSchema>;
 
-const ProjectsUpdateInputSchema = z.object({
-	externalId: z.string().min(1).optional(),
-	id: z.number().int().optional(),
-	name: z.string().min(1).optional(),
-	type: z.string().min(1).optional(),
-	description: z.string().optional(),
-	lifecycleStatus: z.string().min(1).optional(),
-	invoiceType: InvoiceTypeSchema.optional(),
-	portfolioExternalIds: listUpdate.optional(),
-	attachmentExternalIds: listUpdate.optional(),
-	customFields: z
-		.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-		.optional(),
-	archived: z.boolean().optional(),
-});
+const ProjectsUpdateInputSchema = z
+	.object({
+		externalId: z.string().min(1).optional(),
+		id: z.number().int().optional(),
+		name: z.string().min(1).optional(),
+		type: z.string().min(1).optional(),
+		description: z.string().optional(),
+		lifecycleStatus: z.string().min(1).optional(),
+		invoiceType: InvoiceTypeSchema.optional(),
+		portfolioExternalIds: listUpdate.optional(),
+		attachmentExternalIds: listUpdate.optional(),
+		customFields: z
+			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+			.optional(),
+		archived: z.boolean().optional(),
+	})
+	.superRefine((value, ctx) => {
+		if (value.externalId === undefined && value.id === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['externalId'],
+				message: 'Pass externalId or id.',
+			});
+		}
+	});
 
 export type ProjectsUpdateInput = z.input<typeof ProjectsUpdateInputSchema>;
 
@@ -871,27 +905,37 @@ const CustomersCreateInputSchema = z.object({
 
 export type CustomersCreateInput = z.input<typeof CustomersCreateInputSchema>;
 
-const CustomersUpdateInputSchema = z.object({
-	externalId: z.string().min(1).optional(),
-	id: z.number().int().optional(),
-	firstName: z.string().optional(),
-	lastName: z.string().optional(),
-	email: z.email().optional(),
-	phoneNumber: z.string().optional(),
-	type: z.string().min(1).optional(),
-	priority: PrioritySchema.optional(),
-	address: AddressSchema.optional(),
-	title: z.string().optional(),
-	deactivate: z
-		.boolean()
-		.optional()
-		.describe('Deactivate the customer, which stops them signing in.'),
-	pictureAttachmentExternalId: z.string().optional(),
-	customerOrganizationExternalId: z.string().optional(),
-	customFields: z
-		.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-		.optional(),
-});
+const CustomersUpdateInputSchema = z
+	.object({
+		externalId: z.string().min(1).optional(),
+		id: z.number().int().optional(),
+		firstName: z.string().optional(),
+		lastName: z.string().optional(),
+		email: z.email().optional(),
+		phoneNumber: z.string().optional(),
+		type: z.string().min(1).optional(),
+		priority: PrioritySchema.optional(),
+		address: AddressSchema.optional(),
+		title: z.string().optional(),
+		deactivate: z
+			.boolean()
+			.optional()
+			.describe('Deactivate the customer, which stops them signing in.'),
+		pictureAttachmentExternalId: z.string().optional(),
+		customerOrganizationExternalId: z.string().optional(),
+		customFields: z
+			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+			.optional(),
+	})
+	.superRefine((value, ctx) => {
+		if (value.externalId === undefined && value.id === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['externalId'],
+				message: 'Pass externalId or id.',
+			});
+		}
+	});
 
 export type CustomersUpdateInput = z.input<typeof CustomersUpdateInputSchema>;
 
@@ -1103,25 +1147,35 @@ export const ONEDESK_TIMESHEET_STATUSES = [
 	'declined',
 ] as const;
 
-const TimesheetsUpdateInputSchema = z.object({
-	externalId: z.string().min(1).optional(),
-	id: z.number().int().optional(),
-	works: z.number().min(0).optional(),
-	billable: z.boolean().optional(),
-	note: z.string().optional(),
-	status: z.enum(ONEDESK_TIMESHEET_STATUSES).optional(),
-	completion: z.number().int().min(0).max(100).optional(),
-	start: z.string().optional(),
-	finish: z.string().optional(),
-	invoiceWork: z.number().min(0).optional(),
-	userAndCustomerRequesterExternalIds: listUpdate.optional(),
-	teamAndCustomerOrganizationRequesterExternalIds: listUpdate.optional(),
-	invoiceableCustomerOrganizationExternalId: z.string().optional(),
-	serviceType: z.string().optional(),
-	customFields: z
-		.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-		.optional(),
-});
+const TimesheetsUpdateInputSchema = z
+	.object({
+		externalId: z.string().min(1).optional(),
+		id: z.number().int().optional(),
+		works: z.number().min(0).optional(),
+		billable: z.boolean().optional(),
+		note: z.string().optional(),
+		status: z.enum(ONEDESK_TIMESHEET_STATUSES).optional(),
+		completion: z.number().int().min(0).max(100).optional(),
+		start: z.string().optional(),
+		finish: z.string().optional(),
+		invoiceWork: z.number().min(0).optional(),
+		userAndCustomerRequesterExternalIds: listUpdate.optional(),
+		teamAndCustomerOrganizationRequesterExternalIds: listUpdate.optional(),
+		invoiceableCustomerOrganizationExternalId: z.string().optional(),
+		serviceType: z.string().optional(),
+		customFields: z
+			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+			.optional(),
+	})
+	.superRefine((value, ctx) => {
+		if (value.externalId === undefined && value.id === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['externalId'],
+				message: 'Pass externalId or id.',
+			});
+		}
+	});
 
 export type TimesheetsUpdateInput = z.input<typeof TimesheetsUpdateInputSchema>;
 
@@ -1281,16 +1335,26 @@ const InvoiceResultSchema = z
 	.object({ code: z.string().nullish(), data: OnedeskInvoiceSchema.nullish() })
 	.loose();
 
-const InvoicesUpdateInputSchema = z.object({
-	externalId: z.string().min(1).optional(),
-	id: z.number().int().optional(),
-	displayNumber: z.string().optional(),
-	status: z.enum(ONEDESK_INVOICE_STATUSES).optional(),
-	dueDate: z.string().optional(),
-	basicLineItemsToAdd: z.array(LineItemSchema).optional(),
-	serviceLineItemsToAdd: z.array(LineItemSchema).optional(),
-	prepaidHoursLineItemToAdd: z.array(LineItemSchema).optional(),
-});
+const InvoicesUpdateInputSchema = z
+	.object({
+		externalId: z.string().min(1).optional(),
+		id: z.number().int().optional(),
+		displayNumber: z.string().optional(),
+		status: z.enum(ONEDESK_INVOICE_STATUSES).optional(),
+		dueDate: z.string().optional(),
+		basicLineItemsToAdd: z.array(LineItemSchema).optional(),
+		serviceLineItemsToAdd: z.array(LineItemSchema).optional(),
+		prepaidHoursLineItemToAdd: z.array(LineItemSchema).optional(),
+	})
+	.superRefine((value, ctx) => {
+		if (value.externalId === undefined && value.id === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['externalId'],
+				message: 'Pass externalId or id.',
+			});
+		}
+	});
 
 export type InvoicesUpdateInput = z.input<typeof InvoicesUpdateInputSchema>;
 
@@ -1366,16 +1430,26 @@ const QuoteResultSchema = z
 	.object({ code: z.string().nullish(), data: OnedeskQuoteSchema.nullish() })
 	.loose();
 
-const QuotesUpdateInputSchema = z.object({
-	externalId: z.string().min(1).optional(),
-	id: z.number().int().optional(),
-	displayNumber: z.string().optional(),
-	status: z.enum(ONEDESK_QUOTE_STATUSES).optional(),
-	expirationDate: z.string().optional(),
-	basicLineItemsToAdd: z.array(LineItemSchema).optional(),
-	serviceLineItemsToAdd: z.array(LineItemSchema).optional(),
-	prepaidHoursLineItemToAdd: z.array(LineItemSchema).optional(),
-});
+const QuotesUpdateInputSchema = z
+	.object({
+		externalId: z.string().min(1).optional(),
+		id: z.number().int().optional(),
+		displayNumber: z.string().optional(),
+		status: z.enum(ONEDESK_QUOTE_STATUSES).optional(),
+		expirationDate: z.string().optional(),
+		basicLineItemsToAdd: z.array(LineItemSchema).optional(),
+		serviceLineItemsToAdd: z.array(LineItemSchema).optional(),
+		prepaidHoursLineItemToAdd: z.array(LineItemSchema).optional(),
+	})
+	.superRefine((value, ctx) => {
+		if (value.externalId === undefined && value.id === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['externalId'],
+				message: 'Pass externalId or id.',
+			});
+		}
+	});
 
 export type QuotesUpdateInput = z.input<typeof QuotesUpdateInputSchema>;
 

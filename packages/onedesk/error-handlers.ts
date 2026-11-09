@@ -26,23 +26,52 @@ function isReadOperation(context: ErrorContext | undefined): boolean {
 	);
 }
 
-/** A delete or a timer change, which must never be replayed. */
-const DESTRUCTIVE_OPERATIONS = new Set(['timers.cancel']);
+/**
+ * The timer actions change state over GET. None of them is idempotent: a
+ * replayed start bills the same work twice, and a replayed cancel can land
+ * after the timer already moved on. They are therefore excluded from **every**
+ * retry path, including the rate-limit one.
+ */
+const TIMER_ACTIONS = new Set([
+	'timers.start',
+	'timers.pause',
+	'timers.resume',
+	'timers.cancel',
+]);
+
+function isTimerAction(context: ErrorContext | undefined): boolean {
+	return context !== undefined && TIMER_ACTIONS.has(context.operation);
+}
+
+/** Never replayed: the timer actions and anything else that destroys state. */
+const IRREVERSIBLE_OPERATIONS = new Set(['timers.cancel', 'invoices.update']);
 
 function isDestructive(context: ErrorContext | undefined): boolean {
-	return context !== undefined && DESTRUCTIVE_OPERATIONS.has(context.operation);
+	return (
+		context !== undefined && IRREVERSIBLE_OPERATIONS.has(context.operation)
+	);
 }
 
 export const errorHandlers = {
 	// Documented as "Rate limit reached" with a 429. The window is not
 	// published, so the header wins and a short fallback applies without one.
+	// A timer action is excluded: a throttled start that is sent again bills the
+	// same work twice.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => isOnedesk(error) && error.isRateLimit,
+		match: (error: Error, context: ErrorContext) =>
+			isOnedesk(error) && error.isRateLimit && !isTimerAction(context),
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs: isOnedesk(error) ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
+	},
+	// A throttled timer action has to be reported: the caller can retry it once
+	// they know the timer did not move.
+	TIMER_THROTTLED_ERROR: {
+		match: (error: Error, context: ErrorContext) =>
+			isOnedesk(error) && error.isRateLimit && isTimerAction(context),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A wrong, expired or disabled key. 401 arrives with an empty body.
 	AUTH_ERROR: {

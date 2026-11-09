@@ -206,6 +206,14 @@ describe('items', () => {
 		expect(request.body).toEqual({ name: 'Renamed', percentComplete: 50 });
 	});
 
+	it('items.update rejects a call with no target identifier', async () => {
+		// Without this the path would be /items/id/undefined.
+		await expect(
+			invoke(Records.itemsUpdate, { name: 'Renamed' }),
+		).rejects.toThrow(/Pass externalId or id/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('items.update rejects a percentComplete over 100', async () => {
 		await expect(
 			invoke(Records.itemsUpdate, { externalId: 'i-1', percentComplete: 101 }),
@@ -274,6 +282,12 @@ describe('users', () => {
 		});
 	});
 
+	it('users.update rejects a call with no target identifier', async () => {
+		await expect(invoke(Records.usersUpdate, { title: 'x' })).rejects.toThrow(
+			/Pass externalId or id/,
+		);
+	});
+
 	it('users.update sends the team list update', async () => {
 		respond(updateCodeString);
 
@@ -328,6 +342,12 @@ describe('projects and portfolios', () => {
 		await expect(
 			invoke(Records.projectsCreate, { name: 'x', invoiceType: 'hourly' }),
 		).rejects.toThrow();
+	});
+
+	it('projects.update rejects a call with no target identifier', async () => {
+		await expect(invoke(Records.projectsUpdate, { name: 'x' })).rejects.toThrow(
+			/Pass externalId or id/,
+		);
 	});
 
 	it('projects.update posts the lifecycle status', async () => {
@@ -483,6 +503,12 @@ describe('invoices and quotes', () => {
 		expect(lastRequest().body).toEqual({ status: 'sent' });
 	});
 
+	it('invoices.update rejects a call with no target identifier', async () => {
+		await expect(
+			invoke(Records.invoicesUpdate, { status: 'sent' }),
+		).rejects.toThrow(/Pass externalId or id/);
+	});
+
 	it('invoices.update rejects a status OneDesk does not define', async () => {
 		await expect(
 			invoke(Records.invoicesUpdate, {
@@ -516,6 +542,12 @@ describe('invoices and quotes', () => {
 		await invoke(Records.quotesGet, { id: 71 });
 
 		expect(lastRequest().path).toBe('/rest/public/quotes/id/71');
+	});
+
+	it('quotes.update rejects a call with no target identifier', async () => {
+		await expect(
+			invoke(Records.quotesUpdate, { status: 'sent' }),
+		).rejects.toThrow(/Pass externalId or id/);
 	});
 
 	it('quotes.update posts the quote status', async () => {
@@ -569,6 +601,12 @@ describe('customers and organizations', () => {
 			email: 'ada@example.com',
 			customerOrganization: 'co-1',
 		});
+	});
+
+	it('customers.update rejects a call with no target identifier', async () => {
+		await expect(invoke(Crm.customersUpdate, { title: 'x' })).rejects.toThrow(
+			/Pass externalId or id/,
+		);
 	});
 
 	it('customers.update posts the deactivate flag', async () => {
@@ -685,6 +723,12 @@ describe('timesheets and timers', () => {
 			}),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('timesheets.update rejects a call with no target identifier', async () => {
+		await expect(invoke(Crm.timesheetsUpdate, { works: 1 })).rejects.toThrow(
+			/Pass externalId or id/,
+		);
 	});
 
 	it('timesheets.update posts the approval status', async () => {
@@ -936,8 +980,11 @@ describe('activities and attachments', () => {
 		const form = request.body as FormData;
 		expect(form.get('fileName')).toBe('note.txt');
 		const file = form.get('file');
-		expect(file).toBeInstanceOf(Blob);
-		expect(await (file as Blob).text()).toBe('hello');
+		expect(file).toBeInstanceOf(File);
+		// The part must carry the requested name, or OneDesk stores "blob".
+		expect((file as File).name).toBe('note.txt');
+		expect((file as File).type).toBe('text/plain');
+		expect(await (file as File).text()).toBe('hello');
 	});
 
 	it('attachments.upload rejects content that decodes to nothing', async () => {

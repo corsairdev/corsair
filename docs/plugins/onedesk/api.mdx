@@ -20,7 +20,7 @@ List activity log entries by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.activities.filterDetails({});
+await corsair.onedesk.api.activities.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -111,12 +111,7 @@ Upload a file and attach it to a work item
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.attachments.attachToItem({
-  externalId: '1ac35fgh-24e2-4b56-8b5e-c75df7969bad',
-  fileName: 'screenshot.png',
-  contentType: 'image/png',
-  contentBase64: '<base64 bytes>',
-});
+await corsair.onedesk.api.attachments.attachToItem({ externalId: '0abb5fgh-0000-0000-0000-c75df7969bad', fileName: 'invoice.pdf', contentBase64: '<base64 bytes>' });
 ```
 
 **Input**
@@ -150,7 +145,7 @@ Upload a file and attach it to a customer organization
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.attachments.attachToOrganization({});
+await corsair.onedesk.api.attachments.attachToOrganization({ externalId: '04969ee3-f2b0-45b2-95a5-04584fe9b497', fileName: 'invoice.pdf', contentBase64: '<base64 bytes>' });
 ```
 
 **Input**
@@ -184,7 +179,7 @@ Upload a file and attach it to a portfolio
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.attachments.attachToPortfolio({});
+await corsair.onedesk.api.attachments.attachToPortfolio({ externalId: '04969ee3-f2b0-45b2-95a5-04584fe9b497', fileName: 'invoice.pdf', contentBase64: '<base64 bytes>' });
 ```
 
 **Input**
@@ -218,7 +213,7 @@ Upload a file and attach it to a project
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.attachments.attachToProject({});
+await corsair.onedesk.api.attachments.attachToProject({ externalId: 'e150be49-b53c-4d81-a25d-ab807095ce51', fileName: 'invoice.pdf', contentBase64: '<base64 bytes>' });
 ```
 
 **Input**
@@ -252,7 +247,7 @@ List attachment external ids by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.attachments.filter({});
+await corsair.onedesk.api.attachments.filter({ limit: 50 });
 ```
 
 **Input**
@@ -329,7 +324,7 @@ List attachments with their names
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.attachments.filterDetails({});
+await corsair.onedesk.api.attachments.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -417,7 +412,7 @@ Read one attachment record by external id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.attachments.get({});
+await corsair.onedesk.api.attachments.get({ externalId: '1234596f4-0000-0000-0000-cb0e42b1db19' });
 ```
 
 **Input**
@@ -461,7 +456,7 @@ Upload a file to the account and get its external id for attaching later
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.attachments.upload({});
+await corsair.onedesk.api.attachments.upload({ fileName: 'invoice.pdf', contentType: 'application/pdf', contentBase64: '<base64 bytes>' });
 ```
 
 **Input**
@@ -498,7 +493,7 @@ Open a conversation on a work item or project, optionally with its first message
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.conversations.create({});
+await corsair.onedesk.api.conversations.create({ itemExternalId: '0abb5fgh-0000-0000-0000-c75df7969bad' });
 ```
 
 **Input**
@@ -546,7 +541,7 @@ List conversation external ids by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.conversations.filter({});
+await corsair.onedesk.api.conversations.filter({ limit: 50 });
 ```
 
 **Input**
@@ -623,7 +618,7 @@ List conversations with their open and lock state
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.conversations.filterDetails({});
+await corsair.onedesk.api.conversations.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -721,7 +716,7 @@ Read one conversation by external id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.conversations.get({});
+await corsair.onedesk.api.conversations.get({ externalId: '6634596f4-0000-0000-0000-cb0e42b1db19@conference.im.onedesk.com' });
 ```
 
 **Input**
@@ -775,7 +770,7 @@ Close, reopen or lock a conversation
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.conversations.update({});
+await corsair.onedesk.api.conversations.update({ externalId: '6634596f4-0000-0000-0000-cb0e42b1db19@conference.im.onedesk.com', open: false });
 ```
 
 **Input**
@@ -809,7 +804,7 @@ Create a customer, optionally inside a customer organization
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.customers.create({});
+await corsair.onedesk.api.customers.create({ email: 'customer@example.com' });
 ```
 
 **Input**
@@ -846,7 +841,7 @@ List customer external ids by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.customers.filter({});
+await corsair.onedesk.api.customers.filter({ limit: 50 });
 ```
 
 **Input**
@@ -935,7 +930,7 @@ List customers with their contact details and organization
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.customers.filterDetails({});
+await corsair.onedesk.api.customers.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -1057,7 +1052,7 @@ Read one customer by external id or numeric id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.customers.get({});
+await corsair.onedesk.api.customers.get({ externalId: '35650e86-0000-0000-0000-55a4b869c17a' });
 ```
 
 **Input**
@@ -1124,7 +1119,7 @@ Change a customer, including deactivating them so they can no longer sign in
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.customers.update({});
+await corsair.onedesk.api.customers.update({ externalId: '35650e86-0000-0000-0000-55a4b869c17a', title: 'CTO' });
 ```
 
 **Input**
@@ -1185,7 +1180,7 @@ List invoice external ids by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.invoices.filter({});
+await corsair.onedesk.api.invoices.filter({ limit: 50 });
 ```
 
 **Input**
@@ -1262,7 +1257,7 @@ List invoices with their status and totals
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.invoices.filterDetails({});
+await corsair.onedesk.api.invoices.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -1355,7 +1350,7 @@ Read one invoice by external id or numeric id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.invoices.get({});
+await corsair.onedesk.api.invoices.get({ externalId: '35650e86-0000-0000-0000-55a4b869c17a' });
 ```
 
 **Input**
@@ -1400,12 +1395,12 @@ await corsair.onedesk.api.invoices.get({});
 
 `invoices.update`
 
-Change an invoice: its status, due date and line items. A 'void' status cannot be undone
+Change an invoice: its status, due date and line items. Setting the status to 'void' cannot be undone
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.onedesk.api.invoices.update({});
+await corsair.onedesk.api.invoices.update({ externalId: '35650e86-0000-0000-0000-55a4b869c17a', status: 'sent' });
 ```
 
 **Input**
@@ -1444,12 +1439,7 @@ Create a work item such as a ticket or task, optionally with requesters, followe
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.items.create({
-  name: 'The blue button does not work',
-  type: 'Ticket',
-  priority: 80,
-  description: 'Reported by the customer on the checkout page.',
-});
+await corsair.onedesk.api.items.create({ name: 'The blue button does not work', type: 'Problem' });
 ```
 
 **Input**
@@ -1493,14 +1483,7 @@ List work item external ids by type and filter, with paging and a total count
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.items.filter({
-  itemType: ['Problem'],
-  properties: [
-    { property: 'lifecycleStatus', operation: 'EQ', value: 'Open' },
-  ],
-  limit: 50,
-  offset: 0,
-});
+await corsair.onedesk.api.items.filter({ itemType: ['Problem'], limit: 50 });
 ```
 
 **Input**
@@ -1592,7 +1575,7 @@ List work items with their details by type and filter, including assignees and l
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.items.filterDetails({});
+await corsair.onedesk.api.items.filterDetails({ itemType: ['Problem'], limit: 50 });
 ```
 
 **Input**
@@ -1733,7 +1716,7 @@ Read one work item by external id or numeric id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.items.get({});
+await corsair.onedesk.api.items.get({ externalId: '0abb5fgh-0000-0000-0000-c75df7969bad' });
 ```
 
 **Input**
@@ -1816,7 +1799,7 @@ Change a work item: name, status, assignment, priority, dates, links and custom 
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.items.update({});
+await corsair.onedesk.api.items.update({ externalId: '0abb5fgh-0000-0000-0000-c75df7969bad', name: 'Renamed item' });
 ```
 
 **Input**
@@ -2037,7 +2020,7 @@ Post a message into a conversation
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.messages.create({});
+await corsair.onedesk.api.messages.create({ conversationExternalId: '6634596f4-0000-0000-0000-cb0e42b1db19@conference.im.onedesk.com', content: 'Thanks for the update.' });
 ```
 
 **Input**
@@ -2071,7 +2054,7 @@ List conversation message external ids by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.messages.filter({});
+await corsair.onedesk.api.messages.filter({ limit: 50 });
 ```
 
 **Input**
@@ -2148,7 +2131,7 @@ List conversation messages with their content and author
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.messages.filterDetails({});
+await corsair.onedesk.api.messages.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -2244,7 +2227,7 @@ Read one conversation message by external id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.messages.get({});
+await corsair.onedesk.api.messages.get({ externalId: '7e895fe5-0000-0000-0000-06aa3d02e7ef' });
 ```
 
 **Input**
@@ -2296,7 +2279,7 @@ Change a message body or its attachments
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.messages.update({});
+await corsair.onedesk.api.messages.update({ externalId: '7e895fe5-0000-0000-0000-06aa3d02e7ef', content: 'Updated message.' });
 ```
 
 **Input**
@@ -2548,7 +2531,7 @@ Create a customer organization
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.organizations.create({});
+await corsair.onedesk.api.organizations.create({ name: 'Analytical Engines' });
 ```
 
 **Input**
@@ -2581,7 +2564,7 @@ List customer organization external ids by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.organizations.filter({});
+await corsair.onedesk.api.organizations.filter({ limit: 50 });
 ```
 
 **Input**
@@ -2670,7 +2653,7 @@ List customer organizations with their domains and customers
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.organizations.filterDetails({});
+await corsair.onedesk.api.organizations.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -2788,7 +2771,7 @@ Read one customer organization by external id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.organizations.get({});
+await corsair.onedesk.api.organizations.get({ externalId: '04969ee3-f2b0-45b2-95a5-04584fe9b497' });
 ```
 
 **Input**
@@ -2850,7 +2833,7 @@ Change a customer organization, its domains or its customers
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.organizations.update({});
+await corsair.onedesk.api.organizations.update({ externalId: '04969ee3-f2b0-45b2-95a5-04584fe9b497', name: 'Renamed organization' });
 ```
 
 **Input**
@@ -2939,7 +2922,7 @@ Create a portfolio, optionally nested under others
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.portfolios.create({});
+await corsair.onedesk.api.portfolios.create({ name: '2024 portfolio' });
 ```
 
 **Input**
@@ -2974,7 +2957,7 @@ List portfolio external ids by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.portfolios.filter({});
+await corsair.onedesk.api.portfolios.filter({ limit: 50 });
 ```
 
 **Input**
@@ -3051,7 +3034,7 @@ List portfolios with their details
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.portfolios.filterDetails({});
+await corsair.onedesk.api.portfolios.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -3146,7 +3129,7 @@ Read one portfolio by external id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.portfolios.get({});
+await corsair.onedesk.api.portfolios.get({ externalId: '04969ee3-f2b0-45b2-95a5-04584fe9b497' });
 ```
 
 **Input**
@@ -3197,7 +3180,7 @@ Change a portfolio name, parents or attachments
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.portfolios.update({});
+await corsair.onedesk.api.portfolios.update({ externalId: '04969ee3-f2b0-45b2-95a5-04584fe9b497', name: 'Renamed portfolio' });
 ```
 
 **Input**
@@ -3258,7 +3241,7 @@ Create a project, optionally under portfolios
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.projects.create({});
+await corsair.onedesk.api.projects.create({ name: 'Website rebuild' });
 ```
 
 **Input**
@@ -3300,7 +3283,7 @@ List project external ids by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.projects.filter({});
+await corsair.onedesk.api.projects.filter({ limit: 50 });
 ```
 
 **Input**
@@ -3389,7 +3372,7 @@ List projects with their lifecycle status and invoice type
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.projects.filterDetails({});
+await corsair.onedesk.api.projects.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -3516,7 +3499,7 @@ Read one project by external id or numeric id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.projects.get({});
+await corsair.onedesk.api.projects.get({ externalId: 'e150be49-b53c-4d81-a25d-ab807095ce51' });
 ```
 
 **Input**
@@ -3588,7 +3571,7 @@ Change a project: name, lifecycle status, portfolios and custom fields
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.projects.update({});
+await corsair.onedesk.api.projects.update({ externalId: 'e150be49-b53c-4d81-a25d-ab807095ce51', name: 'Renamed project' });
 ```
 
 **Input**
@@ -3656,7 +3639,7 @@ List quote external ids by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.quotes.filter({});
+await corsair.onedesk.api.quotes.filter({ limit: 50 });
 ```
 
 **Input**
@@ -3733,7 +3716,7 @@ List quotes with their status and totals
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.quotes.filterDetails({});
+await corsair.onedesk.api.quotes.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -3825,7 +3808,7 @@ Read one quote by external id or numeric id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.quotes.get({});
+await corsair.onedesk.api.quotes.get({ externalId: '35650e86-0000-0000-0000-55a4b869c17a' });
 ```
 
 **Input**
@@ -3874,7 +3857,7 @@ Change a quote: its status, expiration date and line items
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.quotes.update({});
+await corsair.onedesk.api.quotes.update({ externalId: '35650e86-0000-0000-0000-55a4b869c17a', status: 'sent' });
 ```
 
 **Input**
@@ -3913,7 +3896,7 @@ Create a team with an initial set of members
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.teams.create({});
+await corsair.onedesk.api.teams.create({ name: 'Support' });
 ```
 
 **Input**
@@ -3945,7 +3928,7 @@ List team external ids by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.teams.filter({});
+await corsair.onedesk.api.teams.filter({ limit: 50 });
 ```
 
 **Input**
@@ -4022,7 +4005,7 @@ List teams with their members
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.teams.filterDetails({});
+await corsair.onedesk.api.teams.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -4111,7 +4094,7 @@ Read one team by external id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.teams.get({});
+await corsair.onedesk.api.teams.get({ externalId: '46d4eed9-776f-4a88-aea7-5f8fc741fa22' });
 ```
 
 **Input**
@@ -4156,7 +4139,7 @@ Rename a team or change its members
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.teams.update({});
+await corsair.onedesk.api.teams.update({ externalId: '46d4eed9-776f-4a88-aea7-5f8fc741fa22', name: 'Support team' });
 ```
 
 **Input**
@@ -4203,7 +4186,7 @@ Cancel a work timer, discarding the work recorded in that run
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.onedesk.api.timers.cancel({});
+await corsair.onedesk.api.timers.cancel({ timerExternalId: '4t52581b-0000-0000-0000-b0232f2a4453' });
 ```
 
 **Input**
@@ -4248,7 +4231,7 @@ List timer external ids by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.timers.filter({});
+await corsair.onedesk.api.timers.filter({ limit: 50 });
 ```
 
 **Input**
@@ -4325,7 +4308,7 @@ List timers with their status and accumulated work
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.timers.filterDetails({});
+await corsair.onedesk.api.timers.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -4416,7 +4399,7 @@ Read one timer by external id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.timers.get({});
+await corsair.onedesk.api.timers.get({ externalId: '4t52581b-0000-0000-0000-b0232f2a4453' });
 ```
 
 **Input**
@@ -4463,7 +4446,7 @@ Pause a running work timer
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.timers.pause({});
+await corsair.onedesk.api.timers.pause({ timerExternalId: '4t52581b-0000-0000-0000-b0232f2a4453' });
 ```
 
 **Input**
@@ -4506,7 +4489,7 @@ Resume a paused work timer
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.timers.resume({});
+await corsair.onedesk.api.timers.resume({ timerExternalId: '4t52581b-0000-0000-0000-b0232f2a4453' });
 ```
 
 **Input**
@@ -4549,7 +4532,7 @@ Start a work timer on a work item
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.timers.start({});
+await corsair.onedesk.api.timers.start({ timerExternalId: '4t52581b-0000-0000-0000-b0232f2a4453', itemExternalId: '0abb5fgh-0000-0000-0000-c75df7969bad' });
 ```
 
 **Input**
@@ -4597,13 +4580,7 @@ Book work against a work item for a user
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.timesheets.create({
-  userExternalId: '1534596f4-0000-0000-0000-cb0e42b1db19',
-  taskExternalId: '1ac35fgh-24e2-4b56-8b5e-c75df7969bad',
-  works: 2.5,
-  percentCompleted: 100,
-  finish: '2024-05-14T11:30:00Z',
-});
+await corsair.onedesk.api.timesheets.create({ userExternalId: '67475168-7241-4a76-8bd5-dc4f26a40eb8', taskExternalId: '0abb5fgh-0000-0000-0000-c75df7969bad', works: 2.5, percentCompleted: 100, finish: '2024-05-14T11:30:00Z' });
 ```
 
 **Input**
@@ -4644,7 +4621,7 @@ List timesheet external ids by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.timesheets.filter({});
+await corsair.onedesk.api.timesheets.filter({ limit: 50 });
 ```
 
 **Input**
@@ -4733,7 +4710,7 @@ List timesheets with their hours, dates and approval status
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.timesheets.filterDetails({});
+await corsair.onedesk.api.timesheets.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -4843,7 +4820,7 @@ Read one timesheet by external id or numeric id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.timesheets.get({});
+await corsair.onedesk.api.timesheets.get({ externalId: 'ff87a554-0000-0000-0000-a1acabe30d93' });
 ```
 
 **Input**
@@ -4898,7 +4875,7 @@ Change a timesheet, including approving or declining it and marking it billable
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.timesheets.update({});
+await corsair.onedesk.api.timesheets.update({ externalId: 'ff87a554-0000-0000-0000-a1acabe30d93', status: 'approved' });
 ```
 
 **Input**
@@ -4968,7 +4945,7 @@ Create a user, which sends them an invitation to the account
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.users.create({});
+await corsair.onedesk.api.users.create({ email: 'new.user@example.com', firstName: 'Ada' });
 ```
 
 **Input**
@@ -5006,7 +4983,7 @@ List user external ids by filter
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.users.filter({});
+await corsair.onedesk.api.users.filter({ limit: 50 });
 ```
 
 **Input**
@@ -5095,7 +5072,7 @@ List users with their profile, address and teams
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.users.filterDetails({});
+await corsair.onedesk.api.users.filterDetails({ limit: 50 });
 ```
 
 **Input**
@@ -5219,7 +5196,7 @@ Read one user by external id or numeric id
 **Risk:** `read`
 
 ```ts
-await corsair.onedesk.api.users.get({});
+await corsair.onedesk.api.users.get({ externalId: '67475168-7241-4a76-8bd5-dc4f26a40eb8' });
 ```
 
 **Input**
@@ -5288,7 +5265,7 @@ Change a user profile, teams or custom fields
 **Risk:** `write`
 
 ```ts
-await corsair.onedesk.api.users.update({});
+await corsair.onedesk.api.users.update({ externalId: '67475168-7241-4a76-8bd5-dc4f26a40eb8', title: 'Engineer' });
 ```
 
 **Input**

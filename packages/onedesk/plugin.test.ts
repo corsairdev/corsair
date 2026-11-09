@@ -139,12 +139,21 @@ describe('onedesk plugin definition', () => {
 		}
 	});
 
-	it('marks only timer cancellation as irreversible', () => {
+	it('marks the operations that cannot be undone as irreversible', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const irreversible = Object.entries(meta)
 			.filter(([, entry]) => entry.irreversible)
-			.map(([name]) => name);
-		expect(irreversible).toEqual(['timers.cancel']);
+			.map(([name]) => name)
+			.sort();
+		// A voided invoice cannot be un-voided, so invoices.update is classified
+		// by its worst case rather than its common one.
+		expect(irreversible).toEqual(['invoices.update', 'timers.cancel']);
+	});
+
+	it('treats invoice voiding as destructive so it needs approval', () => {
+		expect(plugin.endpointMeta?.['invoices.update']?.riskLevel).toBe(
+			'destructive',
+		);
 	});
 
 	it('treats every filter and get as a read and every create as a write', () => {

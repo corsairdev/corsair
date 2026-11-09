@@ -65,7 +65,7 @@ describe('onedesk error handlers', () => {
 	it('retries a 429 with the Retry-After delay', async () => {
 		const error = apiError(429, undefined, 'POST', undefined, 4000);
 
-		expect(firstMatch(error)).toBe('RATE_LIMIT_ERROR');
+		expect(firstMatch(error, ctxFor('items.filter'))).toBe('RATE_LIMIT_ERROR');
 		await expect(run('RATE_LIMIT_ERROR', error)).resolves.toEqual({
 			maxRetries: 3,
 			headersRetryAfterMs: 4000,
@@ -73,9 +73,33 @@ describe('onedesk error handlers', () => {
 	});
 
 	it('retries a 429 that carried no Retry-After', async () => {
-		const result = await run('RATE_LIMIT_ERROR', apiError(429, undefined));
+		const result = await run(
+			'RATE_LIMIT_ERROR',
+			apiError(429, undefined),
+			ctxFor('items.filter'),
+		);
 		expect(result.maxRetries).toBe(3);
 		expect(result.headersRetryAfterMs).toBeUndefined();
+	});
+
+	it('never retries a throttled timer action, which is not idempotent', async () => {
+		// A replayed start bills the same work twice.
+		for (const operation of [
+			'timers.start',
+			'timers.pause',
+			'timers.resume',
+			'timers.cancel',
+		]) {
+			const error = apiError(429, undefined, 'GET');
+			const matched = firstMatch(error, ctxFor(operation));
+			expect([operation, matched]).toEqual([
+				operation,
+				'TIMER_THROTTLED_ERROR',
+			]);
+			await expect(
+				run('TIMER_THROTTLED_ERROR', error, ctxFor(operation)),
+			).resolves.toMatchObject({ maxRetries: 0 });
+		}
 	});
 
 	it('never retries a rejected key', async () => {

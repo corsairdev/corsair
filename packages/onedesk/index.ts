@@ -784,9 +784,13 @@ const onedeskEndpointMeta = {
 		description: 'Read one invoice by external id or numeric id',
 	},
 	'invoices.update': {
-		riskLevel: 'write',
+		// Setting status to 'void' cannot be undone, and the operation accepts
+		// that value, so it is classified by its worst case rather than its
+		// common one.
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
-			"Change an invoice: its status, due date and line items. A 'void' status cannot be undone",
+			"Change an invoice: its status, due date and line items. Setting the status to 'void' cannot be undone",
 	},
 	'quotes.filter': {
 		riskLevel: 'read',

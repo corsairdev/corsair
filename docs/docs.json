@@ -2622,6 +2622,14 @@
                 ]
               },
               {
+                "group": "OneDesk",
+                "pages": [
+                  "plugins/onedesk/overview",
+                  "plugins/onedesk/api",
+                  "plugins/onedesk/database"
+                ]
+              },
+              {
                 "group": "OneDrive",
                 "pages": [
                   "plugins/onedrive/overview",
@@ -2629,14 +2637,6 @@
                   "plugins/onedrive/api",
                   "plugins/onedrive/database",
                   "plugins/onedrive/webhooks"
-                ]
-              },
-              {
-                "group": "OneDesk",
-                "pages": [
-                  "plugins/onedesk/overview",
-                  "plugins/onedesk/api",
-                  "plugins/onedesk/database"
                 ]
               },
               {

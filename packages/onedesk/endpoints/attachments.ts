@@ -11,6 +11,11 @@ import {
  * OneDesk takes attachment bytes as multipart, the same way for a bare upload
  * and for attaching to a record. The base64 input is decoded here so the
  * caller can pass a file straight from an agent's tool output.
+ *
+ * The part is a `File`, not a `Blob`: a File carries its name into the
+ * multipart `Content-Disposition`, which is what OneDesk records as the
+ * attachment name. A nameless Blob would arrive as "blob" and lose the
+ * extension the upload was given.
  */
 function multipartFile(parsed: {
 	fileName: string;
@@ -24,15 +29,15 @@ function multipartFile(parsed: {
 		);
 	}
 	return {
-		file: new Blob([new Uint8Array(bytes)], {
+		file: new File([new Uint8Array(bytes)], parsed.fileName, {
 			type: parsed.contentType ?? 'application/octet-stream',
 		}),
 	};
 }
 
 /**
- * A Blob carries no filename, and OneDesk shows the name in its UI, so the
- * name is sent as an extra multipart field where the API tolerates it.
+ * The name also travels as its own field, because a File's name reaches the
+ * server only through the part header.
  */
 function fileWithName(parsed: {
 	fileName: string;
