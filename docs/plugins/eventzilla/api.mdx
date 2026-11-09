@@ -37,6 +37,7 @@ await corsair.eventzilla.api.attendees.checkin({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `checkinstatus` | `object` | Yes | — |
+| `checkedIn` | `boolean \| null` | Yes | Whether this call is believed to have taken effect, derived from `checkinstatus.status`. Null when the provider’s status text does not say. Eventzilla answers HTTP 200 even for a failed check-in, so read this rather than the status code. |
 
 <AccordionGroup>
 <Accordion title="checkinstatus full type">

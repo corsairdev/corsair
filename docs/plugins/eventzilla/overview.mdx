@@ -113,19 +113,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`attendees.get`**
+**List the account's live events**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.eventzilla.api.attendees.get({});
+await tenant.eventzilla.api.events.list({ limit: 10 });
 ```
 
 
-**`attendees.checkin`**
+**Check an attendee in by barcode**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.eventzilla.api.attendees.checkin({});
+await tenant.eventzilla.api.attendees.checkin({ barcode: 'EZ202605200001', eventcheckin: true });
 ```
 
 

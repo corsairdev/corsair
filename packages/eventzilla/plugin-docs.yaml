@@ -25,14 +25,13 @@ overviewNote: |-
   empty one for an unknown id rather than a 404.
 examples:
   read:
-    title: List live events
-    description: The account's events that are currently on sale.
+    path: events.list
+    title: List the account's live events
     args:
-      status: "live"
       limit: 10
   write:
+    path: attendees.checkin
     title: Check an attendee in by barcode
-    description: Uses the barcode from an attendee or ticket record.
     args:
       barcode: "EZ202605200001"
       eventcheckin: true

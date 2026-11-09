@@ -21,7 +21,7 @@ pnpm add @corsair-dev/eventzilla
 | `checkout.prepare` | `eventzilla.api.checkout.prepare` | `read` | What is on sale for one event date — ticket types, availability, payment options and registration questions — and the `payment_id` the later steps need. Needs the event’s `dateid`, not its `id`. |
 | `events.attendees` | `eventzilla.api.events.attendees` | `read` | Every attendee for one event with their barcode, ticket type, answers and check-in state. The route takes no paging parameters, so the whole list arrives at once. |
 | `events.get` | `eventzilla.api.events.get` | `read` | One event by its `id`. Answers an array even for a single id; an unknown id gives an empty array, not an error. |
-| `events.list` | `eventzilla.api.events.list` | `read` | The account's events, newest paging first. Filter by status (Live, Draft, Unpublished, Completed) or category, and page with offset and the returned next_offset. |
+| `events.list` | `eventzilla.api.events.list` | `read` | The account's events, paged with offset. Filter by status (only "live" is accepted) or category, and page with the returned next_offset. An empty account answers HTTP 200 with {"message":"No events found"} rather than an array, which is read here as an empty page. |
 | `events.transactions` | `eventzilla.api.events.transactions` | `read` | Paid and pending orders for one event, with buyer, amount and reference. Paged by offset; next_offset comes back on the result. |
 | `orders.cancel` | `eventzilla.api.orders.cancel` | `destructive` | Cancel an order. The order and its tickets stop standing and the buyer is not restored by any other call; issuing a replacement means a new checkout. |
 | `orders.confirm` | `eventzilla.api.orders.confirm` | `write` | Confirm an order after checkout, optionally emailing the buyer. Confirming an already-confirmed order is the API’s own decision to make. |
@@ -29,7 +29,7 @@ pnpm add @corsair-dev/eventzilla
 | `tickets.create` | `eventzilla.api.tickets.create` | `write` | Add a free ticket type to an event. Paid pricing is not part of this route: the reference documents it as free ticket types only. |
 | `tickets.list` | `eventzilla.api.tickets.list` | `read` | The ticket types on sale for one event, with price, quantity and sales window, plus any donation options. |
 | `tickets.update` | `eventzilla.api.tickets.update` | `write` | Change an existing free ticket type. Every field is required, because the API treats this as a full replace rather than a patch. |
-| `transactions.get` | `eventzilla.api.transactions.get` | `read` | One order by checkout id or by reference number. An unknown reference answers an empty array rather than a 404, so check the array before reading it. |
+| `transactions.get` | `eventzilla.api.transactions.get` | `read` | One order by checkout id or reference number. Verified live, this route does not filter: a small integer answers the account's most recent transaction, a real checkout id answers "Unauthorized access", and an unknown reference answers "Invalid reference number" (404). Check the returned refno before trusting it. |
 | `users.get` | `eventzilla.api.users.get` | `read` | One organizer by id, in the same array envelope as the list. |
 | `users.list` | `eventzilla.api.users.list` | `read` | The organizer account and its sub-organizers, paged by offset. |
 
