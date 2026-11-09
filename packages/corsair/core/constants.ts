@@ -265,6 +265,7 @@ export const BaseProviders = [
 	'hashnode',
 	'here',
 	'heygen',
+	'heyy',
 	'hookdeck',
 	'htmltoimage',
 	'hubspot',
@@ -705,6 +706,7 @@ export const ProviderDisplayNames = {
 	hashnode: 'Hashnode',
 	here: 'HERE',
 	heygen: 'HeyGen',
+	heyy: 'Heyy',
 	hookdeck: 'Hookdeck',
 	htmltoimage: 'HtmlToImage',
 	hubspot: 'HubSpot',
@@ -1149,6 +1151,7 @@ export type AllProviders =
 	| 'hashnode'
 	| 'here'
 	| 'heygen'
+	| 'heyy'
 	| 'hookdeck'
 	| 'htmltoimage'
 	| 'hubspot'
