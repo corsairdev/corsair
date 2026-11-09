@@ -60,7 +60,6 @@ export const domainStatusChanged: InboxkitWebhooks['domainStatusChanged'] = {
 			ctx,
 			[event.data.domain],
 			event.data.metadata?.workspace_uid,
-			{ strict: true },
 		);
 		await safeLog(ctx, 'inboxkit.webhook.domains.statusChanged', {
 			uid: event.data.domain.uid,
@@ -87,7 +86,6 @@ export const mailboxStatusChanged: InboxkitWebhooks['mailboxStatusChanged'] = {
 				},
 			],
 			event.data.metadata?.workspace_uid,
-			{ strict: true },
 		);
 		await safeLog(ctx, 'inboxkit.webhook.mailboxes.statusChanged', {
 			uid: event.data.mailbox.uid,

@@ -1740,7 +1740,7 @@ const inboxkitEndpointMeta = {
 	'sequencers.add': {
 		riskLevel: 'write',
 		description:
-			'Connect a sequencer account such as Instantly, Smartlead or Lemlist, using the fields sequencers.listPlatforms names. Nothing is sent to it until sequencers.exportMailboxes.',
+			'Connect a sequencer account such as Instantly, Smartlead or Lemlist, using the fields sequencers.listPlatforms names. No mailboxes go to it until sequencers.exportMailboxes.',
 	},
 	'sequencers.update': {
 		riskLevel: 'write',

@@ -3,8 +3,8 @@ import type { InboxkitContext } from '..';
 // Rows are built field by field, never spread from what came back, so a credential
 // in a response or webhook can't reach the local database. A row is merged into
 // what is already saved, because a status webhook carries fewer fields than a list.
-// A failed local write never fails an API call, since the InboxKit side already
-// happened, but it does fail a webhook (`strict`), so InboxKit delivers it again.
+// A failed local write never fails the call or delivery it follows: this is only a
+// local copy, the InboxKit side already happened, and the next list corrects it.
 // `ctx.db` is optional chained because endpoint unit tests use a bare context.
 
 type Row = {
@@ -12,8 +12,6 @@ type Row = {
 	// unknown: API rows carry more fields than are stored; those read are checked.
 	[field: string]: unknown;
 };
-
-type SaveOptions = { strict?: boolean };
 
 // unknown: one field of an API row. Each helper below checks its type before use,
 // and keeps null, so a list can clear a value. undefined means "not in this row".
@@ -31,14 +29,12 @@ async function saveAll<T>(
 	rows: readonly T[],
 	// unknown: only whether the write settled matters, not what it returned.
 	write: (row: T) => Promise<unknown> | undefined,
-	{ strict }: SaveOptions = {},
 ): Promise<void> {
 	const results = await Promise.allSettled(rows.map(async (row) => write(row)));
 	const failed = results.filter((result) => result.status === 'rejected');
 	if (failed.length === 0) return;
 	const reason =
 		failed[0]?.status === 'rejected' ? failed[0].reason : undefined;
-	if (strict) throw reason;
 	console.warn(
 		`Failed to save ${failed.length} of ${rows.length} InboxKit ${label}:`,
 		reason,
@@ -94,30 +90,25 @@ export async function saveDomains(
 	ctx: InboxkitContext,
 	domains: readonly Row[],
 	workspaceId?: string | null,
-	options?: SaveOptions,
 ): Promise<void> {
 	const store = ctx.db?.domains;
 	if (!store) return;
-	await saveAll(
-		'domains',
-		domains,
-		(row) =>
-			row.uid
-				? merge(store, {
-						id: row.uid,
-						name: text(row.name),
-						status: text(row.status),
-						workspace_uid: workspaceId ?? undefined,
-						connection_type: text(row.connection_type),
-						dns_propagation_status: text(row.dns_propagation_status),
-						nameserver_match_status: text(row.nameserver_match_status),
-						forwarding_url: text(row.forwarding_url),
-						renewal_date: text(row.renewal_date),
-						renewal_status: text(row.renewal_status),
-						assigned_mailboxes: count(row.assigned_mailboxes),
-					})
-				: undefined,
-		options,
+	await saveAll('domains', domains, (row) =>
+		row.uid
+			? merge(store, {
+					id: row.uid,
+					name: text(row.name),
+					status: text(row.status),
+					workspace_uid: workspaceId ?? undefined,
+					connection_type: text(row.connection_type),
+					dns_propagation_status: text(row.dns_propagation_status),
+					nameserver_match_status: text(row.nameserver_match_status),
+					forwarding_url: text(row.forwarding_url),
+					renewal_date: text(row.renewal_date),
+					renewal_status: text(row.renewal_status),
+					assigned_mailboxes: count(row.assigned_mailboxes),
+				})
+			: undefined,
 	);
 }
 
@@ -125,36 +116,30 @@ export async function saveMailboxes(
 	ctx: InboxkitContext,
 	mailboxes: readonly Row[],
 	workspaceId?: string | null,
-	options?: SaveOptions,
 ): Promise<void> {
 	const store = ctx.db?.mailboxes;
 	if (!store) return;
-	await saveAll(
-		'mailboxes',
-		mailboxes,
-		(row) => {
-			if (!row.uid) return undefined;
-			const username = text(row.username);
-			const domainName = text(row.domain_name);
-			return merge(store, {
-				id: row.uid,
-				email:
-					text(row.email) ??
-					(username && domainName ? `${username}@${domainName}` : undefined),
-				username,
-				domain_name: domainName,
-				first_name: text(row.first_name),
-				last_name: text(row.last_name),
-				platform: text(row.platform),
-				status: text(row.status),
-				workspace_uid: workspaceId ?? undefined,
-				is_admin: flag(row.is_admin),
-				renewal_date: text(row.renewal_date),
-				renewal_status: text(row.renewal_status),
-				sequencer_status: text(row.sequencer_status),
-				forwarding_email: text(row.forwarding_email),
-			});
-		},
-		options,
-	);
+	await saveAll('mailboxes', mailboxes, (row) => {
+		if (!row.uid) return undefined;
+		const username = text(row.username);
+		const domainName = text(row.domain_name);
+		return merge(store, {
+			id: row.uid,
+			email:
+				text(row.email) ??
+				(username && domainName ? `${username}@${domainName}` : undefined),
+			username,
+			domain_name: domainName,
+			first_name: text(row.first_name),
+			last_name: text(row.last_name),
+			platform: text(row.platform),
+			status: text(row.status),
+			workspace_uid: workspaceId ?? undefined,
+			is_admin: flag(row.is_admin),
+			renewal_date: text(row.renewal_date),
+			renewal_status: text(row.renewal_status),
+			sequencer_status: text(row.sequencer_status),
+			forwarding_email: text(row.forwarding_email),
+		});
+	});
 }

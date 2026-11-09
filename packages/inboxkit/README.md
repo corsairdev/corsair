@@ -155,7 +155,7 @@ pnpm add @corsair-dev/inboxkit
 | `prewarm.getOrderStatus` | `inboxkit.api.prewarm.getOrderStatus` | `read` | Status of a prewarmed domain order. |
 | `prewarm.searchDomains` | `inboxkit.api.prewarm.searchDomains` | `read` | Search prewarmed domains for sale. |
 | `prewarm.searchMailboxes` | `inboxkit.api.prewarm.searchMailboxes` | `read` | Search prewarmed mailboxes for sale. |
-| `sequencers.add` | `inboxkit.api.sequencers.add` | `write` | Connect a sequencer account such as Instantly, Smartlead or Lemlist, using the fields sequencers.listPlatforms names. Nothing is sent to it until sequencers.exportMailboxes. |
+| `sequencers.add` | `inboxkit.api.sequencers.add` | `write` | Connect a sequencer account such as Instantly, Smartlead or Lemlist, using the fields sequencers.listPlatforms names. No mailboxes go to it until sequencers.exportMailboxes. |
 | `sequencers.delete` | `inboxkit.api.sequencers.delete` | `destructive` | Remove sequencers from the workspace. Mailboxes can no longer be exported to them. |
 | `sequencers.exportMailboxes` | `inboxkit.api.sequencers.exportMailboxes` | `destructive` | Send mailboxes into a sequencer, which receives their credentials. Runs in the background; follow it with sequencers.getExportStatus. |
 | `sequencers.getExportStatus` | `inboxkit.api.sequencers.getExportStatus` | `read` | Status of mailbox exports, with the error if a connection failed. |

@@ -238,7 +238,7 @@ describe('handlers', () => {
 		).resolves.toMatchObject({ success: true });
 	});
 
-	it('throw when the local save fails, so InboxKit delivers the event again', async () => {
+	it('still succeed when the local save fails: the row is only a local copy', async () => {
 		const db = {
 			domains: {
 				findByEntityId: jest.fn().mockResolvedValue(null),
@@ -250,7 +250,8 @@ describe('handlers', () => {
 				ctx(API_KEY, db),
 				request(domainDelivery),
 			),
-		).rejects.toThrow('disk full');
+		).resolves.toMatchObject({ success: true });
+		expect(db.domains.upsertByEntityId).toHaveBeenCalledTimes(1);
 	});
 
 	it('handle consent and client ID requests', async () => {
