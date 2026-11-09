@@ -263,8 +263,10 @@ export const conversionBySymbolResponse = {
 };
 
 /**
- * `/v1/exchange/info` keyed by slug. The route needs a key, which this build
- * did not have, so the shape is the documented response model's.
+ * `/v1/exchange/info` keyed by slug, captured from a live response. The
+ * payload carries more fields than the documented model, and three of them are
+ * camelCase (`porStatus`, `porAuditStatus`, `porSwitch`) among snake_case
+ * neighbours.
  */
 export const exchangeInfoResponse = {
 	data: {
@@ -273,17 +275,36 @@ export const exchangeInfoResponse = {
 			name: 'Binance',
 			slug: 'binance',
 			logo: 'https://s2.coinmarketcap.com/static/img/exchanges/64x64/270.png',
-			description: 'Binance is a cryptocurrency exchange.',
-			date_launched: '2017-07-14T00:00:00.000Z',
+			description:
+				'## What Is Binance?\n\nBinance is a cryptocurrency exchange.',
+			date_launched: null,
 			notice: null,
 			is_hidden: 0,
+			status: null,
+			type: '',
+			maker_fee: 0.02,
+			taker_fee: 0.04,
+			weekly_visits: 12_000_000,
+			spot_volume_usd: 9_800_000_000,
+			spot_volume_last_updated: '2026-11-09T14:00:00.000Z',
+			tags: [
+				{
+					name: '[Internal] Order book Exchange',
+					slug: 'order-book-exchange',
+					group: 'PROPERTY',
+				},
+			],
+			porStatus: '1',
+			porAuditStatus: '2',
+			porSwitch: true,
 			urls: {
 				website: ['https://www.binance.com/'],
+				actual: ['https://www.binance.com/?ref=40896146'],
+				blog: ['https://www.binance.com/en/blog'],
+				chat: ['https://t.me/binanceexchange'],
+				fee: ['https://www.binance.com/en/fee/schedule'],
 				twitter: ['https://twitter.com/binance'],
-				blog: [],
-				chat: [],
-				fee: [],
-				message_board: [],
+				register: ['https://accounts.binance.com/en/register?ref=40896146'],
 			},
 		},
 	},

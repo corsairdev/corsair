@@ -620,6 +620,20 @@ const ExchangeUrlsSchema = z
 		chat: z.array(z.string()).nullish(),
 		fee: z.array(z.string()).nullish(),
 		message_board: z.array(z.string()).nullish(),
+		// Present on a real response and absent from the documented model.
+		actual: z
+			.array(z.string())
+			.nullish()
+			.describe('The affiliate link CoinMarketCap redirects through.'),
+		register: z.array(z.string()).nullish(),
+	})
+	.loose();
+
+const ExchangeTagSchema = z
+	.object({
+		name: z.string().nullish(),
+		slug: z.string().nullish(),
+		group: z.string().nullish(),
 	})
 	.loose();
 
@@ -635,6 +649,25 @@ const ExchangeInfoSchema = z
 		is_hidden: z.number().nullish(),
 		status: z.string().nullish(),
 		urls: ExchangeUrlsSchema.nullish(),
+		// Live only: absent from the documented response model.
+		type: z
+			.string()
+			.nullish()
+			.describe('The exchange category, such as "cex" or "dex".'),
+		tags: z.array(ExchangeTagSchema).nullish(),
+		maker_fee: z.number().nullish(),
+		taker_fee: z.number().nullish(),
+		weekly_visits: z.number().nullish(),
+		spot_volume_usd: z.number().nullish(),
+		spot_volume_last_updated: z.string().nullish(),
+		// CoinMarketCap's own spelling: these three are camelCase while every
+		// neighbouring field is snake_case.
+		porStatus: z
+			.string()
+			.nullish()
+			.describe("Proof-of-reserves status, in CoinMarketCap's camelCase."),
+		porAuditStatus: z.string().nullish(),
+		porSwitch: z.boolean().nullish(),
 	})
 	.loose();
 

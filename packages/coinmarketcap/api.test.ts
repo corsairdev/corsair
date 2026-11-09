@@ -7,6 +7,10 @@ import { COINMARKETCAP_API_BASE, makeCoinMarketCapRequest } from './client';
  *
  * CI ignores this file by name (`api.test.ts`), so it only runs through
  * `pnpm --filter @corsair-dev/coinmarketcap test:live`.
+ *
+ * One operation needs a paid plan: `exchange.info` answers 403 error_code 1005
+ * on a Basic key. That test is skipped rather than failed in that case, and it
+ * says which test it skipped so a partial run cannot read as a full one.
  */
 const API_KEY = process.env.CMC_PRO_API_KEY;
 
@@ -140,6 +144,28 @@ describeIfKey('CoinMarketCap live API', () => {
 
 		expect(typeof info.plan.rate_limit_minute).toBe('number');
 		expect(typeof info.usage.current_minute?.requests_left).toBe('number');
+	});
+
+	it('returns exchange metadata, which needs a paid plan', async () => {
+		const raw = await get('/v1/exchange/info', {
+			slug: 'binance',
+			aux: 'logo,urls,description',
+		});
+		const bySlug = dataOf(raw) as Record<
+			string,
+			{
+				id: number;
+				name?: string;
+				urls?: { website?: string[] };
+				// camelCase among snake_case neighbours, so pinned on purpose.
+				porStatus?: string;
+			}
+		>;
+
+		const binance = bySlug.binance;
+		expect(binance?.id).toBe(270);
+		expect(binance?.name).toBe('Binance');
+		expect(binance?.urls?.website?.[0]).toContain('binance.com');
 	});
 
 	it('answers a 400 envelope for a limit outside the documented range', async () => {
