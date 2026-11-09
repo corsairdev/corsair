@@ -1,0 +1,4 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Gong"
+description: Access Gong calls, transcripts, users, statistics, settings, and CRM data through the Gong Public API.

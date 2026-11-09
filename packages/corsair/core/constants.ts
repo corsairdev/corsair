@@ -246,6 +246,7 @@ export const BaseProviders = [
 	'gladia',
 	'gmail',
 	'gmicloud',
+	'gong',
 	'googleaddressvalidation',
 	'googleanalytics',
 	'googlebigquery',
@@ -688,6 +689,7 @@ export const ProviderDisplayNames = {
 	gladia: 'Gladia',
 	gmail: 'Gmail',
 	gmicloud: 'GMI Cloud',
+	gong: 'Gong',
 	googleaddressvalidation: 'Google Address Validation',
 	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
@@ -1134,6 +1136,7 @@ export type AllProviders =
 	| 'gladia'
 	| 'gmail'
 	| 'gmicloud'
+	| 'gong'
 	| 'googleaddressvalidation'
 	| 'googleanalytics'
 	| 'googlebigquery'
