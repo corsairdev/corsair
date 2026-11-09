@@ -3,6 +3,11 @@ import { endpoints as contactBooksEndpoints } from './contact-books';
 import { endpoints as contactGroupsEndpoints } from './contact-groups';
 import { endpoints as contactsEndpoints } from './contacts';
 import { endpoints as conversationsEndpoints } from './conversations';
+import { endpoints as draftsEndpoints } from './drafts';
+import { endpoints as messagesEndpoints } from './messages';
+import { endpoints as organizationsEndpoints } from './organizations';
+import { endpoints as postsEndpoints } from './posts';
+import { endpoints as responsesEndpoints } from './responses';
 import {
 	MissiveEndpointInputSchemas,
 	MissiveEndpointOutputSchemas,
@@ -14,6 +19,11 @@ export const missiveEndpoints = {
 	contactBooks: contactBooksEndpoints,
 	contactGroups: contactGroupsEndpoints,
 	conversations: conversationsEndpoints,
+	drafts: draftsEndpoints,
+	messages: messagesEndpoints,
+	organizations: organizationsEndpoints,
+	responses: responsesEndpoints,
+	posts: postsEndpoints,
 } as const;
 
 export const missiveEndpointMeta = {
@@ -92,6 +102,68 @@ export const missiveEndpointMeta = {
 		description:
 			'Merge a conversation into a target conversation; the source is marked as replaced',
 	},
+	'drafts.create': {
+		riskLevel: 'write',
+		description:
+			'Create an email, SMS, WhatsApp, or live chat draft in a new or existing conversation; pass send true to send it immediately',
+	},
+	'drafts.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a draft from its conversation',
+	},
+	'messages.create': {
+		riskLevel: 'write',
+		description:
+			'Create an incoming message in a custom channel to ingest an external conversation event',
+	},
+	'messages.get': {
+		riskLevel: 'read',
+		description:
+			'Fetch one or more messages with headers, body, and attachments by message id',
+	},
+	'messages.list': {
+		riskLevel: 'read',
+		description:
+			'Fetch the messages matching an email Message-ID header, latest first',
+	},
+	'organizations.list': {
+		riskLevel: 'read',
+		description: 'List organizations the authenticated user is part of',
+	},
+	'responses.list': {
+		riskLevel: 'read',
+		description:
+			'List saved responses (canned replies) for the authenticated user',
+	},
+	'responses.get': {
+		riskLevel: 'read',
+		description: 'Fetch a saved response by id',
+	},
+	'responses.create': {
+		riskLevel: 'write',
+		description: 'Create one or more saved response templates',
+	},
+	'responses.update': {
+		riskLevel: 'write',
+		description:
+			'Update one or more saved responses; attachments replace the current ones when passed',
+	},
+	'responses.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete one or more saved response templates',
+	},
+	'posts.create': {
+		riskLevel: 'write',
+		description:
+			'Create a post in a new or existing conversation to inject content and close, reopen, assign, or label the conversation with a visible trace',
+	},
+	'posts.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a post from its conversation',
+	},
 } as const;
 
 export { MissiveEndpointInputSchemas, MissiveEndpointOutputSchemas };
@@ -162,6 +234,58 @@ export const missiveEndpointSchemas = {
 	'conversations.merge': {
 		input: MissiveEndpointInputSchemas['conversations.merge'],
 		output: MissiveEndpointOutputSchemas['conversations.merge'],
+	},
+	'drafts.create': {
+		input: MissiveEndpointInputSchemas['drafts.create'],
+		output: MissiveEndpointOutputSchemas['drafts.create'],
+	},
+	'drafts.delete': {
+		input: MissiveEndpointInputSchemas['drafts.delete'],
+		output: MissiveEndpointOutputSchemas['drafts.delete'],
+	},
+	'messages.create': {
+		input: MissiveEndpointInputSchemas['messages.create'],
+		output: MissiveEndpointOutputSchemas['messages.create'],
+	},
+	'messages.get': {
+		input: MissiveEndpointInputSchemas['messages.get'],
+		output: MissiveEndpointOutputSchemas['messages.get'],
+	},
+	'messages.list': {
+		input: MissiveEndpointInputSchemas['messages.list'],
+		output: MissiveEndpointOutputSchemas['messages.list'],
+	},
+	'organizations.list': {
+		input: MissiveEndpointInputSchemas['organizations.list'],
+		output: MissiveEndpointOutputSchemas['organizations.list'],
+	},
+	'responses.list': {
+		input: MissiveEndpointInputSchemas['responses.list'],
+		output: MissiveEndpointOutputSchemas['responses.list'],
+	},
+	'responses.get': {
+		input: MissiveEndpointInputSchemas['responses.get'],
+		output: MissiveEndpointOutputSchemas['responses.get'],
+	},
+	'responses.create': {
+		input: MissiveEndpointInputSchemas['responses.create'],
+		output: MissiveEndpointOutputSchemas['responses.create'],
+	},
+	'responses.update': {
+		input: MissiveEndpointInputSchemas['responses.update'],
+		output: MissiveEndpointOutputSchemas['responses.update'],
+	},
+	'responses.delete': {
+		input: MissiveEndpointInputSchemas['responses.delete'],
+		output: MissiveEndpointOutputSchemas['responses.delete'],
+	},
+	'posts.create': {
+		input: MissiveEndpointInputSchemas['posts.create'],
+		output: MissiveEndpointOutputSchemas['posts.create'],
+	},
+	'posts.delete': {
+		input: MissiveEndpointInputSchemas['posts.delete'],
+		output: MissiveEndpointOutputSchemas['posts.delete'],
 	},
 } as const;
 

@@ -121,6 +121,57 @@ const INPUT_FIXTURES: Record<MissiveOperationKey, unknown> = {
 		id: '6d3c9b1c-7067-4a28-8ea6-ea91340b67cc',
 		body: { target: '3fa4bcf5-e57e-47a4-9422-de2cce5f802e' },
 	},
+	'drafts.create': {
+		body: {
+			send: true,
+			subject: 'Hello',
+			body: 'World!',
+			to_fields: [{ address: 'paul@acme.com' }],
+			from_field: { address: 'philippe@missiveapp.com' },
+		},
+	},
+	'drafts.delete': { id: '3fa4bcf5-e57e-47a4-9422-de2cce5f802e' },
+	'messages.create': {
+		body: {
+			account: 'fbf74c47-d0a0-4d77-bf3c-2118025d8102',
+			from_field: {
+				id: '12345',
+				username: '@philippe',
+				name: 'Philippe Lehoux',
+			},
+			to_fields: [{ id: '54321', username: '@missiveapp', name: 'Missive' }],
+			body: 'Hello <b>world</b>!',
+		},
+	},
+	'messages.get': { ids: ['3fa4bcf5-e57e-47a4-9422-de2cce5f802e'] },
+	'messages.list': { email_message_id: '<0f1ab2d8@missiveapp.com>' },
+	'organizations.list': { limit: 50 },
+	'responses.list': { organization: '84f876cc-ef7c-41cd-9711-7ab9cf9f26a5' },
+	'responses.get': { id: '75ad834a-9bd6-4008-b9e6-fc9fa2e7770b' },
+	'responses.create': {
+		body: [
+			{
+				title: 'Welcome email template',
+				body: '<p>Welcome to our service!</p>',
+				organization: '0d9bab85-a74f-4ece-9142-0f9b9f36ff92',
+			},
+		],
+	},
+	'responses.update': {
+		ids: ['75ad834a-9bd6-4008-b9e6-fc9fa2e7770b'],
+		body: [{ id: '75ad834a-9bd6-4008-b9e6-fc9fa2e7770b', title: 'Updated' }],
+	},
+	'responses.delete': { ids: ['75ad834a-9bd6-4008-b9e6-fc9fa2e7770b'] },
+	'posts.create': {
+		body: {
+			conversation: '00f78fe9-f11a-4b4e-a502-67e6138d3b0f',
+			notification: { title: 'Ticket resolved', body: 'Marked as resolved' },
+			username: 'Support System',
+			text: 'Ticket #1234 was resolved and marked as complete.',
+			close: true,
+		},
+	},
+	'posts.delete': { id: 'ee31f156-db95-4158-923f-b26450e0dbf7' },
 };
 
 // Spec-derived response fixtures: the envelope each reference-page example
@@ -224,22 +275,84 @@ const RESPONSE_FIXTURES: Record<MissiveOperationKey, unknown> = {
 			},
 		],
 	},
+	// The create-draft and create-message bodies are undocumented; the mock
+	// uses the envelope form of the documented tolerant union. Delete routes
+	// answer empty bodies.
+	'drafts.create': {
+		drafts: { id: '3fa4bcf5-e57e-47a4-9422-de2cce5f802e', draft: true },
+	},
+	'drafts.delete': undefined,
+	'messages.create': {
+		messages: { id: '3fa4bcf5-e57e-47a4-9422-de2cce5f802e' },
+	},
+	'messages.get': {
+		messages: {
+			id: '3fa4bcf5-e57e-47a4-9422-de2cce5f802e',
+			type: 'email',
+			delivered_at: 1563806347,
+		},
+	},
+	'messages.list': {
+		messages: [
+			{
+				id: '3fa4bcf5-e57e-47a4-9422-de2cce5f802e',
+				type: 'email',
+				delivered_at: 1563806347,
+			},
+		],
+	},
+	'organizations.list': {
+		organizations: [
+			{ id: '0d9bab85-a74f-4ece-9142-0f9b9f36ff92', name: 'Conference Badge' },
+		],
+	},
+	'responses.list': {
+		responses: [
+			{ id: '75ad834a-9bd6-4008-b9e6-fc9fa2e7770b', title: 'A test response' },
+		],
+	},
+	'responses.get': {
+		responses: [
+			{ id: '75ad834a-9bd6-4008-b9e6-fc9fa2e7770b', title: 'A test response' },
+		],
+	},
+	'responses.create': {
+		responses: [
+			{
+				id: '75ad834a-9bd6-4008-b9e6-fc9fa2e7770b',
+				title: 'Welcome email template',
+			},
+		],
+	},
+	'responses.update': {
+		responses: [
+			{ id: '75ad834a-9bd6-4008-b9e6-fc9fa2e7770b', title: 'Updated' },
+		],
+	},
+	'responses.delete': undefined,
+	'posts.create': {
+		posts: {
+			conversation: '00f78fe9-f11a-4b4e-a502-67e6138d3b0f',
+			id: 'ee31f156-db95-4158-923f-b26450e0dbf7',
+		},
+	},
+	'posts.delete': undefined,
 };
 
 const AUTH_HEADER = `Bearer ${TOKEN}`;
 
 describe('Missive REST endpoint contract', () => {
 	it('matches the shipped operation catalog', () => {
-		expect(MISSIVE_OPERATIONS).toHaveLength(16);
-		expect(handlers.size).toBe(16);
+		expect(MISSIVE_OPERATIONS).toHaveLength(29);
+		expect(handlers.size).toBe(29);
 		expect([...handlers.keys()].sort()).toEqual(
 			MISSIVE_OPERATIONS.map(({ key }) => key).sort(),
 		);
-		expect(new Set(MISSIVE_OPERATIONS.map(({ key }) => key)).size).toBe(16);
+		expect(new Set(MISSIVE_OPERATIONS.map(({ key }) => key)).size).toBe(29);
 		expect(
 			new Set(MISSIVE_OPERATIONS.map(({ method, path }) => `${method} ${path}`))
 				.size,
-		).toBe(16);
+		).toBe(29);
 	});
 
 	it.each(Object.entries(INPUT_FIXTURES))(
@@ -260,6 +373,10 @@ describe('Missive REST endpoint contract', () => {
 						headers: new Headers(init?.headers),
 						body: init?.body,
 					});
+					// Routes without a response body answer 204.
+					if (response === undefined) {
+						return new Response(null, { status: 204 });
+					}
 					return new Response(JSON.stringify(response), {
 						status: 200,
 						headers: { 'content-type': 'application/json' },
