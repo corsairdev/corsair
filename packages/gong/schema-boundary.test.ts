@@ -1,3 +1,4 @@
+import type { GongOpaqueRecord } from './client';
 import { gongEndpointSchemas } from './index';
 
 const callBody = {
@@ -21,7 +22,7 @@ const emptyOk = new Set([
 	'workspaces.list',
 ]);
 
-const inputFixtures: Record<string, unknown> = {
+const inputFixtures: GongOpaqueRecord = {
 	'calls.add': callBody,
 	'calls.addRecording': { id: '123', mediaFile: new Blob(['audio']) },
 	'calls.list': {
@@ -161,7 +162,7 @@ const inputFixtures: Record<string, unknown> = {
 	'workspaces.list': {},
 };
 
-const outputFixtures: Record<string, unknown> = {
+const outputFixtures: GongOpaqueRecord = {
 	'calls.add': { requestId: 'r', callId: '123' },
 	'calls.addRecording': {
 		requestId: 'r',

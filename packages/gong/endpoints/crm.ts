@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import type { GongOpaqueRecord, GongOpaqueValue } from '../client';
 import { gongRequest } from '../client';
 import type { GongCrmInputs, GongCrmOutputs } from './crm-types';
 import type { GongFamilyContext } from './family-context';
@@ -10,8 +11,8 @@ async function run<K extends keyof GongCrmInputs>(
 	method: 'GET' | 'PUT' | 'POST' | 'DELETE',
 	path: string,
 	input: GongCrmInputs[K],
-	query?: Record<string, unknown>,
-	body?: unknown,
+	query?: GongOpaqueRecord,
+	body?: GongOpaqueValue,
 	formData?: Record<string, Blob | string>,
 ): Promise<GongCrmOutputs[K]> {
 	const options = ctx.options;

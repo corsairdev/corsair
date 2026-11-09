@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import type { GongOpaqueRecord, GongOpaqueValue } from '../client';
 import { gongRequest } from '../client';
 import type { GongFamilyContext } from './family-context';
 import { gongCredentials } from './family-context';
@@ -8,9 +9,9 @@ async function call<T>(
 	ctx: GongFamilyContext,
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE',
 	path: string,
-	input: Record<string, unknown>,
-	query?: Record<string, unknown>,
-	body?: unknown,
+	input: GongOpaqueRecord,
+	query?: GongOpaqueRecord,
+	body?: GongOpaqueValue,
 ): Promise<T> {
 	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
 	const credentials = gongCredentials(ctx);

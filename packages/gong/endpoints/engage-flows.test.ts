@@ -1,4 +1,5 @@
 import { request } from 'corsair/http';
+import type { GongOpaqueRecord, GongOpaqueValue } from '../client';
 import {
 	assignProspects,
 	getFlowProspectsBulkAssignment,
@@ -54,12 +55,12 @@ describe('Gong Engage Flows request contracts', () => {
 	const cases: Array<
 		[
 			string,
-			(...args: never[]) => Promise<unknown>,
-			Record<string, unknown>,
+			(...args: never[]) => Promise<GongOpaqueValue>,
+			GongOpaqueRecord,
 			string,
 			string,
-			Record<string, unknown> | undefined,
-			unknown | undefined,
+			GongOpaqueRecord | undefined,
+			GongOpaqueValue | undefined,
 			unknown,
 		]
 	> = [

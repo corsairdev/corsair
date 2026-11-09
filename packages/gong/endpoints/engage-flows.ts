@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import type { GongOpaqueRecord, GongOpaqueValue } from '../client';
 import { gongRequest } from '../client';
 import type {
 	GongEngageFlowsInputs,
@@ -16,9 +17,9 @@ function request<T>(
 	ctx: LocalGongContext,
 	method: 'GET' | 'POST' | 'PATCH',
 	path: string,
-	input: Record<string, unknown>,
-	query?: Record<string, unknown>,
-	body?: unknown,
+	input: GongOpaqueRecord,
+	query?: GongOpaqueRecord,
+	body?: GongOpaqueValue,
 ): Promise<T> {
 	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
 	const credentials = gongCredentials(ctx);
@@ -34,7 +35,7 @@ function request<T>(
 async function logged<T>(
 	ctx: LocalGongContext,
 	id: string,
-	input: Record<string, unknown>,
+	input: GongOpaqueRecord,
 	run: () => Promise<T>,
 ): Promise<T> {
 	const result = await run();

@@ -1,4 +1,5 @@
 import { request } from 'corsair/http';
+import type { GongOpaqueRecord, GongOpaqueValue } from '../client';
 import {
 	addUsersAccessToCalls,
 	createPermissionProfile,
@@ -35,12 +36,12 @@ const access = { callAccessList: [{ callId: '123', userIds: ['u1'] }] };
 const ops: Array<
 	[
 		string,
-		(...args: never[]) => Promise<unknown>,
-		Record<string, unknown>,
+		(...args: never[]) => Promise<GongOpaqueValue>,
+		GongOpaqueRecord,
 		string,
 		string,
-		Record<string, unknown> | undefined,
-		unknown | undefined,
+		GongOpaqueRecord | undefined,
+		GongOpaqueValue | undefined,
 		unknown,
 	]
 > = [

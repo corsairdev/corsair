@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GongContext, GongUserEndpoints } from '..';
+import type { GongOpaqueRecord, GongOpaqueValue } from '../client';
 import { gongRequest } from '../client';
 import { gongCredentials } from './family-context';
 import type { GongUsersOutputs } from './users-types';
@@ -8,9 +9,9 @@ async function call<T>(
 	ctx: GongContext,
 	method: 'GET' | 'POST',
 	path: string,
-	input: Record<string, unknown>,
-	query?: Record<string, unknown>,
-	body?: unknown,
+	input: GongOpaqueRecord,
+	query?: GongOpaqueRecord,
+	body?: GongOpaqueValue,
 ): Promise<T> {
 	const baseUrl = ctx.options.baseUrl;
 	if (!baseUrl)

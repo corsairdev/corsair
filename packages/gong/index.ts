@@ -13,6 +13,7 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import type { ZodType } from 'zod';
+import type { GongOpaqueRecord } from './client';
 import {
 	addCall,
 	addCallRecording,
@@ -605,13 +606,13 @@ if (Object.keys(gongEndpointSchemas).length !== expectedGongEndpointCount)
 	);
 
 // The generated endpoint tree mixes namespace objects with endpoint functions.
-function validateEndpointTree<T extends Record<string, unknown>>(
+function validateEndpointTree<T extends GongOpaqueRecord>(
 	endpoints: T,
 	schemas: Record<string, { input?: ZodType; output?: ZodType }>,
 	parentPath = '',
 ): T {
 	// The recursive tree is heterogeneous until each entry is visited below.
-	const validated: Record<string, unknown> = {};
+	const validated: GongOpaqueRecord = {};
 	for (const [name, value] of Object.entries(endpoints)) {
 		const path = parentPath ? `${parentPath}.${name}` : name;
 		if (typeof value === 'function') {
@@ -627,7 +628,7 @@ function validateEndpointTree<T extends Record<string, unknown>>(
 		} else if (value && typeof value === 'object') {
 			validated[name] = validateEndpointTree(
 				// This branch is known to be a nested namespace object.
-				value as Record<string, unknown>,
+				value as GongOpaqueRecord,
 				schemas,
 				path,
 			);
