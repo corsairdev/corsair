@@ -1,6 +1,6 @@
 import { asRecord } from 'corsair/core';
 import type { EventzillaEndpoints } from '..';
-import { segment } from '../client';
+import { emptyListMessage, segment } from '../client';
 import { call } from './call';
 import type { EventzillaPagination } from './types';
 import {
@@ -11,21 +11,22 @@ import {
 } from './types';
 
 /**
- * Adds `next_offset` beside the provider's own `pagination` array. The row count
- * has to be the real one: a short page is how the last page is recognised when
- * `total` is absent.
- */
-/**
- * Adds `next_offset` beside the provider's own `pagination` array. The row count
- * has to be the real one: a short page is how the last page is recognised when
- * `total` is absent. Exported so the tests parse what the endpoint really
- * returns rather than the bare documented body.
+ * Adds `next_offset` beside the provider's own `pagination` array, and turns the
+ * empty-list answer into an empty page. That answer is HTTP 200 with only
+ * `{"message":"No events found"}` — verified live — and carries no resource
+ * array at all, so without this it fails the parse rather than reading as no
+ * results. The row count has to be the real one: a short page is how the last
+ * page is recognised when `total` is absent. Exported so the tests parse what
+ * the endpoint really returns rather than the bare documented body.
  */
 export function withNextOffset(
 	// unknown: the response body, validated by the output schema after this.
 	raw: unknown,
 	key: string,
 ) {
+	const empty = emptyListMessage(raw);
+	if (empty !== undefined)
+		return { [key]: [], next_offset: null, message: empty };
 	const body = asRecord(raw) ?? {};
 	// unknown: `pagination` is validated by the output schema; it is only
 	// counted here to work out the next offset.

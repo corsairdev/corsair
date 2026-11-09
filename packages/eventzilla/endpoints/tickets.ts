@@ -1,6 +1,6 @@
 import { asRecord } from 'corsair/core';
 import type { EventzillaEndpoints } from '..';
-import { segment } from '../client';
+import { emptyListMessage, segment } from '../client';
 import { call } from './call';
 import type { EventzillaPagination } from './types';
 import {
@@ -144,6 +144,10 @@ export const users: EventzillaEndpoints['usersList'] = (ctx, input) =>
 		input,
 		{
 			shape: (raw) => {
+				const empty = emptyListMessage(raw);
+				if (empty !== undefined) {
+					return { users: [], next_offset: null, message: empty };
+				}
 				const body = asRecord(raw) ?? {};
 				// unknown: `users` is validated by the output schema; the count is
 				// only needed to decide whether another page exists.
@@ -169,9 +173,11 @@ export const user: EventzillaEndpoints['usersGet'] = (ctx, input) =>
 		},
 		input,
 		{
+			// The single-user route answers `user` (singular) where the list answers
+			// `users`; verified live. Nothing is reshaped beyond that.
 			log: ({ userid }, result) => ({
 				userId: userid,
-				company: result.users[0]?.company ?? undefined,
+				company: result.user[0]?.company ?? undefined,
 			}),
 		},
 	);

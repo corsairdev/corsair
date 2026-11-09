@@ -53,6 +53,16 @@ const PaginationItemSchema = z
 	.loose();
 
 /**
+ * How an empty list is answered: **HTTP 200 with only a message**, no resource
+ * array at all. Verified live (`{"message":"No events found"}`). This is the
+ * one 200-plus-message body that is not an error, so the paged endpoints turn
+ * it into an empty page rather than letting it fail the parse. Done in the
+ * endpoint's `shape` hook, not with `.transform()`, which the docs generator
+ * cannot see.
+ */
+export const EmptyListSchema = z.object({ message: z.string() }).loose();
+
+/**
  * A **one-element array**, not an object: every paged route sends
  * `"pagination": [{ offset, limit, total }]`. Typing it as an object would fail
  * the parse on every list call.
@@ -81,12 +91,16 @@ export function nextOffset(
 
 // ── Events ────────────────────────────────────────────────────────────────
 
-export const EVENTZILLA_EVENT_STATUSES = [
-	'Live',
-	'Draft',
-	'Unpublished',
-	'Completed',
-] as const;
+/**
+ * **Only `live` is accepted.** Verified live against the real API: `status=live`
+ * answers a result, while `draft`, `unpublished`, `completed`, their capitalised
+ * forms (which the reference's own examples use), and any other value answer
+ * HTTP 200 with `{"message":"Invalid URL / Format exception"}`. That message
+ * reads like a URL problem, so it is worth failing before the call rather than
+ * surfacing it. The event *payload* still returns `"status": "Live"` — the
+ * filter value and the field value differ in case.
+ */
+export const EVENTZILLA_EVENT_STATUS_FILTERS = ['live'] as const;
 
 export const EventSchema = z
 	.object({
@@ -123,10 +137,10 @@ export type EventzillaEvent = z.infer<typeof EventSchema>;
 
 const EventsListInputSchema = z.object({
 	status: z
-		.enum(EVENTZILLA_EVENT_STATUSES)
+		.enum(EVENTZILLA_EVENT_STATUS_FILTERS)
 		.optional()
 		.describe(
-			'Only events in this status. The API matches case-insensitively and also accepts the lowercase spelling (live, draft…).',
+			'Only `live` is accepted. Every other value, including the capitalised spellings, is rejected by the API.',
 		),
 	category: z.string().min(1).optional().describe('Only this category name.'),
 	offset: OffsetSchema,
@@ -145,6 +159,8 @@ const EventsListResponseSchema = z
 			.describe(
 				'Offset of the next page, or null when this is the last one. Pass it back as `offset`.',
 			),
+		// Present only when the API answered the empty-list message.
+		message: z.string().optional(),
 	})
 	.loose();
 
@@ -217,6 +233,8 @@ const EventsTransactionsResponseSchema = z
 		pagination: PaginationSchema.nullish(),
 		transactions: z.array(TransactionSchema),
 		next_offset: z.number().nullable(),
+		// Present only when the API answered the empty-list message.
+		message: z.string().optional(),
 	})
 	.loose();
 
@@ -573,6 +591,8 @@ const UsersListResponseSchema = z
 		pagination: PaginationSchema.nullish(),
 		users: z.array(UserSchema),
 		next_offset: z.number().nullable(),
+		// Present only when the API answered the empty-list message.
+		message: z.string().optional(),
 	})
 	.loose();
 
@@ -584,10 +604,15 @@ const UsersGetInputSchema = z.object({
 
 export type UsersGetInput = z.input<typeof UsersGetInputSchema>;
 
-// The same envelope as the list, pagination included, even for one id.
+/**
+ * **`user`, singular**, and an array: verified against the live API, where
+ * `GET /users/{id}` answers `{"user":[{…}]}` while the list answers
+ * `{"users":[…]}`. The reference documents both under one schema, which is why
+ * this is easy to get wrong.
+ */
 const UsersGetResponseSchema = z
 	.object({
-		users: z.array(UserSchema),
+		user: z.array(UserSchema),
 	})
 	.loose();
 
@@ -867,21 +892,53 @@ const AttendeesCheckinInputSchema = z.object({
 
 export type AttendeesCheckinInput = z.input<typeof AttendeesCheckinInputSchema>;
 
-const AttendeesCheckinResponseSchema = z
+/**
+ * Wrapped in `checkinstatus`, whose fields are **snake-free and lowercased**
+ * (`firstname`, not `first_name`) and can be `null`. Verified live:
+ * `{"checkinstatus":{"firstname":null,"lastname":null,"eventtitle":null,`
+ * `"orderref":null,"email":null,"status":null}}` for an unknown barcode. The
+ * reference documents the flat shape, which is why this is easy to get wrong.
+ */
+const CheckInStatusSchema = z
 	.object({
-		first_name: z.string().nullish(),
-		last_name: z.string().nullish(),
+		firstname: z.string().nullish(),
+		lastname: z.string().nullish(),
 		eventtitle: z.string().nullish(),
 		orderref: z.string().nullish(),
-		orderef: z.string().nullish(),
 		email: z.string().nullish(),
 		status: z.string().nullish(),
+	})
+	.loose();
+
+const AttendeesCheckinResponseSchema = z
+	.object({
+		checkinstatus: CheckInStatusSchema,
 	})
 	.loose();
 
 export type AttendeesCheckinResponse = z.infer<
 	typeof AttendeesCheckinResponseSchema
 >;
+
+/**
+ * A check-in that failed still answers HTTP 200 with a `checkinstatus` whose
+ * `status` is not a check-in (`"Already Reverted checked in"` was observed, and
+ * every field `null` for an unknown barcode). The response is not an error at
+ * the transport level, so `checkedIn` states plainly whether this call is
+ * believed to have taken effect — null when the answer does not say.
+ */
+export function checkinSucceeded(
+	status: string | null | undefined,
+	eventcheckin: boolean,
+): boolean | null {
+	if (status === null || status === undefined || status === '') return null;
+	// The API does not document its status vocabulary; "Checkin" was observed
+	// for a real check-in. Anything mentioning an error or a revert is not this
+	// call succeeding.
+	if (/error|fail|invalid|not found|already/i.test(status)) return false;
+	if (/checkin|checked in/i.test(status)) return eventcheckin;
+	return null;
+}
 
 // ── Orders ────────────────────────────────────────────────────────────────
 

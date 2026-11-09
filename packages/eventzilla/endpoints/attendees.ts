@@ -3,6 +3,7 @@ import type { EventzillaEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
+	checkinSucceeded,
 	EventzillaEndpointInputSchemas as Inputs,
 	isAttendedFlag,
 	EventzillaEndpointOutputSchemas as Outputs,
@@ -71,8 +72,13 @@ export const checkin: EventzillaEndpoints['attendeesCheckin'] = (ctx, input) =>
 		{
 			log: ({ barcode, eventcheckin }, result) => ({
 				barCodeSuffix: barcode.slice(-4),
-				checkedIn: eventcheckin,
-				status: result.status ?? undefined,
+				requested: eventcheckin,
+				// The status the provider reported, which can say the check-in did
+				// not happen even though the call answered 200.
+				status: result.checkinstatus.status ?? undefined,
+				checkedIn:
+					checkinSucceeded(result.checkinstatus.status, eventcheckin) ??
+					undefined,
 			}),
 		},
 	);
