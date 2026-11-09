@@ -367,6 +367,24 @@ describe('Re:amaze shape rejections', () => {
 		);
 	});
 
+	it('rejects an unrelated object as one conversation', async () => {
+		// Every other field is optional, so `slug` is what proves this is a
+		// conversation rather than some other resource's body.
+		mockFetch(jsonResponse({ unrelated: true }));
+
+		await expect(
+			endpoints.conversations.get(makeCtx(), { slug: 'knock-knock' }),
+		).rejects.toThrow();
+	});
+
+	it('rejects an empty object as one conversation', async () => {
+		mockFetch(jsonResponse({}));
+
+		await expect(
+			endpoints.conversations.get(makeCtx(), { slug: 'knock-knock' }),
+		).rejects.toThrow();
+	});
+
 	it('rejects a conversation list whose wrapper is not an array', async () => {
 		mockFetch(jsonResponse({ conversations: { slug: 'knock-knock' } }));
 

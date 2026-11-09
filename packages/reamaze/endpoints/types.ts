@@ -79,7 +79,10 @@ const ContactSchema = z
 
 const ConversationSchema = z
 	.object({
-		slug: z.string().nullish(),
+		// Required: verified live, every conversation carries a slug, and it is the
+		// identifier the get and update routes take. Requiring it means an
+		// unrelated object cannot parse as a conversation.
+		slug: z.string().describe('Identifier used by the get and update routes'),
 		subject: z.string().nullish(),
 		/** 0 open, 1 responded, 2 done, 3 spam, 4 archived, 5 on hold, 6 auto-done, 7/8 AI assigned/done, 9 AI spam. */
 		status: z.number().int().nullish(),

@@ -165,7 +165,7 @@ export const notesResponse = [
 ];
 
 /** Verified live: an instance with no notes answers `[]`. */
-export const emptyNotesResponse: unknown[] = [];
+export const emptyNotesResponse: (typeof notesResponse)[number][] = [];
 
 export const channel = {
 	name: 'Support',
@@ -368,7 +368,7 @@ export const incident = {
 /** Verified live: a bare array, empty on an instance with no incidents. */
 export const incidentsResponse = [incident];
 
-export const emptyIncidentsResponse: unknown[] = [];
+export const emptyIncidentsResponse: (typeof incident)[] = [];
 
 export const incidentResponse = incident;
 
@@ -388,7 +388,7 @@ export const system = {
 /** Verified live: a bare array, empty on an instance with no systems. */
 export const systemsResponse = [system];
 
-export const emptySystemsResponse: unknown[] = [];
+export const emptySystemsResponse: (typeof system)[] = [];
 
 /** Verified live, 404 for an unknown resource. */
 export const notFoundResourceBody = { errors: 'Not Found' };
