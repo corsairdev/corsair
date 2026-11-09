@@ -1433,6 +1433,14 @@
                 ]
               },
               {
+                "group": "CoinMarketCap",
+                "pages": [
+                  "plugins/coinmarketcap/overview",
+                  "plugins/coinmarketcap/api",
+                  "plugins/coinmarketcap/database"
+                ]
+              },
+              {
                 "group": "College Football Data",
                 "pages": [
                   "plugins/collegefootballdata/overview",
