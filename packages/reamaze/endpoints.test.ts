@@ -4,6 +4,7 @@ jest.mock('corsair/core', () => {
 	return { ...actual, logEventFromContext: jest.fn().mockResolvedValue('evt') };
 });
 
+import { logEventFromContext } from 'corsair/core';
 import * as fixtures from './test-fixtures';
 import {
 	endpoints,
@@ -195,6 +196,46 @@ describe('Re:amaze output parsing', () => {
 		});
 
 		expect(result).toEqual({ deleted: true, contact: CONTACT, id: 123 });
+	});
+
+	it('returns the write even when the success log throws', async () => {
+		// `logEvent` throws when encryptDataAtRest is configured without a kek. The
+		// log runs outside the request try, so a completed write is still returned
+		// rather than reported as failed and retried into a duplicate.
+		const log = jest.mocked(logEventFromContext);
+		log.mockRejectedValueOnce(new Error('encryptDataAtRest requires kek'));
+		mockFetch(jsonResponse(fixtures.notesResponse));
+
+		const result = await endpoints.notes.create(makeCtx(), {
+			contact: CONTACT,
+			body: 'a note',
+		});
+
+		expect(result.notes.length).toBeGreaterThan(0);
+	});
+
+	it('logs a failed event and rethrows the original error', async () => {
+		const log = jest.mocked(logEventFromContext);
+		log.mockClear();
+		mockFetch(jsonResponse({ errors: 'Not Found' }, { status: 404 }));
+
+		await expect(
+			endpoints.conversations.get(makeCtx(), { slug: 'nope' }),
+		).rejects.toThrow(/Not Found/);
+
+		// One failed event, recorded before the rethrow.
+		const failed = log.mock.calls.filter((call) => call[3] === 'failed');
+		expect(failed).toHaveLength(1);
+	});
+
+	it('rejects a non-empty body on a note delete', async () => {
+		// An error page or a plain-text message is not a successful delete; before
+		// this, any string body was reported as one.
+		mockFetch(new Response('something went wrong', { status: 200 }));
+
+		await expect(
+			endpoints.notes.delete(makeCtx(), { contact: CONTACT, id: 123 }),
+		).rejects.toThrow(/unexpected note delete body/);
 	});
 
 	it('parses a channel list that sends only total_count', async () => {

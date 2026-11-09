@@ -309,7 +309,11 @@ const PageSchema = z
 		'Page number, 1-based. The response carries page_size and page_count',
 	);
 
-/** A `data[key]=value` filter hash. */
+/**
+ * A `data[key]=value` filter hash.
+ * unknown: the keys are custom attributes the brand defines, so their names and
+ * value types differ per account and cannot be enumerated here.
+ */
 const DataFilterSchema = z
 	.record(z.string(), z.unknown())
 	.optional()
@@ -443,6 +447,8 @@ const ConversationsCreateInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('ISO 8601; only meaningful when status is 5 (On Hold)'),
+	// unknown: custom conversation attributes are defined per brand, so neither
+	// their names nor their value types are known ahead of time.
 	data: z
 		.record(z.string(), z.unknown())
 		.optional()
@@ -456,6 +462,8 @@ const ConversationsCreateInputSchema = z.object({
 		.object({
 			name: z.string().min(1),
 			email: z.string().min(1),
+			// unknown: customer attributes are brand-configured, so their keys and
+			// value types vary between accounts.
 			data: z
 				.record(z.string(), z.unknown())
 				.optional()
@@ -486,6 +494,7 @@ const ConversationsUpdateInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('ISO 8601; only meaningful when status is 5 (On Hold)'),
+	// unknown: the same brand-configured attribute map as on create.
 	data: z.record(z.string(), z.unknown()).optional(),
 	category: z
 		.string()
@@ -623,6 +632,7 @@ const ContactsCreateInputSchema = z.object({
 		.array(z.string())
 		.optional()
 		.describe('Plain note bodies attached at creation'),
+	// unknown: brand-defined custom fields; the API passes them through untyped.
 	data: z
 		.record(z.string(), z.unknown())
 		.optional()
@@ -652,6 +662,7 @@ const ContactsUpdateInputSchema = z.object({
 		.array(z.string())
 		.optional()
 		.describe('Appends notes; a note is edited through the notes endpoints'),
+	// unknown: brand-defined custom fields, as on create.
 	data: z
 		.record(z.string(), z.unknown())
 		.optional()

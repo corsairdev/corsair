@@ -48,34 +48,44 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
 
+	/** Logging never decides the outcome: a log failure must not mask a result. */
+	const logSafely = async (
+		payload: LogFields,
+		status: 'completed' | 'failed',
+	): Promise<void> => {
+		await logEventFromContext(
+			ctx,
+			`reamaze.${operation.event}`,
+			payload,
+			status,
+		).catch(() => undefined);
+	};
+
+	let result: z.output<Output>;
 	try {
 		const host = await resolveHost(ctx);
 		const raw = await makeReamazeRequest(host, ctx.key, toRequest(parsed));
-		const result = operation.output.parse(
+		result = operation.output.parse(
 			options.shape ? options.shape(raw, parsed) : raw,
 		);
-
-		await logEventFromContext(
-			ctx,
-			`reamaze.${operation.event}`,
-			options.log?.(parsed, result) ?? {},
-			'completed',
-		);
-		return result;
 	} catch (error) {
-		// Record the failure against the same event, then rethrow the original.
-		// A logging failure must not mask the real error, so it is swallowed.
-		await logEventFromContext(
-			ctx,
-			`reamaze.${operation.event}`,
+		// Only the request and the response parse are inside this try. The success
+		// log is outside it on purpose: `logEvent` throws when `encryptDataAtRest`
+		// is configured without a kek, and if a *write* had already landed, a
+		// rethrow from here would report success as failure and a retry would
+		// duplicate it.
+		await logSafely(
 			{
 				failed: true,
 				error: error instanceof Error ? error.message : String(error),
 			},
 			'failed',
-		).catch(() => undefined);
+		);
 		throw error;
 	}
+
+	await logSafely(options.log?.(parsed, result) ?? {}, 'completed');
+	return result;
 }
 
 /**
