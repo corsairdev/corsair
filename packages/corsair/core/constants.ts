@@ -168,6 +168,7 @@ export const BaseProviders = [
 	'cody',
 	'coinbase',
 	'coinmarketcal',
+	'coinmarketcap',
 	'collegefootballdata',
 	'composio',
 	'confluence',
@@ -608,6 +609,7 @@ export const ProviderDisplayNames = {
 	cody: 'Cody',
 	coinbase: 'Coinbase',
 	coinmarketcal: 'Coinmarketcal',
+	coinmarketcap: 'CoinMarketCap',
 	collegefootballdata: 'College Football Data',
 	composio: 'Composio',
 	confluence: 'Confluence',
@@ -1053,6 +1055,7 @@ export type AllProviders =
 	| 'cody'
 	| 'coinbase'
 	| 'coinmarketcal'
+	| 'coinmarketcap'
 	| 'collegefootballdata'
 	| 'composio'
 	| 'confluence'
