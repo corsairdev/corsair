@@ -1784,6 +1784,15 @@
                 ]
               },
               {
+                "group": "ElevenLabs",
+                "pages": [
+                  "plugins/elevenlabs/overview",
+                  "plugins/elevenlabs/api",
+                  "plugins/elevenlabs/database",
+                  "plugins/elevenlabs/webhooks"
+                ]
+              },
+              {
                 "group": "EmailOctopus",
                 "pages": [
                   "plugins/emailoctopus/overview",
@@ -2243,6 +2252,15 @@
                   "plugins/heyy/overview",
                   "plugins/heyy/api",
                   "plugins/heyy/database"
+                ]
+              },
+              {
+                "group": "Higgsfield",
+                "pages": [
+                  "plugins/higgsfield/overview",
+                  "plugins/higgsfield/api",
+                  "plugins/higgsfield/database",
+                  "plugins/higgsfield/webhooks"
                 ]
               },
               {

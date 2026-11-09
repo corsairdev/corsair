@@ -209,11 +209,12 @@ export const BaseProviders = [
 	'dreamstudio',
 	'dripcel',
 	'dropbox',
-	'enginemailer',
 	'dropboxsign',
 	'dynapictures',
+	'elevenlabs',
 	'emailoctopus',
 	'emelia',
+	'enginemailer',
 	'enigma',
 	'epicgames',
 	'esignatures',
@@ -266,6 +267,7 @@ export const BaseProviders = [
 	'here',
 	'heygen',
 	'heyy',
+	'higgsfield',
 	'hookdeck',
 	'htmltoimage',
 	'hubspot',
@@ -650,11 +652,12 @@ export const ProviderDisplayNames = {
 	dreamstudio: 'DreamStudio',
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
-	enginemailer: 'Enginemailer',
 	dropboxsign: 'Dropbox Sign',
 	dynapictures: 'Dynapictures',
+	elevenlabs: 'ElevenLabs',
 	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
+	enginemailer: 'Enginemailer',
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
 	esignatures: 'eSignatures',
@@ -707,6 +710,7 @@ export const ProviderDisplayNames = {
 	here: 'HERE',
 	heygen: 'HeyGen',
 	heyy: 'Heyy',
+	higgsfield: 'Higgsfield',
 	hookdeck: 'Hookdeck',
 	htmltoimage: 'HtmlToImage',
 	hubspot: 'HubSpot',
@@ -1095,11 +1099,12 @@ export type AllProviders =
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
-	| 'enginemailer'
 	| 'dropboxsign'
 	| 'dynapictures'
+	| 'elevenlabs'
 	| 'emailoctopus'
 	| 'emelia'
+	| 'enginemailer'
 	| 'enigma'
 	| 'epicgames'
 	| 'esignatures'
@@ -1152,6 +1157,7 @@ export type AllProviders =
 	| 'here'
 	| 'heygen'
 	| 'heyy'
+	| 'higgsfield'
 	| 'hookdeck'
 	| 'htmltoimage'
 	| 'hubspot'
