@@ -13,7 +13,7 @@ overviewNote: |
   - **Three routes answer a bare array**, not a wrapper: contact notes, incidents and systems. The plugin wraps each under a named key (`notes`, `incidents`, `systems`) so a caller always reads a collection, and a non-array body throws instead of becoming an empty list.
   - **Report payloads are maps, not arrays.** `reports.volume` keys conversation counts by `YYYY-MM-DD`, `reports.tags` keys tag counts by tag name, `reports.staff` keys metrics by staff display name, and `reports.channelSummary` keys them by channel id. Read them with `Object.entries`.
   - **Conversation status is an integer**: 0 open, 1 responded, 2 done, 3 spam, 4 archived, 5 on hold, 6 auto-done, 7 and 8 for the AI agent, 9 AI spam.
-  - **Request bodies are wrapped**, in `conversation`, `message`, `contact`, `identity`, `article`, `incident`, `response_template` or `staff`. Notes are the exception: `notes.create` sends a bare `{ body }`.
+  - **Request bodies are wrapped**, in `conversation`, `message`, `contact`, `identity`, `article`, `incident`, `response_template` or `staff`. Notes are the exception: `notes.create` and `notes.update` send the fields unwrapped, as a bare `{ body }` plus the optional `creator_email` and `created_at`.
   - **`incidents.update` is a POST.** The vendor heading says PUT, but its own curl example sends `-X POST` to the same path, and that is what the endpoint sends.
   - **An unknown route answers HTML, not JSON.** An unknown resource answers `{"errors":"Not Found"}`, an unknown route `{"status":404,"error":"Not Found"}`, and a validation failure a map of field to message with status 422.
 examples:
