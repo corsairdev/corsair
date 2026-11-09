@@ -1,0 +1,45 @@
+displayName: Dropcontact
+description: B2B email finding and contact enrichment from Dropcontact - submit contacts for enrichment, read qualified email results, check remaining credits, and manage the account default webhook callback URL.
+domain: dropcontact.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key at https://app.dropcontact.com/api and send it in the `X-Access-Token` header. Sign in to the app once first, or the API answers 403 `Unknown account`.
+
+  Things that shape how enrichment behaves:
+
+  - **It is a batch job.** `enrichment.enrich` submits up to 250 contacts and returns a `request_id`, not results. `enrichment.results` reads them back, usually 30 to 60 seconds later.
+  - **Polling is a normal state, not an error.** Before the batch is ready, `enrichment.results` answers HTTP 200 with `success: false` and a `reason`. This plugin returns that rather than throwing, so check `success` before using `records`. `status` reads `in_progress` until the batch finishes, and `ready` after.
+  - **`force_results` returns partial data.** Pass it to get whatever has already been enriched instead of a not-ready answer; each record then carries its own `status`.
+  - **Credits.** One credit per contact for enrichment, refunded when no email is found; an email validation always spends one. `account.credits` costs nothing and reports the balance.
+  - **Input and output differ on two names.** A record needs at least one company identifier (`company`, `website`, `company_linkedin`, `num_siren`, `siret`), an `email`, or a `linkedin` URL. `num_siren` comes back as `siren`, and `email` comes back as a list of objects with a `qualification` such as `nominatif@pro`.
+  - **Unknown input keys are ignored, not rejected.** The record is still processed and the keys are listed under that record's `errors.unexpected_field`, so the plugin accepts extra keys.
+  - **Record level problems do not fail the call.** Check `errors` and `warnings` per record: `only_contact_data` means nothing usable could be found, and `only_organization_data` means only the company was enriched.
+  - **Limits.** 60 requests per second, 250 contacts per request, 15 kB per record.
+  - **Webhooks.** Dropcontact POSTs results to a callback URL, but it signs nothing, so the plugin reads results through `enrichment.results` instead of exposing a webhook route. `webhook.set` and `webhook.remove` manage the account default that Dropcontact itself calls.
+examples:
+  read:
+    path: account.credits
+    title: Check the credits left
+    args: {}
+  write:
+    path: enrichment.enrich
+    title: Enrich a contact by name and company
+    args:
+      data:
+        - first_name: Denis
+          last_name: Cohen
+          company: Dropcontact
+apiExamples:
+  enrichment.enrich:
+    call: "{ data: [{ first_name: 'Denis', last_name: 'Cohen', company: 'Dropcontact' }], language: 'en' }"
+  enrichment.results:
+    call: "{ request_id: 'qzmxkpvlrtdnhwa' }"
+  account.credits: {}
+  webhook.get: {}
+  webhook.set:
+    call: "{ callback_url: 'https://example.com/dropcontact/results' }"
+  webhook.remove: {}
+apiNotes:
+  enrichment.results: '`success: false` with a `reason` means the batch is still processing, not that the call failed. Poll again in about 30 seconds, or pass `force_results: true` for the records already done.'
+  enrichment.enrich: 'Spends one credit per contact and has no cancel operation. Every record needs a company identifier, an email, or a LinkedIn URL.'
+  webhook.remove: 'Deletes the account default callback URL permanently. Only requests that carry their own `custom_callback_url` notify anything afterwards.'
