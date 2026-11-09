@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { gongRequest } from '../client';
 import type { GongFamilyContext } from './family-context';
+import { gongCredentials } from './family-context';
 import type {
 	GongIntegrationSettingsInputs,
 	GongIntegrationSettingsOutputs,
@@ -12,20 +13,7 @@ export async function updateIntegrationSettings(
 ): Promise<GongIntegrationSettingsOutputs['update']> {
 	const options = ctx.options;
 	if (!options.baseUrl) throw new Error('Gong baseUrl is required');
-	const credentials =
-		options.authType === 'oauth_2'
-			? { type: 'bearer' as const, accessToken: ctx.key }
-			: options.accessKey && options.accessKeySecret
-				? {
-						type: 'basic' as const,
-						accessKey: options.accessKey,
-						accessKeySecret: options.accessKeySecret,
-					}
-				: (() => {
-						throw new Error(
-							'Gong Basic authentication requires accessKey and accessKeySecret',
-						);
-					})();
+	const credentials = gongCredentials(ctx);
 	const result = await gongRequest<GongIntegrationSettingsOutputs['update']>({
 		baseUrl: options.baseUrl,
 		credentials,

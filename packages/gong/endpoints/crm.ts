@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { gongRequest } from '../client';
 import type { GongCrmInputs, GongCrmOutputs } from './crm-types';
 import type { GongFamilyContext } from './family-context';
+import { gongCredentials } from './family-context';
 
 async function run<K extends keyof GongCrmInputs>(
 	ctx: GongFamilyContext,
@@ -15,20 +16,7 @@ async function run<K extends keyof GongCrmInputs>(
 ): Promise<GongCrmOutputs[K]> {
 	const options = ctx.options;
 	if (!options.baseUrl) throw new Error('Gong baseUrl is required');
-	const credentials =
-		options.authType === 'oauth_2'
-			? { type: 'bearer' as const, accessToken: ctx.key }
-			: options.accessKey && options.accessKeySecret
-				? {
-						type: 'basic' as const,
-						accessKey: options.accessKey,
-						accessKeySecret: options.accessKeySecret,
-					}
-				: (() => {
-						throw new Error(
-							'Gong Basic authentication requires accessKey and accessKeySecret',
-						);
-					})();
+	const credentials = gongCredentials(ctx);
 	const response = await gongRequest<GongCrmOutputs[K]>({
 		baseUrl: options.baseUrl,
 		credentials,

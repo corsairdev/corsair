@@ -4,17 +4,10 @@ import type {
 	GongEngageFlowsInputs,
 	GongEngageFlowsOutputs,
 } from './engage-flows-types';
+import type { GongFamilyContext } from './family-context';
+import { gongCredentials } from './family-context';
 
-type LocalGongContext = {
-	key: string;
-	options: {
-		baseUrl?: string;
-		authType?: 'api_key' | 'oauth_2';
-		accessKey?: string;
-		accessKeySecret?: string;
-	};
-	$getAccountId: () => Promise<string>;
-};
+type LocalGongContext = GongFamilyContext;
 type Endpoint<K extends keyof GongEngageFlowsInputs> = (
 	ctx: LocalGongContext,
 	input: GongEngageFlowsInputs[K],
@@ -23,25 +16,12 @@ function request<T>(
 	ctx: LocalGongContext,
 	method: 'GET' | 'POST' | 'PATCH',
 	path: string,
-	input: unknown,
+	input: Record<string, unknown>,
 	query?: Record<string, unknown>,
 	body?: unknown,
 ): Promise<T> {
 	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
-	const credentials =
-		ctx.options.authType === 'oauth_2'
-			? { type: 'bearer' as const, accessToken: ctx.key }
-			: ctx.options.accessKey && ctx.options.accessKeySecret
-				? {
-						type: 'basic' as const,
-						accessKey: ctx.options.accessKey,
-						accessKeySecret: ctx.options.accessKeySecret,
-					}
-				: (() => {
-						throw new Error(
-							'Gong Basic authentication requires accessKey and accessKeySecret',
-						);
-					})();
+	const credentials = gongCredentials(ctx);
 	return gongRequest<T>({
 		baseUrl: ctx.options.baseUrl,
 		credentials,
@@ -54,7 +34,7 @@ function request<T>(
 async function logged<T>(
 	ctx: LocalGongContext,
 	id: string,
-	input: unknown,
+	input: Record<string, unknown>,
 	run: () => Promise<T>,
 ): Promise<T> {
 	const result = await run();

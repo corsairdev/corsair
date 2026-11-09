@@ -2,21 +2,11 @@ import { logEventFromContext } from 'corsair/core';
 import type { GongContext, GongEndpoints } from '..';
 import { gongRequest } from '../client';
 import type { GongCallsOutputs } from './calls-types';
+import type { GongFamilyContext } from './family-context';
+import { gongCredentials } from './family-context';
 
-function credentials(ctx: GongContext) {
-	const options = ctx.options;
-	if (options.authType === 'oauth_2')
-		return { type: 'bearer' as const, accessToken: ctx.key };
-	if (!options.accessKey || !options.accessKeySecret) {
-		throw new Error(
-			'Gong Basic authentication requires accessKey and accessKeySecret',
-		);
-	}
-	return {
-		type: 'basic' as const,
-		accessKey: options.accessKey,
-		accessKeySecret: options.accessKeySecret,
-	};
+function credentials(ctx: GongFamilyContext) {
+	return gongCredentials(ctx);
 }
 
 function baseUrl(ctx: GongContext): string {
@@ -44,7 +34,7 @@ async function call<T>(
 	ctx: GongContext,
 	method: 'GET' | 'POST',
 	path: string,
-	input: unknown,
+	input: Record<string, unknown>,
 	query?: Record<string, unknown>,
 	body?: unknown,
 ): Promise<T> {
@@ -120,15 +110,9 @@ export const addCallRecording: GongEndpoints['callsAddCallRecording'] = async (
 		);
 	if (!/^\d{1,20}$/.test(input.id))
 		throw new Error('Gong call id must contain 1 to 20 digits');
-	if (!options.accessKey || !options.accessKeySecret)
-		throw new Error('Call recording upload requires Basic API credentials');
 	const result = await gongRequest<GongCallsOutputs['addCallRecording']>({
 		baseUrl: options.baseUrl,
-		credentials: {
-			type: 'basic',
-			accessKey: options.accessKey,
-			accessKeySecret: options.accessKeySecret,
-		},
+		credentials: gongCredentials(ctx),
 		method: 'PUT',
 		path: `/v2/calls/${encodeURIComponent(input.id)}/media`,
 		formData: { mediaFile: input.mediaFile },

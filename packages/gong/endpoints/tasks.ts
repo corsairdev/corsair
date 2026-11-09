@@ -1,17 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import { gongRequest } from '../client';
+import type { GongFamilyContext } from './family-context';
+import { gongCredentials } from './family-context';
 import type { GongTasksInputs, GongTasksOutputs } from './tasks-types';
 
-type LocalGongContext = {
-	key: string;
-	options: {
-		baseUrl?: string;
-		authType?: 'api_key' | 'oauth_2';
-		accessKey?: string;
-		accessKeySecret?: string;
-	};
-	$getAccountId: () => Promise<string>;
-};
+type LocalGongContext = GongFamilyContext;
 type Endpoint<K extends keyof GongTasksInputs> = (
 	ctx: LocalGongContext,
 	input: GongTasksInputs[K],
@@ -20,24 +13,11 @@ async function call<T>(
 	ctx: LocalGongContext,
 	method: 'POST' | 'PATCH',
 	path: string,
-	input: unknown,
+	input: Record<string, unknown>,
 	body: unknown,
 ): Promise<T> {
 	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
-	const credentials =
-		ctx.options.authType === 'oauth_2'
-			? { type: 'bearer' as const, accessToken: ctx.key }
-			: ctx.options.accessKey && ctx.options.accessKeySecret
-				? {
-						type: 'basic' as const,
-						accessKey: ctx.options.accessKey,
-						accessKeySecret: ctx.options.accessKeySecret,
-					}
-				: (() => {
-						throw new Error(
-							'Gong Basic authentication requires accessKey and accessKeySecret',
-						);
-					})();
+	const credentials = gongCredentials(ctx);
 	const result = await gongRequest<T>({
 		baseUrl: ctx.options.baseUrl,
 		credentials,

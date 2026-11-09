@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { gongRequest } from '../client';
 import type { GongFamilyContext } from './family-context';
+import { gongCredentials } from './family-context';
 import type {
 	GongWorkspacesInputs,
 	GongWorkspacesOutputs,
@@ -11,18 +12,7 @@ export async function listWorkspaces(
 	input: GongWorkspacesInputs['listWorkspaces'],
 ): Promise<GongWorkspacesOutputs['listWorkspaces']> {
 	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
-	const credentials =
-		ctx.options.authType === 'oauth_2'
-			? { type: 'bearer' as const, accessToken: ctx.key }
-			: ctx.options.accessKey && ctx.options.accessKeySecret
-				? {
-						type: 'basic' as const,
-						accessKey: ctx.options.accessKey,
-						accessKeySecret: ctx.options.accessKeySecret,
-					}
-				: (() => {
-						throw new Error('Gong API credentials are required');
-					})();
+	const credentials = gongCredentials(ctx);
 	const result = await gongRequest<GongWorkspacesOutputs['listWorkspaces']>({
 		baseUrl: ctx.options.baseUrl,
 		credentials,

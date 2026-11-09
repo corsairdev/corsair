@@ -1,16 +1,9 @@
 import { gongRequest } from '../client';
+import type { GongFamilyContext } from './family-context';
+import { gongCredentials } from './family-context';
 import type { GongSettingsInputs, GongSettingsOutputs } from './settings-types';
 
-type GongContext = {
-	key: string;
-	options: {
-		baseUrl?: string;
-		authType: 'api_key' | 'oauth_2';
-		accessKey?: string;
-		accessKeySecret?: string;
-	};
-	$getAccountId: () => Promise<string>;
-};
+type GongContext = GongFamilyContext;
 
 async function getSettings<K extends keyof GongSettingsInputs>(
 	ctx: GongContext,
@@ -18,17 +11,7 @@ async function getSettings<K extends keyof GongSettingsInputs>(
 	input: GongSettingsInputs[K],
 ): Promise<GongSettingsOutputs[K]> {
 	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
-	const credentials =
-		ctx.options.authType === 'oauth_2'
-			? ({ type: 'bearer', accessToken: ctx.key } as const)
-			: ctx.options.accessKey && ctx.options.accessKeySecret
-				? ({
-						type: 'basic',
-						accessKey: ctx.options.accessKey,
-						accessKeySecret: ctx.options.accessKeySecret,
-					} as const)
-				: null;
-	if (!credentials) throw new Error('Gong API credentials are required');
+	const credentials = gongCredentials(ctx);
 	return gongRequest<GongSettingsOutputs[K]>({
 		baseUrl: ctx.options.baseUrl,
 		credentials,

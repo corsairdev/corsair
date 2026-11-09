@@ -36,13 +36,13 @@ const ctx = {
 const ops: Array<
 	[
 		string,
-		(context: typeof ctx, input: any) => Promise<any>,
-		any,
+		(...args: never[]) => Promise<unknown>,
+		Record<string, unknown>,
 		string,
 		string,
-		any,
-		any,
-		any,
+		Record<string, unknown> | undefined,
+		unknown | undefined,
+		unknown,
 	]
 > = [
 	[
@@ -269,7 +269,7 @@ describe('Gong additional operation contracts', () => {
 		'%s uses the documented route and request placement',
 		async (_name, endpoint, input, method, url, query, body, output) => {
 			mockedRequest.mockResolvedValue(output);
-			await endpoint(ctx, input);
+			await Reflect.apply(endpoint, undefined, [ctx, input]);
 			expect(mockedRequest).toHaveBeenCalledWith(
 				expect.any(Object),
 				expect.objectContaining({ method, url, query, body }),

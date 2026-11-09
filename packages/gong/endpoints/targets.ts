@@ -1,33 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
 import { gongRequest } from '../client';
+import type { GongFamilyContext } from './family-context';
+import { gongCredentials } from './family-context';
 import type { GongTargetsInputs, GongTargetsOutputs } from './targets-types';
 
-type LocalGongContext = {
-	key: string;
-	options: {
-		baseUrl?: string;
-		authType?: 'api_key' | 'oauth_2';
-		accessKey?: string;
-		accessKeySecret?: string;
-	};
-	$getAccountId: () => Promise<string>;
-};
+type LocalGongContext = GongFamilyContext;
 type Endpoint<K extends keyof GongTargetsInputs> = (
 	ctx: LocalGongContext,
 	input: GongTargetsInputs[K],
 ) => Promise<GongTargetsOutputs[K]>;
 function credentials(ctx: LocalGongContext) {
-	if (ctx.options.authType === 'oauth_2')
-		return { type: 'bearer' as const, accessToken: ctx.key };
-	if (ctx.options.accessKey && ctx.options.accessKeySecret)
-		return {
-			type: 'basic' as const,
-			accessKey: ctx.options.accessKey,
-			accessKeySecret: ctx.options.accessKeySecret,
-		};
-	throw new Error(
-		'Gong Basic authentication requires accessKey and accessKeySecret',
-	);
+	return gongCredentials(ctx);
 }
 function safePath(value: string): string {
 	if (!value || value === '.' || value === '..' || /[\/\\"']/.test(value))

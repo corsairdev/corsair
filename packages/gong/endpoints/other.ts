@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { gongRequest } from '../client';
 import type { GongFamilyContext } from './family-context';
+import { gongCredentials } from './family-context';
 import type { GongOtherOutputs } from './other-types';
 
 type OtherOp = keyof GongOtherOutputs;
@@ -34,20 +35,7 @@ async function send<T>(
 		parsed.hash
 	)
 		throw new Error('Gong baseUrl must be a safe HTTPS URL');
-	const credentials =
-		ctx.options.authType === 'oauth_2'
-			? { type: 'bearer' as const, accessToken: ctx.key }
-			: ctx.options.accessKey && ctx.options.accessKeySecret
-				? {
-						type: 'basic' as const,
-						accessKey: ctx.options.accessKey,
-						accessKeySecret: ctx.options.accessKeySecret,
-					}
-				: (() => {
-						throw new Error(
-							'Gong Basic authentication requires accessKey and accessKeySecret',
-						);
-					})();
+	const credentials = gongCredentials(ctx);
 	const response = await gongRequest<T>({
 		baseUrl,
 		credentials,

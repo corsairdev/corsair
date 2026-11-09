@@ -16,9 +16,25 @@ const ctx = {
 		baseUrl: 'https://tenant.api.gong.io',
 	},
 	$getAccountId: async () => 'account',
-} as never;
+};
 describe('Gong Users contracts', () => {
 	beforeEach(() => mockedRequest.mockReset());
+	it('uses Corsair’s resolved API key for Basic authentication', async () => {
+		mockedRequest.mockResolvedValue({ requestId: 'r', users: [] });
+		const storedKeyContext = {
+			...ctx,
+			key: 'stored-api-key',
+			options: { ...ctx.options, accessKey: undefined },
+		};
+
+		// Endpoint tests supply only the context fields this handler reads.
+		await listUsers(storedKeyContext as never, {});
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			expect.objectContaining({ USERNAME: 'stored-api-key' }),
+			expect.objectContaining({ method: 'GET', url: '/v2/users' }),
+		);
+	});
 	it('validates user inputs and output envelopes', () => {
 		expect(GongUsersInputSchemas.getUser.safeParse({ id: '' }).success).toBe(
 			false,
@@ -66,7 +82,8 @@ describe('Gong Users contracts', () => {
 				user: {},
 				userSettingsHistory: [],
 			});
-			await endpoint(ctx, input as never);
+			// Endpoint tests supply only the context fields each handler reads.
+			await endpoint(ctx as never, input as never);
 			expect(mockedRequest).toHaveBeenCalledWith(
 				expect.any(Object),
 				expect.objectContaining({ method, url, query, body }),
@@ -77,10 +94,10 @@ describe('Gong Users contracts', () => {
 		'rejects unsafe user id %s',
 		async (id) => {
 			await expect(
-				Promise.resolve().then(() => getUser(ctx, { id })),
+				Promise.resolve().then(() => getUser(ctx as never, { id })),
 			).rejects.toThrow('Unsafe Gong user id');
 			await expect(
-				Promise.resolve().then(() => getUserHistory(ctx, { id })),
+				Promise.resolve().then(() => getUserHistory(ctx as never, { id })),
 			).rejects.toThrow('Unsafe Gong user id');
 			expect(mockedRequest).not.toHaveBeenCalled();
 		},

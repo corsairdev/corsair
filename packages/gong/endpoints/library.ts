@@ -1,5 +1,6 @@
 import { gongRequest } from '../client';
 import type { GongFamilyContext } from './family-context';
+import { gongCredentials } from './family-context';
 import type { GongLibraryInputs, GongLibraryOutputs } from './library-types';
 
 async function run<K extends keyof GongLibraryInputs>(
@@ -8,18 +9,7 @@ async function run<K extends keyof GongLibraryInputs>(
 	input: GongLibraryInputs[K],
 ): Promise<GongLibraryOutputs[K]> {
 	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
-	const credentials =
-		ctx.options.authType === 'oauth_2'
-			? { type: 'bearer' as const, accessToken: ctx.key }
-			: ctx.options.accessKey && ctx.options.accessKeySecret
-				? {
-						type: 'basic' as const,
-						accessKey: ctx.options.accessKey,
-						accessKeySecret: ctx.options.accessKeySecret,
-					}
-				: (() => {
-						throw new Error('Gong API credentials are required');
-					})();
+	const credentials = gongCredentials(ctx);
 	return gongRequest<GongLibraryOutputs[K]>({
 		baseUrl: ctx.options.baseUrl,
 		credentials,

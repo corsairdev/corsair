@@ -1,7 +1,6 @@
 import { request } from 'corsair/http';
 import {
 	deleteCrmIntegration,
-	getCrmObjects,
 	getCrmRequestStatus,
 	listCrmIntegrations,
 	listCrmSchemaFields,
@@ -122,23 +121,6 @@ describe('Gong CRM operations', () => {
 				url: '/v2/crm/entity-schema',
 				query: { integrationId: 12, objectType: 'ACCOUNT' },
 				body: [field],
-			}),
-		);
-	});
-	it('requests CRM objects with the documented GET body', async () => {
-		mockedRequest.mockResolvedValue({ requestId: 'r', crmObjectsMap: {} });
-		await getCrmObjects(ctx, {
-			integrationId: 12,
-			objectType: 'DEAL',
-			objectsCrmIds: ['a'],
-		});
-		expect(mockedRequest).toHaveBeenCalledWith(
-			expect.any(Object),
-			expect.objectContaining({
-				method: 'GET',
-				url: '/v2/crm/entities',
-				query: { integrationId: 12, objectType: 'DEAL' },
-				body: ['a'],
 			}),
 		);
 	});

@@ -604,24 +604,29 @@ if (Object.keys(gongEndpointSchemas).length !== expectedGongEndpointCount)
 		`Expected ${expectedGongEndpointCount} Gong endpoint schemas, found ${Object.keys(gongEndpointSchemas).length}`,
 	);
 
+// The generated endpoint tree mixes namespace objects with endpoint functions.
 function validateEndpointTree<T extends Record<string, unknown>>(
 	endpoints: T,
 	schemas: Record<string, { input?: ZodType; output?: ZodType }>,
 	parentPath = '',
 ): T {
+	// The recursive tree is heterogeneous until each entry is visited below.
 	const validated: Record<string, unknown> = {};
 	for (const [name, value] of Object.entries(endpoints)) {
 		const path = parentPath ? `${parentPath}.${name}` : name;
 		if (typeof value === 'function') {
 			const schema = schemas[path];
+			// Endpoint argument tuples differ; only the second argument is schema-parsed.
 			validated[name] = async (...args: unknown[]) => {
 				const callArgs = [...args];
 				if (schema?.input) callArgs[1] = schema.input.parse(callArgs[1] ?? {});
+				// The provider response remains opaque until its registered output schema parses it.
 				const result: unknown = await Reflect.apply(value, undefined, callArgs);
 				return schema?.output ? schema.output.parse(result) : result;
 			};
 		} else if (value && typeof value === 'object') {
 			validated[name] = validateEndpointTree(
+				// This branch is known to be a nested namespace object.
 				value as Record<string, unknown>,
 				schemas,
 				path,

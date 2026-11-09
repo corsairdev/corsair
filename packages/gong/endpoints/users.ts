@@ -1,13 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GongContext, GongUserEndpoints } from '..';
 import { gongRequest } from '../client';
+import { gongCredentials } from './family-context';
 import type { GongUsersOutputs } from './users-types';
 
 async function call<T>(
 	ctx: GongContext,
 	method: 'GET' | 'POST',
 	path: string,
-	input: unknown,
+	input: Record<string, unknown>,
 	query?: Record<string, unknown>,
 	body?: unknown,
 ): Promise<T> {
@@ -17,20 +18,7 @@ async function call<T>(
 			'Gong baseUrl is required; use the workspace API URL from Gong',
 		);
 	new URL(baseUrl);
-	const credentials =
-		ctx.options.authType === 'oauth_2'
-			? { type: 'bearer' as const, accessToken: ctx.key }
-			: ctx.options.accessKey && ctx.options.accessKeySecret
-				? {
-						type: 'basic' as const,
-						accessKey: ctx.options.accessKey,
-						accessKeySecret: ctx.options.accessKeySecret,
-					}
-				: (() => {
-						throw new Error(
-							'Gong Basic authentication requires accessKey and accessKeySecret',
-						);
-					})();
+	const credentials = gongCredentials(ctx);
 	const result = await gongRequest<T>({
 		baseUrl,
 		credentials,

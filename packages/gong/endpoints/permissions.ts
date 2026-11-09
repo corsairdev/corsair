@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { gongRequest } from '../client';
 import type { GongFamilyContext } from './family-context';
+import { gongCredentials } from './family-context';
 import type { GongPermissionsOutputs } from './permissions-types';
 
 async function call<T>(
@@ -12,18 +13,7 @@ async function call<T>(
 	body?: unknown,
 ): Promise<T> {
 	if (!ctx.options.baseUrl) throw new Error('Gong baseUrl is required');
-	const credentials =
-		ctx.options.authType === 'oauth_2'
-			? { type: 'bearer' as const, accessToken: ctx.key }
-			: ctx.options.accessKey && ctx.options.accessKeySecret
-				? {
-						type: 'basic' as const,
-						accessKey: ctx.options.accessKey,
-						accessKeySecret: ctx.options.accessKeySecret,
-					}
-				: (() => {
-						throw new Error('Gong Basic credentials are required');
-					})();
+	const credentials = gongCredentials(ctx);
 	const result = await gongRequest<T>({
 		baseUrl: ctx.options.baseUrl,
 		credentials,

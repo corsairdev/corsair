@@ -22,7 +22,7 @@ jest.mock('corsair/http', () => ({
 }));
 const mockedRequest = jest.mocked(request);
 const ctx = {
-	key: 'token',
+	key: 'key',
 	options: {
 		authType: 'api_key' as const,
 		accessKey: 'key',
@@ -53,25 +53,13 @@ describe('Gong Engage Flows request contracts', () => {
 	const cases: Array<
 		[
 			string,
-			(
-				ctx: {
-					key: string;
-					options: {
-						authType: 'api_key';
-						accessKey: string;
-						accessKeySecret: string;
-						baseUrl: string;
-					};
-					$getAccountId: () => Promise<string>;
-				},
-				input: any,
-			) => Promise<any>,
-			any,
+			(...args: never[]) => Promise<unknown>,
+			Record<string, unknown>,
 			string,
 			string,
 			Record<string, unknown> | undefined,
+			unknown | undefined,
 			unknown,
-			any,
 		]
 	> = [
 		[
@@ -211,7 +199,7 @@ describe('Gong Engage Flows request contracts', () => {
 		'%s sends its documented request',
 		async (_name, endpoint, input, method, url, query, body, output) => {
 			mockedRequest.mockResolvedValue(output);
-			await endpoint(ctx, input as never);
+			await Reflect.apply(endpoint, undefined, [ctx, input]);
 			expect(mockedRequest).toHaveBeenCalledWith(
 				expect.objectContaining({
 					BASE: 'https://tenant.api.gong.io',
