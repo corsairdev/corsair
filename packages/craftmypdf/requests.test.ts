@@ -16,6 +16,7 @@ import {
 	templateVersions,
 	transactionsPage,
 	updatedFields,
+	updatedFieldsWithFailure,
 	usageReport,
 } from './test-fixtures';
 
@@ -359,6 +360,35 @@ describe('pdf editing', () => {
 		expect(request.body).toMatchObject({
 			fields: [{ id: 'last_name', value: 'Smith', readOnly: true }],
 		});
+	});
+
+	it('pdf.updateFields surfaces a field the PDF does not have', async () => {
+		// CraftMyPDF answers status success here; the endpoint lifts the failed
+		// field out so a caller cannot mistake it for a filled form.
+		respond(updatedFieldsWithFailure);
+
+		const result = (await invoke(Pdf.updateFields, {
+			url: 'https://example.com/form.pdf',
+			fields: [{ id: 'last_name', value: 'Smith' }],
+		})) as { status?: string; failed_fields?: { id?: string }[] };
+
+		expect(result.status).toBe('success');
+		expect(result.failed_fields).toHaveLength(1);
+		expect(result.failed_fields?.[0]?.id).toBe('last_name');
+
+		const logged = mockLog.mock.calls.at(-1);
+		expect(logged?.[2]).toMatchObject({ fields: 1, failed: 1 });
+	});
+
+	it('pdf.updateFields reports no failures when every field was filled', async () => {
+		respond(updatedFields);
+
+		const result = (await invoke(Pdf.updateFields, {
+			url: 'https://example.com/form.pdf',
+			fields: [{ id: 'last_name', value: 'Smith' }],
+		})) as { failed_fields?: unknown[] };
+
+		expect(result.failed_fields).toEqual([]);
 	});
 
 	it('pdf.updateFields rejects an empty field list', async () => {

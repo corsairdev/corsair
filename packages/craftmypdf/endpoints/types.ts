@@ -236,6 +236,10 @@ export const GeneratedFileSchema = z
 		file: z.string().nullish(),
 		transaction_ref: z.string().nullish(),
 		anchors: z.array(AnchorSchema).nullish(),
+		// Present on generate responses, absent on the editing endpoints.
+		total_pages: z.number().nullish(),
+		file_size: z.number().nullish(),
+		template_id: z.string().nullish(),
 	})
 	.loose();
 
@@ -419,6 +423,7 @@ const ParallelResultSchema = z
 		transaction_ref: z.string().nullish(),
 		status: z.string().nullish(),
 		total_pages: z.number().nullish(),
+		file_size: z.number().nullish(),
 		template_id: z.string().nullish(),
 		index: z.number().nullish(),
 		meta: z.string().nullish(),
@@ -590,12 +595,29 @@ const PdfUpdateFieldsResponseSchema = z
 		file: z.string().nullish(),
 		transaction_ref: z.string().nullish(),
 		field_statuses: z.array(FieldStatusSchema).nullish(),
+		// Derived by the endpoint from field_statuses.
+		failed_fields: z.array(FieldStatusSchema).nullish(),
 	})
 	.loose();
 
 export type PdfUpdateFieldsResponse = z.infer<
 	typeof PdfUpdateFieldsResponseSchema
 >;
+
+/**
+ * CraftMyPDF answers `status: 'success'` even when every field it was asked to
+ * fill was missing from the document, reporting that only inside
+ * `field_statuses`. Verified against the live API: filling a field that does
+ * not exist returns 200, success, and one entry with `status: 'error'`.
+ */
+export function failedFields(
+	fieldStatuses:
+		| readonly { id?: string | null; status?: string | null }[]
+		| null
+		| undefined,
+): { id?: string | null; status?: string | null }[] {
+	return (fieldStatuses ?? []).filter((field) => field.status === 'error');
+}
 
 // ── pdf.merge ─────────────────────────────────────────────────────────────
 
@@ -724,6 +746,9 @@ const TemplatesGetResponseSchema = z
 		name: z.string().nullish(),
 		body: z.string().nullish(),
 		json: z.string().nullish(),
+		// Sent by the live API; absent from the spec.
+		template_id: z.string().nullish(),
+		version: z.union([z.number(), z.string()]).nullish(),
 	})
 	.loose();
 
@@ -849,6 +874,9 @@ export type CraftmypdfTemplateVersion = z.infer<
 const TemplatesListVersionsResponseSchema = z
 	.object({
 		status: z.string().nullish(),
+		// The live API names this `reference_id`; the spec's `template_id` is
+		// accepted too so either response parses.
+		reference_id: z.string().nullish(),
 		template_id: z.string().nullish(),
 		versions: z.array(CraftmypdfTemplateVersionSchema),
 	})
@@ -980,7 +1008,8 @@ const EditorCreateSessionResponseSchema = z
 	.object({
 		status: z.string().nullish(),
 		url: z.string().nullish(),
-		expire_after_unix_timestamp: z.number().nullish(),
+		// The live API sends this as a string, though the spec types it integer.
+		expire_after_unix_timestamp: z.union([z.number(), z.string()]).nullish(),
 		// The spec types this integer but describes it as an ISO date string.
 		expire_after: z.union([z.string(), z.number()]).nullish(),
 		token_uuid: z.string().nullish(),

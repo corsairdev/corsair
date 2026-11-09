@@ -54,4 +54,4 @@ apiNotes:
   templates.list: CraftMyPDF reports no total, so `next_offset` is present only when the page came back full. Pass it as `offset` to read the next page.
   transactions.list: "`next_offset` is present only when the page came back full."
   editor.createSession: The returned URL is a signed token that lets its bearer edit the template, so treat it as a credential and deactivate it when done.
-  pdf.updateFields: Field ids come from the PDF itself. https://craftmypdf.com/tools/pdf-fillable-field-reader/ lists them for a document.
+  pdf.updateFields: CraftMyPDF answers `success` even when a field does not exist in the document and reports the failure only in `field_statuses`. The plugin also returns the failures as `failed_fields`, so check it is empty before treating the form as filled.

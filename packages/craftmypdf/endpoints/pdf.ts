@@ -1,6 +1,8 @@
+import { asRecord } from 'corsair/core';
 import type { CraftmypdfEndpoints } from '..';
 import { call } from './call';
 import {
+	failedFields,
 	CraftmypdfEndpointInputSchemas as Inputs,
 	CraftmypdfEndpointOutputSchemas as Outputs,
 } from './types';
@@ -198,8 +200,22 @@ export const updateFields: CraftmypdfEndpoints['pdfUpdateFields'] = (
 			body: parsed,
 		}),
 		{
+			// CraftMyPDF reports success even when a field does not exist in the
+			// document, so the failures are lifted out of field_statuses where a
+			// caller can see them.
+			shape: (raw) => {
+				const record = asRecord(raw);
+				const statuses = Array.isArray(record?.field_statuses)
+					? (record.field_statuses as {
+							id?: string | null;
+							status?: string | null;
+						}[])
+					: undefined;
+				return { ...record, failed_fields: failedFields(statuses) };
+			},
 			log: (_, result) => ({
 				fields: result.field_statuses?.length,
+				failed: result.failed_fields?.length,
 			}),
 		},
 	);

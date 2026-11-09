@@ -8,6 +8,10 @@ export const generatedFile = {
 	status: 'success',
 	file: 'https://craftmypdf.s3.ap-southeast-1.amazonaws.com/abc/output.pdf',
 	transaction_ref: 'a0430897-2c94-40e1-a09b-57403d811ceb',
+	// Sent by every generation call; the spec omits all three.
+	total_pages: 1,
+	file_size: 98396,
+	template_id: 'bcf77b23190437b0',
 };
 
 export const generatedFileWithAnchors = {
@@ -57,6 +61,8 @@ export const templatesPage = {
 
 export const templateDetail = {
 	status: 'success',
+	template_id: 'ad577b2b22d4e612',
+	version: null,
 	name: 'Test Template',
 	body: '{"pages":[]}',
 	json: '{"first_name":"Jack"}',
@@ -64,7 +70,8 @@ export const templateDetail = {
 
 export const templateVersions = {
 	status: 'success',
-	template_id: '5ef77b2b187c968c',
+	// The live API names this reference_id; the spec says template_id.
+	reference_id: '5ef77b2b187c968c',
 	versions: [
 		{ version: 0, description: 'Latest', updated_at: '' },
 		{
@@ -127,7 +134,7 @@ export const transactionsPage = {
 export const editorSession = {
 	status: 'success',
 	url: 'https://craftmypdf.com/designer/?template_id=a2777b23223444&session_token=tok',
-	expire_after_unix_timestamp: 1_674_097_492,
+	expire_after_unix_timestamp: '1674097492',
 	expire_after: '2023-01-19T03:04:51.811Z',
 	token_uuid: '66b0e71d-5a72-4fee-b4a5-7f1713fd2fb5',
 };
@@ -139,6 +146,20 @@ export const updatedFields = {
 	field_statuses: [{ id: 'last_name', status: 'success', message: '' }],
 };
 
+/** Copied from a live call: a field the PDF does not have still answers success. */
+export const updatedFieldsWithFailure = {
+	status: 'success',
+	file: 'https://craftmypdf.s3.ap-southeast-1.amazonaws.com/abc/updated.pdf',
+	transaction_ref: '9feb45e4-a025-4301-a0a8-0b74437229b5',
+	field_statuses: [
+		{
+			id: 'last_name',
+			status: 'error',
+			message: "Field 'last_name' not found in PDF form.",
+		},
+	],
+};
+
 export const parallelResult = {
 	status: 'success',
 	results: [
@@ -147,6 +168,7 @@ export const parallelResult = {
 			transaction_ref: 'dvbewe-2a8b-4182-b92c-33dfw3fcds',
 			status: 'success',
 			total_pages: 1,
+			file_size: 95516,
 			template_id: 'be277b31334bfa0',
 			index: 0,
 			meta: 'yourrefernce0001',

@@ -32,6 +32,7 @@ await corsair.craftmypdf.api.account.getInfo({});
 |------|------|----------|-------------|
 | `status` | `string \| null` | No | — |
 | `username` | `string \| null` | No | — |
+| `is_team` | `boolean \| null` | No | — |
 | `quota_counter` | `number \| string \| null` | No | — |
 | `quota_max` | `number \| string \| null` | No | — |
 | `template_counter` | `number \| string \| null` | No | — |
@@ -88,7 +89,7 @@ The returned URL is a signed token that lets its bearer edit the template, so tr
 |------|------|----------|-------------|
 | `status` | `string \| null` | No | — |
 | `url` | `string \| null` | No | — |
-| `expire_after_unix_timestamp` | `number \| null` | No | — |
+| `expire_after_unix_timestamp` | `number \| string \| null` | No | — |
 | `expire_after` | `string \| number \| null` | No | — |
 | `token_uuid` | `string \| null` | No | — |
 
@@ -180,6 +181,9 @@ await corsair.craftmypdf.api.pdf.addText({});
 | `file` | `string \| null` | No | — |
 | `transaction_ref` | `string \| null` | No | — |
 | `anchors` | `object[] \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `file_size` | `number \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="anchors full type">
@@ -238,6 +242,9 @@ await corsair.craftmypdf.api.pdf.addWatermark({});
 | `file` | `string \| null` | No | — |
 | `transaction_ref` | `string \| null` | No | — |
 | `anchors` | `object[] \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `file_size` | `number \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="anchors full type">
@@ -303,6 +310,9 @@ A synchronous call can take up to 100 seconds, so the plugin waits 120 seconds b
 | `file` | `string \| null` | No | — |
 | `transaction_ref` | `string \| null` | No | — |
 | `anchors` | `object[] \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `file_size` | `number \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="anchors full type">
@@ -405,6 +415,9 @@ await corsair.craftmypdf.api.pdf.createImage({});
 | `file` | `string \| null` | No | — |
 | `transaction_ref` | `string \| null` | No | — |
 | `anchors` | `object[] \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `file_size` | `number \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="anchors full type">
@@ -473,6 +486,9 @@ await corsair.craftmypdf.api.pdf.createMerge({});
 | `file` | `string \| null` | No | — |
 | `transaction_ref` | `string \| null` | No | — |
 | `anchors` | `object[] \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `file_size` | `number \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="anchors full type">
@@ -548,6 +564,7 @@ Each request entry carries its own template data. Set `merge` to also receive on
   transaction_ref?: string | null,
   status?: string | null,
   total_pages?: number | null,
+  file_size?: number | null,
   template_id?: string | null,
   index?: number | null,
   meta?: string | null,
@@ -645,6 +662,9 @@ await corsair.craftmypdf.api.pdf.merge({});
 | `file` | `string \| null` | No | — |
 | `transaction_ref` | `string \| null` | No | — |
 | `anchors` | `object[] \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `file_size` | `number \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="anchors full type">
@@ -686,7 +706,7 @@ await corsair.craftmypdf.api.pdf.updateFields({});
 | `output_file` | `string` | No | Name of the generated file, for example output.pdf. |
 | `cloud_storage` | `number` | No | 1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1. |
 
-Field ids come from the PDF itself. https://craftmypdf.com/tools/pdf-fillable-field-reader/ lists them for a document.
+CraftMyPDF answers `success` even when a field does not exist in the document and reports the failure only in `field_statuses`. The plugin also returns the failures as `failed_fields`, so check it is empty before treating the form as filled.
 
 <AccordionGroup>
 <Accordion title="fields full type">
@@ -713,9 +733,21 @@ Field ids come from the PDF itself. https://craftmypdf.com/tools/pdf-fillable-fi
 | `file` | `string \| null` | No | — |
 | `transaction_ref` | `string \| null` | No | — |
 | `field_statuses` | `object[] \| null` | No | — |
+| `failed_fields` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="field_statuses full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  message?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="failed_fields full type">
 
 ```ts
 {
@@ -828,6 +860,8 @@ await corsair.craftmypdf.api.templates.get({});
 | `name` | `string \| null` | No | — |
 | `body` | `string \| null` | No | — |
 | `json` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `version` | `number \| string \| null` | No | — |
 
 
 
@@ -910,6 +944,7 @@ await corsair.craftmypdf.api.templates.listVersions({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string \| null` | No | — |
+| `reference_id` | `string \| null` | No | — |
 | `template_id` | `string \| null` | No | — |
 | `versions` | `object[]` | Yes | — |
 
