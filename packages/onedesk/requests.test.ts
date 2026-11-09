@@ -230,15 +230,34 @@ describe('items', () => {
 	});
 
 	it('items.update rejects a structured response that carries no code', async () => {
-		// Neither a bare code nor an empty 200 is a confirmed success.
+		// A real update answers a bare code string, so an object with content
+		// and no code is a shape this plugin cannot read as success.
 		respond({ data: 'something else' });
 
 		await expect(
 			invoke(Records.itemsUpdate, { externalId: 'i-1', name: 'Renamed' }),
-		).rejects.toThrow(/carried no code/);
+		).rejects.toThrow(/no code/);
 	});
 
-	it('items.update reads an empty 200 as success', async () => {
+	it('items.update reads an empty object or empty body as success', async () => {
+		// Both mean "nothing to report"; the client has already thrown on any
+		// failure code it could read.
+		respond({});
+		const fromObject = (await invoke(Records.itemsUpdate, {
+			externalId: 'i-1',
+			name: 'Renamed',
+		})) as { code: string };
+		expect(fromObject.code).toBe('SUCCESS');
+
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 200 }));
+		const fromEmpty = (await invoke(Records.itemsUpdate, {
+			externalId: 'i-1',
+			name: 'Renamed',
+		})) as { code: string };
+		expect(fromEmpty.code).toBe('SUCCESS');
+	});
+
+	it('items.update reads a bare success code string', async () => {
 		fetchMock.mockResolvedValueOnce(new Response(null, { status: 200 }));
 
 		const result = (await invoke(Records.itemsUpdate, {

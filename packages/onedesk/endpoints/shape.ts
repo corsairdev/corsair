@@ -52,15 +52,17 @@ export function withNextOffset(
 // unknown: the transport returns an untyped body.
 export function updateCode(raw: unknown): { code: string } {
 	if (typeof raw === 'string' && raw.length > 0) return { code: raw };
-	// An empty 200 is a success: the client has already thrown on any error
-	// code it could read, and OneDesk sends nothing else here.
 	if (raw === undefined || raw === null || raw === '') {
 		return { code: 'SUCCESS' };
 	}
-	const code = asRecord(raw)?.code;
+	const record = asRecord(raw);
+	const code = record?.code;
 	if (typeof code === 'string' && code.length > 0) return { code };
+	// An empty object carries nothing, so it is the same as an empty body.
+	// Anything with content but no code cannot be read as a success.
+	if (record && Object.keys(record).length === 0) return { code: 'SUCCESS' };
 	throw new OnedeskAPIError(
-		'The OneDesk update response carried no code, so it cannot be read as a success.',
+		'The OneDesk update response carried data but no code, so it cannot be read as a success.',
 	);
 }
 

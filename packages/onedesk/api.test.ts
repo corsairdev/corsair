@@ -156,6 +156,43 @@ describeLive('OneDesk live API', () => {
 		).toBe('SUCCESS');
 	});
 
+	it('reads a template-free resource and updates it with no net change', async () => {
+		// An update answers a bare code string, so this pins the shape the
+		// plugin normalises. The name is read first and written back unchanged.
+		const ids = await makeOnedeskRequest(
+			LIVE_KEY,
+			{ method: 'POST', path: '/projects/filter', body: { limit: 1 } },
+			options,
+		);
+		const projectId = ((ids as { data?: string[] }).data ?? [])[0];
+		if (!projectId) {
+			console.warn(
+				'No project on the account: the live update test has nothing to change.',
+			);
+			return;
+		}
+
+		const before = await makeOnedeskRequest(
+			LIVE_KEY,
+			{ method: 'GET', path: `/projects/externalId/${projectId}` },
+			options,
+		);
+		const name = ((before as { data?: { name?: string } }).data ?? {}).name;
+
+		const raw = await makeOnedeskRequest(
+			LIVE_KEY,
+			{
+				method: 'POST',
+				path: `/projects/externalId/${projectId}`,
+				body: { name },
+			},
+			options,
+		);
+		// A bare string, not an object; the plugin turns it into { code }.
+		expect(typeof raw).toBe('string');
+		expect(raw).toBe('SUCCESS');
+	});
+
 	it('rejects a key that does not exist', async () => {
 		await expect(
 			makeOnedeskRequest(
