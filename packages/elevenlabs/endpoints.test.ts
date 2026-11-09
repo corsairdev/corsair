@@ -749,6 +749,8 @@ describe('voiceDesign', () => {
 	] as const)('%s refuses a 200 with no previews', async (_op, call) => {
 		answerJson({ text: 'Preview text' });
 		await expect(call()).rejects.toThrow(/previews/);
+		answerJson({ text: 'Preview text', previews: null });
+		await expect(call()).rejects.toThrow(/previews/);
 	});
 });
 
