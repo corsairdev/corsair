@@ -463,4 +463,27 @@ describe('logging', () => {
 		expect(JSON.stringify(fields)).not.toContain('example.com');
 		expect(fields).toMatchObject({ requestId: 'qzmxkpvlrtdnhwa' });
 	});
+
+	it('logs a forced partial read as not ready', async () => {
+		// success is true because the read worked, but the batch is still running.
+		respond(resultsForcedInProgress);
+
+		await invoke(results, {
+			request_id: 'qzmxkpvlrtdnhwa',
+			force_results: true,
+		});
+
+		const [, event, fields] = mockLog.mock.calls.at(-1) ?? [];
+		expect(event).toBe('dropcontact.enrichment.results');
+		expect(fields).toMatchObject({ ready: false });
+	});
+
+	it('logs a finished batch as ready', async () => {
+		respond(resultsReady);
+
+		await invoke(results, { request_id: 'qzmxkpvlrtdnhwa' });
+
+		const [, , fields] = mockLog.mock.calls.at(-1) ?? [];
+		expect(fields).toMatchObject({ ready: true });
+	});
 });

@@ -110,7 +110,9 @@ export const results: DropcontactEndpoints['enrichmentResults'] = (
 			log: (parsed, result) => ({
 				requestId: parsed.request_id,
 				records: result.records.length,
-				ready: result.success,
+				// A forced partial read is success: true with status in_progress, so
+				// the flag follows the batch status, not the envelope.
+				ready: result.status === 'ready',
 			}),
 		},
 	);

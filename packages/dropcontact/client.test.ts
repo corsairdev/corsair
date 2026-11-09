@@ -4,6 +4,7 @@ import {
 	isFailedBody,
 	makeDropcontactRequest,
 	readReason,
+	statusOnlyDescription,
 } from './client';
 import {
 	rateLimited,
@@ -280,6 +281,46 @@ describe('describeDropcontactError', () => {
 	it('falls back when the body carries nothing', () => {
 		expect(describeDropcontactError(undefined, null, 'fetch failed')).toBe(
 			'fetch failed',
+		);
+	});
+});
+
+describe('statusOnlyDescription', () => {
+	it('names no body content, so it is safe as a fallback', () => {
+		expect(statusOnlyDescription(504, 'Gateway Timeout')).toBe(
+			'request failed (Gateway Timeout)',
+		);
+		expect(statusOnlyDescription(504, undefined)).toBe('request failed');
+		expect(statusOnlyDescription(undefined, undefined)).toBe('request failed');
+	});
+});
+
+describe('an unmapped status', () => {
+	it('does not put the echoed contacts in the message', async () => {
+		// The shared client has no message for 504, so its ApiError.message embeds
+		// the whole response body. A failed enrich body can echo the submitted
+		// contacts, so that message must never become the plugin error's text.
+		respond(
+			{
+				detail: null,
+				data: [{ email: 'someone@example.com', first_name: 'Denis' }],
+			},
+			504,
+		);
+
+		const error = await failure(
+			makeDropcontactRequest(API_KEY, {
+				method: 'POST',
+				path: '/v1/enrich/all',
+			}),
+		);
+
+		// No reason field in that body, so the fallback is status-only.
+		expect(error.status).toBe(504);
+		expect(error.message).toBe('Dropcontact 504: request failed');
+		expect(error.message).not.toContain('example.com');
+		expect(require('node:util').inspect(error, { depth: null })).not.toContain(
+			'example.com',
 		);
 	});
 });

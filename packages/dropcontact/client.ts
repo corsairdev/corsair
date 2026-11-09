@@ -122,6 +122,21 @@ export function describeDropcontactError(
 	return status !== undefined ? `Dropcontact ${status}: ${reason}` : reason;
 }
 
+/**
+ * A status-only description, safe to pass as the fallback above.
+ *
+ * The shared client's own message must never be that fallback: for a status
+ * outside its fixed map (504, for one) `ApiError.message` embeds the whole
+ * response body, and a failed enrich response can echo the submitted contacts.
+ */
+export function statusOnlyDescription(
+	status: number | undefined,
+	statusText: string | undefined,
+): string {
+	if (status === undefined) return 'request failed';
+	return statusText ? `request failed (${statusText})` : 'request failed';
+}
+
 export type DropcontactQuery = Record<
 	string,
 	string | number | boolean | undefined
@@ -173,7 +188,13 @@ export async function makeDropcontactRequest(
 			// which can echo the contacts that were submitted. Everything the
 			// handlers need is copied onto this error instead.
 			throw new DropcontactAPIError(
-				describeDropcontactError(error.status, error.body, error.message),
+				describeDropcontactError(
+					error.status,
+					error.body,
+					// Never error.message here: on a status outside the shared client's
+					// fixed map it embeds the whole response body.
+					statusOnlyDescription(error.status, error.statusText),
+				),
 				{
 					status: error.status,
 					body: error.body,
