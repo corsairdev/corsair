@@ -36,13 +36,23 @@ await corsair.eventzilla.api.attendees.checkin({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `first_name` | `string \| null` | No | — |
-| `last_name` | `string \| null` | No | — |
-| `eventtitle` | `string \| null` | No | — |
-| `orderref` | `string \| null` | No | — |
-| `orderef` | `string \| null` | No | — |
-| `email` | `string \| null` | No | — |
-| `status` | `string \| null` | No | — |
+| `checkinstatus` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="checkinstatus full type">
+
+```ts
+{
+  firstname?: string | null,
+  lastname?: string | null,
+  eventtitle?: string | null,
+  orderref?: string | null,
+  email?: string | null,
+  status?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -579,7 +589,7 @@ await corsair.eventzilla.api.events.get({});
 
 `events.list`
 
-The account's events, newest paging first. Filter by status (Live, Draft, Unpublished, Completed) or category, and page with offset and the returned next_offset.
+The account's events, paged with offset. Filter by status (only "live" is accepted) or category, and page with the returned next_offset. An empty account answers HTTP 200 with &#123;"message":"No events found"&#125; rather than an array, which is read here as an empty page.
 
 **Risk:** `read`
 
@@ -591,12 +601,12 @@ await corsair.eventzilla.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `Live \| Draft \| Unpublished \| Completed` | No | Only events in this status. The API matches case-insensitively and also accepts the lowercase spelling (live, draft…). |
+| `status` | `live` | No | Only `live` is accepted. Every other value, including the capitalised spellings, is rejected by the API. |
 | `category` | `string` | No | Only this category name. |
 | `offset` | `number` | No | Records to skip. Defaults to 0. |
 | `limit` | `number` | No | Records to return. Defaults to 20. |
 
-Set status to Live, Draft, Unpublished or Completed, and category to a name from categories.list.
+Only status: live is accepted; every other value is rejected by the API. Set category to a name from categories.list.
 
 
 
@@ -607,6 +617,7 @@ Set status to Live, Draft, Unpublished or Completed, and category to a name from
 | `pagination` | `object[] \| null` | No | — |
 | `events` | `object[]` | Yes | — |
 | `next_offset` | `number \| null` | Yes | Offset of the next page, or null when this is the last one. Pass it back as `offset`. |
+| `message` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="pagination full type">
@@ -687,6 +698,7 @@ await corsair.eventzilla.api.events.transactions({});
 | `pagination` | `object[] \| null` | No | — |
 | `transactions` | `object[]` | Yes | — |
 | `next_offset` | `number \| null` | Yes | — |
+| `message` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="pagination full type">
@@ -1037,7 +1049,7 @@ await corsair.eventzilla.api.tickets.update({});
 
 `transactions.get`
 
-One order by checkout id or by reference number. An unknown reference answers an empty array rather than a 404, so check the array before reading it.
+One order by checkout id or reference number. Verified live, this route does not filter: a small integer answers the account's most recent transaction, a real checkout id answers "Unauthorized access", and an unknown reference answers "Invalid reference number" (404). Check the returned refno before trusting it.
 
 **Risk:** `read`
 
@@ -1120,10 +1132,10 @@ await corsair.eventzilla.api.users.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `users` | `object[]` | Yes | — |
+| `user` | `object[]` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="users full type">
+<Accordion title="user full type">
 
 ```ts
 {
@@ -1184,6 +1196,7 @@ await corsair.eventzilla.api.users.list({});
 | `pagination` | `object[] \| null` | No | — |
 | `users` | `object[]` | Yes | — |
 | `next_offset` | `number \| null` | Yes | — |
+| `message` | `string` | No | — |
 
 <AccordionGroup>
 <Accordion title="pagination full type">

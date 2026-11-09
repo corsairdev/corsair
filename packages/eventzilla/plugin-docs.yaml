@@ -28,7 +28,7 @@ examples:
     title: List live events
     description: The account's events that are currently on sale.
     args:
-      status: "Live"
+      status: "live"
       limit: 10
   write:
     title: Check an attendee in by barcode
@@ -37,4 +37,4 @@ examples:
       barcode: "EZ202605200001"
       eventcheckin: true
 apiNotes:
-  events.list: "Set status to Live, Draft, Unpublished or Completed, and category to a name from categories.list."
+  events.list: "Only status: live is accepted; every other value is rejected by the API. Set category to a name from categories.list."

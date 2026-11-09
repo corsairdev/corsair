@@ -21,7 +21,6 @@ import type {
 	EventzillaEndpointOutputs,
 } from './endpoints/types';
 import {
-	EVENTZILLA_EVENT_STATUSES,
 	EventzillaEndpointInputSchemas,
 	EventzillaEndpointOutputSchemas,
 } from './endpoints/types';
@@ -228,7 +227,7 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 const eventzillaEndpointMeta = {
 	'events.list': {
 		riskLevel: 'read',
-		description: `The account's events, newest paging first. Filter by status (${EVENTZILLA_EVENT_STATUSES.join(', ')}) or category, and page with offset and the returned next_offset.`,
+		description: `The account's events, paged with offset. Filter by status (only "live" is accepted) or category, and page with the returned next_offset. An empty account answers HTTP 200 with {"message":"No events found"} rather than an array, which is read here as an empty page.`,
 	},
 	'events.get': {
 		riskLevel: 'read',
@@ -322,8 +321,7 @@ const eventzillaEndpointMeta = {
 	},
 	'transactions.get': {
 		riskLevel: 'read',
-		description:
-			'One order by checkout id or by reference number. An unknown reference answers an empty array rather than a 404, so check the array before reading it.',
+		description: `One order by checkout id or reference number. Verified live, this route does not filter: a small integer answers the account's most recent transaction, a real checkout id answers "Unauthorized access", and an unknown reference answers "Invalid reference number" (404). Check the returned refno before trusting it.`,
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof eventzillaEndpointsNested
