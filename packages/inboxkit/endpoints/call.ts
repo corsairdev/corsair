@@ -28,29 +28,21 @@ export async function safeLog(
 	}
 }
 
-// What failed with an unclear outcome, by arguments object and operation. Core
-// retries by calling the operation again with the same arguments object, and a
-// root error handler that matches everything runs ahead of the plugin's, so a
-// retry from there would otherwise repeat a purchase that may have gone through.
-const unclearOutcomes = new WeakMap<object, Map<string, Error>>();
+// What failed with an unclear outcome, by call. A root error handler that matches
+// everything runs ahead of the plugin's, so it can ask core to retry a purchase that
+// may have gone through. Core builds a new context for each call and reuses it for
+// that call's retries, so keying on it covers exactly those retries: another tenant's
+// call, or a later deliberate repeat, is a new call and is sent as usual.
+const unclearOutcomes = new WeakMap<InboxkitContext, Map<string, Error>>();
 
 function rememberUnclearOutcome(
-	// unknown: the caller's raw input; only an object can be remembered.
-	input: unknown,
+	ctx: InboxkitContext,
 	operation: string,
 	error: Error,
 ): void {
-	if (typeof input !== 'object' || input === null) return;
-	const failures = unclearOutcomes.get(input) ?? new Map<string, Error>();
+	const failures = unclearOutcomes.get(ctx) ?? new Map<string, Error>();
 	failures.set(operation, error);
-	unclearOutcomes.set(input, failures);
-}
-
-// unknown: the caller's raw input, as above.
-function unclearOutcomeOf(input: unknown, operation: string) {
-	return typeof input === 'object' && input !== null
-		? unclearOutcomes.get(input)?.get(operation)
-		: undefined;
+	unclearOutcomes.set(ctx, failures);
 }
 
 function summarize(error: ZodError): string {
@@ -91,9 +83,8 @@ async function soleWorkspace(ctx: InboxkitContext): Promise<string> {
 
 /**
  * Validates the input, sends the request, validates the response and logs the
- * call. Reads are retried; everything else is sent once, and a retry with the
- * same arguments after an unclear failure gets that error again, with nothing
- * sent. Whatever the response looks like, a call InboxKit accepted never throws,
+ * call. Reads are retried; everything else is sent once, and a retry of a call
+ * whose outcome is unclear gets that error again, with nothing sent. Whatever the response looks like, a call InboxKit accepted never throws,
  * since an agent would repeat it: a response that doesn't fit its schema comes
  * back whole under `raw`, with parse_warning. Only the operation name is logged,
  * because inputs and results hold passwords, API keys and addresses.
@@ -114,7 +105,7 @@ export async function call<K extends InboxkitOperation>(
 	} = {},
 ): Promise<InboxkitEndpointOutputs[K]> {
 	const { path: event, read, workspace } = INBOXKIT_OPERATIONS[operation];
-	const earlier = read ? undefined : unclearOutcomeOf(input, operation);
+	const earlier = read ? undefined : unclearOutcomes.get(ctx)?.get(operation);
 	if (earlier) throw earlier;
 
 	// The schema maps are indexed by a generic key, which TypeScript cannot narrow
@@ -143,7 +134,7 @@ export async function call<K extends InboxkitOperation>(
 	} catch (error) {
 		if (!read && outcomeUnknown(error) && error instanceof Error) {
 			error.message += ` This may still have gone through. Check before repeating ${event}: there is no safe way to retry it, and a repeat may charge or change it twice.`;
-			rememberUnclearOutcome(input, operation, error);
+			rememberUnclearOutcome(ctx, operation, error);
 		}
 		throw error;
 	}

@@ -196,17 +196,52 @@ describe('a root error handler that asks for retries', () => {
 		}
 	});
 
-	it('still lets a deliberate repeat through, with a new arguments object', async () => {
+	it('still lets a deliberate repeat through, even with the same arguments object', async () => {
 		const { corsair, testDb } = await createRetryingClient();
+		const args = { ...purchase };
+		try {
+			fetchMock.mockResolvedValueOnce(jsonResponse({ message: 'broken' }, 500));
+			await expect(corsair.inboxkit.api.mailboxes.buy(args)).rejects.toThrow();
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+			fetchMock.mockResolvedValueOnce(jsonResponse({ order_uid: 'order-1' }));
+			await expect(
+				corsair.inboxkit.api.mailboxes.buy(args),
+			).resolves.toMatchObject({ order_uid: 'order-1' });
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('does not let one account block another that shares the arguments object', async () => {
+		const first = await createRetryingClient();
+		const second = await createRetryingClient();
+		const args = { ...purchase };
 		try {
 			fetchMock.mockResolvedValueOnce(jsonResponse({ message: 'broken' }, 500));
 			await expect(
-				corsair.inboxkit.api.mailboxes.buy({ ...purchase }),
+				first.corsair.inboxkit.api.mailboxes.buy(args),
 			).rejects.toThrow();
-			fetchMock.mockResolvedValueOnce(jsonResponse({ order_uid: 'order-1' }));
+			fetchMock.mockResolvedValueOnce(jsonResponse({ order_uid: 'order-2' }));
 			await expect(
-				corsair.inboxkit.api.mailboxes.buy({ ...purchase }),
-			).resolves.toMatchObject({ order_uid: 'order-1' });
+				second.corsair.inboxkit.api.mailboxes.buy(args),
+			).resolves.toMatchObject({ order_uid: 'order-2' });
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			first.testDb.cleanup();
+			second.testDb.cleanup();
+		}
+	});
+
+	it('covers a call with no fields in its arguments too', async () => {
+		const { corsair, testDb } = await createRetryingClient();
+		try {
+			fetchMock.mockImplementation(() =>
+				jsonResponse({ message: 'broken' }, 500),
+			);
+			await expect(
+				corsair.inboxkit.api.billing.cancelSubscription({}),
+			).rejects.toThrow('may still have gone through');
+			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
 		}
