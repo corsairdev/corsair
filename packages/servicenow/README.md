@@ -21,7 +21,33 @@ pnpm add @corsair-dev/servicenow
 
 ## Auth
 
-Auth: API key. Corsair prompts your tenant for credentials on first use.
+Auth: HTTP Basic, with a username and password for your own ServiceNow instance.
+
+Every customer runs their own instance, so two values are needed:
+
+```ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { servicenow } from '@corsair-dev/servicenow';
+
+const db = new Database('corsair.db');
+const corsair = createCorsair({
+	plugins: [
+		servicenow({
+			host: 'acme.service-now.com',
+			// The pair travels JSON-encoded, because a key is one string.
+			key: JSON.stringify({ username: 'admin', password: process.env.SN_PASSWORD }),
+		}),
+	],
+	database: db,
+	kek: process.env.CORSAIR_KEK!,
+});
+```
+
+Or store both once with `keys.set_host(host)` and
+`keys.set_api_key(JSON.stringify({ username, password }))`. The `keys` methods need a
+database and a KEK, and Corsair does not prompt for credentials on its own without Hub: a
+call with neither a stored pair nor an `key` option throws `AuthMissingError`.
 
 ## Webhooks
 

@@ -45,7 +45,7 @@ Sends `fields` as the request body and answers the created record from `result`,
 
 `records.delete`
 
-Delete one record. ServiceNow keeps no undo, and a deleted record takes its references with it
+Delete one record. ServiceNow keeps no undo, and what happens to referencing records depends on the table reference cascade rule
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -60,7 +60,7 @@ await corsair.servicenow.api.records.delete({ table: 'incident', sys_id: '9d3850
 | `table` | `string` | Yes | — |
 | `sys_id` | `string` | Yes | ServiceNow sys_id |
 
-Answers 204 with no body, so the plugin reports the identifiers it deleted rather than parsing one. The record and its references are gone; there is no undo.
+Answers 204 with no body, so the plugin reports `{ deleted, table, sys_id }` rather than parsing one. The record itself is gone and there is no undo; whether records referencing it are cascaded, nulled or left untouched depends on the table's reference cascade rule.
 
 
 
@@ -96,6 +96,7 @@ await corsair.servicenow.api.records.get({ table: 'incident', sys_id: '9d385017c
 | `sys_id` | `string` | Yes | ServiceNow sys_id |
 | `sysparm_fields` | `string` | No | Comma-separated fields to return, e.g. "number,short_description,state" |
 | `sysparm_display_value` | `true \| false \| all` | No | — |
+| `sysparm_exclude_reference_link` | `boolean` | No | Return a reference column as a bare sys_id instead of &#123; link, value &#125; |
 
 Answers the record object directly from `result`. Reference fields come back as objects with `value` and `link` unless `sysparm_exclude_reference_link` is set.
 
@@ -181,7 +182,7 @@ Sends a PATCH with `fields` as the body, which changes only the fields you name.
 
 `tables.list`
 
-List the tables this account can read, to find a name to query
+List visible table metadata from sys_db_object, to find a table name to query
 
 **Risk:** `read`
 
@@ -199,7 +200,7 @@ await corsair.servicenow.api.tables.list({ sysparm_limit: 50 });
 | `sysparm_limit` | `number` | No | Records per page. ServiceNow defaults to 10000 when omitted |
 | `sysparm_offset` | `number` | No | Records to skip. Add sysparm_limit per page to walk a table |
 
-Reads `sys_db_object`, the table that describes every table, selecting `name`, `label`, `super_class` and `sys_id` by default. A `sysparm_fields` selection keeps `name` even when omitted, because ServiceNow returns only the fields asked for and `name` is what you pass as `table`. Pass `sysparm_query` to narrow it, for example `nameSTARTSWITHu_` for a custom application's tables.
+Lists visible table metadata from `sys_db_object`. A table appearing here does not mean its records are readable through record queries: this is dictionary metadata only, subject to the user's ACLs. selecting `name`, `label`, `super_class` and `sys_id` by default. A `sysparm_fields` selection keeps `name` even when omitted, because ServiceNow returns only the fields asked for and `name` is what you pass as `table`. Pass `sysparm_query` to narrow it, for example `nameSTARTSWITHu_` for a custom application's tables.
 
 
 
