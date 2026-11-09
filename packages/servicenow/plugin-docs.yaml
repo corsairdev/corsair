@@ -59,4 +59,4 @@ apiNotes:
   records.delete: |
     Answers 204 with no body, so the plugin reports the identifiers it deleted rather than parsing one. The record and its references are gone; there is no undo.
   tables.list: |
-    Reads `sys_db_object`, the table that describes every table, selecting `name`, `label`, `super_class` and `sys_id` by default. Pass `sysparm_query` to narrow it, for example `nameSTARTSWITHu_` for a custom application's tables.
+    Reads `sys_db_object`, the table that describes every table, selecting `name`, `label`, `super_class` and `sys_id` by default. A `sysparm_fields` selection keeps `name` even when omitted, because ServiceNow returns only the fields asked for and `name` is what you pass as `table`. Pass `sysparm_query` to narrow it, for example `nameSTARTSWITHu_` for a custom application's tables.
