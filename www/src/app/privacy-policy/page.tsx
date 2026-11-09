@@ -435,8 +435,9 @@ export default function PrivacyPolicyPage() {
 						<li>
 							On Hub, session recordings leave out your name and email in
 							account menus, setup snippets for AI clients, the End User ID on
-							connect pages, the arguments on approval pages, and routine
-							prompts.
+							connect pages, the arguments on approval pages, and error messages
+							from routine runs. A run's error can repeat what a connected app
+							returned.
 						</li>
 						<li>
 							On Hub, session recordings also leave out API keys, signing
@@ -445,8 +446,15 @@ export default function PrivacyPolicyPage() {
 						</li>
 					</ul>
 					<p>
-						On Hub, your Lug address and link name can appear in session recordings
-						and click data, because a Lug address becomes public once claimed.
+						Session recordings on Hub can include other text shown on the page,
+						such as issues, comments, routines and skills, and the names and
+						emails of people in a shared workspace. We watch them to check that
+						these features work.
+					</p>
+					<p>
+						On Hub, your Lug address and link name can appear in session
+						recordings and click data, because a Lug address becomes public once
+						claimed.
 					</p>
 				</LegalSubsection>
 			</LegalSection>
