@@ -60,7 +60,7 @@ describe('makeOnedeskRequest', () => {
 		const result = await makeOnedeskRequest(API_KEY, {
 			method: 'POST',
 			path: '/items/filter',
-			body: { itemType: 'Ticket' },
+			body: { itemType: ['Ticket'] },
 		});
 
 		expect(result).toEqual(pagedIds);
@@ -113,7 +113,7 @@ describe('makeOnedeskRequest', () => {
 			makeOnedeskRequest(API_KEY, {
 				method: 'POST',
 				path: '/items/filter',
-				body: { itemType: 'Ticket' },
+				body: { itemType: ['Ticket'] },
 			}),
 		);
 
@@ -131,7 +131,7 @@ describe('makeOnedeskRequest', () => {
 			makeOnedeskRequest(API_KEY, {
 				method: 'POST',
 				path: '/items/filter',
-				body: { itemType: 'Ticket' },
+				body: { itemType: ['Ticket'] },
 			}),
 		);
 
@@ -174,7 +174,7 @@ describe('makeOnedeskRequest', () => {
 			makeOnedeskRequest(API_KEY, {
 				method: 'POST',
 				path: '/items/filter',
-				body: { itemType: 'Ticket' },
+				body: { itemType: ['Ticket'] },
 			}),
 		);
 

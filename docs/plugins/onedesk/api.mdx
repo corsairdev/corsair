@@ -1494,7 +1494,7 @@ List work item external ids by type and filter, with paging and a total count
 
 ```ts
 await corsair.onedesk.api.items.filter({
-  itemType: 'Ticket',
+  itemType: ['Problem'],
   properties: [
     { property: 'lifecycleStatus', operation: 'EQ', value: 'Open' },
   ],
@@ -1511,10 +1511,10 @@ await corsair.onedesk.api.items.filter({
 | `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
 | `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
 | `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
-| `itemType` | `string` | Yes | The work item type to list, for example 'Ticket' or 'Task'. Read the valid names with organization.itemTypes. |
+| `itemType` | `string[]` | Yes | One or more work item type names, for example ['Ticket']. A bare string is rejected by the API. Read the valid names with organization.itemTypes. |
 | `customFields` | `object[]` | No | — |
 
-The itemType name must be one this organization defines; read the valid names with `organization.itemTypes`. This returns external ids only. Use `items.filterDetails` for full records, which caps `limit` at 50.
+`itemType` is an array of names this organization defines; a bare string is rejected with a 400. Read the valid names with `organization.itemTypes`. Returns external ids only. Use `items.filterDetails` for full records, which caps `limit` at 50.
 
 <AccordionGroup>
 <Accordion title="properties full type">
@@ -1603,7 +1603,7 @@ await corsair.onedesk.api.items.filterDetails({});
 | `limit` | `number` | No | Rows to return. OneDesk caps this at 200 for id requests and 50 for detail requests. |
 | `offset` | `number` | No | Index of the first row to return. Defaults to 0. |
 | `isAsc` | `boolean` | No | Sort by creation time ascending. OneDesk defaults to false, newest first. |
-| `itemType` | `string` | Yes | The work item type to list, for example 'Ticket' or 'Task'. Read the valid names with organization.itemTypes. |
+| `itemType` | `string[]` | Yes | One or more work item type names, for example ['Ticket']. A bare string is rejected by the API. Read the valid names with organization.itemTypes. |
 | `customFields` | `object[]` | No | — |
 
 Returns full item records. OneDesk caps `limit` at 50 on the details variants, against 200 on the id variants.
@@ -2361,7 +2361,10 @@ await corsair.onedesk.api.organization.containerTypes({});
 
 ```ts
 {
-  name?: string | null
+  externalId?: string | null,
+  label?: string | null,
+  isPortfolio?: boolean | null,
+  visible?: boolean | null
 }[]
 ```
 </Accordion>
@@ -2385,6 +2388,8 @@ await corsair.onedesk.api.organization.itemTypes({});
 
 **Input:** _empty object_
 
+Answers `label` and `externalId` per type, not the `name` field the published spec describes.
+
 
 **Output**
 
@@ -2398,7 +2403,10 @@ await corsair.onedesk.api.organization.itemTypes({});
 
 ```ts
 {
-  name?: string | null
+  externalId?: string | null,
+  label?: string | null,
+  iconStyleName?: string | null,
+  iconColor?: number | null
 }[]
 ```
 </Accordion>
@@ -2422,13 +2430,29 @@ await corsair.onedesk.api.organization.lifecycleStatus({});
 
 **Input:** _empty object_
 
+Returns objects with `name`, `externalId` and `state`, not the string array the published spec describes.
+
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `string \| null` | No | — |
-| `data` | `string[]` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string | null,
+  externalId?: string | null,
+  state?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2461,9 +2485,10 @@ await corsair.onedesk.api.organization.profile({});
 
 ```ts
 {
-  name?: string | null,
-  timeZone?: string | null,
-  currency?: string | null
+  organizationName?: string | null,
+  organizationUri?: string | null,
+  dateFormat?: string | null,
+  defaultThreadVisibilityType?: string | null
 } | null
 ```
 </Accordion>
@@ -2500,7 +2525,9 @@ await corsair.onedesk.api.organization.userTypes({});
 
 ```ts
 {
-  name?: string | null
+  label?: string | null,
+  iconStyleName?: string | null,
+  iconColor?: number | null
 }[]
 ```
 </Accordion>
@@ -3580,7 +3607,7 @@ await corsair.onedesk.api.projects.update({});
 | `customFields` | `Record<string, string \| number \| boolean>` | No | — |
 | `archived` | `boolean` | No | — |
 
-A lifecycle status name must be one the organization defines; read them with `organization.lifecycleStatus`.
+A lifecycle status name must be one the organization defines; read them with `organization.lifecycleStatus`, which returns objects whose `name` is the value to pass.
 
 <AccordionGroup>
 <Accordion title="portfolioExternalIds full type">
@@ -4043,13 +4070,7 @@ await corsair.onedesk.api.teams.filterDetails({});
   id?: number | null,
   externalId?: string | null,
   name?: string | null,
-  users?: {
-    typeName?: string | null,
-    displayName?: string | null,
-    email?: string | null,
-    teamName?: string | null,
-    externalId?: string | null
-  }[] | null
+  userExternalIds?: string[] | null
 }[]
 ```
 </Accordion>
@@ -4116,13 +4137,7 @@ await corsair.onedesk.api.teams.get({});
   id?: number | null,
   externalId?: string | null,
   name?: string | null,
-  users?: {
-    typeName?: string | null,
-    displayName?: string | null,
-    email?: string | null,
-    teamName?: string | null,
-    externalId?: string | null
-  }[] | null
+  userExternalIds?: string[] | null
 } | null
 ```
 </Accordion>
@@ -5147,8 +5162,9 @@ await corsair.onedesk.api.users.filterDetails({});
     firstName?: string | null,
     lastName?: string | null,
     email?: string | null,
-    phoneNumber?: string | null,
-    title?: string | null
+    phoneWork?: string | null,
+    title?: string | null,
+    language?: string | null
   } | null,
   address?: {
     address1?: string | null,
@@ -5162,10 +5178,7 @@ await corsair.onedesk.api.users.filterDetails({});
     name?: string | null,
     value?: string | number | boolean | (string | number | boolean)[] | null
   }[] | null,
-  teams?: {
-    externalId?: string | null,
-    name?: string | null
-  }[] | null
+  teams?: string[] | null
 }[]
 ```
 </Accordion>
@@ -5240,8 +5253,9 @@ await corsair.onedesk.api.users.get({});
     firstName?: string | null,
     lastName?: string | null,
     email?: string | null,
-    phoneNumber?: string | null,
-    title?: string | null
+    phoneWork?: string | null,
+    title?: string | null,
+    language?: string | null
   } | null,
   address?: {
     address1?: string | null,
@@ -5255,10 +5269,7 @@ await corsair.onedesk.api.users.get({});
     name?: string | null,
     value?: string | number | boolean | (string | number | boolean)[] | null
   }[] | null,
-  teams?: {
-    externalId?: string | null,
-    name?: string | null
-  }[] | null
+  teams?: string[] | null
 } | null
 ```
 </Accordion>

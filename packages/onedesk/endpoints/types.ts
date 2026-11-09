@@ -274,10 +274,10 @@ export type OnedeskItem = z.infer<typeof OnedeskItemSchema>;
 
 const ItemsFilterBodySchema = SimpleFilterSchema.extend({
 	itemType: z
-		.string()
+		.array(z.string().min(1))
 		.min(1)
 		.describe(
-			"The work item type to list, for example 'Ticket' or 'Task'. Read the valid names with organization.itemTypes.",
+			"One or more work item type names, for example ['Ticket']. A bare string is rejected by the API. Read the valid names with organization.itemTypes.",
 		),
 	customFields: z.array(CustomFieldFilterSchema).optional(),
 });
@@ -427,14 +427,16 @@ export const OnedeskUserSchema = z
 				firstName: z.string().nullish(),
 				lastName: z.string().nullish(),
 				email: z.string().nullish(),
-				phoneNumber: z.string().nullish(),
+				phoneWork: z.string().nullish(),
 				title: z.string().nullish(),
+				language: z.string().nullish(),
 			})
 			.loose()
 			.nullish(),
 		address: AddressSchema.nullish(),
 		customFieldsData: z.array(CustomFieldValueSchema).nullish(),
-		teams: z.array(TeamRefSchema).nullish(),
+		// Live API: team external ids, not embedded objects.
+		teams: z.array(z.string()).nullish(),
 	})
 	.loose();
 
@@ -725,7 +727,8 @@ export const OnedeskTeamSchema = z
 		id: z.number().nullish(),
 		externalId: z.string().nullish(),
 		name: z.string().nullish(),
-		users: z.array(OnedeskUserRefSchema).nullish(),
+		// Live API: a list of user external ids, not embedded objects.
+		userExternalIds: z.array(z.string()).nullish(),
 	})
 	.loose();
 
@@ -1683,13 +1686,17 @@ const OrganizationGetInputSchema = z.object({});
 
 export type OrganizationGetInput = z.input<typeof OrganizationGetInputSchema>;
 
+/** Item types answer `label`, not `name` as the spec says. */
 const OrganizationItemTypesResponseSchema = z
 	.object({
 		code: z.string().nullish(),
 		data: z.array(
 			z
 				.object({
-					name: z.string().nullish(),
+					externalId: z.string().nullish(),
+					label: z.string().nullish(),
+					iconStyleName: z.string().nullish(),
+					iconColor: z.number().nullish(),
 				})
 				.loose(),
 		),
@@ -1700,13 +1707,17 @@ export type OrganizationItemTypesResponse = z.infer<
 	typeof OrganizationItemTypesResponseSchema
 >;
 
+/** Container types answer `label` and an `isPortfolio` flag. */
 const OrganizationContainerTypesResponseSchema = z
 	.object({
 		code: z.string().nullish(),
 		data: z.array(
 			z
 				.object({
-					name: z.string().nullish(),
+					externalId: z.string().nullish(),
+					label: z.string().nullish(),
+					isPortfolio: z.boolean().nullish(),
+					visible: z.boolean().nullish(),
 				})
 				.loose(),
 		),
@@ -1717,13 +1728,16 @@ export type OrganizationContainerTypesResponse = z.infer<
 	typeof OrganizationContainerTypesResponseSchema
 >;
 
+/** User types answer `label`, not `name`. */
 const OrganizationUserTypesResponseSchema = z
 	.object({
 		code: z.string().nullish(),
 		data: z.array(
 			z
 				.object({
-					name: z.string().nullish(),
+					label: z.string().nullish(),
+					iconStyleName: z.string().nullish(),
+					iconColor: z.number().nullish(),
 				})
 				.loose(),
 		),
@@ -1734,10 +1748,20 @@ export type OrganizationUserTypesResponse = z.infer<
 	typeof OrganizationUserTypesResponseSchema
 >;
 
+/** Lifecycle statuses are full objects; the spec shows a string array. */
 const OrganizationLifecycleStatusResponseSchema = z
 	.object({
 		code: z.string().nullish(),
-		data: z.array(z.string()),
+		data: z.array(
+			z
+				.object({
+					name: z.string().nullish(),
+					externalId: z.string().nullish(),
+					state: z.string().nullish(),
+					type: z.string().nullish(),
+				})
+				.loose(),
+		),
 	})
 	.loose();
 
@@ -1750,9 +1774,10 @@ const OrganizationProfileResponseSchema = z
 		code: z.string().nullish(),
 		data: z
 			.object({
-				name: z.string().nullish(),
-				timeZone: z.string().nullish(),
-				currency: z.string().nullish(),
+				organizationName: z.string().nullish(),
+				organizationUri: z.string().nullish(),
+				dateFormat: z.string().nullish(),
+				defaultThreadVisibilityType: z.string().nullish(),
 			})
 			.loose()
 			.nullish(),

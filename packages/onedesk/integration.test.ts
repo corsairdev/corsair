@@ -143,7 +143,7 @@ describe('OneDesk plugin through createCorsair', () => {
 			respond(securityAccessError);
 
 			await expect(
-				corsair.onedesk.api.items.filter({ itemType: 'Ticket' }),
+				corsair.onedesk.api.items.filter({ itemType: ['Ticket'] }),
 			).rejects.toThrow(/ERROR_SECURITY_ACCESS/);
 			// A permission problem is not retried.
 			expect(calls()).toBe(1);
@@ -160,7 +160,9 @@ describe('OneDesk plugin through createCorsair', () => {
 			respond(serviceUnavailableError);
 			respond(pagedIds);
 
-			const pending = corsair.onedesk.api.items.filter({ itemType: 'Ticket' });
+			const pending = corsair.onedesk.api.items.filter({
+				itemType: ['Ticket'],
+			});
 			await jest.advanceTimersByTimeAsync(3000);
 			await expect(pending).resolves.toMatchObject({ code: 'SUCCESS' });
 			expect(calls()).toBe(2);

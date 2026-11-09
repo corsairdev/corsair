@@ -106,7 +106,7 @@ describe('items', () => {
 		respond(pagedIds);
 
 		const result = (await invoke(Records.itemsFilter, {
-			itemType: 'Ticket',
+			itemType: ['Ticket'],
 			limit: 2,
 			offset: 0,
 		})) as { data: string[]; nextOffset: number | null };
@@ -116,7 +116,7 @@ describe('items', () => {
 		const request = lastRequest();
 		expect(request.method).toBe('POST');
 		expect(request.path).toBe('/rest/public/items/filter');
-		expect(request.body).toMatchObject({ itemType: 'Ticket', limit: 2 });
+		expect(request.body).toMatchObject({ itemType: ['Ticket'], limit: 2 });
 		expect(request.headers.get('od-public-api-key')).toBe(API_KEY);
 	});
 
@@ -124,7 +124,7 @@ describe('items', () => {
 		respond(itemDetailsPage);
 
 		const result = (await invoke(Records.itemsFilterDetails, {
-			itemType: 'Ticket',
+			itemType: ['Ticket'],
 		})) as { data: { name?: string }[] };
 
 		expect(result.data[0]?.name).toBe(item.name);
@@ -140,7 +140,7 @@ describe('items', () => {
 		respond({ ...pagedIds, data: [], totalNum: 0 });
 
 		const result = (await invoke(Records.itemsFilter, {
-			itemType: 'Ticket',
+			itemType: ['Ticket'],
 		})) as { nextOffset: number | null };
 
 		expect(result.nextOffset).toBeNull();
@@ -1007,10 +1007,20 @@ describe('organization settings', () => {
 		respond(organizationItemTypes);
 
 		const result = (await invoke(Crm.organizationItemTypes, {})) as {
-			data: { name?: string }[];
+			data: { label?: string; externalId?: string }[];
 		};
 
-		expect(result.data.map((row) => row.name)).toEqual(['Ticket', 'Task']);
+		// The live API answers `label`; the spec's `name` does not exist.
+		expect(result.data.map((row) => row.label)).toEqual([
+			'Problem',
+			'Feedback 5',
+		]);
+		expect(result.data[0]?.externalId).toBe(
+			'384d4dc0-6aa6-4a89-9769-acc46401a2a4'.replace(
+				'384d4dc0-6aa6-4a89-9769-acc46401a2a4',
+				'd3635424-57e5-4722-a3f5-dd84f410cda2',
+			),
+		);
 		expect(lastRequest().path).toBe('/rest/public/organization/itemTypes');
 	});
 
@@ -1018,40 +1028,44 @@ describe('organization settings', () => {
 		respond(organizationContainerTypes);
 
 		const result = (await invoke(Crm.organizationContainerTypes, {})) as {
-			data: { name?: string }[];
+			data: { label?: string; isPortfolio?: boolean }[];
 		};
 
 		expect(result.data).toHaveLength(2);
+		expect(result.data[1]?.isPortfolio).toBe(true);
 	});
 
 	it('organization.userTypes reads the user types', async () => {
 		respond(organizationUserTypes);
 
 		const result = (await invoke(Crm.organizationUserTypes, {})) as {
-			data: { name?: string }[];
+			data: { label?: string }[];
 		};
 
-		expect(result.data[0]?.name).toBe('full-time');
+		expect(result.data[0]?.label).toBe('full-time');
 	});
 
 	it('organization.lifecycleStatus reads the status names', async () => {
 		respond(organizationLifecycleStatus);
 
 		const result = (await invoke(Crm.organizationLifecycleStatus, {})) as {
-			data: string[];
+			data: { name?: string; state?: string }[];
 		};
 
-		expect(result.data).toContain('In Progress');
+		// Lifecycle statuses are objects, not the string array the spec shows.
+		expect(result.data.map((row) => row.name)).toEqual(['Missing', 'Open']);
+		expect(result.data[1]?.state).toBe('not started');
 	});
 
 	it('organization.profile reads the profile', async () => {
 		respond(organizationProfile);
 
 		const result = (await invoke(Crm.organizationProfile, {})) as {
-			data?: { currency?: string };
+			data?: { organizationName?: string; organizationUri?: string };
 		};
 
-		expect(result.data?.currency).toBe('USD');
+		expect(result.data?.organizationName).toBe('Your Organization');
+		expect(result.data?.organizationUri).toContain('yourorganization');
 		expect(lastRequest().path).toBe(
 			'/rest/public/organization/profileAndPolicy',
 		);
@@ -1074,7 +1088,7 @@ describe('hosts and logging', () => {
 		respond({ code: 'ERROR_SECURITY_ACCESS' });
 
 		await expect(
-			invoke(Records.itemsFilter, { itemType: 'Ticket' }),
+			invoke(Records.itemsFilter, { itemType: ['Ticket'] }),
 		).rejects.toThrow(/ERROR_SECURITY_ACCESS/);
 
 		const logged = mockLog.mock.calls.at(-1);

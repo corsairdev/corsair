@@ -16,7 +16,8 @@ failed call rather than returning it as data.
 
 Item and user writes need names the organization defines. Read them first
 with `organization.itemTypes`, `organization.userTypes` and
-`organization.lifecycleStatus`.
+`organization.lifecycleStatus`. `items.filter` takes `itemType` as an array;
+a bare string is rejected.
 
 A white-label or self-hosted account sets the `host` option; it defaults to
 https://app.onedesk.com.
@@ -116,7 +117,10 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.onedesk.api.items.filterDetails({ itemType: 'Ticket', limit: 10 });
+await tenant.onedesk.api.items.filterDetails({
+	itemType: ['Problem'],
+	limit: 10,
+});
 ```
 
 

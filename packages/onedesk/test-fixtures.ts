@@ -74,16 +74,19 @@ export const user = {
 	created: '2024-01-01T00:00:00Z',
 	priority: 0,
 	registered: true,
+	// Live shape: phoneWork and language, not phoneNumber.
 	profile: {
+		email: 'ada@example.com',
 		firstName: 'Ada',
 		lastName: 'Lovelace',
-		email: 'ada@example.com',
-		phoneNumber: '+1 555 0100',
+		phoneWork: null,
 		title: 'Engineer',
+		language: 'en',
 	},
 	address: { address1: '1 Main St', city: 'Springfield', country: 'US' },
 	customFieldsData: [],
-	teams: [],
+	// Live shape: team external ids, not embedded objects.
+	teams: ['46d4eed9-776f-4a88-aea7-5f8fc741fa22'],
 };
 
 export const userDetailsPage = {
@@ -115,11 +118,11 @@ export const projectDetailsPage = {
 	totalNum: 1,
 };
 
+/** Live shape: `userExternalIds`, not `users`, and no numeric id. */
 export const team = {
-	id: 3,
 	externalId: 't-1',
 	name: 'Support',
-	users: [{ typeName: 'User', displayName: 'Ada', externalId: 'u-1' }],
+	userExternalIds: ['67475168-7241-4a76-8bd5-dc4f26a40eb8'],
 };
 
 export const teamDetailsPage = { code: 'SUCCESS', data: [team], totalNum: 1 };
@@ -285,29 +288,87 @@ export const attachmentDetailsPage = {
 	totalNum: 1,
 };
 
+/** Live shape: `label` and an externalId, not `name`. */
 export const organizationItemTypes = {
 	code: 'SUCCESS',
-	data: [{ name: 'Ticket' }, { name: 'Task' }],
+	data: [
+		{
+			externalId: 'd3635424-57e5-4722-a3f5-dd84f410cda2',
+			label: 'Problem',
+			iconStyleName: 'odi_problem',
+			iconColor: 15151164,
+		},
+		{
+			externalId: '384d4dc0-6aa6-4a89-9769-acc46401a2a4',
+			label: 'Feedback 5',
+			iconStyleName: 'odi_knowledgeBaseArticle',
+			iconColor: 12632256,
+		},
+	],
 };
 
 export const organizationUserTypes = {
 	code: 'SUCCESS',
-	data: [{ name: 'full-time' }, { name: 'contractor' }],
+	data: [
+		{
+			label: 'full-time',
+			iconStyleName: 'user_peopleItem_noColor',
+			iconColor: 18556,
+		},
+		{
+			label: 'contractor',
+			iconStyleName: 'odi_userContractor',
+			iconColor: 18556,
+		},
+	],
 };
 
 export const organizationContainerTypes = {
 	code: 'SUCCESS',
-	data: [{ name: 'Project' }, { name: 'Portfolio' }],
+	data: [
+		{
+			externalId: '04969ee3-f2b0-45b2-95a5-04584fe9b497',
+			label: 'Project 5',
+			isPortfolio: false,
+			visible: false,
+		},
+		{
+			externalId: 'c1dbd6d7-74c2-481c-b0d6-73dd21e0e4f2',
+			label: 'Project 6',
+			isPortfolio: true,
+			visible: true,
+		},
+	],
 };
 
+/** Live shape: full objects, not the string array the spec shows. */
 export const organizationLifecycleStatus = {
 	code: 'SUCCESS',
-	data: ['Open', 'In Progress', 'Closed'],
+	data: [
+		{
+			name: 'Missing',
+			externalId: 'dd345b3d-cd67-4471-afb5-5045c6904692',
+			state: 'finished',
+			type: null,
+		},
+		{
+			name: 'Open',
+			externalId: '588e7778-7fa3-4922-ad7c-1f962d60dc78',
+			state: 'not started',
+			type: 'Feedback 8',
+		},
+	],
 };
 
+/** Live shape: no name/timeZone/currency, which the spec claims. */
 export const organizationProfile = {
 	code: 'SUCCESS',
-	data: { name: 'Corsair', timeZone: 'UTC', currency: 'USD' },
+	data: {
+		dateFormat: 'MM-dd-yy',
+		organizationName: 'Your Organization',
+		organizationUri: 'yourorganization1794207978926',
+		defaultThreadVisibilityType: 'PUBLIC_DISCUSSION_POST',
+	},
 };
 
 /** A 2xx envelope that still says error: the API's most dangerous shape. */

@@ -108,6 +108,54 @@ describeLive('OneDesk live API', () => {
 		);
 	});
 
+	it('filters items, whose itemType must be an array', async () => {
+		// A bare string is a 400: the API rejects it before reading anything.
+		const raw = await makeOnedeskRequest(
+			LIVE_KEY,
+			{
+				method: 'POST',
+				path: '/items/filter',
+				body: { itemType: ['Problem'], limit: 5 },
+			},
+			options,
+		);
+		const shaped = { ...(raw as object), nextOffset: null };
+		const out = OnedeskEndpointOutputSchemas.itemsFilter.parse(shaped);
+
+		expect(out.code).toBe('SUCCESS');
+		expect(Array.isArray(out.data)).toBe(true);
+	});
+
+	it('rejects a bare-string itemType', async () => {
+		await expect(
+			makeOnedeskRequest(
+				LIVE_KEY,
+				{
+					method: 'POST',
+					path: '/items/filter',
+					body: { itemType: 'Problem', limit: 5 },
+				},
+				options,
+			),
+		).rejects.toThrow(/HTTP 400/);
+	});
+
+	it('filters items with details', async () => {
+		const raw = await makeOnedeskRequest(
+			LIVE_KEY,
+			{
+				method: 'POST',
+				path: '/items/filter/details',
+				body: { itemType: ['Problem'], limit: 5 },
+			},
+			options,
+		);
+		const shaped = { ...(raw as object), nextOffset: null };
+		expect(
+			OnedeskEndpointOutputSchemas.itemsFilterDetails.parse(shaped).code,
+		).toBe('SUCCESS');
+	});
+
 	it('rejects a key that does not exist', async () => {
 		await expect(
 			makeOnedeskRequest(

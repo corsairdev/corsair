@@ -14,7 +14,8 @@ overviewNote: |
 
   Item and user writes need names the organization defines. Read them first
   with `organization.itemTypes`, `organization.userTypes` and
-  `organization.lifecycleStatus`.
+  `organization.lifecycleStatus`. `items.filter` takes `itemType` as an array;
+  a bare string is rejected.
 
   A white-label or self-hosted account sets the `host` option; it defaults to
   https://app.onedesk.com.
@@ -26,7 +27,8 @@ examples:
     path: items.filterDetails
     title: List open tickets with their details
     args:
-      itemType: Ticket
+      itemType:
+        - Problem
       limit: 10
   write:
     path: items.create
@@ -46,7 +48,7 @@ apiExamples:
   items.filter:
     call: |
       {
-        itemType: 'Ticket',
+        itemType: ['Problem'],
         properties: [
           { property: 'lifecycleStatus', operation: 'EQ', value: 'Open' },
         ],
@@ -71,7 +73,7 @@ apiExamples:
         contentBase64: '<base64 bytes>',
       }
 apiNotes:
-  items.filter: The itemType name must be one this organization defines; read the valid names with `organization.itemTypes`. This returns external ids only. Use `items.filterDetails` for full records, which caps `limit` at 50.
+  items.filter: "`itemType` is an array of names this organization defines; a bare string is rejected with a 400. Read the valid names with `organization.itemTypes`. Returns external ids only. Use `items.filterDetails` for full records, which caps `limit` at 50."
   items.filterDetails: Returns full item records. OneDesk caps `limit` at 50 on the details variants, against 200 on the id variants.
   items.update: Related and assigned lists take a replace, add or remove object rather than an array, so an existing value can be kept.
   timers.start: A timer is identified by the external id you choose, so starting the same id again resumes that timer.
@@ -79,4 +81,6 @@ apiNotes:
   attachments.upload: OneDesk takes multipart uploads, so the file is passed as base64 bytes with a filename. There is no import-from-URL endpoint.
   users.create: Creating a user sends them an invitation to the account.
   customers.create: The email is the customer's identity; a second create with the same address fails with ERROR_USER_ALREADY_EXIST.
-  projects.update: A lifecycle status name must be one the organization defines; read them with `organization.lifecycleStatus`.
+  projects.update: A lifecycle status name must be one the organization defines; read them with `organization.lifecycleStatus`, which returns objects whose `name` is the value to pass.
+  organization.itemTypes: Answers `label` and `externalId` per type, not the `name` field the published spec describes.
+  organization.lifecycleStatus: Returns objects with `name`, `externalId` and `state`, not the string array the published spec describes.
