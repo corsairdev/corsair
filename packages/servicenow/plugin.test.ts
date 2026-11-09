@@ -133,6 +133,12 @@ describe('servicenow plugin definition', () => {
 
 	it('requires a well-formed sys_id on get, update and delete', () => {
 		const valid = '9d385017c611228701d22104cc95c371';
+		const withFields = {
+			table: 'incident',
+			sys_id: valid,
+			fields: { state: '2' },
+		};
+
 		for (const op of ['records.get', 'records.delete'] as const) {
 			const schema = servicenowEndpointSchemas[op];
 			expect(
@@ -142,6 +148,14 @@ describe('servicenow plugin definition', () => {
 				schema.input.safeParse({ table: 'incident', sys_id: 'short' }).success,
 			).toBe(false);
 		}
+
+		// `records.update` takes the same sys_id plus a fields map, so it needs
+		// the same boundary checked with that map present.
+		const update = servicenowEndpointSchemas['records.update'];
+		expect(update.input.safeParse(withFields).success).toBe(true);
+		expect(
+			update.input.safeParse({ ...withFields, sys_id: 'short' }).success,
+		).toBe(false);
 	});
 
 	it('requires a fields map on create and update', () => {

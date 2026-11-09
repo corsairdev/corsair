@@ -214,9 +214,16 @@ describe('ServiceNow error surfaces', () => {
 	it('surfaces a 401 with the message and detail', async () => {
 		mockFetch(jsonResponse(authErrorBody, { status: 401 }));
 
+		// Both fields come off the fixture, so dropping `detail` fails here.
 		await expect(
 			endpoints.records.list(makeCtx(), { table: 'incident' }),
-		).rejects.toThrow(/User Not Authenticated/);
+		).rejects.toMatchObject({
+			status: 401,
+			message: expect.stringContaining(
+				authErrorBody.error.message,
+			) as unknown as string,
+			detail: authErrorBody.error.detail,
+		});
 	});
 
 	it('surfaces a 404 for a missing table', async () => {
@@ -236,7 +243,13 @@ describe('ServiceNow error surfaces', () => {
 				sys_id: SYS_ID,
 				fields: { state: 'bogus' },
 			}),
-		).rejects.toThrow(/Invalid input data/);
+		).rejects.toMatchObject({
+			status: 400,
+			message: expect.stringContaining(
+				validationErrorBody.error.message,
+			) as unknown as string,
+			detail: validationErrorBody.error.detail,
+		});
 	});
 
 	it('throws when the instance host is missing', async () => {

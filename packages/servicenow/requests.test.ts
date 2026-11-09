@@ -197,6 +197,30 @@ describe('ServiceNow request shapes', () => {
 		expect(queryParam('sysparm_fields')).toBe('sys_id,label,name');
 	});
 
+	it('uses the stored host when the option is absent', async () => {
+		mockFetch(jsonResponse(listResponse));
+
+		await endpoints.records.list(
+			makeCtx({ host: null, storedHost: 'stored.example.com' }),
+			{ table: 'incident' },
+		);
+
+		// The option wins when set, but a plugin configured once with
+		// keys.set_host must still work with no per-call option.
+		expect(new URL(lastCall().url).host).toBe('stored.example.com');
+	});
+
+	it('prefers the host option over a stored one', async () => {
+		mockFetch(jsonResponse(listResponse));
+
+		await endpoints.records.list(
+			makeCtx({ host: 'option.example.com', storedHost: 'stored.example.com' }),
+			{ table: 'incident' },
+		);
+
+		expect(new URL(lastCall().url).host).toBe('option.example.com');
+	});
+
 	it('sends a credential pair the client can parse', async () => {
 		// The pair travels JSON-encoded because keyBuilder returns one string.
 		expect(JSON.parse(TEST_KEY)).toEqual({

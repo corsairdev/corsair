@@ -14,12 +14,27 @@ export const TEST_HOST = 'acme.service-now.com';
  * `get_host`. The endpoints resolve the host from `options` first, so the
  * fixture supplies it there.
  */
-export function makeCtx(overrides: { host?: string } = {}): ServicenowContext {
-	// Safe: the endpoints read only key, options and db from the context.
+/**
+ * A context the endpoints read: `key`, `options` and a `keys` slice with
+ * `get_host`. The endpoints resolve the host from `options` first, so the
+ * fixture supplies it there.
+ *
+ * Pass `storedHost` to exercise the stored-host path, and `host: null` to leave
+ * `options.host` unset so the stored value is what resolves.
+ */
+export function makeCtx(
+	overrides: { host?: string | null; storedHost?: string | null } = {},
+): ServicenowContext {
+	const host =
+		overrides.host === null ? undefined : (overrides.host ?? TEST_HOST);
+	// Safe: the endpoints read only key, options, db and keys.get_host.
 	return {
 		key: TEST_KEY,
-		options: { host: overrides.host ?? TEST_HOST },
+		options: host === undefined ? {} : { host },
 		db: {},
+		keys: {
+			get_host: jest.fn().mockResolvedValue(overrides.storedHost ?? null),
+		},
 	} as unknown as ServicenowContext;
 }
 

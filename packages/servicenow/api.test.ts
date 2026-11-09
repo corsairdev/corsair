@@ -74,20 +74,36 @@ describeIfKey('ServiceNow live smoke', () => {
 		}
 	});
 
-	it('filters with an encoded query', async () => {
+	it('filters with an encoded query and finds the record it created', async () => {
 		const { corsair, testDb } = await createClient();
+		// Declared outside the try so the remote record is removed even when an
+		// assertion fails partway.
+		let remoteSysId: string | undefined;
 		try {
+			const created = await corsair.servicenow.api.records.create({
+				table: 'incident',
+				fields: { short_description: 'Corsair query probe' },
+			});
+			remoteSysId = created.sys_id as string;
+			const number = created.number as string;
+
+			// Query for that exact record, so an empty result fails the test. The
+			// earlier version looped over whatever came back, which passed on zero.
 			const result = await corsair.servicenow.api.records.list({
 				table: 'incident',
-				sysparm_query: 'active=true^ORDERBYDESCsys_created_on',
-				sysparm_limit: 1,
-				sysparm_fields: 'number,state,active',
+				sysparm_query: `number=${number}`,
+				sysparm_fields: 'sys_id,number,short_description',
 			});
 
-			for (const record of result.records) {
-				expect(record.active).toBe('true');
-			}
+			expect(result.records).toHaveLength(1);
+			expect(result.records[0]!.sys_id).toBe(remoteSysId);
+			expect(result.records[0]!.number).toBe(number);
 		} finally {
+			if (remoteSysId) {
+				await corsair.servicenow.api.records
+					.delete({ table: 'incident', sys_id: remoteSysId })
+					.catch(() => undefined);
+			}
 			testDb.cleanup();
 		}
 	});
@@ -169,20 +185,26 @@ describeIfKey('ServiceNow live smoke', () => {
 	it('lists tables, and parses a reference column', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
+			// Query a table known to have a non-empty `super_class`. `incident`
+			// extends `task`, so its reference is always populated; the earlier
+			// version read whatever came first and passed when the field was absent.
 			const result = await corsair.servicenow.api.tables.list({
-				sysparm_limit: 2,
+				sysparm_query: 'name=incident',
+				sysparm_fields: 'name,label,super_class',
+				sysparm_limit: 1,
 			});
 
-			expect(result.tables.length).toBeGreaterThan(0);
-			for (const table of result.tables) {
-				expect(typeof table.name).toBe('string');
-				// Verified live: `super_class` is a reference object `{ link, value }`
-				// by default, not a bare string.
-				const superClass = table.super_class;
-				if (superClass !== null && typeof superClass === 'object') {
-					expect(typeof superClass.value).toBe('string');
-				}
-			}
+			expect(result.tables).toHaveLength(1);
+			const table = result.tables[0]!;
+			expect(table.name).toBe('incident');
+
+			// Verified live: `super_class` is a reference object `{ link, value }`
+			// by default, not a bare string, so each of those failures must trip.
+			const superClass = table.super_class;
+			expect(superClass).toBeDefined();
+			expect(superClass).not.toBeNull();
+			expect(typeof superClass).toBe('object');
+			expect(typeof (superClass as { value?: unknown }).value).toBe('string');
 		} finally {
 			testDb.cleanup();
 		}
