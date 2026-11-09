@@ -1,11 +1,12 @@
 /**
- * Live OneDesk tests. These run only when `ONEDESK_API_KEY` is set; otherwise
- * they are skipped so CI stays green without credentials.
+ * Live OneDesk tests. The reads run when `ONEDESK_API_KEY` is set; the writes
+ * additionally need `ONEDESK_ALLOW_WRITES=1`. Both are skipped rather than
+ * failed when unset, so CI stays green without credentials.
  *
- * Every call here is read-only. The writes are not exercised because they need
- * a real organization with work item types and users, which a throwaway key
- * does not have: `items.create` needs an item type name from the organization,
- * and `attachments.*` uploads a file.
+ * Splitting the two matters: the default `test` command runs this file, so a
+ * key present in the environment would otherwise let a test change the account.
+ * The one write test creates its own project and leaves it behind, so no
+ * existing record is ever touched.
  *
  * A self-hosted or white-label account also needs `ONEDESK_HOST`; the plugin
  * defaults to https://app.onedesk.com.
@@ -13,6 +14,7 @@
  * Run with:
  *   ONEDESK_API_KEY=... [ONEDESK_HOST=...] \
  *     pnpm --filter @corsair-dev/onedesk test:live
+ * and add `ONEDESK_ALLOW_WRITES=1` to include the write test.
  */
 
 import { makeOnedeskRequest } from './client';
@@ -22,6 +24,14 @@ const LIVE_KEY = process.env.ONEDESK_API_KEY ?? '';
 const LIVE_HOST = process.env.ONEDESK_HOST;
 
 const describeLive = LIVE_KEY.length > 0 ? describe : describe.skip;
+
+/**
+ * Writes are opt-in twice over: a key **and** `ONEDESK_ALLOW_WRITES=1`. A key
+ * alone must never change an account, because the default `test` command runs
+ * this file whenever the key happens to be in the environment.
+ */
+const ALLOW_WRITES = process.env.ONEDESK_ALLOW_WRITES === '1';
+const describeWrites = ALLOW_WRITES ? describeLive : describe.skip;
 
 if (LIVE_KEY.length === 0) {
 	console.warn(
@@ -156,43 +166,6 @@ describeLive('OneDesk live API', () => {
 		).toBe('SUCCESS');
 	});
 
-	it('reads a template-free resource and updates it with no net change', async () => {
-		// An update answers a bare code string, so this pins the shape the
-		// plugin normalises. The name is read first and written back unchanged.
-		const ids = await makeOnedeskRequest(
-			LIVE_KEY,
-			{ method: 'POST', path: '/projects/filter', body: { limit: 1 } },
-			options,
-		);
-		const projectId = ((ids as { data?: string[] }).data ?? [])[0];
-		if (!projectId) {
-			console.warn(
-				'No project on the account: the live update test has nothing to change.',
-			);
-			return;
-		}
-
-		const before = await makeOnedeskRequest(
-			LIVE_KEY,
-			{ method: 'GET', path: `/projects/externalId/${projectId}` },
-			options,
-		);
-		const name = ((before as { data?: { name?: string } }).data ?? {}).name;
-
-		const raw = await makeOnedeskRequest(
-			LIVE_KEY,
-			{
-				method: 'POST',
-				path: `/projects/externalId/${projectId}`,
-				body: { name },
-			},
-			options,
-		);
-		// A bare string, not an object; the plugin turns it into { code }.
-		expect(typeof raw).toBe('string');
-		expect(raw).toBe('SUCCESS');
-	});
-
 	it('rejects a key that does not exist', async () => {
 		await expect(
 			makeOnedeskRequest(
@@ -201,5 +174,52 @@ describeLive('OneDesk live API', () => {
 				options,
 			),
 		).rejects.toThrow(/rejected the API key|HTTP 401/);
+	});
+});
+
+describeWrites('OneDesk live API: writes (opt-in)', () => {
+	it('creates a disposable project, renames it, and reports the bare code', async () => {
+		// A project this test created itself, so no existing record is touched.
+		const created = await makeOnedeskRequest(
+			LIVE_KEY,
+			{
+				method: 'POST',
+				path: '/projects/',
+				body: { name: `Corsair live test ${Date.now()}` },
+			},
+			options,
+		);
+		const projectId = (created as { data?: string }).data;
+
+		expect(typeof projectId).toBe('string');
+		if (!projectId) return;
+
+		// An update answers a bare code string, not an object; the plugin turns
+		// it into { code }.
+		const raw = await makeOnedeskRequest(
+			LIVE_KEY,
+			{
+				method: 'POST',
+				path: `/projects/externalId/${projectId}`,
+				body: { name: `Corsair live test renamed ${Date.now()}` },
+			},
+			options,
+		);
+
+		expect(typeof raw).toBe('string');
+		expect(raw).toBe('SUCCESS');
+
+		// The public API has no delete for a project, so archiving is the
+		// closest to cleanup: it takes the record out of the active lists.
+		const archived = await makeOnedeskRequest(
+			LIVE_KEY,
+			{
+				method: 'POST',
+				path: `/projects/externalId/${projectId}`,
+				body: { archived: true },
+			},
+			options,
+		);
+		expect(archived).toBe('SUCCESS');
 	});
 });
