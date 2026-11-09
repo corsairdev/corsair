@@ -904,6 +904,365 @@ const MissivePostsCreateOutputSchema = z
 
 const MissivePostsDeleteOutputSchema = z.undefined();
 
+// ── Part 3 shared pieces (shared labels, teams, users, tasks, hooks) ─────
+
+const MissiveSharedLabelSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+		name_with_parent_names: z.string().optional(),
+		organization: z.string().optional(),
+		color: z.string().nullish(),
+		parent: z.string().nullish(),
+		share_with_organization: z.boolean().optional(),
+		share_with_team: z.string().nullish(),
+		share_with_users: z.array(z.string()).optional(),
+		visibility: z.enum(['organization', 'delegates']).optional(),
+	})
+	.loose();
+
+const MissiveOrgPageListInputSchema = z
+	.object({
+		organization: z.string().optional(),
+		limit: z.number().int().min(1).max(200).optional(),
+		offset: z.number().int().min(0).optional(),
+	})
+	.strict();
+
+const MissiveSharedLabelListOutputSchema = z
+	.object({
+		shared_labels: z.array(MissiveSharedLabelSchema),
+	})
+	.loose();
+
+const MissiveSharedLabelCreateInputSchema = z
+	.object({
+		body: z
+			.array(
+				z
+					.object({
+						name: z.string().min(1),
+						organization: z.string().min(1),
+						color: z.string().optional(),
+						parent: z.string().optional(),
+						share_with_organization: z.boolean().optional(),
+						share_with_team: z.string().nullish(),
+						share_with_users: z.array(z.string()).optional(),
+						visibility: z.enum(['organization', 'delegates']).optional(),
+					})
+					.strict(),
+			)
+			.min(1),
+	})
+	.strict();
+
+const MissiveSharedLabelUpdateInputSchema = z
+	.object({
+		ids: z.array(z.string().min(1)).min(1),
+		body: z
+			.array(
+				z
+					.object({
+						id: z.string().min(1),
+						name: z.string().optional(),
+						organization: z.string().optional(),
+						color: z.string().optional(),
+						parent: z.string().optional(),
+						share_with_organization: z.boolean().optional(),
+						share_with_team: z.string().nullish(),
+						share_with_users: z.array(z.string()).optional(),
+						visibility: z.enum(['organization', 'delegates']).optional(),
+					})
+					.strict(),
+			)
+			.min(1),
+	})
+	.strict()
+	.refine((input) => input.body.length === input.ids.length, {
+		message:
+			'Missive requires exactly one shared_labels object per id passed in the URL',
+	});
+
+// Business-hours day windows as documented: one entry per weekday with the
+// second offsets the team covers.
+const MissiveBusinessHoursSchema = z
+	.object({
+		tz: z.string().optional(),
+		t: z
+			.array(
+				z
+					.object({
+						d: z.number().int().optional(),
+						s: z.array(z.number().int()).optional(),
+					})
+					.loose(),
+			)
+			.optional(),
+	})
+	.loose();
+
+const MissiveTeamBehaviorShape = {
+	team_mention_behavior: z
+		.enum(['only_active_members', 'all_members'])
+		.optional(),
+	user_reply_behavior: z
+		.enum(['assign_user', 'leave_in_team_inbox'])
+		.optional(),
+	received_reply_behavior: z
+		.enum(['show_in_assignee_inbox', 'show_in_team_inbox'])
+		.optional(),
+	team_sidebar_behavior: z
+		.enum(['show_team_space', 'show_team_inbox'])
+		.optional(),
+	team_inbox_enabled: z.boolean().optional(),
+	chat_room_enabled: z.boolean().optional(),
+};
+
+const MissiveTeamSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+		organization: z.string().optional(),
+		active_members: z.array(z.string()).optional(),
+		observers: z.array(z.string()).optional(),
+		emoji: z.string().nullish(),
+		color: z.string().nullish(),
+		business_hours: MissiveBusinessHoursSchema.nullish(),
+		inactivity_period: z.number().int().optional(),
+		...MissiveTeamBehaviorShape,
+	})
+	.loose();
+
+const MissiveTeamListOutputSchema = z
+	.object({
+		teams: z.array(MissiveTeamSchema),
+	})
+	.loose();
+
+const MissiveTeamCreateInputSchema = z
+	.object({
+		body: z
+			.array(
+				z
+					.object({
+						name: z.string().min(1),
+						organization: z.string().min(1),
+						emoji: z.string().optional(),
+						color: z.string().optional(),
+						active_members: z.array(z.string()).optional(),
+						observers: z.array(z.string()).optional(),
+						business_hours: MissiveBusinessHoursSchema.optional(),
+						inactivity_period: z.number().int().optional(),
+						...MissiveTeamBehaviorShape,
+					})
+					.strict(),
+			)
+			.min(1),
+	})
+	.strict();
+
+const MissiveTeamUpdateInputSchema = z
+	.object({
+		ids: z.array(z.string().min(1)).min(1),
+		body: z
+			.array(
+				z
+					.object({
+						id: z.string().min(1),
+						name: z.string().optional(),
+						organization: z.string().optional(),
+						emoji: z.string().optional(),
+						color: z.string().optional(),
+						active_members: z.array(z.string()).optional(),
+						observers: z.array(z.string()).optional(),
+						business_hours: MissiveBusinessHoursSchema.optional(),
+						inactivity_period: z.number().int().optional(),
+						...MissiveTeamBehaviorShape,
+					})
+					.strict(),
+			)
+			.min(1),
+	})
+	.strict()
+	.refine((input) => input.body.length === input.ids.length, {
+		message:
+			'Missive requires exactly one teams object per id passed in the URL',
+	});
+
+const MissiveUserSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+		email: z.string().optional(),
+		avatar_url: z.string().optional(),
+		me: z.boolean().optional(),
+	})
+	.loose();
+
+const MissiveUserListOutputSchema = z
+	.object({
+		users: z.array(MissiveUserSchema),
+	})
+	.loose();
+
+// List/Create/Update carry assignee and team UUIDs; Get a task embeds full
+// user and team objects instead, so the value accepts both forms.
+const MissiveTaskSchema = z
+	.object({
+		id: z.string().optional(),
+		title: z.string().optional(),
+		description: z.string().nullish(),
+		state: z.enum(['todo', 'in_progress', 'closed']).optional(),
+		type: z.enum(['task', 'conversation']).optional(),
+		conversation: z.string().nullish(),
+		due_at: z.number().int().nullish(),
+		started_at: z.number().int().nullish(),
+		closed_at: z.number().int().nullish(),
+		assignees: z.union([z.array(z.string()), z.array(MissiveUserSchema)]),
+		// Team is a UUID in list/create/update, a full object in get, and
+		// absent or null on unassigned tasks.
+		team: z.union([z.string(), MissiveTeamSchema]).nullish(),
+		last_activity_at: z.number().int().optional(),
+	})
+	.loose();
+
+const MissiveTaskListInputSchema = z
+	.object({
+		limit: z.number().int().min(2).max(50).optional(),
+		until: z.number().int().optional(),
+		organization: z.string().optional(),
+		team: z.string().optional(),
+		assignee: z.string().optional(),
+		state: z.enum(['todo', 'in_progress', 'closed']).optional(),
+		type: z.enum(['task', 'conversation', 'all']).optional(),
+		conversation: z.string().optional(),
+		due_at_gteq: z.number().int().optional(),
+		due_at_lteq: z.number().int().optional(),
+	})
+	.strict();
+
+const MissiveTaskListOutputSchema = z
+	.object({
+		tasks: z.array(MissiveTaskSchema),
+	})
+	.loose();
+
+// Documented verbatim: GET /tasks/:id answers the single task under the
+// plural key while list answers an array.
+const MissiveTaskGetOutputSchema = z
+	.object({
+		tasks: MissiveTaskSchema,
+	})
+	.loose();
+
+const MissiveTaskCreateInputSchema = z
+	.object({
+		body: z
+			.object({
+				title: z.string().min(1),
+				description: z.string().optional(),
+				state: z.enum(['todo', 'in_progress', 'closed']).optional(),
+				organization: z.string().optional(),
+				team: z.string().optional(),
+				assignees: z.array(z.string()).optional(),
+				due_at: z.number().int().optional(),
+				subtask: z.boolean().optional(),
+				conversation: z.string().optional(),
+				references: z.array(z.string()).optional(),
+				conversation_subject: z.string().optional(),
+				add_users: z.array(z.string()).optional(),
+				add_to_inbox: z.boolean().optional(),
+			})
+			.strict()
+			.refine((body) => body.title.length <= 1000, {
+				message: 'title is limited to 1000 characters',
+			})
+			.refine(
+				(body) =>
+					body.description === undefined || body.description.length <= 10000,
+				{ message: 'description is limited to 10000 characters' },
+			)
+			.refine(
+				(body) =>
+					body.subtask === true ||
+					body.team !== undefined ||
+					body.assignees !== undefined,
+				{
+					message: 'Either team or assignees is required for standalone tasks',
+				},
+			)
+			.refine(
+				(body) => !(body.subtask === true && body.conversation === undefined),
+				{
+					message: 'conversation is required when subtask is true',
+				},
+			),
+	})
+	.strict();
+
+const MissiveTaskUpdateInputSchema = z
+	.object({
+		id: z.string().min(1),
+		body: z
+			.object({
+				title: z.string().optional(),
+				description: z.string().optional(),
+				state: z.enum(['todo', 'in_progress', 'closed']).optional(),
+				assignees: z.array(z.string()).optional(),
+				team: z.string().optional(),
+				due_at: z.number().int().optional(),
+			})
+			.strict()
+			.refine((body) => body.title === undefined || body.title.length <= 1000, {
+				message: 'title is limited to 1000 characters',
+			})
+			.refine(
+				(body) =>
+					body.description === undefined || body.description.length <= 10000,
+				{ message: 'description is limited to 10000 characters' },
+			),
+	})
+	.strict();
+
+const MissiveHooksCreateInputSchema = z
+	.object({
+		body: z
+			.object({
+				type: z.enum([
+					'incoming_email',
+					'incoming_sms_message',
+					'incoming_facebook_message',
+					'incoming_whatsapp_message',
+					'incoming_twilio_chat_message',
+					'new_comment',
+				]),
+				url: z.string().min(1),
+				organization: z.string().optional(),
+				content_contains: z.string().nullish(),
+				content_starts_with: z.string().nullish(),
+				content_ends_with: z.string().nullish(),
+				is_task: z.boolean().optional(),
+				author: z.string().nullish(),
+				mention: z.string().nullish(),
+				from_eq: z.string().nullish(),
+				subject_contains: z.string().nullish(),
+			})
+			.strict(),
+	})
+	.strict();
+
+const MissiveHooksCreateOutputSchema = z
+	.object({
+		hooks: z
+			.object({
+				id: z.string().optional(),
+			})
+			.loose(),
+	})
+	.loose();
+
+const MissiveHooksDeleteOutputSchema = z.undefined();
+
 // ── Registries ────────────────────────────────────────────────────────────────
 
 export const MissiveEndpointInputSchemas = {
@@ -936,6 +1295,19 @@ export const MissiveEndpointInputSchemas = {
 	'responses.delete': MissiveIdsInputSchema,
 	'posts.create': MissivePostsCreateInputSchema,
 	'posts.delete': MissiveIdInputSchema,
+	'sharedLabels.create': MissiveSharedLabelCreateInputSchema,
+	'sharedLabels.update': MissiveSharedLabelUpdateInputSchema,
+	'sharedLabels.list': MissiveOrgPageListInputSchema,
+	'teams.list': MissiveOrgPageListInputSchema,
+	'teams.create': MissiveTeamCreateInputSchema,
+	'teams.update': MissiveTeamUpdateInputSchema,
+	'users.list': MissiveOrgPageListInputSchema,
+	'tasks.list': MissiveTaskListInputSchema,
+	'tasks.get': MissiveIdInputSchema,
+	'tasks.create': MissiveTaskCreateInputSchema,
+	'tasks.update': MissiveTaskUpdateInputSchema,
+	'hooks.create': MissiveHooksCreateInputSchema,
+	'hooks.delete': MissiveIdInputSchema,
 } as const;
 
 export const MissiveEndpointOutputSchemas = {
@@ -968,6 +1340,19 @@ export const MissiveEndpointOutputSchemas = {
 	'responses.delete': MissiveResponseDeleteOutputSchema,
 	'posts.create': MissivePostsCreateOutputSchema,
 	'posts.delete': MissivePostsDeleteOutputSchema,
+	'sharedLabels.create': MissiveSharedLabelListOutputSchema,
+	'sharedLabels.update': MissiveSharedLabelListOutputSchema,
+	'sharedLabels.list': MissiveSharedLabelListOutputSchema,
+	'teams.list': MissiveTeamListOutputSchema,
+	'teams.create': MissiveTeamListOutputSchema,
+	'teams.update': MissiveTeamListOutputSchema,
+	'users.list': MissiveUserListOutputSchema,
+	'tasks.list': MissiveTaskListOutputSchema,
+	'tasks.get': MissiveTaskGetOutputSchema,
+	'tasks.create': MissiveTaskGetOutputSchema,
+	'tasks.update': MissiveTaskGetOutputSchema,
+	'hooks.create': MissiveHooksCreateOutputSchema,
+	'hooks.delete': MissiveHooksDeleteOutputSchema,
 } as const;
 
 export type MissiveEndpointInputs = {
