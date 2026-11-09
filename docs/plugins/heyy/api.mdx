@@ -627,7 +627,7 @@ await corsair.heyy.api.channels.search({});
   status: string,
   vendor?: string | null,
   vendorId?: string | null,
-  vendorDetails?: Record<string, string | number | boolean | null | string[] | number[]> | null
+  vendorDetails?: Record<string, JsonValue> | null
 }[]
 ```
 </Accordion>
@@ -725,9 +725,9 @@ await corsair.heyy.api.contacts.create({ firstName: 'Jordan', lastName: 'Reyes',
     name?: string | null,
     value?: string | number | string[] | null
   }[] | null,
-  handles?: Record<string, string | number | boolean | null | string[] | number[]>[] | null,
-  chats?: Record<string, string | number | boolean | null | string[] | number[]>[] | null,
-  metadata?: Record<string, string | number | boolean | null | string[] | number[]> | null
+  handles?: Record<string, JsonValue>[] | null,
+  chats?: Record<string, JsonValue>[] | null,
+  metadata?: Record<string, JsonValue> | null
 }
 ```
 </Accordion>
@@ -804,9 +804,9 @@ await corsair.heyy.api.contacts.search({ query: "contains(fullName, 'Jordan')", 
     name?: string | null,
     value?: string | number | string[] | null
   }[] | null,
-  handles?: Record<string, string | number | boolean | null | string[] | number[]>[] | null,
-  chats?: Record<string, string | number | boolean | null | string[] | number[]>[] | null,
-  metadata?: Record<string, string | number | boolean | null | string[] | number[]> | null
+  handles?: Record<string, JsonValue>[] | null,
+  chats?: Record<string, JsonValue>[] | null,
+  metadata?: Record<string, JsonValue> | null
 }[]
 ```
 </Accordion>
@@ -1050,9 +1050,9 @@ await corsair.heyy.api.messageTemplates.search({});
   status?: string | null,
   vendorId?: string | null,
   channelId?: string | null,
-  messageContent?: Record<string, string | number | boolean | null | string[] | number[]> | null,
-  variables?: Record<string, string | number | boolean | null | string[] | number[]>[] | null,
-  vendorDetails?: Record<string, string | number | boolean | null | string[] | number[]> | null
+  messageContent?: Record<string, JsonValue> | null,
+  variables?: Record<string, JsonValue>[] | null,
+  vendorDetails?: Record<string, JsonValue> | null
 }[]
 ```
 </Accordion>

@@ -13,20 +13,34 @@ import { z } from 'zod';
 const TimestampSchema = z.string().describe('ISO 8601 timestamp.');
 
 /**
- * A value from a vendor payload: the shapes differ per channel type, so the
- * leaves are typed as the JSON scalars Heyy actually sends.
+ * A value from a vendor payload.
+ *
+ * The shapes differ per channel type, so the leaves are typed as JSON rather
+ * than by a provider model. It is recursive on purpose: `vendorDetails` and
+ * `messageContent` can hold nested objects, and a schema that accepted only
+ * scalars would throw *after* a successful call.
  *
  * Written as a union rather than `z.unknown()` because the docs generator
- * renders `ZodUnknown` as `any`, and a union states what the field can hold.
+ * renders `ZodUnknown` as `any`, and this states what the field can hold.
  */
-const VendorValueSchema = z.union([
-	z.string(),
-	z.number(),
-	z.boolean(),
-	z.null(),
-	z.array(z.string()),
-	z.array(z.number()),
-]);
+type VendorValue =
+	| string
+	| number
+	| boolean
+	| null
+	| VendorValue[]
+	| { [key: string]: VendorValue };
+
+const VendorValueSchema: z.ZodType<VendorValue> = z.lazy(() =>
+	z.union([
+		z.string(),
+		z.number(),
+		z.boolean(),
+		z.null(),
+		z.array(VendorValueSchema),
+		z.record(z.string(), VendorValueSchema),
+	]),
+);
 
 /** A JSON object whose shape belongs to the channel vendor. */
 const VendorPayloadSchema = z

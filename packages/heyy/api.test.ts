@@ -1,11 +1,23 @@
-import { HeyyAPIError, makeHeyyRequest } from './client';
+import { HeyyAPIError } from './client';
+import {
+	attributesSearch,
+	channelsSearch,
+	contactsSearch,
+	labelsSearch,
+} from './endpoints';
+import type { HeyyContext } from './index';
 
 /**
  * Live smoke tests against the real API. Gated on `HEYY_API_KEY`.
  *
- * Every call here is read-only: a search with no query and a page of one. No
- * create, update or delete is exercised, because those change the workspace and
- * there is no sandbox in the API.
+ * These call the endpoint functions rather than the raw client, so the response
+ * mapping and every output schema run against a real payload. A suite that only
+ * checked the envelope would pass while a bound call rejected the same
+ * response.
+ *
+ * Every call here is read-only: a search with a page of one. No create, update
+ * or delete is exercised, because those change the workspace and there is no
+ * sandbox in the API.
  *
  * CI ignores this file by name (`api.test.ts`), so it only runs through
  * `pnpm --filter @corsair-dev/heyy test:live`.
@@ -21,53 +33,50 @@ if (!API_KEY) {
 	);
 }
 
+// Safe: the endpoints read only ctx.key and log through ctx, which the shared
+// logEventFromContext tolerates without a database.
+const ctx = { key: API_KEY, database: undefined } as unknown as HeyyContext;
+
 /** The smallest search body, so no filter syntax has to be right to pass. */
 const oneRow = { pagination: { page: 0, limit: 1 } };
 
-// unknown: the raw client returns untyped JSON; each test narrows what it reads.
-async function search(path: string) {
-	return makeHeyyRequest(API_KEY as string, {
-		method: 'POST',
-		path,
-		body: oneRow,
-	});
-}
-
 describeIfKey('Heyy live API', () => {
-	it('returns a page of contacts with total', async () => {
-		const raw = (await search('/contacts/search')) as {
-			data: unknown[]; // unknown: rows are narrowed per test.
-			pagination: { page: number; limit: number; total: number };
-			success: boolean;
-		};
+	it('returns a page of contacts through the endpoint and its output schema', async () => {
+		const result = await contactsSearch(ctx, oneRow);
 
-		expect(raw.success).toBe(true);
-		expect(Array.isArray(raw.data)).toBe(true);
-		expect(raw.data.length).toBeLessThanOrEqual(1);
-		expect(typeof raw.pagination.total).toBe('number');
+		// The output schema already parsed this, so these are the fields a caller
+		// receives, not the raw body.
+		expect(Array.isArray(result.contacts)).toBe(true);
+		expect(result.contacts.length).toBeLessThanOrEqual(1);
+		expect(typeof result.pagination.total).toBe('number');
+		expect(result.success).toBe(true);
 	});
 
-	it('returns the workspace channels', async () => {
-		const raw = (await search('/channels/search')) as { data: unknown[] }; // unknown: only the array's presence matters here.
-		expect(Array.isArray(raw.data)).toBe(true);
+	it('returns the channels through the endpoint and its output schema', async () => {
+		const result = await channelsSearch(ctx, oneRow);
+
+		expect(Array.isArray(result.channels)).toBe(true);
+		expect(typeof result.pagination.total).toBe('number');
 	});
 
-	it('returns the attributes defined on the workspace', async () => {
-		const raw = (await search('/attributes/search')) as { data: unknown[] }; // unknown: as above.
-		expect(Array.isArray(raw.data)).toBe(true);
+	it('returns the attributes through the endpoint and its output schema', async () => {
+		const result = await attributesSearch(ctx, oneRow);
+
+		expect(Array.isArray(result.attributes)).toBe(true);
+		expect(typeof result.pagination.total).toBe('number');
 	});
 
-	it('returns the labels', async () => {
-		const raw = (await search('/labels/search')) as { data: unknown[] }; // unknown: as above.
-		expect(Array.isArray(raw.data)).toBe(true);
+	it('returns the labels through the endpoint and its output schema', async () => {
+		const result = await labelsSearch(ctx, oneRow);
+
+		expect(Array.isArray(result.labels)).toBe(true);
+		expect(typeof result.pagination.total).toBe('number');
 	});
 
 	it('answers 401 with its own envelope for a bad key', async () => {
-		const failure = await makeHeyyRequest('definitely-not-a-key', {
-			method: 'POST',
-			path: '/contacts/search',
-			body: {},
-		}).catch(
+		const badCtx = { key: 'definitely-not-a-key' } as unknown as HeyyContext;
+
+		const failure = await contactsSearch(badCtx, oneRow).catch(
 			// unknown: a rejection can be any value until the assertion narrows it.
 			(caught: unknown) => caught,
 		);

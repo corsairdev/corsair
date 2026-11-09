@@ -21,6 +21,7 @@ import {
 	attributesSearchResponse,
 	automationsSearchResponse,
 	channelsSearchResponse,
+	contact,
 	contactsCreateResponse,
 	contactsSearchEmpty,
 	contactsSearchResponse,
@@ -181,6 +182,52 @@ describe('contacts.search', () => {
 
 		expect(result.contacts).toEqual([]);
 		expect(result.pagination.total).toBe(0);
+	});
+
+	it('fails visibly when the rows are not an array', async () => {
+		// A 200 with a valid envelope but unreadable rows must not look like a
+		// successful empty page.
+		respond({
+			success: true,
+			data: { contacts: [] },
+			pagination: { page: 0, limit: 10, total: 0 },
+		});
+
+		await expect(invoke(contactsSearch, {})).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('keeps nested objects in a vendor payload', async () => {
+		// vendorDetails and messageContent are unconstrained provider objects, so
+		// a response can nest. A scalar-only schema would throw after success.
+		respond({
+			success: true,
+			data: [
+				{
+					...contact,
+					metadata: {
+						channel: 'whatsapp',
+						nested: { profile: { name: 'Jordan', tags: ['vip'] } },
+						counts: [1, 2, 3],
+					},
+					handles: [
+						{
+							provider: { id: 'abc', capabilities: { templates: true } },
+						},
+					],
+				},
+			],
+			pagination: { page: 0, limit: 10, total: 1 },
+		});
+
+		const result = (await invoke(contactsSearch, {})) as {
+			contacts: { metadata?: Record<string, unknown> | null }[];
+		};
+
+		expect(result.contacts[0]?.metadata).toMatchObject({
+			channel: 'whatsapp',
+			nested: { profile: { name: 'Jordan', tags: ['vip'] } },
+		});
 	});
 });
 

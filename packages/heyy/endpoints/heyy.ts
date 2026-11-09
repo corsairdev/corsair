@@ -27,12 +27,15 @@ function successOf(raw: unknown): unknown {
  * Every search route puts its rows in `data` as a flat array, not nested under
  * a resource-named key, so `key` only names the field this plugin exposes them
  * as. Verified against all seven search operations in the v3 spec.
+ *
+ * `data` is passed through as it arrived rather than defaulted to `[]`: a
+ * response whose rows were not understood must fail the output schema instead
+ * of looking like a successful empty page.
  */
-// unknown: `rows` is the provider's array, which the output schema validates.
+// unknown: `rows` is the provider's value, validated by the output schema.
 function searchResult(raw: unknown, key: string) {
-	const rows = dataOf(raw);
 	return {
-		[key]: Array.isArray(rows) ? rows : [],
+		[key]: dataOf(raw),
 		pagination: paginationOf(raw),
 		success: successOf(raw),
 	};
