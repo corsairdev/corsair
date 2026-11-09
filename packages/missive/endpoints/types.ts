@@ -371,6 +371,12 @@ const MissiveAnalyticsCreateReportOutputSchema = z
 	.loose();
 
 const MissiveIdInputSchema = z.object({ id: z.string().min(1) }).strict();
+// Batch routes take an ids array; the factory joins them with commas.
+const MissiveIdsInputSchema = z
+	.object({
+		ids: z.array(z.string().min(1)).min(1),
+	})
+	.strict();
 
 // The report contents depend on the requested metrics and filters, so only
 // the object envelope is validated and the payload stays provider-defined.
@@ -607,6 +613,297 @@ const MissiveConversationMergeOutputSchema = z
 	})
 	.loose();
 
+// ── Part 2 shared pieces (drafts, messages, organizations, responses,
+// posts). Envelope keys and field names stay provider-verbatim.
+
+// Sender/recipient across channels: email uses address/name, SMS and
+// WhatsApp use phone_number (plus type for WhatsApp), Messenger/Instagram
+// and custom channels use id/username/name.
+const MissiveChannelFieldRefSchema = z
+	.object({
+		name: z.string().nullish(),
+		address: z.string().nullish(),
+		phone_number: z.string().nullish(),
+		type: z
+			.enum(['signalwire', 'twilio', 'twilio_whatsapp', 'whatsapp'])
+			.nullish(),
+		id: z.string().nullish(),
+		username: z.string().nullish(),
+	})
+	.loose();
+
+const MissiveUploadAttachmentSchema = z
+	.object({
+		base64_data: z.string(),
+		filename: z.string(),
+	})
+	.strict();
+
+const MissiveOrganizationSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+	})
+	.loose();
+
+const MissiveResponseSchema = z
+	.object({
+		id: z.string().optional(),
+		title: z.string().optional(),
+		body: z.string().optional(),
+		subject: z.string().nullish(),
+		modified_at: z.number().int().optional(),
+		organization: z.string().nullish(),
+		user: z.string().nullish(),
+		share_with_team: z.string().nullish(),
+		shared_labels: z.array(z.string()).optional(),
+		to_fields: z.array(MissiveFieldRefSchema).optional(),
+		cc_fields: z.array(MissiveFieldRefSchema).optional(),
+		bcc_fields: z.array(MissiveFieldRefSchema).optional(),
+		attachments: z.array(MissiveMessageAttachmentSchema).optional(),
+		external_id: z.string().nullish(),
+		external_source: z.string().nullish(),
+	})
+	.loose();
+
+// Conversation scoping and state fields shared by the draft, message, and
+// post creation payloads; every one is optional there.
+const MissiveConversationScopingShape = {
+	team: z.string().optional(),
+	force_team: z.boolean().optional(),
+	organization: z.string().optional(),
+	add_users: z.array(z.string()).optional(),
+	add_assignees: z.array(z.string()).optional(),
+	remove_assignees: z.array(z.string()).optional(),
+	conversation_subject: z.string().optional(),
+	conversation_color: z.string().optional(),
+	add_shared_labels: z.array(z.string()).optional(),
+	remove_shared_labels: z.array(z.string()).optional(),
+	add_to_inbox: z.boolean().optional(),
+	add_to_team_inbox: z.boolean().optional(),
+	close: z.boolean().optional(),
+	reopen: z.boolean().optional(),
+};
+
+const MissiveDraftsCreateInputSchema = z
+	.object({
+		body: z
+			.object({
+				subject: z.string().nullish(),
+				body: z.string().nullish(),
+				quote_previous_message: z.boolean().optional(),
+				add_default_signature: z.boolean().optional(),
+				from_field: MissiveChannelFieldRefSchema.nullish(),
+				to_fields: z.array(MissiveChannelFieldRefSchema).optional(),
+				cc_fields: z.array(MissiveChannelFieldRefSchema).optional(),
+				bcc_fields: z.array(MissiveChannelFieldRefSchema).optional(),
+				account: z.string().optional(),
+				attachments: z.array(MissiveUploadAttachmentSchema).optional(),
+				references: z.array(z.string()).optional(),
+				conversation: z.string().optional(),
+				...MissiveConversationScopingShape,
+				send: z.boolean().optional(),
+				send_at: z.number().int().optional(),
+				auto_followup: z.boolean().optional(),
+				external_response_id: z.string().optional(),
+				// unknown: WhatsApp template variables are caller-defined placeholder values.
+				external_response_variables: z
+					.record(z.string(), z.unknown())
+					.optional(),
+			})
+			.strict()
+			.refine((body) => !(body.send === true && body.send_at !== undefined), {
+				message: 'send_at cannot be combined with send true',
+			})
+			.refine(
+				(body) => !(body.auto_followup === true && body.send_at === undefined),
+				{ message: 'send_at is required when auto_followup is true' },
+			),
+	})
+	.strict();
+
+// Missive does not document the create-draft body: successful POSTs may
+// return 201 with no body, and the delete-draft route says the draft id is
+// returned in the create response. Accept both documented forms under the
+// provider's plural-key envelope convention.
+const MissiveDraftsCreateOutputSchema = z.union([
+	z.undefined(),
+	z
+		.object({
+			drafts: z.union([MissiveMessageSchema, z.array(MissiveMessageSchema)]),
+		})
+		.loose(),
+]);
+
+const MissiveDraftsDeleteOutputSchema = z.undefined();
+
+const MissiveMessagesCreateInputSchema = z
+	.object({
+		body: z
+			.object({
+				account: z.string().min(1),
+				subject: z.string().nullish(),
+				body: z.string().nullish(),
+				from_field: MissiveChannelFieldRefSchema,
+				to_fields: z.array(MissiveChannelFieldRefSchema).optional(),
+				cc_fields: z.array(MissiveChannelFieldRefSchema).optional(),
+				bcc_fields: z.array(MissiveChannelFieldRefSchema).optional(),
+				delivered_at: z.number().int().optional(),
+				attachments: z.array(MissiveUploadAttachmentSchema).optional(),
+				external_id: z.string().optional(),
+				references: z.array(z.string()).optional(),
+				conversation: z.string().optional(),
+				...MissiveConversationScopingShape,
+			})
+			.strict(),
+	})
+	.strict();
+
+// Missive does not document the create-message body; the same tolerant
+// create-output union as drafts applies.
+const MissiveMessagesCreateOutputSchema = z.union([
+	z.undefined(),
+	z
+		.object({
+			messages: z.union([MissiveMessageSchema, z.array(MissiveMessageSchema)]),
+		})
+		.loose(),
+]);
+
+// Documented verbatim: a single id answers {messages: {object}} while
+// comma-separated ids answer {messages: [array]}.
+const MissiveMessagesGetOutputSchema = z
+	.object({
+		messages: z.union([MissiveMessageSchema, z.array(MissiveMessageSchema)]),
+	})
+	.loose();
+
+const MissiveMessagesListInputSchema = z
+	.object({
+		email_message_id: z.string().min(1),
+	})
+	.strict();
+
+const MissiveMessagesListOutputSchema = z
+	.object({
+		messages: z.array(MissiveMessageSchema),
+	})
+	.loose();
+
+const MissiveOrganizationListInputSchema = z
+	.object({
+		limit: z.number().int().min(1).max(200).optional(),
+		offset: z.number().int().min(0).optional(),
+	})
+	.strict();
+
+const MissiveOrganizationListOutputSchema = z
+	.object({
+		organizations: z.array(MissiveOrganizationSchema),
+	})
+	.loose();
+
+const MissiveResponseListInputSchema = z
+	.object({
+		organization: z.string().optional(),
+		limit: z.number().int().min(1).max(200).optional(),
+		offset: z.number().int().min(0).optional(),
+	})
+	.strict();
+
+const MissiveResponseListOutputSchema = z
+	.object({
+		responses: z.array(MissiveResponseSchema),
+	})
+	.loose();
+
+// The reference documents the response item shape for the whole family but
+// not the single-resource envelope (Missive mixes object and array values
+// under the plural key), so the value accepts both forms.
+const MissiveResponseGetOutputSchema = z
+	.object({
+		responses: z.union([MissiveResponseSchema, z.array(MissiveResponseSchema)]),
+	})
+	.loose();
+
+const MissiveResponseCreateInputSchema = z
+	.object({
+		body: z.array(MissiveResponseSchema).min(1),
+	})
+	.strict();
+
+const MissiveResponseUpdateInputSchema = z
+	.object({
+		ids: z.array(z.string().min(1)).min(1),
+		body: z.array(MissiveResponseSchema).min(1),
+	})
+	.strict()
+	.refine((input) => input.body.length === input.ids.length, {
+		message:
+			'Missive requires exactly one responses object per id passed in the URL',
+	});
+
+const MissiveResponseDeleteOutputSchema = z.undefined();
+
+const MissivePostsCreateInputSchema = z
+	.object({
+		body: z
+			.object({
+				conversation: z.string().optional(),
+				references: z.array(z.string()).optional(),
+				username: z.string().optional(),
+				username_icon: z.string().optional(),
+				conversation_icon: z.string().optional(),
+				text: z.string().optional(),
+				markdown: z.string().optional(),
+				notification: z
+					.object({
+						title: z.string().optional(),
+						body: z.string().optional(),
+					})
+					.loose(),
+				attachments: z
+					.array(
+						// unknown: post attachments are free-form rich-content blocks the
+						// provider renders generically; only the example fields are known.
+						z.record(z.string(), z.unknown()),
+					)
+					.optional(),
+				...MissiveConversationScopingShape,
+			})
+			.strict()
+			.refine(
+				(body) =>
+					(body.text !== undefined && body.text.length > 0) ||
+					(body.markdown !== undefined && body.markdown.length > 0) ||
+					(body.attachments !== undefined && body.attachments.length > 0),
+				{ message: 'One of text, markdown, or attachments is required' },
+			)
+			.refine((body) => body.text === undefined || body.text.length <= 8000, {
+				message: 'text is limited to 8000 characters',
+			})
+			.refine(
+				(body) => body.markdown === undefined || body.markdown.length <= 8000,
+				{ message: 'markdown is limited to 8000 characters' },
+			),
+	})
+	.strict();
+
+// The reference documents only the conversation and post ids in the create
+// response, under the provider's plural-key envelope convention.
+const MissivePostsCreateOutputSchema = z
+	.object({
+		posts: z
+			.object({
+				conversation: z.string().optional(),
+				id: z.string().optional(),
+			})
+			.loose(),
+	})
+	.loose();
+
+const MissivePostsDeleteOutputSchema = z.undefined();
+
 // ── Registries ────────────────────────────────────────────────────────────────
 
 export const MissiveEndpointInputSchemas = {
@@ -626,6 +923,19 @@ export const MissiveEndpointInputSchemas = {
 	'conversations.listDrafts': MissiveLimitUntilInputSchema,
 	'conversations.listPosts': MissiveLimitUntilInputSchema,
 	'conversations.merge': MissiveConversationMergeInputSchema,
+	'drafts.create': MissiveDraftsCreateInputSchema,
+	'drafts.delete': MissiveIdInputSchema,
+	'messages.create': MissiveMessagesCreateInputSchema,
+	'messages.get': MissiveIdsInputSchema,
+	'messages.list': MissiveMessagesListInputSchema,
+	'organizations.list': MissiveOrganizationListInputSchema,
+	'responses.list': MissiveResponseListInputSchema,
+	'responses.get': MissiveIdInputSchema,
+	'responses.create': MissiveResponseCreateInputSchema,
+	'responses.update': MissiveResponseUpdateInputSchema,
+	'responses.delete': MissiveIdsInputSchema,
+	'posts.create': MissivePostsCreateInputSchema,
+	'posts.delete': MissiveIdInputSchema,
 } as const;
 
 export const MissiveEndpointOutputSchemas = {
@@ -645,6 +955,19 @@ export const MissiveEndpointOutputSchemas = {
 	'conversations.listDrafts': MissiveConversationDraftsOutputSchema,
 	'conversations.listPosts': MissiveConversationPostsOutputSchema,
 	'conversations.merge': MissiveConversationMergeOutputSchema,
+	'drafts.create': MissiveDraftsCreateOutputSchema,
+	'drafts.delete': MissiveDraftsDeleteOutputSchema,
+	'messages.create': MissiveMessagesCreateOutputSchema,
+	'messages.get': MissiveMessagesGetOutputSchema,
+	'messages.list': MissiveMessagesListOutputSchema,
+	'organizations.list': MissiveOrganizationListOutputSchema,
+	'responses.list': MissiveResponseListOutputSchema,
+	'responses.get': MissiveResponseGetOutputSchema,
+	'responses.create': MissiveResponseListOutputSchema,
+	'responses.update': MissiveResponseListOutputSchema,
+	'responses.delete': MissiveResponseDeleteOutputSchema,
+	'posts.create': MissivePostsCreateOutputSchema,
+	'posts.delete': MissivePostsDeleteOutputSchema,
 } as const;
 
 export type MissiveEndpointInputs = {
