@@ -727,6 +727,29 @@ describe('voiceDesign', () => {
 		expect('audio_base_64' in (result.previews[0] ?? {})).toBe(false);
 		expect(result.note).toContain('voiceDesign.getPreview');
 	});
+
+	it.each([
+		[
+			'design',
+			() =>
+				VoiceDesign.design(ctx, {
+					voiceDescription: description,
+					autoGenerateText: true,
+				}),
+		],
+		[
+			'remix',
+			() =>
+				VoiceDesign.remix(ctx, {
+					voiceId: 'v1',
+					voiceDescription: 'Brighter',
+					autoGenerateText: true,
+				}),
+		],
+	] as const)('%s refuses a 200 with no previews', async (_op, call) => {
+		answerJson({ text: 'Preview text' });
+		await expect(call()).rejects.toThrow(/previews/);
+	});
 });
 
 describe('dubbing', () => {
@@ -1210,12 +1233,19 @@ describe('a log entry that can’t be written', () => {
 			() => Dubbing.create(ctx, { ...FILE, targetLang: 'es' }),
 		],
 	] as const)('doesn’t fail %s after it ran', async (_op, answer, call) => {
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
 		logEventFromContext.mockRejectedValueOnce(
 			new Error('encryptDataAtRest requires kek'),
 		);
 		answer();
 		await expect(call()).resolves.toBeDefined();
 		expect(logEventFromContext).toHaveBeenCalled();
+		expect(warn).toHaveBeenCalledWith(
+			'Failed to log event:',
+			expect.objectContaining({ message: 'encryptDataAtRest requires kek' }),
+		);
 	});
 });
 

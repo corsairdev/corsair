@@ -435,6 +435,7 @@ export function toBinaryResult(
  * Writes the event log without ever failing the call. The work behind a result is
  * already done and often paid for, so a log entry that can't be written (no KEK
  * with encryptDataAtRest on, a database fault) must not throw that result away.
+ * It warns the way core's logger does, so a missing KEK still shows up.
  */
 export async function logQuietly(
 	ctx: Parameters<typeof logEventFromContext>[0],
@@ -444,8 +445,8 @@ export async function logQuietly(
 ) {
 	try {
 		await logEventFromContext(ctx, event, payload, 'completed');
-	} catch {
-		// Nothing depends on the log entry.
+	} catch (error) {
+		console.warn('Failed to log event:', error);
 	}
 }
 

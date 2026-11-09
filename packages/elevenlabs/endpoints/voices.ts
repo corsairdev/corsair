@@ -190,9 +190,9 @@ function previewsResult<
 	// unknown: the body before the schema parses it; only the previews are read here.
 	T extends Record<string, unknown>,
 >(body: T) {
-	const previews = Array.isArray(body.previews)
-		? (body.previews as Array<Record<string, unknown>>)
-		: [];
+	// A body with no previews list goes to the schema as it came, which refuses it.
+	if (!Array.isArray(body.previews)) return body;
+	const previews = body.previews as Array<Record<string, unknown>>;
 	return {
 		...body,
 		previews: previews.map(({ audio_base_64: _audio, ...preview }) => preview),

@@ -443,9 +443,18 @@ describe('a log entry that can’t be written', () => {
 						headers: { 'Content-Type': 'audio/mpeg' },
 					}),
 			);
+			const warn = jest
+				.spyOn(console, 'warn')
+				.mockImplementation(() => undefined);
 			const result = await corsair.elevenlabs.api.textToSpeech.convert(SPEECH);
 			expect(result.byteLength).toBe(2);
+			expect(result.contentBase64).toBe('AQI=');
 			expect(fetchMock).toHaveBeenCalledTimes(1);
+			// The missing KEK still shows up, the way core's logger reports it.
+			expect(warn).toHaveBeenCalledWith(
+				'Failed to log event:',
+				expect.objectContaining({ message: 'encryptDataAtRest requires kek' }),
+			);
 		} finally {
 			testDb.cleanup();
 		}
