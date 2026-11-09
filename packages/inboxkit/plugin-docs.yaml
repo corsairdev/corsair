@@ -1,0 +1,114 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: InboxKit
+description: Cold email infrastructure from InboxKit; buy and connect domains and Google or Microsoft mailboxes, manage DNS, warmup and sequencer exports, and watch deliverability
+domain: inboxkit.com
+recommendedAuth: api_key
+overviewNote: |
+  Copy your team key from **Settings → API** in [InboxKit](https://app.inboxkit.com/settings/api). One key covers the whole team, including every mailbox's password, so store it as you would a password.
+
+  Things to know before you use it:
+
+  - **Real money.** 17 operations can charge the team's wallet or saved card, and their descriptions say so. They are `destructive`, so `cautious` mode asks first.
+  - **Nothing but a read is retried.** InboxKit has no idempotency keys, and a purchase that timed out may still have gone through. The error says so: check `domains.list` or `mailboxes.list` before repeating one. An error handler in your app that asks for a retry can't repeat it either: a retry of a call whose outcome is unclear gets the same error back with nothing sent. A new call goes through, so check first.
+  - **Unexpected answers.** If InboxKit's answer doesn't fit the documented shape, you get `{ parse_warning, raw }` with the answer in `raw`. The call still happened, so don't repeat it.
+  - **Workspaces.** Most operations act on one workspace. Pass `workspaceId` on the call or set `inboxkit({ workspaceId })`. With neither, a team with one workspace uses that one (found with one extra read per call), and a team with several gets an error naming them, even on a read.
+  - **Live sending infrastructure.** Changing a password or username, deleting or repairing DNS records, or running a resetup can stop a working mailbox. These are `destructive` too. Adding or editing a DNS record is `write`, as on our other DNS plugins, so check an MX change before you make it.
+  - **Fields left out on purpose.** `workspaces.create` takes no webhook URL, `mailboxes.update` no username and `sequencers.add` and `sequencers.update` no auto-export. InboxKit's API has them, but each can send mailbox data elsewhere or change a live address. Use `workspaces.updateWebhook` and `mailboxes.changeUsername`, which need approval in `cautious` mode, and the dashboard for auto-export.
+  - **Credentials.** `mailboxes.showCredentials` and `mailboxes.generateTotp` return plaintext to whoever calls them. Corsair doesn't log or store them, but your agent's transcript may.
+  - **Not covered:** InboxKit's unified inbox (reading and sending email, drafts, labels) and the team-level webhook URL. They are in InboxKit's MCP server and dashboard but not its documented REST API. The dashboard's **Real-time email events** switch isn't handled yet either, because nothing documents those deliveries. Leave it off: each one would get a 404, and InboxKit pauses a URL after five failures in a row.
+
+  **Limits:** 5,000 requests a minute in general; domain search and availability 50 a minute; bulk mailbox provisioning 10 a minute. Reads wait out a short limit and retry; anything else gets the error.
+examples:
+  read:
+    path: domains.list
+    title: List the workspace's domains
+    args:
+      limit: 20
+      status:
+        - active
+  write:
+    path: dns.add
+    title: Add a DNS record
+    args:
+      domain: example.com
+      records:
+        - host: www
+          type: CNAME
+          value: example.net
+          ttl: 3600
+exampleWebhook:
+  path: mailboxes.statusChanged
+  note: "Set the URL under **Settings → API → Webhooks** in InboxKit, and turn off **Include mailbox credentials** there unless you need them. With it on, which is the default, InboxKit sends the mailbox's decrypted passwords in this delivery. The plugin removes them before the handler returns, so `after` hooks, local data and `result.body` never see them. A `before` hook runs first and does see them, so don't log the request there."
+  after: "if (result.data?.data.mailbox.status === 'active') console.log('Ready:', result.data.data.mailbox.email);"
+dbExample:
+  entity: mailboxes
+  note: Mailboxes and domains seen through list operations and webhooks are kept locally, without credentials.
+  data:
+    status: active
+  limit: 10
+apiNotes:
+  billing.addCredits: "Spends money. With `direct_charge: true` the saved card is charged at once and the credits are there when this returns. Otherwise it returns a hosted checkout link; follow it with `billing.getPaymentStatus`."
+  billing.updateAutoTopup: "While this is on, InboxKit charges the saved card with no further call. This route takes a threshold and an amount. The dashboard also has a forecast mode that only covers the next 48 hours of renewals, which this route's docs don't mention, so read `auto_topup_mode` with `billing.getWallet` afterwards."
+  billing.getPortalLink: "Whoever holds this link can manage the team's payment methods and invoices. Don't paste it anywhere shared."
+  billing.changeSubscription: Spends money. It may charge the saved card at once or return a payment link.
+  workspaces.update: "`webhook_url` can receive mailbox passwords in plaintext for this workspace when the team has no team-level URL. Only point it at an endpoint you control, over HTTPS."
+  workspaces.updateWebhook: "This URL can receive mailbox passwords in plaintext for this workspace when the team has no team-level URL. Only point it at an endpoint you control, over HTTPS."
+  workspaces.inviteMember: Sends the person an email and gives them access to the workspace's domains and mailboxes.
+  workspaces.create: "InboxKit's API also takes `webhook_url` here. The plugin leaves it out because that URL can receive mailbox passwords; set it with `workspaces.updateWebhook`."
+  domains.search: "Needs at least one of `keyword` or `domain`. InboxKit's docs mark `keyword` and `page` as required, but the API doesn't."
+  domains.register: Spends money. Limited by your wallet or checkout. Never repeat after a timeout without checking `domains.list`.
+  domains.connect: "Connects a domain you already own and returns the nameservers to set at your registrar. Until you do, its status stays `not_connected`."
+  domains.requestRenewal: "Spends money. If the wallet can't cover the whole batch, InboxKit answers 402 and queues none of them. Up to 50 at once."
+  domains.regenerateNameservers: "Only for domains with status `expired_propagation`, or connected domains whose nameserver status is `moved` or `unknown`. Anything else answers 404."
+  domains.rotate: "Mailbox addresses change. Each mailbox keeps its password, billing and renewal date. Run `domains.previewRotation` first, and follow it with `domains.getRotationStatus`."
+  mailboxes.buy: "Spends money, from subscription slots by default, or the wallet with `use_wallet_balance: true`. Azure always uses the wallet. Send all mailboxes in one call, and never repeat after a timeout without checking `mailboxes.list`."
+  mailboxes.update: "InboxKit's API also takes `user_name` here. The plugin leaves it out because it can change a live mailbox's address; use `mailboxes.changeUsername`."
+  mailboxes.showCredentials: Returns the plaintext password, 2FA secret and app password. The call needs one of `uid` or `email`.
+  mailboxes.generateTotp: Returns a working two-factor code.
+  mailboxes.changePassword: Anything signed in with the old password, such as a sequencer, stops working until it gets the new one.
+  mailboxes.changeUsername: Changes the mailbox's email address, which can disturb warmup and sequencers using it.
+  mailboxes.resetup: "Mail delivery on the domain is paused for up to 24 hours while this runs. It starts 5 days before the admin mailbox's renewal date, or right away if that's closer."
+  forwarding.setup: "Every message to these mailboxes goes to `forwarding_email` too. Setup takes a few minutes; follow it with `forwarding.listJobs`."
+  forwarding.setupAdvanced: "`mode` must be `advanced`. Replaces any forwarding the mailbox had."
+  orders.place: "Spends money, charged to the wallet: the order and the first month of any warmup. If the wallet can't cover both, the order isn't placed. Never repeat after a timeout without checking `domains.list`."
+  prewarm.buy: "Spends money. The price is charged to the wallet when the order is placed, and the handover runs in the background; follow it with `prewarm.getOrderStatus`. Never repeat after a timeout without checking."
+  warmup.add: "Spends money. Billed monthly per mailbox. Mailboxes that aren't ready wait as `pending_activation` and start on their own; `activate_immediately` charges the first month now for the active ones."
+  warmup.addSmtpMailboxes: "Spends money. Your wallet must cover every new mailbox in the request or the whole request is refused. A mailbox that can't sign in is listed under `errors` and isn't charged."
+  warmup.createConnectLink: "`connect_url` is returned only once, works once and lasts 72 hours. Anyone with it can use it. With `start_warmup` the first month is charged when the mailbox connects."
+  sequencers.add: "InboxKit's API also takes `auto_export_enabled`. The plugin leaves it out because it sends new mailboxes' credentials to the sequencer with no further call; turn it on in the dashboard if you want it. InboxKit's docs write `warmup_increment` with stray quotes and its MCP server says `disable` where the docs say `disabled`, so both spellings are accepted."
+  sequencers.update: "InboxKit's API also takes `auto_export_enabled`. The plugin leaves it out for the same reason as on `sequencers.add`."
+  consentRequests.initiate: "Can give the app behind `consent_url` access to the mailbox, so check that URL before you call this."
+  clientIdRequests.initiate: "A Microsoft application role such as `Mail.Read` can reach every mailbox in the tenant. Check the client ID, scopes and roles before you call this."
+  dns.repair: "Changes the domain's email DNS records. Run `dns.verify` first to see what's wrong."
+  sequencers.exportMailboxes: The sequencer receives each mailbox's credentials. Mailboxes already connected to it are skipped, and weekly export limits apply per mailbox.
+  infraGuard.enable: Spends money. Billed per domain; see `infraGuard.getPricing`.
+  inboxPlacement.createTest: "Spends money, from the wallet or credits. With a `frequency`, it repeats and is charged each time."
+apiExamples:
+  domains.list:
+    call: "{ limit: 20, status: ['active'] }"
+  domains.search:
+    call: "{ page: 1, num: 10, keyword: 'acme', tlds: ['com'] }"
+  domains.connect:
+    call: "{ domains: ['example.com'] }"
+  dns.add:
+    call: "{ domain: 'example.com', records: [{ host: 'www', type: 'CNAME', value: 'example.net', ttl: 3600 }] }"
+  dns.update:
+    call: "{ domain: 'example.com', records: [{ record_id: '<record _id from dns.list>', host: 'www', type: 'CNAME', value: 'example.org', ttl: 3600 }] }"
+  dns.deleteRecords:
+    call: "{ domain: 'example.com', record_ids: ['<record _id from dns.list>'] }"
+  mailboxes.list:
+    call: "{ limit: 50, status: 'active' }"
+  mailboxes.get:
+    call: "{ uid: '<mailbox uid>' }"
+  mailboxes.buy:
+    call: "{ mailboxes: [{ first_name: 'Jane', last_name: 'Doe', domain_name: 'example.com', username: 'jane', platform: 'GOOGLE' }] }"
+  workspaces.create:
+    call: "{ name: 'Client A' }"
+  warmup.list:
+    call: "{ status: 'active', limit: 25 }"
+  sequencers.exportMailboxes:
+    call: "{ sequencer_uid: '<sequencer uid>', mailbox_uids: ['<mailbox uid>'] }"
+  emailInsights.getOverview:
+    call: "{ period: 7 }"
+  emailInsights.getMailboxStats:
+    call: "{ uid: '<mailbox uid>', period: 30 }"

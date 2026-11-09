@@ -211,6 +211,7 @@ export const BaseProviders = [
 	'dropbox',
 	'dropboxsign',
 	'dynapictures',
+	'elevenlabs',
 	'emailoctopus',
 	'emelia',
 	'enginemailer',
@@ -265,6 +266,7 @@ export const BaseProviders = [
 	'hashnode',
 	'here',
 	'heygen',
+	'higgsfield',
 	'hookdeck',
 	'htmltoimage',
 	'hubspot',
@@ -274,6 +276,7 @@ export const BaseProviders = [
 	'imagior',
 	'imejisio',
 	'imgbb',
+	'inboxkit',
 	'insightoai',
 	'instagram',
 	'instantly',
@@ -652,6 +655,7 @@ export const ProviderDisplayNames = {
 	dropbox: 'Dropbox',
 	dropboxsign: 'Dropbox Sign',
 	dynapictures: 'Dynapictures',
+	elevenlabs: 'ElevenLabs',
 	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
 	enginemailer: 'Enginemailer',
@@ -706,6 +710,7 @@ export const ProviderDisplayNames = {
 	hashnode: 'Hashnode',
 	here: 'HERE',
 	heygen: 'HeyGen',
+	higgsfield: 'Higgsfield',
 	hookdeck: 'Hookdeck',
 	htmltoimage: 'HtmlToImage',
 	hubspot: 'HubSpot',
@@ -715,6 +720,7 @@ export const ProviderDisplayNames = {
 	imagior: 'Imagior',
 	imejisio: 'Imejis.io',
 	imgbb: 'ImgBB',
+	inboxkit: 'InboxKit',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	instantly: 'Instantly',
@@ -1097,6 +1103,7 @@ export type AllProviders =
 	| 'dropbox'
 	| 'dropboxsign'
 	| 'dynapictures'
+	| 'elevenlabs'
 	| 'emailoctopus'
 	| 'emelia'
 	| 'enginemailer'
@@ -1151,6 +1158,7 @@ export type AllProviders =
 	| 'hashnode'
 	| 'here'
 	| 'heygen'
+	| 'higgsfield'
 	| 'hookdeck'
 	| 'htmltoimage'
 	| 'hubspot'
@@ -1160,6 +1168,7 @@ export type AllProviders =
 	| 'imagior'
 	| 'imejisio'
 	| 'imgbb'
+	| 'inboxkit'
 	| 'insightoai'
 	| 'instagram'
 	| 'instantly'
