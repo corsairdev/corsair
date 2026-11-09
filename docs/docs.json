@@ -1529,6 +1529,14 @@
                 ]
               },
               {
+                "group": "CraftMyPDF",
+                "pages": [
+                  "plugins/craftmypdf/overview",
+                  "plugins/craftmypdf/api",
+                  "plugins/craftmypdf/database"
+                ]
+              },
+              {
                 "group": "Crow Terminal",
                 "pages": [
                   "plugins/crowterminal/overview",

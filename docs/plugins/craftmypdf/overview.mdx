@@ -1,0 +1,140 @@
+---
+title: Overview
+description: "PDF generation API that renders PDFs and images from reusable drag-and-drop templates, and manages those templates, their versions and the account's usage."
+---
+
+Use **CraftMyPDF** through Corsair: one client, typed API calls.
+
+CraftMyPDF renders from templates you design in its editor, so every generation
+call needs a `template_id` and the JSON data that fills it. Read one with the
+templates list operation first.
+
+Generation is metered: each PDF or image costs one credit from the monthly
+allowance. Reads (account, templates, transactions) are free.
+
+CraftMyPDF runs several regional APIs. The plugin calls the Singapore host
+(https://api.craftmypdf.com/v1) unless you pass `region`, which accepts `sg`,
+`de`, `us` or `au`.
+
+**What you get:**
+
+- 23 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/craftmypdf better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/craftmypdf better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/craftmypdf better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/craftmypdf better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { craftmypdf } from '@corsair-dev/craftmypdf';
+
+export const corsair = createCorsair({
+	plugins: [
+		craftmypdf(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. A call made without a saved key throws an auth-missing error, and that error can carry a connect URL for the tenant to add one.
+
+```ts
+craftmypdf()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'craftmypdf',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the templates on the account**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.craftmypdf.api.templates.list({});
+```
+
+
+**Generate a PDF from a template**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.craftmypdf.api.pdf.create({
+	template_id: '05f77b2b18ad809a',
+	data: { invoice_number: 'INV38379', total_amount: 82542.56 },
+});
+```
+
+
+See the full list on the [API](/plugins/craftmypdf/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/craftmypdf/api">
+    Every `craftmypdf.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

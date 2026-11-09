@@ -180,6 +180,7 @@ export const BaseProviders = [
 	'convoloai',
 	'cosmic',
 	'countdownapi',
+	'craftmypdf',
 	'crowterminal',
 	'currentsapi',
 	'cursor',
@@ -620,6 +621,7 @@ export const ProviderDisplayNames = {
 	convoloai: 'ConvoloAi',
 	cosmic: 'Cosmic',
 	countdownapi: 'Countdown API',
+	craftmypdf: 'CraftMyPDF',
 	crowterminal: 'CrowTerminal',
 	currentsapi: 'CurrentsApi',
 	cursor: 'Cursor',
@@ -1065,6 +1067,7 @@ export type AllProviders =
 	| 'convoloai'
 	| 'cosmic'
 	| 'countdownapi'
+	| 'craftmypdf'
 	| 'crowterminal'
 	| 'currentsapi'
 	| 'cursor'
