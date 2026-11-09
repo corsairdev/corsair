@@ -438,12 +438,15 @@ export default function PrivacyPolicyPage() {
 							connect pages, the arguments on approval pages, and routine
 							prompts.
 						</li>
+						<li>
+							On Hub, session recordings also leave out API keys, signing
+							secrets, webhook payloads and test-call results shown in the
+							console.
+						</li>
 					</ul>
 					<p>
-						Your Lug address and link name can appear in session recordings and
-						click data, because a Lug address becomes public once claimed. On
-						lug.dev this includes what you type for them, even if you do not
-						finish claiming the address.
+						On Hub, your Lug address and link name can appear in session recordings
+						and click data, because a Lug address becomes public once claimed.
 					</p>
 				</LegalSubsection>
 			</LegalSection>
