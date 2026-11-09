@@ -320,14 +320,23 @@ describe('generations.submit', () => {
 		});
 	});
 
-	it('still answers when the log write fails', async () => {
+	it('still answers when the log write fails, and warns', async () => {
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 		fetchMock.mockResolvedValueOnce(jsonResponse(acceptedBody));
 		mockLog.mockRejectedValueOnce(new Error('db down'));
-		const response = await generationsSubmit(ctx, {
-			modelPath: MODEL,
-			input: INPUT,
-		});
-		expect(response.request_id).toBe(REQUEST_ID);
+		try {
+			const response = await generationsSubmit(ctx, {
+				modelPath: MODEL,
+				input: INPUT,
+			});
+			expect(response.request_id).toBe(REQUEST_ID);
+			expect(warn).toHaveBeenCalledWith(
+				'Failed to log event:',
+				expect.objectContaining({ message: 'db down' }),
+			);
+		} finally {
+			warn.mockRestore();
+		}
 	});
 
 	it('never logs the prompt', async () => {

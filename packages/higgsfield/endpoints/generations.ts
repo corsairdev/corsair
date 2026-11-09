@@ -139,7 +139,8 @@ async function submitGeneration(
 
 /**
  * A log write failing must not turn an accepted, paid request into an error
- * the caller answers by submitting again.
+ * the caller answers by submitting again. It warns the way core's logger does,
+ * so a missing KEK with encryptDataAtRest on still shows up.
  */
 async function logQuietly(
 	ctx: HiggsfieldContext,
@@ -149,8 +150,8 @@ async function logQuietly(
 ) {
 	try {
 		await logEventFromContext(ctx, event, payload, 'completed');
-	} catch {
-		// Nothing depends on the log entry.
+	} catch (error) {
+		console.warn('Failed to log event:', error);
 	}
 }
 
