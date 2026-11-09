@@ -209,11 +209,11 @@ export const BaseProviders = [
 	'dreamstudio',
 	'dripcel',
 	'dropbox',
-	'enginemailer',
 	'dropboxsign',
 	'dynapictures',
 	'emailoctopus',
 	'emelia',
+	'enginemailer',
 	'enigma',
 	'epicgames',
 	'esignatures',
@@ -299,6 +299,7 @@ export const BaseProviders = [
 	'mem0',
 	'merriamwebsterdict',
 	'minimax',
+	'missive',
 	'monday',
 	'mrscraper',
 	'neon',
@@ -649,11 +650,11 @@ export const ProviderDisplayNames = {
 	dreamstudio: 'DreamStudio',
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
-	enginemailer: 'Enginemailer',
 	dropboxsign: 'Dropbox Sign',
 	dynapictures: 'Dynapictures',
 	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
+	enginemailer: 'Enginemailer',
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
 	esignatures: 'eSignatures',
@@ -739,6 +740,7 @@ export const ProviderDisplayNames = {
 	mem0: 'Mem0',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	minimax: 'MiniMax',
+	missive: 'Missive',
 	monday: 'Monday',
 	mrscraper: 'MrScraper',
 	neon: 'Neon',
@@ -1093,11 +1095,11 @@ export type AllProviders =
 	| 'dreamstudio'
 	| 'dripcel'
 	| 'dropbox'
-	| 'enginemailer'
 	| 'dropboxsign'
 	| 'dynapictures'
 	| 'emailoctopus'
 	| 'emelia'
+	| 'enginemailer'
 	| 'enigma'
 	| 'epicgames'
 	| 'esignatures'
@@ -1183,6 +1185,7 @@ export type AllProviders =
 	| 'mem0'
 	| 'merriamwebsterdict'
 	| 'minimax'
+	| 'missive'
 	| 'monday'
 	| 'mrscraper'
 	| 'neon'
