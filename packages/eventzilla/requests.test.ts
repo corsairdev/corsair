@@ -3,6 +3,8 @@ import { eventzilla } from './index';
 import {
 	categoriesFixture,
 	checkinFixture,
+	checkinRevertedFixture,
+	checkinUnknownBarcodeFixture,
 	checkoutConfirmedFixture,
 	checkoutCreatedFixture,
 	checkoutPrepareFixture,
@@ -557,8 +559,48 @@ describe('attendee endpoints', () => {
 		expect(typeof body.eventcheckin).toBe('boolean');
 	});
 
+	/**
+	 * The P1: `checkedIn` has to be on the returned payload, not just the log,
+	 * because Eventzilla answers HTTP 200 even when the check-in failed.
+	 */
+	it('attendees.checkin returns checkedIn on the response', async () => {
+		respond(checkinFixture);
+
+		const { result } = await run(
+			{ barcode: 'EZ202605200001', eventcheckin: true },
+			endpoints.attendees.checkin,
+		);
+
+		expect(result.checkedIn).toBe(true);
+		expect(result.checkinstatus.status).toBe('Checkin');
+	});
+
+	it('attendees.checkin reports a failed check-in as checkedIn false', async () => {
+		respond(checkinRevertedFixture);
+
+		const { result } = await run(
+			{ barcode: 'EZ202605200001', eventcheckin: true },
+			endpoints.attendees.checkin,
+		);
+
+		expect(result.checkedIn).toBe(false);
+	});
+
+	it('attendees.checkin answers checkedIn null when the provider said nothing', async () => {
+		respond(checkinUnknownBarcodeFixture);
+
+		const { result } = await run(
+			{ barcode: 'nope', eventcheckin: true },
+			endpoints.attendees.checkin,
+		);
+
+		expect(result.checkedIn).toBeNull();
+	});
+
 	it('attendees.checkin sends a revert as the boolean false', async () => {
-		respond({ ...checkinFixture, status: 'Checkout' });
+		respond({
+			checkinstatus: { ...checkinFixture.checkinstatus, status: null },
+		});
 
 		await run(
 			{ barcode: 'EZ202605200001', eventcheckin: false },

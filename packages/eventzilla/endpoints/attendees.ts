@@ -5,8 +5,8 @@ import { call } from './call';
 import {
 	checkinSucceeded,
 	EventzillaEndpointInputSchemas as Inputs,
-	isAttendedFlag,
 	EventzillaEndpointOutputSchemas as Outputs,
+	shapeAttendees,
 } from './types';
 
 export const get: EventzillaEndpoints['attendeesGet'] = (ctx, input) =>
@@ -23,23 +23,7 @@ export const get: EventzillaEndpoints['attendeesGet'] = (ctx, input) =>
 		},
 		input,
 		{
-			shape: (raw) => {
-				const body = asRecord(raw) ?? {};
-				const rows = Array.isArray(body.attendees) ? body.attendees : [];
-				return {
-					...body,
-					attendees: rows.map((row) => {
-						const record = asRecord(row) ?? {};
-						const flag = record.is_attended;
-						return {
-							...record,
-							attended: isAttendedFlag(
-								typeof flag === 'string' ? flag : undefined,
-							),
-						};
-					}),
-				};
-			},
+			shape: shapeAttendees,
 			log: ({ attendeeid }, result) => ({
 				attendeeId: attendeeid,
 				found: result.attendees.length,
@@ -70,15 +54,26 @@ export const checkin: EventzillaEndpoints['attendeesCheckin'] = (ctx, input) =>
 		},
 		input,
 		{
+			// `checkedIn` is derived here, not in `log`: a log field is discarded by
+			// `call`, so a caller would never see it. It answers the fact that
+			// Eventzilla reports a failed check-in with HTTP 200 and only a status
+			// string to go on.
+			shape: (raw, { eventcheckin }) => {
+				const body = asRecord(raw) ?? {};
+				const status = asRecord(body.checkinstatus)?.status;
+				return {
+					...body,
+					checkedIn: checkinSucceeded(
+						typeof status === 'string' ? status : undefined,
+						eventcheckin,
+					),
+				};
+			},
 			log: ({ barcode, eventcheckin }, result) => ({
 				barCodeSuffix: barcode.slice(-4),
 				requested: eventcheckin,
-				// The status the provider reported, which can say the check-in did
-				// not happen even though the call answered 200.
 				status: result.checkinstatus.status ?? undefined,
-				checkedIn:
-					checkinSucceeded(result.checkinstatus.status, eventcheckin) ??
-					undefined,
+				checkedIn: result.checkedIn ?? undefined,
 			}),
 		},
 	);

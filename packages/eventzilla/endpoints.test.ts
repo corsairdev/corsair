@@ -5,6 +5,7 @@ import {
 	isAttendedFlag,
 	nextOffset,
 	EventzillaEndpointOutputSchemas as Outputs,
+	shapeAttendees,
 } from './endpoints/types';
 import {
 	attendeesFixture,
@@ -62,7 +63,13 @@ describe('output schemas accept the documented responses', () => {
 		['checkout.create', Outputs.checkoutCreate, checkoutCreatedFixture],
 		['checkout.fillOrder', Outputs.checkoutFillOrder, checkoutCreatedFixture],
 		['checkout.confirm', Outputs.checkoutConfirm, checkoutConfirmedFixture],
-		['attendees.checkin', Outputs.attendeesCheckin, checkinFixture],
+		[
+			'attendees.checkin',
+			Outputs.attendeesCheckin,
+			// The endpoint derives `checkedIn` before parsing, so the fixture is
+			// shaped the same way rather than parsed raw.
+			{ ...checkinFixture, checkedIn: true },
+		],
 		['orders.cancel', Outputs.ordersCancel, orderCancelledFixture],
 		['orders.confirm', Outputs.ordersConfirm, orderConfirmedFixture],
 		['sales.toggle', Outputs.salesToggle, salesToggledFixture],
@@ -449,20 +456,38 @@ describe('live-verified response shapes', () => {
 	});
 
 	it('check-in is nested under checkinstatus with null-able lowercased fields', () => {
-		expect(Outputs.attendeesCheckin.safeParse(checkinFixture).success).toBe(
-			true,
-		);
 		expect(
-			Outputs.attendeesCheckin.safeParse(checkinUnknownBarcodeFixture).success,
+			Outputs.attendeesCheckin.safeParse({ ...checkinFixture, checkedIn: true })
+				.success,
 		).toBe(true);
 		expect(
-			Outputs.attendeesCheckin.safeParse(checkinRevertedFixture).success,
+			Outputs.attendeesCheckin.safeParse({
+				...checkinUnknownBarcodeFixture,
+				checkedIn: null,
+			}).success,
+		).toBe(true);
+		expect(
+			Outputs.attendeesCheckin.safeParse({
+				...checkinRevertedFixture,
+				checkedIn: false,
+			}).success,
 		).toBe(true);
 		// The documented flat shape is not what the API sends.
 		expect(
-			Outputs.attendeesCheckin.safeParse({ first_name: 'A', status: 'Checkin' })
-				.success,
+			Outputs.attendeesCheckin.safeParse({
+				first_name: 'A',
+				status: 'Checkin',
+				checkedIn: true,
+			}).success,
 		).toBe(false);
+	});
+
+	it('requires the derived checkedIn flag', () => {
+		// Dropping it would silently reintroduce the P1: a caller reading only the
+		// 200 would have no way to tell a failed check-in from a good one.
+		expect(Outputs.attendeesCheckin.safeParse(checkinFixture).success).toBe(
+			false,
+		);
 	});
 
 	it('turns the empty-events message into an empty page', () => {
@@ -493,5 +518,37 @@ describe('checkinSucceeded', () => {
 
 	it('answers null for a status it does not recognise', () => {
 		expect(checkinSucceeded('Pending', true)).toBeNull();
+	});
+});
+
+describe('shapeAttendees', () => {
+	it('adds the derived flag and keeps the provider row as sent', () => {
+		const shaped = shapeAttendees({
+			attendees: [{ bar_code: 'EZ1', is_attended: 'Yes' }],
+		});
+		const row = (shaped.attendees as Record<string, unknown>[])[0] ?? {};
+		expect(row.bar_code).toBe('EZ1');
+		expect(row.is_attended).toBe('Yes');
+		expect(row.attended).toBe(true);
+	});
+
+	/**
+	 * The P2: a malformed successful response must fail the schema, not read as
+	 * "no attendees". Only a real array is reshaped.
+	 */
+	it('leaves a missing or non-array attendees value for the schema to reject', () => {
+		expect(shapeAttendees({ message: 'nope' })).toEqual({ message: 'nope' });
+		expect(shapeAttendees({ attendees: 'not an array' })).toEqual({
+			attendees: 'not an array',
+		});
+		expect(Outputs.eventsAttendees.safeParse(shapeAttendees({})).success).toBe(
+			false,
+		);
+	});
+
+	it('leaves a non-object row in place so the schema rejects it', () => {
+		const shaped = shapeAttendees({ attendees: ['bare text'] });
+		expect((shaped.attendees as unknown[])[0]).toBe('bare text');
+		expect(Outputs.eventsAttendees.safeParse(shaped).success).toBe(false);
 	});
 });

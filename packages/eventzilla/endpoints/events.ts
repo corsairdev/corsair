@@ -5,9 +5,9 @@ import { call } from './call';
 import type { EventzillaPagination } from './types';
 import {
 	EventzillaEndpointInputSchemas as Inputs,
-	isAttendedFlag,
 	nextOffset,
 	EventzillaEndpointOutputSchemas as Outputs,
+	shapeAttendees,
 } from './types';
 
 /**
@@ -123,25 +123,9 @@ export const attendees: EventzillaEndpoints['eventsAttendees'] = (ctx, input) =>
 		input,
 		{
 			// `is_attended` stays as sent; `attended` is the derived boolean the
-			// output schema declares. Derived here rather than with a transform
-			// because the docs generator reads a transform's input side.
-			shape: (raw) => {
-				const body = asRecord(raw) ?? {};
-				const rows = Array.isArray(body.attendees) ? body.attendees : [];
-				return {
-					...body,
-					attendees: rows.map((row) => {
-						const record = asRecord(row) ?? {};
-						const flag = record.is_attended;
-						return {
-							...record,
-							attended: isAttendedFlag(
-								typeof flag === 'string' ? flag : undefined,
-							),
-						};
-					}),
-				};
-			},
+			// output schema declares. Derived in `shapeAttendees` rather than with
+			// a transform, which the docs generator cannot see.
+			shape: shapeAttendees,
 			log: ({ eventid }, result) => ({
 				eventId: eventid,
 				count: result.attendees.length,

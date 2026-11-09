@@ -1,3 +1,4 @@
+import { asRecord } from 'corsair/core';
 import { z } from 'zod';
 
 // Inputs use Eventzilla's own parameter names. Outputs are `.loose()` with
@@ -307,6 +308,35 @@ const AttendeeWithFlagSchema = AttendeeSchema.extend({
 });
 
 export type EventzillaAttendeeWithFlag = z.infer<typeof AttendeeWithFlagSchema>;
+
+/**
+ * Adds the derived `attended` flag to each attendee row and leaves everything
+ * else exactly as the provider sent it. A missing or non-array `attendees` value
+ * is passed through untouched so the output schema rejects it: turning a
+ * malformed successful response into an empty list would report "no attendees"
+ * when the truth is "this payload was wrong". Shared by `events.attendees` and
+ * `attendees.get`, which receive the same rows.
+ */
+export function shapeAttendees(
+	// unknown: the response body, validated by the output schema after this.
+	raw: unknown,
+): Record<string, unknown> {
+	const body = asRecord(raw);
+	if (!body) return {};
+	if (!Array.isArray(body.attendees)) return body;
+	return {
+		...body,
+		attendees: body.attendees.map((row: unknown) => {
+			if (!row || typeof row !== 'object' || Array.isArray(row)) return row;
+			const record = row as Record<string, unknown>;
+			const flag = record.is_attended;
+			return {
+				...record,
+				attended: isAttendedFlag(typeof flag === 'string' ? flag : undefined),
+			};
+		}),
+	};
+}
 
 const EventsAttendeesInputSchema = z.object({
 	eventid: EventIdSchema.describe('The event whose attendees to list.'),
@@ -913,6 +943,12 @@ const CheckInStatusSchema = z
 const AttendeesCheckinResponseSchema = z
 	.object({
 		checkinstatus: CheckInStatusSchema,
+		checkedIn: z
+			.boolean()
+			.nullable()
+			.describe(
+				'Whether this call is believed to have taken effect, derived from `checkinstatus.status`. Null when the provider’s status text does not say. Eventzilla answers HTTP 200 even for a failed check-in, so read this rather than the status code.',
+			),
 	})
 	.loose();
 
