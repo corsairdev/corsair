@@ -1,4 +1,5 @@
 import { EventzillaAPIError, makeEventzillaRequest } from './client';
+import { withNextOffset } from './endpoints/events';
 import { EventzillaEndpointOutputSchemas as Outputs } from './endpoints/types';
 
 /**
@@ -48,19 +49,20 @@ describeIfKey('Eventzilla live smoke', () => {
 			query: { limit: 1 },
 		});
 
-		const result = Outputs.eventsList.safeParse({
-			// unknown: the client returns an untyped body; the output schema
-			// above is what validates it.
-			...(raw as Record<string, unknown>),
-			// The endpoint derives this before parsing; the live suite has to do
-			// the same or it parses a shape the endpoint never returns.
-			next_offset: null,
-		});
+		// The endpoint derives `next_offset` and turns the empty-list message into
+		// an empty page before parsing; the live suite has to do the same or it
+		// parses a shape the endpoint never returns.
+		const result = Outputs.eventsList.safeParse(withNextOffset(raw, 'events'));
 		expect(result.success).toBe(true);
 		if (!result.success) return;
 
+		// An account with no events answers the empty-list message, which is a
+		// valid result rather than a failure.
 		const event = result.data.events[0];
-		if (!event?.id) return;
+		if (!event?.id) {
+			expect(result.data.events).toEqual([]);
+			return;
+		}
 
 		const singleRaw = await makeEventzillaRequest(API_KEY as string, {
 			method: 'GET',

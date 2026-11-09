@@ -18,6 +18,7 @@ let fetchMock: jest.SpyInstance;
 
 // unknown: a response body is arbitrary JSON until a schema reads it.
 function respond(
+	// unknown: same reason; the caller picks the body.
 	body: unknown,
 	status = 200,
 	headers: Record<string, string> = {},

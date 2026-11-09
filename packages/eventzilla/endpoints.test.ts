@@ -1,5 +1,6 @@
 import { withNextOffset } from './endpoints/events';
 import {
+	checkinSucceeded,
 	EventzillaEndpointInputSchemas as Inputs,
 	isAttendedFlag,
 	nextOffset,
@@ -9,14 +10,18 @@ import {
 	attendeesFixture,
 	categoriesFixture,
 	checkinFixture,
+	checkinRevertedFixture,
+	checkinUnknownBarcodeFixture,
 	checkoutConfirmedFixture,
 	checkoutCreatedFixture,
 	checkoutPrepareFixture,
 	eventListFixture,
+	noEventsFixture,
 	orderCancelledFixture,
 	orderConfirmedFixture,
 	salesToggledFixture,
 	singleEventFixture,
+	singleUserFixture,
 	ticketTypeFixture,
 	ticketTypesFixture,
 	transactionLookupFixture,
@@ -51,7 +56,7 @@ describe('output schemas accept the documented responses', () => {
 		['tickets.update', Outputs.ticketsUpdate, ticketTypeFixture],
 		['categories.list', Outputs.categoriesList, categoriesFixture],
 		['users.list', Outputs.usersList, withNextOffset(usersFixture, 'users')],
-		['users.get', Outputs.usersGet, { users: usersFixture.users }],
+		['users.get', Outputs.usersGet, singleUserFixture],
 		['transactions.get', Outputs.transactionsGet, transactionLookupFixture],
 		['checkout.prepare', Outputs.checkoutPrepare, checkoutPrepareFixture],
 		['checkout.create', Outputs.checkoutCreate, checkoutCreatedFixture],
@@ -67,6 +72,7 @@ describe('output schemas accept the documented responses', () => {
 		it(`${name} parses its documented response`, () => {
 			// unknown: the fixture is one of several unrelated shapes, narrowed by
 			// the schema under test.
+			// unknown: the fixtures are unrelated shapes, narrowed by the schema.
 			// unknown: the fixtures are unrelated shapes, narrowed by the schema.
 			const result = (
 				schema as { safeParse: (v: unknown) => { success: boolean } }
@@ -216,11 +222,17 @@ describe('input schemas reject what the API would refuse', () => {
 		expect(Inputs.eventsGet.safeParse({ eventid: 1.5 }).success).toBe(false);
 	});
 
-	it('rejects an unknown event status', () => {
+	it('accepts only the lowercase live status and rejects the capitalised form', () => {
+		// Verified live: `status=Live` is rejected by the API even though the
+		// event payload returns "status": "Live".
+		expect(Inputs.eventsList.safeParse({ status: 'Live' }).success).toBe(false);
+		expect(Inputs.eventsList.safeParse({ status: 'live' }).success).toBe(true);
+		expect(Inputs.eventsList.safeParse({ status: 'draft' }).success).toBe(
+			false,
+		);
 		expect(Inputs.eventsList.safeParse({ status: 'Cancelled' }).success).toBe(
 			false,
 		);
-		expect(Inputs.eventsList.safeParse({ status: 'Live' }).success).toBe(true);
 	});
 
 	it('rejects a limit below 1 and a negative offset', () => {
@@ -420,5 +432,66 @@ describe('nextOffset', () => {
 	it('handles a missing pagination block', () => {
 		expect(nextOffset(undefined, 5)).toBeNull();
 		expect(nextOffset(undefined, 20)).toBe(20);
+	});
+});
+
+/**
+ * Shapes verified against the live API, each of which the reference documents
+ * differently. These are the regressions worth catching.
+ */
+describe('live-verified response shapes', () => {
+	it('users.get answers `user`, singular, not `users`', () => {
+		expect(Outputs.usersGet.safeParse(singleUserFixture).success).toBe(true);
+		// The documented (wrong) envelope must not be what the schema reads.
+		expect(
+			Outputs.usersGet.safeParse({ users: usersFixture.users }).success,
+		).toBe(false);
+	});
+
+	it('check-in is nested under checkinstatus with null-able lowercased fields', () => {
+		expect(Outputs.attendeesCheckin.safeParse(checkinFixture).success).toBe(
+			true,
+		);
+		expect(
+			Outputs.attendeesCheckin.safeParse(checkinUnknownBarcodeFixture).success,
+		).toBe(true);
+		expect(
+			Outputs.attendeesCheckin.safeParse(checkinRevertedFixture).success,
+		).toBe(true);
+		// The documented flat shape is not what the API sends.
+		expect(
+			Outputs.attendeesCheckin.safeParse({ first_name: 'A', status: 'Checkin' })
+				.success,
+		).toBe(false);
+	});
+
+	it('turns the empty-events message into an empty page', () => {
+		const shaped = withNextOffset(noEventsFixture, 'events');
+		const result = Outputs.eventsList.safeParse(shaped);
+		expect(result.success).toBe(true);
+		if (!result.success) return;
+		expect(result.data.events).toEqual([]);
+		expect(result.data.next_offset).toBeNull();
+		expect(result.data.message).toBe('No events found');
+	});
+});
+
+describe('checkinSucceeded', () => {
+	it('reports a real check-in as having taken effect', () => {
+		expect(checkinSucceeded('Checkin', true)).toBe(true);
+	});
+
+	it('reports a revert message as not checked in', () => {
+		expect(checkinSucceeded('Already Reverted checked in', true)).toBe(false);
+	});
+
+	it('answers null when the provider said nothing', () => {
+		expect(checkinSucceeded(null, true)).toBeNull();
+		expect(checkinSucceeded('', true)).toBeNull();
+		expect(checkinSucceeded(undefined, true)).toBeNull();
+	});
+
+	it('answers null for a status it does not recognise', () => {
+		expect(checkinSucceeded('Pending', true)).toBeNull();
 	});
 });

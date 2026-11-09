@@ -260,14 +260,54 @@ export const ticketTypeFixture = {
 	limit_maximum: 10,
 } as const;
 
+/**
+ * Captured live: the payload is nested under `checkinstatus`, whose fields are
+ * lowercased without underscores and can be `null`. The reference documents a
+ * flat shape, which is wrong.
+ */
 export const checkinFixture = {
-	first_name: 'Amelia',
-	last_name: 'Chen',
-	eventtitle: 'Chicago SaaS Growth Summit',
-	orderref: '20260520145-178028',
-	email: 'amelia.chen@example.com',
-	status: 'Checkin',
+	checkinstatus: {
+		firstname: 'Amelia',
+		lastname: 'Chen',
+		eventtitle: 'Chicago SaaS Growth Summit',
+		orderref: '20260520145-178028',
+		email: 'amelia.chen@example.com',
+		status: 'Checkin',
+	},
 } as const;
+
+/** Captured live for an unknown barcode: 200, every field null. */
+export const checkinUnknownBarcodeFixture = {
+	checkinstatus: {
+		firstname: null,
+		lastname: null,
+		eventtitle: null,
+		orderref: null,
+		email: null,
+		status: null,
+	},
+} as const;
+
+/** Captured live: a failed check-in that still answers HTTP 200. */
+export const checkinRevertedFixture = {
+	checkinstatus: {
+		firstname: '',
+		lastname: '',
+		eventtitle: '',
+		orderref: '',
+		email: '',
+		status: 'Already Reverted checked in',
+	},
+} as const;
+
+/** Captured live: how an empty list is answered, with no resource array at all. */
+export const noEventsFixture = { message: 'No events found' } as const;
+export const noTransactionsFixture = {
+	message: 'No transactions found',
+} as const;
+
+/** Captured live: `GET /users/{id}` answers `user`, singular. */
+export const singleUserFixture = { user: usersFixture.users } as const;
 
 export const orderConfirmedFixture = { orderconfirm: 'success' } as const;
 export const orderCancelledFixture = { ordercancel: 'success' } as const;

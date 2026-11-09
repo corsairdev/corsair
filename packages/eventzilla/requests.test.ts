@@ -46,7 +46,7 @@ function makeContext(logged: Logged) {
 			return 'account-1';
 		}),
 	} as const;
-	// Safe: only `key` and the log path's two members are read; the endpoint
+	// unknown: only `key` and the log path's two members are read; the endpoint
 	// code never touches the rest of the context. integration.test.ts runs the
 	// same endpoints against a real context.
 	return ctx as unknown as EventzillaContext;
@@ -96,14 +96,14 @@ describe('event endpoints', () => {
 		respond(eventListFixture);
 
 		const { result, logged } = await run(
-			{ status: 'Live', category: 'Business', offset: 20, limit: 5 },
+			{ status: 'live', category: 'Business', offset: 20, limit: 5 },
 			endpoints.events.list,
 		);
 
 		const { parsed, init, headers } = lastCall();
 		expect(init.method).toBe('GET');
 		expect(parsed.pathname).toBe('/api/v2/events');
-		expect(parsed.searchParams.get('status')).toBe('Live');
+		expect(parsed.searchParams.get('status')).toBe('live');
 		expect(parsed.searchParams.get('category')).toBe('Business');
 		expect(parsed.searchParams.get('offset')).toBe('20');
 		expect(parsed.searchParams.get('limit')).toBe('5');
@@ -320,14 +320,14 @@ describe('ticket endpoints', () => {
 	});
 
 	it('users.get GETs /users/{id}', async () => {
-		respond({ users: usersFixture.users });
+		respond({ user: usersFixture.users });
 
 		const { result } = await run({ userid: 2130004479 }, endpoints.users.get);
 
 		const { parsed, init } = lastCall();
 		expect(init.method).toBe('GET');
 		expect(parsed.pathname).toBe('/api/v2/users/2130004479');
-		expect(result.users).toHaveLength(1);
+		expect(result.user).toHaveLength(1);
 	});
 
 	it('transactions.get GETs a reference number as one segment', async () => {
