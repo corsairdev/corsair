@@ -72,22 +72,74 @@ function isInvalidRoute(status: number, message: string): boolean {
 }
 
 /**
- * `GET /categories` answers a rejected key with **200** and
- * `{ "message": "API Key is not authorized" }` rather than the 401 every other
- * route sends, so a keyless caller reads a success status with an error body.
- * The output schema would report that as a parse failure, hiding the real
- * cause, so it is turned into the auth error it is before anything parses.
+ * Eventzilla answers several failure modes with **HTTP 200** and a body whose
+ * only member is a `message`. Observed live against the real API:
+ *
+ * - `{"message":"API Key is not authorized"}` — a rejected key, on `/categories`
+ *   and on `/transactions/{id}`. Every other route answers 401 for this.
+ * - `{"message":"Unauthorized access"}` — a transaction the key may not read.
+ * - `{"message":"Invalid URL / Format exception"}` — an event filter value the
+ *   API does not accept, e.g. `status=Live` (only `status=live` works).
+ * - `{"message":"Request could not be processed. Please try again."}` — a
+ *   failed check-in, on `/attendees/checkin`.
+ * - `{"message":"No events found"}` — **not** an error: it is how an empty list
+ *   is returned. That one is shaped into an empty page by the endpoint.
+ *
+ * A parse failure on any of these would name the wrong problem, so a
+ * message-only body that is not the empty-list answer is raised here as the
+ * failure it is.
+ */
+const EMPTY_LIST_MESSAGE = /^No .+ found$/i;
+
+const SUCCESS_WITH_ERROR_PATTERNS: ReadonlyArray<{
+	pattern: RegExp;
+	kind: EventzillaErrorCode;
+}> = [
+	{ pattern: /not authorized|unauthorized/i, kind: 'unauthorized' },
+	{
+		pattern: /invalid url|format exception|invalid data submitted/i,
+		kind: 'invalid_input',
+	},
+	{ pattern: /could not be processed/i, kind: 'invalid_input' },
+];
+
+/**
+ * The failure a 2xx body reports, or undefined when the body is a real payload.
+ * A message-only body is either the empty-list answer (not a failure) or one of
+ * the failures above.
  */
 function successBodySaysError(
+	// unknown: a 2xx body, untyped until asRecord narrows it.
+	body: unknown,
+): { message: string; kind: EventzillaErrorCode } | undefined {
+	const record = asRecord(body);
+	if (!record) return undefined;
+	// A real payload carries its resource array; these failures carry only a
+	// message. Checked on the key count so a payload that happens to add a
+	// `message` field is still treated as a payload.
+	const keys = Object.keys(record);
+	if (keys.length !== 1 || keys[0] !== 'message') return undefined;
+	const message = record.message;
+	if (typeof message !== 'string') return undefined;
+	if (EMPTY_LIST_MESSAGE.test(message)) return undefined;
+	for (const entry of SUCCESS_WITH_ERROR_PATTERNS) {
+		if (entry.pattern.test(message)) return { message, kind: entry.kind };
+	}
+	// Unrecognised message-only body: still not a payload the schemas accept.
+	return { message, kind: 'bad_response' };
+}
+
+/** The empty-list answer's message, which an endpoint turns into an empty page. */
+export function emptyListMessage(
 	// unknown: a 2xx body, untyped until asRecord narrows it.
 	body: unknown,
 ): string | undefined {
 	const record = asRecord(body);
 	if (!record) return undefined;
-	// A real categories payload has a `categories` array; an error has neither.
-	if ('categories' in record) return undefined;
+	const keys = Object.keys(record);
+	if (keys.length !== 1 || keys[0] !== 'message') return undefined;
 	const message = record.message;
-	return typeof message === 'string' && /not authorized/i.test(message)
+	return typeof message === 'string' && EMPTY_LIST_MESSAGE.test(message)
 		? message
 		: undefined;
 }
@@ -170,6 +222,8 @@ export function segment(value: string | number): string {
 }
 
 // unknown: callers parse the body with the endpoint's zod output schema.
+// unknown: the response body is untyped; the endpoint's output schema is what
+// validates it. Exported so the live suite parses the same way.
 export async function makeEventzillaRequest(
 	apiKey: string,
 	{ method, path, query, body }: EventzillaRequest,
@@ -200,8 +254,8 @@ export async function makeEventzillaRequest(
 			const refusal = successBodySaysError(body);
 			if (refusal !== undefined) {
 				throw new EventzillaAPIError(
-					`Eventzilla ${method} ${path} answered HTTP 200 with an error: ${refusal}`,
-					{ status: 200, method, kind: 'unauthorized' },
+					`Eventzilla ${method} ${path} answered HTTP 200 with an error: ${refusal.message}`,
+					{ status: 200, method, kind: refusal.kind },
 				);
 			}
 			return body;
