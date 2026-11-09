@@ -624,3 +624,37 @@ describe('higgsfield webhooks through processWebhook', () => {
 		}
 	});
 });
+
+describe('a log entry that can’t be written', () => {
+	it('keeps an accepted submit and warns once', async () => {
+		// With encryptDataAtRest and no KEK, core's logger throws instead of
+		// warning itself, so this goes through the real helper to logQuietly.
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'higgsfield', 'default');
+		const corsair = createCorsair({
+			plugins: [higgsfield({ key: API_KEY })],
+			database: testDb.db,
+			encryptDataAtRest: true,
+			kek: '',
+		});
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		try {
+			fetchMock.mockResolvedValueOnce(jsonResponse(acceptedBody));
+			const response = await corsair.higgsfield.api.generations.submit({
+				modelPath: MODEL,
+				input: INPUT,
+			});
+			expect(response.request_id).toBe(REQUEST_ID);
+			expect(posts()).toHaveLength(1);
+			expect(warn).toHaveBeenCalledTimes(1);
+			expect(warn).toHaveBeenCalledWith(
+				'Failed to log event:',
+				expect.objectContaining({ message: 'encryptDataAtRest requires kek' }),
+			);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
