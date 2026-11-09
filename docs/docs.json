@@ -2819,6 +2819,14 @@
                 ]
               },
               {
+                "group": "Re:amaze",
+                "pages": [
+                  "plugins/reamaze/overview",
+                  "plugins/reamaze/api",
+                  "plugins/reamaze/database"
+                ]
+              },
+              {
                 "group": "Recall.ai",
                 "pages": [
                   "plugins/recallai/overview",
