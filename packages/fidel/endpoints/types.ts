@@ -21,9 +21,17 @@ const FidelItemsOutputSchema = z
 		// unknown: the pagination cursor is an object on most lists and a
 		// base64 string on MID insights. Pass it back as `start` (JSON
 		// stringified when it is an object) to read the next page.
-		last: z.unknown().optional(),
+		last: z
+			.unknown()
+			.optional()
+			.describe(
+				'Cursor for the next page. Pass JSON.stringify(last) as start; on MID insights pass the string unchanged.',
+			),
 		// Set by the active-offer check: whether the offer is active on the card.
-		exists: z.boolean().optional(),
+		exists: z
+			.boolean()
+			.optional()
+			.describe('Active-offer check only: whether the offer is active.'),
 		resource: z.string().optional(),
 		// unknown: the envelope status is documented without a fixed type;
 		// both numeric and string forms appear in provider examples.
