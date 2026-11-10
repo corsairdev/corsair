@@ -106,4 +106,33 @@ describe('Finage live responses', () => {
 			expect(detail.data.open_source).toBe(false);
 		}
 	});
+
+	it('accepts total_results on the cryptocurrency list', () => {
+		const parsed = FinageOutputSchemas.listCryptocurrencies.safeParse({
+			total_results: 2,
+			results: [
+				{
+					symbol: 'btc',
+					name: 'Bitcoin',
+					thumbnail:
+						'https://finage.s3.eu-west-2.amazonaws.com/cryptocurrency/128x128/bitcoin.png',
+					market_cap: 1494316545621,
+					ath: 126080,
+					ath_date: '2025-10-06T10:57:42Z',
+					order: 1,
+				},
+				{
+					symbol: 'eth',
+					name: 'Ethereum',
+					thumbnail:
+						'https://finage.s3.eu-west-2.amazonaws.com/cryptocurrency/128x128/ethereum.png',
+					market_cap: 255577122602,
+					ath: 4946.05,
+					ath_date: '2025-08-24T11:21:03Z',
+					order: 2,
+				},
+			],
+		});
+		expect(parsed.success).toBe(true);
+	});
 });

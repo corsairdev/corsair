@@ -481,7 +481,9 @@ const cryptocurrencyListItem = z
 	.catchall(finageJsonValue);
 const cryptocurrencyListEnvelope = z
 	.object({
-		totalResults: z.number(),
+		// The reference documents totalResults; the API sends total_results.
+		totalResults: z.number().optional(),
+		total_results: z.number().optional(),
 		results: z.array(cryptocurrencyListItem),
 	})
 	.catchall(finageJsonValue);
