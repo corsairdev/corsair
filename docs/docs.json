@@ -3535,6 +3535,15 @@
                 ]
               },
               {
+                "group": "tl;dv",
+                "pages": [
+                  "plugins/tldv/overview",
+                  "plugins/tldv/api",
+                  "plugins/tldv/database",
+                  "plugins/tldv/webhooks"
+                ]
+              },
+              {
                 "group": "Todoist",
                 "pages": [
                   "plugins/todoist/overview",
