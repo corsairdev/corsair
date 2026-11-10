@@ -157,7 +157,7 @@ const BoardPolicySchema = z
 					.enum(['all_editors', 'board_owners_and_coowners'])
 					.optional(),
 				copyAccess: z
-					.enum(['everyone', 'team_members', 'team_editors', 'board_members'])
+					.enum(['anyone', 'team_members', 'team_editors', 'board_owner'])
 					.optional(),
 				sharingAccess: z
 					.enum(['team_members_with_editing_rights', 'owner_and_coowners'])
@@ -447,10 +447,15 @@ export type MembersRemoveInput = z.input<typeof MembersRemoveInputSchema>;
 
 // ── items, shared ───────────────────────────────────────────────────────────
 
+/**
+ * The `type` values the items route filters on. Connectors are not items:
+ * they have their own routes and `connectors.list`.
+ */
 export const MIRO_ITEM_TYPES = [
 	'app_card',
 	'card',
-	'connector',
+	'data_table_format',
+	'doc_format',
 	'document',
 	'embed',
 	'frame',
@@ -503,7 +508,7 @@ const ItemsListInputSchema = z
 			.min(1)
 			.optional()
 			.describe(
-				'Only these item kinds. Miro takes one value; comma-joined here.',
+				'Only this item kind. Miro filters on one type per call, so pass a single value.',
 			),
 		parentItemId: z
 			.string()
@@ -572,17 +577,14 @@ export const MIRO_STICKY_COLORS = [
 	'green',
 	'dark_green',
 	'cyan',
+	'light_pink',
+	'pink',
+	'violet',
+	'red',
 	'light_blue',
 	'blue',
 	'dark_blue',
-	'violet',
-	'dark_violet',
-	'pink',
-	'light_pink',
-	'red',
-	'dark_red',
 	'black',
-	'light_gray',
 ] as const;
 
 /** A returned sticky style: plain strings, so a new colour still parses. */
@@ -1233,16 +1235,11 @@ export const MIRO_TAG_COLORS = [
 	'magenta',
 	'green',
 	'blue',
-	'black',
 	'gray',
 	'violet',
-	'light_blue',
-	'light_yellow',
-	'light_red',
-	'light_magenta',
 	'dark_green',
 	'dark_blue',
-	'dark_red',
+	'black',
 ] as const;
 
 const FlatTagSchema = ItemBaseSchema.extend({

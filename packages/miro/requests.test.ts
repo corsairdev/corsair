@@ -198,6 +198,33 @@ describe('boards', () => {
 		});
 	});
 
+	it.each(['anyone', 'team_members', 'team_editors', 'board_owner'])(
+		'accepts the documented copyAccess %s',
+		async (copyAccess) => {
+			respond(board, 201);
+
+			await invoke(boardsCreate, {
+				policy: { permissionsPolicy: { copyAccess } },
+			});
+
+			expect(lastRequest().body).toEqual({
+				policy: { permissionsPolicy: { copyAccess } },
+			});
+		},
+	);
+
+	it.each(['everyone', 'board_members'])(
+		'rejects %s, which is not a copyAccess value Miro lists',
+		async (copyAccess) => {
+			await expect(
+				invoke(boardsCreate, {
+					policy: { permissionsPolicy: { copyAccess } },
+				}),
+			).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+
 	it('rejects a name longer than 60 characters', async () => {
 		await expect(
 			invoke(boardsCreate, { name: 'x'.repeat(61) }),
@@ -418,6 +445,24 @@ describe('items', () => {
 		});
 	});
 
+	it.each(['doc_format', 'data_table_format'])(
+		'filters on the documented type %s',
+		async (type) => {
+			respond(itemsListResponse);
+
+			await invoke(itemsList, { boardId: BOARD, type: [type] });
+
+			expect(lastRequest().query).toEqual({ type });
+		},
+	);
+
+	it('rejects connector as an item type, which the items route does not list', async () => {
+		await expect(
+			invoke(itemsList, { boardId: BOARD, type: ['connector'] }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects two item types, which the API cannot filter on', async () => {
 		await expect(
 			invoke(itemsList, {
@@ -501,6 +546,16 @@ describe('stickyNotes', () => {
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
+
+	it.each(['dark_violet', 'dark_red', 'light_gray'])(
+		'rejects the sticky colour %s, which Miro does not list',
+		async (fillColor) => {
+			await expect(
+				invoke(stickyNotesCreate, { boardId: BOARD, fillColor }),
+			).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 
 	it('rejects a shape outside square and rectangle', async () => {
 		await expect(
@@ -972,6 +1027,16 @@ describe('tags', () => {
 
 		expect(lastRequest().body).toEqual({ title: 'priority', fillColor: 'red' });
 	});
+
+	it.each(['light_blue', 'light_yellow', 'light_red', 'light_magenta', 'dark_red'])(
+		'rejects the tag colour %s, which Miro does not list',
+		async (fillColor) => {
+			await expect(
+				invoke(tagsCreate, { boardId: BOARD, title: 'priority', fillColor }),
+			).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 
 	it('rejects a title over 120 characters', async () => {
 		await expect(
