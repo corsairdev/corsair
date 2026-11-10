@@ -254,8 +254,8 @@ export const membersShare: MiroEndpoints['membersShare'] = (ctx, input) =>
 			shape: (raw) => body(raw),
 			log: (parsed, result) => ({
 				boardId: parsed.boardId,
-				invited: result.invitedEmails?.length,
-				failed: result.failedEmails?.length,
+				invited: result.successful?.length,
+				failed: result.failed?.length,
 			}),
 		},
 	);

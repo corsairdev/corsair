@@ -345,14 +345,47 @@ describe('members', () => {
 			boardId: BOARD,
 			emails: ['new@acme.com'],
 			role: 'viewer',
-		})) as { invitedEmails?: string[] | null };
+		})) as {
+			successful?: (string | number)[] | null;
+			failed?: { email?: string | null; reason?: string | null }[] | null;
+		};
 
 		expectAuthenticated('POST');
 		expect(lastRequest().body).toEqual({
 			emails: ['new@acme.com'],
 			role: 'viewer',
 		});
-		expect(result.invitedEmails).toEqual(['new@acme.com']);
+		expect(result.successful).toHaveLength(1);
+		expect(result.failed?.[0]).toEqual({
+			email: 'gone@acme.com',
+			reason: 'INVITATION_FAILED',
+		});
+	});
+
+	it('logs how many invitations were sent and how many failed', async () => {
+		respond(invitationResult);
+
+		await invoke(membersShare, {
+			boardId: BOARD,
+			emails: ['new@acme.com', 'gone@acme.com'],
+		});
+
+		// Counts only: the addresses themselves stay out of the log.
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'miro.members.share',
+			{ boardId: BOARD, invited: 1, failed: 1 },
+			'completed',
+		);
+	});
+
+	it('rejects more than the 20 addresses Miro takes per call', async () => {
+		const emails = Array.from({ length: 21 }, (_, i) => `p${i}@acme.com`);
+
+		await expect(
+			invoke(membersShare, { boardId: BOARD, emails }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects an invalid email before sending', async () => {

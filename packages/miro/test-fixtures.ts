@@ -75,14 +75,13 @@ export const membersListResponse = {
 	links: {},
 };
 
+/**
+ * What sharing a board answers: the ids of the invitations sent, and the
+ * addresses that failed with a reason each.
+ */
 export const invitationResult = {
-	invitation: {
-		id: '3074457345618258604',
-		role: 'viewer',
-		links: {},
-	},
-	invitedEmails: ['new@acme.com'],
-	failedEmails: [],
+	successful: [3074457350804038],
+	failed: [{ email: 'gone@acme.com', reason: 'INVITATION_FAILED' }],
 };
 
 /** A sticky note, wrapped in `item` as every item route answers. */

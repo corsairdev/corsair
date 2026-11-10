@@ -396,11 +396,14 @@ const MembersShareInputSchema = z.object({
 	emails: z
 		.array(z.email())
 		.min(1)
-		.describe('Email addresses to invite to the board.'),
+		.max(20)
+		.describe('Email addresses to invite to the board, up to 20 per call.'),
 	role: z
 		.enum(MIRO_BOARD_MEMBER_ROLES)
 		.optional()
-		.describe('The role they get. Defaults to `viewer`.'),
+		.describe(
+			'The role they get. Defaults to `commenter`; `owner` is treated as `coowner`.',
+		),
 	message: z.string().optional().describe('Note included in the invitation.'),
 });
 
@@ -408,16 +411,23 @@ export type MembersShareInput = z.input<typeof MembersShareInputSchema>;
 
 const MembersShareResponseSchema = z
 	.object({
-		invitation: z
-			.object({
-				id: z.string().nullish(),
-				role: z.string().nullish(),
-				links: LinksSchema.nullish(),
-			})
-			.loose()
-			.nullish(),
-		invitedEmails: z.array(z.string()).nullish(),
-		failedEmails: z.array(z.string()).nullish(),
+		successful: z
+			.array(z.union([z.string(), z.number()]))
+			.nullish()
+			.describe(
+				'Ids of the invitations that were sent, one per address that worked.',
+			),
+		failed: z
+			.array(
+				z
+					.object({
+						email: z.string().nullish(),
+						reason: z.string().nullish(),
+					})
+					.loose(),
+			)
+			.nullish()
+			.describe('The addresses that could not be invited, each with a reason.'),
 	})
 	.loose();
 
