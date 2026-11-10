@@ -2523,6 +2523,14 @@
                 ]
               },
               {
+                "group": "Lemon Squeezy",
+                "pages": [
+                  "plugins/lemonsqueezy/overview",
+                  "plugins/lemonsqueezy/api",
+                  "plugins/lemonsqueezy/database"
+                ]
+              },
+              {
                 "group": "Lever",
                 "pages": [
                   "plugins/lever/overview",
