@@ -69,6 +69,61 @@ import {
 	updateDatasourceInstancesProperties,
 	deleteDatasourceInstancesProperties,
 } from './endpoints/datasources';
+import {
+	listGroups,
+	retrieveGroup,
+	createGroup,
+	updateGroup,
+	deleteGroup,
+	retrieveGroupDefaultTabs,
+	retrieveGroupDefaultTab,
+	addGroupDefaultTabs,
+	updateGroupDefaultTab,
+	deleteGroupDefaultTab,
+	retrieveGroupUsers,
+	updateGroupUser,
+	deleteGroupUser,
+} from './endpoints/groups';
+import {
+	listKlips,
+	retrieveKlip,
+	retrieveKlipClientInstances,
+	createKlip,
+	updateKlip,
+	deleteKlip,
+	retrieveKlipAnnotations,
+	retrieveKlipAnnotation,
+	createKlipAnnotations,
+	updateKlipAnnotation,
+	deleteKlipAnnotation,
+	updateFromParentKlip,
+	retrieveKlipSchema,
+	updateKlipSchema,
+	retrieveKlipShareRights,
+	setKlipShareRights,
+	deleteKlipShareRights,
+	importKlip,
+} from './endpoints/klips';
+import {
+	retrieveProfile,
+	createDashboardPublishedLinks,
+	listDashboardPublishedLinks,
+	updateDashboardPublishedLinks,
+	deleteDashboardPublishedLinks,
+} from './endpoints/misc';
+import {
+	listRoles,
+	retrieveRole,
+	updateRole,
+	createRole,
+	deleteRole,
+	retrieveRoleUsers,
+	updateRoleUser,
+	deleteRoleUser,
+	retrieveRolePermissions,
+	updateRolePermissions,
+	deleteRolePermissions,
+} from './endpoints/roles';
 import { KlipfolioSchema } from './schema';
 import { errorHandlers } from './error-handlers';
 
@@ -222,6 +277,61 @@ const klipfolioEndpointsNested = {
 			retrieveDatasourceInstancesProperties,
 		updateDatasourceInstancesProperties: updateDatasourceInstancesProperties,
 		deleteDatasourceInstancesProperties: deleteDatasourceInstancesProperties,
+	},
+	groups: {
+		listGroups: listGroups,
+		retrieveGroup: retrieveGroup,
+		createGroup: createGroup,
+		updateGroup: updateGroup,
+		deleteGroup: deleteGroup,
+		retrieveGroupDefaultTabs: retrieveGroupDefaultTabs,
+		retrieveGroupDefaultTab: retrieveGroupDefaultTab,
+		addGroupDefaultTabs: addGroupDefaultTabs,
+		updateGroupDefaultTab: updateGroupDefaultTab,
+		deleteGroupDefaultTab: deleteGroupDefaultTab,
+		retrieveGroupUsers: retrieveGroupUsers,
+		updateGroupUser: updateGroupUser,
+		deleteGroupUser: deleteGroupUser,
+	},
+	klips: {
+		listKlips: listKlips,
+		retrieveKlip: retrieveKlip,
+		retrieveKlipClientInstances: retrieveKlipClientInstances,
+		createKlip: createKlip,
+		updateKlip: updateKlip,
+		deleteKlip: deleteKlip,
+		retrieveKlipAnnotations: retrieveKlipAnnotations,
+		retrieveKlipAnnotation: retrieveKlipAnnotation,
+		createKlipAnnotations: createKlipAnnotations,
+		updateKlipAnnotation: updateKlipAnnotation,
+		deleteKlipAnnotation: deleteKlipAnnotation,
+		updateFromParentKlip: updateFromParentKlip,
+		retrieveKlipSchema: retrieveKlipSchema,
+		updateKlipSchema: updateKlipSchema,
+		retrieveKlipShareRights: retrieveKlipShareRights,
+		setKlipShareRights: setKlipShareRights,
+		deleteKlipShareRights: deleteKlipShareRights,
+		importKlip: importKlip,
+	},
+	misc: {
+		retrieveProfile: retrieveProfile,
+		createDashboardPublishedLinks: createDashboardPublishedLinks,
+		listDashboardPublishedLinks: listDashboardPublishedLinks,
+		updateDashboardPublishedLinks: updateDashboardPublishedLinks,
+		deleteDashboardPublishedLinks: deleteDashboardPublishedLinks,
+	},
+	roles: {
+		listRoles: listRoles,
+		retrieveRole: retrieveRole,
+		updateRole: updateRole,
+		createRole: createRole,
+		deleteRole: deleteRole,
+		retrieveRoleUsers: retrieveRoleUsers,
+		updateRoleUser: updateRoleUser,
+		deleteRoleUser: deleteRoleUser,
+		retrieveRolePermissions: retrieveRolePermissions,
+		updateRolePermissions: updateRolePermissions,
+		deleteRolePermissions: deleteRolePermissions,
 	},
 } as const;
 
@@ -406,6 +516,195 @@ export const klipfolioEndpointMeta = {
 	'datasources.deleteDatasourceInstancesProperties': {
 		riskLevel: 'destructive',
 		description: 'Delete Data Source Instance Property on Klipfolio',
+	},
+	'groups.listGroups': {
+		riskLevel: 'read',
+		description: 'List Groups on Klipfolio',
+	},
+	'groups.retrieveGroup': {
+		riskLevel: 'read',
+		description: 'Get Group on Klipfolio',
+	},
+	'groups.createGroup': {
+		riskLevel: 'write',
+		description: 'Create Group on Klipfolio',
+	},
+	'groups.updateGroup': {
+		riskLevel: 'write',
+		description: 'Update Group on Klipfolio',
+	},
+	'groups.deleteGroup': {
+		riskLevel: 'destructive',
+		description: 'Delete Group on Klipfolio',
+	},
+	'groups.retrieveGroupDefaultTabs': {
+		riskLevel: 'read',
+		description: 'List Group Default Tabs on Klipfolio',
+	},
+	'groups.retrieveGroupDefaultTab': {
+		riskLevel: 'read',
+		description: 'Get Group Default Tab on Klipfolio',
+	},
+	'groups.addGroupDefaultTabs': {
+		riskLevel: 'write',
+		description: 'Add Dashboard to Group on Klipfolio',
+	},
+	'groups.updateGroupDefaultTab': {
+		riskLevel: 'write',
+		description: 'Update Group Default Tab on Klipfolio',
+	},
+	'groups.deleteGroupDefaultTab': {
+		riskLevel: 'destructive',
+		description: 'Delete Group Default Tab on Klipfolio',
+	},
+	'groups.retrieveGroupUsers': {
+		riskLevel: 'read',
+		description: 'List Users in Group on Klipfolio',
+	},
+	'groups.updateGroupUser': {
+		riskLevel: 'write',
+		description: 'Add User to Group on Klipfolio',
+	},
+	'groups.deleteGroupUser': {
+		riskLevel: 'destructive',
+		description: 'Delete User from Group on Klipfolio',
+	},
+	'klips.listKlips': {
+		riskLevel: 'read',
+		description: 'List Klips on Klipfolio',
+	},
+	'klips.retrieveKlip': {
+		riskLevel: 'read',
+		description: 'Get Klip on Klipfolio',
+	},
+	'klips.retrieveKlipClientInstances': {
+		riskLevel: 'read',
+		description: 'Get Klip Client Instances on Klipfolio',
+	},
+	'klips.createKlip': {
+		riskLevel: 'write',
+		description: 'Create Klip on Klipfolio',
+	},
+	'klips.updateKlip': {
+		riskLevel: 'write',
+		description: 'Update Klip on Klipfolio',
+	},
+	'klips.deleteKlip': {
+		riskLevel: 'destructive',
+		description: 'Delete Klip on Klipfolio',
+	},
+	'klips.retrieveKlipAnnotations': {
+		riskLevel: 'read',
+		description: 'List annotations on Klipfolio',
+	},
+	'klips.retrieveKlipAnnotation': {
+		riskLevel: 'read',
+		description: 'Get one annotation on Klipfolio',
+	},
+	'klips.createKlipAnnotations': {
+		riskLevel: 'write',
+		description: 'Create annotation on Klipfolio',
+	},
+	'klips.updateKlipAnnotation': {
+		riskLevel: 'write',
+		description: 'Update annotation on Klipfolio',
+	},
+	'klips.deleteKlipAnnotation': {
+		riskLevel: 'destructive',
+		description: 'Delete annotation on Klipfolio',
+	},
+	'klips.updateFromParentKlip': {
+		riskLevel: 'write',
+		description:
+			'Update client instance from parent (update_from_parent) on Klipfolio',
+	},
+	'klips.retrieveKlipSchema': {
+		riskLevel: 'read',
+		description: 'Get Klip schema on Klipfolio',
+	},
+	'klips.updateKlipSchema': {
+		riskLevel: 'write',
+		description: 'Update Klip schema on Klipfolio',
+	},
+	'klips.retrieveKlipShareRights': {
+		riskLevel: 'read',
+		description: 'Get Klip share rights on Klipfolio',
+	},
+	'klips.setKlipShareRights': {
+		riskLevel: 'write',
+		description: 'Update Klip share rights on Klipfolio',
+	},
+	'klips.deleteKlipShareRights': {
+		riskLevel: 'destructive',
+		description: 'Delete Klip share rights on Klipfolio',
+	},
+	'klips.importKlip': {
+		riskLevel: 'write',
+		description: 'Import Klip to client account on Klipfolio',
+	},
+	'misc.retrieveProfile': {
+		riskLevel: 'read',
+		description: 'Get profile on Klipfolio',
+	},
+	'misc.createDashboardPublishedLinks': {
+		riskLevel: 'write',
+		description: 'Create published link on Klipfolio',
+	},
+	'misc.listDashboardPublishedLinks': {
+		riskLevel: 'read',
+		description: 'Get published link(s) on Klipfolio',
+	},
+	'misc.updateDashboardPublishedLinks': {
+		riskLevel: 'write',
+		description: 'Update published link on Klipfolio',
+	},
+	'misc.deleteDashboardPublishedLinks': {
+		riskLevel: 'destructive',
+		description: 'Delete published link on Klipfolio',
+	},
+	'roles.listRoles': {
+		riskLevel: 'read',
+		description: 'List roles on Klipfolio',
+	},
+	'roles.retrieveRole': {
+		riskLevel: 'read',
+		description: 'Get role on Klipfolio',
+	},
+	'roles.updateRole': {
+		riskLevel: 'write',
+		description: 'Update role on Klipfolio',
+	},
+	'roles.createRole': {
+		riskLevel: 'write',
+		description: 'Create role on Klipfolio',
+	},
+	'roles.deleteRole': {
+		riskLevel: 'destructive',
+		description: 'Delete role on Klipfolio',
+	},
+	'roles.retrieveRoleUsers': {
+		riskLevel: 'read',
+		description: 'List users for role on Klipfolio',
+	},
+	'roles.updateRoleUser': {
+		riskLevel: 'write',
+		description: 'Add user to role on Klipfolio',
+	},
+	'roles.deleteRoleUser': {
+		riskLevel: 'destructive',
+		description: 'Delete user from role on Klipfolio',
+	},
+	'roles.retrieveRolePermissions': {
+		riskLevel: 'read',
+		description: 'Get role permissions on Klipfolio',
+	},
+	'roles.updateRolePermissions': {
+		riskLevel: 'write',
+		description: 'Update role permissions on Klipfolio',
+	},
+	'roles.deleteRolePermissions': {
+		riskLevel: 'destructive',
+		description: 'Remove role permission on Klipfolio',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof klipfolioEndpointsNested
@@ -592,6 +891,194 @@ export const klipfolioEndpointSchemas = {
 	'datasources.deleteDatasourceInstancesProperties': {
 		input: KlipfolioEndpointInputSchemas.deleteDatasourceInstancesProperties,
 		output: KlipfolioEndpointOutputSchemas.deleteDatasourceInstancesProperties,
+	},
+	'groups.listGroups': {
+		input: KlipfolioEndpointInputSchemas.listGroups,
+		output: KlipfolioEndpointOutputSchemas.listGroups,
+	},
+	'groups.retrieveGroup': {
+		input: KlipfolioEndpointInputSchemas.retrieveGroup,
+		output: KlipfolioEndpointOutputSchemas.retrieveGroup,
+	},
+	'groups.createGroup': {
+		input: KlipfolioEndpointInputSchemas.createGroup,
+		output: KlipfolioEndpointOutputSchemas.createGroup,
+	},
+	'groups.updateGroup': {
+		input: KlipfolioEndpointInputSchemas.updateGroup,
+		output: KlipfolioEndpointOutputSchemas.updateGroup,
+	},
+	'groups.deleteGroup': {
+		input: KlipfolioEndpointInputSchemas.deleteGroup,
+		output: KlipfolioEndpointOutputSchemas.deleteGroup,
+	},
+	'groups.retrieveGroupDefaultTabs': {
+		input: KlipfolioEndpointInputSchemas.retrieveGroupDefaultTabs,
+		output: KlipfolioEndpointOutputSchemas.retrieveGroupDefaultTabs,
+	},
+	'groups.retrieveGroupDefaultTab': {
+		input: KlipfolioEndpointInputSchemas.retrieveGroupDefaultTab,
+		output: KlipfolioEndpointOutputSchemas.retrieveGroupDefaultTab,
+	},
+	'groups.addGroupDefaultTabs': {
+		input: KlipfolioEndpointInputSchemas.addGroupDefaultTabs,
+		output: KlipfolioEndpointOutputSchemas.addGroupDefaultTabs,
+	},
+	'groups.updateGroupDefaultTab': {
+		input: KlipfolioEndpointInputSchemas.updateGroupDefaultTab,
+		output: KlipfolioEndpointOutputSchemas.updateGroupDefaultTab,
+	},
+	'groups.deleteGroupDefaultTab': {
+		input: KlipfolioEndpointInputSchemas.deleteGroupDefaultTab,
+		output: KlipfolioEndpointOutputSchemas.deleteGroupDefaultTab,
+	},
+	'groups.retrieveGroupUsers': {
+		input: KlipfolioEndpointInputSchemas.retrieveGroupUsers,
+		output: KlipfolioEndpointOutputSchemas.retrieveGroupUsers,
+	},
+	'groups.updateGroupUser': {
+		input: KlipfolioEndpointInputSchemas.updateGroupUser,
+		output: KlipfolioEndpointOutputSchemas.updateGroupUser,
+	},
+	'groups.deleteGroupUser': {
+		input: KlipfolioEndpointInputSchemas.deleteGroupUser,
+		output: KlipfolioEndpointOutputSchemas.deleteGroupUser,
+	},
+	'klips.listKlips': {
+		input: KlipfolioEndpointInputSchemas.listKlips,
+		output: KlipfolioEndpointOutputSchemas.listKlips,
+	},
+	'klips.retrieveKlip': {
+		input: KlipfolioEndpointInputSchemas.retrieveKlip,
+		output: KlipfolioEndpointOutputSchemas.retrieveKlip,
+	},
+	'klips.retrieveKlipClientInstances': {
+		input: KlipfolioEndpointInputSchemas.retrieveKlipClientInstances,
+		output: KlipfolioEndpointOutputSchemas.retrieveKlipClientInstances,
+	},
+	'klips.createKlip': {
+		input: KlipfolioEndpointInputSchemas.createKlip,
+		output: KlipfolioEndpointOutputSchemas.createKlip,
+	},
+	'klips.updateKlip': {
+		input: KlipfolioEndpointInputSchemas.updateKlip,
+		output: KlipfolioEndpointOutputSchemas.updateKlip,
+	},
+	'klips.deleteKlip': {
+		input: KlipfolioEndpointInputSchemas.deleteKlip,
+		output: KlipfolioEndpointOutputSchemas.deleteKlip,
+	},
+	'klips.retrieveKlipAnnotations': {
+		input: KlipfolioEndpointInputSchemas.retrieveKlipAnnotations,
+		output: KlipfolioEndpointOutputSchemas.retrieveKlipAnnotations,
+	},
+	'klips.retrieveKlipAnnotation': {
+		input: KlipfolioEndpointInputSchemas.retrieveKlipAnnotation,
+		output: KlipfolioEndpointOutputSchemas.retrieveKlipAnnotation,
+	},
+	'klips.createKlipAnnotations': {
+		input: KlipfolioEndpointInputSchemas.createKlipAnnotations,
+		output: KlipfolioEndpointOutputSchemas.createKlipAnnotations,
+	},
+	'klips.updateKlipAnnotation': {
+		input: KlipfolioEndpointInputSchemas.updateKlipAnnotation,
+		output: KlipfolioEndpointOutputSchemas.updateKlipAnnotation,
+	},
+	'klips.deleteKlipAnnotation': {
+		input: KlipfolioEndpointInputSchemas.deleteKlipAnnotation,
+		output: KlipfolioEndpointOutputSchemas.deleteKlipAnnotation,
+	},
+	'klips.updateFromParentKlip': {
+		input: KlipfolioEndpointInputSchemas.updateFromParentKlip,
+		output: KlipfolioEndpointOutputSchemas.updateFromParentKlip,
+	},
+	'klips.retrieveKlipSchema': {
+		input: KlipfolioEndpointInputSchemas.retrieveKlipSchema,
+		output: KlipfolioEndpointOutputSchemas.retrieveKlipSchema,
+	},
+	'klips.updateKlipSchema': {
+		input: KlipfolioEndpointInputSchemas.updateKlipSchema,
+		output: KlipfolioEndpointOutputSchemas.updateKlipSchema,
+	},
+	'klips.retrieveKlipShareRights': {
+		input: KlipfolioEndpointInputSchemas.retrieveKlipShareRights,
+		output: KlipfolioEndpointOutputSchemas.retrieveKlipShareRights,
+	},
+	'klips.setKlipShareRights': {
+		input: KlipfolioEndpointInputSchemas.setKlipShareRights,
+		output: KlipfolioEndpointOutputSchemas.setKlipShareRights,
+	},
+	'klips.deleteKlipShareRights': {
+		input: KlipfolioEndpointInputSchemas.deleteKlipShareRights,
+		output: KlipfolioEndpointOutputSchemas.deleteKlipShareRights,
+	},
+	'klips.importKlip': {
+		input: KlipfolioEndpointInputSchemas.importKlip,
+		output: KlipfolioEndpointOutputSchemas.importKlip,
+	},
+	'misc.retrieveProfile': {
+		input: KlipfolioEndpointInputSchemas.retrieveProfile,
+		output: KlipfolioEndpointOutputSchemas.retrieveProfile,
+	},
+	'misc.createDashboardPublishedLinks': {
+		input: KlipfolioEndpointInputSchemas.createDashboardPublishedLinks,
+		output: KlipfolioEndpointOutputSchemas.createDashboardPublishedLinks,
+	},
+	'misc.listDashboardPublishedLinks': {
+		input: KlipfolioEndpointInputSchemas.listDashboardPublishedLinks,
+		output: KlipfolioEndpointOutputSchemas.listDashboardPublishedLinks,
+	},
+	'misc.updateDashboardPublishedLinks': {
+		input: KlipfolioEndpointInputSchemas.updateDashboardPublishedLinks,
+		output: KlipfolioEndpointOutputSchemas.updateDashboardPublishedLinks,
+	},
+	'misc.deleteDashboardPublishedLinks': {
+		input: KlipfolioEndpointInputSchemas.deleteDashboardPublishedLinks,
+		output: KlipfolioEndpointOutputSchemas.deleteDashboardPublishedLinks,
+	},
+	'roles.listRoles': {
+		input: KlipfolioEndpointInputSchemas.listRoles,
+		output: KlipfolioEndpointOutputSchemas.listRoles,
+	},
+	'roles.retrieveRole': {
+		input: KlipfolioEndpointInputSchemas.retrieveRole,
+		output: KlipfolioEndpointOutputSchemas.retrieveRole,
+	},
+	'roles.updateRole': {
+		input: KlipfolioEndpointInputSchemas.updateRole,
+		output: KlipfolioEndpointOutputSchemas.updateRole,
+	},
+	'roles.createRole': {
+		input: KlipfolioEndpointInputSchemas.createRole,
+		output: KlipfolioEndpointOutputSchemas.createRole,
+	},
+	'roles.deleteRole': {
+		input: KlipfolioEndpointInputSchemas.deleteRole,
+		output: KlipfolioEndpointOutputSchemas.deleteRole,
+	},
+	'roles.retrieveRoleUsers': {
+		input: KlipfolioEndpointInputSchemas.retrieveRoleUsers,
+		output: KlipfolioEndpointOutputSchemas.retrieveRoleUsers,
+	},
+	'roles.updateRoleUser': {
+		input: KlipfolioEndpointInputSchemas.updateRoleUser,
+		output: KlipfolioEndpointOutputSchemas.updateRoleUser,
+	},
+	'roles.deleteRoleUser': {
+		input: KlipfolioEndpointInputSchemas.deleteRoleUser,
+		output: KlipfolioEndpointOutputSchemas.deleteRoleUser,
+	},
+	'roles.retrieveRolePermissions': {
+		input: KlipfolioEndpointInputSchemas.retrieveRolePermissions,
+		output: KlipfolioEndpointOutputSchemas.retrieveRolePermissions,
+	},
+	'roles.updateRolePermissions': {
+		input: KlipfolioEndpointInputSchemas.updateRolePermissions,
+		output: KlipfolioEndpointOutputSchemas.updateRolePermissions,
+	},
+	'roles.deleteRolePermissions': {
+		input: KlipfolioEndpointInputSchemas.deleteRolePermissions,
+		output: KlipfolioEndpointOutputSchemas.deleteRolePermissions,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof klipfolioEndpointsNested

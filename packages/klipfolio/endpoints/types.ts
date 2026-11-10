@@ -376,6 +376,420 @@ const DeleteDatasourceInstancesPropertiesInputSchema = z
 	})
 	.passthrough();
 
+const ListGroupsInputSchema = z
+	.object({
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveGroupInputSchema = z
+	.object({
+		id: z.string().min(1),
+		full: z.boolean().optional(),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const CreateGroupInputSchema = z
+	.object({
+		name: z.string(),
+		description: z.string(),
+		// unknown: optional; create the group in a client account
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateGroupInputSchema = z
+	.object({
+		id: z.string().min(1),
+		// unknown: update value
+		name: z.string().optional(),
+		// unknown: update value
+		description: z.string().optional(),
+		// unknown: optional
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const DeleteGroupInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveGroupDefaultTabsInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveGroupDefaultTabInputSchema = z
+	.object({
+		id: z.string().min(1),
+		id2: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const AddGroupDefaultTabsInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: dashboard (tab) to add
+		tab_id: z.string().optional(),
+		can_edit: z.boolean().optional(),
+		// unknown: library | dashboard | permanent
+		visibility: z.string().optional(),
+		index: z.number().optional(),
+	})
+	.passthrough();
+
+const UpdateGroupDefaultTabInputSchema = z
+	.object({
+		id: z.string().min(1),
+		id2: z.string().min(1),
+		client_id: z.string().optional(),
+		can_edit: z.boolean().optional(),
+		visibility: z.string().optional(),
+		index: z.number().optional(),
+	})
+	.passthrough();
+
+const DeleteGroupDefaultTabInputSchema = z
+	.object({
+		id: z.string().min(1),
+		id2: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveGroupUsersInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateGroupUserInputSchema = z
+	.object({
+		id: z.string().min(1),
+		userid: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const DeleteGroupUserInputSchema = z
+	.object({
+		id: z.string().min(1),
+		id2: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const ListKlipsInputSchema = z
+	.object({
+		datasource_id: z.string().optional(),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveKlipInputSchema = z
+	.object({
+		id: z.string().min(1),
+		full: z.boolean().optional(),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveKlipClientInstancesInputSchema = z
+	.object({
+		id: z.string().min(1),
+	})
+	.passthrough();
+
+const CreateKlipInputSchema = z
+	.object({
+		name: z.string(),
+		description: z.string(),
+		// unknown: create for a client
+		client_id: z.string().optional(),
+		// unknown: if no schema specified, new Klip has a simple default schema
+		schema: z.record(z.string(), z.unknown()).optional(),
+	})
+	.passthrough();
+
+const UpdateKlipInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: listed under required Fields
+		klip_id: z.string(),
+		name: z.string(),
+		description: z.string(),
+	})
+	.passthrough();
+
+const DeleteKlipInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveKlipAnnotationsInputSchema = z
+	.object({
+		id: z.string().min(1),
+		start_date: z.string().optional(),
+		end_date: z.string().optional(),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveKlipAnnotationInputSchema = z
+	.object({
+		id: z.string().min(1),
+		annotationId: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const CreateKlipAnnotationsInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: other fields default; created_by is authenticated user, date_created is creation timestamp
+		body: z.string(),
+	})
+	.passthrough();
+
+const UpdateKlipAnnotationInputSchema = z
+	.object({
+		id: z.string().min(1),
+		annotationId: z.string().min(1),
+		client_id: z.string().optional(),
+		'annotation id': z.string(),
+		body: z.string(),
+	})
+	.passthrough();
+
+const DeleteKlipAnnotationInputSchema = z
+	.object({
+		id: z.string().min(1),
+		annotationId: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateFromParentKlipInputSchema = z
+	.object({
+		id: z.string().min(1),
+	})
+	.passthrough();
+
+const RetrieveKlipSchemaInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateKlipSchemaInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: required flag not explicitly documented
+		title: z.string(),
+		// unknown: (input key renamed: the wire body key "id" is taken by the path identifier)
+		wire_id: z.string(),
+		'workspace.datasources': z.array(z.unknown()),
+		// unknown: each: type (string), displayName (string), id (string), nested components (array of label objects with type, displayName, size (number), fmt (string optional), role, id, formulas (array), data (array))
+		components: z.array(z.record(z.string(), z.unknown())),
+	})
+	.passthrough();
+
+const RetrieveKlipShareRightsInputSchema = z
+	.object({
+		id: z.string().min(1),
+	})
+	.passthrough();
+
+const SetKlipShareRightsInputSchema = z
+	.object({
+		id: z.string().min(1),
+		// unknown: each object: group_id (string), can_edit (boolean). If Klip not already shared with the group, a new share-right is created, otherwise existing is updated
+		groups: z.array(z.record(z.string(), z.unknown())),
+	})
+	.passthrough();
+
+const DeleteKlipShareRightsInputSchema = z
+	.object({
+		id: z.string().min(1),
+		// unknown: same shape as PUT: group_id (string), can_edit (boolean)
+		groups: z.array(z.record(z.string(), z.unknown())),
+	})
+	.passthrough();
+
+const ImportKlipInputSchema = z
+	.object({
+		id: z.string().min(1),
+		// unknown: required per response code 400 missing client_id
+		client_id: z.string(),
+	})
+	.passthrough();
+
+const RetrieveProfileInputSchema = z
+	.object({
+		full: z.boolean().optional(),
+	})
+	.passthrough();
+
+const CreateDashboardPublishedLinksInputSchema = z
+	.object({
+		dashboardId: z.string().min(1),
+		client_id: z.string().optional(),
+		name: z.string(),
+		password: z.string().optional(),
+		// unknown: default false
+		isPublic: z.boolean().optional(),
+		// unknown: default 'light'; options: light, dark
+		theme: z.string().optional(),
+		logo: z.string().optional(),
+		// unknown: default false
+		social: z.boolean().optional(),
+		// unknown: default false
+		wantsAdvertising: z.boolean().optional(),
+		// unknown: default false
+		useIpRanges: z.boolean().optional(),
+	})
+	.passthrough();
+
+const ListDashboardPublishedLinksInputSchema = z
+	.object({
+		dashboard_id: z.string().optional(),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateDashboardPublishedLinksInputSchema = z
+	.object({
+		publishedLinkId: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: all optional per the table
+		name: z.string().optional(),
+		password: z.string().optional(),
+		// unknown: default false
+		isPublic: z.boolean().optional(),
+		// unknown: default 'light'
+		theme: z.string().optional(),
+		logo: z.string().optional(),
+		// unknown: default false
+		social: z.boolean().optional(),
+		// unknown: default false
+		wantsAdvertising: z.boolean().optional(),
+		// unknown: default false
+		useIpRanges: z.boolean().optional(),
+	})
+	.passthrough();
+
+const DeleteDashboardPublishedLinksInputSchema = z
+	.object({
+		publishedLinkId: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const ListRolesInputSchema = z
+	.object({
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveRoleInputSchema = z
+	.object({
+		id: z.string().min(1),
+		full: z.boolean().optional(),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateRoleInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		name: z.string(),
+		description: z.string(),
+		// unknown: permissions specified will replace existing permissions
+		permissions: z.array(z.unknown()),
+	})
+	.passthrough();
+
+const CreateRoleInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		name: z.string(),
+		description: z.string(),
+		// unknown: see permission string list in notes
+		permissions: z.array(z.unknown()),
+	})
+	.passthrough();
+
+const DeleteRoleInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveRoleUsersInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateRoleUserInputSchema = z
+	.object({
+		id: z.string().min(1),
+		userId: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const DeleteRoleUserInputSchema = z
+	.object({
+		id: z.string().min(1),
+		userid: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveRolePermissionsInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateRolePermissionsInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: valid values are permission names (e.g. "account.api", "admin.client", "dashboard.fullscreen", "tab.push", "user.manage")
+		permissions: z.array(z.string()),
+	})
+	.passthrough();
+
+const DeleteRolePermissionsInputSchema = z
+	.object({
+		id: z.string().min(1),
+		name: z.string().optional(),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
 export const KlipfolioEndpointInputSchemas = {
 	listClients: ListClientsInputSchema,
 	retrieveClient: RetrieveClientInputSchema,
@@ -425,6 +839,53 @@ export const KlipfolioEndpointInputSchemas = {
 		UpdateDatasourceInstancesPropertiesInputSchema,
 	deleteDatasourceInstancesProperties:
 		DeleteDatasourceInstancesPropertiesInputSchema,
+	listGroups: ListGroupsInputSchema,
+	retrieveGroup: RetrieveGroupInputSchema,
+	createGroup: CreateGroupInputSchema,
+	updateGroup: UpdateGroupInputSchema,
+	deleteGroup: DeleteGroupInputSchema,
+	retrieveGroupDefaultTabs: RetrieveGroupDefaultTabsInputSchema,
+	retrieveGroupDefaultTab: RetrieveGroupDefaultTabInputSchema,
+	addGroupDefaultTabs: AddGroupDefaultTabsInputSchema,
+	updateGroupDefaultTab: UpdateGroupDefaultTabInputSchema,
+	deleteGroupDefaultTab: DeleteGroupDefaultTabInputSchema,
+	retrieveGroupUsers: RetrieveGroupUsersInputSchema,
+	updateGroupUser: UpdateGroupUserInputSchema,
+	deleteGroupUser: DeleteGroupUserInputSchema,
+	listKlips: ListKlipsInputSchema,
+	retrieveKlip: RetrieveKlipInputSchema,
+	retrieveKlipClientInstances: RetrieveKlipClientInstancesInputSchema,
+	createKlip: CreateKlipInputSchema,
+	updateKlip: UpdateKlipInputSchema,
+	deleteKlip: DeleteKlipInputSchema,
+	retrieveKlipAnnotations: RetrieveKlipAnnotationsInputSchema,
+	retrieveKlipAnnotation: RetrieveKlipAnnotationInputSchema,
+	createKlipAnnotations: CreateKlipAnnotationsInputSchema,
+	updateKlipAnnotation: UpdateKlipAnnotationInputSchema,
+	deleteKlipAnnotation: DeleteKlipAnnotationInputSchema,
+	updateFromParentKlip: UpdateFromParentKlipInputSchema,
+	retrieveKlipSchema: RetrieveKlipSchemaInputSchema,
+	updateKlipSchema: UpdateKlipSchemaInputSchema,
+	retrieveKlipShareRights: RetrieveKlipShareRightsInputSchema,
+	setKlipShareRights: SetKlipShareRightsInputSchema,
+	deleteKlipShareRights: DeleteKlipShareRightsInputSchema,
+	importKlip: ImportKlipInputSchema,
+	retrieveProfile: RetrieveProfileInputSchema,
+	createDashboardPublishedLinks: CreateDashboardPublishedLinksInputSchema,
+	listDashboardPublishedLinks: ListDashboardPublishedLinksInputSchema,
+	updateDashboardPublishedLinks: UpdateDashboardPublishedLinksInputSchema,
+	deleteDashboardPublishedLinks: DeleteDashboardPublishedLinksInputSchema,
+	listRoles: ListRolesInputSchema,
+	retrieveRole: RetrieveRoleInputSchema,
+	updateRole: UpdateRoleInputSchema,
+	createRole: CreateRoleInputSchema,
+	deleteRole: DeleteRoleInputSchema,
+	retrieveRoleUsers: RetrieveRoleUsersInputSchema,
+	updateRoleUser: UpdateRoleUserInputSchema,
+	deleteRoleUser: DeleteRoleUserInputSchema,
+	retrieveRolePermissions: RetrieveRolePermissionsInputSchema,
+	updateRolePermissions: UpdateRolePermissionsInputSchema,
+	deleteRolePermissions: DeleteRolePermissionsInputSchema,
 } as const;
 
 export const KlipfolioEndpointOutputSchemas = {
@@ -473,6 +934,53 @@ export const KlipfolioEndpointOutputSchemas = {
 	retrieveDatasourceInstancesProperties: KlipfolioEnvelopeOutputSchema,
 	updateDatasourceInstancesProperties: KlipfolioEnvelopeOutputSchema,
 	deleteDatasourceInstancesProperties: KlipfolioEnvelopeOutputSchema,
+	listGroups: KlipfolioEnvelopeOutputSchema,
+	retrieveGroup: KlipfolioEnvelopeOutputSchema,
+	createGroup: KlipfolioEnvelopeOutputSchema,
+	updateGroup: KlipfolioEnvelopeOutputSchema,
+	deleteGroup: KlipfolioEnvelopeOutputSchema,
+	retrieveGroupDefaultTabs: KlipfolioEnvelopeOutputSchema,
+	retrieveGroupDefaultTab: KlipfolioEnvelopeOutputSchema,
+	addGroupDefaultTabs: KlipfolioEnvelopeOutputSchema,
+	updateGroupDefaultTab: KlipfolioEnvelopeOutputSchema,
+	deleteGroupDefaultTab: KlipfolioEnvelopeOutputSchema,
+	retrieveGroupUsers: KlipfolioEnvelopeOutputSchema,
+	updateGroupUser: KlipfolioEnvelopeOutputSchema,
+	deleteGroupUser: KlipfolioEnvelopeOutputSchema,
+	listKlips: KlipfolioEnvelopeOutputSchema,
+	retrieveKlip: KlipfolioEnvelopeOutputSchema,
+	retrieveKlipClientInstances: KlipfolioEnvelopeOutputSchema,
+	createKlip: KlipfolioEnvelopeOutputSchema,
+	updateKlip: KlipfolioEnvelopeOutputSchema,
+	deleteKlip: KlipfolioEnvelopeOutputSchema,
+	retrieveKlipAnnotations: KlipfolioEnvelopeOutputSchema,
+	retrieveKlipAnnotation: KlipfolioEnvelopeOutputSchema,
+	createKlipAnnotations: KlipfolioEnvelopeOutputSchema,
+	updateKlipAnnotation: KlipfolioEnvelopeOutputSchema,
+	deleteKlipAnnotation: KlipfolioEnvelopeOutputSchema,
+	updateFromParentKlip: KlipfolioEnvelopeOutputSchema,
+	retrieveKlipSchema: KlipfolioEnvelopeOutputSchema,
+	updateKlipSchema: KlipfolioEnvelopeOutputSchema,
+	retrieveKlipShareRights: KlipfolioEnvelopeOutputSchema,
+	setKlipShareRights: KlipfolioEnvelopeOutputSchema,
+	deleteKlipShareRights: KlipfolioEnvelopeOutputSchema,
+	importKlip: KlipfolioEnvelopeOutputSchema,
+	retrieveProfile: KlipfolioEnvelopeOutputSchema,
+	createDashboardPublishedLinks: KlipfolioEnvelopeOutputSchema,
+	listDashboardPublishedLinks: KlipfolioEnvelopeOutputSchema,
+	updateDashboardPublishedLinks: KlipfolioEnvelopeOutputSchema,
+	deleteDashboardPublishedLinks: KlipfolioEnvelopeOutputSchema,
+	listRoles: KlipfolioEnvelopeOutputSchema,
+	retrieveRole: KlipfolioEnvelopeOutputSchema,
+	updateRole: KlipfolioEnvelopeOutputSchema,
+	createRole: KlipfolioEnvelopeOutputSchema,
+	deleteRole: KlipfolioEnvelopeOutputSchema,
+	retrieveRoleUsers: KlipfolioEnvelopeOutputSchema,
+	updateRoleUser: KlipfolioEnvelopeOutputSchema,
+	deleteRoleUser: KlipfolioEnvelopeOutputSchema,
+	retrieveRolePermissions: KlipfolioEnvelopeOutputSchema,
+	updateRolePermissions: KlipfolioEnvelopeOutputSchema,
+	deleteRolePermissions: KlipfolioEnvelopeOutputSchema,
 } as const;
 
 export type KlipfolioEndpointInputs = {
