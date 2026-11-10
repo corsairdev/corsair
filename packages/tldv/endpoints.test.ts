@@ -3,6 +3,7 @@ jest.mock('corsair/core', () => {
 	return { ...actual, logEventFromContext: jest.fn().mockResolvedValue('evt') };
 });
 
+import { liveMeetingsListResponse } from './live-fixtures';
 import {
 	basicErrorBody,
 	foldersListResponse,
@@ -177,5 +178,16 @@ describe('tl;dv shape rejections', () => {
 		await expect(endpoints.meetings.list(makeCtx(), {})).rejects.toThrow(
 			/AuthorizationRequiredError/,
 		);
+	});
+});
+
+describe('tl;dv live responses', () => {
+	it('returns the list happenedAt as ISO 8601, like a single-meeting read', async () => {
+		// The list answers a JavaScript date string; get answers ISO 8601.
+		mockFetch(jsonResponse(liveMeetingsListResponse));
+
+		const result = await endpoints.meetings.list(makeCtx(), {});
+
+		expect(result.results[0]!.happenedAt).toBe('2026-11-10T19:06:44.000Z');
 	});
 });

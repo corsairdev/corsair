@@ -1,9 +1,33 @@
+import { asRecord } from 'corsair/core';
 import type { TldvEndpoints } from '..';
 import { call, queryOf } from './call';
 import {
 	TldvEndpointInputSchemas as Inputs,
 	TldvEndpointOutputSchemas as Outputs,
 } from './types';
+
+/**
+ * The list endpoint answers `happenedAt` as a JavaScript date string, e.g.
+ * `Tue Nov 10 2026 19:06:44 GMT+0000 (Coordinated Universal Time)`, while a
+ * single-meeting read answers ISO 8601 (seen live on 2026-11-10). Convert the
+ * list's value so both reads agree; a value that does not parse is left as is.
+ * unknown: raw is the response body, validated by the output schema after this.
+ */
+function withIsoHappenedAt(raw: unknown): unknown {
+	const page = asRecord(raw);
+	if (!page || !Array.isArray(page.results)) return raw;
+	return {
+		...page,
+		results: page.results.map((item: unknown) => {
+			const meeting = asRecord(item);
+			if (!meeting || typeof meeting.happenedAt !== 'string') return item;
+			const time = Date.parse(meeting.happenedAt);
+			return Number.isNaN(time)
+				? item
+				: { ...meeting, happenedAt: new Date(time).toISOString() };
+		}),
+	};
+}
 
 export const list: TldvEndpoints['meetingsList'] = (ctx, input) =>
 	call(
@@ -41,6 +65,7 @@ export const list: TldvEndpoints['meetingsList'] = (ctx, input) =>
 			}),
 		}),
 		{
+			shape: withIsoHappenedAt,
 			log: (_, result) => ({
 				count: result.results.length,
 				total: result.total,
