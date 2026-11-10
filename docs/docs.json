@@ -3115,6 +3115,14 @@
                 ]
               },
               {
+                "group": "RiteKit",
+                "pages": [
+                  "plugins/ritekit/overview",
+                  "plugins/ritekit/api",
+                  "plugins/ritekit/database"
+                ]
+              },
+              {
                 "group": "Rootly",
                 "pages": [
                   "plugins/rootly/overview",
