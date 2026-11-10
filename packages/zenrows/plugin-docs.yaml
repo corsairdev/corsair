@@ -1,0 +1,63 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: ZenRows
+description: Web data infrastructure for agents and applications. Fetch any page through anti-bot bypasses, a headless browser and residential proxies, extract structured JSON, crawl a site from one URL, and track the credits behind it all.
+domain: zenrows.com
+recommendedAuth: api_key
+overviewNote: |
+  Every call goes through `https://api.zenrows.com`. The key travels in the `X-API-Key` header, or in the `apikey` query parameter when `customHeaders` is on, because ZenRows copies every request header onto the target page in that mode.
+
+  A Fetch answer is not always JSON. `fetch.page` returns the page itself as HTML, Markdown or plaintext, `fetch.cssExtract` and `fetch.outputs` return a JSON object, and `fetch.extract` returns `{ html, parsed }`. ZenRows labels all of these `text/plain`, so the operation you call is what tells you the shape.
+
+  A crawl is a job. `crawl.start` returns a `crawl_id` and spends credits per page, `crawl.get` reads its `status` and one page of results, and polling it with the same `cursor` returns only new URLs. On Corsair's cloud, `get_job` and the job card follow it for you.
+
+  Extract needs a domain prepared first. `extract.getDomainStatus` says whether it is ready; `extract.prepareDomain` asks for it, which takes minutes and one slot of the monthly allowance. `fetch.cssExtract` works on any site with no preparation.
+examples:
+  read:
+    path: fetch.page
+    title: Read a page as Markdown
+    args:
+      url: https://example.com
+  write:
+    path: crawl.start
+    title: Crawl the first two pages of a site
+    args:
+      url: https://www.scrapingcourse.com/ecommerce/
+      maxPages: 2
+apiExamples:
+  fetch.page:
+    call: "{ url: 'https://example.com', responseType: 'markdown' }"
+  fetch.extract:
+    call: "{ url: 'https://www.scrapingcourse.com/ecommerce/product/abominable-hoodie/' }"
+  fetch.cssExtract:
+    call: "{ url: 'https://example.com', cssExtractor: { title: 'h1', links: 'a @href' } }"
+  fetch.outputs:
+    call: "{ url: 'https://example.com', outputs: ['emails', 'links'] }"
+  fetch.jsonResponse:
+    call: "{ url: 'https://example.com', jsRender: true }"
+  fetch.post:
+    call: "{ url: 'https://httpbin.io/anything', body: { type: 'json', value: { hello: 'world' } } }"
+  crawl.start:
+    call: "{ url: 'https://www.scrapingcourse.com/ecommerce/', maxPages: 10, includePatterns: ['/product/'], outputFormat: 'html' }"
+  crawl.get:
+    call: "{ crawlId: '<crawl_id from crawl.start>' }"
+  crawl.getContent:
+    call: "{ crawlId: '<crawl_id>', contentId: '<last segment of content_url>' }"
+  extract.prepareDomain:
+    call: "{ domain: 'example.com', exampleUrls: ['https://example.com/1', 'https://example.com/2', 'https://example.com/3'] }"
+  extract.getDomainStatus:
+    call: "{ domain: 'example.com' }"
+  account.subscription:
+    call: "{}"
+apiNotes:
+  fetch.page: 'Returns the page itself, so the body is text. `responseType` picks HTML (the default), Markdown or plaintext; the PDF conversion is not exposed because this client cannot return a binary body.'
+  fetch.extract: 'Needs a domain prepared for Extract, or a 403 REQS007. `extract` defaults to `auto`; `extractFields` narrows the fields and requires `extract`.'
+  fetch.cssExtract: 'The answer is the extracted keys at the top level, not an Extract envelope. A selector that matched nothing comes back as an empty string rather than a missing key.'
+  fetch.jsonResponse: 'Needs `jsRender` or `mode: ''auto''`. Selectors arrive under `css_extractor` and output filters under `outputs`, inside the envelope.'
+  fetch.post: 'The forwarded body reaches the target, so the site''s state can change. `jsRender` cannot be combined with a JSON body, because ZenRows reads the body as a query parameter.'
+  fetch.put: 'The forwarded body reaches the target, so the site''s state can change.'
+  crawl.start: 'The page limit is the cost cap, because each page opened is one billed Fetch request. `webhookUrl` needs a ZenRows webhook signing key on the account and an `https` host that resolves publicly, and the URL cannot change after the start.'
+  crawl.get: 'While the crawl runs `next_cursor` is never null. Poll with the cursor to collect only the URLs you have not read.'
+  crawl.stop: 'Pages already in flight finish and are billed. Read the crawl until `next_cursor` is null for its final results.'
+  extract.prepareDomain: 'Preparation is free and needs no credits, but it takes one slot of the monthly allowance and minutes to finish. Poll `extract.getDomainStatus` rather than blocking.'
+  extract.allowance: 'Costs no credits.'
+  account.subscription: 'Costs no credits and does not count against the concurrency limit, so it is safe to call after a failure to see where the credits stand.'
