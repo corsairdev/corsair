@@ -173,7 +173,7 @@ function topLevelVersionAt(cwd, rev, path) {
  * The newest first-parent commit on HEAD whose package.json moved the
  * top-level version to `version` (a nested "version" key doesn't count).
  */
-function versionSetCommit(cwd, dir, version) {
+export function versionSetCommit(cwd, dir, version) {
 	const path = `${dir}/package.json`;
 	const commits = git(cwd, [
 		'log',

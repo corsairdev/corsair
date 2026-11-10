@@ -12,6 +12,12 @@ on:
   # deploy.yml runs this after each publish, so a change merged while a
   # release was still publishing gets released once that one lands.
   workflow_dispatch:
+    inputs:
+      # Hub starts this when its cloud runtime moves to a new SDK version, for the
+      # changelog. Hub's own PR titles stay out of it: that repo is private.
+      cloud_corsair_version:
+        description: corsair version Corsair Cloud just moved to
+        required: false
   # Backstop in case a run failed and nothing has been merged since.
   schedule:
     - cron: '17 4 * * *'
@@ -70,6 +76,7 @@ jobs:
       - name: Commit the version bumps and record the releases
         env:
           PLAN: ${{ runner.temp }}/release-plan.json
+          CLOUD_VERSION: ${{ inputs.cloud_corsair_version }}
         run: |
           git config user.name "corsair-releases[bot]"
           git config user.email "353438335+corsair-releases[bot]@users.noreply.github.com"
@@ -85,11 +92,20 @@ jobs:
             fi
             node scripts/release-on-merge.mjs --out "$PLAN"
             count=$(jq '.bumps | length' "$PLAN")
-            if [ "$count" -eq 0 ]; then pushed=1; break; fi
+            # A changelog problem must not stop a release.
+            if ! node scripts/release-changelog.mjs --plan "$PLAN" ${CLOUD_VERSION:+--cloud-version "$CLOUD_VERSION"}; then
+              echo "::warning::The changelog wasn't updated for this release."
+              git checkout -- docs/changelog.mdx scripts/changelog-entries.json
+            fi
+            if [ "$count" -eq 0 ] && git diff --quiet; then pushed=1; break; fi
             {
-              echo "chore(release): publish $count package(s)"
-              echo
-              jq -r '.bumps[] | "- \(.name) \(.from) -> \(.to)"' "$PLAN"
+              if [ "$count" -eq 0 ]; then
+                echo "chore(release): update the changelog"
+              else
+                echo "chore(release): publish $count package(s)"
+                echo
+                jq -r '.bumps[] | "- \(.name) \(.from) -> \(.to)"' "$PLAN"
+              fi
             } > "$RUNNER_TEMP/release-message.txt"
             git commit -q -a -F "$RUNNER_TEMP/release-message.txt"
             if git push origin HEAD:main; then pushed=1; break; fi
