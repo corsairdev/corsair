@@ -28,7 +28,7 @@ await corsair.servicenow.api.records.create({ table: 'incident', fields: { short
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `table` | `string` | Yes | — |
-| `fields` | `Record<string, unknown>` | Yes | Column values for the new record, e.g. &#123; short_description: "..." &#125; |
+| `fields` | `Record<string, any>` | Yes | Column values for the new record, e.g. &#123; short_description: "..." &#125; |
 | `sysparm_input_display_value` | `boolean` | No | Treat the supplied values as display values |
 | `sysparm_display_value` | `true \| false \| all` | No | — |
 
@@ -36,7 +36,7 @@ Sends `fields` as the request body and answers the created record from `result`,
 
 
 
-**Output:** `Record<string, unknown>`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -60,7 +60,7 @@ await corsair.servicenow.api.records.delete({ table: 'incident', sys_id: '9d3850
 | `table` | `string` | Yes | — |
 | `sys_id` | `string` | Yes | ServiceNow sys_id |
 
-Answers 204 with no body, so the plugin reports `{ deleted, table, sys_id }` rather than parsing one. The record itself is gone and there is no undo; whether records referencing it are cascaded, nulled or left untouched depends on the table's reference cascade rule.
+Answers 204 with no body, so the plugin reports `{ deleted, table, sys_id }` rather than parsing one. The record itself is gone and there is no undo; whether records referencing it are deleted, cleared or left untouched depends on the table's reference cascade rule, and a `Restrict` rule refuses the delete.
 
 
 
@@ -102,7 +102,7 @@ Answers the record object directly from `result`. Reference fields come back as 
 
 
 
-**Output:** `Record<string, unknown>`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -140,7 +140,7 @@ Answers `{ records: [...] }` from the `result` array. Every raw value is a strin
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `records` | `Record<string, unknown>[]` | Yes | — |
+| `records` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -164,14 +164,14 @@ await corsair.servicenow.api.records.update({ table: 'incident', sys_id: '9d3850
 |------|------|----------|-------------|
 | `table` | `string` | Yes | — |
 | `sys_id` | `string` | Yes | ServiceNow sys_id |
-| `fields` | `Record<string, unknown>` | Yes | — |
+| `fields` | `Record<string, any>` | Yes | — |
 | `sysparm_input_display_value` | `boolean` | No | — |
 
 Sends a PATCH with `fields` as the body, which changes only the fields you name. Answers the updated record. Business rules and notifications fire.
 
 
 
-**Output:** `Record<string, unknown>`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -200,7 +200,7 @@ await corsair.servicenow.api.tables.list({ sysparm_limit: 50 });
 | `sysparm_limit` | `number` | No | Records per page. ServiceNow defaults to 10000 when omitted |
 | `sysparm_offset` | `number` | No | Records to skip. Add sysparm_limit per page to walk a table |
 
-Lists visible table metadata from `sys_db_object`. A table appearing here does not mean its records are readable through record queries: this is dictionary metadata only, subject to the user's ACLs. selecting `name`, `label`, `super_class` and `sys_id` by default. A `sysparm_fields` selection keeps `name` even when omitted, because ServiceNow returns only the fields asked for and `name` is what you pass as `table`. Pass `sysparm_query` to narrow it, for example `nameSTARTSWITHu_` for a custom application's tables.
+Lists visible table metadata from `sys_db_object`. A table appearing here does not mean its records are readable through record queries: this is dictionary metadata only, subject to the user's ACLs. Returns `name`, `label`, `super_class` and `sys_id` by default. A `sysparm_fields` selection keeps `name` even when omitted, because ServiceNow returns only the fields asked for and `name` is what you pass as `table`. Pass `sysparm_query` to narrow it, for example `nameSTARTSWITHu_` for a custom application's tables.
 
 
 
