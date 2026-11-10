@@ -23,8 +23,8 @@ import type { EventbriteContext } from '..';
  * ```
  *
  * `api_url` addresses the object on the v3 API and `config.action` names what
- * happened, so the handler reads that URL back with the tenant's own token
- * before anything downstream can see the object.
+ * happened. The handler passes the notification on and does not fetch the
+ * object; a caller reads `api_url` back with the tenant's own token.
  * (https://www.eventbrite.com/platform/docs/webhooks)
  */
 export const EventbriteWebhookPayloadSchema = z
@@ -32,7 +32,12 @@ export const EventbriteWebhookPayloadSchema = z
 		api_url: z
 			.string()
 			.min(1)
-			.describe('Absolute v3 API URL of the object that changed.'),
+			.refine(isEventbriteApiUrl, {
+				message: '`api_url` must be an https URL on eventbriteapi.com',
+			})
+			.describe(
+				'Absolute v3 API URL of the object that changed, always on eventbriteapi.com.',
+			),
 		config: z
 			.object({
 				/** e.g. `order.placed`. Absent on the dashboard's test delivery. */
@@ -62,9 +67,9 @@ export type EventbriteWebhookOutputs = {
 /**
  * Eventbrite signs neither the delivery nor lets a webhook carry a caller-chosen
  * header (`POST /organizations/{id}/webhooks/` accepts only `endpoint_url`,
- * `actions` and `event_id`), so there is nothing to verify against a secret.
- * Provenance rests on the unguessable ingress URL plus reading `api_url` back
- * with the tenant's token.
+ * `actions` and `event_id`), so there is nothing to verify against a secret
+ * and a delivery cannot be proven to come from Eventbrite. The receiving URL
+ * has to stay private.
  */
 export function actionOf(payload: EventbriteWebhookPayload): string | null {
 	const action = payload.config?.action;
@@ -78,7 +83,31 @@ export function organizationIdOf(
 	return typeof userId === 'string' && userId.length > 0 ? userId : null;
 }
 
-/** True for a body shaped like an Eventbrite notification. */
+/**
+ * True when `api_url` is an https URL on Eventbrite's API host. Deliveries are
+ * unsigned and callers are told to read `api_url` back with the tenant's
+ * token, so a forged body naming another host must never be handed to them:
+ * that read would send the token to whoever forged it.
+ */
+export function isEventbriteApiUrl(value: string): boolean {
+	let url: URL;
+	try {
+		url = new URL(value);
+	} catch {
+		return false;
+	}
+	return (
+		url.protocol === 'https:' &&
+		(url.hostname === 'eventbriteapi.com' ||
+			url.hostname.endsWith('.eventbriteapi.com'))
+	);
+}
+
+/**
+ * True for a body shaped like an Eventbrite notification. A string `api_url`
+ * alone is not enough: other providers send that key too, and this plugin
+ * would claim their deliveries.
+ */
 export function isEventbriteNotification(request: RawWebhookRequest): boolean {
 	const body = request.body;
 	const record =
@@ -87,7 +116,9 @@ export function isEventbriteNotification(request: RawWebhookRequest): boolean {
 				// this only asks whether one known key is a string.
 				(body as Record<string, unknown>)
 			: undefined;
-	return typeof record?.api_url === 'string';
+	return (
+		typeof record?.api_url === 'string' && isEventbriteApiUrl(record.api_url)
+	);
 }
 
 export const notificationMatch: CorsairWebhookMatcher =
@@ -111,7 +142,7 @@ export const notification: CorsairWebhook<
 			// Throwing, not returning `success: false`: processWebhook rewrites a
 			// returned refusal to a successful delivery (packages/corsair/webhooks).
 			throw new Error(
-				'Invalid Eventbrite webhook notification: expected `api_url` and an optional `config` object',
+				'Invalid Eventbrite webhook notification: expected an `api_url` on eventbriteapi.com and an optional `config` object',
 			);
 		}
 

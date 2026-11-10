@@ -45,6 +45,49 @@ describe('notification.match', () => {
 			false,
 		);
 	});
+
+	it("does not claim another provider's body just because it has an api_url", () => {
+		expect(
+			notification.match(
+				request({
+					event_type: 'form_response',
+					api_url: 'https://api.example.com/forms/abc/responses/1',
+				}),
+			),
+		).toBe(false);
+	});
+
+	it.each([
+		['another host', 'https://attacker.example/v3/orders/1/'],
+		[
+			'a host that only starts with the name',
+			'https://www.eventbriteapi.com.attacker.example/v3/orders/1/',
+		],
+		[
+			'a host that only ends with the name',
+			'https://evileventbriteapi.com/v3/orders/1/',
+		],
+		['plain http', 'http://www.eventbriteapi.com/v3/orders/1/'],
+		['a relative path', '/v3/orders/1/'],
+	])('does not match an api_url on %s', (_label, apiUrl) => {
+		// Callers read api_url back with the tenant's token, so a forged body
+		// naming another host would send that token to the forger.
+		expect(
+			notification.match(request({ ...webhookDelivery, api_url: apiUrl })),
+		).toBe(false);
+	});
+
+	it('matches the placeholder path the dashboard test delivery sends', () => {
+		expect(
+			notification.match(
+				request({
+					api_url:
+						'https://www.eventbriteapi.com/{api-endpoint-to-fetch-object-details}/',
+					config: { action: 'test' },
+				}),
+			),
+		).toBe(true);
+	});
 });
 
 describe('notification.handler', () => {
@@ -76,6 +119,18 @@ describe('notification.handler', () => {
 			notification.handler(
 				ctx,
 				request({ config: { action: 'event.created' } }),
+			),
+		).rejects.toThrow('Invalid Eventbrite webhook notification');
+	});
+
+	it('throws on an api_url that is not on eventbriteapi.com', async () => {
+		await expect(
+			notification.handler(
+				ctx,
+				request({
+					...webhookDelivery,
+					api_url: 'https://attacker.example/v3/orders/1/',
+				}),
 			),
 		).rejects.toThrow('Invalid Eventbrite webhook notification');
 	});
@@ -182,6 +237,25 @@ describe('a delivery through processWebhook', () => {
 				externalId: '154830740213',
 			});
 			expect(result.response).toMatchObject({ success: true });
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('leaves a delivery with a foreign api_url unclaimed', async () => {
+		const { corsair, testDb } = await createClient(false);
+		try {
+			const result = await processWebhook(
+				corsair,
+				{ 'content-type': 'application/json' },
+				{
+					...webhookDelivery,
+					api_url: 'https://attacker.example/v3/orders/1/',
+				},
+			);
+
+			expect(result.plugin).toBeNull();
+			expect(result.response).toBeUndefined();
 		} finally {
 			testDb.cleanup();
 		}
