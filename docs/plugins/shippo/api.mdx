@@ -4799,7 +4799,7 @@ await corsair.shippo.api.webhooks.create({ url: 'https://myapp.com/webhooks/ship
 | `is_test` | `boolean` | No | Defaults to false; true limits deliveries to test-mode objects. |
 | `shippo_account_id` | `string` | No | Sent as `SHIPPO-ACCOUNT-ID`: the managed Shippo account to act on behalf of. Platform accounts only. |
 
-Shippo signs nothing and allows no custom header, so the receiving URL must be private. One subscription per event, but a label it sells creates its own tracking webhook.
+`url`, `event` and `is_test` are the only fields this route accepts, so an HMAC secret is arranged with Shippo support rather than passed here. One subscription per event, but a label it sells creates its own tracking webhook.
 
 
 

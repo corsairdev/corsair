@@ -1,7 +1,9 @@
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import type {
 	CorsairWebhook,
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
+	WebhookRequest,
 } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import { z } from 'zod';
@@ -52,19 +54,152 @@ export type ShippoWebhookOutputs = {
 		// unknown: the union above is resolved at runtime by `event`, and the
 		// caller narrows it the same way.
 		data: unknown;
+		/** False when the delivery carried no verifiable signature. */
+		signatureVerified: boolean;
 	};
 };
 
-/**
- * Shippo does not sign webhook deliveries and offers no header to authenticate
- * one: `POST /webhooks` accepts only `url`, `event` and `is_test`. There is no
- * secret to verify, so this says so rather than inventing a check. Provenance
- * rests on the endpoint URL being private and on treating the payload as
- * untrusted input, which the schema below does.
- */
-export function signatureSupported(): false {
-	return false;
+// ── Verification ──────────────────────────────────────────────────────────
+//
+// Shippo offers three ways to secure a webhook (tracking/webhook-security):
+// an inbound IP allowlist, a self-generated `?token=` on the subscription URL,
+// and HMAC. Only HMAC authenticates the *body*, so it is the one this plugin
+// checks.
+//
+// HMAC is opt-in and account-level: it is not a field on `POST /webhooks`
+// (that route accepts only `url`, `event` and `is_test`), it is arranged with
+// Shippo support, who issue a shared secret. So verification is active only
+// when a secret is configured; without one, deliveries are accepted unsigned
+// and the handler reports `signatureVerified: false` rather than implying a
+// check that did not happen.
+
+/** Header Shippo sends for an HMAC-enabled webhook: `t=<unix>,v1=<hex>`. */
+export const SHIPPO_SIGNATURE_HEADER = 'shippo-auth-signature';
+
+function headerValue(
+	// Header values are string | string[] | undefined depending on the adapter.
+	headers: RawWebhookRequest['headers'],
+	name: string,
+): string | undefined {
+	for (const [key, value] of Object.entries(headers)) {
+		if (key.toLowerCase() !== name) continue;
+		return Array.isArray(value) ? value[0] : value;
+	}
+	return undefined;
 }
+
+/** Constant-time compare that tolerates differing lengths without throwing. */
+function safeEqual(left: string, right: string): boolean {
+	const a = Buffer.from(left);
+	const b = Buffer.from(right);
+	return a.length === b.length && timingSafeEqual(a, b);
+}
+
+/**
+ * Parses `t=1688493073,v1=24036c…` into its parts. Shippo's reference script
+ * splits on commas and takes the first two fields, so any extra fields are
+ * ignored rather than treated as malformed.
+ */
+export function parseSignatureHeader(
+	header: string,
+): { timestamp: string; signature: string } | null {
+	const parts = header.split(',').map((part) => part.trim());
+	const timestamp = parts
+		.find((part) => part.startsWith('t='))
+		?.slice(2)
+		.trim();
+	const signature = parts
+		.find((part) => part.startsWith('v1='))
+		?.slice(3)
+		.trim();
+	if (!timestamp || !signature) return null;
+	return { timestamp, signature };
+}
+
+/**
+ * The signed payload is `<timestamp>.<raw body>`, hashed with SHA-256 and the
+ * shared secret. Verified against Shippo's documented bash reference:
+ * `openssl dgst -sha256 -hmac "<secret>"` over `"${timestamp}.${payload}"`.
+ */
+export function computeSignature(
+	secret: string,
+	timestamp: string,
+	rawBody: string,
+): string {
+	return createHmac('sha256', secret)
+		.update(`${timestamp}.${rawBody}`)
+		.digest('hex');
+}
+
+/**
+ * Authenticates one delivery. `secret` comes from the plugin option
+ * `webhookSecret` or the account's stored `webhook_signature`.
+ *
+ * A delivery is only verified when a secret is configured: without one there is
+ * nothing to check against, so it is accepted but reported as unverified. A
+ * delivery with a bad or missing signature *when a secret is set* is rejected.
+ */
+export function verifyShippoWebhook(
+	// unknown: verification reads headers and the raw body only, never the parsed payload.
+	request: WebhookRequest<unknown>,
+	secret: string | undefined,
+): { valid: boolean; verified: boolean; error?: string } {
+	if (request.hubVerified) {
+		// The Hub already checked the provider signature.
+		return { valid: true, verified: true };
+	}
+
+	const expected = secret?.trim();
+	if (!expected) {
+		// No secret configured: accept, but say plainly that nothing was checked.
+		return { valid: true, verified: false };
+	}
+
+	const header = headerValue(request.headers, SHIPPO_SIGNATURE_HEADER)?.trim();
+	if (!header) {
+		return {
+			valid: false,
+			verified: false,
+			error:
+				'Shippo delivery is missing the Shippo-Auth-Signature header, but a webhook secret is configured',
+		};
+	}
+
+	const parsed = parseSignatureHeader(header);
+	if (!parsed) {
+		return {
+			valid: false,
+			verified: false,
+			error:
+				'Shippo-Auth-Signature is not in the expected `t=<unix>,v1=<hex>` form',
+		};
+	}
+
+	// The raw body is required: re-serializing parsed JSON changes bytes and the
+	// digest would never match.
+	const rawBody = request.rawBody;
+	if (rawBody === undefined) {
+		return {
+			valid: false,
+			verified: false,
+			error:
+				'Webhook verification needs the raw request body; pass the body as a string (await request.text()), not parsed JSON',
+		};
+	}
+
+	const computed = computeSignature(expected, parsed.timestamp, rawBody);
+	if (!safeEqual(computed, parsed.signature)) {
+		return {
+			valid: false,
+			verified: false,
+			error: 'Shippo-Auth-Signature does not match the delivery body',
+		};
+	}
+
+	return { valid: true, verified: true };
+}
+
+// ── Parsing ───────────────────────────────────────────────────────────────
 
 const EVENT_TO_SCHEMA = {
 	track_updated: TrackSchema,
@@ -124,7 +259,8 @@ function assertIdentity(
 ): void {
 	const record =
 		typeof data === 'object' && data !== null && !Array.isArray(data)
-			? (data as Record<string, unknown>)
+			? // unknown: a track, transaction or batch; only one shared identity field is read.
+				(data as Record<string, unknown>)
 			: undefined;
 	const field =
 		IDENTITY_FIELD[event as keyof typeof IDENTITY_FIELD] ?? 'object_id';
@@ -193,43 +329,64 @@ export function parseDelivery(
 	return { ...envelope, data: parsed.data };
 }
 
-export const notification: CorsairWebhook<
-	ShippoContext,
-	ShippoWebhookPayload,
-	ShippoWebhookOutputs['notification']
-> = {
-	match: deliveryMatch,
-	handler: async (ctx, request) => {
-		// Throwing, not returning `success: false`: processWebhook rewrites a
-		// returned refusal to a successful delivery.
-		const parsed = parseDelivery(request.payload);
+/**
+ * Builds the webhook handler. It takes the secret as an argument rather than
+ * closing over the plugin options, so the same function serves a caller who
+ * passes `webhookSecret` inline and one who stored it on the account.
+ */
+export function createNotificationHandler(secret: string | undefined) {
+	return {
+		match: deliveryMatch,
+		handler: async (ctx, request) => {
+			// Throwing, not returning `success: false`: processWebhook rewrites a
+			// returned refusal to a successful delivery, so an unauthenticated
+			// delivery must throw to be reported as a failure.
+			const verification = verifyShippoWebhook(request, secret);
+			if (!verification.valid) {
+				throw new Error(
+					`Shippo webhook rejected: ${verification.error ?? 'signature verification failed'}`,
+				);
+			}
 
-		// unknown: the object is a track, transaction or batch; only shared keys are read.
-		const data = (parsed.data ?? {}) as Record<string, unknown>;
-		const objectId =
-			typeof data.object_id === 'string' ? data.object_id : undefined;
+			const parsed = parseDelivery(request.payload);
 
-		await logEventFromContext(
-			ctx,
-			`shippo.webhook.${parsed.event}`,
-			{
-				event: parsed.event,
-				test: parsed.test ?? undefined,
-				objectId,
-				// A track's status and a transaction's status both live here; a
-				// batch's object fields do not, so this stays undefined for those.
-				status: typeof data.status === 'string' ? data.status : undefined,
-			},
-			'completed',
-		);
+			// unknown: the object is a track, transaction or batch; only shared
+			// keys are read.
+			const data = (parsed.data ?? {}) as Record<string, unknown>;
+			const objectId =
+				typeof data.object_id === 'string' ? data.object_id : undefined;
 
-		return {
-			success: true,
-			data: {
-				event: parsed.event,
-				test: parsed.test ?? null,
-				data: parsed.data ?? null,
-			},
-		};
-	},
-};
+			await logEventFromContext(
+				ctx,
+				`shippo.webhook.${parsed.event}`,
+				{
+					event: parsed.event,
+					test: parsed.test ?? undefined,
+					objectId,
+					// A track's status and a transaction's status both live here; a
+					// batch's object fields do not, so this stays undefined.
+					status: typeof data.status === 'string' ? data.status : undefined,
+					signatureVerified: verification.verified,
+				},
+				'completed',
+			);
+
+			return {
+				success: true,
+				data: {
+					event: parsed.event,
+					test: parsed.test ?? null,
+					data: parsed.data ?? null,
+					signatureVerified: verification.verified,
+				},
+			};
+		},
+	} satisfies CorsairWebhook<
+		ShippoContext,
+		ShippoWebhookPayload,
+		ShippoWebhookOutputs['notification']
+	>;
+}
+
+/** The handler with no secret: accepts unsigned deliveries, and says so. */
+export const notification = createNotificationHandler(undefined);

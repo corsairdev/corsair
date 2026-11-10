@@ -104,10 +104,55 @@ describe('shippo plugin', () => {
 		);
 	});
 
-	it('resolves a webhook key without a credential, since Shippo signs nothing', async () => {
-		// Every delivery would otherwise fail before the handler ran.
+	it('resolves an empty webhook secret when none is configured', async () => {
+		// Not an error: the handler reads '' as "accept unsigned and report
+		// signatureVerified: false", so a delivery without HMAC still arrives.
 		const resolved = await shippo().keyBuilder?.(
 			keyContext({}) as never,
+			'webhook',
+		);
+
+		expect(resolved).toBe('');
+	});
+
+	it('returns the configured HMAC secret for webhook verification', async () => {
+		const resolved = await shippo({
+			webhookSecret: 'whsec_configured',
+		}).keyBuilder?.(keyContext({}) as never, 'webhook');
+
+		expect(resolved).toBe('whsec_configured');
+	});
+
+	it('falls back to a stored webhook signature when no inline secret is set', async () => {
+		const resolved = await shippo().keyBuilder?.(
+			{
+				authType: 'api_key',
+				keys: {
+					get_api_key: async () => 'shippo_test_key',
+					get_webhook_signature: async () => 'whsec_stored',
+				},
+				// unknown: the fixture implements a couple of key manager methods, not the type.
+			} as unknown as ShippoKeyBuilderContext,
+			'webhook',
+		);
+
+		expect(resolved).toBe('whsec_stored');
+	});
+
+	it('does not refuse a delivery when the account has no stored secret', async () => {
+		// Reading a stored secret needs the account DEK; an uninitialised
+		// account has none, and that must not throw inside the binding.
+		const resolved = await shippo().keyBuilder?.(
+			{
+				authType: 'api_key',
+				keys: {
+					get_api_key: async () => null,
+					get_webhook_signature: async () => {
+						throw new Error('No DEK found for account');
+					},
+				},
+				// unknown: the fixture implements two methods, not the full type.
+			} as unknown as ShippoKeyBuilderContext,
 			'webhook',
 		);
 

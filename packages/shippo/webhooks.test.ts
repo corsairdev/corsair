@@ -4,11 +4,15 @@ import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { shippo } from './index';
 import { batch, track, transaction } from './test-fixtures';
 import {
+	computeSignature,
+	createNotificationHandler,
 	isShippoDelivery,
 	isShippoEvent,
 	notification,
 	parseDelivery,
-	signatureSupported,
+	parseSignatureHeader,
+	SHIPPO_SIGNATURE_HEADER,
+	verifyShippoWebhook,
 } from './webhooks';
 
 jest.mock('corsair/core', () => ({
@@ -222,11 +226,163 @@ describe('hostile and empty payloads', () => {
 	});
 });
 
-describe('signature', () => {
-	it('reports that Shippo signs nothing, rather than pretending to verify', () => {
-		// `POST /webhooks` accepts only `url`, `event` and `is_test`; there is no
-		// header and no secret to check.
-		expect(signatureSupported()).toBe(false);
+describe('HMAC verification', () => {
+	const SECRET = 'whsec_test_shared_secret';
+	const RAW = JSON.stringify(trackDelivery);
+
+	/**
+	 * Shippo's documented header form is `t=<unix>,v1=<hex>`, and the digest is
+	 * SHA-256 over `<timestamp>.<raw body>` with the shared secret — the same
+	 * computation as their bash reference script.
+	 */
+	function signed(timestamp = '1688493073') {
+		const signature = computeSignature(SECRET, timestamp, RAW);
+		return {
+			headers: {
+				'content-type': 'application/json',
+				[SHIPPO_SIGNATURE_HEADER]: `t=${timestamp},v1=${signature}`,
+			},
+			payload: trackDelivery,
+			rawBody: RAW,
+		};
+	}
+
+	it('computes the digest Shippo documents', () => {
+		// Pinned against `openssl dgst -sha256 -hmac` over "1688493073.<body>":
+		// changing the algorithm or the signed string breaks this.
+		const signature = computeSignature(
+			SECRET,
+			'1688493073',
+			'{"event":"track_updated"}',
+		);
+		expect(signature).toHaveLength(64);
+		expect(signature).toMatch(/^[0-9a-f]{64}$/);
+	});
+
+	it('parses `t=…,v1=…` and ignores extra fields', () => {
+		expect(parseSignatureHeader('t=1688493073,v1=abc')).toEqual({
+			timestamp: '1688493073',
+			signature: 'abc',
+		});
+		expect(parseSignatureHeader('t=1,v1=ab,v0=ignored')).toEqual({
+			timestamp: '1',
+			signature: 'ab',
+		});
+		expect(parseSignatureHeader('v1=abc')).toBeNull();
+		expect(parseSignatureHeader('garbage')).toBeNull();
+	});
+
+	it('accepts a delivery signed with the configured secret', () => {
+		const result = verifyShippoWebhook(signed(), SECRET);
+
+		expect(result).toMatchObject({ valid: true, verified: true });
+	});
+
+	it('rejects a delivery whose signature does not match the body', () => {
+		const request = signed();
+		request.rawBody = JSON.stringify({ ...trackDelivery, tampered: true });
+
+		const result = verifyShippoWebhook(request, SECRET);
+
+		expect(result).toMatchObject({ valid: false, verified: false });
+		expect(result.error).toContain('does not match');
+	});
+
+	it('rejects a delivery signed with a different secret', () => {
+		const result = verifyShippoWebhook(signed(), 'some_other_secret');
+
+		expect(result).toMatchObject({ valid: false, verified: false });
+	});
+
+	it('rejects a delivery with no signature header when a secret is set', () => {
+		const result = verifyShippoWebhook(
+			{
+				headers: {},
+				payload: trackDelivery,
+				rawBody: RAW,
+			},
+			SECRET,
+		);
+
+		expect(result).toMatchObject({ valid: false, verified: false });
+		expect(result.error).toContain('missing the Shippo-Auth-Signature');
+	});
+
+	it('rejects a malformed signature header', () => {
+		const result = verifyShippoWebhook(
+			{
+				headers: { [SHIPPO_SIGNATURE_HEADER]: 'not-a-signature' },
+				payload: trackDelivery,
+				rawBody: RAW,
+			},
+			SECRET,
+		);
+
+		expect(result).toMatchObject({ valid: false, verified: false });
+		expect(result.error).toContain('expected `t=<unix>,v1=<hex>`');
+	});
+
+	it('refuses to verify without the raw body, rather than trusting parsed JSON', () => {
+		// Re-serializing parsed JSON changes the bytes, so the digest could never
+		// match; guessing would be worse than failing.
+		const request = signed();
+		const result = verifyShippoWebhook(
+			{ headers: request.headers, payload: trackDelivery },
+			SECRET,
+		);
+
+		expect(result).toMatchObject({ valid: false, verified: false });
+		expect(result.error).toContain('needs the raw request body');
+	});
+
+	it('accepts unsigned deliveries when no secret is configured, and says so', () => {
+		const result = verifyShippoWebhook(
+			{ headers: {}, payload: trackDelivery, rawBody: RAW },
+			undefined,
+		);
+
+		// Nothing was checked, so this is not a verified delivery.
+		expect(result).toMatchObject({ valid: true, verified: false });
+	});
+
+	it('trusts the Hub when it already verified the signature', () => {
+		const result = verifyShippoWebhook(
+			{ headers: {}, payload: trackDelivery, hubVerified: true },
+			undefined,
+		);
+
+		expect(result).toMatchObject({ valid: true, verified: true });
+	});
+
+	it('throws from the handler on a bad signature, so the delivery is refused', async () => {
+		const handler = createNotificationHandler(SECRET);
+
+		await expect(handler.handler(ctx, signed())).resolves.toMatchObject({
+			success: true,
+		});
+
+		await expect(
+			handler.handler(ctx, {
+				headers: {},
+				payload: trackDelivery,
+				rawBody: RAW,
+			}),
+		).rejects.toThrow('Shippo webhook rejected');
+	});
+
+	it('reports signatureVerified in the handler output', async () => {
+		const signedHandler = createNotificationHandler(SECRET);
+		const unsignedHandler = createNotificationHandler(undefined);
+
+		const verified = await signedHandler.handler(ctx, signed());
+		expect(verified.data?.signatureVerified).toBe(true);
+
+		const unverified = await unsignedHandler.handler(ctx, {
+			headers: {},
+			payload: trackDelivery,
+			rawBody: RAW,
+		});
+		expect(unverified.data?.signatureVerified).toBe(false);
 	});
 });
 
@@ -275,6 +431,59 @@ describe('a delivery through processWebhook', () => {
 				corsair,
 				{ 'content-type': 'application/json' },
 				transactionDelivery,
+			);
+
+			expect(result.plugin).toBe('shippo');
+			expect(result.response).toMatchObject({ success: true });
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('refuses an unsigned delivery when a secret is configured', async () => {
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'shippo', 'default');
+		const corsair = createCorsair({
+			plugins: [shippo({ webhookSecret: 'whsec_configured' })],
+			database: testDb.db,
+			kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+		});
+		try {
+			const raw = JSON.stringify(trackDelivery);
+			const result = await processWebhook(
+				corsair,
+				{ 'content-type': 'application/json' },
+				raw,
+			);
+
+			// No signature header, so the handler throws and processWebhook
+			// reports a failure rather than running hooks on an untrusted body.
+			expect(result.plugin).toBe('shippo');
+			expect(result.response).toMatchObject({ success: false });
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('accepts a correctly signed delivery when a secret is configured', async () => {
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'shippo', 'default');
+		const corsair = createCorsair({
+			plugins: [shippo({ webhookSecret: 'whsec_configured' })],
+			database: testDb.db,
+			kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+		});
+		try {
+			const raw = JSON.stringify(trackDelivery);
+			const signature = computeSignature('whsec_configured', '1688493073', raw);
+
+			const result = await processWebhook(
+				corsair,
+				{
+					'content-type': 'application/json',
+					[SHIPPO_SIGNATURE_HEADER]: `t=1688493073,v1=${signature}`,
+				},
+				raw,
 			);
 
 			expect(result.plugin).toBe('shippo');

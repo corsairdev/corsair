@@ -42,9 +42,9 @@ import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { ShippoSchema } from './schema';
 import type { ShippoWebhookOutputs, ShippoWebhookPayload } from './webhooks';
 import {
+	createNotificationHandler,
 	isShippoDelivery,
 	matchShippoTenantWebhook,
-	Notifications,
 	ShippoWebhookPayloadSchema,
 } from './webhooks';
 
@@ -56,6 +56,14 @@ export type ShippoPluginOptions = {
 	 */
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/**
+	 * Shippo's HMAC secret for webhook verification. Shippo issues it through
+	 * support (it is not a field on `POST /webhooks`), and verification is only
+	 * performed when one is set — either this option or the account's stored
+	 * `webhook_signature`. Without it, deliveries are accepted unsigned and the
+	 * handler reports `signatureVerified: false`.
+	 */
+	webhookSecret?: string;
 	hooks?: InternalShippoPlugin['hooks'];
 	webhookHooks?: InternalShippoPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -242,12 +250,6 @@ const shippoEndpointsNested = {
 		create: Webhooks.create,
 		update: Webhooks.update,
 		delete: Webhooks.remove,
-	},
-} as const;
-
-const shippoWebhooksNested = {
-	notifications: {
-		delivery: Notifications.delivery,
 	},
 } as const;
 
@@ -781,6 +783,22 @@ export type InternalShippoPlugin = BaseShippoPlugin<ShippoPluginOptions>;
 export type ExternalShippoPlugin<T extends ShippoPluginOptions> =
 	BaseShippoPlugin<T>;
 
+/**
+ * The webhook tree, built per plugin instance because the HMAC secret is an
+ * option. The path (`notifications.delivery`) is fixed, so `webhookSchemas`
+ * and `pluginWebhookMatcher` stay valid whatever the secret is.
+ */
+function shippoWebhooksNestedFor(secret: string | undefined) {
+	return {
+		notifications: {
+			delivery: createNotificationHandler(secret),
+		},
+	} as const;
+}
+
+/** The no-secret tree, for the type and the schemas. */
+const shippoWebhooksNested = shippoWebhooksNestedFor(undefined);
+
 export function shippo<const T extends ShippoPluginOptions>(
 	incomingOptions: ShippoPluginOptions & T = {} as ShippoPluginOptions & T,
 ): ExternalShippoPlugin<T> {
@@ -796,7 +814,7 @@ export function shippo<const T extends ShippoPluginOptions>(
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: shippoEndpointsNested,
-		webhooks: shippoWebhooksNested,
+		webhooks: shippoWebhooksNestedFor(options.webhookSecret),
 		endpointMeta: shippoEndpointMeta,
 		endpointSchemas: shippoEndpointSchemas,
 		webhookSchemas: shippoWebhookSchemas,
@@ -808,10 +826,20 @@ export function shippo<const T extends ShippoPluginOptions>(
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: ShippoKeyBuilderContext, source) => {
 			if (source === 'webhook') {
-				// Shippo signs nothing and allows no header on the subscription,
-				// so there is no secret to resolve. Throwing here would fail every
-				// delivery before the handler ran.
-				return '';
+				// The HMAC secret, when one is configured: the inline option wins
+				// over the account's stored value. Empty when neither exists,
+				// which the handler reads as "accept unsigned and report
+				// signatureVerified: false" rather than failing every delivery.
+				if (options.webhookSecret) return options.webhookSecret;
+				try {
+					return (await ctx.keys.get_webhook_signature()) ?? '';
+				} catch {
+					// Reading a stored secret needs the account DEK. An account
+					// that was never initialised has none, and that must not turn
+					// into a refused delivery: no secret is configured, so the
+					// handler accepts it as unverified.
+					return '';
+				}
 			}
 
 			if (options.key) {
