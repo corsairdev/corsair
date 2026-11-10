@@ -8,7 +8,7 @@ overviewNote: |
 
   List operations return up to `limit` items (100 by default). When a response has a `last` cursor there is another page: pass `JSON.stringify(last)` as `start` on the next call. On `mid-insights.listMidInsights` the cursor is already a string, so pass it unchanged.
 
-  `cards.createCard` takes a full card number. Corsair sends it to Fidel and never writes the number or the expiry date to its event log. Fidel's responses only carry the first six and last four digits.
+  `cards.createCard` takes a full card number, so read Fidel's rules before using it with real cards: Fidel requires PCI compliance for this endpoint in the live environment, documents it with the public SDK key instead of the secret key, and recommends its own SDKs for linking cards. Corsair keeps the number and the expiry date out of its event log, but a call that is held for approval stores its arguments until it is approved. Fidel's responses only carry the first six and last four digits.
 examples:
   read:
     path: programs.listPrograms
@@ -27,6 +27,8 @@ apiExamples:
 apiNotes:
   locations.createLocation: |
     To attach merchant IDs you already know, pass `searchBy` as a nested object: `{ merchantIds: { visa: ['1234567'], mastercard: ['7654321'], amex: ['1357986420'] } }`.
+  cards.createCard: |
+    Fidel documents this endpoint with the public SDK key (`pk_test_…` or `pk_live_…`) and requires PCI compliance to call it in the live environment. For real cards, use Fidel's SDKs, which send the card number straight to Fidel.
   cards.updateCardMetadata: |
     `metadata` replaces the card's whole metadata object. Pass `{}` to clear it.
   webhooks.createProgramWebhook: |

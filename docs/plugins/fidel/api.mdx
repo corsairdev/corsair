@@ -265,6 +265,8 @@ await corsair.fidel.api.cards.createCard({});
 | `termsOfUse` | `boolean` | Yes | — |
 | `metadata` | `Record<string, any>` | No | — |
 
+Fidel documents this endpoint with the public SDK key (`pk_test_…` or `pk_live_…`) and requires PCI compliance to call it in the live environment. For real cards, use Fidel's SDKs, which send the card number straight to Fidel.
+
 
 
 **Output**

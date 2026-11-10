@@ -9,7 +9,7 @@ The API key is your Fidel secret key (`sk_test_…` or `sk_live_…`). A test ke
 
 List operations return up to `limit` items (100 by default). When a response has a `last` cursor there is another page: pass `JSON.stringify(last)` as `start` on the next call. On `mid-insights.listMidInsights` the cursor is already a string, so pass it unchanged.
 
-`cards.createCard` takes a full card number. Corsair sends it to Fidel and never writes the number or the expiry date to its event log. Fidel's responses only carry the first six and last four digits.
+`cards.createCard` takes a full card number, so read Fidel's rules before using it with real cards: Fidel requires PCI compliance for this endpoint in the live environment, documents it with the public SDK key instead of the secret key, and recommends its own SDKs for linking cards. Corsair keeps the number and the expiry date out of its event log, but a call that is held for approval stores its arguments until it is approved. Fidel's responses only carry the first six and last four digits.
 
 **What you get:**
 
