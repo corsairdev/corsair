@@ -1,0 +1,169 @@
+---
+title: Overview
+description: "Sanity's Content Lake from an agent. Query documents with GROQ, create and edit drafts, publish, upload images and files, read history, run Sanity's AI Agent Actions, manage datasets and webhooks, and receive signed document webhooks."
+---
+
+Use **Sanity** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Connect with an API token from sanity.io/manage under API > Tokens, plus the project id and the dataset you use most. A Viewer token can read. Writing documents needs Editor. Datasets and webhooks need a token with the Administrator or Developer role. Each call can name another dataset with `dataset`.
+
+Writes follow the Studio's draft model. `documents.create` and `documents.edit` change the draft (`drafts.<id>`), and readers of published content see nothing until `documents.publish`. Pass `publish: true` to do both in one transaction. `documents.patch` and `documents.mutate` write the exact ids you give them, so a published id changes the live document at once.
+
+Before writing a type you don't know, call `schemas.list`. It returns each deployed schema's types and fields, and the `schemaId` the Agent Actions need. A project deploys its schema with `sanity schema deploy`, and the list only shows what was last deployed.
+
+The Agent Actions (`generate`, `transform`, `translate`, `prompt`) use one Sanity AI credit per call and stop with a 429 when the organization's AI budget runs out. They write to drafts unless `forcePublishedWrite` is set. `noWrite: true` returns the result without saving it. Sanity marks these actions experimental, and they run on API version `vX`.
+
+The plugin retries reads after a 5xx or a network failure. It never repeats a write that may have landed. Sanity's 429 for too many requests means nothing ran, so those are retried for writes too.
+
+**What you get:**
+
+- 26 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/sanity better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/sanity better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/sanity better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/sanity better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { sanity } from '@corsair-dev/sanity';
+
+export const corsair = createCorsair({
+	plugins: [
+		sanity(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+sanity()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'sanity',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the latest published posts**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.sanity.api.documents.query({
+	query: '*[_type == $type] | order(_createdAt desc)[0...10]{ _id, title, \'slug\': slug.current }',
+	params: { type: 'post' },
+});
+```
+
+
+**Create a draft post**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.sanity.api.documents.create({
+	document: {
+		_type: 'post',
+		title: 'Shipping the Sanity plugin',
+		slug: { _type: 'slug', current: 'shipping-the-sanity-plugin' },
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/sanity/api) page.
+
+## Webhooks
+
+Create the webhook with `webhooks.create`, or under API > Webhooks at sanity.io/manage, and give it a secret. Store the same secret with `keys.set_webhook_signature` (or `sanity({ webhookSecret })`). Deliveries without a valid signature are refused. Hand `processWebhook` the raw body text (`await request.text()`), because a parsed body cannot verify. A delivery that fails verification makes `processWebhook` report a failure. Answer it with a 5xx and Sanity retries twice, 30 seconds apart. Signatures more than 15 minutes from now are refused. Deliveries can repeat, so deduplicate by `idempotencyKey`. The event's `body` is the webhook's GROQ projection, and its operation, document id and dataset come from Sanity's headers. Every delivery names its project in `sanity-project-id`, which routes it to the account that stored that project id. When several tenants share one Sanity project, give each its own webhook with `?tenantId=` on the URL and pass `Object.fromEntries(new URL(request.url).searchParams)` to `processWebhook` as the fourth argument. The signature covers the body but not the URL, so give each tenant's webhook its own secret. A delivery replayed under another `tenantId` then fails that tenant's check. A `before` hook runs ahead of the signature check, so keep side effects in `after`.
+
+```ts
+sanity({
+    webhookHooks: {
+        documents: {
+            changed: {
+                after: async (ctx, result) => {
+                    if (result.data?.operation === 'update') console.log(result.data.documentId, result.data.body);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/sanity/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/sanity/api">
+    Every `sanity.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/sanity/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

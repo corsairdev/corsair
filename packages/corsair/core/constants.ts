@@ -373,6 +373,7 @@ export const BaseProviders = [
 	'runpod',
 	'salesflare',
 	'salesforce',
+	'sanity',
 	'saperly',
 	'sapsuccessfactors',
 	'scaleai',
@@ -836,6 +837,7 @@ export const ProviderDisplayNames = {
 	runpod: 'RunPod',
 	salesflare: 'Salesflare',
 	salesforce: 'Salesforce',
+	sanity: 'Sanity',
 	saperly: 'Saperly',
 	sapsuccessfactors: 'SAP SuccessFactors',
 	scaleai: 'Scale AI',
@@ -1305,6 +1307,7 @@ export type AllProviders =
 	| 'runpod'
 	| 'salesflare'
 	| 'salesforce'
+	| 'sanity'
 	| 'saperly'
 	| 'sapsuccessfactors'
 	| 'scaleai'
