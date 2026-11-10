@@ -118,7 +118,7 @@ apiNotes:
   messages.list: |
     Answers `{ messages, page_size, page_count, total_count }`, newest first. `include: 'original_body'` adds the message HTML when the brand stored it.
   messages.create: |
-    The conversation slug is a path segment, so it never appears in the body. The payload is wrapped in `message`. `visibility: 1` posts an internal note instead of a reply, and `origin_id` lets Re:amaze discard a duplicate send.
+    **A reply is sent to the real customer** and the other participants, by email or the conversation's channel, unless `suppress_notifications` is true. `visibility: 1` posts an internal note that only staff see. The conversation slug is a path segment, so it never appears in the body, and the payload is wrapped in `message`. `origin_id` lets Re:amaze discard a duplicate send.
   contacts.list: |
     Answers `{ contacts, page_size, page_count, total_count }`. Contacts belong to the account rather than a brand. `type` takes `email` or `mobile`, and `data` filters the same way it does on conversations.
   contacts.create: |

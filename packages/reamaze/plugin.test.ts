@@ -151,6 +151,14 @@ describe('reamaze plugin definition', () => {
 		expect(irreversible).toEqual(['notes.delete']);
 	});
 
+	it('says that a reply reaches a real customer', () => {
+		// Sending a message is `write`, like every other send in the catalog, so
+		// the description is where an agent learns that it leaves the building.
+		expect(meta['messages.create']?.riskLevel).toBe('write');
+		expect(meta['messages.create']?.description).toMatch(/real customer/);
+		expect(meta['messages.create']?.description).toMatch(/internal note/);
+	});
+
 	it('describes every operation', () => {
 		for (const entry of Object.values(meta)) {
 			expect(entry.description.length).toBeGreaterThan(10);

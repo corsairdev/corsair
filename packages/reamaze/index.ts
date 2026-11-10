@@ -338,7 +338,7 @@ const reamazeEndpointMeta = {
 	'messages.create': {
 		riskLevel: 'write',
 		description:
-			'Post a reply or an internal note into a conversation, which notifies participants unless suppressed',
+			'Send a reply in a conversation. It goes out to the real customer and the other participants unless suppress_notifications is set. visibility 1 posts an internal note only staff see',
 	},
 	'contacts.list': {
 		riskLevel: 'read',
@@ -468,7 +468,8 @@ const reamazeEndpointMeta = {
 	},
 	'incidents.create': {
 		riskLevel: 'write',
-		description: 'Create a status page incident with its first update',
+		description:
+			'Create a status page incident with its first update, which shows on the public status page',
 	},
 	'incidents.update': {
 		riskLevel: 'write',
