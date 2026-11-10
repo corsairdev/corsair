@@ -457,7 +457,7 @@ The name field is sent as `taskName`, which is what the API accepts; the publish
 | `statusId` | `string \| null` | No | — |
 | `groupId` | `string \| null` | No | — |
 | `group` | `string \| null` | No | — |
-| `taskUsers` | `string[] \| null` | No | — |
+| `taskUsers` | `object[] \| null` | No | — |
 | `subscribers` | `string[] \| null` | No | — |
 | `description` | `string \| null` | No | — |
 | `dueDate` | `string \| null` | No | — |
@@ -473,6 +473,15 @@ The name field is sent as `taskName`, which is what the API accepts; the publish
 | `links` | `JsonValue[] \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="taskUsers full type">
+
+```ts
+{
+  taskUserId?: string | null
+}[] | null
+```
+</Accordion>
+
 <Accordion title="comments full type">
 
 ```ts
@@ -527,7 +536,7 @@ Comments on the task use PascalCase fields (`_id`, `CreatedBy`, `CreatedTime`, `
 | `statusId` | `string \| null` | No | — |
 | `groupId` | `string \| null` | No | — |
 | `group` | `string \| null` | No | — |
-| `taskUsers` | `string[] \| null` | No | — |
+| `taskUsers` | `object[] \| null` | No | — |
 | `subscribers` | `string[] \| null` | No | — |
 | `description` | `string \| null` | No | — |
 | `dueDate` | `string \| null` | No | — |
@@ -543,6 +552,15 @@ Comments on the task use PascalCase fields (`_id`, `CreatedBy`, `CreatedTime`, `
 | `links` | `JsonValue[] \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="taskUsers full type">
+
+```ts
+{
+  taskUserId?: string | null
+}[] | null
+```
+</Accordion>
+
 <Accordion title="comments full type">
 
 ```ts
