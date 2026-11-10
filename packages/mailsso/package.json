@@ -20,7 +20,7 @@
     "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
   },
   "peerDependencies": {
-    "corsair": ">=0.1.157",
+    "corsair": ">=0.1.158",
     "zod": "^4.1.13"
   },
   "devDependencies": {
