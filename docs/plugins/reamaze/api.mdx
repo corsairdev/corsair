@@ -1,0 +1,2516 @@
+---
+title: API
+description: "API reference for Re:amaze: every `reamaze.api.*` operation with input and output types."
+---
+
+Every `reamaze.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Articles
+
+### create
+
+`articles.create`
+
+Create a help center article under a topic
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.articles.create({ topic: 'the-federalist-papers', title: 'Returns policy', body: 'Send it back within 30 days.', status: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `string` | Yes | Topic slug the article is filed under |
+| `title` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `status` | `0 \| 1 \| 4` | No | 0 published, 1 draft, 4 internal |
+| `topic_id` | `string` | No | Topic slug carried in the body |
+
+Posts to the topic named by `topic`, with the payload wrapped in `article`. The numeric `status` is 0 published, 1 draft or 4 internal.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `status` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `topic` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="topic full type">
+
+```ts
+{
+  name?: string | null,
+  slug?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`articles.get`
+
+Read one help center article by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.articles.get({ slug: 'advantage-of-the-union' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+Answers one article with its `author` and `topic` objects.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `status` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `topic` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="topic full type">
+
+```ts
+{
+  name?: string | null,
+  slug?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`articles.list`
+
+List help center articles, filtered by status or search text
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.articles.list({ status: 'published', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `published \| draft \| internal` | No | Defaults to published articles only |
+| `q` | `string` | No | Search over article keywords |
+| `page` | `number` | No | Page number, 1-based. The response carries page_size and page_count |
+
+Answers `{ articles, page_size, page_count, total_count }`. The status filter takes `published`, `draft` or `internal`, and omitting it returns published articles only.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `articles` | `object[]` | Yes | — |
+| `page_size` | `number \| null` | No | — |
+| `page_count` | `number \| null` | No | — |
+| `total_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="articles full type">
+
+```ts
+{
+  title?: string | null,
+  body?: string | null,
+  slug?: string | null,
+  status?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  url?: string | null,
+  author?: {
+    name?: string | null,
+    email?: string | null
+  } | null,
+  topic?: {
+    name?: string | null,
+    slug?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`articles.update`
+
+Change an article title, body, status or topic
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.articles.update({ slug: 'advantage-of-the-union', title: 'New title' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `body` | `string` | No | — |
+| `status` | `0 \| 1 \| 4` | No | 0 published, 1 draft, 4 internal |
+| `topic_id` | `string` | No | — |
+
+Sends PUT to the article slug with an `article` wrapper.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `status` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `topic` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="topic full type">
+
+```ts
+{
+  name?: string | null,
+  slug?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Channels
+
+### get
+
+`channels.get`
+
+Read one channel by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.channels.get({ slug: 'support' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | Channel slug |
+
+Answers one channel with its `brand` object. `settings_reply_from_name` is `channel`, `brand` or `staff`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `channel` | `number \| null` | No | — |
+| `visibility` | `number \| null` | No | — |
+| `spam_filter_enabled` | `boolean \| null` | No | — |
+| `reply_from_origin` | `boolean \| null` | No | — |
+| `verified` | `boolean \| null` | No | — |
+| `verification_email` | `string \| null` | No | — |
+| `last_verified` | `string \| null` | No | — |
+| `settings_reply_from_name` | `string \| null` | No | — |
+| `settings_signature` | `string \| null` | No | — |
+| `brand` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="brand full type">
+
+```ts
+{
+  name?: string | null,
+  url?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`channels.list`
+
+List the brand channels, optionally by type
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.channels.list({ channel: 'email' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `email \| facebook \| twitter \| chat` | No | Defaults to every channel type |
+
+Answers `{ channels, total_count }` with **no** `page_size` or `page_count`. The `channel` filter takes `email`, `facebook`, `twitter` or `chat`, and each channel carries a numeric `channel` type.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channels` | `object[]` | Yes | — |
+| `total_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="channels full type">
+
+```ts
+{
+  name?: string | null,
+  slug?: string | null,
+  email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  channel?: number | null,
+  visibility?: number | null,
+  spam_filter_enabled?: boolean | null,
+  reply_from_origin?: boolean | null,
+  verified?: boolean | null,
+  verification_email?: string | null,
+  last_verified?: string | null,
+  settings_reply_from_name?: string | null,
+  settings_signature?: string | null,
+  brand?: {
+    name?: string | null,
+    url?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact for the account
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.contacts.create({ name: 'bob', email: 'bob@example.com', data: { plan: 'pro' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `email` | `string` | No | Either this or mobile is required |
+| `mobile` | `string` | No | E.164 without spaces, e.g. +12223334444. Either this or email is required |
+| `id` | `string` | No | Your own id for this contact |
+| `external_avatar_url` | `string` | No | — |
+| `notes` | `string[]` | No | Plain note bodies attached at creation |
+| `data` | `Record<string, any>` | No | Customer data attributes, one level deep |
+
+Wraps the payload in `contact` and answers `{ contact }`. Pass an `email` or a `mobile` number in E.164 form; other contact types cannot be created. `notes` is an array of note bodies attached at creation, and `data` becomes the customer data attributes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  email?: string | null,
+  friendly_name?: string | null,
+  mobile?: string | null,
+  external_avatar_url?: string | null,
+  notes?: {
+    id?: string | number | null,
+    note?: string | null,
+    content?: string | null,
+    body?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    creator?: {
+      name?: string | null,
+      email?: string | null
+    } | null
+  }[] | null,
+  data?: Record<string, any> | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts, filtered by search text, type or data attributes
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.contacts.list({ q: 'bob', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Search over contact name and email |
+| `data` | `Record<string, any>` | No | Sent as one `data[key]=value` query entry per key, ANDed by the API |
+| `sort` | `date` | No | date orders by create time descending; default is by name |
+| `type` | `email \| mobile` | No | Only contacts that have an email address or a phone number |
+| `page` | `number` | No | Page number, 1-based. The response carries page_size and page_count |
+
+Answers `{ contacts, page_size, page_count, total_count }`. Contacts belong to the account rather than a brand. `type` takes `email` or `mobile`, and `data` filters the same way it does on conversations.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+| `page_size` | `number \| null` | No | — |
+| `page_count` | `number \| null` | No | — |
+| `total_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  email?: string | null,
+  friendly_name?: string | null,
+  mobile?: string | null,
+  external_avatar_url?: string | null,
+  notes?: {
+    id?: string | number | null,
+    note?: string | null,
+    content?: string | null,
+    body?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    creator?: {
+      name?: string | null,
+      email?: string | null
+    } | null
+  }[] | null,
+  data?: Record<string, any> | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Change a contact name, friendly name, avatar or data attributes, and append notes
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.contacts.update({ email: 'bob@example.com', friendly_name: 'Bobby' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The contact identifier in the path |
+| `identifier_type` | `mobile \| facebook \| twitter \| instagram` | No | Interprets `email` as this identity type instead of an email |
+| `name` | `string` | No | — |
+| `friendly_name` | `string` | No | — |
+| `external_avatar_url` | `string` | No | — |
+| `notes` | `string[]` | No | Appends notes; a note is edited through the notes endpoints |
+| `data` | `Record<string, any>` | No | Customer data attributes, one level deep |
+
+Sends PUT with a `contact` wrapper, and the identifier stays in the path only because Re:amaze cannot change an email, mobile number or other identifier. `notes` appends notes; editing one goes through the notes endpoints.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  email?: string | null,
+  friendly_name?: string | null,
+  mobile?: string | null,
+  external_avatar_url?: string | null,
+  notes?: {
+    id?: string | number | null,
+    note?: string | null,
+    content?: string | null,
+    body?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    creator?: {
+      name?: string | null,
+      email?: string | null
+    } | null
+  }[] | null,
+  data?: Record<string, any> | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Conversations
+
+### create
+
+`conversations.create`
+
+Create a conversation on behalf of a customer, with its first message
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.conversations.create({ subject: 'Printer offline', category: 'support', message: { body: 'The printer on floor 3 is offline.' }, user: { name: 'bob', email: 'bob@example.com' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject` | `string` | Yes | — |
+| `category` | `string` | Yes | Channel slug the conversation is created in |
+| `tag_list` | `string[]` | No | — |
+| `status` | `number` | No | 0 open, 2 done, 3 spam, 5 on hold, 9 AI spam |
+| `hold_until` | `string` | No | ISO 8601; only meaningful when status is 5 (On Hold) |
+| `data` | `Record<string, any>` | No | Conversation data attributes |
+| `assignee` | `string` | No | Staff email the conversation is assigned to |
+| `message` | `object` | Yes | — |
+| `user` | `object` | Yes | The customer the conversation is created for |
+
+Wraps the payload in `conversation` and answers the created conversation. `category` is a channel slug, and the nested `message` is the first message in the thread.
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  body: string,
+  recipients?: string[],
+  suppress_notifications?: boolean,
+  suppress_autoresolve?: boolean,
+  suppress_surveys?: boolean | string,
+  attachment?: string,
+  attachments?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  name: string,
+  email: string,
+  data?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | Identifier used by the get and update routes |
+| `subject` | `string \| null` | No | — |
+| `status` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `tag_list` | `string[] \| null` | No | — |
+| `message` | `object \| null` | No | — |
+| `last_staff_message` | `object \| null` | No | — |
+| `last_customer_message` | `object \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `category` | `object \| null` | No | — |
+| `data` | `Record<string, any> \| null` | No | — |
+| `followers` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  body?: string | null,
+  created_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="last_staff_message full type">
+
+```ts
+{
+  body?: string | null,
+  created_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="last_customer_message full type">
+
+```ts
+{
+  body?: string | null,
+  created_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="category full type">
+
+```ts
+{
+  name?: string | null,
+  slug?: string | null,
+  email?: string | null,
+  channel?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="followers full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`conversations.get`
+
+Read one conversation by slug, reference id, or origin id within a channel
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.conversations.get({ slug: 'knock-knock' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | Conversation slug, unless id_type selects another identifier |
+| `id_type` | `ref \| origin` | No | ref looks up by ref_id, origin by origin id within `category` |
+| `category` | `string` | No | Channel slug, required when id_type is origin |
+| `channel` | `number \| string` | No | Channel type, used with id_type=origin |
+
+Answers one conversation object. The path segment is normally the slug; set `id_type` to `ref` to look up by reference id, or to `origin` with `category` to look up by an origin id within a channel.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | Identifier used by the get and update routes |
+| `subject` | `string \| null` | No | — |
+| `status` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `tag_list` | `string[] \| null` | No | — |
+| `message` | `object \| null` | No | — |
+| `last_staff_message` | `object \| null` | No | — |
+| `last_customer_message` | `object \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `category` | `object \| null` | No | — |
+| `data` | `Record<string, any> \| null` | No | — |
+| `followers` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  body?: string | null,
+  created_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="last_staff_message full type">
+
+```ts
+{
+  body?: string | null,
+  created_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="last_customer_message full type">
+
+```ts
+{
+  body?: string | null,
+  created_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="category full type">
+
+```ts
+{
+  name?: string | null,
+  slug?: string | null,
+  email?: string | null,
+  channel?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="followers full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`conversations.list`
+
+List conversations, filtered by status, assignee, tag, channel, origin or date
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.conversations.list({ filter: 'open', sort: 'updated', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `archived \| open \| unassigned \| all` | No | Defaults to unarchived conversations only |
+| `for` | `string` | No | User email; returns conversations visible to that customer |
+| `for_id` | `string` | No | SSO user id; the same filter as `for` |
+| `sort` | `updated \| changed` | No | updated orders by last customer message, changed by any update. Default is created_at |
+| `tag` | `string` | No | Comma-separated tags, all must match |
+| `category` | `string` | No | Channel slug |
+| `page` | `number` | No | Page number, 1-based. The response carries page_size and page_count |
+| `start_date` | `string` | No | ISO 8601; filters on the latest customer message time |
+| `end_date` | `string` | No | ISO 8601; filters on the latest customer message time |
+| `origin` | `number \| string` | No | Origin number (1 email) or name (email) |
+| `data` | `Record<string, any>` | No | Sent as one `data[key]=value` query entry per key, ANDed by the API |
+
+Answers `{ conversations, page_size, page_count, total_count }`. `filter` takes `archived`, `open`, `unassigned` or `all`; omitting it returns unarchived conversations only. `data` is sent as one `data[key]=value` entry per key, so `data: { plan: 'pro' }` becomes `data[plan]=pro`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversations` | `object[]` | Yes | — |
+| `page_size` | `number \| null` | No | — |
+| `page_count` | `number \| null` | No | — |
+| `total_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="conversations full type">
+
+```ts
+{
+  slug: string,
+  subject?: string | null,
+  status?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  tag_list?: string[] | null,
+  message?: {
+    body?: string | null,
+    created_at?: string | null
+  } | null,
+  last_staff_message?: {
+    body?: string | null,
+    created_at?: string | null
+  } | null,
+  last_customer_message?: {
+    body?: string | null,
+    created_at?: string | null
+  } | null,
+  author?: {
+    name?: string | null,
+    email?: string | null
+  } | null,
+  assignee?: {
+    name?: string | null,
+    email?: string | null
+  } | null,
+  category?: {
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    channel?: number | null
+  } | null,
+  data?: Record<string, any> | null,
+  followers?: {
+    name?: string | null,
+    email?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`conversations.update`
+
+Change a conversation status, tags, assignee, data attributes or channel
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.conversations.update({ slug: 'knock-knock', status: 2, tag_list: ['resolved'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+| `assignee` | `object` | No | Reassigns the conversation to this staff user |
+| `tag_list` | `string[]` | No | Replaces the tag list |
+| `status` | `number` | No | — |
+| `hold_until` | `string` | No | ISO 8601; only meaningful when status is 5 (On Hold) |
+| `data` | `Record<string, any>` | No | — |
+| `category` | `string` | No | Moves the conversation to this channel; it must be an email channel |
+| `brand` | `string` | No | Destination brand URL, only when moving to another brand |
+
+Sends PUT with a `conversation` wrapper. Only `assignee`, `tag_list`, `status`, `hold_until`, `data`, `category` and `brand` can change; `category` must be an email channel, and `brand` is only used when moving a conversation to another brand.
+
+<AccordionGroup>
+<Accordion title="assignee full type">
+
+```ts
+{
+  email: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | Identifier used by the get and update routes |
+| `subject` | `string \| null` | No | — |
+| `status` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `tag_list` | `string[] \| null` | No | — |
+| `message` | `object \| null` | No | — |
+| `last_staff_message` | `object \| null` | No | — |
+| `last_customer_message` | `object \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `category` | `object \| null` | No | — |
+| `data` | `Record<string, any> \| null` | No | — |
+| `followers` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  body?: string | null,
+  created_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="last_staff_message full type">
+
+```ts
+{
+  body?: string | null,
+  created_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="last_customer_message full type">
+
+```ts
+{
+  body?: string | null,
+  created_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="category full type">
+
+```ts
+{
+  name?: string | null,
+  slug?: string | null,
+  email?: string | null,
+  channel?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="followers full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Identities
+
+### create
+
+`identities.create`
+
+Attach an identity to a contact. An identity already on another contact is moved here with its messages
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.identities.create({ email: 'bob@example.com', type: 'email', identifier: 'bob.work@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Contact email the identity is attached to |
+| `type` | `email \| mobile \| instagram \| igsid \| twitter` | Yes | Facebook identities cannot be added |
+| `identifier` | `string` | Yes | Address or handle, matching `type` |
+
+Wraps the payload in `identity` and answers the contact's full identity list. An identity already attached to another contact is moved here, along with its messages and data.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identities` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="identities full type">
+
+```ts
+{
+  type?: string | null,
+  identifier?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`identities.list`
+
+List the emails, handles and phone numbers attached to a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.identities.list({ email: 'bob@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Contact email whose identities are listed |
+
+Answers `{ identities: [{ type, identifier }] }`. The type is one of `email`, `twitter`, `facebook`, `instagram`, `igsid` or `mobile`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identities` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="identities full type">
+
+```ts
+{
+  type?: string | null,
+  identifier?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Incidents
+
+### create
+
+`incidents.create`
+
+Create a status page incident with its first update, which shows on the public status page
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.incidents.create({ title: 'Shipment issues', updates_attributes: [{ status: 'investigating', message: 'Looking into it.' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `updates_attributes` | `object[]` | Yes | — |
+| `incidents_systems_attributes` | `object[]` | No | — |
+
+Wraps the payload in `incident`. Each update status is `investigating`, `identified`, `monitoring` or `resolved`; each system status is `operational`, `degraded_performance`, `partial_outage`, `major_outage` or `under_maintenance`.
+
+<AccordionGroup>
+<Accordion title="updates_attributes full type">
+
+```ts
+{
+  status: investigating | identified | monitoring | resolved,
+  message: string
+}[]
+```
+</Accordion>
+
+<Accordion title="incidents_systems_attributes full type">
+
+```ts
+{
+  id?: string,
+  system_id: string,
+  status: operational | degraded_performance | partial_outage | major_outage | under_maintenance
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `status` | `string \| null` | No | investigating, identified, monitoring or resolved |
+| `updates` | `object[] \| null` | No | — |
+| `incidents_systems` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="updates full type">
+
+```ts
+{
+  id?: string | number | null,
+  status?: string | null,
+  message?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="incidents_systems full type">
+
+```ts
+{
+  id?: string | number | null,
+  system_id?: string | number | null,
+  status?: string | null,
+  system?: {
+    id?: string | number | null,
+    title?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`incidents.get`
+
+Read one status page incident by id
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.incidents.get({ identifier: 'inc-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | Incident id |
+
+Answers one incident with its `updates` and `incidents_systems` arrays.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `status` | `string \| null` | No | investigating, identified, monitoring or resolved |
+| `updates` | `object[] \| null` | No | — |
+| `incidents_systems` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="updates full type">
+
+```ts
+{
+  id?: string | number | null,
+  status?: string | null,
+  message?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="incidents_systems full type">
+
+```ts
+{
+  id?: string | number | null,
+  system_id?: string | number | null,
+  status?: string | null,
+  system?: {
+    id?: string | number | null,
+    title?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`incidents.list`
+
+List status page incidents
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.incidents.list({});
+```
+
+**Input:** _empty object_
+
+Answers a **bare array**, so the plugin returns `{ incidents }`. A brand with no incidents answers `[]`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `incidents` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="incidents full type">
+
+```ts
+{
+  id?: string | number | null,
+  title?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  updates?: {
+    id?: string | number | null,
+    status?: string | null,
+    message?: string | null
+  }[] | null,
+  incidents_systems?: {
+    id?: string | number | null,
+    system_id?: string | number | null,
+    status?: string | null,
+    system?: {
+      id?: string | number | null,
+      title?: string | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`incidents.update`
+
+Change a status page incident and append an update, which shows on the public status page
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.incidents.update({ identifier: 'inc-1', updates_attributes: [{ status: 'resolved', message: 'Fixed.' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | Incident id |
+| `title` | `string` | No | — |
+| `updates_attributes` | `object[]` | No | Appends updates to the incident |
+| `incidents_systems_attributes` | `object[]` | No | — |
+
+Sends PUT to the incident id, with an `incident` wrapper. The vendor's curl example shows `-X POST`, but a POST to this path is answered as an unknown route. New `updates_attributes` are appended to the incident.
+
+<AccordionGroup>
+<Accordion title="updates_attributes full type">
+
+```ts
+{
+  status: investigating | identified | monitoring | resolved,
+  message: string
+}[]
+```
+</Accordion>
+
+<Accordion title="incidents_systems_attributes full type">
+
+```ts
+{
+  id?: string,
+  system_id: string,
+  status: operational | degraded_performance | partial_outage | major_outage | under_maintenance
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `status` | `string \| null` | No | investigating, identified, monitoring or resolved |
+| `updates` | `object[] \| null` | No | — |
+| `incidents_systems` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="updates full type">
+
+```ts
+{
+  id?: string | number | null,
+  status?: string | null,
+  message?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="incidents_systems full type">
+
+```ts
+{
+  id?: string | number | null,
+  system_id?: string | number | null,
+  status?: string | null,
+  system?: {
+    id?: string | number | null,
+    title?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### create
+
+`messages.create`
+
+Send a reply in a conversation. It goes out to the real customer and the other participants unless suppress_notifications is set. visibility 1 posts an internal note only staff see
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.messages.create({ slug: 'knock-knock', body: 'Thanks for reaching out.', visibility: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | Conversation slug the message belongs to |
+| `body` | `string` | Yes | Markdown is accepted |
+| `visibility` | `number` | No | 0 regular (default), 1 internal note |
+| `user` | `object` | No | Sender; defaults to the authenticated user |
+| `origin_id` | `string` | No | Your own message id, which lets Re:amaze discard duplicates |
+| `suppress_notifications` | `boolean` | No | — |
+| `suppress_autoresolve` | `boolean` | No | — |
+| `suppress_surveys` | `boolean \| string` | No | — |
+| `attachment` | `string` | No | URL Re:amaze fetches to attach |
+| `attachments` | `string[]` | No | — |
+| `recipients` | `string[]` | No | Emails or phone numbers added as thread participants |
+
+**A reply is sent to the real customer** and the other participants, by email or the conversation's channel, unless `suppress_notifications` is true. `visibility: 1` posts an internal note that only staff see. The conversation slug is a path segment, so it never appears in the body, and the payload is wrapped in `message`. `origin_id` lets Re:amaze discard a duplicate send.
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  name?: string,
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `string \| null` | No | — |
+| `original_body` | `string \| null` | No | — |
+| `visibility` | `number \| null` | No | — |
+| `origin` | `number \| null` | No | — |
+| `origin_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `recipients` | `object[] \| null` | No | — |
+| `attachments` | `object[] \| null` | No | — |
+| `conversation` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="recipients full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  file_file_name?: string | null,
+  file_content_type?: string | null,
+  file_file_size?: number | null,
+  thumb_url?: string | null,
+  url?: string | null,
+  image?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="conversation full type">
+
+```ts
+{
+  subject?: string | null,
+  slug?: string | null,
+  created_at?: string | null,
+  category?: {
+    name?: string | null,
+    slug?: string | null,
+    email?: string | null,
+    channel?: number | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List messages across the brand, filtered by sender, tag, channel or date
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.messages.list({ filter: 'customer', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `staff \| customer` | No | Defaults to every message |
+| `tag` | `string` | No | Comma-separated tags on the conversation |
+| `origin` | `number` | No | 1 email, 2 twitter, 6 chat, 7 api, 9 sms, 15 whatsapp, 17 form |
+| `page` | `number` | No | Page number, 1-based. The response carries page_size and page_count |
+| `sent_by` | `string` | No | User email the message was sent by |
+| `category` | `string` | No | Channel slug |
+| `start_date` | `string` | No | ISO 8601 message creation bound |
+| `end_date` | `string` | No | ISO 8601 message creation bound |
+| `include` | `original_body` | No | Adds `original_body`, the message HTML when present |
+
+Answers `{ messages, page_size, page_count, total_count }`, newest first. `include: 'original_body'` adds the message HTML when the brand stored it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+| `page_size` | `number \| null` | No | — |
+| `page_count` | `number \| null` | No | — |
+| `total_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  body?: string | null,
+  original_body?: string | null,
+  visibility?: number | null,
+  origin?: number | null,
+  origin_id?: string | null,
+  created_at?: string | null,
+  user?: {
+    name?: string | null,
+    email?: string | null
+  } | null,
+  recipients?: {
+    name?: string | null,
+    email?: string | null
+  }[] | null,
+  attachments?: {
+    file_file_name?: string | null,
+    file_content_type?: string | null,
+    file_file_size?: number | null,
+    thumb_url?: string | null,
+    url?: string | null,
+    image?: boolean | null
+  }[] | null,
+  conversation?: {
+    subject?: string | null,
+    slug?: string | null,
+    created_at?: string | null,
+    category?: {
+      name?: string | null,
+      slug?: string | null,
+      email?: string | null,
+      channel?: number | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notes
+
+### create
+
+`notes.create`
+
+Add a note to one contact
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.notes.create({ contact: 'bob@example.com', body: 'Called about the invoice.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string` | Yes | Contact email address or phone number |
+| `body` | `string` | Yes | — |
+| `creator_email` | `string` | No | Staff email credited with the note; defaults to the caller |
+| `created_at` | `string` | No | ISO 8601; defaults to now |
+
+The one resource whose payload is not wrapped: the body is a bare `{ body }`. `creator_email` credits a staff member instead of the caller, and `created_at` defaults to now.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+  id?: string | number | null,
+  note?: string | null,
+  content?: string | null,
+  body?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  creator?: {
+    name?: string | null,
+    email?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`notes.delete`
+
+Delete one contact note. Re:amaze keeps no undo and the note text is not returned anywhere afterwards
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.reamaze.api.notes.delete({ contact: 'bob@example.com', id: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string` | Yes | Contact email address or phone number |
+| `id` | `string \| number` | Yes | Note id |
+
+Deletes the note and answers 200 with no body, so the plugin reports `{ deleted, contact, id }`. The note text is gone; there is no undo.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `contact` | `string` | Yes | — |
+| `id` | `string \| number` | Yes | — |
+
+
+
+---
+
+### list
+
+`notes.list`
+
+List the notes on one contact
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.notes.list({ contact: 'bob@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string` | Yes | Contact email address or phone number |
+
+Answers a **bare array** of notes, so the plugin returns `{ notes }`. There is no paging on this route. A body that is not an array throws rather than reading as an empty list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+  id?: string | number | null,
+  note?: string | null,
+  content?: string | null,
+  body?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  creator?: {
+    name?: string | null,
+    email?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`notes.update`
+
+Replace the text of one contact note
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.notes.update({ contact: 'bob@example.com', id: 123, body: 'Called again about the invoice.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string` | Yes | Contact email address or phone number |
+| `id` | `string \| number` | Yes | Note id |
+| `body` | `string` | Yes | — |
+| `creator_email` | `string` | No | Staff email credited with the note; the creator is kept when omitted |
+| `created_at` | `string` | No | — |
+
+Sends PUT to the note id with a bare `{ body }`. The creator is only replaced when `creator_email` is sent, and `created_at` is kept when it is omitted.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notes full type">
+
+```ts
+{
+  id?: string | number | null,
+  note?: string | null,
+  content?: string | null,
+  body?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  creator?: {
+    name?: string | null,
+    email?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### channelSummary
+
+`reports.channelSummary`
+
+Per-channel response counts, response time, satisfaction and thread size
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.reports.channelSummary({ start_date: '2026-10-11', end_date: '2026-11-09' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brand` | `string` | No | Brand URL; omit for every brand in the account |
+| `start_date` | `string` | No | YYYY-MM-DD; defaults to 30 days ago |
+| `end_date` | `string` | No | YYYY-MM-DD; defaults to today |
+
+Answers `{ channels, start_date, end_date }`, keyed by channel id. Each entry carries staff and customer response counts, average response time, appreciations, open and resolved counts, average satisfaction and average thread size.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channels` | `Record<string, any> \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+
+
+
+---
+
+### responseTime
+
+`reports.responseTime`
+
+Daily first-response time in seconds, with averages and ratios
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.reports.responseTime({ start_date: '2026-10-11', end_date: '2026-11-09' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brand` | `string` | No | Brand URL; omit for every brand in the account |
+| `start_date` | `string` | No | YYYY-MM-DD; defaults to 30 days ago |
+| `end_date` | `string` | No | YYYY-MM-DD; defaults to today |
+
+Answers `{ response_times, summary, start_date, end_date }`. Response times are seconds keyed by date, and `summary` carries averages, trends and ratios.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response_times` | `Record<string, any> \| null` | No | — |
+| `summary` | `Record<string, any> \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+
+
+
+---
+
+### staff
+
+`reports.staff`
+
+Per-staff response counts, response time and appreciations
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.reports.staff({ start_date: '2026-10-11', end_date: '2026-11-09' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brand` | `string` | No | Brand URL; omit for every brand in the account |
+| `start_date` | `string` | No | YYYY-MM-DD; defaults to 30 days ago |
+| `end_date` | `string` | No | YYYY-MM-DD; defaults to today |
+
+Answers `{ report, start_date, end_date }`, keyed by each staff member's display name. Each entry has a response count, a response time and a per-day trend.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report` | `Record<string, any> \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+
+
+
+---
+
+### tags
+
+`reports.tags`
+
+Tag usage counts over a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.reports.tags({ start_date: '2026-10-11', end_date: '2026-11-09' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brand` | `string` | No | Brand URL; omit for every brand in the account |
+| `start_date` | `string` | No | YYYY-MM-DD; defaults to 30 days ago |
+| `end_date` | `string` | No | YYYY-MM-DD; defaults to today |
+
+Answers `{ tags, start_date, end_date }`, where `tags` is a **map of tag name to count**, not an array. Iterate it with `Object.entries`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `Record<string, number> \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+
+
+
+---
+
+### volume
+
+`reports.volume`
+
+Daily conversation volume over a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.reports.volume({ start_date: '2026-10-11', end_date: '2026-11-09' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brand` | `string` | No | Brand URL; omit for every brand in the account |
+| `start_date` | `string` | No | YYYY-MM-DD; defaults to 30 days ago |
+| `end_date` | `string` | No | YYYY-MM-DD; defaults to today |
+
+Answers `{ conversation_counts, start_date, end_date }`, where `conversation_counts` is a **map of `YYYY-MM-DD` to a count**. Dates default to the last 30 days, and a window must be between 1 day and 1 year.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversation_counts` | `Record<string, number> \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+
+
+
+---
+
+## Response Templates
+
+### create
+
+`responseTemplates.create`
+
+Create a response template
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.responseTemplates.create({ name: 'Returns instructions', body: 'Send it back within 30 days.', is_personal: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+| `is_personal` | `0 \| 1` | No | 1 creates a personal template when the caller may have one |
+
+Wraps the payload in `response_template`. `is_personal: 1` creates a personal template when the caller's role allows one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `is_personal` | `number \| null` | No | — |
+| `response_template_group` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_template_group full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`responseTemplates.get`
+
+Read one response template by id
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.responseTemplates.get({ id: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Response template id |
+
+Answers one template with its `response_template_group`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `is_personal` | `number \| null` | No | — |
+| `response_template_group` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_template_group full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`responseTemplates.list`
+
+List response templates, filtered by search text
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.responseTemplates.list({ q: 'returns', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Search over template keywords |
+| `page` | `number` | No | Page number, 1-based. The response carries page_size and page_count |
+
+Answers `{ response_templates, page_size, page_count, total_count }` and includes personal templates the caller's role can see.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response_templates` | `object[]` | Yes | — |
+| `page_size` | `number \| null` | No | — |
+| `page_count` | `number \| null` | No | — |
+| `total_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_templates full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  body?: string | null,
+  is_personal?: number | null,
+  response_template_group?: {
+    id?: string | number | null,
+    name?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`responseTemplates.update`
+
+Change a response template name or body
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.responseTemplates.update({ id: 123, name: 'Returns instructions', body: 'Send it back within 14 days.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Response template id |
+| `name` | `string` | No | — |
+| `body` | `string` | No | — |
+| `is_personal` | `0 \| 1` | No | — |
+
+Sends PUT to the id with a `response_template` wrapper.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `is_personal` | `number \| null` | No | — |
+| `response_template_group` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_template_group full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Satisfaction
+
+### list
+
+`satisfaction.list`
+
+List satisfaction survey ratings, filtered by brand, rating or date
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.satisfaction.list({ rating: 5, page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brand` | `string` | No | Brand URL, or all_brands; omitting it also means all brands |
+| `rating` | `number` | No | — |
+| `assignee_id` | `string` | No | Staff member the conversation was assigned to |
+| `created_after` | `string` | No | ISO 8601 |
+| `created_before` | `string` | No | ISO 8601 |
+| `updated_after` | `string` | No | ISO 8601 |
+| `updated_before` | `string` | No | ISO 8601 |
+| `page` | `number` | No | Page number, 1-based. The response carries page_size and page_count |
+
+Answers `{ satisfaction_ratings, page_size, page_count, total_count }`. The route needs the `access_reports` permission, so a user without it gets a 403. `rating` is 1 to 5, and `brand` accepts `all_brands`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `satisfaction_ratings` | `object[]` | Yes | — |
+| `page_size` | `number \| null` | No | — |
+| `page_count` | `number \| null` | No | — |
+| `total_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="satisfaction_ratings full type">
+
+```ts
+{
+  id?: string | number | null,
+  rating?: number | null,
+  comment?: string | null,
+  user_id?: string | number | null,
+  assignee_id?: string | number | null,
+  conversation_id?: string | number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Staff
+
+### create
+
+`staff.create`
+
+Create a staff user, which counts toward the monthly subscription. No invite email is sent
+
+**Risk:** `write`
+
+```ts
+await corsair.reamaze.api.staff.create({ name: 'Jean Super Agent', email: 'jean@example.com', password: 'temporary password' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `password` | `string` | Yes | Temporary password; the user must change it at first login |
+
+Wraps the payload in `staff` and answers the created user. This counts toward the monthly subscription, no invite email is sent, and the user must change the password at first login.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `role` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### list
+
+`staff.list`
+
+List staff users, oldest first
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.staff.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, 1-based. The response carries page_size and page_count |
+
+Answers `{ staff, page_size, page_count, total_count }`, oldest first. The `role` hash is documented as unstable, so treat it as informational.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `staff` | `object[]` | Yes | — |
+| `page_size` | `number \| null` | No | — |
+| `page_count` | `number \| null` | No | — |
+| `total_count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="staff full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  created_at?: string | null,
+  role?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Systems
+
+### list
+
+`systems.list`
+
+List the status page systems and their current status
+
+**Risk:** `read`
+
+```ts
+await corsair.reamaze.api.systems.list({});
+```
+
+**Input:** _empty object_
+
+Answers a **bare array**, so the plugin returns `{ systems }`. Each system carries its current status and any active incidents.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `systems` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="systems full type">
+
+```ts
+{
+  id?: string | number | null,
+  title?: string | null,
+  account_id?: string | number | null,
+  brand_id?: string | number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  status?: string | null,
+  active_incidents?: {
+    id?: string | number | null,
+    title?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    status?: string | null,
+    updates?: {
+      id?: string | number | null,
+      status?: string | null,
+      message?: string | null
+    }[] | null,
+    incidents_systems?: {
+      id?: string | number | null,
+      system_id?: string | number | null,
+      status?: string | null,
+      system?: {
+        id?: string | number | null,
+        title?: string | null
+      } | null
+    }[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

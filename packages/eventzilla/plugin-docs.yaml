@@ -1,0 +1,40 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "Eventzilla"
+description: "Read events, ticket types, orders and attendees, run the registration checkout, and check attendees in."
+domain: "eventzilla.net"
+recommendedAuth: "api_key"
+overviewNote: |-
+  Eventzilla authenticates with an `x-api-key` header. Create a key in your
+  Eventzilla account under **Settings > Developers > API Credentials**, then
+  save it for the `eventzilla` integration.
+
+  The checkout workflow runs in four steps and each one needs the event's
+  `dateid`, not its `id`: `checkout.prepare` (what is on sale, and the
+  `payment_id` to use), `checkout.create` (reserve, and get one
+  `ticket_price_id` per ticket), `checkout.fillOrder` (buyer and attendee
+  details), then `checkout.confirm` (record the payment). A reservation holds
+  inventory until it is confirmed or abandoned.
+
+  Eventzilla posts webhooks, but does not sign them and documents no secret to
+  verify one with, so this plugin registers no inbound webhook: a delivery
+  cannot be told apart from a forged request.
+
+  List operations page with `offset` and `limit`; each result carries
+  `next_offset`, which is null on the last page. `events.get`,
+  `attendees.get` and `users.get` answer an array, and an empty one for an
+  unknown id rather than a 404. `transactions.get` answers an array too, but
+  an unknown reference is a 404 error, not an empty result.
+examples:
+  read:
+    path: events.list
+    title: List the account's live events
+    args:
+      limit: 10
+  write:
+    path: attendees.checkin
+    title: Check an attendee in by barcode
+    args:
+      barcode: "EZ202605200001"
+      eventcheckin: true
+apiNotes:
+  events.list: "Only status: live is accepted; every other value is rejected by the API. Set category to a name from categories.list."
