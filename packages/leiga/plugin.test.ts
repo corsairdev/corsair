@@ -80,9 +80,7 @@ function authContext(
 		keys: {
 			get_access_token: jest.fn().mockResolvedValue(stored.accessToken ?? null),
 			get_client_id: jest.fn().mockResolvedValue(stored.clientId ?? null),
-			get_client_secret: jest
-				.fn()
-				.mockResolvedValue(stored.clientSecret ?? null),
+			get_api_key: jest.fn().mockResolvedValue(stored.clientSecret ?? null),
 			set_access_token: jest.fn(async (value: string) => {
 				written.token = value;
 			}),
@@ -109,13 +107,14 @@ describe('leiga plugin definition', () => {
 		expect(Object.keys(leigaAuthConfig)).toEqual(['api_key']);
 	});
 
-	it('declares the client pair as account fields the manager can read', () => {
+	it('keeps the secret in api_key and the client id beside it', () => {
 		// The account manager only generates accessors for account-level fields;
 		// get_integration_credentials exists solely on oauth_2 managers, so the
 		// pair has to be account-level or every call throws before the request.
+		// The secret is the base `api_key` field, which is what Corsair reads to
+		// decide whether the account is connected.
 		expect([...leigaAuthConfig.api_key.account]).toEqual([
 			'client_id',
-			'client_secret',
 			'access_token',
 		]);
 	});

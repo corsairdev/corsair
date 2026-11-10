@@ -158,11 +158,16 @@ export const leigaEndpointSchemas = {
 const defaultAuthType: 'api_key' = 'api_key';
 
 /**
- * `client_id` and `client_secret` are **account** fields, not integration ones.
- * The account key manager is what `keyBuilder` receives, and it only generates
- * accessors for account-level fields: `get_integration_credentials` exists
- * solely on `oauth_2` managers, so reading an integration-level pair through an
- * `api_key` account would throw before any request was sent.
+ * The client pair lives on the **account**: the account key manager is what
+ * `keyBuilder` receives, and `get_integration_credentials` exists solely on
+ * `oauth_2` managers, so an integration-level pair would throw before any
+ * request was sent.
+ *
+ * Leiga's Secret Key is stored in `api_key`, the field every `api_key` plugin
+ * has, and the Client ID beside it in `client_id`. Corsair decides whether an
+ * `api_key` account is connected by looking at `api_key` alone, so a secret
+ * kept under any other name leaves a working account reported as not
+ * connected.
  *
  * `api_key` is the auth type because the minted token is what every resource
  * call sends. The exchange happens in the key builder, so a caller stores the
@@ -172,7 +177,6 @@ export const leigaAuthConfig = {
 	api_key: {
 		account: [
 			'client_id',
-			'client_secret',
 			// The minted token with its expiry and the pair it belongs to, as
 			// one value. See `LeigaStoredToken`.
 			'access_token',

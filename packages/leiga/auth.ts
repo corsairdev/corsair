@@ -12,7 +12,8 @@ export type LeigaAuthContext = {
 	tenantId?: string;
 	keys: {
 		get_client_id: () => Promise<string | null | undefined>;
-		get_client_secret: () => Promise<string | null | undefined>;
+		/** Leiga's Secret Key. See `leigaAuthConfig` for why it is `api_key`. */
+		get_api_key: () => Promise<string | null | undefined>;
 		get_access_token: () => Promise<string | null | undefined>;
 		set_access_token: (value: string) => Promise<void>;
 	};
@@ -131,7 +132,7 @@ export async function resolveLeigaAccessToken(
 	const [storedValue, clientId, clientSecret] = await Promise.all([
 		ctx.keys.get_access_token(),
 		ctx.keys.get_client_id(),
-		ctx.keys.get_client_secret(),
+		ctx.keys.get_api_key(),
 	]);
 
 	if (!clientId || !clientSecret) {

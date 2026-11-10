@@ -57,7 +57,7 @@ describe('Leiga bound client without an explicit key', () => {
 		try {
 			await corsair.leiga.keys.issue_new_dek();
 			await corsair.leiga.keys.set_client_id('cid');
-			await corsair.leiga.keys.set_client_secret('secret');
+			await corsair.leiga.keys.set_api_key('secret');
 
 			mockFetch(jsonResponse(tokenResponse));
 			mockFetch(jsonResponse({ code: '0', data: projectListResponse }));
@@ -77,7 +77,7 @@ describe('Leiga bound client without an explicit key', () => {
 		try {
 			await corsair.leiga.keys.issue_new_dek();
 			await corsair.leiga.keys.set_client_id('cid');
-			await corsair.leiga.keys.set_client_secret('secret');
+			await corsair.leiga.keys.set_api_key('secret');
 
 			mockFetch(jsonResponse(tokenResponse));
 			mockFetch(jsonResponse({ code: '0', data: projectListResponse }));
@@ -109,7 +109,7 @@ describe('Leiga bound client without an explicit key', () => {
 			await corsair.leiga.keys.issue_new_dek();
 			await corsair.leiga.keys.issue_new_dek();
 			await corsair.leiga.keys.set_client_id('cid');
-			await corsair.leiga.keys.set_client_secret('secret');
+			await corsair.leiga.keys.set_api_key('secret');
 			// A token that already expired, as a later process would find.
 			await corsair.leiga.keys.set_access_token(
 				encodeLeigaStoredToken({
@@ -141,14 +141,14 @@ describe('Leiga bound client without an explicit key', () => {
 		try {
 			await corsair.leiga.keys.issue_new_dek();
 			await corsair.leiga.keys.set_client_id('cid-a');
-			await corsair.leiga.keys.set_client_secret('secret-a');
+			await corsair.leiga.keys.set_api_key('secret-a');
 			mockFetch(jsonResponse(tokenFor('token-a')));
 			mockFetch(jsonResponse({ code: '0', data: projectListResponse }));
 			await corsair.leiga.api.projects.list({});
 
 			// The account now points at another Leiga organization.
 			await corsair.leiga.keys.set_client_id('cid-b');
-			await corsair.leiga.keys.set_client_secret('secret-b');
+			await corsair.leiga.keys.set_api_key('secret-b');
 			clearLeigaTokenCache();
 			mockFetch(jsonResponse(tokenFor('token-b')));
 			mockFetch(jsonResponse({ code: '0', data: projectListResponse }));
@@ -173,13 +173,13 @@ describe('Leiga bound client without an explicit key', () => {
 		try {
 			await corsair.leiga.keys.issue_new_dek();
 			await corsair.leiga.keys.set_client_id('cid');
-			await corsair.leiga.keys.set_client_secret('secret');
+			await corsair.leiga.keys.set_api_key('secret');
 			mockFetch(jsonResponse(tokenFor('token-a')));
 			mockFetch(jsonResponse({ code: '0', data: projectListResponse }));
 			await corsair.leiga.api.projects.list({});
 
 			await corsair.leiga.keys.set_client_id('');
-			await corsair.leiga.keys.set_client_secret('');
+			await corsair.leiga.keys.set_api_key('');
 			clearLeigaTokenCache();
 
 			await expect(corsair.leiga.api.projects.list({})).rejects.toThrow(
@@ -196,7 +196,7 @@ describe('Leiga bound client without an explicit key', () => {
 		try {
 			await corsair.leiga.keys.issue_new_dek();
 			await corsair.leiga.keys.set_client_id('cid');
-			await corsair.leiga.keys.set_client_secret('secret');
+			await corsair.leiga.keys.set_api_key('secret');
 			mockFetch(jsonResponse(tokenFor('token-a')));
 			mockFetch(jsonResponse({ code: '0', data: projectListResponse }));
 			await corsair.leiga.api.projects.list({});
@@ -229,7 +229,7 @@ describe('Leiga bound client without an explicit key', () => {
 		try {
 			await corsair.leiga.keys.issue_new_dek();
 			await corsair.leiga.keys.set_client_id('cid');
-			await corsair.leiga.keys.set_client_secret('secret');
+			await corsair.leiga.keys.set_api_key('secret');
 			mockFetch(jsonResponse(tokenFor('token-a')));
 			mockFetch(jsonResponse({ code: '15', msg: 'accessToken error' }));
 			mockFetch(jsonResponse(tokenFor('token-b')));
@@ -251,7 +251,7 @@ describe('Leiga bound client without an explicit key', () => {
 		try {
 			await corsair.leiga.keys.issue_new_dek();
 			await corsair.leiga.keys.set_client_id('cid');
-			await corsair.leiga.keys.set_client_secret('secret');
+			await corsair.leiga.keys.set_api_key('secret');
 			mockFetch(jsonResponse(tokenFor('token-a')));
 			mockFetch(jsonResponse({ code: '0', data: projectListResponse }));
 			await corsair.leiga.api.projects.list({});
@@ -298,6 +298,29 @@ describe('Leiga bound client without an explicit key', () => {
 		}
 	});
 
+	it('reports the account as connected once it works', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			expect(await corsair.manage.connectionStatus.get()).toEqual({
+				leiga: 'not_connected',
+			});
+
+			await corsair.leiga.keys.issue_new_dek();
+			await corsair.leiga.keys.set_client_id('cid');
+			await corsair.leiga.keys.set_api_key('secret');
+			mockFetch(jsonResponse(tokenResponse));
+			mockFetch(jsonResponse({ code: '0', data: projectListResponse }));
+			await corsair.leiga.api.projects.list({});
+
+			// Hub shows this state, and asks for credentials again without it.
+			expect(await corsair.manage.connectionStatus.get()).toEqual({
+				leiga: 'connected',
+			});
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('does not replace an explicit key that Leiga rejects', async () => {
 		const testDb = createTestDatabase();
 		await createIntegrationAndAccount(testDb.db, 'leiga', 'default');
@@ -310,7 +333,7 @@ describe('Leiga bound client without an explicit key', () => {
 			// A pair is stored too, but the caller chose their own token.
 			await corsair.leiga.keys.issue_new_dek();
 			await corsair.leiga.keys.set_client_id('cid');
-			await corsair.leiga.keys.set_client_secret('secret');
+			await corsair.leiga.keys.set_api_key('secret');
 			mockFetch(jsonResponse({ code: '15', msg: 'accessToken error' }));
 
 			await expect(corsair.leiga.api.projects.list({})).rejects.toThrow(
