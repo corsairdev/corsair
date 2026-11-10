@@ -1849,6 +1849,14 @@
                 ]
               },
               {
+                "group": "Eventzilla",
+                "pages": [
+                  "plugins/eventzilla/overview",
+                  "plugins/eventzilla/api",
+                  "plugins/eventzilla/database"
+                ]
+              },
+              {
                 "group": "Everhour",
                 "pages": [
                   "plugins/everhour/overview",
