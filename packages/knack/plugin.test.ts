@@ -19,52 +19,42 @@ const OPERATIONS = [
 	'records.delete',
 ] as const;
 
-type EndpointMeta = {
-	riskLevel: string;
-	description: string;
-	irreversible?: boolean;
-};
 type KeyBuilder = (
 	ctx: KnackKeyBuilderContext,
 	source: string,
 ) => Promise<string>;
 
-/** Reads a key that must exist, so a missing one fails as an assertion. */
-function required<T>(source: Record<string, T>, key: string): T {
-	const value = source[key];
-	if (value === undefined) {
-		throw new Error(`Expected "${key}" to be registered`);
-	}
-	return value;
-}
-
-// unknown: the plugin's endpoint map is read through these aliases because
-// Object.entries and Object.keys erase the literal types the plugin declares.
-// `required` narrows each entry before anything is asserted on it.
-function flatten(endpoints: Record<string, unknown>): string[] {
-	const paths: string[] = [];
-	for (const [group, members] of Object.entries(endpoints)) {
-		for (const name of Object.keys(members as Record<string, unknown>)) {
-			paths.push(`${group}.${name}`);
-		}
-	}
-	return paths.sort();
-}
-
 describe('knack plugin', () => {
 	const plugin = knack();
-	// unknown: the plugin's declared metadata is a narrow literal type, and this
-	// alias is what lets the test read a risk level by operation name.
-	const meta = plugin.endpointMeta as unknown as Record<string, EndpointMeta>;
-	// unknown: keyBuilder is an untyped member on the plugin object; the cast
-	// narrows it to the call signature the test drives.
+	// keyBuilder is not part of the plugin's public surface, so it is reached
+	// through a narrow cast to the one call signature the tests drive.
 	const keyBuilderOf = (candidate: { keyBuilder?: unknown }): KeyBuilder =>
 		candidate.keyBuilder as KeyBuilder;
 
+	/**
+	 * A metadata entry that must exist. `endpointMeta` is optional and its
+	 * entries are partial, so this narrows both before anything is asserted on.
+	 */
+	function metaEntry(operation: (typeof OPERATIONS)[number]) {
+		const entry = plugin.endpointMeta?.[operation];
+		if (!entry) {
+			throw new Error(`Expected "${operation}" in endpointMeta`);
+		}
+		return entry;
+	}
+
 	it('registers every advertised operation', () => {
-		expect(flatten(plugin.endpoints as Record<string, unknown>)).toEqual(
-			[...OPERATIONS].sort(),
-		);
+		const endpoints = plugin.endpoints;
+		if (!endpoints) throw new Error('Expected plugin.endpoints to be set');
+		const registered = [
+			...Object.keys(endpoints.applications).map(
+				(name) => `applications.${name}`,
+			),
+			...Object.keys(endpoints.objects).map((name) => `objects.${name}`),
+			...Object.keys(endpoints.records).map((name) => `records.${name}`),
+		].sort();
+
+		expect(registered).toEqual([...OPERATIONS].sort());
 	});
 
 	it('declares input and output schemas for each operation', () => {
@@ -72,7 +62,7 @@ describe('knack plugin', () => {
 			[...OPERATIONS].sort(),
 		);
 		for (const operation of OPERATIONS) {
-			const entry = required(knackEndpointSchemas, operation);
+			const entry = knackEndpointSchemas[operation];
 			expect(entry.input).toBeDefined();
 			expect(entry.output).toBeDefined();
 		}
@@ -80,22 +70,24 @@ describe('knack plugin', () => {
 
 	it('describes each operation without generator placeholder text', () => {
 		for (const operation of OPERATIONS) {
-			const entry = required(meta, operation);
-			expect(entry.description.length).toBeGreaterThan(20);
-			expect(entry.description).not.toMatch(/example resource/i);
+			const { description } = metaEntry(operation);
+			expect(description).toBeDefined();
+			expect(description?.length ?? 0).toBeGreaterThan(20);
+			expect(description).not.toMatch(/example resource/i);
 		}
 	});
 
 	// A delete is permanent and cannot be undone by another call, so it is both
 	// destructive and irreversible. The two writes are recoverable.
 	it('classifies delete as destructive and the writes as writes', () => {
-		expect(required(meta, 'records.delete').riskLevel).toBe('destructive');
-		expect(required(meta, 'records.delete').irreversible).toBe(true);
-		expect(required(meta, 'records.create').riskLevel).toBe('write');
-		expect(required(meta, 'records.update').riskLevel).toBe('write');
+		expect(metaEntry('records.delete').riskLevel).toBe('destructive');
+		expect(metaEntry('records.delete').irreversible).toBe(true);
+		expect(metaEntry('records.create').riskLevel).toBe('write');
+		expect(metaEntry('records.update').riskLevel).toBe('write');
+		expect(metaEntry('records.get').riskLevel).toBe('read');
 
 		const nonReads = OPERATIONS.filter(
-			(operation) => required(meta, operation).riskLevel !== 'read',
+			(operation) => metaEntry(operation).riskLevel !== 'read',
 		);
 		expect(nonReads.sort()).toEqual(
 			['records.create', 'records.delete', 'records.update'].sort(),
