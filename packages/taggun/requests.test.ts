@@ -1,10 +1,15 @@
 import { Campaigns, ReceiptValidation, Simple, Verbose } from './endpoints';
+import type {
+	CampaignValidateFileResponse,
+	ReceiptValidateUrlResponse,
+} from './endpoints/types';
 import {
 	CAMPAIGN_IDS,
 	CAMPAIGN_SETTINGS,
 	CAMPAIGN_VALIDATION_PASSED,
 	CREATE_ACK,
 	DELETE_ACK,
+	RECEIPT_VALIDATION_VERDICTS,
 	SIMPLE_RECEIPT,
 	UPDATE_ACK,
 	VERBOSE_RECEIPT,
@@ -439,6 +444,40 @@ describe('receiptValidation.url', () => {
 			validation: rules,
 			incognito: false,
 		});
+	});
+});
+
+describe('the validation result', () => {
+	it('reads fields wrapped with their verdict, as the generated spec types them', async () => {
+		respond(fetchMock, RECEIPT_VALIDATION_VERDICTS);
+
+		const result = (await invoke(ReceiptValidation.url, {
+			url: 'https://example.com/receipts/receipt-123.png',
+			validation: { merchantName: { allowed: ['H-E-B'] } },
+		})) as ReceiptValidateUrlResponse;
+
+		expect(result.successful).toBe(false);
+		expect(result.merchantName).toEqual(
+			RECEIPT_VALIDATION_VERDICTS.merchantName,
+		);
+		expect(result.receiptNumber).toBe(21556789);
+		expect(result.smartValidate?.is_credit_card).toEqual({
+			data: true,
+			valid: true,
+			expected: 'true',
+		});
+	});
+
+	it('still reads the bare values of the campaign examples', async () => {
+		respond(fetchMock, CAMPAIGN_VALIDATION_PASSED);
+
+		const result = (await invoke(Campaigns.validateFile, {
+			campaignId: 'coffee-june-2026',
+			file: pngFile(),
+		})) as CampaignValidateFileResponse;
+
+		expect(result.merchantName).toBe('Walmart');
+		expect(result.smartValidate?.is_credit_card).toBe(true);
 	});
 });
 

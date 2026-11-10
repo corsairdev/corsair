@@ -881,6 +881,32 @@ const DigitalDetectionSchema = z
 	})
 	.loose();
 
+/**
+ * A checked field of a validation result. Taggun's generated spec
+ * (api.taggun.io/docs/swagger.json, the 200 of `receipt-validation/*`) wraps
+ * each value with its verdict, while the reference pages and the campaign
+ * examples show the bare value. Both are accepted, so a billed scan is never
+ * lost to a parse error over which form came back.
+ */
+function checked<T extends z.ZodType>(value: T) {
+	return z.union([
+		value,
+		z
+			.object({
+				data: value.nullish(),
+				valid: z.boolean().optional(),
+				// unknown: the spec types `expected` as a string, but the
+				// handwriting rule documents it as `{ "isHandwritten": false }`.
+				expected: z.unknown().optional(),
+				confidenceLevel: z.number().optional(),
+			})
+			.loose(),
+	]);
+}
+
+/** Taggun lists string or number for the document numbers. */
+const DocumentNumberSchema = z.union([z.string(), z.number()]).nullish();
+
 /** Both validation families return this same pass/fail object. */
 export const ValidationResultSchema = z
 	.object({
@@ -897,34 +923,43 @@ export const ValidationResultSchema = z
 			.array(z.string())
 			.optional()
 			.describe('Validation keys that passed.'),
-		productLineItems: z.array(ValidationLineItemSchema).optional(),
+		productLineItems: checked(z.array(ValidationLineItemSchema)).optional(),
 		matchedProductLineItems: z
 			.array(ValidationLineItemSchema)
 			.optional()
 			.describe('Items matched by the campaign rules.'),
-		date: z.string().optional(),
-		merchantName: z.string().optional(),
-		merchantAddress: z.string().optional(),
-		merchantCity: z.string().optional(),
-		merchantState: z.string().optional(),
-		merchantCountryCode: z.string().optional(),
-		merchantPostalCode: z.string().optional(),
-		productCodes: z.array(z.string()).optional(),
-		serialNumber: z.string().optional(),
-		balanceAmount: z.number().nullish(),
+		date: checked(z.string()).optional(),
+		merchantName: checked(z.string()).optional(),
+		merchantAddress: checked(z.string()).optional(),
+		merchantCity: checked(z.string()).optional(),
+		merchantState: checked(z.string()).optional(),
+		merchantCountryCode: checked(z.string()).optional(),
+		merchantPostalCode: checked(z.string()).optional(),
+		productCodes: checked(z.array(z.string())).optional(),
+		serialNumber: checked(z.string()).optional(),
+		balanceAmount: checked(z.number()).nullish(),
 		smartValidate: z
-			.record(z.string(), z.boolean())
+			.record(z.string(), checked(z.boolean()))
 			.optional()
 			.describe('Boolean answer per configured SmartValidate prompt.'),
 		totalAmount: z.number().optional(),
 		currencyCode: z.string().optional(),
-		receiptNumber: z.string().nullish(),
-		invoiceNumber: z.string().nullish(),
+		receiptNumber: DocumentNumberSchema,
+		invoiceNumber: DocumentNumberSchema,
+		purchaseOrderNumber: DocumentNumberSchema,
 		trackingId: z.string().optional(),
 		targetRotation: z.number().optional(),
 		similarReceipts: z.array(SimilarReceiptSchema).optional(),
 		tamperDetection: TamperDetectionSchema.optional(),
 		digitalDetection: DigitalDetectionSchema.optional(),
+		// unknown: each detector reports its own `data` (a score object, or null
+		// when unavailable), and the inline routes nest them all here.
+		fraudDetection: z
+			.record(z.string(), checked(z.unknown()))
+			.optional()
+			.describe(
+				'Inline validation only: one verdict per enabled detector, e.g. `handwritingDetection`.',
+			),
 	})
 	.loose();
 

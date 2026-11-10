@@ -317,3 +317,56 @@ export const PNG_BYTES = Buffer.from(
 );
 
 export const PNG_BASE64 = PNG_BYTES.toString('base64');
+
+/**
+ * The inline `receipt-validation/*` answer as Taggun's generated spec types it
+ * (api.taggun.io/docs/swagger.json, the 200 of both routes): each checked field
+ * is wrapped with its verdict, `{ data, valid, expected, confidenceLevel }`,
+ * and the document numbers may come back as numbers. The reference pages show
+ * the bare values used by the campaign examples above, so both must parse.
+ */
+export const RECEIPT_VALIDATION_VERDICTS = {
+	successful: false,
+	date: {
+		data: '2026-06-12T00:00:00.000Z',
+		valid: true,
+		expected: '2026-06-01T00:00:00.000Z - 2026-06-30T23:59:59.999Z',
+		confidenceLevel: 0.92,
+	},
+	merchantName: {
+		data: 'Fresh Market',
+		valid: false,
+		expected: 'H-E-B',
+		confidenceLevel: 0.88,
+	},
+	merchantAddress: { data: '1 Main St', valid: true, confidenceLevel: 0.7 },
+	merchantCity: { data: 'Austin' },
+	merchantPostalCode: { data: '78701' },
+	merchantState: { data: 'TX' },
+	merchantCountryCode: { data: 'US' },
+	productCodes: { data: ['COF-250'], valid: true },
+	serialNumber: { data: 'SN-1', valid: true },
+	balanceAmount: { data: 0, valid: true, expected: '0.01' },
+	totalAmount: 23.97,
+	currencyCode: 'USD',
+	receiptNumber: 21556789,
+	invoiceNumber: 'INV-7',
+	purchaseOrderNumber: 4410,
+	productLineItems: {
+		data: [{ name: 'COFFEE BEANS', unitPrice: 9.99, quantity: 1 }],
+	},
+	matchedProductLineItems: [{ name: 'COFFEE BEANS', totalPrice: 9.99 }],
+	smartValidate: {
+		is_credit_card: { data: true, valid: true, expected: 'true' },
+	},
+	fraudDetection: {
+		handwritingDetection: {
+			data: null,
+			valid: false,
+			expected: { isHandwritten: false },
+		},
+	},
+	trackingId: 'T-20260612-0000001',
+	containerId: 'coffee-june',
+	targetRotation: 0,
+};
