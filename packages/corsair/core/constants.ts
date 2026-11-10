@@ -165,6 +165,7 @@ export const BaseProviders = [
 	'coda',
 	'codacy',
 	'codeinterpreter',
+	'codereadr',
 	'cody',
 	'coinbase',
 	'coinmarketcal',
@@ -613,6 +614,7 @@ export const ProviderDisplayNames = {
 	coda: 'Coda',
 	codacy: 'Codacy',
 	codeinterpreter: 'CodeInterpreter',
+	codereadr: 'CodeREADr',
 	cody: 'Cody',
 	coinbase: 'Coinbase',
 	coinmarketcal: 'Coinmarketcal',
@@ -1066,6 +1068,7 @@ export type AllProviders =
 	| 'coda'
 	| 'codacy'
 	| 'codeinterpreter'
+	| 'codereadr'
 	| 'cody'
 	| 'coinbase'
 	| 'coinmarketcal'
