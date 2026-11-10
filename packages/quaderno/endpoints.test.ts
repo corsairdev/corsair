@@ -145,18 +145,23 @@ describe('input schemas reject what the API would refuse', () => {
 		expect(Inputs.contactsList.safeParse({ limit: 0 }).success).toBe(false);
 	});
 
-	it('rejects a contact with no email on create', () => {
-		// Verified live: Quaderno uses it to deliver documents.
+	it('requires first_name on a contact, which is what the API requires', () => {
 		expect(Inputs.contactsCreate.safeParse({}).success).toBe(false);
+		// An email alone is not enough: Quaderno answers 422 with no first_name.
 		expect(
 			Inputs.contactsCreate.safeParse({ email: 'a@example.com' }).success,
+		).toBe(false);
+		// A company with no email on file is a valid contact.
+		expect(
+			Inputs.contactsCreate.safeParse({ kind: 'company', first_name: 'Acme' })
+				.success,
 		).toBe(true);
 	});
 
 	it('rejects a two-letter country that is not two letters', () => {
 		expect(
 			Inputs.contactsCreate.safeParse({
-				email: 'a@example.com',
+				first_name: 'Amelia',
 				country: 'USA',
 			}).success,
 		).toBe(false);

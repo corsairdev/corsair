@@ -196,6 +196,7 @@ describe('quaderno through createCorsair', () => {
 			respond(contactFixture, 200);
 
 			const result = await corsair.quaderno.api.contacts.create({
+				first_name: 'Amelia',
 				email: 'a@example.com',
 			});
 
@@ -216,7 +217,10 @@ describe('quaderno through createCorsair', () => {
 			respond({ error: 'boom' }, 502);
 
 			await expect(
-				corsair.quaderno.api.contacts.create({ email: 'a@example.com' }),
+				corsair.quaderno.api.contacts.create({
+					first_name: 'Amelia',
+					email: 'a@example.com',
+				}),
 			).rejects.toThrow();
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {

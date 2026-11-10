@@ -154,12 +154,26 @@ const ContactsListResponseSchema = z.object({
 
 export type ContactsListResponse = z.infer<typeof ContactsListResponseSchema>;
 
+/**
+ * `first_name` is the one field the API requires on a contact. For a `company`
+ * there is no separate name field, so the company name goes here. `email` is
+ * optional to Quaderno, but a contact without one cannot be sent a document.
+ */
 const ContactsCreateInputSchema = z.object({
 	...ContactWriteShape,
+	first_name: z
+		.string()
+		.min(1)
+		.describe(
+			'The first name of a person, or the company name when `kind` is `company`. Required.',
+		),
 	email: z
 		.string()
 		.min(3)
-		.describe('Contact email address. Quaderno uses it to deliver documents.'),
+		.optional()
+		.describe(
+			'Contact email address. Quaderno delivers documents to it, so a contact without one cannot be emailed.',
+		),
 });
 
 export type ContactsCreateInput = z.input<typeof ContactsCreateInputSchema>;
