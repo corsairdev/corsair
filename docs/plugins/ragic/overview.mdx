@@ -1,0 +1,156 @@
+---
+title: Overview
+description: "Read, filter, create, update and delete records on any Ragic sheet, post comments, lock records and read a sheet's field schema."
+---
+
+Use **Ragic** through Corsair: one client, typed API calls.
+
+Generate an API key in Ragic under **Personal Settings**. It goes in `Authorization: Basic <key>` — the key is the Basic username and the password is empty, and the value is *not* base64-encoded, because Ragic reads it directly.
+
+Four things trip up almost every integration:
+
+- **Every call needs the sheet's coordinates.** A Ragic URL is `https://{server}/{account}{path}/{sheetIndex}`, so each operation takes `account`, `path` and `sheetIndex`, read straight off the URL you see in the browser. There is no way to address a sheet without them.
+- **The server is per account.** `www.ragic.com` is the default; an account on another shard uses `na3`, `ap5`, `eu2` and so on, and a key only works on its own server. Pass `server: 'eu2.ragic.com'` when that is where your account lives.
+- **A failure arrives as HTTP 200.** Ragic reports nearly every error inside the response body — `{"status":"ERROR","code":106,"msg":"…"}` — including an unrecognised key, a bad sheet index and a server fault. The plugin checks for that envelope and throws, so a refusal can never be mistaken for a record. Note that `106` covers both a missing key and a genuine permission gap: both fall back to the guest account, and the message names which.
+- **Records are keyed by row id, not returned as an array.** A list answers `{"12345": {…}, "12346": {…}}`, and each row repeats its id in `_ragicId`. Field keys are field names by default; pass `naming: 'EID'` for field IDs.
+
+Writing, in practice:
+
+- **Use `schema.get` first.** A write needs field IDs, and a form's fields differ per account. `schema.get` returns them with their types and, for a select field, up to 50 options — but it needs an **account manager's** API key, so a non-admin key gets `403 no right`.
+- **Subtable rows are grouped by row id.** On create, give every field of one row the same *negative* id under `_subtable_<id>` so Ragic can tell which values belong together. On update, use the *positive* row id you read from the record. To delete a row, send `_DELSUB_<subtableId>` with an array of row ids.
+- **Dates are `yyyy/MM/dd` or `yyyy/MM/dd HH:mm:ss`**, in filters and in field values, never ISO 8601.
+- **`where` is a three-part filter.** `{ fieldId, op, value }` becomes `fieldId,op,value`, and several conditions are sent as a repeated `where` parameter. Repeated `eq`/`regex`/`like` on one field is an **OR**; a `gte` with an `lte` on one field is a **range (AND)**. Leave `value` out to match an empty field.
+- **A listing returns 1,000 records by default.** Set `limit` explicitly for more, and `subtables: false` when you do not need them, which makes the response far smaller.
+- **Writes run more than the save.** Workflows, AI Agents and notifications run by default; `doWorkflow: false`, `doAIAgent: false` and `notification: false` turn them off, and `doValidation: true` refuses a save that breaks the sheet's validation rules. `checkLock: true` refuses to edit a locked record.
+- **`records.lock` / `records.unlock`** map to Ragic's bare `lock` / `unlock` query flag on a POST to the record, and need the same permission as locking in the form.
+- **No rate limit, but a queue.** Ragic documents no numeric limit, only a per-account queue of 50 that stops accepting GET requests when full, and a manual review above 5 requests a second. The plugin retries a 5xx twice for reads only.
+
+**What you get:**
+
+- 9 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/ragic better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/ragic better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/ragic better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/ragic better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { ragic } from '@corsair-dev/ragic';
+
+export const corsair = createCorsair({
+	plugins: [
+		ragic(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+ragic()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'ragic',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List records from a sheet**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ragic.api.records.list({
+	account: 'demo',
+	path: '/sales',
+	sheetIndex: 1,
+	limit: 50,
+});
+```
+
+
+**Create a record**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ragic.api.records.create({
+	account: 'demo',
+	path: '/sales',
+	sheetIndex: 1,
+	fields: { 2000123: 'Dunder Mifflin', 2000127: 'Jeff Kuo' },
+});
+```
+
+
+See the full list on the [API](/plugins/ragic/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/ragic/api">
+    Every `ragic.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

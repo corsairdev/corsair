@@ -2999,6 +2999,14 @@
                 ]
               },
               {
+                "group": "Ragic",
+                "pages": [
+                  "plugins/ragic/overview",
+                  "plugins/ragic/api",
+                  "plugins/ragic/database"
+                ]
+              },
+              {
                 "group": "Razorpay",
                 "pages": [
                   "plugins/razorpay/overview",

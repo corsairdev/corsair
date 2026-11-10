@@ -1,0 +1,433 @@
+---
+title: API
+description: "API reference for Ragic: every `ragic.api.*` operation with input and output types."
+---
+
+Every `ragic.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Records
+
+### comment
+
+`records.comment`
+
+Post a comment on a record and return the comment that was added
+
+**Risk:** `write`
+
+```ts
+await corsair.ragic.api.records.comment({ account: 'demo', path: '/sales', sheetIndex: 1, recordId: 2, comment: 'Please review this order.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | The account name from your Ragic URL, such as "demo" in www.ragic.com/demo/sales. |
+| `path` | `string` | Yes | The folder path from your URL, starting with a slash, such as /sales. |
+| `sheetIndex` | `number` | Yes | The sheet number from your URL, the number after the folder path. |
+| `recordId` | `number` | Yes | The record id, which is the _ragicId value. |
+| `comment` | `string` | Yes | The comment text. |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### create
+
+`records.create`
+
+Create a record from field ID to value, including subtable rows grouped by negative row id, with control over formulas, workflows, AI Agents and notifications
+
+**Risk:** `write`
+
+```ts
+await corsair.ragic.api.records.create({ account: 'demo', path: '/sales', sheetIndex: 1, fields: { '2000123': 'Dunder Mifflin', '1000001': ['Customer', 'Reseller'], '_subtable_2000154': { '-1': { '2000147': 'Bill' } } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | The account name from your Ragic URL, such as "demo" in www.ragic.com/demo/sales. |
+| `path` | `string` | Yes | The folder path from your URL, starting with a slash, such as /sales. |
+| `sheetIndex` | `number` | Yes | The sheet number from your URL, the number after the folder path. |
+| `fields` | `Record<string, JsonValue>` | Yes | Field ID to value. A multi-select takes an array; a date needs yyyy/MM/dd or yyyy/MM/dd HH:mm:ss; a subtable is `_subtable_<id>` keyed by a negative row id that groups a row’s values. |
+| `doFormula` | `boolean` | No | Recalculate every formula before saving. |
+| `doDefaultValue` | `boolean` | No | Load every default value before saving. |
+| `doLinkLoad` | `boolean \| first` | No | Run link and load operations: true after the formula recalculation, "first" before it. Either way doFormula must also be set when a recalculation is needed. |
+| `doWorkflow` | `boolean` | No | False skips the workflow scripts, which otherwise run. |
+| `doAIAgent` | `boolean` | No | False skips the AI Agents, which otherwise run. |
+| `notification` | `boolean` | No | Defaults to true: the save sends notifications. |
+| `doValidation` | `boolean` | No | Run the sheet’s field validation rules first. A failing field rejects the save. |
+| `checkLock` | `boolean` | No | Refuse the update when the record is locked. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recordId` | `number \| null` | No | The new record id. |
+| `_ragicId` | `number \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `msg` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`records.delete`
+
+Permanently delete one record by id
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ragic.api.records.delete({ account: 'demo', path: '/sales', sheetIndex: 1, recordId: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | The account name from your Ragic URL, such as "demo" in www.ragic.com/demo/sales. |
+| `path` | `string` | Yes | The folder path from your URL, starting with a slash, such as /sales. |
+| `sheetIndex` | `number` | Yes | The sheet number from your URL, the number after the folder path. |
+| `recordId` | `number` | Yes | The record id, which is the _ragicId value. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | SUCCESS on a deleted record. |
+| `msg` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`records.get`
+
+Read one record by id, optionally with its subtable, comments, history or unmasked fields
+
+**Risk:** `read`
+
+```ts
+await corsair.ragic.api.records.get({ account: 'demo', path: '/sales', sheetIndex: 1, recordId: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | The account name from your Ragic URL, such as "demo" in www.ragic.com/demo/sales. |
+| `path` | `string` | Yes | The folder path from your URL, starting with a slash, such as /sales. |
+| `sheetIndex` | `number` | Yes | The sheet number from your URL, the number after the folder path. |
+| `recordId` | `number` | Yes | The record id, which is the _ragicId value. |
+| `naming` | `EID \| FNAME` | No | — |
+| `subtables` | `boolean` | No | — |
+| `info` | `boolean` | No | — |
+| `comment` | `boolean` | No | — |
+| `history` | `boolean` | No | — |
+| `ignoreMask` | `boolean` | No | Unmask masked text, when your groups allow it. |
+
+
+
+**Output:** `Record<string, Record<string, JsonValue>>`
+
+
+---
+
+### list
+
+`records.list`
+
+List records from a sheet with filters, full-text search, a saved view, paging and ordering; pass a taskId to check a mass operation instead
+
+**Risk:** `read`
+
+```ts
+await corsair.ragic.api.records.list({ account: 'demo', path: '/sales', sheetIndex: 1, where: [{ fieldId: 2000123, op: 'eq', value: 'Alphabet Inc.' }], limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | The account name from your Ragic URL, such as "demo" in www.ragic.com/demo/sales. |
+| `path` | `string` | Yes | The folder path from your URL, starting with a slash, such as /sales. |
+| `sheetIndex` | `number` | Yes | The sheet number from your URL, the number after the folder path. |
+| `where` | `object[]` | No | Filter conditions. Several on the same field combine as the docs describe. |
+| `fts` | `string` | No | A full-text search term. |
+| `filterId` | `number` | No | A saved Shared View id, as an alternative to building filters. |
+| `limit` | `number` | No | How many records to return. Defaults to 1,000; above that, set it explicitly. |
+| `offset` | `number` | No | How many records to skip first. |
+| `taskId` | `string` | No | Check a mass operation’s progress instead of listing records. |
+| `order` | `object` | No | Sort by one field. |
+| `reverse` | `boolean` | No | Reverse the default creation-date ordering, newest first. |
+| `naming` | `EID \| FNAME` | No | Name each field in the response by its ID (EID) or its name (FNAME, the default). |
+| `subtables` | `boolean` | No | False omits subtable data, which makes the response much smaller. |
+| `listing` | `boolean` | No | True returns only the fields shown on the listing page. |
+| `fetchDomainIds` | `(number \| string)[]` | No | Return only these field IDs. |
+| `info` | `boolean` | No | Add create date and create user to each record. |
+| `comment` | `boolean` | No | Add the comment thread to each record. |
+| `history` | `boolean` | No | Add the edit history to each record. |
+| `conversation` | `boolean` | No | Add the email conversation to each record. |
+| `approval` | `boolean` | No | Add the approval information to each record. |
+
+<AccordionGroup>
+<Accordion title="where full type">
+
+```ts
+{
+  fieldId: number | string,
+  op: eq | regex | gte | lte | gt | lt | like | eqeq,
+  value?: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="order full type">
+
+```ts
+{
+  fieldId: number | string,
+  direction: ASC | DESC
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, Record<string, JsonValue>> \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+Record<string, Record<string, JsonValue>> | {
+  status: string,
+  progress?: number | null,
+  total?: number | null,
+  message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### lock
+
+`records.lock`
+
+Lock a record so it cannot be edited until it is unlocked; the same permission as locking in the form
+
+**Risk:** `write`
+
+```ts
+await corsair.ragic.api.records.lock({ account: 'demo', path: '/sales', sheetIndex: 1, recordId: 102 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | The account name from your Ragic URL, such as "demo" in www.ragic.com/demo/sales. |
+| `path` | `string` | Yes | The folder path from your URL, starting with a slash, such as /sales. |
+| `sheetIndex` | `number` | Yes | The sheet number from your URL, the number after the folder path. |
+| `recordId` | `number` | Yes | The record id, which is the _ragicId value. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | SUCCESS on success. |
+| `code` | `number \| null` | No | — |
+
+
+
+---
+
+### unlock
+
+`records.unlock`
+
+Unlock a record that was locked
+
+**Risk:** `write`
+
+```ts
+await corsair.ragic.api.records.unlock({ account: 'demo', path: '/sales', sheetIndex: 1, recordId: 102 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | The account name from your Ragic URL, such as "demo" in www.ragic.com/demo/sales. |
+| `path` | `string` | Yes | The folder path from your URL, starting with a slash, such as /sales. |
+| `sheetIndex` | `number` | Yes | The sheet number from your URL, the number after the folder path. |
+| `recordId` | `number` | Yes | The record id, which is the _ragicId value. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | SUCCESS on success. |
+| `code` | `number \| null` | No | — |
+
+
+
+---
+
+### update
+
+`records.update`
+
+Update only the fields you send on one record, edit a subtable row by its row id, or delete one with _DELSUB_
+
+**Risk:** `write`
+
+```ts
+await corsair.ragic.api.records.update({ account: 'demo', path: '/sales', sheetIndex: 1, recordId: 3, fields: { '_subtable_2000154': { '29': { '2000147': 'Ms. Amy Tsai' } } }, checkLock: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | The account name from your Ragic URL, such as "demo" in www.ragic.com/demo/sales. |
+| `path` | `string` | Yes | The folder path from your URL, starting with a slash, such as /sales. |
+| `sheetIndex` | `number` | Yes | The sheet number from your URL, the number after the folder path. |
+| `fields` | `Record<string, JsonValue>` | Yes | Field ID to value. A multi-select takes an array; a date needs yyyy/MM/dd or yyyy/MM/dd HH:mm:ss; a subtable is `_subtable_<id>` keyed by a negative row id that groups a row’s values. |
+| `doFormula` | `boolean` | No | Recalculate every formula before saving. |
+| `doDefaultValue` | `boolean` | No | Load every default value before saving. |
+| `doLinkLoad` | `boolean \| first` | No | Run link and load operations: true after the formula recalculation, "first" before it. Either way doFormula must also be set when a recalculation is needed. |
+| `doWorkflow` | `boolean` | No | False skips the workflow scripts, which otherwise run. |
+| `doAIAgent` | `boolean` | No | False skips the AI Agents, which otherwise run. |
+| `notification` | `boolean` | No | Defaults to true: the save sends notifications. |
+| `doValidation` | `boolean` | No | Run the sheet’s field validation rules first. A failing field rejects the save. |
+| `checkLock` | `boolean` | No | Refuse the update when the record is locked. |
+| `recordId` | `number` | Yes | The record id, which is the _ragicId value. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recordId` | `number \| null` | No | The new record id. |
+| `_ragicId` | `number \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `msg` | `string \| null` | No | — |
+
+
+
+---
+
+## Schema
+
+### get
+
+`schema.get`
+
+Read a sheet's field schema, including field IDs, types and subtables, so a write can be built without guessing. Needs an account manager's API key
+
+**Risk:** `read`
+
+```ts
+await corsair.ragic.api.schema.get({ account: 'demo', path: '/sales', sheetIndex: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `string` | Yes | The account name from your Ragic URL, such as "demo" in www.ragic.com/demo/sales. |
+| `path` | `string` | Yes | The folder path from your URL, starting with a slash, such as /sales. |
+| `sheetIndex` | `number` | Yes | The sheet number from your URL, the number after the folder path. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sheet` | `object \| null` | No | — |
+| `fields` | `object[] \| null` | No | — |
+| `subtables` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sheet full type">
+
+```ts
+{
+  sheetPath?: string | null,
+  sheetIndex?: number | string | null,
+  sheetName?: string | null,
+  keyFieldId?: number | string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  fieldId?: number | string | null,
+  fieldName?: string | null,
+  type?: string | null,
+  required?: boolean | null,
+  readOnly?: boolean | null,
+  computed?: boolean | null,
+  hidden?: boolean | null,
+  selectionOptionsPreview?: string[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="subtables full type">
+
+```ts
+{
+  subtableKey?: string | null,
+  fields?: {
+    fieldId?: number | string | null,
+    fieldName?: string | null,
+    type?: string | null,
+    required?: boolean | null,
+    readOnly?: boolean | null,
+    computed?: boolean | null,
+    hidden?: boolean | null,
+    selectionOptionsPreview?: string[] | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

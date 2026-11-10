@@ -1,0 +1,62 @@
+displayName: Ragic
+description: Read, filter, create, update and delete records on any Ragic sheet, post comments, lock records and read a sheet's field schema.
+domain: ragic.com
+recommendedAuth: api_key
+overviewNote: |
+  Generate an API key in Ragic under **Personal Settings**. It goes in `Authorization: Basic <key>` — the key is the Basic username and the password is empty, and the value is *not* base64-encoded, because Ragic reads it directly.
+
+  Four things trip up almost every integration:
+
+  - **Every call needs the sheet's coordinates.** A Ragic URL is `https://{server}/{account}{path}/{sheetIndex}`, so each operation takes `account`, `path` and `sheetIndex`, read straight off the URL you see in the browser. There is no way to address a sheet without them.
+  - **The server is per account.** `www.ragic.com` is the default; an account on another shard uses `na3`, `ap5`, `eu2` and so on, and a key only works on its own server. Pass `server: 'eu2.ragic.com'` when that is where your account lives.
+  - **A failure arrives as HTTP 200.** Ragic reports nearly every error inside the response body — `{"status":"ERROR","code":106,"msg":"…"}` — including an unrecognised key, a bad sheet index and a server fault. The plugin checks for that envelope and throws, so a refusal can never be mistaken for a record. Note that `106` covers both a missing key and a genuine permission gap: both fall back to the guest account, and the message names which.
+  - **Records are keyed by row id, not returned as an array.** A list answers `{"12345": {…}, "12346": {…}}`, and each row repeats its id in `_ragicId`. Field keys are field names by default; pass `naming: 'EID'` for field IDs.
+
+  Writing, in practice:
+
+  - **Use `schema.get` first.** A write needs field IDs, and a form's fields differ per account. `schema.get` returns them with their types and, for a select field, up to 50 options — but it needs an **account manager's** API key, so a non-admin key gets `403 no right`.
+  - **Subtable rows are grouped by row id.** On create, give every field of one row the same *negative* id under `_subtable_<id>` so Ragic can tell which values belong together. On update, use the *positive* row id you read from the record. To delete a row, send `_DELSUB_<subtableId>` with an array of row ids.
+  - **Dates are `yyyy/MM/dd` or `yyyy/MM/dd HH:mm:ss`**, in filters and in field values, never ISO 8601.
+  - **`where` is a three-part filter.** `{ fieldId, op, value }` becomes `fieldId,op,value`, and several conditions are sent as a repeated `where` parameter. Repeated `eq`/`regex`/`like` on one field is an **OR**; a `gte` with an `lte` on one field is a **range (AND)**. Leave `value` out to match an empty field.
+  - **A listing returns 1,000 records by default.** Set `limit` explicitly for more, and `subtables: false` when you do not need them, which makes the response far smaller.
+  - **Writes run more than the save.** Workflows, AI Agents and notifications run by default; `doWorkflow: false`, `doAIAgent: false` and `notification: false` turn them off, and `doValidation: true` refuses a save that breaks the sheet's validation rules. `checkLock: true` refuses to edit a locked record.
+  - **`records.lock` / `records.unlock`** map to Ragic's bare `lock` / `unlock` query flag on a POST to the record, and need the same permission as locking in the form.
+  - **No rate limit, but a queue.** Ragic documents no numeric limit, only a per-account queue of 50 that stops accepting GET requests when full, and a manual review above 5 requests a second. The plugin retries a 5xx twice for reads only.
+examples:
+  read:
+    path: records.list
+    title: List records from a sheet
+    args:
+      account: demo
+      path: /sales
+      sheetIndex: 1
+      limit: 50
+  write:
+    path: records.create
+    title: Create a record
+    args:
+      account: demo
+      path: /sales
+      sheetIndex: 1
+      fields:
+        '2000123': Dunder Mifflin
+        '2000127': Jeff Kuo
+apiExamples:
+  records.list:
+    call: "{ account: 'demo', path: '/sales', sheetIndex: 1, where: [{ fieldId: 2000123, op: 'eq', value: 'Alphabet Inc.' }], limit: 50 }"
+  records.get:
+    call: "{ account: 'demo', path: '/sales', sheetIndex: 1, recordId: 12345 }"
+  records.create:
+    call: "{ account: 'demo', path: '/sales', sheetIndex: 1, fields: { '2000123': 'Dunder Mifflin', '1000001': ['Customer', 'Reseller'], '_subtable_2000154': { '-1': { '2000147': 'Bill' } } } }"
+  records.update:
+    call: "{ account: 'demo', path: '/sales', sheetIndex: 1, recordId: 3, fields: { '_subtable_2000154': { '29': { '2000147': 'Ms. Amy Tsai' } } }, checkLock: true }"
+  records.delete:
+    call: "{ account: 'demo', path: '/sales', sheetIndex: 1, recordId: 3 }"
+  records.comment:
+    call: "{ account: 'demo', path: '/sales', sheetIndex: 1, recordId: 2, comment: 'Please review this order.' }"
+  records.lock:
+    call: "{ account: 'demo', path: '/sales', sheetIndex: 1, recordId: 102 }"
+  records.unlock:
+    call: "{ account: 'demo', path: '/sales', sheetIndex: 1, recordId: 102 }"
+  schema.get:
+    call: "{ account: 'demo', path: '/sales', sheetIndex: 1 }"
