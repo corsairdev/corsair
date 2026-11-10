@@ -180,6 +180,43 @@ describe('Mixmax salesforce endpoints', () => {
 		expect(result).toEqual(RESULT);
 	});
 
+	// Mixmax picks the record to update from the body `Id` and ignores the id
+	// in the URL, so a call whose two ids disagree must never reach the API.
+	it.each([
+		['updateAccount', {}],
+		['updateContact', {}],
+		['updateLead', {}],
+		['updateOpportunity', { CloseDate: '2026-12-31' }],
+		['updateTask', {}],
+	] as const)('salesforce.%s rejects a body Id that names a different record than the path id', async (operation, extra) => {
+		await expect(
+			endpoints.salesforce[operation](ctx, {
+				id: '0011I000003h7gdQAA',
+				Id: '0011I000009zzzzQAA',
+				...extra,
+			} as never),
+		).rejects.toThrow('must name the same Salesforce record');
+		expect(request).not.toHaveBeenCalled();
+	});
+
+	it('salesforce.updateAccount accepts the 15-character form of the same record Id', async () => {
+		request.mockResolvedValue(RESULT);
+		await endpoints.salesforce.updateAccount(ctx, {
+			id: '0011I000003h7gdQAA',
+			Id: '0011I000003h7gd',
+			Website: 'https://example.com',
+		});
+
+		expect(request).toHaveBeenCalledWith(
+			ctx,
+			'/v1/salesforce/account/0011I000003h7gdQAA',
+			{
+				method: 'PUT',
+				body: { Id: '0011I000003h7gd', Website: 'https://example.com' },
+			},
+		);
+	});
+
 	it('salesforce.createContact posts the documented body', async () => {
 		request.mockResolvedValue(RESULT);
 		const body = { LastName: 'Lovelace', Email: 'ada@example.com' };

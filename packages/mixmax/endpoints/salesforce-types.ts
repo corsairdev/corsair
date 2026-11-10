@@ -22,6 +22,23 @@ export const SalesforceRecordSchema = z
 
 export type SalesforceRecord = z.infer<typeof SalesforceRecordSchema>;
 
+// The update routes take the record's Id twice: in the URL and in the body.
+// Mixmax picks the record from the body `Id` and ignores the one in the URL,
+// so a call whose two ids disagree would silently update a record other than
+// the one the caller addressed. Salesforce writes the same record's Id in a
+// 15-character and an 18-character form (the 18-character one adds a
+// checksum suffix), so only the first 15 characters are compared.
+const isSameSalesforceRecord = (input: { id: string; Id: string }) =>
+	input.id.length >= 15 && input.Id.length >= 15
+		? input.id.slice(0, 15) === input.Id.slice(0, 15)
+		: input.id === input.Id;
+
+const SALESFORCE_ID_MISMATCH = {
+	message:
+		'`Id` must name the same Salesforce record as `id`: Mixmax updates the record in the body `Id`, not the one in the URL',
+	path: ['Id'],
+};
+
 // A page of Salesforce records, matching the official SalesforceRecordPage
 // schema. Both cursors are always returned, so `next`, `hasNext`, `previous`
 // and `hasPrevious` stay optional while `results` is the page's payload.
@@ -216,7 +233,7 @@ export const SalesforceUpdateAccountInputSchema =
 	SalesforceWriteBodySchema.extend({
 		id: z.string().min(1),
 		Id: z.string().min(1),
-	});
+	}).refine(isSameSalesforceRecord, SALESFORCE_ID_MISMATCH);
 
 export type SalesforceUpdateAccountInput = z.infer<
 	typeof SalesforceUpdateAccountInputSchema
@@ -275,7 +292,7 @@ export const SalesforceUpdateContactInputSchema =
 	SalesforceWriteBodySchema.extend({
 		id: z.string().min(1),
 		Id: z.string().min(1),
-	});
+	}).refine(isSameSalesforceRecord, SALESFORCE_ID_MISMATCH);
 
 export type SalesforceUpdateContactInput = z.infer<
 	typeof SalesforceUpdateContactInputSchema
@@ -407,7 +424,7 @@ export const SalesforceUpdateLeadInputSchema = SalesforceWriteBodySchema.extend(
 		id: z.string().min(1),
 		Id: z.string().min(1),
 	},
-);
+).refine(isSameSalesforceRecord, SALESFORCE_ID_MISMATCH);
 
 export type SalesforceUpdateLeadInput = z.infer<
 	typeof SalesforceUpdateLeadInputSchema
@@ -505,7 +522,7 @@ export const SalesforceUpdateOpportunityInputSchema =
 		ContactId: z.string().optional(),
 		// With `ContactId`, `true` makes that Contact the primary contact.
 		mm_IsPrimaryContactRole: z.boolean().optional(),
-	});
+	}).refine(isSameSalesforceRecord, SALESFORCE_ID_MISMATCH);
 
 export type SalesforceUpdateOpportunityInput = z.infer<
 	typeof SalesforceUpdateOpportunityInputSchema
@@ -639,7 +656,7 @@ export const SalesforceUpdateTaskInputSchema = SalesforceWriteBodySchema.extend(
 		id: z.string().min(1),
 		Id: z.string().min(1),
 	},
-);
+).refine(isSameSalesforceRecord, SALESFORCE_ID_MISMATCH);
 
 export type SalesforceUpdateTaskInput = z.infer<
 	typeof SalesforceUpdateTaskInputSchema
