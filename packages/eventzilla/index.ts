@@ -276,9 +276,9 @@ const eventzillaEndpointMeta = {
 			'Cancel an order. The order and its tickets stop standing and the buyer is not restored by any other call; issuing a replacement means a new checkout.',
 	},
 	'orders.confirm': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Confirm an order after checkout, optionally emailing the buyer. Confirming an already-confirmed order is the API’s own decision to make.',
+			'Confirm an order after checkout. EMAILS THE BUYER unless `sendemail` is false. Confirming an already-confirmed order is the API’s own decision to make.',
 	},
 	'sales.toggle': {
 		riskLevel: 'write',
@@ -301,9 +301,9 @@ const eventzillaEndpointMeta = {
 			'Attach buyer and attendee details to a reserved checkout. Nothing is charged and no email is sent until checkout.confirm.',
 	},
 	'checkout.confirm': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Record the payment result and turn a filled checkout into a confirmed order, optionally emailing the buyer. This is the step that completes a registration.',
+			'Record the payment result and turn a filled checkout into a confirmed order. EMAILS THE BUYER unless `sendemail` is false. This is the step that completes a registration.',
 	},
 	'categories.list': {
 		riskLevel: 'read',
