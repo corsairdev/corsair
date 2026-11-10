@@ -411,7 +411,7 @@ describe('models.train', () => {
 });
 
 describe('models.updateGuidelines', () => {
-	it('POSTs the guidelines to the ObjectDetection model endpoint', async () => {
+	it('PATCHes the guidelines to the ObjectDetection model endpoint', async () => {
 		respond(modelObject);
 
 		const result = await invoke(Models.updateGuidelines, {
@@ -422,8 +422,10 @@ describe('models.updateGuidelines', () => {
 		});
 
 		expectAuthenticated();
+		// Nanonets answers 405 to a POST on this route; the reference heading
+		// says PATCH although its samples show POST.
 		expect(lastRequest()).toMatchObject({
-			method: 'POST',
+			method: 'PATCH',
 			path: `/api/v2/ObjectDetection/Model/${modelId}`,
 		});
 		const body = lastInit().body;

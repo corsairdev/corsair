@@ -58,7 +58,9 @@ export const updateGuidelines: NanonetsEndpoints['modelsUpdateGuidelines'] = (
 		},
 		input,
 		({ model_id, field_instructions, table_instructions, ai_guidelines }) => ({
-			method: 'POST',
+			// The reference heading says PATCH while its samples show POST;
+			// the live route answers 405 to POST and accepts PATCH.
+			method: 'PATCH',
 			path: `/ObjectDetection/Model/${encodeURIComponent(model_id)}`,
 			body: { field_instructions, table_instructions, ai_guidelines },
 		}),
