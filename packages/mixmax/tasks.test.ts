@@ -79,4 +79,19 @@ describe('Mixmax tasks endpoints', () => {
 		});
 		expect(result).toEqual(page);
 	});
+
+	it('tasks.list accepts the live answer, which has after/before instead of next/previous', async () => {
+		// Recorded from GET /v1/tasks on a live trial account (11-10).
+		const live = {
+			results: [],
+			hasPrevious: false,
+			hasNext: false,
+			after: null,
+			before: null,
+			total: 0,
+		};
+		request.mockResolvedValueOnce(live);
+
+		await expect(endpoints.tasks.list(ctx, {})).resolves.toEqual(live);
+	});
 });

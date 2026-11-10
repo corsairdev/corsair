@@ -72,15 +72,18 @@ export const TasksListInputSchema = z.object({
 
 export type TasksListInput = z.infer<typeof TasksListInputSchema>;
 
-// GET /v1/tasks answer, matching the official TaskListResponse: `total`,
-// both cursors and both flags are required, with the cursors `null` when
-// there is no adjacent page.
+// GET /v1/tasks answer: `total` and both flags are always present.
 export const TasksListOutputSchema = z.object({
 	results: z.array(TaskSchema),
 	// Total number of tasks matching the requested filters.
 	total: z.number().int(),
-	next: z.string().nullable(),
-	previous: z.string().nullable(),
+	// The reference names the cursors `next` and `previous`; the live API
+	// (11-10) answers `after` and `before` instead, `null` with no adjacent
+	// page. Accept either pair.
+	next: z.string().nullish(),
+	previous: z.string().nullish(),
+	after: z.string().nullish(),
+	before: z.string().nullish(),
 	hasNext: z.boolean(),
 	hasPrevious: z.boolean(),
 });
