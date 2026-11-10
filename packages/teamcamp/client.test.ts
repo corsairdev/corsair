@@ -53,14 +53,11 @@ describe('auth transport', () => {
 		await makeTeamcampRequest(KEY, { method: 'GET', path: '/project' });
 
 		const sent = lastRequest();
-		// The base carries the /v1.0 prefix, so the URL starts with it whole.
 		expect(
 			`${sent.origin}${sent.path.startsWith('/v1.0') ? '/v1.0' : ''}`,
 		).toBe(TEAMCAMP_API_BASE);
 		expect(TEAMCAMP_KEY_HEADER).toBe('apiKey');
 		expect(sent.headers.get('apikey')).toBe(KEY);
-		// The spec's scheme is named bearerAuth but is an apiKey header; the live
-		// API answers 403 to a Bearer token.
 		expect(sent.headers.get('authorization')).toBeNull();
 	});
 
@@ -144,7 +141,6 @@ describe('the 403 that is not an auth failure', () => {
 		)) as TeamcampAPIError;
 
 		expect(error.status).toBe(403);
-		// The point of the flag: a caller is not sent to re-enter a working key.
 		expect(error.resourceNotFound).toBe(true);
 		expect(error.isAuthError).toBe(false);
 		expect(error.message).toContain('does not exist');

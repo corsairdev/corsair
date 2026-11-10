@@ -139,7 +139,6 @@ describe('Teamcamp retries through createCorsair', () => {
 	it('reports a missing project as a missing resource, not a bad key', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			// A valid key, an unknown project: Teamcamp answers its invalid-key 403.
 			respond('"Invalid API key!!!"', 403);
 
 			const error = await captureError(
@@ -147,7 +146,6 @@ describe('Teamcamp retries through createCorsair', () => {
 			);
 
 			expect((error as Error).message).toContain('does not exist');
-			// One attempt: a key problem would not fix itself on a retry either.
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();

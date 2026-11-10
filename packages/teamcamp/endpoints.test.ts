@@ -27,7 +27,6 @@ describe('output schemas parse live answers', () => {
 			users: userList,
 		});
 		const user = output.users[0];
-		// These three are in the live answer and absent from the spec.
 		expect(user?.timezone).toBe('India Standard Time');
 		expect(user?.dateFormat).toBe('DD MMM YYYY');
 		expect(user?.lastSeen).toBe('2026-11-10T12:34:45.461Z');
@@ -56,7 +55,6 @@ describe('output schemas parse live answers', () => {
 		expect(first?.Name).toBe('Todo');
 		expect(first?.Type).toBe(2);
 		expect(first?._id).toBe('ppxah6OgUcGXclowmNm8D');
-		// `Default` is a keyword-looking name beside `Index`, both PascalCase.
 		expect(first?.Default).toBe(true);
 	});
 
@@ -70,7 +68,6 @@ describe('output schemas parse live answers', () => {
 		const output =
 			TeamcampEndpointOutputSchemas.projectsGet.parse(archivedProject);
 		expect(output.archived).toBe(true);
-		// A project that is live has no archived field at all.
 		expect(
 			TeamcampEndpointOutputSchemas.projectsGet.parse(projectDetail).archived,
 		).toBeUndefined();
@@ -108,7 +105,6 @@ describe('output schemas parse live answers', () => {
 		expect(comment?._id).toBe('8jqHIXnP5_p9_We9-qey3');
 		expect(comment?.CreatedBy).toBe('iXH_-M_COvz453E5uQgoJ');
 		expect(comment?.Type).toBe(17);
-		// A task with no group sends null, not an omitted field.
 		expect(output.groupId).toBeNull();
 		expect(output.description).toBe('');
 	});
@@ -142,7 +138,6 @@ describe('output schemas reject the wrong shape', () => {
 	});
 
 	it('accepts a field the schema does not name', () => {
-		// A field Teamcamp adds later must not fail a call that already happened.
 		const output = TeamcampEndpointOutputSchemas.tasksGet.parse({
 			...task,
 			brandNewField: 'x',

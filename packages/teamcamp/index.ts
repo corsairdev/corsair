@@ -234,7 +234,6 @@ export function teamcamp<const T extends TeamcampPluginOptions>(
 		options: options,
 		hooks: options.hooks,
 		endpoints: teamcampEndpointsNested,
-		// Teamcamp documents no webhooks and sends no deliveries.
 		webhooks: {},
 		endpointMeta: teamcampEndpointMeta,
 		endpointSchemas: teamcampEndpointSchemas,

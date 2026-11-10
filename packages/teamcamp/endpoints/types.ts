@@ -1,35 +1,13 @@
 import { z } from 'zod';
 
-// Shapes come from Teamcamp's published OpenAPI specs
-// (https://docs.teamcamp.app/api-reference/*.json) checked against live
-// answers on 2026-11-10. Where the two disagree, the live answer wins and the
-// difference is noted at the field.
-//
-// Four documented operations are deliberately absent because they do not work:
-// `GET /project/{id}/getCurrentProjectDetails` answers 404 (the plain project
-// read already returns the same fields), `PUT /task/updateTask/{id}` answers
-// 404 (the real update is `PUT /task/{id}`), `POST /task/{id}/comments` answers
-// 404 (no comment route exists), and `PUT /task/{id}` answers 200 while
-// ignoring every field, so exposing it would report success without saving
-// anything.
-
-// ── Shared building blocks ────────────────────────────────────────────────
-
-/** Teamcamp answers a bad parameter with `{ error }`. */
 export const TeamcampErrorSchema = z
 	.object({ error: z.string().nullish() })
 	.loose();
 
 export type TeamcampError = z.infer<typeof TeamcampErrorSchema>;
 
-/** A resource id, which the API treats as an opaque string. */
 const ResourceId = z.string().min(1);
 
-/**
- * A `yyyy-MM-dd` date, which is the only format Teamcamp accepts. The shape is
- * checked, then the calendar, so a month or day that does not exist fails here
- * rather than at the API.
- */
 const DateOnly = z
 	.string()
 	.regex(/^\d{4}-\d{2}-\d{2}$/, 'must be a yyyy-MM-dd date')
@@ -44,13 +22,6 @@ const DateOnly = z
 	}, 'must be a real calendar date')
 	.describe('A date in yyyy-MM-dd form, such as 2026-11-30.');
 
-// ── users ─────────────────────────────────────────────────────────────────
-
-/**
- * A workspace member. `timezone`, `dateFormat` and `lastSeen` are in the live
- * answer and absent from the spec, which documents only id, name, email, phone,
- * profile_photo, isOwner and isAdmin.
- */
 export const TeamcampUserSchema = z
 	.object({
 		id: z.string(),
@@ -78,9 +49,6 @@ const ListUsersResponseSchema = z.object({
 
 export type ListUsersResponse = z.infer<typeof ListUsersResponseSchema>;
 
-// ── customers ─────────────────────────────────────────────────────────────
-
-/** A client under a customer; the spec nests them, the live answer may omit. */
 const TeamcampClientSchema = z
 	.object({
 		clientId: z.string().nullish(),
@@ -113,9 +81,6 @@ const ListCustomersResponseSchema = z.object({
 
 export type ListCustomersResponse = z.infer<typeof ListCustomersResponseSchema>;
 
-// ── workspace ─────────────────────────────────────────────────────────────
-
-/** What `GET /verify` answers: the workspace the key belongs to. */
 export const TeamcampWorkspaceSchema = z
 	.object({
 		workspaceId: z.string(),
@@ -134,9 +99,6 @@ const VerifyKeyResponseSchema = TeamcampWorkspaceSchema;
 
 export type VerifyKeyResponse = z.infer<typeof VerifyKeyResponseSchema>;
 
-// ── projects ──────────────────────────────────────────────────────────────
-
-/** One row of the project list, which carries only these two fields. */
 export const TeamcampProjectSummarySchema = z
 	.object({
 		projectId: z.string(),
@@ -148,11 +110,6 @@ export type TeamcampProjectSummary = z.infer<
 	typeof TeamcampProjectSummarySchema
 >;
 
-/**
- * A project's workflows status. The live answer sends `Name`, `Type`, `_id`,
- * `Index` and `Default` in PascalCase, while the project fields beside them are
- * camelCase.
- */
 const ProjectStatusSchema = z
 	.object({
 		Name: z.string().nullish(),
@@ -163,11 +120,6 @@ const ProjectStatusSchema = z
 	})
 	.loose();
 
-/**
- * A single project. `archived` appears only after a delete, which archives the
- * project rather than removing the row: the project leaves the list, but
- * reading it by id still answers 200 with `archived: true` (live-verified).
- */
 export const TeamcampProjectSchema = TeamcampProjectSummarySchema.extend({
 	workspaceId: z.string().nullish(),
 	ownerId: z.string().nullish(),
@@ -208,12 +160,6 @@ const GetProjectResponseSchema = TeamcampProjectSchema;
 
 export type GetProjectResponse = z.infer<typeof GetProjectResponseSchema>;
 
-/**
- * Creates a project. `projectName` is the only required field; the spec also
- * accepts `customerId`, `startDate`, `dueDate` and `templateId`. The live
- * answer is the created project, including the workflow statuses Teamcamp
- * generates for it.
- */
 const CreateProjectInputSchema = z.object({
 	projectName: z.string().min(1).describe('The project name.'),
 	customerId: z
@@ -236,11 +182,6 @@ const CreateProjectResponseSchema = TeamcampProjectSchema;
 
 export type CreateProjectResponse = z.infer<typeof CreateProjectResponseSchema>;
 
-/**
- * Updates a project. Every field is optional, but a call that names none is a
- * request the API answers with an unchanged project, so at least one is
- * required here.
- */
 const UpdateProjectInputSchema = z
 	.object({
 		projectId: ResourceId.describe('The project to update.'),
@@ -283,11 +224,6 @@ const DeleteProjectInputSchema = z.object({
 
 export type DeleteProjectInput = z.infer<typeof DeleteProjectInputSchema>;
 
-/**
- * A delete answers `200` with the bare string `"The project has been deleted
- * successfully."` and archives the project: it leaves the list, but reading it
- * by id still answers 200 with `archived: true`.
- */
 const DeleteProjectResponseSchema = z.object({
 	archived: z.boolean(),
 	projectId: z.string(),
@@ -295,8 +231,6 @@ const DeleteProjectResponseSchema = z.object({
 });
 
 export type DeleteProjectResponse = z.infer<typeof DeleteProjectResponseSchema>;
-
-// ── project groups ────────────────────────────────────────────────────────
 
 const TeamcampGroupSchema = z
 	.object({
@@ -320,9 +254,6 @@ const ListGroupsResponseSchema = z.object({
 
 export type ListGroupsResponse = z.infer<typeof ListGroupsResponseSchema>;
 
-// ── tasks ─────────────────────────────────────────────────────────────────
-
-/** A row of the task list. The live answer also carries status and timestamps. */
 export const TeamcampTaskSummarySchema = z
 	.object({
 		taskId: z.string(),
@@ -331,18 +262,12 @@ export const TeamcampTaskSummarySchema = z
 		statusId: z.string().nullish(),
 		createdAt: z.string().nullish(),
 		updatedAt: z.string().nullish(),
-		// The live list sends the id twice, under `taskId` and `id`.
 		id: z.string().nullish(),
 	})
 	.loose();
 
 export type TeamcampTaskSummary = z.infer<typeof TeamcampTaskSummarySchema>;
 
-/**
- * A task's comment. The live answer uses PascalCase (`_id`, `CreatedBy`,
- * `CreatedTime`, `Type`) while the spec documents `commentId` and `content`,
- * so both spellings are read and either may be absent.
- */
 const TaskCommentSchema = z
 	.object({
 		_id: z.string().nullish(),
@@ -358,11 +283,6 @@ const TaskCommentSchema = z
 
 export type TeamcampTaskComment = z.infer<typeof TaskCommentSchema>;
 
-/**
- * A single task. `status` is a boolean (done or not) and `statusId` names the
- * workflow column; the spec describes `status` as "The Status of the task"
- * without saying it is a boolean.
- */
 export const TeamcampTaskSchema = z
 	.object({
 		taskId: z.string(),
@@ -421,7 +341,6 @@ const GetTaskResponseSchema = TeamcampTaskSchema;
 
 export type GetTaskResponse = z.infer<typeof GetTaskResponseSchema>;
 
-/** The priority scale Teamcamp documents for a task. */
 export const TEAMCAMP_TASK_PRIORITIES = [
 	'none',
 	'urgent',
@@ -430,7 +349,6 @@ export const TEAMCAMP_TASK_PRIORITIES = [
 	'low',
 ] as const;
 
-/** The wire value for each priority, which the API takes as a number. */
 export const TEAMCAMP_PRIORITY_VALUES: Record<
 	(typeof TEAMCAMP_TASK_PRIORITIES)[number],
 	number
@@ -442,11 +360,6 @@ export const TEAMCAMP_PRIORITY_VALUES: Record<
 	low: 4,
 };
 
-/**
- * Creates a task. The name field is `taskName`, not `name`: the published spec
- * says `name` and the API answers `400 "Task Name is required."` for it
- * (live-verified), so `taskName` is what is sent.
- */
 const CreateTaskInputSchema = z.object({
 	projectId: ResourceId.describe('The project the task belongs to.'),
 	taskName: z.string().min(1).describe('The task name.'),
@@ -505,8 +418,6 @@ export type CreateTaskInput = z.input<typeof CreateTaskInputSchema>;
 const CreateTaskResponseSchema = TeamcampTaskSchema;
 
 export type CreateTaskResponse = z.infer<typeof CreateTaskResponseSchema>;
-
-// ── Registry ──────────────────────────────────────────────────────────────
 
 export type TeamcampEndpointInputs = {
 	accountVerify: VerifyKeyInput;

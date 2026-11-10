@@ -1,14 +1,3 @@
-// Answers copied from live Teamcamp responses on 2026-11-10 against a test
-// workspace, not from the docs' examples. Differences from the published spec
-// are noted at the field, because several matter:
-//
-// - `GET /company/users` also sends `timezone`, `dateFormat` and `lastSeen`.
-// - A task list row sends `status`, `statusId`, `createdAt` and `updatedAt`, and
-//   repeats the id under both `taskId` and `id`.
-// - A task's `status` is a boolean, and its workflow column is a `statusId`.
-// - A project's `status` array is PascalCase (`Name`, `Type`, `_id`, `Index`,
-//   `Default`) beside camelCase project fields.
-
 export const workspace = {
 	workspaceId: '5-YTy0zgMFoXJSV4joyB5',
 	workspaceName: 'test',
@@ -32,10 +21,8 @@ export const user = {
 export const userList = [user];
 
 // unknown: the live answer was an empty array, so there is no element shape to
-// pin; the endpoint test asserts the list parses as empty.
 export const customerList = [] as unknown[];
 
-/** A project as the create and update calls answer, with its workflow. */
 export const project = {
 	projectId: '0uUAD4N11-tUA00rNE2EB',
 	projectName: 'Corsair Probe Project',
@@ -76,7 +63,6 @@ export const project = {
 	],
 };
 
-/** A project read, which adds a start date to the created shape. */
 export const projectDetail = {
 	projectId: 'iPSOnKVs4zSOR5-vQTK_3',
 	projectName: 'Getting Started',
@@ -92,13 +78,11 @@ export const projectDetail = {
 	status: project.status,
 };
 
-/** An archived project, which is what a read by id answers after a delete. */
 export const archivedProject = {
 	...project,
 	archived: true,
 };
 
-/** The project list carries only these two fields per row. */
 export const projectList = [
 	{ projectId: 'iPSOnKVs4zSOR5-vQTK_3', projectName: 'Getting Started' },
 ];
@@ -106,7 +90,6 @@ export const projectList = [
 // unknown: same as customerList: an empty live answer with no element shape.
 export const groupList = [] as unknown[];
 
-/** A task list row. */
 export const taskSummary = {
 	taskId: 'VgPahrw0YaDq-1AnJQXSx',
 	taskName: 'Connect Figma',
@@ -119,7 +102,6 @@ export const taskSummary = {
 
 export const taskList = [taskSummary];
 
-/** A task as the create call answers, and as a read returns it. */
 export const task = {
 	taskId: 'HbQJf4Lc2nJv5djKH4zCU',
 	taskName: 'Corsair probe',
@@ -149,14 +131,10 @@ export const task = {
 	links: [],
 };
 
-/** The bare string a project delete answers with HTTP 200. */
 export const deleteMessage = 'The project has been deleted successfully.';
 
-/** The bare JSON string a bad key answers with HTTP 403. */
 export const invalidKeyBody = '"Invalid API key!!!"';
 
-/** The body a missing projectId answers with HTTP 400. */
 export const missingProjectId = { error: 'ProjectId is required' };
 
-/** The body a task create answers when `name` is sent instead of `taskName`. */
 export const missingTaskName = { error: 'Task Name is required.' };

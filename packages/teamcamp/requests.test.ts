@@ -27,9 +27,6 @@ import {
 beforeEach(setUp);
 afterEach(tearDown);
 
-// One test per operation: the URL, the method, where the key went, and every
-// query or body field sent.
-
 describe('account.verify', () => {
 	it('GETs /verify and reads the workspace', async () => {
 		respond(workspace);
@@ -105,7 +102,6 @@ describe('projects.get', () => {
 		expectAuthenticated();
 		expect(lastRequest().path).toBe('/v1.0/project/iPSOnKVs4zSOR5-vQTK_3');
 		expect(result.status).toHaveLength(4);
-		// The workflow is PascalCase beside camelCase project fields.
 		expect(result.status[0]?.Name).toBe('Todo');
 	});
 
@@ -211,8 +207,6 @@ describe('projects.delete', () => {
 	});
 
 	it('still reads a project by id after the delete, marked archived', async () => {
-		// The delete archives; it does not erase. This is the behaviour the
-		// operation's description states.
 		respond(archivedProject);
 
 		const result = (await invoke(Endpoints.projectsGet, {
@@ -294,8 +288,6 @@ describe('tasks.create', () => {
 		const sent = lastRequest();
 		expect(sent.method).toBe('POST');
 		expect(sent.path).toBe('/v1.0/task');
-		// The published spec calls this `name`; the live API rejects that with
-		// 400 "Task Name is required."
 		expect(sent.body).toEqual({ projectId: 'p1', taskName: 'Corsair probe' });
 		expect(sent.body).not.toHaveProperty('name');
 		expect(result.taskId).toBe('HbQJf4Lc2nJv5djKH4zCU');
@@ -310,7 +302,6 @@ describe('tasks.create', () => {
 			priority: 'urgent',
 		});
 
-		// 0 = none, 1 = urgent, 2 = high, 3 = medium, 4 = low.
 		expect((lastRequest().body as { priority?: number }).priority).toBe(1);
 	});
 

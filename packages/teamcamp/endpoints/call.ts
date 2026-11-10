@@ -6,12 +6,6 @@ import { makeTeamcampRequest } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
-/**
- * Validates the input, sends the request, shapes and validates the answer.
- *
- * Teamcamp's list endpoints answer a bare array, so `shape` wraps it under a
- * named key before the output schema sees it. A delete answers a bare string.
- */
 export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	ctx: TeamcampContext,
 	operation: { event: string; input: Input; output: Output },
@@ -41,11 +35,6 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	return result;
 }
 
-/**
- * Reads a bare-array answer into `{ items }`. A body that is not an array is
- * reported rather than mapped to an empty list: a page of nothing looks like
- * data, and an endpoint that silently stopped working would be invisible.
- */
 // unknown: `raw` is the provider's answer before the endpoint's output schema
 // runs, and `unknown[]` is what this returns: the element shapes differ per
 // resource, so naming one here would be wrong for every other caller.

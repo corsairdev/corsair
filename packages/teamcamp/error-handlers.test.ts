@@ -56,7 +56,6 @@ describe('error handlers', () => {
 
 	it('routes a resource-scoped 403 to NOT_FOUND, not AUTH', async () => {
 		const error = apiError('missing', { status: 403, resourceNotFound: true });
-		// AUTH_ERROR must not claim it: the key is fine, the id is not.
 		const authEntry = errorHandlers.AUTH_ERROR as NonNullable<
 			CorsairErrorHandler['AUTH_ERROR']
 		>;

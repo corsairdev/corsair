@@ -7,9 +7,6 @@ import {
 	TEAMCAMP_PRIORITY_VALUES,
 } from './types';
 
-// ── account ───────────────────────────────────────────────────────────────
-
-/** Reads the workspace the key belongs to, which doubles as a key check. */
 export const accountVerify: TeamcampEndpoints['accountVerify'] = (ctx, input) =>
 	call(
 		ctx,
@@ -22,8 +19,6 @@ export const accountVerify: TeamcampEndpoints['accountVerify'] = (ctx, input) =>
 		() => ({ method: 'GET', path: '/verify' }),
 		{ log: (_, result) => ({ workspaceId: result.workspaceId }) },
 	);
-
-// ── company ───────────────────────────────────────────────────────────────
 
 export const usersList: TeamcampEndpoints['usersList'] = (ctx, input) =>
 	call(
@@ -53,8 +48,6 @@ export const customersList: TeamcampEndpoints['customersList'] = (ctx, input) =>
 		},
 	);
 
-// ── projects ──────────────────────────────────────────────────────────────
-
 export const projectsList: TeamcampEndpoints['projectsList'] = (ctx, input) =>
 	call(
 		ctx,
@@ -71,10 +64,6 @@ export const projectsList: TeamcampEndpoints['projectsList'] = (ctx, input) =>
 		},
 	);
 
-/**
- * Reads one project. This is the call that carries the workflow statuses a task
- * create needs for `statusId`, along with the members and the owner.
- */
 export const projectsGet: TeamcampEndpoints['projectsGet'] = (ctx, input) =>
 	call(
 		ctx,
@@ -129,10 +118,6 @@ export const projectsCreate: TeamcampEndpoints['projectsCreate'] = (
 		},
 	);
 
-/**
- * Updates a project. The API sends a whole project back, so the request carries
- * only the fields the caller named.
- */
 export const projectsUpdate: TeamcampEndpoints['projectsUpdate'] = (
 	ctx,
 	input,
@@ -165,11 +150,6 @@ export const projectsUpdate: TeamcampEndpoints['projectsUpdate'] = (
 		},
 	);
 
-/**
- * Deletes a project, which archives it: it leaves the project list, but a read
- * by id still answers it with `archived: true`. The call answers a bare string,
- * which becomes this operation's result.
- */
 export const projectsDelete: TeamcampEndpoints['projectsDelete'] = (
 	ctx,
 	input,
@@ -188,8 +168,6 @@ export const projectsDelete: TeamcampEndpoints['projectsDelete'] = (
 			resourceScoped: true,
 		}),
 		{
-			// The 200 body is the bare string "The project has been deleted
-			// successfully."; the archive state it creates is read by projects.get.
 			shape: (raw, parsed) => ({
 				archived: true,
 				projectId: parsed.projectId,
@@ -198,8 +176,6 @@ export const projectsDelete: TeamcampEndpoints['projectsDelete'] = (
 			log: (parsed) => ({ projectId: parsed.projectId }),
 		},
 	);
-
-// ── project groups ────────────────────────────────────────────────────────
 
 export const groupsList: TeamcampEndpoints['groupsList'] = (ctx, input) =>
 	call(
@@ -223,8 +199,6 @@ export const groupsList: TeamcampEndpoints['groupsList'] = (ctx, input) =>
 			}),
 		},
 	);
-
-// ── tasks ─────────────────────────────────────────────────────────────────
 
 export const tasksList: TeamcampEndpoints['tasksList'] = (ctx, input) =>
 	call(
@@ -265,11 +239,6 @@ export const tasksGet: TeamcampEndpoints['tasksGet'] = (ctx, input) =>
 		},
 	);
 
-/**
- * Creates a task. The name goes out as `taskName`, which is what the API
- * accepts; the published spec calls it `name` and the request fails with
- * `400 "Task Name is required."` if that is sent instead.
- */
 export const tasksCreate: TeamcampEndpoints['tasksCreate'] = (ctx, input) =>
 	call(
 		ctx,

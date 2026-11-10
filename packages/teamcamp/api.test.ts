@@ -2,12 +2,6 @@ import type { TeamcampAPIError } from './client';
 import { makeTeamcampRequest, TEAMCAMP_API_BASE } from './client';
 import { captureError } from './test-errors';
 
-// Live smoke tests. CI skips `api.test.ts` by design, and so does the plugin
-// gate; run it with `pnpm --filter @corsair-dev/teamcamp test:live`.
-//
-// Every call here is read-only: the workspace, the member and customer lists,
-// the project list, one project by id, its groups and its tasks. Nothing is
-// created, updated or deleted, so a run changes nothing in the workspace.
 const KEY = process.env.TEAMCAMP_API_KEY;
 const describeIfKey = KEY ? describe : describe.skip;
 
@@ -61,18 +55,15 @@ describeIfKey('Teamcamp live', () => {
 
 		const first = projects[0];
 		if (!first) {
-			// A workspace with no project is valid; nothing to read back.
 			expect(projects).toEqual([]);
 			return;
 		}
 
 		const project = await makeTeamcampRequest<{
 			projectId: string;
-			// unknown: only that the workflow is an array is asserted, not its members.
-			status?: unknown[];
+			status?: { _id?: string | null; Name?: string | null }[];
 		}>(apiKey, { method: 'GET', path: `/project/${first.projectId}` });
 		expect(project.projectId).toBe(first.projectId);
-		// The workflow statuses are what a task create needs for statusId.
 		expect(Array.isArray(project.status)).toBe(true);
 
 		const groups = await makeTeamcampRequest<
@@ -150,8 +141,6 @@ describeIfKey('Teamcamp live', () => {
 	});
 
 	it('answers an unknown project with the same 403, reported as a missing resource', async () => {
-		// The trap this plugin handles: a valid key and an unknown id give the
-		// same body a bad key does.
 		const error = await captureError(
 			makeTeamcampRequest(apiKey, {
 				method: 'GET',

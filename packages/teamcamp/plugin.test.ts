@@ -6,7 +6,6 @@ import {
 } from './endpoints/types';
 import { teamcamp, teamcampEndpointSchemas } from './index';
 
-// The key builder only reads authType and keys.
 function keyContext(apiKey: string | null) {
 	return {
 		authType: 'api_key' as const,
@@ -20,7 +19,6 @@ function buildKey(
 	plugin: ReturnType<typeof teamcamp>,
 	ctx: ReturnType<typeof keyContext>,
 ) {
-	// The fake context is not a full KeyBuilderContext.
 	return plugin.keyBuilder?.(ctx as never, 'endpoint');
 }
 
@@ -45,7 +43,6 @@ describe('teamcamp plugin definition', () => {
 	it('registers with api_key auth and no webhooks', () => {
 		expect(plugin.id).toBe('teamcamp');
 		expect(plugin.options?.authType).toBe('api_key');
-		// Teamcamp documents no webhooks and sends no deliveries.
 		expect(plugin.webhooks).toEqual({});
 		expect(
 			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
@@ -60,8 +57,6 @@ describe('teamcamp plugin definition', () => {
 	});
 
 	it('leaves out the four documented operations that do not work', () => {
-		// Three answer 404 and one silently ignores its body, so exposing them
-		// would report success where nothing happened.
 		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
@@ -85,8 +80,6 @@ describe('teamcamp plugin definition', () => {
 			'customers.list': 'read',
 			'groups.list': 'read',
 			'projects.create': 'write',
-			// Deleting archives rather than erasing, and the project still reads
-			// back by id, so this is destructive but not marked irreversible.
 			'projects.delete': 'destructive',
 			'projects.get': 'read',
 			'projects.list': 'read',
@@ -107,7 +100,6 @@ describe('teamcamp plugin definition', () => {
 	});
 
 	it('has no long-running jobs to follow', () => {
-		// Every call answers when it finishes, so no operation declares one.
 		const meta = plugin.endpointMeta as Record<
 			string,
 			{ job?: EndpointJob } | undefined
