@@ -1,0 +1,1041 @@
+---
+title: API
+description: "API reference for Raisely: every `raisely.api.*` operation with input and output types."
+---
+
+Every `raisely.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Campaigns
+
+### get
+
+`campaigns.get`
+
+Fetch one campaign by uuid or path, including its totals, goal and public URL
+
+**Risk:** `read`
+
+```ts
+await corsair.raisely.api.campaigns.get({ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string` | Yes | The campaign uuid or path, as returned by `campaigns.list`. |
+| `private` | `boolean` | No | Return the full record. Only meaningful with a token that can see private fields. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  path?: string | null,
+  url?: string | null,
+  mode?: string | null,
+  status?: string | null,
+  currency?: string | null,
+  goal?: number | null,
+  total?: number | null,
+  totalPercent?: number | null,
+  grandTotal?: number | null,
+  version?: string | null,
+  theme?: string | null,
+  primaryDomain?: string | null,
+  organisationUuid?: string | null,
+  campaignEndsAt?: string | null,
+  createdAt?: string | null,
+  deletedAt?: string | null,
+  defaultDesignation?: string | null,
+  isTaxDeductible?: boolean | null,
+  enablePartialTaxReceipting?: boolean | null,
+  allowExperiments?: boolean | null,
+  showRaiselyCheckbox?: boolean | null,
+  publicKey?: string | null,
+  privateKey?: string | null,
+  profile?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  urls?: string[] | null,
+  config?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
+  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
+  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List the organisation’s campaigns with path, mode and status filters plus offset paging
+
+**Risk:** `read`
+
+```ts
+await corsair.raisely.api.campaigns.list({ status: 'active', limit: 100, sort: 'createdAt', order: 'desc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page. Raisely applies its own default when omitted. |
+| `offset` | `number` | No | Records to skip. Pass the `next_offset` from the previous page rather than computing it. |
+| `q` | `string` | No | A search phrase. |
+| `sort` | `string` | No | The attribute to sort on, used with `order`. |
+| `order` | `asc \| desc` | No | The sort direction; only applied when `sort` is also set. |
+| `private` | `boolean` | No | Return the full record. Only meaningful with a token that can see private fields. |
+| `path` | `string` | No | Only the campaign with this path. |
+| `mode` | `string` | No | The campaign mode. |
+| `status` | `string` | No | The campaign status. |
+| `prune_config` | `boolean` | No | Drop `config` from each record to shrink the response. |
+| `include_tags` | `boolean` | No | — |
+
+`order` is only sent when `sort` is also set, because Raisely ignores it alone.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaigns` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `next_offset` | `number \| null` | Yes | Pass as `offset` to read the next page; null on the last. |
+| `total` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaigns full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  path?: string | null,
+  url?: string | null,
+  mode?: string | null,
+  status?: string | null,
+  currency?: string | null,
+  goal?: number | null,
+  total?: number | null,
+  totalPercent?: number | null,
+  grandTotal?: number | null,
+  version?: string | null,
+  theme?: string | null,
+  primaryDomain?: string | null,
+  organisationUuid?: string | null,
+  campaignEndsAt?: string | null,
+  createdAt?: string | null,
+  deletedAt?: string | null,
+  defaultDesignation?: string | null,
+  isTaxDeductible?: boolean | null,
+  enablePartialTaxReceipting?: boolean | null,
+  allowExperiments?: boolean | null,
+  showRaiselyCheckbox?: boolean | null,
+  publicKey?: string | null,
+  privateKey?: string | null,
+  profile?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  urls?: string[] | null,
+  config?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
+  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
+  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total?: number | null,
+  pages?: number | null,
+  offset?: number | null,
+  limit?: number | null,
+  prevUrl?: string | null,
+  nextUrl?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Designations
+
+### list
+
+`designations.list`
+
+List the designations a donation can be attributed to, optionally for one campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.raisely.api.designations.list({ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', status: 'active' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page. Raisely applies its own default when omitted. |
+| `offset` | `number` | No | Records to skip. Pass the `next_offset` from the previous page rather than computing it. |
+| `q` | `string` | No | A search phrase. |
+| `sort` | `string` | No | The attribute to sort on, used with `order`. |
+| `order` | `asc \| desc` | No | The sort direction; only applied when `sort` is also set. |
+| `private` | `boolean` | No | Return the full record. Only meaningful with a token that can see private fields. |
+| `campaign` | `string` | No | Only the designations of this campaign. |
+| `status` | `string` | No | — |
+
+A designation is what a donation is attributed to; `publicName` is the label shown to donors.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `designations` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `next_offset` | `number \| null` | Yes | Pass as `offset` to read the next page; null on the last. |
+| `total` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="designations full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  publicName?: string | null,
+  externalId?: string | null,
+  status?: string | null,
+  organisationId?: number | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total?: number | null,
+  pages?: number | null,
+  offset?: number | null,
+  limit?: number | null,
+  prevUrl?: string | null,
+  nextUrl?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Donations
+
+### create
+
+`donations.create`
+
+Record a donation for a campaign, with the donor details and the gateway it came through
+
+**Risk:** `write`
+
+```ts
+await corsair.raisely.api.donations.create({ amount: 2500, currency: 'USD', email: 'jordan@example.com', method: 'CREDIT_CARD', type: 'ONLINE', campaignUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | The donation total in the smallest currency unit, so 2500 is $25.00. |
+| `currency` | `string` | Yes | A three-letter currency code. |
+| `email` | `string` | Yes | The donor email. |
+| `method` | `string` | Yes | The payment gateway, such as `CREDIT_CARD`, `PAYPAL` or `APPLE_PAY`. |
+| `type` | `ONLINE \| OFFLINE` | Yes | Whether the donation was taken online or recorded by hand. |
+| `campaign_uuid` | `string` | No | The campaign the donation belongs to. |
+| `profile_uuid` | `string` | No | The fundraising profile the donation is credited to. |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `fullName` | `string` | No | — |
+| `preferredName` | `string` | No | — |
+| `message` | `string` | No | — |
+| `anonymous` | `boolean` | No | — |
+| `date` | `string` | No | An ISO 8601 timestamp. |
+| `country` | `string` | No | — |
+| `postcode` | `string` | No | — |
+| `address1` | `string` | No | — |
+| `address2` | `string` | No | — |
+| `phoneNumber` | `string` | No | — |
+| `mode` | `LIVE \| TEST` | No | — |
+| `designation` | `string` | No | The designation uuid to attribute the donation to. |
+| `public` | `Record<string, string \| number \| boolean \| Record<string, string \| number \| boolean \| null> \| null> \| null` | No | — |
+| `private` | `Record<string, string \| number \| boolean \| Record<string, string \| number \| boolean \| null> \| null> \| null` | No | — |
+
+The record is sent under `data`; amounts are integers in the smallest currency unit.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `donation` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="donation full type">
+
+```ts
+{
+  uuid?: string | null,
+  id?: number | null,
+  amount?: number | null,
+  amountRefunded?: number | null,
+  currency?: string | null,
+  currencySymbol?: string | null,
+  campaignCurrency?: string | null,
+  campaignAmount?: number | null,
+  campaignUuid?: string | null,
+  displayTotal?: number | null,
+  donationTotal?: number | null,
+  organisationUuid?: string | null,
+  profileUuid?: string | null,
+  profile?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  date?: string | null,
+  createdAt?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  preferredName?: string | null,
+  message?: string | null,
+  anonymous?: boolean | null,
+  method?: string | null,
+  methodType?: string | null,
+  mode?: string | null,
+  status?: string | null,
+  processing?: string | null,
+  declineCode?: string | null,
+  isFraud?: boolean | null,
+  isSuspicious?: boolean | null,
+  fee?: number | null,
+  feeOptIn?: boolean | null,
+  feeModel?: string | null,
+  gst?: number | null,
+  includesGiftAid?: boolean | null,
+  giftAidText?: string | null,
+  country?: string | null,
+  postcode?: string | null,
+  phoneNumber?: string | null,
+  designationUuid?: string | null,
+  designation?: {
+    uuid?: string | null,
+    name?: string | null,
+    publicName?: string | null
+  } | null,
+  allocations?: {
+    amount?: number | null,
+    amountRefunded?: number | null,
+    campaignAmount?: number | null,
+    campaignAmountRefunded?: number | null,
+    designationUuid?: string | null,
+    designation?: {
+      uuid?: string | null,
+      name?: string | null,
+      publicName?: string | null
+    } | null
+  }[] | null,
+  items?: {
+    amount?: number | null,
+    amountRefunded?: number | null,
+    attendance?: string | null,
+    quantity?: number | null,
+    description?: string | null,
+    name?: string | null
+  }[] | null,
+  itemTypes?: string[] | null,
+  context?: Record<string, string> | null,
+  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
+  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`donations.get`
+
+Fetch one donation by uuid with its amount, gateway state and designation
+
+**Risk:** `read`
+
+```ts
+await corsair.raisely.api.donations.get({ donation_uuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `donation_uuid` | `string` | Yes | The donation uuid. |
+| `private` | `boolean` | No | Return the full record. Only meaningful with a token that can see private fields. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `donation` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="donation full type">
+
+```ts
+{
+  uuid?: string | null,
+  id?: number | null,
+  amount?: number | null,
+  amountRefunded?: number | null,
+  currency?: string | null,
+  currencySymbol?: string | null,
+  campaignCurrency?: string | null,
+  campaignAmount?: number | null,
+  campaignUuid?: string | null,
+  displayTotal?: number | null,
+  donationTotal?: number | null,
+  organisationUuid?: string | null,
+  profileUuid?: string | null,
+  profile?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  date?: string | null,
+  createdAt?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  preferredName?: string | null,
+  message?: string | null,
+  anonymous?: boolean | null,
+  method?: string | null,
+  methodType?: string | null,
+  mode?: string | null,
+  status?: string | null,
+  processing?: string | null,
+  declineCode?: string | null,
+  isFraud?: boolean | null,
+  isSuspicious?: boolean | null,
+  fee?: number | null,
+  feeOptIn?: boolean | null,
+  feeModel?: string | null,
+  gst?: number | null,
+  includesGiftAid?: boolean | null,
+  giftAidText?: string | null,
+  country?: string | null,
+  postcode?: string | null,
+  phoneNumber?: string | null,
+  designationUuid?: string | null,
+  designation?: {
+    uuid?: string | null,
+    name?: string | null,
+    publicName?: string | null
+  } | null,
+  allocations?: {
+    amount?: number | null,
+    amountRefunded?: number | null,
+    campaignAmount?: number | null,
+    campaignAmountRefunded?: number | null,
+    designationUuid?: string | null,
+    designation?: {
+      uuid?: string | null,
+      name?: string | null,
+      publicName?: string | null
+    } | null
+  }[] | null,
+  items?: {
+    amount?: number | null,
+    amountRefunded?: number | null,
+    attendance?: string | null,
+    quantity?: number | null,
+    description?: string | null,
+    name?: string | null
+  }[] | null,
+  itemTypes?: string[] | null,
+  context?: Record<string, string> | null,
+  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
+  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`donations.list`
+
+List donations with campaign, profile, status, mode and currency filters plus offset paging
+
+**Risk:** `read`
+
+```ts
+await corsair.raisely.api.donations.list({ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', mode: 'LIVE', limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page. Raisely applies its own default when omitted. |
+| `offset` | `number` | No | Records to skip. Pass the `next_offset` from the previous page rather than computing it. |
+| `q` | `string` | No | A search phrase. |
+| `sort` | `string` | No | The attribute to sort on, used with `order`. |
+| `order` | `asc \| desc` | No | The sort direction; only applied when `sort` is also set. |
+| `private` | `boolean` | No | Return the full record. Only meaningful with a token that can see private fields. |
+| `campaign` | `string` | No | Only this campaign uuid. |
+| `profile` | `string` | No | Only this profile uuid. |
+| `user` | `string` | No | Only this user uuid. |
+| `organisation` | `string` | No | Only this organisation uuid. |
+| `designation` | `string` | No | Only this designation uuid. |
+| `subscription` | `string` | No | — |
+| `status` | `string` | No | — |
+| `mode` | `string` | No | `LIVE` or `TEST`. |
+| `currency` | `string` | No | — |
+| `type` | `string` | No | The donation type. |
+| `is_suspicious` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `donations` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `next_offset` | `number \| null` | Yes | Pass as `offset` to read the next page; null on the last. |
+| `total` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="donations full type">
+
+```ts
+{
+  uuid?: string | null,
+  id?: number | null,
+  amount?: number | null,
+  amountRefunded?: number | null,
+  currency?: string | null,
+  currencySymbol?: string | null,
+  campaignCurrency?: string | null,
+  campaignAmount?: number | null,
+  campaignUuid?: string | null,
+  displayTotal?: number | null,
+  donationTotal?: number | null,
+  organisationUuid?: string | null,
+  profileUuid?: string | null,
+  profile?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  date?: string | null,
+  createdAt?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  preferredName?: string | null,
+  message?: string | null,
+  anonymous?: boolean | null,
+  method?: string | null,
+  methodType?: string | null,
+  mode?: string | null,
+  status?: string | null,
+  processing?: string | null,
+  declineCode?: string | null,
+  isFraud?: boolean | null,
+  isSuspicious?: boolean | null,
+  fee?: number | null,
+  feeOptIn?: boolean | null,
+  feeModel?: string | null,
+  gst?: number | null,
+  includesGiftAid?: boolean | null,
+  giftAidText?: string | null,
+  country?: string | null,
+  postcode?: string | null,
+  phoneNumber?: string | null,
+  designationUuid?: string | null,
+  designation?: {
+    uuid?: string | null,
+    name?: string | null,
+    publicName?: string | null
+  } | null,
+  allocations?: {
+    amount?: number | null,
+    amountRefunded?: number | null,
+    campaignAmount?: number | null,
+    campaignAmountRefunded?: number | null,
+    designationUuid?: string | null,
+    designation?: {
+      uuid?: string | null,
+      name?: string | null,
+      publicName?: string | null
+    } | null
+  }[] | null,
+  items?: {
+    amount?: number | null,
+    amountRefunded?: number | null,
+    attendance?: string | null,
+    quantity?: number | null,
+    description?: string | null,
+    name?: string | null
+  }[] | null,
+  itemTypes?: string[] | null,
+  context?: Record<string, string> | null,
+  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
+  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total?: number | null,
+  pages?: number | null,
+  offset?: number | null,
+  limit?: number | null,
+  prevUrl?: string | null,
+  nextUrl?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Profiles
+
+### get
+
+`profiles.get`
+
+Fetch one fundraising profile by its path, including its totals and goal
+
+**Risk:** `read`
+
+```ts
+await corsair.raisely.api.profiles.get({ profile_path: 'jordan-lee' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile_path` | `string` | Yes | The profile path, as returned by `campaigns.profiles`. |
+| `private` | `boolean` | No | Return the full record. Only meaningful with a token that can see private fields. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  path?: string | null,
+  photoUrl?: string | null,
+  type?: string | null,
+  status?: string | null,
+  description?: string | null,
+  currency?: string | null,
+  goal?: number | null,
+  total?: number | null,
+  grandTotal?: number | null,
+  campaignTotal?: number | null,
+  campaignDisplayTotal?: number | null,
+  activityTotal?: number | null,
+  activityTotalPercent?: number | null,
+  donationCount?: number | null,
+  donationRecordCount?: number | null,
+  uniqueDonors?: number | null,
+  selfDonationTotal?: number | null,
+  nonSelfDonationTotal?: number | null,
+  exerciseTotal?: number | null,
+  exerciseTotalTime?: number | null,
+  exerciseGoal?: number | null,
+  exerciseGoalTime?: number | null,
+  isCampaignProfile?: boolean | null,
+  paid?: boolean | null,
+  shared?: boolean | null,
+  pronouns?: string | null,
+  fundraiserTheme?: string | null,
+  facebookFundraiserId?: string | null,
+  subscriptionCount?: number | null,
+  teamProfileCount?: number | null,
+  organisationProfileCount?: number | null,
+  individualProfileCount?: number | null,
+  campaignUuid?: string | null,
+  userUuid?: string | null,
+  parentUuid?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  user?: {
+    uuid?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    fullName?: string | null,
+    photoUrl?: string | null
+  } | null,
+  parent?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  teamProfile?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  organisationProfile?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  tags?: string[] | null,
+  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
+  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`profiles.list`
+
+List the fundraising profiles in a campaign with their totals, goals and donation counts
+
+**Risk:** `read`
+
+```ts
+await corsair.raisely.api.profiles.list({ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page. Raisely applies its own default when omitted. |
+| `offset` | `number` | No | Records to skip. Pass the `next_offset` from the previous page rather than computing it. |
+| `q` | `string` | No | A search phrase. |
+| `sort` | `string` | No | The attribute to sort on, used with `order`. |
+| `order` | `asc \| desc` | No | The sort direction; only applied when `sort` is also set. |
+| `private` | `boolean` | No | Return the full record. Only meaningful with a token that can see private fields. |
+| `campaign` | `string` | Yes | The campaign uuid or path. Raisely requires this on `/profiles`. |
+| `rank` | `boolean` | No | Include the rank fields. |
+| `rank_donors` | `boolean` | No | — |
+| `rank_activity_total` | `boolean` | No | — |
+| `rank_activity_time` | `boolean` | No | — |
+
+Raisely requires `campaign` on this route, so the schema makes it mandatory.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profiles` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `next_offset` | `number \| null` | Yes | Pass as `offset` to read the next page; null on the last. |
+| `total` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  path?: string | null,
+  photoUrl?: string | null,
+  type?: string | null,
+  status?: string | null,
+  description?: string | null,
+  currency?: string | null,
+  goal?: number | null,
+  total?: number | null,
+  grandTotal?: number | null,
+  campaignTotal?: number | null,
+  campaignDisplayTotal?: number | null,
+  activityTotal?: number | null,
+  activityTotalPercent?: number | null,
+  donationCount?: number | null,
+  donationRecordCount?: number | null,
+  uniqueDonors?: number | null,
+  selfDonationTotal?: number | null,
+  nonSelfDonationTotal?: number | null,
+  exerciseTotal?: number | null,
+  exerciseTotalTime?: number | null,
+  exerciseGoal?: number | null,
+  exerciseGoalTime?: number | null,
+  isCampaignProfile?: boolean | null,
+  paid?: boolean | null,
+  shared?: boolean | null,
+  pronouns?: string | null,
+  fundraiserTheme?: string | null,
+  facebookFundraiserId?: string | null,
+  subscriptionCount?: number | null,
+  teamProfileCount?: number | null,
+  organisationProfileCount?: number | null,
+  individualProfileCount?: number | null,
+  campaignUuid?: string | null,
+  userUuid?: string | null,
+  parentUuid?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  user?: {
+    uuid?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    fullName?: string | null,
+    photoUrl?: string | null
+  } | null,
+  parent?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  teamProfile?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  organisationProfile?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  tags?: string[] | null,
+  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
+  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total?: number | null,
+  pages?: number | null,
+  offset?: number | null,
+  limit?: number | null,
+  prevUrl?: string | null,
+  nextUrl?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`profiles.update`
+
+Update a fundraising profile: its name, description, goal, photo or custom values
+
+**Risk:** `write`
+
+```ts
+await corsair.raisely.api.profiles.update({ profile_path: 'jordan-lee', goal: 6000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile_path` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `goal` | `number` | No | — |
+| `photoUrl` | `string` | No | — |
+| `pronouns` | `string` | No | — |
+| `shared` | `boolean` | No | — |
+| `status` | `string` | No | — |
+| `public` | `Record<string, string \| number \| boolean \| Record<string, string \| number \| boolean \| null> \| null> \| null` | No | — |
+| `private` | `Record<string, string \| number \| boolean \| Record<string, string \| number \| boolean \| null> \| null> \| null` | No | — |
+
+The body is sent under `data`, and the path identifies the record rather than the body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  path?: string | null,
+  photoUrl?: string | null,
+  type?: string | null,
+  status?: string | null,
+  description?: string | null,
+  currency?: string | null,
+  goal?: number | null,
+  total?: number | null,
+  grandTotal?: number | null,
+  campaignTotal?: number | null,
+  campaignDisplayTotal?: number | null,
+  activityTotal?: number | null,
+  activityTotalPercent?: number | null,
+  donationCount?: number | null,
+  donationRecordCount?: number | null,
+  uniqueDonors?: number | null,
+  selfDonationTotal?: number | null,
+  nonSelfDonationTotal?: number | null,
+  exerciseTotal?: number | null,
+  exerciseTotalTime?: number | null,
+  exerciseGoal?: number | null,
+  exerciseGoalTime?: number | null,
+  isCampaignProfile?: boolean | null,
+  paid?: boolean | null,
+  shared?: boolean | null,
+  pronouns?: string | null,
+  fundraiserTheme?: string | null,
+  facebookFundraiserId?: string | null,
+  subscriptionCount?: number | null,
+  teamProfileCount?: number | null,
+  organisationProfileCount?: number | null,
+  individualProfileCount?: number | null,
+  campaignUuid?: string | null,
+  userUuid?: string | null,
+  parentUuid?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  user?: {
+    uuid?: string | null,
+    email?: string | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    fullName?: string | null,
+    photoUrl?: string | null
+  } | null,
+  parent?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  teamProfile?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  organisationProfile?: {
+    uuid?: string | null,
+    name?: string | null,
+    path?: string | null,
+    photoUrl?: string | null
+  } | null,
+  tags?: string[] | null,
+  public?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null,
+  private?: Record<string, string | number | boolean | Record<string, string | number | boolean | null> | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
