@@ -37,6 +37,34 @@ const NutshellJsonPatchOperationSchema = z
 	})
 	.loose();
 
+// Every Nutshell read answers with the same envelope: `meta`, `links` and the
+// resource list under its own key, even when the reference prints a bare array.
+function NutshellEnvelope<T extends z.ZodRawShape>(shape: T) {
+	return z
+		.object({
+			meta: z.object({}).loose().nullish(),
+			links: z.object({}).loose().nullish(),
+			...shape,
+		})
+		.loose();
+}
+
+// Money amounts arrive as a decimal string ("900.00") on most records and as a
+// number (0) on a lead that has no value yet.
+const NutshellAmountSchema = z.union([z.string(), z.number()]);
+
+// Lead times arrive as an object with the timestamp and localized strings.
+const NutshellLocalizedTimeSchema = z.union([
+	z.string(),
+	z
+		.object({
+			absoluteLocalizedString: z.string().nullish(),
+			timestamp: z.number().nullish(),
+			value: z.string().nullish(),
+		})
+		.loose(),
+]);
+
 const NutshellStagesListInputSchema = z.object({}).strict();
 const NutshellStagesListOutputSchema = z
 	.object({
@@ -71,15 +99,19 @@ const NutshellStagesListOutputSchema = z
 	.loose();
 
 const NutshellAudiencesListInputSchema = z.object({}).strict();
-const NutshellAudiencesListOutputSchema = z.array(
-	z
-		.object({
-			id: z.string().nullish(),
-			name: z.string().nullish(),
-			isWebFX: z.boolean().nullish(),
-		})
-		.loose(),
-);
+const NutshellAudiencesListOutputSchema = NutshellEnvelope({
+	emAudiences: z
+		.array(
+			z
+				.object({
+					id: z.string().nullish(),
+					name: z.string().nullish(),
+					isWebFX: z.boolean().nullish(),
+				})
+				.loose(),
+		)
+		.nullish(),
+});
 
 const NutshellLeadsListInputSchema = z
 	.object({
@@ -141,17 +173,17 @@ const NutshellLeadsListOutputSchema = z
 							z
 								.object({
 									id: z.string().nullish(),
-									deletedTime: z.string().nullish(),
+									deletedTime: z.union([z.string(), z.number()]).nullish(),
 									name: z.string().nullish(),
 									value: z
 										.object({
 											formatted: z.string().nullish(),
-											amount: z.string().nullish(),
+											amount: NutshellAmountSchema.nullish(),
 											currency: z.string().nullish(),
 										})
 										.loose()
 										.nullish(),
-									number: z.number().int().nullish(),
+									number: z.union([z.string(), z.number()]).nullish(),
 									description: z.string().nullish(),
 									createdTime: z
 										.object({
@@ -162,8 +194,8 @@ const NutshellLeadsListOutputSchema = z
 										.loose()
 										.nullish(),
 									closedTime: z.string().nullish(),
-									dueTime: z.string().nullish(),
-									anticipatedClosedTime: z.string().nullish(),
+									dueTime: NutshellLocalizedTimeSchema.nullish(),
+									anticipatedClosedTime: NutshellLocalizedTimeSchema.nullish(),
 									ownerType: z.string().nullish(),
 									status: z.string().nullish(),
 									lastContactedTime: z
@@ -171,7 +203,7 @@ const NutshellLeadsListOutputSchema = z
 										.nullish(),
 									pieState: z.string().nullish(),
 									isOverdue: z.boolean().nullish(),
-									overdueTime: z.string().nullish(),
+									overdueTime: NutshellLocalizedTimeSchema.nullish(),
 									href: z.string().nullish(),
 									confidence: z.number().int().nullish(),
 									priority: z.number().int().nullish(),
@@ -241,7 +273,7 @@ const NutshellQuotesListOutputSchema = z
 											price: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -249,7 +281,7 @@ const NutshellQuotesListOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -274,7 +306,7 @@ const NutshellQuotesListOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -302,7 +334,7 @@ const NutshellQuotesListOutputSchema = z
 							total: z
 								.object({
 									formatted: z.string().nullish(),
-									amount: z.string().nullish(),
+									amount: NutshellAmountSchema.nullish(),
 									currency: z.string().nullish(),
 								})
 								.loose()
@@ -312,7 +344,7 @@ const NutshellQuotesListOutputSchema = z
 							publishedTime: z.string().nullish(),
 							sentTime: z.string().nullish(),
 							acceptedTime: z.string().nullish(),
-							deletedTime: z.string().nullish(),
+							deletedTime: z.union([z.string(), z.number()]).nullish(),
 						})
 						.loose(),
 				),
@@ -332,7 +364,7 @@ const NutshellQuotesListOutputSchema = z
 const NutshellAccountsCustomFieldAttributesInputSchema = z.object({}).strict();
 const NutshellAccountsCustomFieldAttributesOutputSchema = z
 	.object({
-		customFields: z
+		accounts: z
 			.array(
 				z
 					.object({
@@ -345,14 +377,20 @@ const NutshellAccountsCustomFieldAttributesOutputSchema = z
 	.loose();
 
 const NutshellOutcomesListInputSchema = z.object({}).strict();
-const NutshellOutcomesListOutputSchema = z
-	.object({
-		id: z.string().nullish(),
-		name: z.string().nullish(),
-		status: z.string().nullish(),
-		type: z.string().nullish(),
-	})
-	.loose();
+const NutshellOutcomesListOutputSchema = NutshellEnvelope({
+	outcomes: z
+		.array(
+			z
+				.object({
+					id: z.string().nullish(),
+					name: z.string().nullish(),
+					status: z.string().nullish(),
+					type: z.string().nullish(),
+				})
+				.loose(),
+		)
+		.nullish(),
+});
 
 const NutshellTasksGetInputSchema = z
 	.object({
@@ -416,17 +454,17 @@ const NutshellLeadsReopenOutputSchema = z.intersection(
 			z
 				.object({
 					id: z.string().nullish(),
-					deletedTime: z.string().nullish(),
+					deletedTime: z.union([z.string(), z.number()]).nullish(),
 					name: z.string().nullish(),
 					value: z
 						.object({
 							formatted: z.string().nullish(),
-							amount: z.string().nullish(),
+							amount: NutshellAmountSchema.nullish(),
 							currency: z.string().nullish(),
 						})
 						.loose()
 						.nullish(),
-					number: z.number().int().nullish(),
+					number: z.union([z.string(), z.number()]).nullish(),
 					description: z.string().nullish(),
 					createdTime: z
 						.object({
@@ -437,8 +475,8 @@ const NutshellLeadsReopenOutputSchema = z.intersection(
 						.loose()
 						.nullish(),
 					closedTime: z.string().nullish(),
-					dueTime: z.string().nullish(),
-					anticipatedClosedTime: z.string().nullish(),
+					dueTime: NutshellLocalizedTimeSchema.nullish(),
+					anticipatedClosedTime: NutshellLocalizedTimeSchema.nullish(),
 					ownerType: z.string().nullish(),
 					status: z.string().nullish(),
 					lastContactedTime: z
@@ -446,7 +484,7 @@ const NutshellLeadsReopenOutputSchema = z.intersection(
 						.nullish(),
 					pieState: z.string().nullish(),
 					isOverdue: z.boolean().nullish(),
-					overdueTime: z.string().nullish(),
+					overdueTime: NutshellLocalizedTimeSchema.nullish(),
 					href: z.string().nullish(),
 					confidence: z.number().int().nullish(),
 					priority: z.number().int().nullish(),
@@ -507,7 +545,7 @@ const NutshellProductsListOutputSchema = z
 							.unknown() /* OpenAPI schema has no recognized type */
 							.nullish(),
 						modifiedTime: z.number().int().nullish(),
-						deletedTime: z.string().nullish(),
+						deletedTime: z.union([z.string(), z.number()]).nullish(),
 						sku: z
 							.unknown() /* OpenAPI schema has no recognized type */
 							.nullish(),
@@ -518,7 +556,7 @@ const NutshellProductsListOutputSchema = z
 							.object({
 								'1-markets': z
 									.object({
-										amount: z.number().nullish(),
+										amount: NutshellAmountSchema.nullish(),
 										currency: z.string().nullish(),
 										formatted: z.string().nullish(),
 										currencySymbol: z.string().nullish(),
@@ -530,7 +568,7 @@ const NutshellProductsListOutputSchema = z
 							.nullish(),
 						price: z
 							.object({
-								amount: z.number().nullish(),
+								amount: NutshellAmountSchema.nullish(),
 								currency: z.string().nullish(),
 								formatted: z.string().nullish(),
 								currencySymbol: z.string().nullish(),
@@ -748,7 +786,7 @@ const NutshellAccountsCreateOutputSchema = z.intersection(
 			href: z.string().nullish(),
 			revenue: z
 				.object({
-					amount: z.string().nullish(),
+					amount: NutshellAmountSchema.nullish(),
 					formatted: z.string().nullish(),
 				})
 				.loose()
@@ -869,7 +907,7 @@ const NutshellAccountsUndeleteOutputSchema = z.intersection(
 			href: z.string().nullish(),
 			revenue: z
 				.object({
-					amount: z.string().nullish(),
+					amount: NutshellAmountSchema.nullish(),
 					formatted: z.string().nullish(),
 				})
 				.loose()
@@ -902,7 +940,7 @@ const NutshellProductsDeleteOutputSchema = z
 							.unknown() /* OpenAPI schema has no recognized type */
 							.nullish(),
 						modifiedTime: z.number().int().nullish(),
-						deletedTime: z.string().nullish(),
+						deletedTime: z.union([z.string(), z.number()]).nullish(),
 						sku: z
 							.unknown() /* OpenAPI schema has no recognized type */
 							.nullish(),
@@ -913,7 +951,7 @@ const NutshellProductsDeleteOutputSchema = z
 							.object({
 								'1-markets': z
 									.object({
-										amount: z.number().nullish(),
+										amount: NutshellAmountSchema.nullish(),
 										currency: z.string().nullish(),
 										formatted: z.string().nullish(),
 										currencySymbol: z.string().nullish(),
@@ -925,7 +963,7 @@ const NutshellProductsDeleteOutputSchema = z
 							.nullish(),
 						price: z
 							.object({
-								amount: z.number().nullish(),
+								amount: NutshellAmountSchema.nullish(),
 								currency: z.string().nullish(),
 								formatted: z.string().nullish(),
 								currencySymbol: z.string().nullish(),
@@ -1064,17 +1102,17 @@ const NutshellLeadsDeleteOutputSchema = z.intersection(
 			z
 				.object({
 					id: z.string().nullish(),
-					deletedTime: z.string().nullish(),
+					deletedTime: z.union([z.string(), z.number()]).nullish(),
 					name: z.string().nullish(),
 					value: z
 						.object({
 							formatted: z.string().nullish(),
-							amount: z.string().nullish(),
+							amount: NutshellAmountSchema.nullish(),
 							currency: z.string().nullish(),
 						})
 						.loose()
 						.nullish(),
-					number: z.number().int().nullish(),
+					number: z.union([z.string(), z.number()]).nullish(),
 					description: z.string().nullish(),
 					createdTime: z
 						.object({
@@ -1085,8 +1123,8 @@ const NutshellLeadsDeleteOutputSchema = z.intersection(
 						.loose()
 						.nullish(),
 					closedTime: z.string().nullish(),
-					dueTime: z.string().nullish(),
-					anticipatedClosedTime: z.string().nullish(),
+					dueTime: NutshellLocalizedTimeSchema.nullish(),
+					anticipatedClosedTime: NutshellLocalizedTimeSchema.nullish(),
 					ownerType: z.string().nullish(),
 					status: z.string().nullish(),
 					lastContactedTime: z
@@ -1094,7 +1132,7 @@ const NutshellLeadsDeleteOutputSchema = z.intersection(
 						.nullish(),
 					pieState: z.string().nullish(),
 					isOverdue: z.boolean().nullish(),
-					overdueTime: z.string().nullish(),
+					overdueTime: NutshellLocalizedTimeSchema.nullish(),
 					href: z.string().nullish(),
 					confidence: z.number().int().nullish(),
 					priority: z.number().int().nullish(),
@@ -1289,7 +1327,7 @@ const NutshellAccountsDeleteOutputSchema = z
 									href: z.string().nullish(),
 									revenue: z
 										.object({
-											amount: z.string().nullish(),
+											amount: NutshellAmountSchema.nullish(),
 											formatted: z.string().nullish(),
 										})
 										.loose()
@@ -1636,12 +1674,12 @@ const NutshellLeadsUpdateInstallmentsOutputSchema = z
 			z
 				.object({
 					id: z.string().nullish(),
-					dueTime: z.string().nullish(),
+					dueTime: NutshellLocalizedTimeSchema.nullish(),
 					description: z.string().nullish(),
 					value: z
 						.object({
 							currency: z.string().nullish(),
-							amount: z.number().nullish(),
+							amount: NutshellAmountSchema.nullish(),
 						})
 						.loose()
 						.nullish(),
@@ -2107,7 +2145,7 @@ const NutshellLeadsStagesOutputSchema = z
 								default: z.boolean().nullish(),
 								canAccess: z.boolean().nullish(),
 								// Documented values: 1, 2, 3. Kept open for later additions.
-								status: z.string().nullish(),
+								status: z.union([z.string(), z.number()]).nullish(),
 							})
 							.loose()
 							.nullish(),
@@ -2130,13 +2168,10 @@ const NutshellLeadsStagesOutputSchema = z
 						numSteps: z.number().nullish(),
 						canAdvanceStage: z.boolean().nullish(),
 						links: z
-							.array(
-								z
-									.object({
-										stageset: z.string().nullish(),
-									})
-									.loose(),
-							)
+							.object({
+								stageset: z.string().nullish(),
+							})
+							.loose()
 							.nullish(),
 					})
 					.loose(),
@@ -2224,12 +2259,21 @@ const NutshellLeadsListItemsOutputSchema = z
 									relatedType: z.string().nullish(),
 									relatedUrl: z.string().nullish(),
 									relatedUrlPath: z.string().nullish(),
-									primaryContact: z.string().nullish(),
-									primaryAccount: z.string().nullish(),
-									latlon: z.string().nullish(),
+									primaryContact: z
+										.union([z.string(), z.object({}).loose()])
+										.nullish(),
+									primaryAccount: z
+										.union([z.string(), z.object({}).loose()])
+										.nullish(),
+									latlon: z.union([z.string(), z.array(z.string())]).nullish(),
 									mapUrl: z.string().nullish(),
 									isDeleted: z.boolean().nullish(),
-									fields: z.array(z.object({}).loose()).nullish(),
+									fields: z
+										.union([
+											z.array(z.object({}).loose()),
+											z.record(z.string(), z.unknown()),
+										])
+										.nullish(),
 								})
 								.loose(),
 						),
@@ -2285,17 +2329,17 @@ const NutshellLeadsUndeleteOutputSchema = z.intersection(
 			z
 				.object({
 					id: z.string().nullish(),
-					deletedTime: z.string().nullish(),
+					deletedTime: z.union([z.string(), z.number()]).nullish(),
 					name: z.string().nullish(),
 					value: z
 						.object({
 							formatted: z.string().nullish(),
-							amount: z.string().nullish(),
+							amount: NutshellAmountSchema.nullish(),
 							currency: z.string().nullish(),
 						})
 						.loose()
 						.nullish(),
-					number: z.number().int().nullish(),
+					number: z.union([z.string(), z.number()]).nullish(),
 					description: z.string().nullish(),
 					createdTime: z
 						.object({
@@ -2306,8 +2350,8 @@ const NutshellLeadsUndeleteOutputSchema = z.intersection(
 						.loose()
 						.nullish(),
 					closedTime: z.string().nullish(),
-					dueTime: z.string().nullish(),
-					anticipatedClosedTime: z.string().nullish(),
+					dueTime: NutshellLocalizedTimeSchema.nullish(),
+					anticipatedClosedTime: NutshellLocalizedTimeSchema.nullish(),
 					ownerType: z.string().nullish(),
 					status: z.string().nullish(),
 					lastContactedTime: z
@@ -2315,7 +2359,7 @@ const NutshellLeadsUndeleteOutputSchema = z.intersection(
 						.nullish(),
 					pieState: z.string().nullish(),
 					isOverdue: z.boolean().nullish(),
-					overdueTime: z.string().nullish(),
+					overdueTime: NutshellLocalizedTimeSchema.nullish(),
 					href: z.string().nullish(),
 					confidence: z.number().int().nullish(),
 					priority: z.number().int().nullish(),
@@ -2381,7 +2425,7 @@ const NutshellInvoicesListOutputSchema = z
 											price: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -2389,7 +2433,7 @@ const NutshellInvoicesListOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -2414,7 +2458,7 @@ const NutshellInvoicesListOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -2442,7 +2486,7 @@ const NutshellInvoicesListOutputSchema = z
 							total: z
 								.object({
 									formatted: z.string().nullish(),
-									amount: z.string().nullish(),
+									amount: NutshellAmountSchema.nullish(),
 									currency: z.string().nullish(),
 								})
 								.loose()
@@ -2453,7 +2497,7 @@ const NutshellInvoicesListOutputSchema = z
 							sentTime: z.string().nullish(),
 							paidTime: z.string().nullish(),
 							completionComment: z.string().nullable().optional(),
-							deletedTime: z.string().nullish(),
+							deletedTime: z.union([z.string(), z.number()]).nullish(),
 						})
 						.loose(),
 				),
@@ -2599,7 +2643,7 @@ const NutshellProductMapsListOutputSchema = z
 						price: z
 							.object({
 								formatted: z.string().nullish(),
-								amount: z.string().nullish(),
+								amount: NutshellAmountSchema.nullish(),
 								currency: z.string().nullish(),
 							})
 							.loose()
@@ -2630,7 +2674,10 @@ const NutshellContactsDeleteInputSchema = z
 		id: z.string().min(1),
 	})
 	.strict();
-const NutshellContactsDeleteOutputSchema = z.undefined();
+// Nutshell answers 200 with the contact here (accounts and leads answer 204).
+const NutshellContactsDeleteOutputSchema = NutshellEnvelope({
+	contacts: z.array(z.object({ id: z.string().nullish() }).loose()).nullish(),
+}).optional();
 
 const NutshellAccountsListFieldsInputSchema = z.object({}).strict();
 const NutshellAccountsListFieldsOutputSchema = z
@@ -2711,7 +2758,7 @@ const NutshellNotesUndeleteOutputSchema = z.intersection(
 		.object({
 			id: z.string().nullish(),
 			createdTime: z.string().nullish(),
-			deletedTime: z.string().nullish(),
+			deletedTime: z.union([z.string(), z.number()]).nullish(),
 			href: z.string().nullish(),
 			body: z.string().nullish(),
 			bodyHtml: z.string().nullish(),
@@ -2769,7 +2816,7 @@ const NutshellQuotesGetOutputSchema = z
 											price: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -2777,7 +2824,7 @@ const NutshellQuotesGetOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -2802,7 +2849,7 @@ const NutshellQuotesGetOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -2830,7 +2877,7 @@ const NutshellQuotesGetOutputSchema = z
 							total: z
 								.object({
 									formatted: z.string().nullish(),
-									amount: z.string().nullish(),
+									amount: NutshellAmountSchema.nullish(),
 									currency: z.string().nullish(),
 								})
 								.loose()
@@ -2840,7 +2887,7 @@ const NutshellQuotesGetOutputSchema = z
 							publishedTime: z.string().nullish(),
 							sentTime: z.string().nullish(),
 							acceptedTime: z.string().nullish(),
-							deletedTime: z.string().nullish(),
+							deletedTime: z.union([z.string(), z.number()]).nullish(),
 						})
 						.loose(),
 				),
@@ -2850,26 +2897,34 @@ const NutshellQuotesGetOutputSchema = z
 	.loose();
 
 const NutshellLeadsCustomFieldAttributesInputSchema = z.object({}).strict();
-const NutshellLeadsCustomFieldAttributesOutputSchema = z.array(
-	z
-		.object({
-			id: z.string().nullish(),
-		})
-		.loose(),
-);
+const NutshellLeadsCustomFieldAttributesOutputSchema = NutshellEnvelope({
+	leads: z
+		.array(
+			z
+				.object({
+					id: z.string().nullish(),
+				})
+				.loose(),
+		)
+		.nullish(),
+});
 
 const NutshellContactsCustomfieldsInputSchema = z
 	.object({
 		id: z.string().min(1),
 	})
 	.strict();
-const NutshellContactsCustomfieldsOutputSchema = z.array(
-	z
-		.object({
-			id: z.string().nullish(),
-		})
-		.loose(),
-);
+const NutshellContactsCustomfieldsOutputSchema = NutshellEnvelope({
+	customFields: z
+		.array(
+			z
+				.object({
+					id: z.string().nullish(),
+				})
+				.loose(),
+		)
+		.nullish(),
+});
 
 const NutshellTasksCreateInputSchema = z
 	.object({
@@ -3094,13 +3149,17 @@ const NutshellUsersGetOutputSchema = z
 	.loose();
 
 const NutshellContactsCustomFieldAttributesInputSchema = z.object({}).strict();
-const NutshellContactsCustomFieldAttributesOutputSchema = z.array(
-	z
-		.object({
-			id: z.string().nullish(),
-		})
-		.loose(),
-);
+const NutshellContactsCustomFieldAttributesOutputSchema = NutshellEnvelope({
+	contacts: z
+		.array(
+			z
+				.object({
+					id: z.string().nullish(),
+				})
+				.loose(),
+		)
+		.nullish(),
+});
 
 const NutshellProductCategoriesCreateInputSchema = z
 	.object({
@@ -3187,7 +3246,7 @@ const NutshellProductMapsGetOutputSchema = z
 						price: z
 							.object({
 								formatted: z.string().nullish(),
-								amount: z.string().nullish(),
+								amount: NutshellAmountSchema.nullish(),
 								currency: z.string().nullish(),
 							})
 							.loose()
@@ -3279,17 +3338,17 @@ const NutshellLeadsStatusOutputSchema = z.intersection(
 			z
 				.object({
 					id: z.string().nullish(),
-					deletedTime: z.string().nullish(),
+					deletedTime: z.union([z.string(), z.number()]).nullish(),
 					name: z.string().nullish(),
 					value: z
 						.object({
 							formatted: z.string().nullish(),
-							amount: z.string().nullish(),
+							amount: NutshellAmountSchema.nullish(),
 							currency: z.string().nullish(),
 						})
 						.loose()
 						.nullish(),
-					number: z.number().int().nullish(),
+					number: z.union([z.string(), z.number()]).nullish(),
 					description: z.string().nullish(),
 					createdTime: z
 						.object({
@@ -3300,8 +3359,8 @@ const NutshellLeadsStatusOutputSchema = z.intersection(
 						.loose()
 						.nullish(),
 					closedTime: z.string().nullish(),
-					dueTime: z.string().nullish(),
-					anticipatedClosedTime: z.string().nullish(),
+					dueTime: NutshellLocalizedTimeSchema.nullish(),
+					anticipatedClosedTime: NutshellLocalizedTimeSchema.nullish(),
 					ownerType: z.string().nullish(),
 					status: z.string().nullish(),
 					lastContactedTime: z
@@ -3309,7 +3368,7 @@ const NutshellLeadsStatusOutputSchema = z.intersection(
 						.nullish(),
 					pieState: z.string().nullish(),
 					isOverdue: z.boolean().nullish(),
-					overdueTime: z.string().nullish(),
+					overdueTime: NutshellLocalizedTimeSchema.nullish(),
 					href: z.string().nullish(),
 					confidence: z.number().int().nullish(),
 					priority: z.number().int().nullish(),
@@ -3333,15 +3392,19 @@ const NutshellLeadsStatusOutputSchema = z.intersection(
 );
 
 const NutshellAccountTypesListInputSchema = z.object({}).strict();
-const NutshellAccountTypesListOutputSchema = z.array(
-	z
-		.object({
-			id: z.string().nullish(),
-			name: z.string().nullish(),
-			modifiedTime: z.number().int().nullish(),
-		})
-		.loose(),
-);
+const NutshellAccountTypesListOutputSchema = NutshellEnvelope({
+	accountTypes: z
+		.array(
+			z
+				.object({
+					id: z.string().nullish(),
+					name: z.string().nullish(),
+					modifiedTime: z.number().int().nullish(),
+				})
+				.loose(),
+		)
+		.nullish(),
+});
 
 const NutshellEditionsGetInputSchema = z
 	.object({
@@ -3377,7 +3440,7 @@ const NutshellProductsUndeleteOutputSchema = z
 							.unknown() /* OpenAPI schema has no recognized type */
 							.nullish(),
 						modifiedTime: z.number().int().nullish(),
-						deletedTime: z.string().nullish(),
+						deletedTime: z.union([z.string(), z.number()]).nullish(),
 						sku: z
 							.unknown() /* OpenAPI schema has no recognized type */
 							.nullish(),
@@ -3388,7 +3451,7 @@ const NutshellProductsUndeleteOutputSchema = z
 							.object({
 								'1-markets': z
 									.object({
-										amount: z.number().nullish(),
+										amount: NutshellAmountSchema.nullish(),
 										currency: z.string().nullish(),
 										formatted: z.string().nullish(),
 										currencySymbol: z.string().nullish(),
@@ -3400,7 +3463,7 @@ const NutshellProductsUndeleteOutputSchema = z
 							.nullish(),
 						price: z
 							.object({
-								amount: z.number().nullish(),
+								amount: NutshellAmountSchema.nullish(),
 								currency: z.string().nullish(),
 								formatted: z.string().nullish(),
 								currencySymbol: z.string().nullish(),
@@ -3524,12 +3587,23 @@ const NutshellContactsListItemsOutputSchema = z
 										relatedType: z.string().nullish(),
 										relatedUrl: z.string().nullish(),
 										relatedUrlPath: z.string().nullish(),
-										primaryContact: z.string().nullish(),
-										primaryAccount: z.string().nullish(),
-										latlon: z.string().nullish(),
+										primaryContact: z
+											.union([z.string(), z.object({}).loose()])
+											.nullish(),
+										primaryAccount: z
+											.union([z.string(), z.object({}).loose()])
+											.nullish(),
+										latlon: z
+											.union([z.string(), z.array(z.string())])
+											.nullish(),
 										mapUrl: z.string().nullish(),
 										isDeleted: z.boolean().nullish(),
-										fields: z.array(z.object({}).loose()).nullish(),
+										fields: z
+											.union([
+												z.array(z.object({}).loose()),
+												z.record(z.string(), z.unknown()),
+											])
+											.nullish(),
 									})
 									.loose(),
 							),
@@ -3584,7 +3658,7 @@ const NutshellProductMapsDeleteOutputSchema = z
 						price: z
 							.object({
 								formatted: z.string().nullish(),
-								amount: z.string().nullish(),
+								amount: NutshellAmountSchema.nullish(),
 								currency: z.string().nullish(),
 							})
 							.loose()
@@ -3622,12 +3696,12 @@ const NutshellLeadsInstallmentsOutputSchema = z
 			z
 				.object({
 					id: z.string().nullish(),
-					dueTime: z.string().nullish(),
+					dueTime: NutshellLocalizedTimeSchema.nullish(),
 					description: z.string().nullish(),
 					value: z
 						.object({
 							currency: z.string().nullish(),
-							amount: z.number().nullish(),
+							amount: NutshellAmountSchema.nullish(),
 						})
 						.loose()
 						.nullish(),
@@ -3731,17 +3805,17 @@ const NutshellLeadsCreateOutputSchema = z.intersection(
 			z
 				.object({
 					id: z.string().nullish(),
-					deletedTime: z.string().nullish(),
+					deletedTime: z.union([z.string(), z.number()]).nullish(),
 					name: z.string().nullish(),
 					value: z
 						.object({
 							formatted: z.string().nullish(),
-							amount: z.string().nullish(),
+							amount: NutshellAmountSchema.nullish(),
 							currency: z.string().nullish(),
 						})
 						.loose()
 						.nullish(),
-					number: z.number().int().nullish(),
+					number: z.union([z.string(), z.number()]).nullish(),
 					description: z.string().nullish(),
 					createdTime: z
 						.object({
@@ -3752,8 +3826,8 @@ const NutshellLeadsCreateOutputSchema = z.intersection(
 						.loose()
 						.nullish(),
 					closedTime: z.string().nullish(),
-					dueTime: z.string().nullish(),
-					anticipatedClosedTime: z.string().nullish(),
+					dueTime: NutshellLocalizedTimeSchema.nullish(),
+					anticipatedClosedTime: NutshellLocalizedTimeSchema.nullish(),
 					ownerType: z.string().nullish(),
 					status: z.string().nullish(),
 					lastContactedTime: z
@@ -3761,7 +3835,7 @@ const NutshellLeadsCreateOutputSchema = z.intersection(
 						.nullish(),
 					pieState: z.string().nullish(),
 					isOverdue: z.boolean().nullish(),
-					overdueTime: z.string().nullish(),
+					overdueTime: NutshellLocalizedTimeSchema.nullish(),
 					href: z.string().nullish(),
 					confidence: z.number().int().nullish(),
 					priority: z.number().int().nullish(),
@@ -3800,7 +3874,7 @@ const NutshellNotesGetOutputSchema = z.intersection(
 		.object({
 			id: z.string().nullish(),
 			createdTime: z.string().nullish(),
-			deletedTime: z.string().nullish(),
+			deletedTime: z.union([z.string(), z.number()]).nullish(),
 			href: z.string().nullish(),
 			body: z.string().nullish(),
 			bodyHtml: z.string().nullish(),
@@ -3812,17 +3886,21 @@ const NutshellNotesGetOutputSchema = z.intersection(
 );
 
 const NutshellIndustriesListInputSchema = z.object({}).strict();
-const NutshellIndustriesListOutputSchema = z.array(
-	z
-		.object({
-			id: z.string().nullish(),
-			name: z
-				.unknown() /* OpenAPI schema has no recognized type */
-				.nullish(),
-			modifiedTime: z.number().int().nullish(),
-		})
-		.loose(),
-);
+const NutshellIndustriesListOutputSchema = NutshellEnvelope({
+	industries: z
+		.array(
+			z
+				.object({
+					id: z.string().nullish(),
+					name: z
+						.unknown() /* OpenAPI schema has no recognized type */
+						.nullish(),
+					modifiedTime: z.number().int().nullish(),
+				})
+				.loose(),
+		)
+		.nullish(),
+});
 
 const NutshellFormsGetFieldIdInputSchema = z
 	.object({
@@ -3852,21 +3930,25 @@ const NutshellLeadsCustomfieldsInputSchema = z
 		id: z.string().min(1),
 	})
 	.strict();
-const NutshellLeadsCustomfieldsOutputSchema = z.array(
-	z.intersection(
-		z
-			.object({
-				id: z.string().nullish(),
-			})
-			.loose(),
-		z
-			.object({
-				value: z.string().nullish(),
-				id: z.string().nullish(),
-			})
-			.loose(),
-	),
-);
+const NutshellLeadsCustomfieldsOutputSchema = NutshellEnvelope({
+	customFields: z
+		.array(
+			z.intersection(
+				z
+					.object({
+						id: z.string().nullish(),
+					})
+					.loose(),
+				z
+					.object({
+						value: z.string().nullish(),
+						id: z.string().nullish(),
+					})
+					.loose(),
+			),
+		)
+		.nullish(),
+});
 
 const NutshellCompetitorMapsDeleteInputSchema = z
 	.object({
@@ -3891,7 +3973,7 @@ const NutshellNotesDeleteOutputSchema = z.intersection(
 		.object({
 			id: z.string().nullish(),
 			createdTime: z.string().nullish(),
-			deletedTime: z.string().nullish(),
+			deletedTime: z.union([z.string(), z.number()]).nullish(),
 			href: z.string().nullish(),
 			body: z.string().nullish(),
 			bodyHtml: z.string().nullish(),
@@ -3923,7 +4005,7 @@ const NutshellStageSetsListOutputSchema = z
 						default: z.boolean().nullish(),
 						canAccess: z.boolean().nullish(),
 						// Documented values: 1, 2, 3. Kept open for later additions.
-						status: z.string().nullish(),
+						status: z.union([z.string(), z.number()]).nullish(),
 					})
 					.loose(),
 				z
@@ -4268,7 +4350,7 @@ const NutshellQuotesCreateInvoiceOutputSchema = z
 											price: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -4276,7 +4358,7 @@ const NutshellQuotesCreateInvoiceOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -4301,7 +4383,7 @@ const NutshellQuotesCreateInvoiceOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -4329,7 +4411,7 @@ const NutshellQuotesCreateInvoiceOutputSchema = z
 							total: z
 								.object({
 									formatted: z.string().nullish(),
-									amount: z.string().nullish(),
+									amount: NutshellAmountSchema.nullish(),
 									currency: z.string().nullish(),
 								})
 								.loose()
@@ -4340,7 +4422,7 @@ const NutshellQuotesCreateInvoiceOutputSchema = z
 							sentTime: z.string().nullish(),
 							paidTime: z.string().nullish(),
 							completionComment: z.string().nullable().optional(),
-							deletedTime: z.string().nullish(),
+							deletedTime: z.union([z.string(), z.number()]).nullish(),
 						})
 						.loose(),
 				),
@@ -4385,17 +4467,17 @@ const NutshellLeadsGetOutputSchema = z
 							z
 								.object({
 									id: z.string().nullish(),
-									deletedTime: z.string().nullish(),
+									deletedTime: z.union([z.string(), z.number()]).nullish(),
 									name: z.string().nullish(),
 									value: z
 										.object({
 											formatted: z.string().nullish(),
-											amount: z.string().nullish(),
+											amount: NutshellAmountSchema.nullish(),
 											currency: z.string().nullish(),
 										})
 										.loose()
 										.nullish(),
-									number: z.number().int().nullish(),
+									number: z.union([z.string(), z.number()]).nullish(),
 									description: z.string().nullish(),
 									createdTime: z
 										.object({
@@ -4406,8 +4488,8 @@ const NutshellLeadsGetOutputSchema = z
 										.loose()
 										.nullish(),
 									closedTime: z.string().nullish(),
-									dueTime: z.string().nullish(),
-									anticipatedClosedTime: z.string().nullish(),
+									dueTime: NutshellLocalizedTimeSchema.nullish(),
+									anticipatedClosedTime: NutshellLocalizedTimeSchema.nullish(),
 									ownerType: z.string().nullish(),
 									status: z.string().nullish(),
 									lastContactedTime: z
@@ -4415,7 +4497,7 @@ const NutshellLeadsGetOutputSchema = z
 										.nullish(),
 									pieState: z.string().nullish(),
 									isOverdue: z.boolean().nullish(),
-									overdueTime: z.string().nullish(),
+									overdueTime: NutshellLocalizedTimeSchema.nullish(),
 									href: z.string().nullish(),
 									confidence: z.number().int().nullish(),
 									priority: z.number().int().nullish(),
@@ -4583,22 +4665,34 @@ const NutshellEventsListOutputSchema = z
 										.object({
 											attribute: z.string().nullish(),
 											oldValue: z
-												.object({
-													id: z.string().nullish(),
-													type: z.string().nullish(),
-													name: z.string().nullish(),
-													position: z.number().int().nullish(),
-												})
-												.loose()
+												.union([
+													z.string(),
+													z.number(),
+													z.boolean(),
+													z
+														.object({
+															id: z.string().nullish(),
+															type: z.string().nullish(),
+															name: z.string().nullish(),
+															position: z.number().int().nullish(),
+														})
+														.loose(),
+												])
 												.nullish(),
 											newValue: z
-												.object({
-													id: z.string().nullish(),
-													type: z.string().nullish(),
-													name: z.string().nullish(),
-													position: z.number().int().nullish(),
-												})
-												.loose()
+												.union([
+													z.string(),
+													z.number(),
+													z.boolean(),
+													z
+														.object({
+															id: z.string().nullish(),
+															type: z.string().nullish(),
+															name: z.string().nullish(),
+															position: z.number().int().nullish(),
+														})
+														.loose(),
+												])
 												.nullish(),
 										})
 										.loose(),
@@ -4671,7 +4765,7 @@ const NutshellQuotesStatusOutputSchema = z
 											price: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -4679,7 +4773,7 @@ const NutshellQuotesStatusOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -4704,7 +4798,7 @@ const NutshellQuotesStatusOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -4732,7 +4826,7 @@ const NutshellQuotesStatusOutputSchema = z
 							total: z
 								.object({
 									formatted: z.string().nullish(),
-									amount: z.string().nullish(),
+									amount: NutshellAmountSchema.nullish(),
 									currency: z.string().nullish(),
 								})
 								.loose()
@@ -4742,7 +4836,7 @@ const NutshellQuotesStatusOutputSchema = z
 							publishedTime: z.string().nullish(),
 							sentTime: z.string().nullish(),
 							acceptedTime: z.string().nullish(),
-							deletedTime: z.string().nullish(),
+							deletedTime: z.union([z.string(), z.number()]).nullish(),
 						})
 						.loose(),
 				),
@@ -4940,17 +5034,17 @@ const NutshellLeadsPostStagesetOutputSchema = z.intersection(
 			z
 				.object({
 					id: z.string().nullish(),
-					deletedTime: z.string().nullish(),
+					deletedTime: z.union([z.string(), z.number()]).nullish(),
 					name: z.string().nullish(),
 					value: z
 						.object({
 							formatted: z.string().nullish(),
-							amount: z.string().nullish(),
+							amount: NutshellAmountSchema.nullish(),
 							currency: z.string().nullish(),
 						})
 						.loose()
 						.nullish(),
-					number: z.number().int().nullish(),
+					number: z.union([z.string(), z.number()]).nullish(),
 					description: z.string().nullish(),
 					createdTime: z
 						.object({
@@ -4961,8 +5055,8 @@ const NutshellLeadsPostStagesetOutputSchema = z.intersection(
 						.loose()
 						.nullish(),
 					closedTime: z.string().nullish(),
-					dueTime: z.string().nullish(),
-					anticipatedClosedTime: z.string().nullish(),
+					dueTime: NutshellLocalizedTimeSchema.nullish(),
+					anticipatedClosedTime: NutshellLocalizedTimeSchema.nullish(),
 					ownerType: z.string().nullish(),
 					status: z.string().nullish(),
 					lastContactedTime: z
@@ -4970,7 +5064,7 @@ const NutshellLeadsPostStagesetOutputSchema = z.intersection(
 						.nullish(),
 					pieState: z.string().nullish(),
 					isOverdue: z.boolean().nullish(),
-					overdueTime: z.string().nullish(),
+					overdueTime: NutshellLocalizedTimeSchema.nullish(),
 					href: z.string().nullish(),
 					confidence: z.number().int().nullish(),
 					priority: z.number().int().nullish(),
@@ -5168,17 +5262,17 @@ const NutshellCompetitorMapsGetOutputSchema = z
 					z
 						.object({
 							id: z.string().nullish(),
-							deletedTime: z.string().nullish(),
+							deletedTime: z.union([z.string(), z.number()]).nullish(),
 							name: z.string().nullish(),
 							value: z
 								.object({
 									formatted: z.string().nullish(),
-									amount: z.string().nullish(),
+									amount: NutshellAmountSchema.nullish(),
 									currency: z.string().nullish(),
 								})
 								.loose()
 								.nullish(),
-							number: z.number().int().nullish(),
+							number: z.union([z.string(), z.number()]).nullish(),
 							description: z.string().nullish(),
 							createdTime: z
 								.object({
@@ -5189,8 +5283,8 @@ const NutshellCompetitorMapsGetOutputSchema = z
 								.loose()
 								.nullish(),
 							closedTime: z.string().nullish(),
-							dueTime: z.string().nullish(),
-							anticipatedClosedTime: z.string().nullish(),
+							dueTime: NutshellLocalizedTimeSchema.nullish(),
+							anticipatedClosedTime: NutshellLocalizedTimeSchema.nullish(),
 							ownerType: z.string().nullish(),
 							status: z.string().nullish(),
 							lastContactedTime: z
@@ -5198,7 +5292,7 @@ const NutshellCompetitorMapsGetOutputSchema = z
 								.nullish(),
 							pieState: z.string().nullish(),
 							isOverdue: z.boolean().nullish(),
-							overdueTime: z.string().nullish(),
+							overdueTime: NutshellLocalizedTimeSchema.nullish(),
 							href: z.string().nullish(),
 							confidence: z.number().int().nullish(),
 							priority: z.number().int().nullish(),
@@ -5267,7 +5361,7 @@ const NutshellInvoicesGetOutputSchema = z
 											price: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -5275,7 +5369,7 @@ const NutshellInvoicesGetOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -5300,7 +5394,7 @@ const NutshellInvoicesGetOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -5328,7 +5422,7 @@ const NutshellInvoicesGetOutputSchema = z
 							total: z
 								.object({
 									formatted: z.string().nullish(),
-									amount: z.string().nullish(),
+									amount: NutshellAmountSchema.nullish(),
 									currency: z.string().nullish(),
 								})
 								.loose()
@@ -5339,7 +5433,7 @@ const NutshellInvoicesGetOutputSchema = z
 							sentTime: z.string().nullish(),
 							paidTime: z.string().nullish(),
 							completionComment: z.string().nullable().optional(),
-							deletedTime: z.string().nullish(),
+							deletedTime: z.union([z.string(), z.number()]).nullish(),
 						})
 						.loose(),
 				),
@@ -5674,17 +5768,17 @@ const NutshellLeadsWatchOutputSchema = z.intersection(
 			z
 				.object({
 					id: z.string().nullish(),
-					deletedTime: z.string().nullish(),
+					deletedTime: z.union([z.string(), z.number()]).nullish(),
 					name: z.string().nullish(),
 					value: z
 						.object({
 							formatted: z.string().nullish(),
-							amount: z.string().nullish(),
+							amount: NutshellAmountSchema.nullish(),
 							currency: z.string().nullish(),
 						})
 						.loose()
 						.nullish(),
-					number: z.number().int().nullish(),
+					number: z.union([z.string(), z.number()]).nullish(),
 					description: z.string().nullish(),
 					createdTime: z
 						.object({
@@ -5695,8 +5789,8 @@ const NutshellLeadsWatchOutputSchema = z.intersection(
 						.loose()
 						.nullish(),
 					closedTime: z.string().nullish(),
-					dueTime: z.string().nullish(),
-					anticipatedClosedTime: z.string().nullish(),
+					dueTime: NutshellLocalizedTimeSchema.nullish(),
+					anticipatedClosedTime: NutshellLocalizedTimeSchema.nullish(),
 					ownerType: z.string().nullish(),
 					status: z.string().nullish(),
 					lastContactedTime: z
@@ -5704,7 +5798,7 @@ const NutshellLeadsWatchOutputSchema = z.intersection(
 						.nullish(),
 					pieState: z.string().nullish(),
 					isOverdue: z.boolean().nullish(),
-					overdueTime: z.string().nullish(),
+					overdueTime: NutshellLocalizedTimeSchema.nullish(),
 					href: z.string().nullish(),
 					confidence: z.number().int().nullish(),
 					priority: z.number().int().nullish(),
@@ -5744,7 +5838,7 @@ const NutshellNotesListOutputSchema = z.intersection(
 		.object({
 			id: z.string().nullish(),
 			createdTime: z.string().nullish(),
-			deletedTime: z.string().nullish(),
+			deletedTime: z.union([z.string(), z.number()]).nullish(),
 			href: z.string().nullish(),
 			body: z.string().nullish(),
 			bodyHtml: z.string().nullish(),
@@ -5861,7 +5955,10 @@ const NutshellContactsUpdateInputSchema = z
 		body: z.array(NutshellJsonPatchOperationSchema),
 	})
 	.strict();
-const NutshellContactsUpdateOutputSchema = z.undefined();
+// Nutshell answers 200 with the contact here (accounts and leads answer 204).
+const NutshellContactsUpdateOutputSchema = NutshellEnvelope({
+	contacts: z.array(z.object({ id: z.string().nullish() }).loose()).nullish(),
+}).optional();
 
 const NutshellSourcesCreateInputSchema = z
 	.object({
@@ -6105,16 +6202,20 @@ const NutshellContactsListOutputSchema = z
 	.loose();
 
 const NutshellTerritoriesListInputSchema = z.object({}).strict();
-const NutshellTerritoriesListOutputSchema = z.array(
-	z
-		.object({
-			id: z.string().nullish(),
-			name: z.string().nullish(),
-			href: z.string().nullish(),
-			modifiedTime: z.number().nullish(),
-		})
-		.loose(),
-);
+const NutshellTerritoriesListOutputSchema = NutshellEnvelope({
+	territories: z
+		.array(
+			z
+				.object({
+					id: z.string().nullish(),
+					name: z.string().nullish(),
+					href: z.string().nullish(),
+					modifiedTime: z.number().nullish(),
+				})
+				.loose(),
+		)
+		.nullish(),
+});
 
 const NutshellInvoicesStatusInputSchema = z
 	.object({
@@ -6163,7 +6264,7 @@ const NutshellInvoicesStatusOutputSchema = z
 											price: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -6171,7 +6272,7 @@ const NutshellInvoicesStatusOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -6196,7 +6297,7 @@ const NutshellInvoicesStatusOutputSchema = z
 											total: z
 												.object({
 													formatted: z.string().nullish(),
-													amount: z.string().nullish(),
+													amount: NutshellAmountSchema.nullish(),
 													currency: z.string().nullish(),
 												})
 												.loose()
@@ -6224,7 +6325,7 @@ const NutshellInvoicesStatusOutputSchema = z
 							total: z
 								.object({
 									formatted: z.string().nullish(),
-									amount: z.string().nullish(),
+									amount: NutshellAmountSchema.nullish(),
 									currency: z.string().nullish(),
 								})
 								.loose()
@@ -6235,7 +6336,7 @@ const NutshellInvoicesStatusOutputSchema = z
 							sentTime: z.string().nullish(),
 							paidTime: z.string().nullish(),
 							completionComment: z.string().nullable().optional(),
-							deletedTime: z.string().nullish(),
+							deletedTime: z.union([z.string(), z.number()]).nullish(),
 						})
 						.loose(),
 				),
@@ -6368,7 +6469,7 @@ const NutshellAccountsGetOutputSchema = z
 									href: z.string().nullish(),
 									revenue: z
 										.object({
-											amount: z.string().nullish(),
+											amount: NutshellAmountSchema.nullish(),
 											formatted: z.string().nullish(),
 										})
 										.loose()
@@ -6726,7 +6827,7 @@ const NutshellNotesCreateOutputSchema = z.intersection(
 		.object({
 			id: z.string().nullish(),
 			createdTime: z.string().nullish(),
-			deletedTime: z.string().nullish(),
+			deletedTime: z.union([z.string(), z.number()]).nullish(),
 			href: z.string().nullish(),
 			body: z.string().nullish(),
 			bodyHtml: z.string().nullish(),
@@ -6992,7 +7093,7 @@ const NutshellProductsGetOutputSchema = z
 							.unknown() /* OpenAPI schema has no recognized type */
 							.nullish(),
 						modifiedTime: z.number().int().nullish(),
-						deletedTime: z.string().nullish(),
+						deletedTime: z.union([z.string(), z.number()]).nullish(),
 						sku: z
 							.unknown() /* OpenAPI schema has no recognized type */
 							.nullish(),
@@ -7003,7 +7104,7 @@ const NutshellProductsGetOutputSchema = z
 							.object({
 								'1-markets': z
 									.object({
-										amount: z.number().nullish(),
+										amount: NutshellAmountSchema.nullish(),
 										currency: z.string().nullish(),
 										formatted: z.string().nullish(),
 										currencySymbol: z.string().nullish(),
@@ -7015,7 +7116,7 @@ const NutshellProductsGetOutputSchema = z
 							.nullish(),
 						price: z
 							.object({
-								amount: z.number().nullish(),
+								amount: NutshellAmountSchema.nullish(),
 								currency: z.string().nullish(),
 								formatted: z.string().nullish(),
 								currencySymbol: z.string().nullish(),
@@ -7098,22 +7199,34 @@ const NutshellEventsDeletedOutputSchema = z
 										.object({
 											attribute: z.string().nullish(),
 											oldValue: z
-												.object({
-													id: z.string().nullish(),
-													type: z.string().nullish(),
-													name: z.string().nullish(),
-													position: z.number().int().nullish(),
-												})
-												.loose()
+												.union([
+													z.string(),
+													z.number(),
+													z.boolean(),
+													z
+														.object({
+															id: z.string().nullish(),
+															type: z.string().nullish(),
+															name: z.string().nullish(),
+															position: z.number().int().nullish(),
+														})
+														.loose(),
+												])
 												.nullish(),
 											newValue: z
-												.object({
-													id: z.string().nullish(),
-													type: z.string().nullish(),
-													name: z.string().nullish(),
-													position: z.number().int().nullish(),
-												})
-												.loose()
+												.union([
+													z.string(),
+													z.number(),
+													z.boolean(),
+													z
+														.object({
+															id: z.string().nullish(),
+															type: z.string().nullish(),
+															name: z.string().nullish(),
+															position: z.number().int().nullish(),
+														})
+														.loose(),
+												])
 												.nullish(),
 										})
 										.loose(),
@@ -7185,17 +7298,17 @@ const NutshellCompetitorMapsListOutputSchema = z
 					z
 						.object({
 							id: z.string().nullish(),
-							deletedTime: z.string().nullish(),
+							deletedTime: z.union([z.string(), z.number()]).nullish(),
 							name: z.string().nullish(),
 							value: z
 								.object({
 									formatted: z.string().nullish(),
-									amount: z.string().nullish(),
+									amount: NutshellAmountSchema.nullish(),
 									currency: z.string().nullish(),
 								})
 								.loose()
 								.nullish(),
-							number: z.number().int().nullish(),
+							number: z.union([z.string(), z.number()]).nullish(),
 							description: z.string().nullish(),
 							createdTime: z
 								.object({
@@ -7206,8 +7319,8 @@ const NutshellCompetitorMapsListOutputSchema = z
 								.loose()
 								.nullish(),
 							closedTime: z.string().nullish(),
-							dueTime: z.string().nullish(),
-							anticipatedClosedTime: z.string().nullish(),
+							dueTime: NutshellLocalizedTimeSchema.nullish(),
+							anticipatedClosedTime: NutshellLocalizedTimeSchema.nullish(),
 							ownerType: z.string().nullish(),
 							status: z.string().nullish(),
 							lastContactedTime: z
@@ -7215,7 +7328,7 @@ const NutshellCompetitorMapsListOutputSchema = z
 								.nullish(),
 							pieState: z.string().nullish(),
 							isOverdue: z.boolean().nullish(),
-							overdueTime: z.string().nullish(),
+							overdueTime: NutshellLocalizedTimeSchema.nullish(),
 							href: z.string().nullish(),
 							confidence: z.number().int().nullish(),
 							priority: z.number().int().nullish(),
@@ -7269,7 +7382,8 @@ const NutshellTasksUpdateInputSchema = z
 		body: z.array(NutshellJsonPatchOperationSchema),
 	})
 	.strict();
-const NutshellTasksUpdateOutputSchema = z.undefined();
+// Nutshell answers 200 with the updated task.
+const NutshellTasksUpdateOutputSchema = NutshellTasksEnvelopeSchema.optional();
 
 const NutshellAccountsListInputSchema = z
 	.object({
@@ -7455,7 +7569,7 @@ const NutshellAccountsListOutputSchema = z
 							href: z.string().nullish(),
 							revenue: z
 								.object({
-									amount: z.string().nullish(),
+									amount: NutshellAmountSchema.nullish(),
 									formatted: z.string().nullish(),
 								})
 								.loose()
@@ -7572,12 +7686,23 @@ const NutshellAccountsListItemsOutputSchema = z
 										relatedType: z.string().nullish(),
 										relatedUrl: z.string().nullish(),
 										relatedUrlPath: z.string().nullish(),
-										primaryContact: z.string().nullish(),
-										primaryAccount: z.string().nullish(),
-										latlon: z.string().nullish(),
+										primaryContact: z
+											.union([z.string(), z.object({}).loose()])
+											.nullish(),
+										primaryAccount: z
+											.union([z.string(), z.object({}).loose()])
+											.nullish(),
+										latlon: z
+											.union([z.string(), z.array(z.string())])
+											.nullish(),
 										mapUrl: z.string().nullish(),
 										isDeleted: z.boolean().nullish(),
-										fields: z.array(z.object({}).loose()).nullish(),
+										fields: z
+											.union([
+												z.array(z.object({}).loose()),
+												z.record(z.string(), z.unknown()),
+											])
+											.nullish(),
 									})
 									.loose(),
 							),
