@@ -1,0 +1,456 @@
+---
+title: Webhooks
+description: "Shippo incoming webhooks: event paths, payloads, and response data."
+---
+
+The Shippo plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/shippo/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `notifications`
+  - `delivery` (`notifications.delivery`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Notifications
+
+### Delivery
+
+`notifications.delivery`
+
+A Shippo webhook delivery: the `{ event, test, data }` envelope whose `data` is the full track, transaction or batch object
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `test` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  carrier?: string | null,
+  tracking_number?: string | null,
+  address_from?: {
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null,
+    country?: string | null
+  } | null,
+  address_to?: {
+    city?: string | null,
+    state?: string | null,
+    zip?: string | null,
+    country?: string | null
+  } | null,
+  eta?: string | null,
+  original_eta?: string | null,
+  servicelevel?: {
+    name?: string | null,
+    token?: string | null,
+    terms?: string | null,
+    extended_token?: string | null,
+    parent_servicelevel?: {
+      name?: string | null,
+      token?: string | null,
+      terms?: string | null,
+      extended_token?: string | null
+    } | null
+  } | null,
+  messages?: string[] | null,
+  metadata?: string | null,
+  tracking_status?: {
+    object_id?: string | null,
+    object_created?: string | null,
+    object_updated?: string | null,
+    status?: string | null,
+    status_date?: string | null,
+    status_details?: string | null,
+    substatus?: {
+      code?: string | null,
+      text?: string | null,
+      action_required?: boolean | null
+    } | null,
+    location?: {
+      city?: string | null,
+      state?: string | null,
+      zip?: string | null,
+      country?: string | null
+    } | null
+  } | null,
+  tracking_history?: {
+    object_id?: string | null,
+    object_created?: string | null,
+    object_updated?: string | null,
+    status?: string | null,
+    status_date?: string | null,
+    status_details?: string | null,
+    substatus?: {
+      code?: string | null,
+      text?: string | null,
+      action_required?: boolean | null
+    } | null,
+    location?: {
+      city?: string | null,
+      state?: string | null,
+      zip?: string | null,
+      country?: string | null
+    } | null
+  }[] | null
+} | {
+  object_id?: string | null,
+  object_owner?: string | null,
+  object_created?: string | null,
+  object_updated?: string | null,
+  object_state?: string | null,
+  status?: string | null,
+  rate?: {
+    object_id?: string | null,
+    object_owner?: string | null,
+    object_created?: string | null,
+    amount?: string | null,
+    amount_local?: string | null,
+    currency?: string | null,
+    currency_local?: string | null,
+    provider?: string | null,
+    provider_image_75?: string | null,
+    provider_image_200?: string | null,
+    arrives_by?: string | null,
+    attributes?: string[] | null,
+    estimated_days?: number | null,
+    duration_terms?: string | null,
+    included_insurance_price?: string | null,
+    servicelevel?: {
+      name?: string | null,
+      token?: string | null,
+      terms?: string | null,
+      extended_token?: string | null,
+      parent_servicelevel?: {
+        name?: string | null,
+        token?: string | null,
+        terms?: string | null,
+        extended_token?: string | null
+      } | null
+    } | null,
+    carrier_account?: string | null,
+    shipment?: string | null,
+    zone?: string | null,
+    messages?: {
+      source?: string | null,
+      code?: string | null,
+      text?: string | null
+    }[] | null,
+    test?: boolean | null
+  } | null,
+  parcel?: string | null,
+  label_url?: string | null,
+  commercial_invoice_url?: string | null,
+  qr_code_url?: string | null,
+  label_file_type?: string | null,
+  tracking_number?: string | null,
+  tracking_status?: {
+    object_id?: string | null,
+    object_created?: string | null,
+    object_updated?: string | null,
+    status?: string | null,
+    status_date?: string | null,
+    status_details?: string | null,
+    substatus?: {
+      code?: string | null,
+      text?: string | null,
+      action_required?: boolean | null
+    } | null,
+    location?: {
+      city?: string | null,
+      state?: string | null,
+      zip?: string | null,
+      country?: string | null
+    } | null
+  } | null,
+  tracking_url_provider?: string | null,
+  eta?: string | null,
+  messages?: {
+    source?: string | null,
+    code?: string | null,
+    text?: string | null
+  }[] | null,
+  metadata?: string | null,
+  test?: boolean | null
+} | {
+  object_id?: string | null,
+  object_owner?: string | null,
+  object_created?: string | null,
+  object_updated?: string | null,
+  status?: string | null,
+  default_carrier_account?: string | null,
+  default_servicelevel_token?: string | null,
+  label_filetype?: string | null,
+  metadata?: string | null,
+  label_url?: string[] | null,
+  batch_shipments?: {
+    next?: string | null,
+    previous?: string | null,
+    results?: {
+      object_id?: string | null,
+      shipment?: string | null,
+      transaction?: string | null,
+      status?: string | null,
+      carrier_account?: string | null,
+      servicelevel_token?: string | null,
+      messages?: {
+        source?: string | null,
+        code?: string | null,
+        text?: string | null
+      }[] | null,
+      metadata?: string | null
+    }[] | null
+  } | null,
+  object_results?: {
+    purchase_failed?: number | null,
+    purchase_succeeded?: number | null
+  } | null,
+  test?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  test?: boolean | null,
+  data?: {
+    carrier?: string | null,
+    tracking_number?: string | null,
+    address_from?: {
+      city?: string | null,
+      state?: string | null,
+      zip?: string | null,
+      country?: string | null
+    } | null,
+    address_to?: {
+      city?: string | null,
+      state?: string | null,
+      zip?: string | null,
+      country?: string | null
+    } | null,
+    eta?: string | null,
+    original_eta?: string | null,
+    servicelevel?: {
+      name?: string | null,
+      token?: string | null,
+      terms?: string | null,
+      extended_token?: string | null,
+      parent_servicelevel?: {
+        name?: string | null,
+        token?: string | null,
+        terms?: string | null,
+        extended_token?: string | null
+      } | null
+    } | null,
+    messages?: string[] | null,
+    metadata?: string | null,
+    tracking_status?: {
+      object_id?: string | null,
+      object_created?: string | null,
+      object_updated?: string | null,
+      status?: string | null,
+      status_date?: string | null,
+      status_details?: string | null,
+      substatus?: {
+        code?: string | null,
+        text?: string | null,
+        action_required?: boolean | null
+      } | null,
+      location?: {
+        city?: string | null,
+        state?: string | null,
+        zip?: string | null,
+        country?: string | null
+      } | null
+    } | null,
+    tracking_history?: {
+      object_id?: string | null,
+      object_created?: string | null,
+      object_updated?: string | null,
+      status?: string | null,
+      status_date?: string | null,
+      status_details?: string | null,
+      substatus?: {
+        code?: string | null,
+        text?: string | null,
+        action_required?: boolean | null
+      } | null,
+      location?: {
+        city?: string | null,
+        state?: string | null,
+        zip?: string | null,
+        country?: string | null
+      } | null
+    }[] | null
+  } | {
+    object_id?: string | null,
+    object_owner?: string | null,
+    object_created?: string | null,
+    object_updated?: string | null,
+    object_state?: string | null,
+    status?: string | null,
+    rate?: {
+      object_id?: string | null,
+      object_owner?: string | null,
+      object_created?: string | null,
+      amount?: string | null,
+      amount_local?: string | null,
+      currency?: string | null,
+      currency_local?: string | null,
+      provider?: string | null,
+      provider_image_75?: string | null,
+      provider_image_200?: string | null,
+      arrives_by?: string | null,
+      attributes?: string[] | null,
+      estimated_days?: number | null,
+      duration_terms?: string | null,
+      included_insurance_price?: string | null,
+      servicelevel?: {
+        name?: string | null,
+        token?: string | null,
+        terms?: string | null,
+        extended_token?: string | null,
+        parent_servicelevel?: {
+          name?: string | null,
+          token?: string | null,
+          terms?: string | null,
+          extended_token?: string | null
+        } | null
+      } | null,
+      carrier_account?: string | null,
+      shipment?: string | null,
+      zone?: string | null,
+      messages?: {
+        source?: string | null,
+        code?: string | null,
+        text?: string | null
+      }[] | null,
+      test?: boolean | null
+    } | null,
+    parcel?: string | null,
+    label_url?: string | null,
+    commercial_invoice_url?: string | null,
+    qr_code_url?: string | null,
+    label_file_type?: string | null,
+    tracking_number?: string | null,
+    tracking_status?: {
+      object_id?: string | null,
+      object_created?: string | null,
+      object_updated?: string | null,
+      status?: string | null,
+      status_date?: string | null,
+      status_details?: string | null,
+      substatus?: {
+        code?: string | null,
+        text?: string | null,
+        action_required?: boolean | null
+      } | null,
+      location?: {
+        city?: string | null,
+        state?: string | null,
+        zip?: string | null,
+        country?: string | null
+      } | null
+    } | null,
+    tracking_url_provider?: string | null,
+    eta?: string | null,
+    messages?: {
+      source?: string | null,
+      code?: string | null,
+      text?: string | null
+    }[] | null,
+    metadata?: string | null,
+    test?: boolean | null
+  } | {
+    object_id?: string | null,
+    object_owner?: string | null,
+    object_created?: string | null,
+    object_updated?: string | null,
+    status?: string | null,
+    default_carrier_account?: string | null,
+    default_servicelevel_token?: string | null,
+    label_filetype?: string | null,
+    metadata?: string | null,
+    label_url?: string[] | null,
+    batch_shipments?: {
+      next?: string | null,
+      previous?: string | null,
+      results?: {
+        object_id?: string | null,
+        shipment?: string | null,
+        transaction?: string | null,
+        status?: string | null,
+        carrier_account?: string | null,
+        servicelevel_token?: string | null,
+        messages?: {
+          source?: string | null,
+          code?: string | null,
+          text?: string | null
+        }[] | null,
+        metadata?: string | null
+      }[] | null
+    } | null,
+    object_results?: {
+      purchase_failed?: number | null,
+      purchase_succeeded?: number | null
+    } | null,
+    test?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+shippo({
+    webhookHooks: {
+        notifications: {
+            delivery: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
