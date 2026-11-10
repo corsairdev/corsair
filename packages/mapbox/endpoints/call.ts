@@ -14,8 +14,7 @@ type LogFields = Record<string, string | number | boolean | undefined>;
 export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	ctx: MapboxContext,
 	operation: { event: string; input: Input; output: Output },
-	// unknown: raw caller input, parsed below by the operation's input schema.
-	rawInput: unknown,
+	rawInput: unknown /* unknown: parsed below by the input schema */,
 	toRequest: (parsed: z.output<Input>) => MapboxRequest,
 	log?: (result: z.output<Output>) => LogFields,
 ): Promise<z.output<Output>> {
