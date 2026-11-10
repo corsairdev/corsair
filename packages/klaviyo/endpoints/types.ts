@@ -167,14 +167,20 @@ const SortSchema = z
 
 // ── profiles ────────────────────────────────────────────────────────────────
 
+/**
+ * A coordinate, which the spec types as a string or a number on both the
+ * request and the response.
+ */
+const CoordinateSchema = z.union([z.string(), z.number()]);
+
 const ProfileLocationSchema = z
 	.object({
 		address1: z.string().nullish(),
 		address2: z.string().nullish(),
 		city: z.string().nullish(),
 		country: z.string().nullish(),
-		latitude: z.number().nullish(),
-		longitude: z.number().nullish(),
+		latitude: CoordinateSchema.nullish(),
+		longitude: CoordinateSchema.nullish(),
 		region: z.string().nullish(),
 		zip: z.string().nullish(),
 		timezone: z.string().nullish(),

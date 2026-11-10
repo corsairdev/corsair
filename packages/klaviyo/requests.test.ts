@@ -884,3 +884,28 @@ describe('page sizes per route', () => {
 		});
 	});
 });
+
+describe('profile location', () => {
+	it('reads a latitude Klaviyo sends as a string', async () => {
+		// The spec types latitude and longitude as string or number.
+		respond({
+			data: {
+				...profile,
+				attributes: {
+					...profile.attributes,
+					location: { latitude: '30.2672', longitude: -97.7431 },
+				},
+			},
+		});
+
+		const result = (await invoke(profilesGet, { id: '01H8XYZABC123' })) as {
+			data: {
+				attributes?: {
+					location?: { latitude?: string | number | null } | null;
+				} | null;
+			};
+		};
+
+		expect(result.data.attributes?.location?.latitude).toBe('30.2672');
+	});
+});
