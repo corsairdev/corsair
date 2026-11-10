@@ -78,6 +78,97 @@ describe('Finage HTTP client', () => {
 		});
 	});
 
+	// The two error bodies Finage returns today (probed 2026-11-10): the market
+	// data routes send { error: "<text>" } and the news and market-status routes
+	// send { success, statusCode, message }.
+	it.each([
+		[
+			{
+				error: 'You do not have permission to make a request to this endpoint.',
+			},
+			'You do not have permission to make a request to this endpoint.',
+		],
+		[
+			{
+				success: false,
+				statusCode: 401,
+				message: 'Invalid API Key!',
+				isFree: false,
+			},
+			'Invalid API Key!',
+		],
+	])(
+		'keeps the message from the provider error body %#',
+		async (body, message) => {
+			httpRequest.mockRejectedValueOnce(
+				new ApiError(
+					{ method: 'GET', url: '/last/stock/AAPL' } as ApiRequestOptions,
+					{
+						url: 'https://api.finage.co.uk/last/stock/AAPL',
+						ok: false,
+						status: 401,
+						statusText: 'Unauthorized',
+						body,
+					},
+					'Unauthorized',
+				),
+			);
+
+			await expect(
+				makeFinageRequest('/last/stock/AAPL', 'secret-key'),
+			).rejects.toMatchObject({
+				name: 'FinageAPIError',
+				status: 401,
+				message,
+			});
+		},
+	);
+
+	it('never carries the API key or the request URL on the thrown error', async () => {
+		// Core's ApiError keeps the request URL and query, and its redaction list
+		// does not include Finage's `apikey` parameter name.
+		httpRequest.mockRejectedValueOnce(
+			new ApiError(
+				{
+					method: 'GET',
+					url: '/last/stock/AAPL',
+					query: { apikey: 'secret-key' },
+				} as ApiRequestOptions,
+				{
+					url: 'https://api.finage.co.uk/last/stock/AAPL?apikey=secret-key',
+					ok: false,
+					status: 401,
+					statusText: 'Unauthorized',
+					body: { error: 'Please use your APIKey to make a request.' },
+				},
+				'Unauthorized',
+			),
+		);
+
+		const error = await makeFinageRequest(
+			'/last/stock/AAPL',
+			'secret-key',
+		).catch((caught: unknown) => caught); // unknown: rejection value, narrowed below
+
+		expect(error).toBeInstanceOf(FinageAPIError);
+		if (!(error instanceof FinageAPIError)) return;
+		const everything = [
+			error.message,
+			error.stack ?? '',
+			JSON.stringify(error),
+			JSON.stringify(
+				Object.getOwnPropertyNames(error).map((name) => [
+					name,
+					// unknown: reads every own property to prove none holds the key.
+					String((error as unknown as Record<string, unknown>)[name]),
+				]),
+			),
+			String(error.cause ?? ''),
+		].join('\n');
+		expect(everything).not.toContain('secret-key');
+		expect(everything).not.toContain('apikey=');
+	});
+
 	it('wraps non-Error rejections without losing the plugin error type', async () => {
 		httpRequest.mockRejectedValueOnce('offline');
 

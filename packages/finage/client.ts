@@ -37,12 +37,17 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null;
 }
 
-// Finage documents error bodies as { error: { code, message } }; surface those
-// fields on the plugin error instead of discarding the provider's own message.
+// Finage sends three error bodies: { error: "<text>" } on the market data
+// routes, { success, statusCode, message } on news and market status, and
+// { error: { code, message } }. Surface the provider's own message in each case
+// instead of discarding it for the generic status text.
 // unknown: the transport hands back unparsed JSON, and providerError narrows
 // only the documented fields rather than trusting the whole body.
 function providerError(body: unknown): { code?: string; message?: string } {
 	if (!isRecord(body)) return {};
+	if (typeof body.error === 'string' && body.error.length > 0) {
+		return { message: body.error };
+	}
 	const nested = isRecord(body.error) ? body.error : body;
 	const code = typeof nested.code === 'string' ? nested.code : undefined;
 	const message =
