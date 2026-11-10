@@ -1,0 +1,153 @@
+name: Release on merge
+
+# Every merge to main releases the packages it changed. A package whose shipped
+# files changed since its last release (git tag <name>@<version>) moves to the
+# next patch version in one commit on main, and deploy.yml publishes it. A
+# version raised by hand in a PR (a minor or major) is published as it is.
+# Details: scripts/release-on-merge.mjs.
+
+on:
+  push:
+    branches: [main]
+  # deploy.yml runs this after each publish, so a change merged while a
+  # release was still publishing gets released once that one lands.
+  workflow_dispatch:
+    inputs:
+      # Hub starts this when its cloud runtime moves to a new SDK version, for the
+      # changelog. Hub's own PR titles stay out of it: that repo is private.
+      cloud_corsair_version:
+        description: corsair version Corsair Cloud just moved to
+        required: false
+  # Backstop in case a run failed and nothing has been merged since.
+  schedule:
+    - cron: '17 4 * * *'
+
+permissions:
+  contents: read
+  actions: write # retry deploy.yml for a version npm doesn't have yet
+
+concurrency:
+  group: release-on-merge
+  cancel-in-progress: false
+
+jobs:
+  release:
+    # The release commit this workflow pushed triggers a push of its own, with
+    # nothing left to release. Skip only that commit (bot author and prefix): a
+    # contributor's squash merge titled chore(release) still gets planned.
+    if: >-
+      github.event_name != 'push' ||
+      !(startsWith(github.event.head_commit.message, 'chore(release):') &&
+        github.event.head_commit.author.email == '353438335+corsair-releases[bot]@users.noreply.github.com')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check the release app credentials
+        env:
+          APP_ID: ${{ vars.RELEASE_APP_ID }}
+          KEY: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+        run: |
+          if [ -z "$APP_ID" ] || [ -z "$KEY" ]; then
+            echo "::error::RELEASE_APP_ID (variable) and RELEASE_APP_PRIVATE_KEY (secret) must both be set. They belong to the Corsair Releases GitHub App, which the main ruleset lets push release commits."
+            exit 1
+          fi
+
+      # The main ruleset requires a PR for every other push. Its bypass list
+      # holds the Corsair Releases GitHub App, so the release commit and tags
+      # are pushed with that app's installation token. Unlike GITHUB_TOKEN, a
+      # push made with it starts deploy.yml, which publishes the bumps.
+      - name: Get a Corsair Releases token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+
+      - name: Commit the version bumps and record the releases
+        env:
+          PLAN: ${{ runner.temp }}/release-plan.json
+          CLOUD_VERSION: ${{ inputs.cloud_corsair_version }}
+        run: |
+          git config user.name "corsair-releases[bot]"
+          git config user.email "353438335+corsair-releases[bot]@users.noreply.github.com"
+
+          # If another merge lands first, the push is refused: plan again on
+          # the new main instead of rebasing bumps that may no longer apply.
+          pushed=0
+          for attempt in 1 2 3; do
+            if [ "$attempt" -gt 1 ]; then
+              echo "main moved; planning again on the new main"
+              git fetch -q --tags origin main
+              git reset -q --hard origin/main
+            fi
+            node scripts/release-on-merge.mjs --out "$PLAN"
+            count=$(jq '.bumps | length' "$PLAN")
+            # A changelog problem must not stop a release.
+            if ! node scripts/release-changelog.mjs --plan "$PLAN" ${CLOUD_VERSION:+--cloud-version "$CLOUD_VERSION"}; then
+              echo "::warning::The changelog wasn't updated for this release."
+              git checkout -- docs/changelog.mdx scripts/changelog-entries.json
+            fi
+            if [ "$count" -eq 0 ] && git diff --quiet; then pushed=1; break; fi
+            {
+              if [ "$count" -eq 0 ]; then
+                echo "chore(release): update the changelog"
+              else
+                echo "chore(release): publish $count package(s)"
+                echo
+                jq -r '.bumps[] | "- \(.name) \(.from) -> \(.to)"' "$PLAN"
+              fi
+            } > "$RUNNER_TEMP/release-message.txt"
+            git commit -q -a -F "$RUNNER_TEMP/release-message.txt"
+            if git push origin HEAD:main; then pushed=1; break; fi
+          done
+          if [ "$pushed" != 1 ]; then exit 1; fi
+
+          mapfile -t tags < <(jq -r '.tags[] | "\(.tag) \(.sha)"' "$PLAN")
+          if [ "${#tags[@]}" -gt 0 ]; then
+            refs=()
+            for line in "${tags[@]}"; do
+              tag=${line% *}
+              sha=${line##* }
+              git tag "$tag" "$sha"
+              refs+=("refs/tags/$tag")
+            done
+            git push origin "${refs[@]}"
+          fi
+
+          {
+            echo "### Release on merge"
+            echo
+            echo "$count package(s) bumped, ${#tags[@]} release tag(s) recorded."
+            jq -r '.bumps[] | "- \(.name) \(.from) → \(.to) (\(.files | join(", ")))"' "$PLAN"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # A version npm doesn't have yet is left for deploy.yml, which only runs
+      # when a package.json changes. After a failed publish nothing would run it
+      # again, so retry here on each merge and on the daily run. Not when
+      # deploy.yml started this run: a publish that keeps failing would loop.
+      - name: Retry publishing what npm doesn't have yet
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PLAN: ${{ runner.temp }}/release-plan.json
+        run: |
+          waiting=$(jq -r '.waiting[] | "\(.name)@\(.version)"' "$PLAN")
+          if [ -z "$waiting" ]; then exit 0; fi
+          echo "Not on npm yet:"; echo "$waiting"
+          active=$(gh run list -R "$GITHUB_REPOSITORY" -w deploy.yml -b main \
+            --json status --jq '[.[] | select(.status != "completed")] | length')
+          if [ "$active" -gt 0 ]; then
+            echo "deploy.yml is already running; it publishes these."
+            exit 0
+          fi
+          gh workflow run deploy.yml -R "$GITHUB_REPOSITORY" --ref main
