@@ -219,8 +219,7 @@ export const MessagesTestOutputSchema = z.object({}).passthrough();
 
 export type MessagesTestOutput = z.infer<typeof MessagesTestOutputSchema>;
 
-// POST /v1/send addresses mirror the official SendAddress schema and the
-// published example uses a single `to` recipient object.
+// POST /v1/send addresses mirror the official SendAddress schema.
 export const SendAddressSchema = z.object({
 	address: z.string().min(1),
 	name: z.string().optional(),
@@ -230,9 +229,10 @@ export type SendAddress = z.infer<typeof SendAddressSchema>;
 
 export const MessagesSendPlainInputSchema = z.object({
 	message: z.object({
-		// The provider declares `to` as opaque; the official example sends a
-		// single { address, name } recipient object.
-		to: SendAddressSchema,
+		// One recipient object, or an array of them. The reference declares
+		// `to` as oneOf the two: Gmail accounts accept the array, Outlook
+		// accounts need a single object (and also need `from`).
+		to: z.union([SendAddressSchema, z.array(SendAddressSchema).min(1)]),
 		from: SendAddressSchema.optional(),
 		cc: z.array(SendAddressSchema).optional(),
 		bcc: z.array(SendAddressSchema).optional(),

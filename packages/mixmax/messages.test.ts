@@ -193,6 +193,32 @@ describe('Mixmax messages endpoints', () => {
 		});
 	});
 
+	it('messages.sendPlain accepts an array of recipients, as the reference allows for Gmail accounts', async () => {
+		const message = {
+			to: [
+				{ address: 'ada@example.com', name: 'Ada Lovelace' },
+				{ address: 'grace@example.com' },
+			],
+			subject: 'Your invoice',
+			html: '<p>Attached.</p>',
+		};
+		await endpoints.messages.sendPlain(ctx, { message });
+
+		expect(request).toHaveBeenCalledWith(ctx, '/v1/send', {
+			method: 'POST',
+			body: { message },
+		});
+	});
+
+	it('messages.sendPlain rejects an empty recipient array before any request', async () => {
+		await expect(
+			endpoints.messages.sendPlain(ctx, {
+				message: { to: [], subject: 'Your invoice', html: '<p>Attached.</p>' },
+			}),
+		).rejects.toThrow();
+		expect(request).not.toHaveBeenCalled();
+	});
+
 	it('messages.sendPlain requires the message envelope', async () => {
 		await expect(
 			// unknown: deliberately invalid input shape to prove the schema
