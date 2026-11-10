@@ -124,15 +124,17 @@ describe('Mixmax meetings endpoints', () => {
 		expect(result).toEqual(response);
 	});
 
-	it('meetings.getTranscript sends GET /v1/meetings/transcripts/:id', async () => {
+	it('meetings.getTranscript URL-encodes the whole summary id, slashes included', async () => {
 		request.mockResolvedValue(TRANSCRIPT);
 		const result = await endpoints.meetings.getTranscript(ctx, {
 			id: '64f1c2a9e4b0a1b2c3d4e5f6/abc-defg-hij/2025-01-15T10:00:00.000Z',
 		});
 
+		// The reference: "It contains slashes, so URL encode it before passing
+		// it to GET /v1/meetings/transcripts/{id}". The id is one path segment.
 		expect(request).toHaveBeenCalledWith(
 			ctx,
-			'/v1/meetings/transcripts/64f1c2a9e4b0a1b2c3d4e5f6/abc-defg-hij/2025-01-15T10%3A00%3A00.000Z',
+			'/v1/meetings/transcripts/64f1c2a9e4b0a1b2c3d4e5f6%2Fabc-defg-hij%2F2025-01-15T10%3A00%3A00.000Z',
 			{
 				method: 'GET',
 			},
@@ -144,6 +146,15 @@ describe('Mixmax meetings endpoints', () => {
 		await expect(
 			endpoints.meetings.getTranscript(ctx, {
 				id: '../../admin/transcripts/x',
+			}),
+		).rejects.toThrow('Invalid Mixmax id');
+		expect(request).not.toHaveBeenCalled();
+	});
+
+	it('meetings.getTranscript rejects a backslash in the id before any request', async () => {
+		await expect(
+			endpoints.meetings.getTranscript(ctx, {
+				id: 'summary/a\\b/2025-01-15',
 			}),
 		).rejects.toThrow('Invalid Mixmax id');
 		expect(request).not.toHaveBeenCalled();

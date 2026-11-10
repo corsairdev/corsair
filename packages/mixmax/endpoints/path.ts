@@ -20,12 +20,13 @@ export const mixmaxPathParameter = (
 	return template.replace(`{${name}}`, encodeURIComponent(value));
 };
 
-// Multi-segment path parameter guard for the identifiers Mixmax documents as
-// containing slashes (e.g. GET /v1/meetings/transcripts/{id} takes
-// `meetingSummaryId/transcriptId/date`). Each segment must be non-empty and
-// free of dot segments and backslashes, then every segment is percent-encoded
-// individually and rejoined with `/`, so the substitution cannot climb out of
-// the intended path.
+// Guard for the one identifier Mixmax documents as containing slashes: the
+// meeting summary id passed to GET /v1/meetings/transcripts/{id}
+// (`meetingSummaryId/transcriptId/date`). The reference says to URL encode
+// the id before appending it, so the whole value is percent-encoded and its
+// slashes travel as `%2F` inside a single path segment. Each part must still
+// be non-empty and free of dot segments and backslashes, so a value that a
+// server decodes early cannot climb out of the intended path.
 export const mixmaxMultiSegmentPathParameter = (
 	template: string,
 	name: string,
@@ -39,13 +40,14 @@ export const mixmaxMultiSegmentPathParameter = (
 	const segments = value.split('/');
 	if (
 		segments.some(
-			(segment) => segment.length === 0 || segment === '.' || segment === '..',
+			(segment) =>
+				segment.length === 0 ||
+				segment === '.' ||
+				segment === '..' ||
+				segment.includes('\\'),
 		)
 	) {
 		throw new Error(`Invalid Mixmax ${name}`);
 	}
-	return template.replace(
-		`{${name}}`,
-		segments.map((segment) => encodeURIComponent(segment)).join('/'),
-	);
+	return template.replace(`{${name}}`, encodeURIComponent(value));
 };
