@@ -104,6 +104,39 @@ pnpm add @corsair-dev/klipfolio
 | `roles.updateRole` | `klipfolio.api.roles.updateRole` | `write` | Update role on Klipfolio |
 | `roles.updateRolePermissions` | `klipfolio.api.roles.updateRolePermissions` | `write` | Update role permissions on Klipfolio |
 | `roles.updateRoleUser` | `klipfolio.api.roles.updateRoleUser` | `write` | Add user to role on Klipfolio |
+| `tabs.createTab` | `klipfolio.api.tabs.createTab` | `write` | Create tab on Klipfolio |
+| `tabs.deleteTab` | `klipfolio.api.tabs.deleteTab` | `destructive` | Delete tab on Klipfolio |
+| `tabs.deleteTabKlipInstance` | `klipfolio.api.tabs.deleteTabKlipInstance` | `destructive` | Delete Klip from tab on Klipfolio |
+| `tabs.deleteTabShareRight` | `klipfolio.api.tabs.deleteTabShareRight` | `destructive` | Revoke group access to tab on Klipfolio |
+| `tabs.importTab` | `klipfolio.api.tabs.importTab` | `write` | Import tab to client account on Klipfolio |
+| `tabs.listTabs` | `klipfolio.api.tabs.listTabs` | `read` | List tabs on Klipfolio |
+| `tabs.retrieveTab` | `klipfolio.api.tabs.retrieveTab` | `read` | Get tab on Klipfolio |
+| `tabs.retrieveTabKlipInstances` | `klipfolio.api.tabs.retrieveTabKlipInstances` | `read` | List Klip instances on tab on Klipfolio |
+| `tabs.retrieveTabLayout` | `klipfolio.api.tabs.retrieveTabLayout` | `read` | Get tab layout on Klipfolio |
+| `tabs.retrieveTabShareRights` | `klipfolio.api.tabs.retrieveTabShareRights` | `read` | Get tab share rights on Klipfolio |
+| `tabs.setTabShareRights` | `klipfolio.api.tabs.setTabShareRights` | `write` | Update tab share rights on Klipfolio |
+| `tabs.updateTab` | `klipfolio.api.tabs.updateTab` | `write` | Update tab on Klipfolio |
+| `tabs.updateTabKlipInstances` | `klipfolio.api.tabs.updateTabKlipInstances` | `write` | Add Klip to tab on Klipfolio |
+| `tabs.updateTabLayout` | `klipfolio.api.tabs.updateTabLayout` | `write` | Update tab layout on Klipfolio |
+| `users.createUser` | `klipfolio.api.users.createUser` | `write` | Create User on Klipfolio |
+| `users.deleteUser` | `klipfolio.api.users.deleteUser` | `destructive` | Delete User on Klipfolio |
+| `users.deleteUserGroup` | `klipfolio.api.users.deleteUserGroup` | `destructive` | Delete user from group on Klipfolio |
+| `users.deleteUserProperties` | `klipfolio.api.users.deleteUserProperties` | `destructive` | Delete user property on Klipfolio |
+| `users.deleteUserRole` | `klipfolio.api.users.deleteUserRole` | `destructive` | Delete user from role on Klipfolio |
+| `users.deleteUserTabInstance` | `klipfolio.api.users.deleteUserTabInstance` | `destructive` | Delete user tab instance on Klipfolio |
+| `users.listUsers` | `klipfolio.api.users.listUsers` | `read` | Get Users on Klipfolio |
+| `users.resendInviteUser` | `klipfolio.api.users.resendInviteUser` | `write` | Resend Invitation on Klipfolio |
+| `users.resetPasswordUser` | `klipfolio.api.users.resetPasswordUser` | `write` | Reset Password on Klipfolio |
+| `users.retrieveUser` | `klipfolio.api.users.retrieveUser` | `read` | Get User by ID on Klipfolio |
+| `users.retrieveUserGroups` | `klipfolio.api.users.retrieveUserGroups` | `read` | Get user groups on Klipfolio |
+| `users.retrieveUserProperties` | `klipfolio.api.users.retrieveUserProperties` | `read` | Get user properties on Klipfolio |
+| `users.retrieveUserRoles` | `klipfolio.api.users.retrieveUserRoles` | `read` | Get user roles on Klipfolio |
+| `users.retrieveUserTabInstances` | `klipfolio.api.users.retrieveUserTabInstances` | `read` | Get user tab instances on Klipfolio |
+| `users.updateUser` | `klipfolio.api.users.updateUser` | `write` | Update User on Klipfolio |
+| `users.updateUserGroup` | `klipfolio.api.users.updateUserGroup` | `write` | Add user to group on Klipfolio |
+| `users.updateUserProperties` | `klipfolio.api.users.updateUserProperties` | `write` | Update user properties on Klipfolio |
+| `users.updateUserRole` | `klipfolio.api.users.updateUserRole` | `write` | Assign user to role on Klipfolio |
+| `users.updateUserTabInstances` | `klipfolio.api.users.updateUserTabInstances` | `write` | Add tabs to user on Klipfolio |
 
 ## Auth
 

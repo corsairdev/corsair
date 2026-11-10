@@ -790,6 +790,288 @@ const DeleteRolePermissionsInputSchema = z
 	})
 	.passthrough();
 
+const ListTabsInputSchema = z
+	.object({
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveTabInputSchema = z
+	.object({
+		id: z.string().min(1),
+		full: z.boolean().optional(),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const CreateTabInputSchema = z
+	.object({
+		client_id: z.string().optional(),
+		name: z.string(),
+		// unknown: required per Fields listing
+		description: z.string(),
+	})
+	.passthrough();
+
+const UpdateTabInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		name: z.string(),
+		description: z.string(),
+	})
+	.passthrough();
+
+const DeleteTabInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveTabKlipInstancesInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateTabKlipInstancesInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: each object: klip_id (string, required), region (number, optional, default 1), position (number, optional, default 0). Uses Klip id, not instance id.
+		klips: z.array(z.record(z.string(), z.unknown())),
+	})
+	.passthrough();
+
+const DeleteTabKlipInstanceInputSchema = z
+	.object({
+		id: z.string().min(1),
+		klipInstanceId: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveTabLayoutInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateTabLayoutInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: layout type; refers to the size and number of Klip columns on the tab
+		type: z.string(),
+		// unknown: keyed by Klip id; each value has region (string) and idx (number). All details must be provided or Klips will be removed from dashboard when the command is run
+		state: z.string(),
+	})
+	.passthrough();
+
+const RetrieveTabShareRightsInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const SetTabShareRightsInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: each object: group_id (string), can_edit (boolean)
+		groups: z.array(z.record(z.string(), z.unknown())).optional(),
+		// unknown: each object: user_id (string), can_edit (boolean)
+		users: z.array(z.record(z.string(), z.unknown())).optional(),
+	})
+	.passthrough();
+
+const DeleteTabShareRightInputSchema = z
+	.object({
+		id: z.string().min(1),
+		groupId: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const ImportTabInputSchema = z
+	.object({
+		id: z.string().min(1),
+		// unknown: client account to import the tab into; required flag not specified in source
+		client_id: z.string().optional(),
+		// unknown: listed under Fields; role not elaborated on page
+		tab_id: z.string().optional(),
+	})
+	.passthrough();
+
+const ListUsersInputSchema = z
+	.object({
+		client_id: z.string().optional(),
+		email: z.string().optional(),
+		external_id: z.string().optional(),
+		full: z.boolean().optional(),
+		include_roles: z.boolean().optional(),
+		include_groups: z.boolean().optional(),
+	})
+	.passthrough();
+
+const RetrieveUserInputSchema = z
+	.object({
+		id: z.string().min(1),
+		full: z.boolean().optional(),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const CreateUserInputSchema = z
+	.object({
+		send_email: z.boolean().optional(),
+		first_name: z.string(),
+		last_name: z.string(),
+		// unknown: required per examples
+		roles: z.array(z.unknown()),
+		email: z.string(),
+		password: z.string().optional(),
+		external_id: z.string().optional(),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateUserInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: only updated fields need sending; PUT row does not explicitly mark fields required
+		first_name: z.string().optional(),
+		last_name: z.string().optional(),
+		external_id: z.string().optional(),
+		email: z.string().optional(),
+	})
+	.passthrough();
+
+const DeleteUserInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveUserGroupsInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateUserGroupInputSchema = z
+	.object({
+		id: z.string().min(1),
+		groupId: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: listed as body field per docs
+		'user id': z.string(),
+		group_id: z.string(),
+		// unknown: true/false
+		can_edit: z.boolean(),
+	})
+	.passthrough();
+
+const DeleteUserGroupInputSchema = z
+	.object({
+		id: z.string().min(1),
+		groupId: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const ResendInviteUserInputSchema = z
+	.object({
+		id: z.string().min(1),
+	})
+	.passthrough();
+
+const ResetPasswordUserInputSchema = z
+	.object({
+		id: z.string().min(1),
+	})
+	.passthrough();
+
+const RetrieveUserPropertiesInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateUserPropertiesInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: example verbatim: {"properties": {"kfTestCountry": "Canada", "TestValue": "abc1234", "City": "Ottawa"}}
+		properties: z.string(),
+	})
+	.passthrough();
+
+const DeleteUserPropertiesInputSchema = z
+	.object({
+		id: z.string().min(1),
+		name: z.string().optional(),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveUserRolesInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateUserRoleInputSchema = z
+	.object({
+		id: z.string().min(1),
+		roleId: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: role id(s); example verbatim: -d {'id': ['f70a1cd9817b85ffa252a7b4280f0223']} (input key renamed: the wire body key "id" is taken by the path identifier)
+		wire_id: z.array(z.unknown()),
+	})
+	.passthrough();
+
+const DeleteUserRoleInputSchema = z
+	.object({
+		id: z.string().min(1),
+		roleid: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const RetrieveUserTabInstancesInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
+const UpdateUserTabInstancesInputSchema = z
+	.object({
+		id: z.string().min(1),
+		client_id: z.string().optional(),
+		// unknown: use tab IDs, not tab instance IDs. Example verbatim: {"tab_ids": ["ab12a34580678e912d9c365e12b1bc"]}
+		tab_ids: z.array(z.string()),
+	})
+	.passthrough();
+
+const DeleteUserTabInstanceInputSchema = z
+	.object({
+		id: z.string().min(1),
+		tabInstanceId: z.string().min(1),
+		client_id: z.string().optional(),
+	})
+	.passthrough();
+
 export const KlipfolioEndpointInputSchemas = {
 	listClients: ListClientsInputSchema,
 	retrieveClient: RetrieveClientInputSchema,
@@ -886,6 +1168,39 @@ export const KlipfolioEndpointInputSchemas = {
 	retrieveRolePermissions: RetrieveRolePermissionsInputSchema,
 	updateRolePermissions: UpdateRolePermissionsInputSchema,
 	deleteRolePermissions: DeleteRolePermissionsInputSchema,
+	listTabs: ListTabsInputSchema,
+	retrieveTab: RetrieveTabInputSchema,
+	createTab: CreateTabInputSchema,
+	updateTab: UpdateTabInputSchema,
+	deleteTab: DeleteTabInputSchema,
+	retrieveTabKlipInstances: RetrieveTabKlipInstancesInputSchema,
+	updateTabKlipInstances: UpdateTabKlipInstancesInputSchema,
+	deleteTabKlipInstance: DeleteTabKlipInstanceInputSchema,
+	retrieveTabLayout: RetrieveTabLayoutInputSchema,
+	updateTabLayout: UpdateTabLayoutInputSchema,
+	retrieveTabShareRights: RetrieveTabShareRightsInputSchema,
+	setTabShareRights: SetTabShareRightsInputSchema,
+	deleteTabShareRight: DeleteTabShareRightInputSchema,
+	importTab: ImportTabInputSchema,
+	listUsers: ListUsersInputSchema,
+	retrieveUser: RetrieveUserInputSchema,
+	createUser: CreateUserInputSchema,
+	updateUser: UpdateUserInputSchema,
+	deleteUser: DeleteUserInputSchema,
+	retrieveUserGroups: RetrieveUserGroupsInputSchema,
+	updateUserGroup: UpdateUserGroupInputSchema,
+	deleteUserGroup: DeleteUserGroupInputSchema,
+	resendInviteUser: ResendInviteUserInputSchema,
+	resetPasswordUser: ResetPasswordUserInputSchema,
+	retrieveUserProperties: RetrieveUserPropertiesInputSchema,
+	updateUserProperties: UpdateUserPropertiesInputSchema,
+	deleteUserProperties: DeleteUserPropertiesInputSchema,
+	retrieveUserRoles: RetrieveUserRolesInputSchema,
+	updateUserRole: UpdateUserRoleInputSchema,
+	deleteUserRole: DeleteUserRoleInputSchema,
+	retrieveUserTabInstances: RetrieveUserTabInstancesInputSchema,
+	updateUserTabInstances: UpdateUserTabInstancesInputSchema,
+	deleteUserTabInstance: DeleteUserTabInstanceInputSchema,
 } as const;
 
 export const KlipfolioEndpointOutputSchemas = {
@@ -981,6 +1296,39 @@ export const KlipfolioEndpointOutputSchemas = {
 	retrieveRolePermissions: KlipfolioEnvelopeOutputSchema,
 	updateRolePermissions: KlipfolioEnvelopeOutputSchema,
 	deleteRolePermissions: KlipfolioEnvelopeOutputSchema,
+	listTabs: KlipfolioEnvelopeOutputSchema,
+	retrieveTab: KlipfolioEnvelopeOutputSchema,
+	createTab: KlipfolioEnvelopeOutputSchema,
+	updateTab: KlipfolioEnvelopeOutputSchema,
+	deleteTab: KlipfolioEnvelopeOutputSchema,
+	retrieveTabKlipInstances: KlipfolioEnvelopeOutputSchema,
+	updateTabKlipInstances: KlipfolioEnvelopeOutputSchema,
+	deleteTabKlipInstance: KlipfolioEnvelopeOutputSchema,
+	retrieveTabLayout: KlipfolioEnvelopeOutputSchema,
+	updateTabLayout: KlipfolioEnvelopeOutputSchema,
+	retrieveTabShareRights: KlipfolioEnvelopeOutputSchema,
+	setTabShareRights: KlipfolioEnvelopeOutputSchema,
+	deleteTabShareRight: KlipfolioEnvelopeOutputSchema,
+	importTab: KlipfolioEnvelopeOutputSchema,
+	listUsers: KlipfolioEnvelopeOutputSchema,
+	retrieveUser: KlipfolioEnvelopeOutputSchema,
+	createUser: KlipfolioEnvelopeOutputSchema,
+	updateUser: KlipfolioEnvelopeOutputSchema,
+	deleteUser: KlipfolioEnvelopeOutputSchema,
+	retrieveUserGroups: KlipfolioEnvelopeOutputSchema,
+	updateUserGroup: KlipfolioEnvelopeOutputSchema,
+	deleteUserGroup: KlipfolioEnvelopeOutputSchema,
+	resendInviteUser: KlipfolioEnvelopeOutputSchema,
+	resetPasswordUser: KlipfolioEnvelopeOutputSchema,
+	retrieveUserProperties: KlipfolioEnvelopeOutputSchema,
+	updateUserProperties: KlipfolioEnvelopeOutputSchema,
+	deleteUserProperties: KlipfolioEnvelopeOutputSchema,
+	retrieveUserRoles: KlipfolioEnvelopeOutputSchema,
+	updateUserRole: KlipfolioEnvelopeOutputSchema,
+	deleteUserRole: KlipfolioEnvelopeOutputSchema,
+	retrieveUserTabInstances: KlipfolioEnvelopeOutputSchema,
+	updateUserTabInstances: KlipfolioEnvelopeOutputSchema,
+	deleteUserTabInstance: KlipfolioEnvelopeOutputSchema,
 } as const;
 
 export type KlipfolioEndpointInputs = {
