@@ -2,7 +2,11 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { QuadernoContext } from '..';
 import type { QuadernoRequest } from '../client';
-import { makeQuadernoRequest, QuadernoError } from '../client';
+import {
+	makeQuadernoRequest,
+	QuadernoAPIError,
+	QuadernoError,
+} from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
@@ -32,6 +36,27 @@ export function idOf(raw: unknown): number | undefined {
 	return typeof id === 'number' ? id : undefined;
 }
 
+/**
+ * Reads a list response, which Quaderno sends as a **bare array**. A body that
+ * is not an array is a bad response, not an empty page: returning `[]` there
+ * would report "no records" when the truth is "this payload was wrong", and a
+ * caller would stop paging without knowing anything had gone wrong. Throws, so
+ * the endpoint fails loudly instead.
+ */
+export function requireArray(
+	// unknown: the response body, narrowed to an array here.
+	raw: unknown,
+	resource: string,
+): unknown[] {
+	if (!Array.isArray(raw)) {
+		throw new QuadernoAPIError(
+			`Quaderno answered ${resource} with a non-array body; expected a list.`,
+			{ kind: 'bad_response' },
+		);
+	}
+	return raw;
+}
+
 /** Resolves the account subdomain: an explicit option wins over stored value. */
 export async function resolveAccount(ctx: QuadernoContext): Promise<string> {
 	const explicit = ctx.options?.account;
@@ -57,18 +82,27 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		input: Input;
 		output: Output;
 		toRequest: (parsed: z.output<Input>) => QuadernoRequest;
+		/**
+		 * Skips account resolution and sends to the bare `quadernoapp.com` host.
+		 * Only `/authorization` needs this, because it exists to discover the
+		 * account name a caller does not have yet.
+		 */
+		rootHost?: boolean;
 	},
 	// unknown: raw caller input, parsed below by the operation's input schema.
 	rawInput: unknown,
 	options: ShapeOptions<Input, Output> = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const account = await resolveAccount(ctx);
-	const raw = await makeQuadernoRequest(
-		ctx.key,
-		account,
-		operation.toRequest(parsed),
-	);
+	// An account is not needed to reach the root host, and requiring one there
+	// would break discovery for exactly the caller who needs it.
+	const account = operation.rootHost ? '' : await resolveAccount(ctx);
+	const raw = await makeQuadernoRequest(ctx.key, account, {
+		...operation.toRequest(parsed),
+		// Carried onto any error so a retry handler can tell a deliver from a read.
+		operation: operation.event,
+		useRootHost: operation.rootHost,
+	});
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);

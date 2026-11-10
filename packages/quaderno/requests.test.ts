@@ -337,6 +337,25 @@ describe('invoices', () => {
 		expect(body.amount).toBe(10);
 	});
 
+	it('invoices.update PUTs without the id in the body', async () => {
+		respond(invoiceFixture);
+
+		await run(
+			{
+				id: 181235103,
+				contact: { id: 78395726 },
+				items: [{ description: 'Probe item', unit_price: 10 }],
+			},
+			endpoints.invoices.update,
+		);
+
+		const { parsed, init, body } = lastCall();
+		expect(init.method).toBe('PUT');
+		expect(parsed.pathname).toBe('/api/invoices/181235103');
+		expect(body).not.toHaveProperty('id');
+		expect(body.contact).toEqual({ id: 78395726 });
+	});
+
 	it('invoices.deliver sends a GET, with no body', async () => {
 		respond(invoiceFixture);
 
@@ -377,6 +396,30 @@ describe('receipts, credits and proformas', () => {
 		expect(lastCall().init.method).toBe('POST');
 	});
 
+	it('receipts.get GETs one receipt by id', async () => {
+		respond(invoiceFixture);
+
+		const { result } = await run({ id: 181235200 }, endpoints.receipts.get);
+
+		expect(lastCall().parsed.pathname).toBe('/api/receipts/181235200');
+		expect(result.receipt.id).toBe(invoiceFixture.id);
+	});
+
+	it('receipts.deliver GETs the deliver route and sends no body', async () => {
+		respond(invoiceFixture);
+
+		await run(
+			{ id: 181235200, email: 'probe@example.com' },
+			endpoints.receipts.deliver,
+		);
+
+		const { parsed, init, body } = lastCall();
+		expect(init.method).toBe('GET');
+		expect(parsed.pathname).toBe('/api/receipts/181235200/deliver');
+		expect(parsed.searchParams.get('email')).toBe('probe@example.com');
+		expect(body).toBeUndefined();
+	});
+
 	it('receipts.void PUTs the void route with a reason', async () => {
 		respond(invoiceFixture);
 
@@ -406,12 +449,98 @@ describe('receipts, credits and proformas', () => {
 		expect(lastCall().init.method).toBe('POST');
 	});
 
+	it('credits.get GETs one credit note', async () => {
+		respond(invoiceFixture);
+
+		await run({ id: 181235112 }, endpoints.credits.get);
+
+		expect(lastCall().parsed.pathname).toBe('/api/credits/181235112');
+	});
+
+	it('credits.update PUTs without the id in the body', async () => {
+		respond(invoiceFixture);
+
+		await run(
+			{
+				id: 181235112,
+				contact: { id: 1 },
+				items: [{ description: 'Refund', unit_price: 5 }],
+			},
+			endpoints.credits.update,
+		);
+
+		const { parsed, init, body } = lastCall();
+		expect(init.method).toBe('PUT');
+		expect(parsed.pathname).toBe('/api/credits/181235112');
+		expect(body).not.toHaveProperty('id');
+	});
+
+	it('credits.void PUTs the void route with a reason', async () => {
+		respond(invoiceFixture);
+
+		await run({ id: 181235112, void_reason: 'Probe' }, endpoints.credits.void);
+
+		const { parsed, body } = lastCall();
+		expect(parsed.pathname).toBe('/api/credits/181235112/void');
+		expect(body.void_reason).toBe('Probe');
+	});
+
+	it('credits.deliver GETs the deliver route', async () => {
+		respond(invoiceFixture);
+
+		await run({ id: 181235112 }, endpoints.credits.deliver);
+
+		const { parsed, init } = lastCall();
+		expect(init.method).toBe('GET');
+		expect(parsed.pathname).toBe('/api/credits/181235112/deliver');
+	});
+
 	it('proformas.list GETs /proformas', async () => {
 		respond([invoiceFixture]);
 
 		await run({ limit: 5 }, endpoints.proformas.list);
 
 		expect(lastCall().parsed.pathname).toBe('/api/proformas');
+	});
+
+	it('proformas.create POSTs /proformas', async () => {
+		respond(invoiceFixture, 201);
+
+		const { result } = await run(
+			{ contact: { id: 1 }, items: [{ description: 'x', unit_price: 1 }] },
+			endpoints.proformas.create,
+		);
+
+		const { parsed, init } = lastCall();
+		expect(init.method).toBe('POST');
+		expect(parsed.pathname).toBe('/api/proformas');
+		expect(result.proforma.id).toBeDefined();
+	});
+
+	it('proformas.get GETs one proforma', async () => {
+		respond(invoiceFixture);
+
+		await run({ id: 181235300 }, endpoints.proformas.get);
+
+		expect(lastCall().parsed.pathname).toBe('/api/proformas/181235300');
+	});
+
+	it('proformas.update PUTs without the id in the body', async () => {
+		respond(invoiceFixture);
+
+		await run(
+			{
+				id: 181235300,
+				contact: { id: 1 },
+				items: [{ description: 'x', unit_price: 2 }],
+			},
+			endpoints.proformas.update,
+		);
+
+		const { parsed, init, body } = lastCall();
+		expect(init.method).toBe('PUT');
+		expect(parsed.pathname).toBe('/api/proformas/181235300');
+		expect(body).not.toHaveProperty('id');
 	});
 
 	it('proformas action routes PUT the right segment', async () => {

@@ -12,12 +12,15 @@ function statusOf(error: Error): number | undefined {
 }
 
 /**
- * Reads only. The deliver routes are GETs that send email, so a replay would
- * email the customer twice; they carry their method through as `GET`, which
- * means method alone cannot decide here.
+ * Reads only, and never a delivery. The four `deliver` routes are GETs that
+ * send email to the customer, so a replay mails them twice. Their method is
+ * still `GET`, which is why method alone cannot decide: the operation name is
+ * checked as well, and anything ending in `.deliver` is treated as a write.
  */
 function isReplayableRead(error: Error): boolean {
-	return error instanceof QuadernoAPIError && error.method === 'GET';
+	if (!(error instanceof QuadernoAPIError)) return false;
+	if (error.method !== 'GET') return false;
+	return !/\.deliver$/.test(error.operation ?? '');
 }
 
 /**
@@ -90,7 +93,9 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof QuadernoTransportError &&
 			error.kind === 'network' &&
-			error.method === 'GET',
+			error.method === 'GET' &&
+			// A deliver is a GET too, and a second call emails the customer again.
+			!/\.deliver$/.test(error.operation ?? ''),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

@@ -1,6 +1,6 @@
 import type { QuadernoEndpoints } from '..';
 import { segment } from '../client';
-import { call, wrap } from './call';
+import { call, requireArray, wrap } from './call';
 import {
 	QuadernoEndpointInputSchemas as Inputs,
 	nextCreatedBefore,
@@ -26,7 +26,7 @@ export const list: QuadernoEndpoints['contactsList'] = (ctx, input) =>
 			// stable key, and the next cursor is derived from the last row because
 			// Quaderno puts the real one in a response header.
 			shape: (raw, { limit }) => {
-				const contacts = Array.isArray(raw) ? raw : [];
+				const contacts = requireArray(raw, 'contacts');
 				return {
 					contacts,
 					next_created_before: nextCreatedBefore(

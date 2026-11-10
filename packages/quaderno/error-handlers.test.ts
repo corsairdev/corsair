@@ -33,6 +33,7 @@ async function resolve(
 function apiError(options: {
 	status?: number;
 	method?: string;
+	operation?: string;
 	retryAfter?: number;
 	kind?: QuadernoAPIError['kind'];
 }) {
@@ -100,8 +101,65 @@ describe('errorHandlers', () => {
 	});
 
 	it('replays a 5xx on a read', async () => {
-		const strategy = await resolve(apiError({ status: 503, method: 'GET' }));
+		const strategy = await resolve(
+			apiError({ status: 503, method: 'GET', operation: 'contacts.list' }),
+		);
 		expect(strategy.maxRetries).toBe(2);
+	});
+
+	/**
+	 * The four deliver routes are GETs that send email. A retry mails the
+	 * customer twice, so a GET is not enough to call one replayable.
+	 */
+	it('never replays a delivery, even though it is a GET', async () => {
+		for (const operation of [
+			'invoices.deliver',
+			'receipts.deliver',
+			'credits.deliver',
+			'proformas.deliver',
+		]) {
+			expect({
+				operation,
+				strategy: await resolve(
+					apiError({ status: 503, method: 'GET', operation }),
+				),
+			}).toEqual({ operation, strategy: { maxRetries: 0 } });
+		}
+	});
+
+	it('never replays a delivery that failed at the transport', async () => {
+		// A dropped connection on a deliver still must not be retried: the first
+		// call may have sent the email before the connection broke.
+		const error = new QuadernoTransportError(
+			'reset',
+			'network',
+			'GET',
+			'invoices.deliver',
+		);
+		expect(await resolve(error)).toEqual({ maxRetries: 0 });
+	});
+
+	it('does replay a read that failed at the transport', async () => {
+		const error = new QuadernoTransportError(
+			'reset',
+			'network',
+			'GET',
+			'contacts.list',
+		);
+		expect(await resolve(error)).toEqual({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('never replays a delivery that failed with a server error', async () => {
+		// A deliver is a GET, but the 5xx handler must not treat it as a read.
+		const deliveryError = new QuadernoAPIError('boom', {
+			status: 503,
+			method: 'GET',
+			operation: 'invoices.deliver',
+		});
+		expect(await resolve(deliveryError)).toEqual({ maxRetries: 0 });
 	});
 
 	it('never replays a 5xx on a write', async () => {

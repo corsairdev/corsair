@@ -136,6 +136,8 @@ export class QuadernoError extends Error {
 export class QuadernoAPIError extends Error {
 	readonly status?: number;
 	readonly method?: string;
+	/** The endpoint event name, so a handler can tell a deliver from a read. */
+	readonly operation?: string;
 	readonly retryAfter?: number;
 	readonly kind?: QuadernoErrorCode;
 
@@ -144,6 +146,7 @@ export class QuadernoAPIError extends Error {
 		options: {
 			status?: number;
 			method?: string;
+			operation?: string;
 			retryAfter?: number;
 			kind?: QuadernoErrorCode;
 		} = {},
@@ -152,6 +155,7 @@ export class QuadernoAPIError extends Error {
 		this.name = 'QuadernoAPIError';
 		this.status = options.status;
 		this.method = options.method;
+		this.operation = options.operation;
 		this.retryAfter = options.retryAfter;
 		this.kind = options.kind;
 	}
@@ -161,12 +165,20 @@ export class QuadernoAPIError extends Error {
 export class QuadernoTransportError extends Error {
 	readonly kind: 'network' | 'timeout';
 	readonly method?: string;
+	/** The endpoint event name, so a deliver is never replayed either. */
+	readonly operation?: string;
 
-	constructor(message: string, kind: 'network' | 'timeout', method?: string) {
+	constructor(
+		message: string,
+		kind: 'network' | 'timeout',
+		method?: string,
+		operation?: string,
+	) {
 		super(message);
 		this.name = 'QuadernoTransportError';
 		this.kind = kind;
 		this.method = method;
+		this.operation = operation;
 	}
 }
 
@@ -179,6 +191,19 @@ export type QuadernoRequest = {
 	query?: Record<string, QuadernoQueryValue>;
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
+	/**
+	 * The endpoint event name, carried onto the error. A `.deliver` route is a
+	 * GET that sends email, so the retry handlers need this to tell it apart from
+	 * an ordinary read.
+	 */
+	operation?: string;
+	/**
+	 * Send to the bare `quadernoapp.com` host instead of an account host. Only
+	 * `/authorization` uses this, because its whole purpose is to find the
+	 * account a key belongs to: requiring an account name first would make it
+	 * unusable for exactly the caller who needs it.
+	 */
+	useRootHost?: boolean;
 };
 
 /** Encodes one path segment. */
@@ -219,10 +244,11 @@ function kindFor(
 export async function makeQuadernoRequest(
 	apiKey: string,
 	account: string,
-	{ method, path, query, body }: QuadernoRequest,
+	call: QuadernoRequest,
 ): Promise<unknown> {
+	const { method, path, query, body, operation, useRootHost } = call;
 	const config: OpenAPIConfig = {
-		BASE: accountBaseUrl(account),
+		BASE: useRootHost ? `${QUADERNO_ROOT_HOST}/api` : accountBaseUrl(account),
 		VERSION: '20241028',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -255,6 +281,7 @@ export async function makeQuadernoRequest(
 			throw new QuadernoAPIError(text, {
 				status: error.status,
 				method,
+				operation,
 				retryAfter: error.retryAfter,
 				kind: kindFor(error.status, text),
 			});
@@ -268,6 +295,7 @@ export async function makeQuadernoRequest(
 					: `Could not reach Quaderno for ${method} ${path}.`,
 				timedOut ? 'timeout' : 'network',
 				method,
+				operation,
 			);
 		}
 		if (error instanceof Error) {
@@ -275,12 +303,14 @@ export async function makeQuadernoRequest(
 				`Could not reach Quaderno for ${method} ${path}: ${error.message}`,
 				'network',
 				method,
+				operation,
 			);
 		}
 		throw new QuadernoTransportError(
 			`Could not reach Quaderno for ${method} ${path}.`,
 			'network',
 			method,
+			operation,
 		);
 	}
 }

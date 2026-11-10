@@ -1,6 +1,6 @@
 import type { QuadernoEndpoints } from '..';
 import { segment } from '../client';
-import { call, wrap } from './call';
+import { call, requireArray, wrap } from './call';
 import {
 	QuadernoEndpointInputSchemas as Inputs,
 	QuadernoEndpointOutputSchemas as Outputs,
@@ -23,8 +23,8 @@ export const ping: QuadernoEndpoints['ping'] = (ctx, input) =>
 
 /**
  * The only route that works with a key alone, and the way to find which account
- * a key belongs to: `identity.href` is that account's base URL. It answers the
- * same on the bare `quadernoapp.com` host and on an account host.
+ * a key belongs to: `identity.href` is that account's base URL. It goes to the
+ * bare `quadernoapp.com` host, so it works before any account name is known.
  */
 export const authorization: QuadernoEndpoints['authorization'] = (ctx, input) =>
 	call(
@@ -34,6 +34,7 @@ export const authorization: QuadernoEndpoints['authorization'] = (ctx, input) =>
 			input: Inputs.authorization,
 			output: Outputs.authorization,
 			toRequest: () => ({ method: 'GET', path: '/authorization' }),
+			rootHost: true,
 		},
 		input,
 		{
@@ -120,7 +121,7 @@ export const taxCodesList: QuadernoEndpoints['taxCodesList'] = (ctx, input) =>
 		input,
 		{
 			// Verified live: this route honours `limit`, unlike `/jurisdictions`.
-			shape: (raw) => ({ tax_codes: Array.isArray(raw) ? raw : [] }),
+			shape: (raw) => ({ tax_codes: requireArray(raw, 'tax codes') }),
 			log: (_, result) => ({ count: result.tax_codes.length }),
 		},
 	);
@@ -164,7 +165,7 @@ export const jurisdictionsList: QuadernoEndpoints['jurisdictionsList'] = (
 		{
 			// Verified live: `/jurisdictions` ignores `limit` and always answers the
 			// full static list, so no paging parameters are offered for it.
-			shape: (raw) => ({ jurisdictions: Array.isArray(raw) ? raw : [] }),
+			shape: (raw) => ({ jurisdictions: requireArray(raw, 'jurisdictions') }),
 			log: (_, result) => ({ count: result.jurisdictions.length }),
 		},
 	);
@@ -225,7 +226,7 @@ export const webhooksList: QuadernoEndpoints['webhooksList'] = (ctx, input) =>
 		},
 		input,
 		{
-			shape: (raw) => ({ webhooks: Array.isArray(raw) ? raw : [] }),
+			shape: (raw) => ({ webhooks: requireArray(raw, 'webhooks') }),
 			log: (_, result) => ({ count: result.webhooks.length }),
 		},
 	);

@@ -125,6 +125,19 @@ describeIfReady('Quaderno live smoke', () => {
 		expect(error.message).toContain('does not exist');
 	});
 
+	it('discovers the account from the root host with no account name', async () => {
+		// The flow the docs promise, and the reason `authorization` skips account
+		// resolution: a caller with only a key can find its account here.
+		const auth = await makeQuadernoRequest(API_KEY as string, '', {
+			method: 'GET',
+			path: '/authorization',
+			operation: 'authorization',
+			useRootHost: true,
+		});
+		const identity = (auth as { identity?: { href?: string } }).identity;
+		expect(identity?.href).toContain('.quadernoapp.com');
+	});
+
 	it('reports a wrong key as an auth error', async () => {
 		const error = await makeQuadernoRequest(
 			'sk_live_not_a_real_key',

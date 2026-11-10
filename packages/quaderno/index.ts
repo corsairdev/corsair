@@ -408,6 +408,16 @@ const schemaEntries = {
 	],
 } as const;
 
+/**
+ * `schemaEntries` above lists every operation as a literal and is checked by
+ * `satisfies`, so the key set is verified before this runs. `Object.fromEntries`
+ * loses the literal key type, which is the only reason a cast is needed here:
+ * the map is reshaped from `[input, output]` tuples into `{ input, output }` and
+ * adds no keys. `plugin.test.ts` asserts the resulting keys equal the registered
+ * operations, so a missing or extra entry fails a test rather than slipping by.
+ */
+// unknown: `Object.fromEntries` widens the literal key set to `string`; the value
+// shape is preserved, and the key set is pinned by the test named above.
 export const quadernoEndpointSchemas = Object.fromEntries(
 	Object.entries(schemaEntries).map(([path, [input, output]]) => [
 		path,

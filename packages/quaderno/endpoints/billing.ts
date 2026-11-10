@@ -1,6 +1,6 @@
 import type { QuadernoEndpoints } from '..';
 import { segment } from '../client';
-import { call, wrap } from './call';
+import { call, requireArray, wrap } from './call';
 import {
 	QuadernoEndpointInputSchemas as Inputs,
 	nextCreatedBefore,
@@ -33,7 +33,7 @@ export const list: QuadernoEndpoints['invoicesList'] = (ctx, input) =>
 		input,
 		{
 			shape: (raw, { limit }) => {
-				const invoices = Array.isArray(raw) ? raw : [];
+				const invoices = requireArray(raw, 'invoices');
 				return {
 					invoices,
 					next_created_before: nextCreatedBefore(
@@ -232,7 +232,7 @@ export const receiptsList: QuadernoEndpoints['receiptsList'] = (ctx, input) =>
 		input,
 		{
 			shape: (raw, { limit }) => {
-				const receipts = Array.isArray(raw) ? raw : [];
+				const receipts = requireArray(raw, 'receipts');
 				return {
 					receipts,
 					next_created_before: nextCreatedBefore(
@@ -347,7 +347,7 @@ export const creditsList: QuadernoEndpoints['creditsList'] = (ctx, input) =>
 		input,
 		{
 			shape: (raw, { limit }) => {
-				const credits = Array.isArray(raw) ? raw : [];
+				const credits = requireArray(raw, 'credits');
 				return {
 					credits,
 					next_created_before: nextCreatedBefore(
@@ -476,7 +476,7 @@ export const proformasList: QuadernoEndpoints['proformasList'] = (ctx, input) =>
 		input,
 		{
 			shape: (raw, { limit }) => {
-				const proformas = Array.isArray(raw) ? raw : [];
+				const proformas = requireArray(raw, 'proformas');
 				return {
 					proformas,
 					next_created_before: nextCreatedBefore(

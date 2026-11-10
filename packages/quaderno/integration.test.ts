@@ -1,7 +1,11 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { quaderno } from './index';
-import { contactFixture, pingFixture } from './test-fixtures';
+import {
+	authorizationFixture,
+	contactFixture,
+	pingFixture,
+} from './test-fixtures';
 
 async function createClient(options: Parameters<typeof quaderno>[0] = {}) {
 	const testDb = createTestDatabase();
@@ -96,6 +100,29 @@ describe('quaderno through createCorsair', () => {
 
 			await expect(corsair.quaderno.api.contacts.list({})).rejects.toThrow();
 			expect(fetchMock).not.toHaveBeenCalled();
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	/**
+	 * The discovery flow the docs promise: a key with no account name must still
+	 * be able to ask which account it belongs to. `authorization` goes to the bare
+	 * `quadernoapp.com` host for exactly this reason.
+	 */
+	it('reaches authorization with no account name stored', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			await corsair.quaderno.keys.issue_new_dek();
+			await corsair.quaderno.keys.set_api_key('stored-quaderno-key');
+			respond(authorizationFixture);
+
+			const result = await corsair.quaderno.api.authorization({});
+
+			const { url } = lastRequest();
+			expect(url).toContain('https://quadernoapp.com/api/authorization');
+			expect(url).not.toContain('quadernoapp.com/api/authorization?');
+			expect(result.identity.href).toContain('assur-224963');
 		} finally {
 			testDb.cleanup();
 		}

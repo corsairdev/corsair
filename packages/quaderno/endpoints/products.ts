@@ -1,6 +1,6 @@
 import type { QuadernoEndpoints } from '..';
 import { segment } from '../client';
-import { call, wrap } from './call';
+import { call, requireArray, wrap } from './call';
 import {
 	QuadernoEndpointInputSchemas as Inputs,
 	nextCreatedBefore,
@@ -25,7 +25,7 @@ export const list: QuadernoEndpoints['productsList'] = (ctx, input) =>
 			// The route is `/items` and answers a bare array; the plugin calls the
 			// domain object a product, which is what the docs and schemas call it.
 			shape: (raw, { limit }) => {
-				const products = Array.isArray(raw) ? raw : [];
+				const products = requireArray(raw, 'products');
 				return {
 					products,
 					next_created_before: nextCreatedBefore(
