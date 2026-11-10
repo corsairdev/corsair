@@ -240,7 +240,9 @@ export const webhooksList: QuadernoEndpoints['webhooksList'] = (ctx, input) =>
 		},
 		input,
 		{
-			shape: (raw) => ({ webhooks: requireArray(raw, 'webhooks') }),
+			shape: (raw) => ({
+				webhooks: requireArray(raw, 'webhooks').map(withoutAuthKey),
+			}),
 			log: (_, result) => ({ count: result.webhooks.length }),
 		},
 	);

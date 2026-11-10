@@ -12,6 +12,7 @@ import {
 	productFixture,
 	productsFixture,
 	taxCodeFixture,
+	webhookFixture,
 } from './test-fixtures';
 
 const API_KEY = 'sk_live_test';
@@ -736,5 +737,23 @@ describe('transactions and webhooks', () => {
 
 		expect(lastCall().parsed.pathname).toBe('/api/webhooks');
 		expect(result.webhooks).toEqual([]);
+	});
+
+	it('webhooks.list reads a documented row and drops the signing secret', async () => {
+		respond([webhookFixture]);
+
+		const { result } = await run({}, endpoints.webhooks.list);
+
+		// `created_at` is a date-time string on this resource, and the events are
+		// the array `events_types`.
+		expect(result.webhooks).toHaveLength(1);
+		expect(result.webhooks[0]?.events_types).toEqual([
+			'invoice.created',
+			'credit.created',
+		]);
+		expect(result.webhooks[0]?.created_at).toBe('2026-11-10T09:00:00Z');
+		// `auth_key` signs the deliveries: it must not reach the caller.
+		expect(JSON.stringify(result)).not.toContain('example-signing-secret');
+		expect(result.webhooks[0]).not.toHaveProperty('auth_key');
 	});
 });

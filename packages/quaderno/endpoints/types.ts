@@ -1108,24 +1108,25 @@ const WebhooksListInputSchema = z.object({});
 
 export type WebhooksListInput = z.input<typeof WebhooksListInputSchema>;
 
-export const QUADERNO_WEBHOOK_EVENTS = [
-	'invoice.created',
-	'invoice.sent',
-	'invoice.paid',
-	'invoice.voided',
-	'receipt.created',
-	'credit.created',
-	'proforma.created',
-	'expense.created',
-] as const;
-
+/**
+ * Field names and types are the reference's: the subscribed events are the
+ * array `events_types`, and the timestamps are date-time **strings** here, not
+ * the epoch integers the other resources use.
+ *
+ * `auth_key`, the secret Quaderno signs deliveries with, is deliberately not
+ * declared: `webhooks.list` removes it before this schema runs, because a
+ * signing secret has no business in a list result or a log.
+ */
 const WebhookSchema = z
 	.object({
 		id: z.number().nullish(),
 		url: z.string().nullish(),
-		event_name: z.string().nullish(),
-		enabled: z.boolean().nullish(),
-		created_at: z.number().nullish(),
+		events_types: z.array(z.string()).nullish(),
+		events_sent: z.number().nullish(),
+		last_sent_at: z.string().nullish(),
+		last_error: z.string().nullish(),
+		last_error_at: z.string().nullish(),
+		created_at: z.union([z.string(), z.number()]).nullish(),
 	})
 	.loose();
 

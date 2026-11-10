@@ -668,7 +668,7 @@ const quadernoEndpointMeta = {
 	'webhooks.list': {
 		riskLevel: 'read',
 		description:
-			'The webhook subscriptions on the account, as a bare array. Read only here: Quaderno sends unsigned deliveries, so this plugin registers no inbound handler.',
+			'The webhook subscriptions on the account, with the events each one receives. Read only here: this plugin registers no inbound handler. The signing secret (`auth_key`) is left out of the result.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof quadernoEndpointsNested>;
 

@@ -239,6 +239,24 @@ export const taxIdValidationFixture = {
 /** `GET /webhooks`, a bare array. Empty on the scratch account. */
 export const webhooksFixture = [] as const;
 
+/**
+ * One webhook as the reference documents it. Not captured: the scratch account
+ * had none. The timestamps are date-time strings, the events are `events_types`,
+ * and `auth_key` is the secret the deliveries are signed with (a placeholder
+ * here).
+ */
+export const webhookFixture = {
+	id: 4821,
+	url: 'https://example.com/hooks/quaderno',
+	auth_key: 'example-signing-secret',
+	events_types: ['invoice.created', 'credit.created'],
+	events_sent: 12,
+	last_sent_at: '2026-11-10T09:30:00Z',
+	last_error: null,
+	last_error_at: null,
+	created_at: '2026-11-10T09:00:00Z',
+} as const;
+
 // ── Errors, captured live ─────────────────────────────────────────────────
 
 /** A wrong key. HTTP 401. */
