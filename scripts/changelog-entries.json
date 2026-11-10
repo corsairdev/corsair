@@ -1856,5 +1856,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/shippo",
+    "dir": "packages/shippo",
+    "name": "Shippo",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
