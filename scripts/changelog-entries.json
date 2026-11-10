@@ -2356,5 +2356,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/tldv",
+    "dir": "packages/tldv",
+    "name": "tl;dv",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
