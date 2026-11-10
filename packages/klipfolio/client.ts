@@ -38,14 +38,24 @@ export async function makeKlipfolioRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 		// unknown: Klipfolio request bodies differ by operation and are
 		// validated by the corresponding endpoint schema before this boundary.
-		body?: Record<string, unknown>;
+		// A raw string body (e.g. datasource instance data uploads) rides
+		// through verbatim when the media type is not JSON.
+		body?: Record<string, unknown> | string;
 		// unknown: Klipfolio documents offset-based list pagination and
 		// scoping filters as scalar query parameters; passthrough extras ride
 		// along as opaque values.
 		query?: Record<string, unknown>;
+		// unknown: media type defaults to JSON for every documented
+		// operation; raw-content uploads override it per call.
+		mediaType?: string;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const {
+		method = 'GET',
+		body,
+		query,
+		mediaType = 'application/json; charset=utf-8',
+	} = options;
 
 	const config: OpenAPIConfig = {
 		BASE: KLIPFOLIO_API_BASE,
@@ -64,11 +74,16 @@ export async function makeKlipfolioRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
+		// Klipfolio documents request bodies on DELETE too (e.g. share-right
+		// removal takes a `groups` body); only GET stays body-less.
 		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
+			method === 'POST' ||
+			method === 'PUT' ||
+			method === 'PATCH' ||
+			method === 'DELETE'
 				? body
 				: undefined,
-		mediaType: 'application/json; charset=utf-8',
+		mediaType,
 		// Documented query parameters apply to writes as well; the shared
 		// transport serializes them into the URL for every method.
 		query,

@@ -334,6 +334,9 @@ export const deleteKlipShareRights: KlipfolioEndpoints['deleteKlipShareRights'] 
 			KlipfolioEndpointOutputs['deleteKlipShareRights']
 		>(ctx, klipfolioPathParameter('/klips/{id}/share-rights', 'id', input.id), {
 			method: 'DELETE',
+			// The provider reads the groups whose share rights are revoked from
+			// the DELETE body, mirroring the PUT shape.
+			body: rest,
 		});
 		await logEventFromContext(
 			ctx,

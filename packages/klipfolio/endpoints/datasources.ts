@@ -221,7 +221,9 @@ export const deleteDatasourceProperties: KlipfolioEndpoints['deleteDatasourcePro
 		>(
 			ctx,
 			klipfolioPathParameter('/datasources/{id}/properties', 'id', input.id),
-			{ method: 'DELETE' },
+			// The provider reads the property name (and client scoping) from the
+			// query string.
+			{ method: 'DELETE', query: rest },
 		);
 		await logEventFromContext(
 			ctx,
@@ -384,13 +386,21 @@ export const retrieveDatasourceInstancesData: KlipfolioEndpoints['retrieveDataso
 
 export const updateDatasourceInstancesData: KlipfolioEndpoints['updateDatasourceInstancesData'] =
 	async (ctx, input) => {
-		const { id, ...rest } = input;
+		const { id, client_id, rawContent: rawData, ...rest } = input;
 		const response = await makeKlipfolioRequest<
 			KlipfolioEndpointOutputs['updateDatasourceInstancesData']
 		>(
 			ctx,
 			klipfolioPathParameter('/datasource-instances/{id}/data', 'id', input.id),
-			{ method: 'PUT', body: rest },
+			{
+				method: 'PUT',
+				// The provider takes the raw data (or file contents) as the
+				// request body itself, not wrapped in a JSON object; client_id
+				// scopes the update from the query string.
+				body: rawData,
+				mediaType: 'text/plain; charset=utf-8',
+				query: { ...rest, client_id },
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -496,7 +506,9 @@ export const deleteDatasourceInstancesProperties: KlipfolioEndpoints['deleteData
 				'id',
 				input.id,
 			),
-			{ method: 'DELETE' },
+			// The provider reads the property name (and client scoping) from the
+			// query string.
+			{ method: 'DELETE', query: rest },
 		);
 		await logEventFromContext(
 			ctx,

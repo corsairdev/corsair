@@ -214,6 +214,8 @@ export const deleteClientProperties: KlipfolioEndpoints['deleteClientProperties'
 			KlipfolioEndpointOutputs['deleteClientProperties']
 		>(ctx, klipfolioPathParameter('/clients/{id}/properties', 'id', input.id), {
 			method: 'DELETE',
+			// The provider reads the property to remove from the query string.
+			query: rest,
 		});
 		await logEventFromContext(
 			ctx,
