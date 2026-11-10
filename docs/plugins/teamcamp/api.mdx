@@ -1,0 +1,665 @@
+---
+title: API
+description: "API reference for Teamcamp: every `teamcamp.api.*` operation with input and output types."
+---
+
+Every `teamcamp.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### verify
+
+`account.verify`
+
+Read the workspace the key belongs to, which also confirms the key is valid
+
+**Risk:** `read`
+
+```ts
+await corsair.teamcamp.api.account.verify({});
+```
+
+**Input:** _empty object_
+
+Reads the workspace the key belongs to. A bad key answers 403 here, which is the one call where that status really does mean the key.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `workspaceName` | `string \| null` | No | — |
+| `createdBy` | `string \| null` | No | — |
+
+
+
+---
+
+## Customers
+
+### list
+
+`customers.list`
+
+List the customers a project can be billed to, with their clients
+
+**Risk:** `read`
+
+```ts
+await corsair.teamcamp.api.customers.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customers` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customers full type">
+
+```ts
+{
+  customerId: string,
+  address?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  companyName?: string | null,
+  phone?: string | null,
+  clients?: {
+    clientId?: string | null,
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### list
+
+`groups.list`
+
+List the task groups of a project, by id and name
+
+**Risk:** `read`
+
+```ts
+await corsair.teamcamp.api.groups.list({ projectId: '<project id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | The project to list the task groups of. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  groupId: string,
+  groupName?: string | null,
+  projectId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project, optionally from a template and with a customer and dates
+
+**Risk:** `write`
+
+```ts
+await corsair.teamcamp.api.projects.create({ projectName: 'Website Redesign', customerId: '<customer id>', startDate: '2026-11-30', dueDate: '2026-12-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project name. |
+| `customerId` | `string` | No | The customer to bill the project to. |
+| `startDate` | `string` | No | The project start date. |
+| `dueDate` | `string` | No | The project due date. |
+| `templateId` | `string` | No | A project template to copy the statuses and groups from. |
+
+Only `projectName` is required. A `templateId` copies the template's statuses and groups into the new project.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `projectName` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `customerId` | `string \| null` | No | — |
+| `startDate` | `string \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `favoriteUsers` | `string[] \| null` | No | — |
+| `projectUsers` | `string[] \| null` | No | — |
+| `statusEnable` | `boolean \| null` | No | — |
+| `estimate` | `boolean \| null` | No | — |
+| `priority` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `status` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  Name?: string | null,
+  Type?: number | null,
+  _id?: string | null,
+  Index?: number | null,
+  Default?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project. It is archived rather than erased: it leaves the project list, but a read by id still returns it marked archived
+
+**Risk:** `destructive`
+
+```ts
+await corsair.teamcamp.api.projects.delete({ projectId: '<project id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | The project to delete. |
+
+This archives the project rather than erasing it. It leaves the project list, but a read by id still returns it with `archived: true`, so this is destructive but the record survives.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `archived` | `boolean` | Yes | — |
+| `projectId` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Read one project: its members, owner, dates and workflow statuses, which a task create needs for its status id
+
+**Risk:** `read`
+
+```ts
+await corsair.teamcamp.api.projects.get({ projectId: '<project id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | The project id, as the project list reports it. |
+
+The workflow statuses in `status` are what a task create needs for `statusId`, and `projectUsers` is what it needs for `taskUsers`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `projectName` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `customerId` | `string \| null` | No | — |
+| `startDate` | `string \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `favoriteUsers` | `string[] \| null` | No | — |
+| `projectUsers` | `string[] \| null` | No | — |
+| `statusEnable` | `boolean \| null` | No | — |
+| `estimate` | `boolean \| null` | No | — |
+| `priority` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `status` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  Name?: string | null,
+  Type?: number | null,
+  _id?: string | null,
+  Index?: number | null,
+  Default?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List the projects in the workspace, by id and name
+
+**Risk:** `read`
+
+```ts
+await corsair.teamcamp.api.projects.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  projectId: string,
+  projectName?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Change a project name, description, dates or customer
+
+**Risk:** `write`
+
+```ts
+await corsair.teamcamp.api.projects.update({ projectId: '<project id>', projectName: 'Website Redesign v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | The project to update. |
+| `projectName` | `string` | No | The new project name. |
+| `description` | `string` | No | The new description. |
+| `startDate` | `string` | No | The new start date. |
+| `dueDate` | `string` | No | The new due date. |
+| `customerId` | `string` | No | The customer to bill the project to. |
+
+Give at least one of `projectName`, `description`, `startDate`, `dueDate` or `customerId`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `projectName` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `customerId` | `string \| null` | No | — |
+| `startDate` | `string \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `favoriteUsers` | `string[] \| null` | No | — |
+| `projectUsers` | `string[] \| null` | No | — |
+| `statusEnable` | `boolean \| null` | No | — |
+| `estimate` | `boolean \| null` | No | — |
+| `priority` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `status` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  Name?: string | null,
+  Type?: number | null,
+  _id?: string | null,
+  Index?: number | null,
+  Default?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a task in a project, with a priority, due date, assignees, group, status, milestone, estimate and attachments
+
+**Risk:** `write`
+
+```ts
+await corsair.teamcamp.api.tasks.create({ projectId: '<project id>', taskName: 'Draft the launch announcement', priority: 'high', dueDate: '2026-12-15' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | The project the task belongs to. |
+| `taskName` | `string` | Yes | The task name. |
+| `description` | `string` | No | The task description. |
+| `priority` | `none \| urgent \| high \| medium \| low` | No | The task priority. Omit it for no priority. |
+| `dueDate` | `string` | No | The task due date. |
+| `groupId` | `string` | No | The task group to place it in. |
+| `taskUsers` | `string[]` | No | User ids to assign as the task assignees. |
+| `statusId` | `string` | No | The workflow status id, as a project read lists it under `status`. |
+| `milestoneId` | `number` | No | The milestone id, when the project has milestones. |
+| `estimateTime` | `number` | No | The estimated hours for the task. |
+| `files` | `object[]` | No | Files to attach, each with its type, url, name and a human-readable size such as "12 KB". |
+
+The name field is sent as `taskName`, which is what the API accepts; the published spec calls it `name` and that is rejected.
+
+<AccordionGroup>
+<Accordion title="files full type">
+
+```ts
+{
+  fileType: string,
+  href: string,
+  name: string,
+  size: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `taskName` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `status` | `boolean \| null` | No | — |
+| `statusId` | `string \| null` | No | — |
+| `groupId` | `string \| null` | No | — |
+| `group` | `string \| null` | No | — |
+| `taskUsers` | `string[] \| null` | No | — |
+| `subscribers` | `string[] \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `estimateTime` | `number \| null` | No | — |
+| `milestoneId` | `number \| null` | No | — |
+| `labels` | `string[] \| null` | No | — |
+| `files` | `Record<string, JsonValue>[] \| null` | No | — |
+| `comments` | `object[] \| null` | No | — |
+| `createdBy` | `string \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `updatedBy` | `string \| null` | No | — |
+| `updatedTime` | `string \| null` | No | — |
+| `links` | `JsonValue[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  _id?: string | null,
+  commentId?: string | null,
+  content?: string | null,
+  CreatedBy?: string | null,
+  UpdatedBy?: string | null,
+  CreatedTime?: string | null,
+  UpdatedTime?: string | null,
+  Type?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Read one task, with its assignees, labels, files and comments
+
+**Risk:** `read`
+
+```ts
+await corsair.teamcamp.api.tasks.get({ taskId: '<task id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | The task id. |
+
+Comments on the task use PascalCase fields (`_id`, `CreatedBy`, `CreatedTime`, `Type`), unlike the rest of the answer.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `taskName` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `status` | `boolean \| null` | No | — |
+| `statusId` | `string \| null` | No | — |
+| `groupId` | `string \| null` | No | — |
+| `group` | `string \| null` | No | — |
+| `taskUsers` | `string[] \| null` | No | — |
+| `subscribers` | `string[] \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `dueDate` | `string \| null` | No | — |
+| `estimateTime` | `number \| null` | No | — |
+| `milestoneId` | `number \| null` | No | — |
+| `labels` | `string[] \| null` | No | — |
+| `files` | `Record<string, JsonValue>[] \| null` | No | — |
+| `comments` | `object[] \| null` | No | — |
+| `createdBy` | `string \| null` | No | — |
+| `createdTime` | `string \| null` | No | — |
+| `updatedBy` | `string \| null` | No | — |
+| `updatedTime` | `string \| null` | No | — |
+| `links` | `JsonValue[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  _id?: string | null,
+  commentId?: string | null,
+  content?: string | null,
+  CreatedBy?: string | null,
+  UpdatedBy?: string | null,
+  CreatedTime?: string | null,
+  UpdatedTime?: string | null,
+  Type?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List the tasks of a project, optionally only the completed or only the open ones
+
+**Risk:** `read`
+
+```ts
+await corsair.teamcamp.api.tasks.list({ projectId: '<project id>', complete: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | The project to list tasks from. Required by the API. |
+| `complete` | `boolean` | No | True returns only completed tasks, false only open ones. Omit it for both. |
+
+`projectId` is required; the API answers 400 "ProjectId is required" without it. `complete: true` returns only finished tasks, `false` only open ones.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  taskId: string,
+  taskName?: string | null,
+  status?: boolean | null,
+  statusId?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### list
+
+`users.list`
+
+List the workspace members, with their role, timezone and last seen time
+
+**Risk:** `read`
+
+```ts
+await corsair.teamcamp.api.users.list({});
+```
+
+**Input:** _empty object_
+
+The answer also carries each member's timezone, date format and last seen time, which the published spec does not mention.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  timezone?: string | null,
+  dateFormat?: string | null,
+  profile_photo?: string | null,
+  isOwner?: boolean | null,
+  isAdmin?: boolean | null,
+  lastSeen?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
