@@ -378,7 +378,10 @@ export const creditsCreate: QuadernoEndpoints['creditsCreate'] = (ctx, input) =>
 		input,
 		{
 			shape: (raw) => wrap('credit', raw),
-			log: (_, result) => ({ creditId: result.credit.id }),
+			log: ({ invoice_id }, result) => ({
+				creditId: result.credit.id,
+				invoiceId: invoice_id,
+			}),
 		},
 	);
 

@@ -532,12 +532,12 @@ const quadernoEndpointMeta = {
 	'receipts.list': {
 		riskLevel: 'read',
 		description:
-			'Receipts, newest first, as a bare array with the same filters as invoices: date, state and contact.',
+			'Receipts, newest first, as a bare array. Filter by a `date` range or `contact`, and page with `created_before`.',
 	},
 	'receipts.create': {
 		riskLevel: 'write',
 		description:
-			'Issues a receipt. Like an invoice, it consumes a document number and cannot be deleted.',
+			'Issues a receipt for a sale that is already paid, so `payment_method` is required. Like an invoice, it consumes a document number and cannot be deleted or updated, only voided.',
 	},
 	'receipts.get': {
 		riskLevel: 'read',
@@ -563,7 +563,7 @@ const quadernoEndpointMeta = {
 	'credits.create': {
 		riskLevel: 'write',
 		description:
-			'Issues a credit note. It consumes a document number and cannot be deleted, only voided.',
+			'Issues a credit note against an existing invoice, by `invoice_id`, and records the refund. It credits the whole invoice unless `credited_amount` is given. It consumes a document number and cannot be deleted, only voided.',
 	},
 	'credits.get': {
 		riskLevel: 'read',

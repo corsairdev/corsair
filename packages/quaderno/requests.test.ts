@@ -391,18 +391,37 @@ describe('receipts, credits and proformas', () => {
 		expect(lastCall().parsed.pathname).toBe('/api/receipts');
 	});
 
-	it('receipts.create POSTs /receipts', async () => {
+	it('receipts.create POSTs /receipts with the payment method', async () => {
 		respond(invoiceFixture, 201);
 
 		await run(
 			{
 				contact: { id: 1 },
 				items: [{ description: 'x', unit_price: 1 }],
+				payment_method: 'cash',
 			},
 			endpoints.receipts.create,
 		);
 
-		expect(lastCall().init.method).toBe('POST');
+		const { parsed, init, body } = lastCall();
+		expect(init.method).toBe('POST');
+		expect(parsed.pathname).toBe('/api/receipts');
+		// Required by the API: a receipt records a sale that is already paid.
+		expect(body.payment_method).toBe('cash');
+	});
+
+	it('receipts.create refuses a receipt with no payment method', async () => {
+		await expect(
+			run(
+				// unknown: a deliberately incomplete input, to reach the schema.
+				{
+					contact: { id: 1 },
+					items: [{ description: 'x', unit_price: 1 }],
+				} as unknown as Parameters<typeof endpoints.receipts.create>[1],
+				endpoints.receipts.create,
+			),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('receipts.get GETs one receipt by id', async () => {
@@ -447,15 +466,32 @@ describe('receipts, credits and proformas', () => {
 		expect(lastCall().parsed.pathname).toBe('/api/credits');
 	});
 
-	it('credits.create POSTs /credits', async () => {
+	it('credits.create POSTs the invoice being credited', async () => {
 		respond(invoiceFixture, 201);
 
 		await run(
-			{ contact: { id: 1 }, items: [{ description: 'x', unit_price: 1 }] },
+			{ invoice_id: 181235103, payment_method: 'cash', credited_amount: 5.5 },
 			endpoints.credits.create,
 		);
 
-		expect(lastCall().init.method).toBe('POST');
+		const { parsed, init, body } = lastCall();
+		expect(init.method).toBe('POST');
+		expect(parsed.pathname).toBe('/api/credits');
+		// The documented body: a credit note is issued against an invoice, not
+		// built from a contact and line items.
+		expect(body).toEqual({
+			invoice_id: 181235103,
+			payment_method: 'cash',
+			credited_amount: 5.5,
+		});
+	});
+
+	it('credits.create needs only the invoice id', async () => {
+		respond(invoiceFixture, 201);
+
+		await run({ invoice_id: 181235103 }, endpoints.credits.create);
+
+		expect(lastCall().body).toEqual({ invoice_id: 181235103 });
 	});
 
 	it('credits.get GETs one credit note', async () => {

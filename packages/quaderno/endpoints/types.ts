@@ -619,7 +619,16 @@ const ReceiptsListResponseSchema = z.object({
 
 export type ReceiptsListResponse = z.infer<typeof ReceiptsListResponseSchema>;
 
-const ReceiptsCreateInputSchema = z.object(DocumentWriteShape);
+/**
+ * A receipt documents a sale that is already paid, so `payment_method` is
+ * required: the API refuses a receipt without one.
+ */
+const ReceiptsCreateInputSchema = z.object({
+	...DocumentWriteShape,
+	payment_method: z
+		.enum(QUADERNO_PAYMENT_METHODS)
+		.describe('How the customer paid. Required on a receipt.'),
+});
 
 export type ReceiptsCreateInput = z.input<typeof ReceiptsCreateInputSchema>;
 
@@ -687,8 +696,18 @@ export const QUADERNO_REFUND_METHODS = [
  * customer and lines from it.
  */
 const CreditsCreateInputSchema = z.object({
-	...DocumentWriteShape,
-	payment_method: z.enum(QUADERNO_PAYMENT_METHODS).optional(),
+	invoice_id: IdSchema.describe('The invoice being credited.'),
+	payment_method: z
+		.enum(QUADERNO_REFUND_METHODS)
+		.optional()
+		.describe('How the credited amount is refunded.'),
+	credited_amount: z
+		.number()
+		.positive()
+		.optional()
+		.describe(
+			'Amount to credit in major units, at most the invoice total. Only works for an invoice with a single line. Defaults to the full invoice total.',
+		),
 });
 
 export type CreditsCreateInput = z.input<typeof CreditsCreateInputSchema>;
