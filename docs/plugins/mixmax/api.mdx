@@ -2966,7 +2966,7 @@ await corsair.mixmax.api.messages.schedule({});
 
 ```ts
 {
-  scheduledDate: number
+  scheduledDate: number | string
 }
 ```
 </Accordion>
@@ -6047,7 +6047,7 @@ await corsair.mixmax.api.sequences.recipients.add({});
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `recipients` | `object[]` | Yes | — |
-| `scheduledAt` | `number` | No | — |
+| `scheduledAt` | `number \| string` | No | — |
 | `enrich` | `boolean \| true \| false` | No | — |
 | `allowMissingVariables` | `boolean \| true \| false` | No | — |
 
@@ -6500,7 +6500,7 @@ await corsair.mixmax.api.snippets.send({});
 | `bcc` | `object[]` | No | — |
 | `subject` | `string` | No | — |
 | `variables` | `object` | No | — |
-| `scheduledAt` | `number` | No | — |
+| `scheduledAt` | `number \| string` | No | — |
 | `trackingEnabled` | `boolean \| true \| false` | No | — |
 | `linkTrackingEnabled` | `boolean \| true \| false` | No | — |
 | `fileTrackingEnabled` | `boolean \| true \| false` | No | — |
