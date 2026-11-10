@@ -2,7 +2,7 @@ import { createCorsair } from 'corsair/core';
 import { MISSIVE_BASE_URL } from './client';
 import { missive, missiveEndpointSchemas } from './index';
 import type { MissiveOperationKey } from './operations';
-import { getMissiveOperation, MISSIVE_OPERATIONS } from './operations';
+import { MISSIVE_OPERATIONS } from './operations';
 
 const TOKEN = 'missive_pat-test-token';
 
@@ -503,6 +503,228 @@ const RESPONSE_FIXTURES: Record<MissiveOperationKey, unknown> = {
 	'hooks.delete': undefined,
 };
 
+// Independently written expected requests, transcribed by hand from
+// https://missiveapp.com/docs/developers/rest-api/endpoints and paired with the
+// hand-written INPUT_FIXTURES above. They are deliberately NOT derived from
+// MISSIVE_OPERATIONS: a wrong catalog entry must change the wire request
+// without also rewriting the expectation, or the test could never catch it.
+type ExpectedBody = { wrapper: string } | { raw: true };
+type ExpectedRequest = {
+	method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+	path: string;
+	query?: Record<string, string>;
+	body?: ExpectedBody;
+};
+
+const EXPECTED_REQUESTS: Record<MissiveOperationKey, ExpectedRequest> = {
+	'analytics.createReport': {
+		method: 'POST',
+		path: '/v1/analytics/reports',
+		body: { wrapper: 'reports' },
+	},
+	'analytics.getReport': {
+		method: 'GET',
+		path: '/v1/analytics/reports/8441d4a0-a0ad-4f0f-aa9c-1cc881057e42',
+	},
+	'contacts.create': {
+		method: 'POST',
+		path: '/v1/contacts',
+		body: { wrapper: 'contacts' },
+	},
+	'contacts.update': {
+		method: 'PATCH',
+		path: '/v1/contacts/ee31f156-db95-4158-923f-b26450e0dbf7',
+		body: { wrapper: 'contacts' },
+	},
+	'contacts.list': {
+		method: 'GET',
+		path: '/v1/contacts',
+		query: {
+			contact_book: '487bc080-6631-4edc-830e-1d114eef4ab0',
+			limit: '50',
+			search: 'Lehoux',
+		},
+	},
+	'contacts.get': {
+		method: 'GET',
+		path: '/v1/contacts/5960dcd2-3382-4430-aa70-955a2c62040a',
+	},
+	'contactBooks.list': {
+		method: 'GET',
+		path: '/v1/contact_books',
+	},
+	'contactGroups.list': {
+		method: 'GET',
+		path: '/v1/contact_groups',
+		query: {
+			contact_book: '487bc080-6631-4edc-830e-1d114eef4ab0',
+			kind: 'organization',
+		},
+	},
+	'conversations.list': {
+		method: 'GET',
+		path: '/v1/conversations',
+		query: { inbox: 'true', limit: '25' },
+	},
+	'conversations.get': {
+		method: 'GET',
+		path: '/v1/conversations/6d3c9b1c-7067-4a28-8ea6-ea91340b67cc',
+	},
+	'conversations.update': {
+		method: 'PATCH',
+		path: '/v1/conversations/6d3c9b1c-7067-4a28-8ea6-ea91340b67cc',
+		body: { wrapper: 'conversations' },
+	},
+	'conversations.listMessages': {
+		method: 'GET',
+		path: '/v1/conversations/6d3c9b1c-7067-4a28-8ea6-ea91340b67cc/messages',
+		query: { limit: '10' },
+	},
+	'conversations.listComments': {
+		method: 'GET',
+		path: '/v1/conversations/6d3c9b1c-7067-4a28-8ea6-ea91340b67cc/comments',
+	},
+	'conversations.listDrafts': {
+		method: 'GET',
+		path: '/v1/conversations/6d3c9b1c-7067-4a28-8ea6-ea91340b67cc/drafts',
+	},
+	'conversations.listPosts': {
+		method: 'GET',
+		path: '/v1/conversations/6d3c9b1c-7067-4a28-8ea6-ea91340b67cc/posts',
+	},
+	'conversations.merge': {
+		method: 'POST',
+		path: '/v1/conversations/6d3c9b1c-7067-4a28-8ea6-ea91340b67cc/merge',
+		body: { raw: true },
+	},
+	'drafts.create': {
+		method: 'POST',
+		path: '/v1/drafts',
+		body: { wrapper: 'drafts' },
+	},
+	'drafts.delete': {
+		method: 'DELETE',
+		path: '/v1/drafts/3fa4bcf5-e57e-47a4-9422-de2cce5f802e',
+	},
+	'messages.create': {
+		method: 'POST',
+		path: '/v1/messages',
+		body: { wrapper: 'messages' },
+	},
+	'messages.get': {
+		method: 'GET',
+		path: '/v1/messages/3fa4bcf5-e57e-47a4-9422-de2cce5f802e',
+	},
+	'messages.list': {
+		method: 'GET',
+		path: '/v1/messages',
+		query: { email_message_id: '<0f1ab2d8@missiveapp.com>' },
+	},
+	'organizations.list': {
+		method: 'GET',
+		path: '/v1/organizations',
+		query: { limit: '50' },
+	},
+	'responses.list': {
+		method: 'GET',
+		path: '/v1/responses',
+		query: { organization: '84f876cc-ef7c-41cd-9711-7ab9cf9f26a5' },
+	},
+	'responses.get': {
+		method: 'GET',
+		path: '/v1/responses/75ad834a-9bd6-4008-b9e6-fc9fa2e7770b',
+	},
+	'responses.create': {
+		method: 'POST',
+		path: '/v1/responses',
+		body: { wrapper: 'responses' },
+	},
+	'responses.update': {
+		method: 'PATCH',
+		path: '/v1/responses/75ad834a-9bd6-4008-b9e6-fc9fa2e7770b',
+		body: { wrapper: 'responses' },
+	},
+	'responses.delete': {
+		method: 'DELETE',
+		path: '/v1/responses/75ad834a-9bd6-4008-b9e6-fc9fa2e7770b',
+	},
+	'posts.create': {
+		method: 'POST',
+		path: '/v1/posts',
+		body: { wrapper: 'posts' },
+	},
+	'posts.delete': {
+		method: 'DELETE',
+		path: '/v1/posts/ee31f156-db95-4158-923f-b26450e0dbf7',
+	},
+	'sharedLabels.create': {
+		method: 'POST',
+		path: '/v1/shared_labels',
+		body: { wrapper: 'shared_labels' },
+	},
+	'sharedLabels.update': {
+		method: 'PATCH',
+		path: '/v1/shared_labels/ee31f156-db95-4158-923f-b26450e0dbf7',
+		body: { wrapper: 'shared_labels' },
+	},
+	'sharedLabels.list': {
+		method: 'GET',
+		path: '/v1/shared_labels',
+		query: { organization: '0d9bab85-a74f-4ece-9142-0f9b9f36ff92' },
+	},
+	'teams.list': {
+		method: 'GET',
+		path: '/v1/teams',
+		query: { organization: '0d9bab85-a74f-4ece-9142-0f9b9f36ff92' },
+	},
+	'teams.create': {
+		method: 'POST',
+		path: '/v1/teams',
+		body: { wrapper: 'teams' },
+	},
+	'teams.update': {
+		method: 'PATCH',
+		path: '/v1/teams/d75aecb6-96a2-4b5f-afa6-19d1916052ea',
+		body: { wrapper: 'teams' },
+	},
+	'users.list': {
+		method: 'GET',
+		path: '/v1/users',
+		query: { limit: '50' },
+	},
+	'tasks.list': {
+		method: 'GET',
+		path: '/v1/tasks',
+		query: {
+			organization: '0d9bab85-a74f-4ece-9142-0f9b9f36ff92',
+			state: 'todo',
+		},
+	},
+	'tasks.get': {
+		method: 'GET',
+		path: '/v1/tasks/75ad834a-9bd6-4008-b9e6-fc9fa2e7770b',
+	},
+	'tasks.create': {
+		method: 'POST',
+		path: '/v1/tasks',
+		body: { wrapper: 'tasks' },
+	},
+	'tasks.update': {
+		method: 'PATCH',
+		path: '/v1/tasks/75ad834a-9bd6-4008-b9e6-fc9fa2e7770b',
+		body: { wrapper: 'tasks' },
+	},
+	'hooks.create': {
+		method: 'POST',
+		path: '/v1/hooks',
+		body: { wrapper: 'hooks' },
+	},
+	'hooks.delete': {
+		method: 'DELETE',
+		path: '/v1/hooks/d75aecb6-96a2-4b5f-afa6-19d1916052ea',
+	},
+};
+
 const AUTH_HEADER = `Bearer ${TOKEN}`;
 
 describe('Missive REST endpoint contract', () => {
@@ -539,7 +761,7 @@ describe('Missive REST endpoint contract', () => {
 			'conversations.listComments': 'GET /conversations/{id}/comments',
 			'conversations.listDrafts': 'GET /conversations/{id}/drafts',
 			'conversations.listPosts': 'GET /conversations/{id}/posts',
-			'conversations.merge': 'PATCH /conversations/{id}/merge',
+			'conversations.merge': 'POST /conversations/{id}/merge',
 			'drafts.create': 'POST /drafts',
 			'drafts.delete': 'DELETE /drafts/{id}',
 			'messages.create': 'POST /messages',
@@ -576,7 +798,7 @@ describe('Missive REST endpoint contract', () => {
 	it.each(Object.entries(INPUT_FIXTURES))(
 		'%s sends its documented request',
 		async (key) => {
-			const operation = getMissiveOperation(key as MissiveOperationKey);
+			const expected = EXPECTED_REQUESTS[key as MissiveOperationKey];
 			const schema = missiveEndpointSchemas[key as MissiveOperationKey];
 			const input = INPUT_FIXTURES[key as MissiveOperationKey];
 			const response = RESPONSE_FIXTURES[key as MissiveOperationKey];
@@ -602,39 +824,30 @@ describe('Missive REST endpoint contract', () => {
 				});
 
 			try {
-				const handler = handlers.get(operation.key);
+				const expectedUrl = new URL(expected.path, MISSIVE_BASE_URL);
+				const handler = handlers.get(key);
 				expect(handler).toBeDefined();
 				const result = await handler?.(input);
 				expect(mockFetch).toHaveBeenCalledTimes(1);
 				expect(captures).toHaveLength(1);
 				const request = captures[0];
 				if (!request) {
-					throw new Error(`No request captured for ${operation.key}`);
+					throw new Error(`No request captured for ${key}`);
 				}
-				expect(request.method).toBe(operation.method);
-				const expectedPath = operation.path.replace(
-					/\{([^}]+)\}/g,
-					(_match, name: string) => {
-						const value = (input as Record<string, unknown>)[name];
-						if (operation.joinIds && Array.isArray(value)) {
-							return value
-								.map((id) => encodeURIComponent(String(id)))
-								.join(',');
-						}
-						return encodeURIComponent(String(value));
-					},
-				);
-				expect(`${request.url.origin}${request.url.pathname}`).toBe(
-					`${MISSIVE_BASE_URL}${expectedPath}`,
-				);
-				expect(request.url.pathname).toBe(`/v1${expectedPath}`);
+				expect(request.method).toBe(expected.method);
+				expect(request.url.origin).toBe(expectedUrl.origin);
+				expect(request.url.pathname).toBe(expectedUrl.pathname);
 				expect(request.headers.get('authorization')).toBe(AUTH_HEADER);
+				expect(Object.fromEntries(request.url.searchParams)).toEqual(
+					expected.query ?? {},
+				);
 
-				if (operation.hasBody) {
+				if (expected.body) {
 					const rawBody = (input as Record<string, unknown>).body;
-					const expectedBody = operation.bodyWrapper
-						? { [operation.bodyWrapper]: rawBody }
-						: rawBody;
+					const expectedBody =
+						'wrapper' in expected.body
+							? { [expected.body.wrapper]: rawBody }
+							: rawBody;
 					expect(request.body).toBeDefined();
 					expect(JSON.parse(String(request.body))).toEqual(expectedBody);
 					expect(request.headers.get('content-type')).toContain(
@@ -642,16 +855,6 @@ describe('Missive REST endpoint contract', () => {
 					);
 				} else {
 					expect(request.body).toBeUndefined();
-				}
-
-				// Declared query params that the fixture sets must reach the wire.
-				const inputRecord = input as Record<string, unknown>;
-				for (const name of operation.queryParams) {
-					if (inputRecord[name] !== undefined) {
-						expect(request.url.searchParams.get(name)).toBe(
-							String(inputRecord[name]),
-						);
-					}
 				}
 
 				expect(schema.output.safeParse(result).success).toBe(true);

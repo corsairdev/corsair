@@ -183,7 +183,10 @@ export function missive<const T extends MissivePluginOptions>(
 	} satisfies InternalMissivePlugin;
 }
 
-export { missiveEndpointMeta, missiveEndpointSchemas, missiveEndpoints };
+export { missiveEndpointMeta, missiveEndpointSchemas };
+// Export the schema-bound tree, never the raw handlers: direct consumers of
+// this export get the same input/output validation the plugin binds.
+export { validatedMissiveEndpointsNested as missiveEndpoints };
 export type {
 	MissiveEndpointInputs,
 	MissiveEndpointOutputs,

@@ -1118,7 +1118,11 @@ const MissiveTaskSchema = z
 		due_at: z.number().int().nullish(),
 		started_at: z.number().int().nullish(),
 		closed_at: z.number().int().nullish(),
-		assignees: z.union([z.array(z.string()), z.array(MissiveUserSchema)]),
+		// Assignees are UUIDs in list/create/update responses and full user
+		// objects in get; unassigned tasks omit the field or send null.
+		assignees: z
+			.union([z.array(z.string()), z.array(MissiveUserSchema)])
+			.nullish(),
 		// Team is a UUID in list/create/update, a full object in get, and
 		// absent or null on unassigned tasks.
 		team: z.union([z.string(), MissiveTeamSchema]).nullish(),

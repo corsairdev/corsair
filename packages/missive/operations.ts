@@ -137,7 +137,7 @@ export const MISSIVE_OPERATIONS = [
 		method: 'GET',
 		path: '/contact_books',
 		pathParams: [],
-		queryParams: [],
+		queryParams: ['limit', 'offset'],
 		hasBody: false,
 		bodyRequired: false,
 		hasResponseBody: true,
