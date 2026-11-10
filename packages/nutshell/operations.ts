@@ -870,7 +870,9 @@ export const NUTSHELL_OPERATIONS = [
 		key: 'productMaps.delete',
 		group: 'productMaps',
 		method: 'DELETE',
-		path: '/productMaps/{id}',
+		// Lowercase on purpose: the reference prints `/productMaps/{id}`, which
+		// answers 404. Paths are case-sensitive and the route is `/productmaps`.
+		path: '/productmaps/{id}',
 		pathParams: ['id'],
 		queryParams: [],
 		hasBody: false,

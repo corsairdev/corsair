@@ -56,7 +56,10 @@ export const NUTSHELL_DOCUMENTED_ROUTES = {
 	'products.undelete': 'POST /products/{id}/undelete',
 	'tags.delete': 'DELETE /tags/{id}',
 	'contacts.listItems': 'GET /contacts/list',
-	'productMaps.delete': 'DELETE /productMaps/{id}',
+	// The reference page prints `/productMaps/{id}`, but paths are case-sensitive:
+	// that spelling answers 404 and `/productmaps/{id}` (like the GET and PATCH
+	// routes) answers 401 without credentials.
+	'productMaps.delete': 'DELETE /productmaps/{id}',
 	'leads.installments': 'GET /leads/{id}/installments',
 	'leads.create': 'POST /leads',
 	'notes.get': 'GET /notes/{id}',
