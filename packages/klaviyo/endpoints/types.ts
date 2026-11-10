@@ -351,23 +351,6 @@ export type ProfilesSubscribeInput = z.input<
 	typeof ProfilesSubscribeInputSchema
 >;
 
-/** A bulk job accepts a body and answers 202 with a job id. */
-const JobResponseSchema = z
-	.object({
-		data: z
-			.object({
-				type: z.string().nullish(),
-				id: z.string().nullish(),
-				attributes: JsonObjectSchema.nullish(), // unknown: a bulk job's payload.
-			})
-			.loose()
-			.nullish(),
-		links: LinksSchema.nullish(),
-	})
-	.loose();
-
-export type KlaviyoJob = z.infer<typeof JobResponseSchema>;
-
 // ── lists ───────────────────────────────────────────────────────────────────
 
 const ListSchema = z
@@ -1015,7 +998,7 @@ export type KlaviyoEndpointOutputs = {
 	profilesGet: z.infer<typeof singleEnvelope<typeof ProfileSchema>>;
 	profilesCreate: z.infer<typeof singleEnvelope<typeof ProfileSchema>>;
 	profilesUpdate: z.infer<typeof singleEnvelope<typeof ProfileSchema>>;
-	profilesSubscribe: KlaviyoJob;
+	profilesSubscribe: { success: boolean };
 	listsList: ListsListResponse;
 	listsGet: z.infer<typeof singleEnvelope<typeof ListSchema>>;
 	listsCreate: z.infer<typeof singleEnvelope<typeof ListSchema>>;
@@ -1045,7 +1028,7 @@ export type KlaviyoEndpointOutputs = {
 	tagsList: TagsListResponse;
 	tagsGet: z.infer<typeof singleEnvelope<typeof TagSchema>>;
 	tagsCreate: z.infer<typeof singleEnvelope<typeof TagSchema>>;
-	tagsUpdate: z.infer<typeof singleEnvelope<typeof TagSchema>>;
+	tagsUpdate: { success: boolean };
 	tagsRemove: { success: boolean };
 	tagGroupsList: TagGroupsListResponse;
 	tagGroupsCreate: z.infer<typeof singleEnvelope<typeof TagGroupSchema>>;
@@ -1101,7 +1084,7 @@ export const KlaviyoEndpointOutputSchemas = {
 	profilesGet: singleEnvelope(ProfileSchema),
 	profilesCreate: singleEnvelope(ProfileSchema),
 	profilesUpdate: singleEnvelope(ProfileSchema),
-	profilesSubscribe: JobResponseSchema,
+	profilesSubscribe: DeletedSchema,
 	listsList: ListsListResponseSchema,
 	listsGet: singleEnvelope(ListSchema),
 	listsCreate: singleEnvelope(ListSchema),
@@ -1131,7 +1114,7 @@ export const KlaviyoEndpointOutputSchemas = {
 	tagsList: TagsListResponseSchema,
 	tagsGet: singleEnvelope(TagSchema),
 	tagsCreate: singleEnvelope(TagSchema),
-	tagsUpdate: singleEnvelope(TagSchema),
+	tagsUpdate: DeletedSchema,
 	tagsRemove: DeletedSchema,
 	tagGroupsList: TagGroupsListResponseSchema,
 	tagGroupsCreate: singleEnvelope(TagGroupSchema),

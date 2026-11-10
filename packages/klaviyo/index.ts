@@ -377,7 +377,7 @@ const klaviyoEndpointMeta = {
 	'profiles.subscribe': {
 		riskLevel: 'write',
 		description:
-			'Subscribe a profile to a list over email or SMS; this creates a bulk job and grants marketing consent, so it returns a job id rather than the profile',
+			'Subscribe a profile to a list over email or SMS; this grants marketing consent through a queued bulk job, so it confirms the request was accepted rather than returning the profile',
 	},
 	'lists.list': {
 		riskLevel: 'read',
@@ -602,7 +602,6 @@ export type {
 	KlaviyoEndpointInputs,
 	KlaviyoEndpointOutputs,
 	KlaviyoEvent,
-	KlaviyoJob,
 	KlaviyoList,
 	KlaviyoMetric,
 	KlaviyoProfile,

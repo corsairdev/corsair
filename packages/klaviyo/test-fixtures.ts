@@ -200,14 +200,6 @@ export const tagGroupsListResponse = {
 export const tagGroupResponse = { data: tagGroup };
 
 /** A bulk job answers 202 with its id. */
-export const jobResponse = {
-	data: {
-		type: 'profile-subscription-bulk-create-job',
-		id: 'Job123',
-		attributes: {},
-	},
-};
-
 /** A 401, as the live API answers a bad key. */
 export const authenticationFailed = {
 	errors: [

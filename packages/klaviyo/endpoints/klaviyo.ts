@@ -145,8 +145,8 @@ export const profilesUpdate: KlaviyoEndpoints['profilesUpdate'] = (
 	);
 
 /**
- * Subscription is a bulk job even for one profile, so this posts a job and
- * returns its id rather than the updated profile.
+ * Subscription is a bulk job even for one profile. Klaviyo queues it and answers
+ * 202 with no body, so there is no job id or profile to return.
  */
 export const profilesSubscribe: KlaviyoEndpoints['profilesSubscribe'] = (
 	ctx,
@@ -196,10 +196,9 @@ export const profilesSubscribe: KlaviyoEndpoints['profilesSubscribe'] = (
 			},
 		}),
 		{
-			log: (parsed, result) => ({
-				listId: parsed.listId,
-				jobId: result.data?.id ?? undefined,
-			}),
+			// The route answers 202 with an empty body.
+			shape: () => deleted,
+			log: (parsed) => ({ listId: parsed.listId }),
 		},
 	);
 
@@ -895,7 +894,8 @@ export const tagsUpdate: KlaviyoEndpoints['tagsUpdate'] = (ctx, input) =>
 			path: tagPath(parsed.id),
 			body: attributesOf('tag', { name: parsed.name }, { id: parsed.id }),
 		}),
-		{ log: (parsed) => ({ tagId: parsed.id }) },
+		// Unlike the other updates, this route answers 204 with no body.
+		{ shape: () => deleted, log: (parsed) => ({ tagId: parsed.id }) },
 	);
 
 export const tagsRemove: KlaviyoEndpoints['tagsRemove'] = (ctx, input) =>

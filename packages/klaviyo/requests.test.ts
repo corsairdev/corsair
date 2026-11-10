@@ -43,7 +43,6 @@ import {
 import {
 	event,
 	eventsListResponse,
-	jobResponse,
 	list,
 	listResponse,
 	listsListResponse,
@@ -221,17 +220,18 @@ describe('profiles', () => {
 	});
 
 	it('subscribes as a bulk job with the list relationship', async () => {
-		respond(jobResponse, 202);
+		// The spec gives this route a 202 with no content, so there is no job to
+		// read back.
+		respond(undefined, 202);
 
 		const result = (await invoke(profilesSubscribe, {
 			listId: 'R7QkZp',
 			email: 'jordan@acme.com',
 			channels: ['email'],
-		})) as { data?: { id?: string | null } | null };
+		})) as { success: boolean };
 
 		expectAuthenticated('/api/profile-subscription-bulk-create-jobs', 'POST');
-		// A job, not the profile: subscription is asynchronous.
-		expect(result.data?.id).toBe('Job123');
+		expect(result).toEqual({ success: true });
 		expect(lastRequest().body).toMatchObject({
 			data: {
 				type: 'profile-subscription-bulk-create-job',
@@ -302,7 +302,7 @@ describe('lists', () => {
 	});
 
 	it('accepts a subscribe that has the identifier for each channel', async () => {
-		respond(jobResponse, 202);
+		respond(undefined, 202);
 
 		await invoke(profilesSubscribe, {
 			listId: 'R7QkZp',
@@ -716,9 +716,14 @@ describe('per-endpoint coverage', () => {
 	});
 
 	it('tags.update renames', async () => {
-		respond({ data: tag });
-		await invoke(tagsUpdate, { id: 'Tg123', name: 'urgent' });
+		// The spec gives this route a 204 with no content.
+		respond(undefined, 204);
+		const result = (await invoke(tagsUpdate, {
+			id: 'Tg123',
+			name: 'urgent',
+		})) as { success: boolean };
 		expectAuthenticated('/api/tags/Tg123', 'PATCH');
+		expect(result).toEqual({ success: true });
 		expect(lastRequest().body).toEqual({
 			data: { type: 'tag', id: 'Tg123', attributes: { name: 'urgent' } },
 		});
