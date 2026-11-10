@@ -278,7 +278,9 @@ export const OrderSchema = ResourceBaseSchema.extend({
 			total_usd: z.number().nullish(),
 			refunded_amount_usd: z.number().nullish(),
 			tax_name: z.string().nullish(),
-			tax_rate: z.number().nullish(),
+			// A decimal percentage sent as a string, such as "20.00", the same
+			// way currency_rate is. Live docs example, checked 2026-11-10.
+			tax_rate: z.string().nullish(),
 			refunded: z.boolean().nullish(),
 			refunded_at: z.string().nullish(),
 			status: z.string().nullish(),

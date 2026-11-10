@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/lemonsqueezy",
   "version": "0.1.0",
-  "description": "Lemon Squeezy plugin for Corsair",
+  "description": "Lemon Squeezy plugin for Corsair: sell as a merchant of record, read stores, products, orders and subscriptions, issue refunds, record metered usage, create checkout links and discount codes, and manage webhook registrations. Inbound webhook deliveries are not handled by this plugin.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

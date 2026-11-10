@@ -269,3 +269,70 @@ export const methodNotAllowed = {
 		},
 	],
 };
+
+/**
+ * A taxed order, from the live docs example (retrieve-order, checked
+ * 2026-11-10). `tax_rate` and `currency_rate` are strings while every other
+ * money field is a number, which is the contract this fixture pins: a
+ * `z.number()` for either would reject this order after a refund had already
+ * been issued.
+ */
+export const taxedOrder = {
+	jsonapi: { version: '1.0' },
+	links: { self: 'https://api.lemonsqueezy.com/v1/orders/1' },
+	data: {
+		type: 'orders',
+		id: '1',
+		attributes: {
+			store_id: 1,
+			customer_id: 1,
+			identifier: '104e18a2-d755-4d4b-80c4-a6c1dcbe1c10',
+			order_number: 1,
+			user_name: 'John Doe',
+			user_email: 'john@example.com',
+			currency: 'USD',
+			currency_rate: '1.0000',
+			subtotal: 999,
+			setup_fee: 999,
+			discount_total: 0,
+			tax: 200,
+			total: 1199,
+			refunded_amount: 0,
+			subtotal_usd: 999,
+			setup_fee_usd: 999,
+			discount_total_usd: 0,
+			tax_usd: 200,
+			total_usd: 1199,
+			refunded_amount_usd: 0,
+			tax_name: 'VAT',
+			tax_rate: '20.00',
+			tax_inclusive: false,
+			refunded: false,
+			refunded_at: null,
+			status: 'paid',
+			status_formatted: 'Paid',
+			subtotal_formatted: '$9.99',
+			setup_fee_formatted: '$9.99',
+			discount_total_formatted: '$0.00',
+			tax_formatted: '$2.00',
+			total_formatted: '$11.99',
+			refunded_amount_formatted: '$0.00',
+			first_order_item: {
+				id: 1,
+				order_id: 1,
+				product_id: 1,
+				variant_id: 1,
+				product_name: 'Lemonade',
+				variant_name: 'Citrus Blast',
+				price: 999,
+				quantity: 1,
+				created_at: '2026-11-10T11:25:25.000000Z',
+				updated_at: '2026-11-10T11:25:25.000000Z',
+			},
+			urls: { receipt: 'https://app.lemonsqueezy.com/my-orders/1' },
+			created_at: '2026-11-10T11:25:25.000000Z',
+			updated_at: '2026-11-10T11:25:25.000000Z',
+			test_mode: true,
+		},
+	},
+};

@@ -1,6 +1,6 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: Lemon Squeezy
-description: Sell software and digital products as a merchant of record. Read stores, products, orders and subscriptions, issue refunds, record metered usage, and create checkout links and discount codes.
+description: Sell software and digital products as a merchant of record. Read stores, products, orders and subscriptions, issue refunds, record metered usage, create checkout links and discount codes, and manage webhook registrations. Inbound webhook deliveries are not handled by this plugin.
 domain: lemonsqueezy.com
 recommendedAuth: api_key
 overviewNote: |

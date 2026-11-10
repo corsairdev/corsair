@@ -1,6 +1,6 @@
 # @corsair-dev/lemonsqueezy
 
-Lemon Squeezy plugin for Corsair.
+Lemon Squeezy plugin for Corsair: sell as a merchant of record, read stores, products, orders and subscriptions, issue refunds, record metered usage, create checkout links and discount codes, and manage webhook registrations. Inbound webhook deliveries are not handled by this plugin.
 
 ## Install
 

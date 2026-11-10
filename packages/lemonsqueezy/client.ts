@@ -121,10 +121,15 @@ export function readErrors(
 	});
 }
 
+// unknown: this reads one field off an untyped error body, so the input can be
+// any JSON value; the typeof check is the narrowing.
 function asString(value: unknown): string | undefined {
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+// unknown: the text is a provider body whose shape each endpoint's output
+// schema validates, so a concrete return type here would be a claim this
+// function cannot make.
 function parseJson(text: string): unknown {
 	try {
 		return JSON.parse(text);

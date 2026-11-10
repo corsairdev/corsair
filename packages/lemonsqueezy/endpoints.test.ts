@@ -12,6 +12,7 @@ import {
 	store,
 	storeDetail,
 	storeList,
+	taxedOrder,
 	unauthorized,
 	user,
 	webhook,
@@ -79,6 +80,16 @@ describe('output schemas parse live answers', () => {
 		expect(output.data.attributes.events).toEqual(['order_created']);
 		// Lemon Squeezy never echoes the secret back.
 		expect(output.data.attributes).not.toHaveProperty('secret');
+	});
+
+	it('orders.get reads a taxed order, where tax_rate is a string', () => {
+		const output =
+			LemonSqueezyEndpointOutputSchemas.ordersGet.parse(taxedOrder);
+		// Strings: tax_rate and currency_rate. Numbers: every money total.
+		expect(output.data.attributes.tax_rate).toBe('20.00');
+		expect(output.data.attributes.currency_rate).toBe('1.0000');
+		expect(output.data.attributes.total).toBe(1199);
+		expect(output.data.attributes.tax_name).toBe('VAT');
 	});
 
 	it('a delete reports what it removed', () => {
