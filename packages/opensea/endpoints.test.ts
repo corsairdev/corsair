@@ -5,18 +5,25 @@ import {
 	OpenseaEndpointOutputSchemas as Outputs,
 } from './endpoints/types';
 import {
+	accountFixture,
+	bestOfferFixture,
 	chainsFixture,
 	collectionFixture,
 	collectionStatsFixture,
 	collectionsLastPageFixture,
 	collectionsPageFixture,
 	eventsPageFixture,
+	floorPricesFixture,
+	holdersFixture,
 	listingFixture,
 	listingsLastPageFixture,
 	listingsPageFixture,
 	nftFixture,
 	nftsPageFixture,
 	offersPageFixture,
+	orderFixture,
+	ownersFixture,
+	portfolioFixture,
 	searchFixture,
 	traitsFixture,
 } from './test-fixtures';
@@ -56,6 +63,21 @@ describe('output schemas accept the documented responses', () => {
 			listingsLastPageFixture,
 		],
 		['offers.collection', Outputs.offersCollection, offersPageFixture],
+		['contract.nfts', Outputs.contractNfts, nftsPageFixture],
+		['nfts.owners', Outputs.nftsOwners, ownersFixture],
+		['events.collection', Outputs.eventsCollection, eventsPageFixture],
+		['listings.all', Outputs.listingsAll, listingsPageFixture],
+		['offers.all', Outputs.offersAll, offersPageFixture],
+		['offers.best', Outputs.offersBest, bestOfferFixture],
+		['orders.get', Outputs.ordersGet, orderFixture],
+		[
+			'collections.floorPrices',
+			Outputs.collectionsFloorPrices,
+			floorPricesFixture,
+		],
+		['collections.holders', Outputs.collectionsHolders, holdersFixture],
+		['accounts.get', Outputs.accountsGet, accountFixture],
+		['accounts.portfolio', Outputs.accountsPortfolio, portfolioFixture],
 	] as const;
 
 	for (const [name, schema, fixture] of cases) {

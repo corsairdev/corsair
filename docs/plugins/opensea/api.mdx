@@ -9,6 +9,86 @@ Every `opensea.api.*` operation is listed below with parameter shapes and return
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Accounts
+
+### get
+
+`accounts.get`
+
+One OpenSea profile by wallet address or username, with its display name, bio, follower counts and verification flag. `is_agent` is a self-declaration, not a check by OpenSea.
+
+**Risk:** `read`
+
+```ts
+await corsair.opensea.api.accounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address_or_username` | `string` | Yes | A wallet address or an OpenSea username. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `username` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `bio` | `string \| null` | No | — |
+| `ens_name` | `string \| null` | No | — |
+| `banner_image_url` | `string \| null` | No | — |
+| `profile_image_url` | `string \| null` | No | — |
+| `follower_count` | `number \| null` | No | — |
+| `following_count` | `number \| null` | No | — |
+| `is_verified` | `boolean \| null` | No | — |
+| `is_agent` | `boolean \| null` | No | — |
+| `joined_date` | `string \| null` | No | — |
+
+
+
+---
+
+### portfolio
+
+`accounts.portfolio`
+
+USD value of one wallet’s NFTs and tokens, with profit and loss over a timeframe. Every figure is a string. `pnl_absolute` and `pnl_percentage` are absent, not zero, when the account has no history.
+
+**Risk:** `read`
+
+```ts
+await corsair.opensea.api.accounts.portfolio({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | The wallet address to value. |
+| `timeframe` | `string` | No | Window for the P&L figures. The API defaults to `DAY`. |
+| `chains` | `(base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood)[]` | No | Only value assets on these chains. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_value_usd` | `string \| null` | No | — |
+| `nft_value_usd` | `string \| null` | No | — |
+| `token_value_usd` | `string \| null` | No | — |
+| `pnl_absolute` | `string \| null` | No | — |
+| `pnl_percentage` | `string \| null` | No | — |
+| `timeframe` | `string \| null` | No | — |
+
+
+
+---
+
 ## Chains
 
 ### list
@@ -133,6 +213,53 @@ await corsair.opensea.api.collection.nfts({});
 
 ## Collections
 
+### floorPrices
+
+`collections.floorPrices`
+
+Floor price over time for one collection, as points carrying a float unix timestamp, a USD string and a token-unit price. Narrow with `timeframe` or a `resolution` in seconds.
+
+**Risk:** `read`
+
+```ts
+await corsair.opensea.api.collections.floorPrices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | The collection slug. |
+| `timeframe` | `string` | No | Window to report. The API defaults to `one_day`. |
+| `resolution` | `number` | No | Bucket width in seconds. The spec gives no default or bounds. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `floor_prices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="floor_prices full type">
+
+```ts
+{
+  time?: number | null,
+  usd_price?: string | null,
+  token_unit?: number | null,
+  symbol?: string | null,
+  chain?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### get
 
 `collections.get`
@@ -186,6 +313,54 @@ await corsair.opensea.api.collections.get({});
   address: string,
   chain: string
 }[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### holders
+
+`collections.holders`
+
+Wallet addresses holding one collection, with each amount and its share of supply as a fraction (`0.0127` is 1.27%). Sort by quantity either way, and page with `next`.
+
+**Risk:** `read`
+
+```ts
+await corsair.opensea.api.collections.holders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | The collection slug. |
+| `limit` | `number` | No | Defaults to 20. |
+| `cursor` | `string` | No | The `next` cursor from a previous page. |
+| `sort_direction` | `asc \| desc` | No | Order by quantity held. Defaults to `desc`. |
+| `owned_by` | `string` | No | Only report this wallet address. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `holders` | `object[]` | Yes | — |
+| `next` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="holders full type">
+
+```ts
+{
+  address: string,
+  quantity?: number | null,
+  percentage?: number | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -458,7 +633,143 @@ await corsair.opensea.api.collections.trending({});
 
 ---
 
+## Contract
+
+### nfts
+
+`contract.nfts`
+
+Every NFT a contract has issued, paged with `next`. Use this to walk a contract whose collection slug you do not have; `collection.nfts` is the same rows keyed by slug.
+
+**Risk:** `read`
+
+```ts
+await corsair.opensea.api.contract.nfts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chain` | `base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood` | Yes | The chain slug, such as `ethereum` or `base`. Values outside the enum are rejected by the API. |
+| `address` | `string` | Yes | The contract address. |
+| `limit` | `number` | No | Page size. |
+| `next` | `string` | No | The `next` cursor. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nfts` | `object[]` | Yes | — |
+| `next` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="nfts full type">
+
+```ts
+{
+  identifier: string,
+  collection: string,
+  contract: string,
+  token_standard: string,
+  name?: string | null,
+  description?: string | null,
+  image_url?: string | null,
+  display_image_url?: string | null,
+  display_animation_url?: string | null,
+  original_image_url?: string | null,
+  original_animation_url?: string | null,
+  animation_url?: string | null,
+  metadata_url?: string | null,
+  opensea_url?: string | null,
+  creator?: string | null,
+  owners?: {
+    address: string,
+    quantity?: number | null,
+    quantity_string?: string | null
+  }[] | null,
+  traits?: {
+    trait_type: string,
+    display_type?: string | null,
+    max_value?: string | null,
+    value?: string | number | boolean | null
+  }[] | null,
+  is_disabled?: boolean | null,
+  is_nsfw?: boolean | null,
+  is_suspicious?: boolean | null,
+  updated_at?: string | null,
+  decimals?: number | null,
+  estimated_value_usd?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Events
+
+### collection
+
+`events.collection`
+
+Marketplace events limited to one collection, paged with `next`. Narrow by event type, trait filter or a time window. The account-wide `events.list` is the same shape without the collection scope.
+
+**Risk:** `read`
+
+```ts
+await corsair.opensea.api.events.collection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | The collection slug. |
+| `event_type` | `(sale \| transfer \| order \| redemption \| listing \| offer \| collection_offer \| trait_offer)[]` | No | Only these event types. |
+| `traits` | `string` | No | Trait filter, as `trait_type:value`, comma separated. |
+| `after` | `number` | No | Only events after this unix timestamp. |
+| `before` | `number` | No | Only events before this unix timestamp. |
+| `limit` | `number` | No | Page size. |
+| `next` | `string` | No | The `next` cursor. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset_events` | `object[]` | Yes | — |
+| `next` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="asset_events full type">
+
+```ts
+{
+  event_type?: string | null,
+  transfer_type?: string | null,
+  order_hash?: string | null,
+  chain?: string | null,
+  transaction?: string | null,
+  event_timestamp?: number | null,
+  from_address?: string | null,
+  to_address?: string | null,
+  quantity?: number | null,
+  payment?: Record<string, unknown> | null,
+  nft?: Record<string, unknown> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### list
 
@@ -517,6 +828,79 @@ await corsair.opensea.api.events.list({});
 ---
 
 ## Listings
+
+### all
+
+`listings.all`
+
+Every active listing in a collection, paged with `next`, including private ones when asked. Filter by `maker` to see one seller’s listings. `listings.best` gives only the cheapest per token.
+
+**Risk:** `read`
+
+```ts
+await corsair.opensea.api.listings.all({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | The collection slug. |
+| `include_private_listings` | `boolean` | No | Include listings not shown on the public marketplace. |
+| `maker` | `string` | No | Only listings signed by this wallet address. |
+| `limit` | `number` | No | Page size. |
+| `next` | `string` | No | The `next` cursor. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listings` | `object[]` | Yes | — |
+| `next` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="listings full type">
+
+```ts
+{
+  order_hash?: string | null,
+  chain: string,
+  protocol?: string | null,
+  protocol_address?: string | null,
+  remaining_quantity?: number | null,
+  order_created_at?: number | null,
+  asset?: {
+    contract: string,
+    identifier?: string | null
+  } | null,
+  protocol_data?: {
+    parameters?: Record<string, unknown> | null,
+    signature?: string | null
+  } | null,
+  price?: {
+    current?: {
+      currency?: string | null,
+      decimals?: number | null,
+      value?: string | null
+    } | null
+  } | null,
+  price_per_item?: {
+    currency?: string | null,
+    decimals?: number | null,
+    value?: string | null
+  } | null,
+  type?: string | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### best
 
@@ -667,7 +1051,215 @@ await corsair.opensea.api.nfts.get({});
 
 ---
 
+### owners
+
+`nfts.owners`
+
+Wallets holding one token, with the quantity each holds. Useful for an ERC-1155 or a fractionalised token, where more than one address holds the same id.
+
+**Risk:** `read`
+
+```ts
+await corsair.opensea.api.nfts.owners({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chain` | `base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood` | Yes | The chain slug, such as `ethereum` or `base`. Values outside the enum are rejected by the API. |
+| `address` | `string` | Yes | The contract address. |
+| `identifier` | `string` | Yes | The token id, as a string. |
+| `limit` | `number` | No | Defaults to 20. |
+| `next` | `string` | No | The `next` cursor. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owners` | `object[]` | Yes | — |
+| `next` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+{
+  address: string,
+  quantity?: number | null,
+  quantity_string?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Offers
+
+### all
+
+`offers.all`
+
+Every active offer on a collection, paged with `next`, including trait and per-token offers. Filter by `maker` for one bidder. `offers.collection` gives only the collection-wide ones.
+
+**Risk:** `read`
+
+```ts
+await corsair.opensea.api.offers.all({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | The collection slug. |
+| `maker` | `string` | No | Only offers made from this wallet address. |
+| `limit` | `number` | No | Page size. |
+| `next` | `string` | No | The `next` cursor. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offers` | `object[]` | Yes | — |
+| `next` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="offers full type">
+
+```ts
+{
+  order_hash?: string | null,
+  chain: string,
+  protocol?: string | null,
+  protocol_address?: string | null,
+  remaining_quantity?: number | null,
+  order_created_at?: number | null,
+  asset?: {
+    contract: string,
+    identifier?: string | null
+  } | null,
+  protocol_data?: {
+    parameters?: Record<string, unknown> | null,
+    signature?: string | null
+  } | null,
+  price?: {
+    current?: {
+      currency?: string | null,
+      decimals?: number | null,
+      value?: string | null
+    } | null
+  } | null,
+  price_per_item?: {
+    currency?: string | null,
+    decimals?: number | null,
+    value?: string | null
+  } | null,
+  type?: string | null,
+  status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### best
+
+`offers.best`
+
+The highest active offer on one token in a collection, as a single order object. Answers an empty or 404 result when nobody has bid on that token.
+
+**Risk:** `read`
+
+```ts
+await corsair.opensea.api.offers.best({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | The collection slug. |
+| `identifier` | `string` | Yes | The token id within the collection, as a string. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_hash` | `string \| null` | No | — |
+| `chain` | `string` | Yes | — |
+| `protocol` | `string \| null` | No | — |
+| `protocol_address` | `string \| null` | No | — |
+| `remaining_quantity` | `number \| null` | No | — |
+| `order_created_at` | `number \| null` | No | — |
+| `asset` | `object \| null` | No | — |
+| `protocol_data` | `object \| null` | No | — |
+| `price` | `object \| null` | No | — |
+| `price_per_item` | `object \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="asset full type">
+
+```ts
+{
+  contract: string,
+  identifier?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="protocol_data full type">
+
+```ts
+{
+  parameters?: Record<string, unknown> | null,
+  signature?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="price full type">
+
+```ts
+{
+  current?: {
+    currency?: string | null,
+    decimals?: number | null,
+    value?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="price_per_item full type">
+
+```ts
+{
+  currency?: string | null,
+  decimals?: number | null,
+  value?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### collection
 
@@ -732,6 +1324,78 @@ await corsair.opensea.api.offers.collection({});
   type?: string | null,
   status?: string | null
 }[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### get
+
+`orders.get`
+
+One order by chain, Seaport contract address and order hash, as a single object rather than an array. Takes the `order_hash` from a listing or offer row; a cancelled or filled order still answers with its final state.
+
+**Risk:** `read`
+
+```ts
+await corsair.opensea.api.orders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chain` | `base \| ethereum \| zora \| arbitrum \| sei \| avalanche \| polygon \| optimism \| ape_chain \| flow \| soneium \| ronin \| bera_chain \| solana \| shape \| unichain \| gunzilla \| abstract \| animechain \| hyperevm \| somnia \| monad \| hyperliquid \| megaeth \| ink \| robinhood` | Yes | The chain slug, such as `ethereum` or `base`. Values outside the enum are rejected by the API. |
+| `protocol_address` | `string` | Yes | The Seaport contract address, such as OpenSea's 0x0000000000000068f116a894984e2db1123eb395. |
+| `order_hash` | `string` | Yes | The `order_hash` from a listing or offer row. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="order full type">
+
+```ts
+{
+  order_hash?: string | null,
+  chain: string,
+  protocol?: string | null,
+  protocol_address?: string | null,
+  remaining_quantity?: number | null,
+  order_created_at?: number | null,
+  asset?: {
+    contract: string,
+    identifier?: string | null
+  } | null,
+  protocol_data?: {
+    parameters?: Record<string, unknown> | null,
+    signature?: string | null
+  } | null,
+  price?: {
+    current?: {
+      currency?: string | null,
+      decimals?: number | null,
+      value?: string | null
+    } | null
+  } | null,
+  price_per_item?: {
+    currency?: string | null,
+    decimals?: number | null,
+    value?: string | null
+  } | null,
+  type?: string | null,
+  status?: string | null
+}
 ```
 </Accordion>
 </AccordionGroup>

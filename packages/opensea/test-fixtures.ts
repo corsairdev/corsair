@@ -360,3 +360,137 @@ export const invalidKeyBody = { errors: ['Invalid API key'] } as const;
 export const notFoundBody = {
 	error: { message: 'Not Found', status: 'NOT_FOUND', code: 404 },
 } as const;
+
+// ── Captured from the live API with a real key ────────────────────────────
+
+export const ownersFixture = {
+	owners: [
+		{
+			address: '0x46efbaedc92067e6d60e84ed6395099723252496',
+			quantity: 1,
+			quantity_string: '1',
+		},
+	],
+	next: null,
+} as const;
+
+export const floorPricesFixture = {
+	floor_prices: [
+		{
+			time: 1794211644.768,
+			usd_price: '11954.648199',
+			token_unit: 5.7199,
+			symbol: null,
+			chain: 'ethereum',
+		},
+		{
+			time: 1794229070.751,
+			usd_price: '12277.670277',
+			token_unit: 5.7777,
+			symbol: null,
+			chain: 'ethereum',
+		},
+	],
+} as const;
+
+/** `percentage` is a fraction: 0.0127 means 1.27%. */
+export const holdersFixture = {
+	holders: [
+		{
+			address: '0x68a24ab6dc7e2f8dedd2993eb178a68e0b7473d4',
+			quantity: 127,
+			percentage: 0.0127,
+		},
+		{
+			address: '0xf395767ae0e947504651a33ac2899520c551955d',
+			quantity: 117,
+			percentage: 0.0117,
+		},
+	],
+	next: 'WzExNywiMHhmMzk1NzY3YWUwZTk0NzUwNDY1MWEzM2FjMjg5OTUyMGM1NTE5NTVkIl0',
+} as const;
+
+export const accountFixture = {
+	address: '0xaba7161a7fb69c88e16ed9f455ce62b791ee4d03',
+	username: 'BoredApeYachtClub',
+	display_name: 'BoredApeYachtClub',
+	ens_name: null,
+	is_verified: true,
+	is_agent: false,
+	follower_count: 12,
+	following_count: 0,
+	profile_image_url:
+		'https://i2c.seadn.io/profiles/0xaba7161a7fb69c88e16ed9f455ce62b791ee4d03/avatar/bd0639d4297f57bbb88c840dc7a0df/82bd0639d4297f57bbb88c840dc7a0df.png',
+	banner_image_url:
+		'https://i2c.seadn.io/profiles/0xaba7161a7fb69c88e16ed9f455ce62b791ee4d03/banner/3dc0bdd11ad92fb560fb8311b51451/e73dc0bdd11ad92fb560fb8311b51451.jpeg',
+	bio: 'BAYC is a collection of 10,000 Bored Ape NFTs. Owning a Bored Ape doubles as your membership to the Club.',
+	joined_date: '2021-04-23',
+} as const;
+
+/**
+ * Captured live for a wallet with no history: `pnl_absolute` and
+ * `pnl_percentage` are absent rather than zero, and every figure is a string.
+ */
+export const portfolioFixture = {
+	total_value_usd: '0.00',
+	nft_value_usd: '0.00',
+	token_value_usd: '0.00',
+	timeframe: 'DAY',
+} as const;
+
+/** `/orders/chain/...` wraps the order; `offers.best` returns it bare. */
+export const orderFixture = {
+	order: {
+		order_hash:
+			'0x830a0a93980e21a464208a182b62ba5e8eee008d8e8d3062ee10ce075beb53f4',
+		chain: 'ethereum',
+		protocol_address: '0x0000000000000068f116a894984e2db1123eb395',
+		asset: {
+			identifier: '9933',
+			contract: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
+		},
+		remaining_quantity: 1,
+		order_created_at: 1794260807,
+		price: {
+			current: {
+				currency: 'ETH',
+				decimals: 18,
+				value: '5900000000000000000',
+			},
+		},
+		price_per_item: {
+			currency: 'ETH',
+			decimals: 18,
+			value: '5900000000000000000',
+		},
+		type: 'basic',
+		status: 'ACTIVE',
+	},
+} as const;
+
+export const bestOfferFixture = {
+	order_hash:
+		'0x830a0a93980e21a464208a182b62ba5e8eee008d8e8d3062ee10ce075beb53f4',
+	chain: 'ethereum',
+	protocol_address: '0x0000000000000068f116a894984e2db1123eb395',
+	asset: {
+		identifier: '9933',
+		contract: '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
+	},
+	remaining_quantity: 1,
+	order_created_at: 1794260807,
+	price: {
+		current: {
+			currency: 'ETH',
+			decimals: 18,
+			value: '5900000000000000000',
+		},
+	},
+	price_per_item: {
+		currency: 'ETH',
+		decimals: 18,
+		value: '5900000000000000000',
+	},
+	type: 'basic',
+	status: 'ACTIVE',
+} as const;

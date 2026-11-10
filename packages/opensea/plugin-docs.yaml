@@ -17,6 +17,10 @@ overviewNote: |-
   `collections.list` also accepts a `chain` filter, but the generator renders an
   enum unquoted, so that one is named here rather than in the example.
 
+  Order lookups come in two shapes. `orders.get` wraps the result under `order`;
+  `offers.best` returns the order bare. Both carry the Seaport `protocol_data`
+  and the `order_hash` that identifies the order.
+
   Paged routes take a `next` cursor and return it back. Pass the previous
   response's `next` as this call's `next`; it is `null` on the last page.
 

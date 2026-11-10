@@ -137,6 +137,109 @@ describeIfKey('OpenSea live smoke', () => {
 		expect(offers.offers.length).toBeGreaterThan(0);
 	});
 
+	it('reads the contract, owner, order and analytics routes', async () => {
+		const contract = Outputs.contractNfts.parse(
+			await makeOpenseaRequest(API_KEY as string, {
+				method: 'GET',
+				path: '/chain/ethereum/contract/0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D/nfts',
+				query: { limit: 1 },
+			}),
+		);
+		expect(contract.nfts.length).toBeGreaterThan(0);
+
+		const owners = Outputs.nftsOwners.parse(
+			await makeOpenseaRequest(API_KEY as string, {
+				method: 'GET',
+				path: '/chain/ethereum/contract/0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D/nfts/1/owners',
+				query: { limit: 1 },
+			}),
+		);
+		expect(owners.owners.length).toBeGreaterThan(0);
+
+		const floor = Outputs.collectionsFloorPrices.parse(
+			await makeOpenseaRequest(API_KEY as string, {
+				method: 'GET',
+				path: '/collections/boredapeyachtclub/floor_prices',
+			}),
+		);
+		expect(floor.floor_prices.length).toBeGreaterThan(0);
+
+		const holders = Outputs.collectionsHolders.parse(
+			await makeOpenseaRequest(API_KEY as string, {
+				method: 'GET',
+				path: '/collections/boredapeyachtclub/holders',
+				query: { limit: 1 },
+			}),
+		);
+		expect(holders.holders.length).toBeGreaterThan(0);
+	});
+
+	it('reads an account, its portfolio, and one order', async () => {
+		const account = Outputs.accountsGet.parse(
+			await makeOpenseaRequest(API_KEY as string, {
+				method: 'GET',
+				path: '/accounts/boredapeyachtclub',
+			}),
+		);
+		expect(account.address).toBeTruthy();
+
+		const portfolio = Outputs.accountsPortfolio.parse(
+			await makeOpenseaRequest(API_KEY as string, {
+				method: 'GET',
+				path: `/account/${account.address}/portfolio`,
+			}),
+		);
+		// Every figure is a string, and the fields are present even at zero.
+		expect(typeof portfolio.total_value_usd).toBe('string');
+
+		const best = Outputs.offersBest.parse(
+			await makeOpenseaRequest(API_KEY as string, {
+				method: 'GET',
+				path: '/offers/collection/boredapeyachtclub/nfts/1/best',
+			}),
+		);
+		// Bare order, not wrapped.
+		expect(best.order_hash).toBeTruthy();
+		if (!best.order_hash) return;
+
+		const order = Outputs.ordersGet.parse(
+			await makeOpenseaRequest(API_KEY as string, {
+				method: 'GET',
+				path: `/orders/chain/${best.chain}/protocol/${best.protocol_address}/${best.order_hash}`,
+			}),
+		);
+		expect(order.order.order_hash).toBe(best.order_hash);
+	});
+
+	it('reads every listing and every offer for a collection', async () => {
+		const listings = Outputs.listingsAll.parse(
+			await makeOpenseaRequest(API_KEY as string, {
+				method: 'GET',
+				path: '/listings/collection/boredapeyachtclub/all',
+				query: { limit: 1 },
+			}),
+		);
+		expect(listings.listings.length).toBeGreaterThan(0);
+
+		const offers = Outputs.offersAll.parse(
+			await makeOpenseaRequest(API_KEY as string, {
+				method: 'GET',
+				path: '/offers/collection/boredapeyachtclub/all',
+				query: { limit: 1 },
+			}),
+		);
+		expect(offers.offers.length).toBeGreaterThan(0);
+
+		const events = Outputs.eventsCollection.parse(
+			await makeOpenseaRequest(API_KEY as string, {
+				method: 'GET',
+				path: '/events/collection/boredapeyachtclub',
+				query: { limit: 1 },
+			}),
+		);
+		expect(events.asset_events.length).toBeGreaterThan(0);
+	});
+
 	it('reports a rejected key as an auth error', async () => {
 		const error = await failure(
 			makeOpenseaRequest('not-a-real-key', {

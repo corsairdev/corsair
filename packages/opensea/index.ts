@@ -15,7 +15,7 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Marketplace } from './endpoints';
+import { Extended, Marketplace } from './endpoints';
 import type {
 	OpenseaEndpointInputs,
 	OpenseaEndpointOutputs,
@@ -62,12 +62,23 @@ export type OpenseaEndpoints = {
 	collectionsTop: OpenseaEndpoint<'collectionsTop'>;
 	collectionsTrending: OpenseaEndpoint<'collectionsTrending'>;
 	collectionNfts: OpenseaEndpoint<'collectionNfts'>;
+	contractNfts: OpenseaEndpoint<'contractNfts'>;
 	nftsGet: OpenseaEndpoint<'nftsGet'>;
+	nftsOwners: OpenseaEndpoint<'nftsOwners'>;
 	eventsList: OpenseaEndpoint<'eventsList'>;
+	eventsCollection: OpenseaEndpoint<'eventsCollection'>;
 	search: OpenseaEndpoint<'search'>;
 	traitsList: OpenseaEndpoint<'traitsList'>;
 	listingsBest: OpenseaEndpoint<'listingsBest'>;
+	listingsAll: OpenseaEndpoint<'listingsAll'>;
 	offersCollection: OpenseaEndpoint<'offersCollection'>;
+	offersAll: OpenseaEndpoint<'offersAll'>;
+	offersBest: OpenseaEndpoint<'offersBest'>;
+	ordersGet: OpenseaEndpoint<'ordersGet'>;
+	collectionsFloorPrices: OpenseaEndpoint<'collectionsFloorPrices'>;
+	collectionsHolders: OpenseaEndpoint<'collectionsHolders'>;
+	accountsGet: OpenseaEndpoint<'accountsGet'>;
+	accountsPortfolio: OpenseaEndpoint<'accountsPortfolio'>;
 };
 
 // OpenSea sends no inbound webhooks. It publishes a Stream API over WebSocket
@@ -87,15 +98,29 @@ const openseaEndpointsNested = {
 		stats: Marketplace.stats,
 		top: Marketplace.top,
 		trending: Marketplace.trending,
+		floorPrices: Extended.floorPrices,
+		holders: Extended.holders,
 	},
 	collection: {
 		nfts: Marketplace.nfts,
 	},
+	contract: {
+		nfts: Extended.contractNfts,
+	},
 	nfts: {
 		get: Marketplace.nft,
+		owners: Extended.nftOwners,
 	},
 	events: {
 		list: Marketplace.events,
+		collection: Extended.collectionEvents,
+	},
+	accounts: {
+		get: Extended.account,
+		portfolio: Extended.portfolio,
+	},
+	orders: {
+		get: Extended.getOrder,
 	},
 	search: {
 		search: Marketplace.search,
@@ -105,9 +130,12 @@ const openseaEndpointsNested = {
 	},
 	listings: {
 		best: Marketplace.bestListings,
+		all: Extended.allListings,
 	},
 	offers: {
 		collection: Marketplace.collectionOffers,
+		all: Extended.allOffers,
+		best: Extended.bestOffer,
 	},
 } as const;
 
@@ -138,17 +166,49 @@ export const openseaEndpointSchemas = {
 		input: OpenseaEndpointInputSchemas.collectionsTrending,
 		output: OpenseaEndpointOutputSchemas.collectionsTrending,
 	},
+	'collections.floorPrices': {
+		input: OpenseaEndpointInputSchemas.collectionsFloorPrices,
+		output: OpenseaEndpointOutputSchemas.collectionsFloorPrices,
+	},
+	'collections.holders': {
+		input: OpenseaEndpointInputSchemas.collectionsHolders,
+		output: OpenseaEndpointOutputSchemas.collectionsHolders,
+	},
 	'collection.nfts': {
 		input: OpenseaEndpointInputSchemas.collectionNfts,
 		output: OpenseaEndpointOutputSchemas.collectionNfts,
+	},
+	'contract.nfts': {
+		input: OpenseaEndpointInputSchemas.contractNfts,
+		output: OpenseaEndpointOutputSchemas.contractNfts,
 	},
 	'nfts.get': {
 		input: OpenseaEndpointInputSchemas.nftsGet,
 		output: OpenseaEndpointOutputSchemas.nftsGet,
 	},
+	'nfts.owners': {
+		input: OpenseaEndpointInputSchemas.nftsOwners,
+		output: OpenseaEndpointOutputSchemas.nftsOwners,
+	},
 	'events.list': {
 		input: OpenseaEndpointInputSchemas.eventsList,
 		output: OpenseaEndpointOutputSchemas.eventsList,
+	},
+	'events.collection': {
+		input: OpenseaEndpointInputSchemas.eventsCollection,
+		output: OpenseaEndpointOutputSchemas.eventsCollection,
+	},
+	'accounts.get': {
+		input: OpenseaEndpointInputSchemas.accountsGet,
+		output: OpenseaEndpointOutputSchemas.accountsGet,
+	},
+	'accounts.portfolio': {
+		input: OpenseaEndpointInputSchemas.accountsPortfolio,
+		output: OpenseaEndpointOutputSchemas.accountsPortfolio,
+	},
+	'orders.get': {
+		input: OpenseaEndpointInputSchemas.ordersGet,
+		output: OpenseaEndpointOutputSchemas.ordersGet,
 	},
 	'search.search': {
 		input: OpenseaEndpointInputSchemas.search,
@@ -162,9 +222,21 @@ export const openseaEndpointSchemas = {
 		input: OpenseaEndpointInputSchemas.listingsBest,
 		output: OpenseaEndpointOutputSchemas.listingsBest,
 	},
+	'listings.all': {
+		input: OpenseaEndpointInputSchemas.listingsAll,
+		output: OpenseaEndpointOutputSchemas.listingsAll,
+	},
 	'offers.collection': {
 		input: OpenseaEndpointInputSchemas.offersCollection,
 		output: OpenseaEndpointOutputSchemas.offersCollection,
+	},
+	'offers.all': {
+		input: OpenseaEndpointInputSchemas.offersAll,
+		output: OpenseaEndpointOutputSchemas.offersAll,
+	},
+	'offers.best': {
+		input: OpenseaEndpointInputSchemas.offersBest,
+		output: OpenseaEndpointOutputSchemas.offersBest,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof openseaEndpointsNested
@@ -208,25 +280,65 @@ const openseaEndpointMeta = {
 		description:
 			'Collections ranked by momentum over a window, `one_day` by default. Same page shape and cursor as `collections.top`.',
 	},
+	'collections.floorPrices': {
+		riskLevel: 'read',
+		description:
+			'Floor price over time for one collection, as points carrying a float unix timestamp, a USD string and a token-unit price. Narrow with `timeframe` or a `resolution` in seconds.',
+	},
+	'collections.holders': {
+		riskLevel: 'read',
+		description:
+			'Wallet addresses holding one collection, with each amount and its share of supply as a fraction (`0.0127` is 1.27%). Sort by quantity either way, and page with `next`.',
+	},
 	'collection.nfts': {
 		riskLevel: 'read',
 		description:
 			'The NFTs in one collection, paged with `next`. Filter by trait with `trait_type:value`, several joined by commas.',
+	},
+	'contract.nfts': {
+		riskLevel: 'read',
+		description:
+			'Every NFT a contract has issued, paged with `next`. Use this to walk a contract whose collection slug you do not have; `collection.nfts` is the same rows keyed by slug.',
 	},
 	'nfts.get': {
 		riskLevel: 'read',
 		description:
 			'One NFT by chain, contract address and token id, with its owners and traits. The token id goes in as a string, because some collections use ids beyond the safe integer range.',
 	},
+	'nfts.owners': {
+		riskLevel: 'read',
+		description:
+			'Wallets holding one token, with the quantity each holds. Useful for an ERC-1155 or a fractionalised token, where more than one address holds the same id.',
+	},
 	'events.list': {
 		riskLevel: 'read',
 		description:
 			'Marketplace events, newest first, paged with `next`. Narrow by event type and by an `after` or `before` unix timestamp.',
 	},
+	'events.collection': {
+		riskLevel: 'read',
+		description:
+			'Marketplace events limited to one collection, paged with `next`. Narrow by event type, trait filter or a time window. The account-wide `events.list` is the same shape without the collection scope.',
+	},
 	'search.search': {
 		riskLevel: 'read',
 		description:
 			'Search across collections, NFTs, tokens and accounts. Each result carries a `type` and one payload key, so branch on `type` before reading the rest.',
+	},
+	'accounts.get': {
+		riskLevel: 'read',
+		description:
+			'One OpenSea profile by wallet address or username, with its display name, bio, follower counts and verification flag. `is_agent` is a self-declaration, not a check by OpenSea.',
+	},
+	'accounts.portfolio': {
+		riskLevel: 'read',
+		description:
+			'USD value of one wallet\u2019s NFTs and tokens, with profit and loss over a timeframe. Every figure is a string. `pnl_absolute` and `pnl_percentage` are absent, not zero, when the account has no history.',
+	},
+	'orders.get': {
+		riskLevel: 'read',
+		description:
+			'One order by chain, Seaport contract address and order hash, as a single object rather than an array. Takes the `order_hash` from a listing or offer row; a cancelled or filled order still answers with its final state.',
 	},
 	'traits.list': {
 		riskLevel: 'read',
@@ -237,6 +349,21 @@ const openseaEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'The cheapest active listings in one collection, paged with `next`. Each order carries a Seaport `protocol_data` payload and its `order_hash` for a later fulfilment call.',
+	},
+	'listings.all': {
+		riskLevel: 'read',
+		description:
+			'Every active listing in a collection, paged with `next`, including private ones when asked. Filter by `maker` to see one seller\u2019s listings. `listings.best` gives only the cheapest per token.',
+	},
+	'offers.all': {
+		riskLevel: 'read',
+		description:
+			'Every active offer on a collection, paged with `next`, including trait and per-token offers. Filter by `maker` for one bidder. `offers.collection` gives only the collection-wide ones.',
+	},
+	'offers.best': {
+		riskLevel: 'read',
+		description:
+			'The highest active offer on one token in a collection, as a single order object. Answers an empty or 404 result when nobody has bid on that token.',
 	},
 	'offers.collection': {
 		riskLevel: 'read',

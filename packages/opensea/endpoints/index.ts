@@ -1,4 +1,5 @@
+import * as Extended from './extended';
 import * as Marketplace from './marketplace';
 
-export { Marketplace };
+export { Extended, Marketplace };
 export * from './types';

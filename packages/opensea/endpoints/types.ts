@@ -377,6 +377,43 @@ const NftResponseSchema = z
 
 export type NftGetResponse = z.infer<typeof NftResponseSchema>;
 
+const ContractNftsInputSchema = z.object({
+	chain: ChainIdentifierSchema,
+	address: z.string().min(1).describe('The contract address.'),
+	limit: z.number().int().min(1).optional().describe('Page size.'),
+	next: z.string().min(1).optional().describe('The `next` cursor.'),
+});
+
+export type ContractNftsInput = z.input<typeof ContractNftsInputSchema>;
+
+const ContractNftInputSchema = z.object({
+	chain: ChainIdentifierSchema,
+	address: z.string().min(1).describe('The contract address.'),
+	identifier: z.string().min(1).describe('The token id, as a string.'),
+});
+
+export type ContractNftInput = z.input<typeof ContractNftInputSchema>;
+
+const OwnersInputSchema = z.object({
+	chain: ChainIdentifierSchema,
+	address: z.string().min(1).describe('The contract address.'),
+	identifier: z.string().min(1).describe('The token id, as a string.'),
+	limit: z.number().int().min(1).optional().describe('Defaults to 20.'),
+	next: z.string().min(1).optional().describe('The `next` cursor.'),
+});
+
+export type OwnersInput = z.input<typeof OwnersInputSchema>;
+
+/** Captured live: `address`, `quantity` and `quantity_string`. */
+const OwnersResponseSchema = z
+	.object({
+		owners: z.array(OwnerSchema),
+		next: z.string().nullish(),
+	})
+	.loose();
+
+export type OwnersResponse = z.infer<typeof OwnersResponseSchema>;
+
 // ── Events ────────────────────────────────────────────────────────────────
 
 /**
@@ -436,6 +473,34 @@ const EventsListResponseSchema = z
 	.loose();
 
 export type EventsListResponse = z.infer<typeof EventsListResponseSchema>;
+
+const CollectionEventsInputSchema = z.object({
+	slug: z.string().min(1).describe('The collection slug.'),
+	event_type: z
+		.array(z.enum(OPENSEA_EVENT_TYPES))
+		.min(1)
+		.optional()
+		.describe('Only these event types.'),
+	traits: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Trait filter, as `trait_type:value`, comma separated.'),
+	after: z
+		.number()
+		.int()
+		.optional()
+		.describe('Only events after this unix timestamp.'),
+	before: z
+		.number()
+		.int()
+		.optional()
+		.describe('Only events before this unix timestamp.'),
+	limit: z.number().int().min(1).optional().describe('Page size.'),
+	next: z.string().min(1).optional().describe('The `next` cursor.'),
+});
+
+export type CollectionEventsInput = z.input<typeof CollectionEventsInputSchema>;
 
 // ── Search and traits ─────────────────────────────────────────────────────
 
@@ -600,6 +665,230 @@ const OffersResponseSchema = z
 
 export type OffersResponse = z.infer<typeof OffersResponseSchema>;
 
+const AllListingsInputSchema = z.object({
+	slug: z.string().min(1).describe('The collection slug.'),
+	include_private_listings: z
+		.boolean()
+		.optional()
+		.describe('Include listings not shown on the public marketplace.'),
+	maker: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Only listings signed by this wallet address.'),
+	limit: z.number().int().min(1).optional().describe('Page size.'),
+	next: z.string().min(1).optional().describe('The `next` cursor.'),
+});
+
+export type AllListingsInput = z.input<typeof AllListingsInputSchema>;
+
+const AllOffersInputSchema = z.object({
+	slug: z.string().min(1).describe('The collection slug.'),
+	maker: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Only offers made from this wallet address.'),
+	limit: z.number().int().min(1).optional().describe('Page size.'),
+	next: z.string().min(1).optional().describe('The `next` cursor.'),
+});
+
+export type AllOffersInput = z.input<typeof AllOffersInputSchema>;
+
+const BestOfferInputSchema = z.object({
+	slug: z.string().min(1).describe('The collection slug.'),
+	identifier: z
+		.string()
+		.min(1)
+		.describe('The token id within the collection, as a string.'),
+});
+
+export type BestOfferInput = z.input<typeof BestOfferInputSchema>;
+
+/**
+ * The best offer arrives **bare**, not wrapped in `order`, which is what live
+ * responses show even though the published spec describes the same `Offer`
+ * object the list routes nest. Captured: the top-level keys are `order_hash`,
+ * `chain`, `protocol_data`, `protocol_address`, `asset`, `remaining_quantity`,
+ * `order_created_at`, `criteria`, `price`, `price_per_item` and `status`. An
+ * unknown token answers 404 `NFT with identifier … not found in collection …`.
+ */
+const BestOfferResponseSchema = OrderSchema;
+
+export type BestOfferResponse = z.infer<typeof BestOfferResponseSchema>;
+
+/** A single order under `/orders/chain/...` arrives wrapped under `order`. */
+const OrderResponseSchema = z
+	.object({
+		order: OrderSchema,
+	})
+	.loose();
+
+export type OrderResponse = z.infer<typeof OrderResponseSchema>;
+
+const OrderGetInputSchema = z.object({
+	chain: ChainIdentifierSchema,
+	protocol_address: z
+		.string()
+		.min(1)
+		.describe(
+			"The Seaport contract address, such as OpenSea's 0x0000000000000068f116a894984e2db1123eb395.",
+		),
+	order_hash: z
+		.string()
+		.min(1)
+		.describe('The `order_hash` from a listing or offer row.'),
+});
+
+export type OrderGetInput = z.input<typeof OrderGetInputSchema>;
+
+// ── Collection analytics ──────────────────────────────────────────────────
+
+const FloorPricesInputSchema = z.object({
+	slug: z.string().min(1).describe('The collection slug.'),
+	timeframe: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Window to report. The API defaults to `one_day`.'),
+	resolution: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Bucket width in seconds. The spec gives no default or bounds.'),
+});
+
+export type FloorPricesInput = z.input<typeof FloorPricesInputSchema>;
+
+/** Captured live: `time` is a float unix timestamp, not an integer. */
+const FloorPricePointSchema = z
+	.object({
+		time: z.number().nullish(),
+		usd_price: z.string().nullish(),
+		token_unit: z.number().nullish(),
+		symbol: z.string().nullish(),
+		chain: z.string().nullish(),
+	})
+	.loose();
+
+const FloorPricesResponseSchema = z
+	.object({
+		floor_prices: z.array(FloorPricePointSchema),
+	})
+	.loose();
+
+export type FloorPricesResponse = z.infer<typeof FloorPricesResponseSchema>;
+
+const HoldersInputSchema = z.object({
+	slug: z.string().min(1).describe('The collection slug.'),
+	limit: z.number().int().min(1).optional().describe('Defaults to 20.'),
+	cursor: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('The `next` cursor from a previous page.'),
+	sort_direction: z
+		.enum(['asc', 'desc'])
+		.optional()
+		.describe('Order by quantity held. Defaults to `desc`.'),
+	owned_by: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Only report this wallet address.'),
+});
+
+export type HoldersInput = z.input<typeof HoldersInputSchema>;
+
+/** Captured live: `percentage` arrives as a fraction, 0.0127 for 1.27%. */
+const HolderSchema = z
+	.object({
+		address: z.string(),
+		quantity: z.number().nullish(),
+		percentage: z.number().nullish(),
+	})
+	.loose();
+
+const HoldersResponseSchema = z
+	.object({
+		holders: z.array(HolderSchema),
+		next: z.string().nullish(),
+	})
+	.loose();
+
+export type HoldersResponse = z.infer<typeof HoldersResponseSchema>;
+
+// ── Accounts ──────────────────────────────────────────────────────────────
+
+const AccountGetInputSchema = z.object({
+	address_or_username: z
+		.string()
+		.min(1)
+		.max(256)
+		.describe('A wallet address or an OpenSea username.'),
+});
+
+export type AccountGetInput = z.input<typeof AccountGetInputSchema>;
+
+const AccountSchema = z
+	.object({
+		address: z.string(),
+		username: z.string().nullish(),
+		display_name: z.string().nullish(),
+		bio: z.string().nullish(),
+		ens_name: z.string().nullish(),
+		banner_image_url: z.string().nullish(),
+		profile_image_url: z.string().nullish(),
+		follower_count: z.number().nullish(),
+		following_count: z.number().nullish(),
+		is_verified: z.boolean().nullish(),
+		is_agent: z.boolean().nullish(),
+		joined_date: z.string().nullish(),
+	})
+	.loose();
+
+export type OpenseaAccount = z.infer<typeof AccountSchema>;
+
+/** A single account arrives bare. */
+const AccountGetResponseSchema = AccountSchema;
+
+export type AccountGetResponse = z.infer<typeof AccountGetResponseSchema>;
+
+const PortfolioInputSchema = z.object({
+	address: z.string().min(1).describe('The wallet address to value.'),
+	timeframe: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Window for the P&L figures. The API defaults to `DAY`.'),
+	chains: z
+		.array(ChainIdentifierSchema)
+		.min(1)
+		.optional()
+		.describe('Only value assets on these chains.'),
+});
+
+export type PortfolioInput = z.input<typeof PortfolioInputSchema>;
+
+/**
+ * Captured live: every money figure is a **string**, and `pnl_absolute` and
+ * `pnl_percentage` are absent entirely when the account has no history, rather
+ * than zero. `nft_value_usd` and the rest arrive even for an empty wallet.
+ */
+const PortfolioResponseSchema = z
+	.object({
+		total_value_usd: z.string().nullish(),
+		nft_value_usd: z.string().nullish(),
+		token_value_usd: z.string().nullish(),
+		pnl_absolute: z.string().nullish(),
+		pnl_percentage: z.string().nullish(),
+		timeframe: z.string().nullish(),
+	})
+	.loose();
+
+export type PortfolioResponse = z.infer<typeof PortfolioResponseSchema>;
+
 // ── Registry ──────────────────────────────────────────────────────────────
 
 export type OpenseaEndpointInputs = {
@@ -610,12 +899,23 @@ export type OpenseaEndpointInputs = {
 	collectionsTop: CollectionsTopInput;
 	collectionsTrending: TrendingCollectionsInput;
 	collectionNfts: CollectionNftsInput;
+	contractNfts: ContractNftsInput;
 	nftsGet: NftsGetInput;
+	nftsOwners: OwnersInput;
 	eventsList: EventsListInput;
+	eventsCollection: CollectionEventsInput;
 	search: SearchInput;
 	traitsList: TraitsListInput;
 	listingsBest: BestListingsInput;
+	listingsAll: AllListingsInput;
 	offersCollection: CollectionOffersInput;
+	offersAll: AllOffersInput;
+	offersBest: BestOfferInput;
+	ordersGet: OrderGetInput;
+	collectionsFloorPrices: FloorPricesInput;
+	collectionsHolders: HoldersInput;
+	accountsGet: AccountGetInput;
+	accountsPortfolio: PortfolioInput;
 };
 
 export type OpenseaEndpointOutputs = {
@@ -626,12 +926,23 @@ export type OpenseaEndpointOutputs = {
 	collectionsTop: RankedCollectionsResponse;
 	collectionsTrending: RankedCollectionsResponse;
 	collectionNfts: NftListResponse;
+	contractNfts: NftListResponse;
 	nftsGet: NftGetResponse;
+	nftsOwners: OwnersResponse;
 	eventsList: EventsListResponse;
+	eventsCollection: EventsListResponse;
 	search: SearchResponse;
 	traitsList: TraitsListResponse;
 	listingsBest: ListingsResponse;
+	listingsAll: ListingsResponse;
 	offersCollection: OffersResponse;
+	offersAll: OffersResponse;
+	offersBest: BestOfferResponse;
+	ordersGet: OrderResponse;
+	collectionsFloorPrices: FloorPricesResponse;
+	collectionsHolders: HoldersResponse;
+	accountsGet: AccountGetResponse;
+	accountsPortfolio: PortfolioResponse;
 };
 
 export const OpenseaEndpointInputSchemas = {
@@ -642,12 +953,23 @@ export const OpenseaEndpointInputSchemas = {
 	collectionsTop: CollectionsTopInputSchema,
 	collectionsTrending: TrendingCollectionsInputSchema,
 	collectionNfts: CollectionNftsInputSchema,
+	contractNfts: ContractNftsInputSchema,
 	nftsGet: NftsGetInputSchema,
+	nftsOwners: OwnersInputSchema,
 	eventsList: EventsListInputSchema,
+	eventsCollection: CollectionEventsInputSchema,
 	search: SearchInputSchema,
 	traitsList: TraitsListInputSchema,
 	listingsBest: BestListingsInputSchema,
+	listingsAll: AllListingsInputSchema,
 	offersCollection: CollectionOffersInputSchema,
+	offersAll: AllOffersInputSchema,
+	offersBest: BestOfferInputSchema,
+	ordersGet: OrderGetInputSchema,
+	collectionsFloorPrices: FloorPricesInputSchema,
+	collectionsHolders: HoldersInputSchema,
+	accountsGet: AccountGetInputSchema,
+	accountsPortfolio: PortfolioInputSchema,
 } as const;
 
 export const OpenseaEndpointOutputSchemas = {
@@ -658,10 +980,21 @@ export const OpenseaEndpointOutputSchemas = {
 	collectionsTop: RankedCollectionsResponseSchema,
 	collectionsTrending: RankedCollectionsResponseSchema,
 	collectionNfts: NftListResponseSchema,
+	contractNfts: NftListResponseSchema,
 	nftsGet: NftResponseSchema,
+	nftsOwners: OwnersResponseSchema,
 	eventsList: EventsListResponseSchema,
+	eventsCollection: EventsListResponseSchema,
 	search: SearchResponseSchema,
 	traitsList: TraitsResponseSchema,
 	listingsBest: ListingsResponseSchema,
+	listingsAll: ListingsResponseSchema,
 	offersCollection: OffersResponseSchema,
+	offersAll: OffersResponseSchema,
+	offersBest: BestOfferResponseSchema,
+	ordersGet: OrderResponseSchema,
+	collectionsFloorPrices: FloorPricesResponseSchema,
+	collectionsHolders: HoldersResponseSchema,
+	accountsGet: AccountGetResponseSchema,
+	accountsPortfolio: PortfolioResponseSchema,
 } as const;

@@ -1,17 +1,24 @@
 import type { OpenseaContext } from './index';
 import { opensea } from './index';
 import {
+	accountFixture,
+	bestOfferFixture,
 	chainsFixture,
 	collectionFixture,
 	collectionStatsFixture,
 	collectionsLastPageFixture,
 	collectionsPageFixture,
 	eventsPageFixture,
+	floorPricesFixture,
+	holdersFixture,
 	listingsLastPageFixture,
 	listingsPageFixture,
 	nftFixture,
 	nftsPageFixture,
 	offersPageFixture,
+	orderFixture,
+	ownersFixture,
+	portfolioFixture,
 	searchFixture,
 	traitsFixture,
 } from './test-fixtures';
@@ -379,6 +386,157 @@ describe('events, search and orders', () => {
 		expect(parsed.pathname).toBe('/api/v2/offers/collection/boredapeyachtclub');
 		expect(parsed.searchParams.get('limit')).toBe('5');
 		expect(result.offers).toHaveLength(1);
+	});
+});
+
+describe('extended reads', () => {
+	it('contract.nfts GETs the contract NFT list', async () => {
+		respond(nftsPageFixture);
+		await run(
+			{ chain: 'ethereum', address: '0xabc', limit: 5, next: 'C1' },
+			endpoints.contract.nfts,
+		);
+		const { parsed, init } = lastCall();
+		expect(init.method).toBe('GET');
+		expect(parsed.pathname).toBe('/api/v2/chain/ethereum/contract/0xabc/nfts');
+		expect(parsed.searchParams.get('limit')).toBe('5');
+		expect(parsed.searchParams.get('next')).toBe('C1');
+	});
+
+	it('nfts.owners GETs the token owners', async () => {
+		respond(ownersFixture);
+		const { result } = await run(
+			{ chain: 'ethereum', address: '0xabc', identifier: '1', limit: 2 },
+			endpoints.nfts.owners,
+		);
+		expect(lastCall().parsed.pathname).toBe(
+			'/api/v2/chain/ethereum/contract/0xabc/nfts/1/owners',
+		);
+		expect(result.owners.length).toBeGreaterThan(0);
+	});
+
+	it('events.collection GETs the collection events with a trait filter', async () => {
+		respond(eventsPageFixture);
+		await run(
+			{
+				slug: 'boredapeyachtclub',
+				event_type: ['sale'],
+				traits: 'Background:Blue',
+				limit: 5,
+			},
+			endpoints.events.collection,
+		);
+		const { parsed, init } = lastCall();
+		expect(init.method).toBe('GET');
+		expect(parsed.pathname).toBe('/api/v2/events/collection/boredapeyachtclub');
+		expect(parsed.searchParams.get('event_type')).toBe('sale');
+		expect(parsed.searchParams.get('traits')).toBe('Background:Blue');
+	});
+
+	it('listings.all GETs every listing, comma-joining nothing', async () => {
+		respond(listingsPageFixture);
+		await run(
+			{ slug: 'boredapeyachtclub', maker: '0xmaker', limit: 5 },
+			endpoints.listings.all,
+		);
+		const { parsed } = lastCall();
+		expect(parsed.pathname).toBe(
+			'/api/v2/listings/collection/boredapeyachtclub/all',
+		);
+		expect(parsed.searchParams.get('maker')).toBe('0xmaker');
+	});
+
+	it('offers.all GETs every offer', async () => {
+		respond(offersPageFixture);
+		await run(
+			{ slug: 'boredapeyachtclub', maker: '0xmaker', limit: 5 },
+			endpoints.offers.all,
+		);
+		const { parsed } = lastCall();
+		expect(parsed.pathname).toBe(
+			'/api/v2/offers/collection/boredapeyachtclub/all',
+		);
+		expect(parsed.searchParams.get('maker')).toBe('0xmaker');
+	});
+
+	it('offers.best GETs one token best offer', async () => {
+		respond(bestOfferFixture);
+		const { result } = await run(
+			{ slug: 'boredapeyachtclub', identifier: '1' },
+			endpoints.offers.best,
+		);
+		expect(lastCall().parsed.pathname).toBe(
+			'/api/v2/offers/collection/boredapeyachtclub/nfts/1/best',
+		);
+		// Bare order, not wrapped in `order`.
+		expect(result.order_hash).toBeTruthy();
+	});
+
+	it('orders.get GETs one order by chain, protocol and hash', async () => {
+		respond(orderFixture);
+		const { result } = await run(
+			{
+				chain: 'ethereum',
+				protocol_address: '0x0000000000000068f116a894984e2db1123eb395',
+				order_hash: '0xdeadbeef',
+			},
+			endpoints.orders.get,
+		);
+		expect(lastCall().parsed.pathname).toBe(
+			'/api/v2/orders/chain/ethereum/protocol/0x0000000000000068f116a894984e2db1123eb395/0xdeadbeef',
+		);
+		expect(result.order.order_hash).toBeTruthy();
+	});
+
+	it('collections.floorPrices GETs the history with a timeframe', async () => {
+		respond(floorPricesFixture);
+		const { result } = await run(
+			{ slug: 'boredapeyachtclub', timeframe: 'seven_day', resolution: 3600 },
+			endpoints.collections.floorPrices,
+		);
+		const { parsed } = lastCall();
+		expect(parsed.pathname).toBe(
+			'/api/v2/collections/boredapeyachtclub/floor_prices',
+		);
+		expect(parsed.searchParams.get('timeframe')).toBe('seven_day');
+		expect(result.floor_prices.length).toBeGreaterThan(0);
+	});
+
+	it('collections.holders GETs holders with a sort direction', async () => {
+		respond(holdersFixture);
+		await run(
+			{ slug: 'boredapeyachtclub', limit: 2, sort_direction: 'desc' },
+			endpoints.collections.holders,
+		);
+		const { parsed } = lastCall();
+		expect(parsed.pathname).toBe(
+			'/api/v2/collections/boredapeyachtclub/holders',
+		);
+		expect(parsed.searchParams.get('sort_direction')).toBe('desc');
+	});
+
+	it('accounts.get GETs a profile by username', async () => {
+		respond(accountFixture);
+		const { result } = await run(
+			{ address_or_username: 'boredapeyachtclub' },
+			endpoints.accounts.get,
+		);
+		expect(lastCall().parsed.pathname).toBe(
+			'/api/v2/accounts/boredapeyachtclub',
+		);
+		expect(result.address).toBeTruthy();
+	});
+
+	it('accounts.portfolio GETs the portfolio with a comma-joined chain list', async () => {
+		respond(portfolioFixture);
+		const { result } = await run(
+			{ address: '0xabc', timeframe: 'WEEK', chains: ['ethereum', 'base'] },
+			endpoints.accounts.portfolio,
+		);
+		const { parsed } = lastCall();
+		expect(parsed.pathname).toBe('/api/v2/account/0xabc/portfolio');
+		expect(parsed.searchParams.get('chains')).toBe('ethereum,base');
+		expect(result.total_value_usd).toBeDefined();
 	});
 });
 
