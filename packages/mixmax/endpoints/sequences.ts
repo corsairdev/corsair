@@ -113,7 +113,9 @@ export const sequencesRecipientsList: MixmaxEndpoints['sequencesRecipientsList']
 			MixmaxEndpointOutputs['sequencesRecipientsList']
 		>(
 			ctx,
-			mixmaxPathParameter('/v1/sequences/{id}/recipients', 'id', input.id),
+			// The reference writes this route with a trailing slash, in the
+			// path and in its curl sample, so the request keeps it.
+			mixmaxPathParameter('/v1/sequences/{id}/recipients/', 'id', input.id),
 			{
 				method: 'GET',
 				query: {
@@ -143,7 +145,7 @@ export const sequencesRecipientsAdd: MixmaxEndpoints['sequencesRecipientsAdd'] =
 			input;
 		const result = await makeMixmaxRequest<
 			MixmaxEndpointOutputs['sequencesRecipientsAdd']
-		>(ctx, mixmaxPathParameter('/v1/sequences/{id}/recipients', 'id', id), {
+		>(ctx, mixmaxPathParameter('/v1/sequences/{id}/recipients/', 'id', id), {
 			method: 'POST',
 			body: {
 				recipients,

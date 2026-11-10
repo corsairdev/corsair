@@ -153,7 +153,7 @@ describe('Mixmax sequences endpoints', () => {
 		});
 	});
 
-	it('sequences.recipients.list sends GET /v1/sequences/:id/recipients and parses the bare array', async () => {
+	it('sequences.recipients.list sends GET /v1/sequences/:id/recipients/ (documented trailing slash) and parses the bare array', async () => {
 		const recipients = [
 			{
 				_id: 'r-1',
@@ -176,7 +176,7 @@ describe('Mixmax sequences endpoints', () => {
 
 		expect(request).toHaveBeenCalledWith(
 			ctx,
-			'/v1/sequences/seq-1/recipients',
+			'/v1/sequences/seq-1/recipients/',
 			{
 				method: 'GET',
 				query: {
@@ -222,7 +222,7 @@ describe('Mixmax sequences endpoints', () => {
 
 		expect(request).toHaveBeenCalledWith(
 			ctx,
-			'/v1/sequences/seq-1/recipients',
+			'/v1/sequences/seq-1/recipients/',
 			{
 				method: 'POST',
 				body: {
