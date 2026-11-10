@@ -56,17 +56,17 @@ export const errorHandlers = {
 				(error instanceof MiroAPIError ? error.retryAfter : undefined) ?? 2_000,
 		}),
 	},
-	// 5xx: retried with backoff. Every write here is addressed by a board and
-	// item id, and Miro creates the item server-side before answering, so a
-	// replay after a 5xx can leave a duplicate. That is the lesser risk against
-	// a caller who never learns the write succeeded.
+	// 5xx: a read is retried with backoff. A write is not: a 502 or 504 can come
+	// from a gateway after Miro applied it, and a second POST would add a second
+	// item, a second board copy or a second invitation email. The caller gets the
+	// error and can check the board before sending it again.
 	SERVER_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
 			return status !== undefined && status >= 500;
 		},
-		handler: async () => ({
-			maxRetries: 2,
+		handler: async (error: Error) => ({
+			maxRetries: error instanceof MiroAPIError && isRead(error.method) ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -95,7 +95,7 @@ export const errorHandlers = {
 	},
 } satisfies CorsairErrorHandler;
 
-/** Only a GET is safe to replay after a transport failure. */
+/** Only a GET is safe to replay after a transport failure or a 5xx. */
 function isRead(method: string | undefined): boolean {
 	return method === 'GET';
 }

@@ -132,14 +132,28 @@ describe('RATE_LIMIT_ERROR', () => {
 });
 
 describe('SERVER_ERROR', () => {
-	it('replays a 5xx with backoff', async () => {
-		const error = apiError(503, {});
+	it('replays a 5xx on a read with backoff', async () => {
+		const error = apiError(503, {}, { method: 'GET' });
 		expect(classify(error)).toBe('SERVER_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
 		});
 	});
+
+	it.each(['POST', 'PUT', 'PATCH', 'DELETE'])(
+		'does not replay a 5xx on a %s, which may have been applied',
+		async (method) => {
+			// A 502 or 504 can come from a gateway after Miro did the write; a
+			// second POST would add a second item, board copy or invitation.
+			const error = apiError(502, {}, { method });
+			expect(classify(error)).toBe('SERVER_ERROR');
+			expect(await strategy(error)).toEqual({
+				maxRetries: 0,
+				retryStrategy: 'exponential_backoff',
+			});
+		},
+	);
 
 	it('does not catch a 4xx', async () => {
 		expect(classify(apiError(400, badRequest))).not.toBe('SERVER_ERROR');

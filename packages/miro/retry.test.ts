@@ -78,16 +78,33 @@ describe('retries through the bound client', () => {
 		}
 	});
 
-	it('retries a 5xx on a create', async () => {
+	it('retries a 5xx on a read', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			respond({ status: 500, code: 'internal', message: 'boom' }, 500);
+			respond({ status: 502, code: 'internal', message: 'boom' }, 502);
+			respond(boardsListResponse);
+
+			const result = await corsair.miro.api.boards.list({});
+
+			expect(result.boards).toHaveLength(1);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('does not replay a create after a 5xx, which may have landed', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respond({ status: 502, code: 'internal', message: 'boom' }, 502);
+			// Queued so a replay, if one happened, would be counted rather than
+			// reach the network.
 			respond(board, 201);
 
-			const result = await corsair.miro.api.boards.create({ name: 'Roadmap' });
-
-			expect(result.id).toBe(board.id);
-			expect(fetchMock).toHaveBeenCalledTimes(2);
+			await expect(
+				corsair.miro.api.boards.create({ name: 'Roadmap' }),
+			).rejects.toMatchObject({ status: 502, method: 'POST' });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
 		}
