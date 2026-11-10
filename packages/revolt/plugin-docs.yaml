@@ -1,0 +1,60 @@
+displayName: Revolt (Stoat)
+description: Community chat with Revolt, now branded Stoat - read the account behind a bot or user token, users, direct messages, channels, servers and members, and read, send, edit and delete messages and add reactions.
+domain: revolt.chat
+recommendedAuth: api_key
+overviewNote: |
+  Revolt has been rebranded **Stoat**, and the published OpenAPI document now points at `api.stoat.chat`; `api.revolt.chat` still answers the same API. Create a bot in the client under user settings, or copy a user session token, then pass it here. Things to know before you call:
+
+  - **The header depends on the credential.** A bot token goes in `X-Bot-Token`, a user token in `X-Session-Token`. They are not interchangeable: a bot token in the session header is rejected. Set `credential: 'bot'` (the default) or `'user'`.
+  - **`Authorization` is not used.** Revolt ignores a bearer header entirely, which is why the plugin writes the token into its own header rather than `TOKEN`.
+  - **A custom host is supported.** `base_url` targets a self-hosted instance; the default is Stoat's production host.
+  - **A 429 can mean two different things.** `RateLimited` is the per-bucket throughput limit and clears on its own, with `retry_after` in the body in **milliseconds**. `Blocked` is Revolt refusing an action it considers abusive, and no retry clears it — so the block handler is matched first.
+  - **Messages come back with their authors.** A message list answers `messages` beside the `users` and `members` those messages reference, so a caller never has to resolve an author id itself. The plugin returns all three.
+  - **Cursors, not pages.** `before` and `after` are message ids, and they contradict each other, so the schema rejects both at once. `sort` only applies with `nearby` and is rejected without it.
+  - **A message needs content or an attachment.** An empty post is refused, so the schema requires one of the two.
+  - **Edits and deletes are permanent.** `messages.delete` and `channels.delete` keep no copy, and a closed channel takes its history with it.
+examples:
+  read:
+    path: messages.list
+    title: Read the latest messages in a channel
+    args:
+      channel_id: 01F8Z1A2B3C4D5E6F7G8H9J0K1
+      limit: 50
+  write:
+    path: messages.send
+    title: Send a message to a channel
+    args:
+      channel_id: 01F8Z1A2B3C4D5E6F7G8H9J0K1
+      content: Standup in five
+apiExamples:
+  users.me: {}
+  users.get:
+    call: "{ user_id: '01F8Z0T8Y4W4Z8X3K5M2N1P0Q9' }"
+  users.dms: {}
+  channels.get:
+    call: "{ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1' }"
+  channels.edit:
+    call: "{ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', name: 'announcements' }"
+  channels.delete:
+    call: "{ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1' }"
+  messages.list:
+    call: "{ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', limit: 50 }"
+  messages.get:
+    call: "{ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', message_id: '01F8Z2B3C4D5E6F7G8H9J0K1L2' }"
+  messages.send:
+    call: "{ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', content: 'Standup in five' }"
+  messages.edit:
+    call: "{ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', message_id: '01F8Z2B3C4D5E6F7G8H9J0K1L2', content: 'Standup in ten' }"
+  messages.delete:
+    call: "{ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', message_id: '01F8Z2B3C4D5E6F7G8H9J0K1L2' }"
+  reactions.add:
+    call: "{ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', message_id: '01F8Z2B3C4D5E6F7G8H9J0K1L2', emoji: '👍' }"
+  servers.get:
+    call: "{ server_id: '01F8Z3C4D5E6F7G8H9J0K1L2M3', include_channels: true }"
+  servers.members:
+    call: "{ server_id: '01F8Z3C4D5E6F7G8H9J0K1L2M3', exclude_offline: true }"
+apiNotes:
+  'users.me': 'The default credential is a bot, so the token goes in X-Bot-Token; set `credential: user` for a session token.'
+  'messages.list': 'The response carries `users` and `members` beside the messages, so authors resolve without a second call.'
+  'messages.send': 'Provide `content` or an attachment id; `nonce` makes a retry idempotent.'
+  'reactions.add': 'The emoji is a unicode character or a custom emoji id in `:id:` form.'

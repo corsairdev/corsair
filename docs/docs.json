@@ -3115,6 +3115,14 @@
                 ]
               },
               {
+                "group": "Revolt (Stoat)",
+                "pages": [
+                  "plugins/revolt/overview",
+                  "plugins/revolt/api",
+                  "plugins/revolt/database"
+                ]
+              },
+              {
                 "group": "Rootly",
                 "pages": [
                   "plugins/rootly/overview",
