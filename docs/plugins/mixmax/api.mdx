@@ -647,7 +647,7 @@ await corsair.mixmax.api.integrations.enhancements.create({});
 | `editorHeight` | `number` | No | — |
 | `editorWidth` | `number` | No | — |
 | `commands` | `string[]` | No | — |
-| `category` | `string` | No | — |
+| `category` | `string \| string[]` | No | — |
 | `isEditable` | `boolean` | No | — |
 
 
@@ -669,7 +669,7 @@ await corsair.mixmax.api.integrations.enhancements.create({});
 | `editorHeight` | `number` | No | — |
 | `editorWidth` | `number` | No | — |
 | `commands` | `string[]` | No | — |
-| `category` | `string` | No | — |
+| `category` | `string \| string[]` | No | — |
 | `isEditable` | `boolean` | No | — |
 
 
@@ -751,7 +751,7 @@ await corsair.mixmax.api.integrations.enhancements.list({});
   editorHeight?: number,
   editorWidth?: number,
   commands?: string[],
-  category?: string,
+  category?: string | string[],
   isEditable?: boolean
 }[]
 ```
@@ -6139,7 +6139,7 @@ await corsair.mixmax.api.sequences.recipients.list({});
   state?: string,
   completedReason?: string | null,
   createdAt?: number,
-  lastStageSentOrdinal?: number,
+  lastStageSentOrdinal?: number | null,
   analytics?: {
     events?: {
       opens?: number,
@@ -6223,7 +6223,7 @@ await corsair.mixmax.api.sequences.search({});
     completedAt?: number | null,
     lastStageProcessedAt?: number | null,
     lastStageSentAt?: number | null,
-    lastStageSentOrdinal?: number,
+    lastStageSentOrdinal?: number | null,
     nextStageScheduledAt?: number | null,
     isActive?: number,
     isPaused?: number,
@@ -7239,8 +7239,10 @@ await corsair.mixmax.api.tasks.list({});
 |------|------|----------|-------------|
 | `results` | `object[]` | Yes | — |
 | `total` | `number` | Yes | — |
-| `next` | `string \| null` | Yes | — |
-| `previous` | `string \| null` | Yes | — |
+| `next` | `string \| null` | No | — |
+| `previous` | `string \| null` | No | — |
+| `after` | `string \| null` | No | — |
+| `before` | `string \| null` | No | — |
 | `hasNext` | `boolean` | Yes | — |
 | `hasPrevious` | `boolean` | Yes | — |
 
