@@ -54,9 +54,9 @@ export const encoded: TaggunEndpoints['verboseEncoded'] = (ctx, input) =>
 			}),
 		}),
 		{
-			// The base64 payload is the document; only its name is logged.
+			// The base64 payload is the document, and the user's own filename can
+			// name the shop, the buyer or the amount, so neither is logged.
 			log: (parsed, result) => ({
-				filename: parsed.filename,
 				contentType: parsed.contentType,
 				trackingId: result.trackingId,
 			}),

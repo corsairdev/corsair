@@ -29,6 +29,8 @@ const TOTAL = 9137.53;
 const SIGNATURE = 'CANARYSIG77';
 const DOCUMENT_URL = `https://receipts.example.com/r/42?sig=${SIGNATURE}`;
 const HEADER_VALUE = 'Bearer CANARY-HEADER-5521';
+// A user's own filename can name the shop, the person or the amount.
+const FILENAME = 'canary-dinner-with-dana-9137.png';
 const IMAGE = PNG_BYTES.toString('base64');
 
 const receiptFields = {
@@ -68,7 +70,7 @@ afterEach(() => {
 });
 
 describe('event log privacy', () => {
-	it('logs no receipt contents, document, URL, header or key from any operation', async () => {
+	it('logs no receipt contents, document, filename, URL, header or key from any operation', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			const api = corsair.taggun.api;
@@ -78,7 +80,7 @@ describe('event log privacy', () => {
 			};
 			const encoded = {
 				image: IMAGE,
-				filename: 'receipt.png',
+				filename: FILENAME,
 				contentType: 'image/png',
 			};
 			const rules = { merchantName: { allowed: [MERCHANT] } };
@@ -143,6 +145,7 @@ describe('event log privacy', () => {
 				DOCUMENT_URL,
 				SIGNATURE,
 				HEADER_VALUE,
+				FILENAME,
 				IMAGE.slice(0, 40),
 				API_KEY,
 			]) {
