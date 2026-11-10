@@ -317,6 +317,7 @@ export const BaseProviders = [
 	'onepassword',
 	'openai',
 	'openrouter',
+	'opensea',
 	'openweathermap',
 	'orbit',
 	'oura',
@@ -760,6 +761,7 @@ export const ProviderDisplayNames = {
 	onepassword: '1Password',
 	openai: 'OpenAI',
 	openrouter: 'OpenRouter',
+	opensea: 'OpenSea',
 	openweathermap: 'OpenWeatherMap',
 	orbit: 'Orbit',
 	oura: 'Oura',
@@ -1207,6 +1209,7 @@ export type AllProviders =
 	| 'onepassword'
 	| 'openai'
 	| 'openrouter'
+	| 'opensea'
 	| 'openweathermap'
 	| 'orbit'
 	| 'oura'
