@@ -221,6 +221,7 @@ export const BaseProviders = [
 	'enigma',
 	'epicgames',
 	'esignatures',
+	'erpnext',
 	'esputnik',
 	'eventbrite',
 	'eventzilla',
@@ -685,6 +686,7 @@ export const ProviderDisplayNames = {
 	enigma: 'Enigma',
 	epicgames: 'Epic Games',
 	esignatures: 'eSignatures',
+	erpnext: 'ERPNext',
 	esputnik: 'eSputnik',
 	eventbrite: 'Eventbrite',
 	eventzilla: 'Eventzilla',
@@ -1153,6 +1155,7 @@ export type AllProviders =
 	| 'enigma'
 	| 'epicgames'
 	| 'esignatures'
+	| 'erpnext'
 	| 'esputnik'
 	| 'eventbrite'
 	| 'eventzilla'

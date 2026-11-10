@@ -5,6 +5,19 @@ import type {
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
+/**
+ * Strips trailing slashes from the caller-supplied site origin without a
+ * regular expression: the origin is user input, and a backtracking trim
+ * over strings of repeated slashes is quadratic (CodeQL polynomial-regex).
+ */
+export function trimTrailingSlashes(url: string): string {
+	let trimmed = url;
+	while (trimmed.endsWith('/')) {
+		trimmed = trimmed.slice(0, -1);
+	}
+	return trimmed;
+}
+
 export class ErpnextAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
@@ -14,14 +27,33 @@ export class ErpnextAPIError extends Error {
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 
-	constructor(message: string, options?: { cause?: Error }) {
+	constructor(
+		message: string,
+		options?: {
+			cause?: Error;
+			status?: number;
+			statusText?: string;
+			body?: unknown;
+			retryAfter?: number;
+		},
+	) {
 		super(message, options);
 		this.name = 'ErpnextAPIError';
 		if (options?.cause instanceof ApiError) {
+			// The shared transport already parsed the response, including the
+			// Retry-After header in milliseconds, so its fields are authoritative.
 			this.status = options.cause.status;
 			this.statusText = options.cause.statusText;
 			this.body = options.cause.body;
 			this.retryAfter = options.cause.retryAfter;
+		} else if (options) {
+			// Direct construction (binary download path): the caller read the
+			// status line and Retry-After itself, so carry them through so the
+			// error handlers can classify and rate-limit the wrapped error.
+			this.status = options.status;
+			this.statusText = options.statusText;
+			this.body = options.body;
+			this.retryAfter = options.retryAfter;
 		}
 	}
 }
@@ -68,7 +100,7 @@ export async function makeErpnextRequest<T>(
 	const { method = 'GET', body, query, headers, mediaType } = options;
 
 	const config: OpenAPIConfig = {
-		BASE: baseUrl.replace(/\/+$/, ''),
+		BASE: trimTrailingSlashes(baseUrl),
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -115,16 +147,31 @@ export async function fetchErpnextBinary(
 	baseUrl: string,
 	key: string,
 ): Promise<string> {
-	const url = `${baseUrl.replace(/\/+$/, '')}${endpoint}`;
+	const url = `${trimTrailingSlashes(baseUrl)}${endpoint}`;
 	const response = await fetch(url, {
 		headers: { Authorization: erpnextAuthorizationHeader(key) },
 		signal: AbortSignal.timeout(60_000),
 	});
 	if (!response.ok) {
 		const statusText = response.statusText || 'Request failed';
+		// Mirror the shared transport's Retry-After handling: the header is
+		// in seconds on the wire and milliseconds once wrapped, so the
+		// endpoint error handlers see the same shape as JSON-path errors and
+		// can classify (401/403/429) and retry binary reads correctly.
+		const retryAfterHeader = response.headers.get('Retry-After');
+		const retryAfterSeconds = retryAfterHeader
+			? Number.parseInt(retryAfterHeader, 10)
+			: Number.NaN;
 		throw new ErpnextAPIError(
 			`ERPNext binary download failed with HTTP ${response.status}: ${statusText}`,
-			{ cause: new Error(String(response.status)) },
+			{
+				cause: new Error(String(response.status)),
+				status: response.status,
+				statusText,
+				retryAfter: Number.isNaN(retryAfterSeconds)
+					? undefined
+					: retryAfterSeconds * 1000,
+			},
 		);
 	}
 	const bytes = new Uint8Array(await response.arrayBuffer());
