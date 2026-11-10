@@ -161,4 +161,21 @@ describe('Mixmax livefeed endpoints', () => {
 		});
 		expect(result).toEqual(EVENTS_PAGE);
 	});
+	it('livefeed.events refuses a call with neither messageId nor contactEmail before any request', async () => {
+		// The provider answers 500 for this request, so the plugin names the
+		// missing selector instead of sending it.
+		await expect(endpoints.livefeed.events(ctx, {})).rejects.toThrow(
+			'Provide `messageId` or `contactEmail`',
+		);
+		await expect(
+			endpoints.livefeed.events(ctx, { limit: 10 }),
+		).rejects.toThrow('Provide `messageId` or `contactEmail`');
+		expect(request).not.toHaveBeenCalled();
+	});
+
+	it('livefeed.events accepts contactEmail alone', async () => {
+		request.mockResolvedValue({ results: [] });
+		await endpoints.livefeed.events(ctx, { contactEmail: 'ada@example.com' });
+		expect(request).toHaveBeenCalledTimes(1);
+	});
 });

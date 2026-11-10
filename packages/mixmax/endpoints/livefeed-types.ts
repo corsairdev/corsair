@@ -212,7 +212,12 @@ export const LiveFeedEventsInputSchema = z.object({
 	// The `next` token from a previous events page. Tokens from
 	// GET /v1/livefeed do not work here.
 	next: z.string().optional(),
-});
+}).refine(
+	// The reference: "Pass `messageId` or `contactEmail`"; a request with
+	// neither answers 500, so it is refused here with a message that says why.
+	(input) => Boolean(input.messageId) || Boolean(input.contactEmail),
+	{ message: 'Provide `messageId` or `contactEmail`' },
+);
 
 export type LiveFeedEventsInput = z.infer<typeof LiveFeedEventsInputSchema>;
 
