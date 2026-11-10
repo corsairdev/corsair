@@ -210,6 +210,7 @@ export async function makeTaggunRequest(
 	}
 }
 
+// unknown: the body is untyped until asRecord narrows it.
 /**
  * Taggun answers application errors with the matching HTTP status, but Campaign
  * Settings Update and Delete put the code inside the body (`{ result,
@@ -217,7 +218,6 @@ export async function makeTaggunRequest(
  * success, so it is raised rather than parsed into an empty result the caller
  * reads as a write that worked.
  */
-// unknown: the body is untyped until asRecord narrows it.
 function throwIfBodyReportsFailure(
 	body: unknown /* unknown: see above */,
 	method: string,
