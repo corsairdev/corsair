@@ -405,6 +405,9 @@ function closingRun(text, from, n) {
 	return -1;
 }
 
+// Characters MDX or Markdown would read as markup outside a code span.
+const MDX_SPECIAL = new Set('\\<>{}[]*_|');
+
 /**
  * Escapes text for MDX. A bad page can fail the docs deploy, and titles are free
  * text. Code spans stay as written, since MDX doesn't parse them: a span opens
@@ -417,7 +420,7 @@ export function escapeMdx(text) {
 	let i = 0;
 	while (i < flat.length) {
 		if (flat[i] !== '`') {
-			out += flat[i].replace(/[\\<>{}[\]*_|]/, '\\$&');
+			out += MDX_SPECIAL.has(flat[i]) ? `\\${flat[i]}` : flat[i];
 			i++;
 			continue;
 		}
