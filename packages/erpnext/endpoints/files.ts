@@ -36,7 +36,10 @@ export const downloadPdf = async (
 	});
 	if (input.format !== undefined) query.set('format', input.format);
 	if (input.no_letterhead !== undefined) {
-		query.set('no_letterhead', String(input.no_letterhead));
+		// Frappe converts the string to int with cint() (printview.py), where
+		// "true"/"false" both convert to 0; the provider-usable wire form is
+		// 1/0 so the caller's boolean is honoured in both directions.
+		query.set('no_letterhead', input.no_letterhead ? '1' : '0');
 	}
 	if (input.letterhead !== undefined) query.set('letterhead', input.letterhead);
 	const base64 = await fetchErpnextBinary(

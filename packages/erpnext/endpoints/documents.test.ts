@@ -1,5 +1,5 @@
 import { createCorsair } from 'corsair/core';
-import { erpnext, erpnextEndpointSchemas, erpnextEndpoints } from '../index';
+import { erpnext, erpnextEndpointSchemas } from '../index';
 import type { ErpnextOperationKey } from '../operations';
 import { ERPNEXT_OPERATIONS } from '../operations';
 
@@ -501,19 +501,19 @@ const EXPECTED_REQUESTS: Record<DocumentsOperationKey, ExpectedRequest> = {
 describe('ERPNext documents endpoint contract', () => {
 	it('binds exactly the 19 documented documents handlers', () => {
 		expect(DOCUMENTS_OPERATIONS).toHaveLength(19);
-		// The family tree exposes exactly the documented action keys; these
-		// define the dotted operation ids with the `documents` prefix.
-		expect(Object.keys(erpnextEndpoints.documents).sort()).toEqual(
-			[...DOCUMENTS_ACTIONS].sort(),
-		);
 		expect(DOCUMENTS_OPERATIONS.map(({ key }) => key).sort()).toEqual(
 			DOCUMENTS_ACTIONS.map((action) => `documents.${action}`).sort(),
 		);
-		// And the bound public tree carries one handler per action.
+		// The bound public tree exposes exactly the documented action keys;
+		// these define the dotted operation ids with the `documents` prefix.
 		// unknown: the bound tree is walked by group name at runtime; the
 		// documents group must exist once the family is registered.
 		const documentsApi = (publicApi as Record<string, unknown>).documents;
 		expect(documentsApi).toBeDefined();
+		expect(Object.keys(documentsApi as object).sort()).toEqual(
+			[...DOCUMENTS_ACTIONS].sort(),
+		);
+		// And the bound public tree carries one schema-wrapped handler per action.
 		expect([...endpointHandlers(documentsApi as object).keys()].sort()).toEqual(
 			[...DOCUMENTS_ACTIONS].sort(),
 		);

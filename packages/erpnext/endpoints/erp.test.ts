@@ -1,5 +1,5 @@
 import { createCorsair } from 'corsair/core';
-import { erpnext, erpnextEndpointSchemas, erpnextEndpoints } from '../index';
+import { erpnext, erpnextEndpointSchemas } from '../index';
 import type { ErpnextOperationKey } from '../operations';
 import { ERPNEXT_OPERATIONS } from '../operations';
 
@@ -236,7 +236,9 @@ const EXPECTED_REQUESTS: Record<ErpOperationKey, ExpectedRequest> = {
 		url: 'https://test.example.com/api/method/erpnext.stock.get_item_details.get_item_details',
 		query: {
 			ctx: '{"item_code":"WIDGET"}',
-			for_validate: 'true',
+			// Boolean query values reach Frappe as strings; the provider reads
+			// them with Python truthiness, so the factory sends a true as "1".
+			for_validate: '1',
 		},
 		authHeader: AUTH_HEADER,
 	},
@@ -305,19 +307,19 @@ const EXPECTED_REQUESTS: Record<ErpOperationKey, ExpectedRequest> = {
 describe('ERPNext erp endpoint contract', () => {
 	it('binds exactly the 9 documented erp handlers', () => {
 		expect(ERP_OPERATIONS).toHaveLength(9);
-		// The family tree exposes exactly the documented action keys; these
-		// define the dotted operation ids with the `erp` prefix.
-		expect(Object.keys(erpnextEndpoints.erp).sort()).toEqual(
-			[...ERP_ACTIONS].sort(),
-		);
 		expect(ERP_OPERATIONS.map(({ key }) => key).sort()).toEqual(
 			ERP_ACTIONS.map((action) => `erp.${action}`).sort(),
 		);
-		// And the bound public tree carries one handler per action.
+		// The bound public tree exposes exactly the documented action keys;
+		// these define the dotted operation ids with the `erp` prefix.
 		// unknown: the bound tree is walked by group name at runtime; the
 		// erp group must exist once the family is registered.
 		const erpApi = (publicApi as Record<string, unknown>).erp;
 		expect(erpApi).toBeDefined();
+		expect(Object.keys(erpApi as object).sort()).toEqual(
+			[...ERP_ACTIONS].sort(),
+		);
+		// And the bound public tree carries one schema-wrapped handler per action.
 		expect([...endpointHandlers(erpApi as object).keys()].sort()).toEqual(
 			[...ERP_ACTIONS].sort(),
 		);

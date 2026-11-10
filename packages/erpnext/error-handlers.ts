@@ -25,7 +25,11 @@ function isReplaySafe(context: ErrorContext): boolean {
 	return riskByOperation.get(context.operation) === 'read';
 }
 
-export const errorHandlers = {
+// Annotated (not just `satisfies`) so callers see the shared 2-argument
+// matcher/handler signatures: a bare `satisfies` keeps the narrower literal
+// lambda types (e.g. a 1-parameter match), and a caller passing the full
+// (error, context) pair would fail the type check.
+export const errorHandlers: CorsairErrorHandler = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error, context: ErrorContext) => {

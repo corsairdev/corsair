@@ -1,5 +1,5 @@
 import { createCorsair } from 'corsair/core';
-import { erpnext, erpnextEndpointSchemas, erpnextEndpoints } from '../index';
+import { erpnext, erpnextEndpointSchemas } from '../index';
 import type { ErpnextOperationKey } from '../operations';
 import { ERPNEXT_OPERATIONS } from '../operations';
 
@@ -263,19 +263,19 @@ const LIST_OPERATION_KEYS: readonly SystemOperationKey[] = [
 describe('ERPNext system endpoint contract', () => {
 	it('binds exactly the 8 documented system handlers', () => {
 		expect(SYSTEM_OPERATIONS).toHaveLength(8);
-		// The family tree exposes exactly the documented action keys; these
-		// define the dotted operation ids with the `system` prefix.
-		expect(Object.keys(erpnextEndpoints.system).sort()).toEqual(
-			[...SYSTEM_ACTIONS].sort(),
-		);
 		expect(SYSTEM_OPERATIONS.map(({ key }) => key).sort()).toEqual(
 			SYSTEM_ACTIONS.map((action) => `system.${action}`).sort(),
 		);
-		// And the bound public tree carries one handler per action.
+		// The bound public tree exposes exactly the documented action keys;
+		// these define the dotted operation ids with the `system` prefix.
 		// unknown: the bound tree is walked by group name at runtime; the
 		// system group must exist once the family is registered.
 		const systemApi = (publicApi as Record<string, unknown>).system;
 		expect(systemApi).toBeDefined();
+		expect(Object.keys(systemApi as object).sort()).toEqual(
+			[...SYSTEM_ACTIONS].sort(),
+		);
+		// And the bound public tree carries one schema-wrapped handler per action.
 		expect([...endpointHandlers(systemApi as object).keys()].sort()).toEqual(
 			[...SYSTEM_ACTIONS].sort(),
 		);

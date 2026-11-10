@@ -4,7 +4,15 @@ const baseUrl = process.env.ERPNEXT_BASE_URL;
 const apiKey = process.env.ERPNEXT_API_KEY;
 const apiSecret = process.env.ERPNEXT_API_SECRET;
 
-const describeLive = baseUrl && apiKey && apiSecret ? describe : describe.skip;
+// Repo convention: the live suite runs only when explicitly enabled with
+// LIVE_TEST=1 and a full credential is present; CI and local suites skip it.
+const liveEnabled =
+	process.env.LIVE_TEST === '1' &&
+	Boolean(baseUrl) &&
+	Boolean(apiKey) &&
+	Boolean(apiSecret);
+
+const describeLive = liveEnabled ? describe : describe.skip;
 
 // One read-only smoke test: it proves authentication, transport, and
 // response handling still work against the live site. Destructive and

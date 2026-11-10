@@ -151,7 +151,13 @@ async function resolveErpnextCredential(
 	ctx: ErpnextKeyBuilderContext,
 ): Promise<string> {
 	if (options.key && options.key.includes(':')) {
-		return options.key;
+		const [keyPart, secretPart] = options.key.split(':');
+		if (keyPart && secretPart) {
+			return options.key;
+		}
+		// A malformed compact credential (an empty half) would put `token :`
+		// on the wire; an unusable credential is a missing one.
+		throw new AuthMissingError('erpnext', 'api_key');
 	}
 	const apiKey = options.apiKey ?? options.key;
 	if (apiKey && options.apiSecret) {
@@ -208,7 +214,10 @@ export function erpnext<const T extends ErpnextPluginOptions>(
 	} satisfies InternalErpnextPlugin;
 }
 
-export { erpnextEndpointMeta, erpnextEndpointSchemas, erpnextEndpoints };
+// Only the metadata and the schema registry are exported; the raw handler
+// tree stays internal so every consumer goes through the schema-bound
+// endpoints the factory exposes above.
+export { erpnextEndpointMeta, erpnextEndpointSchemas };
 export type {
 	ErpnextEndpointInputs,
 	ErpnextEndpointOutputs,

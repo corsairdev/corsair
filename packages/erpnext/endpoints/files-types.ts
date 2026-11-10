@@ -18,7 +18,9 @@ import { z } from 'zod';
 // signature is download_pdf(doctype, name, format=None, doc=None,
 // no_letterhead=0, language=None, letterhead=None, ...) (print_format.py);
 // the doc, language, pdf_generator, style, and settings parameters stay out
-// rather than being invented.
+// rather than being invented. no_letterhead is sent on the wire as 1/0: the
+// handler serializes the boolean through cint() semantics (printview.py),
+// where "true"/"false" strings would both convert to 0.
 const FilesDownloadPdfInputSchema = z
 	.object({
 		doctype: z.string().min(1),

@@ -34,9 +34,11 @@ const DoctypesListInputSchema = z
 	.strict();
 
 // GET /api/method/frappe.desk.form.load.getdoctype — doctype names the schema
-// to load and with_parent additionally loads parent and child DocTypes
-// (Frappe accepts int|bool on the wire; the transport serializes the boolean
-// as true/false).
+// to load and with_parent additionally loads parent and child DocTypes. The
+// provider reads the query string with Python truthiness (load.py:
+// `if with_parent and ...`), so the shared factory sends a true as "1" and
+// omits a false — any "false" string would be truthy server-side and load
+// the parents the caller asked to leave out.
 const DoctypesGetMetaInputSchema = z
 	.object({
 		doctype: z.string().min(1),

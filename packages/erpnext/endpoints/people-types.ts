@@ -33,6 +33,7 @@ const PeopleListEmployeesInputSchema = z
 			.describe(
 				'JSON string filter expression in Frappe list format, for example [["status","=","Active"]], passed verbatim',
 			),
+		order_by: z.string().optional(),
 		limit_start: z.number().int().min(0).optional(),
 		limit_page_length: z
 			.number()
@@ -61,6 +62,7 @@ const PeopleListProjectsInputSchema = z
 			.describe(
 				'JSON string filter expression in Frappe list format, for example [["status","=","Open"]], passed verbatim',
 			),
+		order_by: z.string().optional(),
 		limit_start: z.number().int().min(0).optional(),
 		limit_page_length: z
 			.number()

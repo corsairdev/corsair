@@ -34,6 +34,7 @@ const TimesheetsListInputSchema = z
 			.describe(
 				'JSON string filter expression in Frappe list format, for example [["docstatus","=",0]], passed verbatim',
 			),
+		order_by: z.string().optional(),
 		limit_start: z.number().int().min(0).optional(),
 		limit_page_length: z
 			.number()

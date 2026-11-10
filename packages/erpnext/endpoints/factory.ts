@@ -59,7 +59,17 @@ function pickQuery(
 	const query: Record<string, unknown> = {};
 	for (const name of queryParams) {
 		const value = input[name];
-		if (value !== undefined) query[name] = value;
+		// Frappe reads query booleans as strings: with Python truthiness
+		// (load.py getdoctype `if with_parent`) a "false" string is truthy,
+		// and with cint() (printview.py no_letterhead) both "true" and
+		// "false" convert to 0. A true is therefore sent as the cint-
+		// compatible "1"; a false is omitted so the provider default (false
+		// on every catalog boolean) applies. All other validated values go
+		// on the wire verbatim.
+		if (value === undefined || value === false) {
+			continue;
+		}
+		query[name] = value === true ? '1' : value;
 	}
 	return Object.keys(query).length > 0 ? query : undefined;
 }
@@ -97,6 +107,9 @@ export function defineEndpoint<K extends ErpnextOperationKey>(
 				body: operation.hasBody ? record.body : undefined,
 			},
 		);
+		// Safe: the schema-bound wrapper in index.ts re-parses this value
+		// with the operation's output schema before it reaches callers, so
+		// the cast only carries the value to that boundary.
 		return result as ErpnextEndpointOutputs[K];
 	};
 }
