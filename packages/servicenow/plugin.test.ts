@@ -53,6 +53,9 @@ describe('servicenow plugin definition', () => {
 	it('declares the instance host as an account field', () => {
 		// ServiceNow has no shared API host, so the resolver reads it per account.
 		expect([...servicenowAuthConfig.api_key.account]).toContain('host');
+		// `webhook_signature` is a base field of every api_key account. Listing it
+		// here again made it show twice in the catalog's account fields.
+		expect([...servicenowAuthConfig.api_key.account]).toEqual(['host']);
 	});
 
 	it('declares no inbound webhooks', () => {

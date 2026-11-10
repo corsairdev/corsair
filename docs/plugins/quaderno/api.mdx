@@ -3466,8 +3466,8 @@ await corsair.quaderno.api.taxRates.calculate({ to_country: "US", tax_code: "sta
 | `to_country` | `string` | Yes | Two-letter ISO country code of the customer. |
 | `to_postal_code` | `string` | No | Customer postal code, needed in countries that tax by region. |
 | `to_region` | `string` | No | — |
-| `tax_code` | `string` | No | The tax code for the product, such as `standard`. |
-| `amount` | `string \| number` | No | Amount to compute tax on, in major units. |
+| `tax_code` | `string` | Yes | The tax code for the product, such as `standard`. |
+| `amount` | `string \| number` | Yes | Amount to compute tax on, in major units. |
 
 `tax_code` and `amount` are required from API version 20210316.
 
