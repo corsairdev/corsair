@@ -27,6 +27,11 @@ function resolvePath(
 		if (typeof value !== 'string' || value.length === 0) {
 			throw new Error(`[nutshell] missing required path parameter: ${name}`);
 		}
+		// encodeURIComponent leaves dots alone, and fetch resolves a `.` or `..`
+		// segment before sending, which would turn the request into another route.
+		if (value === '.' || value === '..') {
+			throw new Error(`[nutshell] invalid path parameter: ${name}`);
+		}
 		path = path.replace(`{${name}}`, encodeURIComponent(value));
 	}
 	return path;
