@@ -111,15 +111,16 @@ export const subscriptionsUpdate: LemonSqueezyEndpoints['subscriptionsUpdate'] =
 							variant_id: parsed.variantId,
 							invoice_immediately: parsed.invoiceImmediately,
 							disable_prorations: parsed.disableProrations,
-							pause:
-								parsed.pause === undefined
+							// There is no unpause attribute: the API resumes collection
+							// when `pause` is set to null.
+							pause: parsed.unpause
+								? null
+								: parsed.pause === undefined
 									? undefined
 									: {
 											mode: parsed.pause.mode,
 											resumes_at: parsed.pause.resumesAt,
 										},
-							// The API takes `unpause` as a bare flag.
-							unpause: parsed.unpause,
 							billing_anchor: parsed.billingAnchor,
 						},
 					},
@@ -215,7 +216,7 @@ export const subscriptionItemsUsage: LemonSqueezyEndpoints['subscriptionItemsUsa
 			{
 				log: (parsed, result) => ({
 					subscriptionItemId: parsed.subscriptionItemId,
-					currentUsage: result.meta?.current_usage ?? undefined,
+					quantity: result.meta.quantity ?? undefined,
 				}),
 			},
 		);

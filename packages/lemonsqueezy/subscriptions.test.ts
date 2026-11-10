@@ -113,7 +113,7 @@ describe('subscriptions.update', () => {
 		});
 	});
 
-	it('sends unpause on its own', async () => {
+	it('unpauses by sending a null pause, which is how the API resumes collection', async () => {
 		respond(subscription);
 
 		await invoke(Subscriptions.subscriptionsUpdate, {
@@ -121,7 +121,7 @@ describe('subscriptions.update', () => {
 			unpause: true,
 		});
 
-		expect(lastRequest().body?.data.attributes).toEqual({ unpause: true });
+		expect(lastRequest().body?.data.attributes).toEqual({ pause: null });
 	});
 
 	it('moves the billing anchor', async () => {
@@ -217,22 +217,25 @@ describe('subscriptionItems', () => {
 		expect(lastRequest().path).toBe('/v1/subscription-items/4');
 	});
 
-	it('subscriptionItems.usage reads the current usage', async () => {
-		respond({
-			data: {
-				type: 'subscription-items',
-				id: '4',
-				attributes: { is_usage_based: true, quantity: 1 },
+	it('subscriptionItems.usage reads the usage block, which has no data member', async () => {
+		const answer = {
+			jsonapi: { version: '1.0' },
+			meta: {
+				period_start: '2023-08-10T13:08:16+00:00',
+				period_end: '2023-09-10T13:03:16+00:00',
+				quantity: 5,
+				interval_unit: 'month',
+				interval_quantity: 1,
 			},
-			meta: { current_usage: 42 },
-		});
+		};
+		respond(answer);
 
 		const result = (await invoke(Subscriptions.subscriptionItemsUsage, {
 			subscriptionItemId: '4',
-		})) as { meta?: { current_usage?: number } };
+		})) as typeof answer;
 
 		expect(lastRequest().path).toBe('/v1/subscription-items/4/current-usage');
-		expect(result.meta?.current_usage).toBe(42);
+		expect(result.meta).toEqual(answer.meta);
 	});
 
 	it('subscriptionItems.update PATCHes the quantity', async () => {

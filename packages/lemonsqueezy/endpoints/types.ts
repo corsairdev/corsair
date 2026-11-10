@@ -400,12 +400,21 @@ export type LemonSqueezySubscriptionItem = z.infer<
 	typeof SubscriptionItemSchema
 >;
 
-/** `current-usage` answers the item plus its metered usage, not a document. */
+/**
+ * `current-usage` answers only a `meta` block with the period and its usage
+ * total; there is no `data` member.
+ */
 export const SubscriptionItemUsageSchema = z
 	.object({
-		data: SubscriptionItemSchema,
-		meta: z.object({ current_usage: z.number().nullish() }).loose().nullish(),
-		links: LinksSchema.optional(),
+		meta: z
+			.object({
+				period_start: z.string().nullish(),
+				period_end: z.string().nullish(),
+				quantity: z.number().nullish(),
+				interval_unit: z.string().nullish(),
+				interval_quantity: z.number().nullish(),
+			})
+			.loose(),
 		jsonapi: z.object({ version: z.string() }).loose().optional(),
 	})
 	.loose();
@@ -1181,7 +1190,9 @@ const UpdateSubscriptionInputSchema = z
 		unpause: z
 			.boolean()
 			.optional()
-			.describe('Resume collection on a paused subscription.'),
+			.describe(
+				'Resume collection on a paused subscription. Sent as `pause: null`, which is how the API unpauses.',
+			),
 		billingAnchor: z
 			.number()
 			.int()
