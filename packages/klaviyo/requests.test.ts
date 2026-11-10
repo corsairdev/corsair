@@ -488,6 +488,22 @@ describe('metrics', () => {
 		]);
 	});
 
+	it('sends the page cursor of a longer report', async () => {
+		respond(metricAggregateResponse);
+
+		await invoke(metricsAggregate, {
+			metricId: 'Mt123',
+			measurements: ['count'],
+			interval: 'day',
+			filter: AGGREGATE_RANGE,
+			pageCursor: 'bmV4dA',
+		});
+
+		expect(lastRequest().body).toMatchObject({
+			data: { attributes: { page_cursor: 'bmV4dA' } },
+		});
+	});
+
 	it('requires the date range filter the spec marks required', async () => {
 		await expect(
 			invoke(metricsAggregate, {
