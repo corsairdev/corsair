@@ -1,0 +1,519 @@
+---
+title: API
+description: "API reference for Roboflow: every `roboflow.api.*` operation with input and output types."
+---
+
+Every `roboflow.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Check that the key works; the route answers 200 either way, so `authenticated` reports whether a workspace actually came back
+
+**Risk:** `read`
+
+```ts
+await corsair.roboflow.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `welcome` | `string \| null` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `docs` | `string \| null` | No | — |
+| `workspace` | `string \| null` | No | The workspace slug the key belongs to. Absent when the request was not authenticated. |
+| `workspaceId` | `string \| null` | No | — |
+| `authenticated` | `boolean` | Yes | True when a workspace came back, which is the only proof the key works. |
+
+
+
+---
+
+## Images
+
+### upload
+
+`images.upload`
+
+Upload one image to a project by URL or base64; a duplicate is reported as such rather than as a failure
+
+**Risk:** `write`
+
+```ts
+await corsair.roboflow.api.images.upload({ project: 'roboflow/chess-sample-4ckfl', image: 'https://example.com/board.jpg', batch: 'may-import', tag: ['chess'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `string` | Yes | The project ID, which is workspace/project. |
+| `image` | `string` | Yes | A publicly reachable image URL, or a base64 data URI. Up to 20MB. |
+| `name` | `string` | No | The file name to record, when the image is a data URI. |
+| `batch` | `string` | No | A batch name to group the upload under. |
+| `tag` | `string[]` | No | Tags for the new image. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `duplicate` | `boolean \| null` | No | — |
+| `id` | `string \| null` | No | The image ID, for a later annotation. |
+
+
+
+---
+
+## Infer
+
+### infer
+
+`infer`
+
+Run a trained model on an image on the serverless inference host, returning predictions and their count; billed per image
+
+**Risk:** `write`
+
+```ts
+await corsair.roboflow.api.infer({ modelId: 'chess-sample-4ckfl/3', image: 'https://example.com/board.jpg', confidence: 0.5, overlap: 0.3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `modelId` | `string` | Yes | The model ID from models.list `url`, in the form project/version, or workspace/model for a model not tied to a version. |
+| `image` | `string` | Yes | A publicly reachable image URL, a base64 string, or a data URI. Base64 is sent as `image_type=base64`. |
+| `imageType` | `url \| base64` | No | url sends `image` as a URL, base64 sends it in the body. Inferred from a data URI prefix when omitted. |
+| `confidence` | `number` | No | The confidence threshold, 0 to 1, to filter predictions. |
+| `overlap` | `number` | No | The IoU threshold above which two boxes are treated as duplicates. |
+| `maxDetections` | `number` | No | The most predictions to return. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image` | `Record<string, JsonValue> \| null` | No | The input image, with its width and height. |
+| `predictions` | `object[] \| null` | No | Boxes for a detection model, class scores for a classification model. A segmentation model adds `points` to each. |
+| `count` | `number \| null` | No | How many predictions came back. |
+| `time` | `number \| null` | No | Inference time in seconds. |
+
+<AccordionGroup>
+<Accordion title="predictions full type">
+
+```ts
+{
+  x?: number | null,
+  y?: number | null,
+  width?: number | null,
+  height?: number | null,
+  confidence?: number | null,
+  class?: string | null,
+  class_id?: number | null,
+  detection_id?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### list
+
+`models.list`
+
+List a project's trained models with their task, architecture and metrics; each `url` is the model ID `infer` takes
+
+**Risk:** `read`
+
+```ts
+await corsair.roboflow.api.models.list({ workspace: 'roboflow', project: 'chess-sample-4ckfl' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `group` | `string` | No | A Neural Architecture Search run ID. Returns only that run's models, or an empty array. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  url?: string | null,
+  version?: string | null,
+  train?: {
+    status?: string | null
+  } | null,
+  taskType?: string | null,
+  modelType?: string | null,
+  name?: string | null,
+  created?: string | null,
+  metrics?: {
+    map50?: number | null,
+    map5095?: number | null,
+    precision?: number | null,
+    recall?: number | null,
+    f1?: number | null,
+    accuracy?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Project
+
+### create
+
+`project.create`
+
+Create a project of a given type in an annotation group, optionally licensed onto Universe
+
+**Risk:** `write`
+
+```ts
+await corsair.roboflow.api.project.create({ workspace: 'roboflow', name: 'Sharks Dataset', type: 'object-detection', annotation: 'sharks', license: 'Private' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `name` | `string` | Yes | Letters, numbers, dashes, underscores and spaces only. |
+| `type` | `object-detection \| single-label-classification \| multi-label-classification \| instance-segmentation \| semantic-segmentation \| keypoint-detection \| action-recognition \| anomaly-detection` | Yes | anomaly-detection needs the feature turned on and its own annotation group. |
+| `annotation` | `string` | Yes | The annotation group: a noun for what you label, such as sharks. Projects in one group share classes. |
+| `license` | `Private \| Public Domain \| MIT \| CC BY 4.0 \| BY-NC-SA 4.0 \| ODbL v1.0` | No | Private keeps the project private; any other value publishes it on Universe. Required on a public plan, which cannot create a private project. |
+| `group` | `string` | No | A project folder ID to create it in. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The new project ID. |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`project.delete`
+
+Delete a project and its images, versions and models
+
+**Risk:** `destructive`
+
+```ts
+await corsair.roboflow.api.project.delete({ workspace: 'roboflow', project: 'chess-sample-4ckfl' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`project.get`
+
+Read a project with its classes, splits and dataset versions, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.roboflow.api.project.get({ workspace: 'roboflow', project: 'chess-sample-4ckfl' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `versions` | `object[] \| null` | No | Newest first. |
+
+<AccordionGroup>
+<Accordion title="workspace full type">
+
+```ts
+{
+  name?: string | null,
+  url?: string | null,
+  members?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null,
+  created?: number | null,
+  updated?: number | null,
+  images?: number | null,
+  unannotated?: number | null,
+  annotation?: string | null,
+  versions?: number | null,
+  public?: boolean | null,
+  multilabel?: boolean | null,
+  license?: string | null,
+  splits?: Record<string, number> | null,
+  classes?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="versions full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  created?: number | null,
+  images?: number | null,
+  splits?: Record<string, number> | null,
+  generating?: boolean | null,
+  progress?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Version
+
+### delete
+
+`version.delete`
+
+Delete a dataset version
+
+**Risk:** `destructive`
+
+```ts
+await corsair.roboflow.api.version.delete({ workspace: 'roboflow', project: 'chess-sample-4ckfl', version: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `version` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`version.get`
+
+Read a dataset version with its image count, splits, and the preprocessing and augmentation it applied
+
+**Risk:** `read`
+
+```ts
+await corsair.roboflow.api.version.get({ workspace: 'roboflow', project: 'chess-sample-4ckfl', version: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | — |
+| `project` | `string` | Yes | — |
+| `version` | `number` | Yes | The dataset version number. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `object \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `version` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="workspace full type">
+
+```ts
+{
+  name?: string | null,
+  url?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id?: string | null,
+  type?: string | null,
+  name?: string | null,
+  created?: number | null,
+  updated?: number | null,
+  images?: number | null,
+  unannotated?: number | null,
+  annotation?: string | null,
+  versions?: number | null,
+  public?: boolean | null,
+  multilabel?: boolean | null,
+  license?: string | null,
+  splits?: Record<string, number> | null,
+  classes?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="version full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  created?: number | null,
+  images?: number | null,
+  splits?: Record<string, number> | null,
+  generating?: boolean | null,
+  progress?: number | null,
+  preprocessing?: Record<string, JsonValue> | null,
+  augmentation?: Record<string, JsonValue> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspace
+
+### get
+
+`workspace.get`
+
+Read a workspace and its projects with image, annotation and version counts
+
+**Risk:** `read`
+
+```ts
+await corsair.roboflow.api.workspace.get({ workspace: 'roboflow' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `string` | Yes | The workspace URL slug. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="workspace full type">
+
+```ts
+{
+  name?: string | null,
+  url?: string | null,
+  members?: number | null,
+  enabled_features?: Record<string, JsonValue> | null,
+  projects?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null,
+    created?: number | null,
+    updated?: number | null,
+    images?: number | null,
+    unannotated?: number | null,
+    annotation?: string | null,
+    versions?: number | null,
+    public?: boolean | null,
+    multilabel?: boolean | null,
+    license?: string | null,
+    splits?: Record<string, number> | null,
+    classes?: Record<string, JsonValue> | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

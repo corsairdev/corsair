@@ -1,0 +1,144 @@
+---
+title: Overview
+description: "Read workspaces, projects, versions and trained models, create projects, upload images, and run model inference on the serverless host with Roboflow."
+---
+
+Use **Roboflow** through Corsair: one client, typed API calls.
+
+Find your key under **Account, Roboflow Keys**, or in the workspace settings. It goes in `Authorization: Bearer`, which the docs call the recommended transport; the `api_key` query parameter still works but puts the key in URLs and logs, so the plugin never uses it.
+
+**Two hosts, two contracts:**
+
+- **`api.roboflow.com`** for management: workspaces, projects, versions, models and image upload.
+- **`serverless.roboflow.com`** for inference. It is the Inference server's interface, not the Platform API's, and every input is a **query parameter** — including the image — with no request body.
+
+Things to know before you rely on a response:
+
+- **`account.get` returns `200` whether or not your key works.** With no key it still answers a welcome message and instructions, so a successful status proves nothing. Only `workspace` appears for a valid key, and that is what the plugin's `authenticated` field reports. Reading the `200` as a success is the easiest mistake to make here.
+- **An inference model ID is `project/version`.** Take it from `models.list`'s `url`, which is exactly what `infer` expects. A model not tied to a version is `workspace/model` and splits the same way; the plugin rejects an ID with no separator rather than sending a request that cannot resolve.
+- **`infer` is billed per image.** It is marked `write` for that reason and is never retried. The prediction payload is the Inference server's and differs by task: a detection model returns boxes in `predictions`, a classification model returns class scores in the same field, and a segmentation model adds `points` to each prediction — which is why only `count` is relied upon across tasks.
+- **A duplicate image upload is a success.** `images.upload` answers `duplicate: true` with the existing image's `id` and adds nothing. That is not a failure, and treating it as one would drop a valid image ID.
+- **`images.upload` takes the project ID, not two segments.** The route is `/dataset/{project}/upload`, where the project is `workspace/project` joined by a slash.
+- **`annotation` is a shared label group.** Projects in the same group share classes, so reusing one is how a second project starts from an existing label set. `anomaly-detection` additionally needs the feature turned on and a group no other project type uses.
+- **`license` is required on a public plan.** `Private` is what keeps a project private; any other value publishes it on Universe, and a public plan cannot create a private project at all.
+- **`versions` come back newest first**, and `version.generating` tells you whether the version is still being built — a `progress` under 1 means the image count is not final.
+
+**What you get:**
+
+- 10 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/roboflow better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/roboflow better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/roboflow better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/roboflow better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { roboflow } from '@corsair-dev/roboflow';
+
+export const corsair = createCorsair({
+	plugins: [
+		roboflow(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+roboflow()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'roboflow',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List a project's trained models**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.roboflow.api.models.list({ workspace: 'roboflow', project: 'chess-sample-4ckfl' });
+```
+
+
+**Run a model on an image**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.roboflow.api.infer({ modelId: 'chess-sample-4ckfl/3', image: 'https://example.com/board.jpg', confidence: 0.5 });
+```
+
+
+See the full list on the [API](/plugins/roboflow/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/roboflow/api">
+    Every `roboflow.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
