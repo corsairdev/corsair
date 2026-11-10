@@ -3419,6 +3419,14 @@
                 ]
               },
               {
+                "group": "Teamcamp",
+                "pages": [
+                  "plugins/teamcamp/overview",
+                  "plugins/teamcamp/api",
+                  "plugins/teamcamp/database"
+                ]
+              },
+              {
                 "group": "Telegram",
                 "pages": [
                   "plugins/telegram/overview",
