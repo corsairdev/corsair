@@ -67,6 +67,16 @@ export type RecordedCall = {
 	body: JsonBody | undefined;
 };
 
+/**
+ * Spies on `fetch` and makes every call a test did not stub throw, so no test
+ * can fall through to the real fetch and reach Linguapop.
+ */
+export function blockFetch(): jest.SpyInstance {
+	return jest.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+		throw new Error('unmocked fetch: queue a response first');
+	});
+}
+
 /** Reads the last call a `fetch` spy received. */
 export function lastCall(fetchMock: jest.SpyInstance): RecordedCall {
 	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];

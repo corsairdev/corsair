@@ -14,6 +14,7 @@ import {
 	validationProblemBody,
 } from './test-fixtures';
 import {
+	blockFetch,
 	captureError,
 	jsonResponse,
 	linguapopFailure,
@@ -27,7 +28,7 @@ const API_KEY = 'lp-secret-test-key';
 let fetchMock: jest.SpyInstance;
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = blockFetch();
 });
 
 afterEach(() => {
