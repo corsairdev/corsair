@@ -225,6 +225,52 @@ describe('makeDemioRequest', () => {
 		expect(inspected).not.toContain(CREDENTIALS.apiSecret);
 	});
 
+	// A failed registration must not carry the registrant anywhere reachable.
+	// ApiError keeps the request on `request.body`, and a logger or error
+	// tracker printing this error would write a real person's name and address.
+	it('keeps a failed registration body out of the error entirely', async () => {
+		const registrant = {
+			id: 86,
+			name: 'Jane Doe',
+			email: 'jane@example.com',
+		};
+		respond({ errors: ['Your email is not verified.'] }, 400);
+
+		const error = await failure(
+			makeDemioRequest(CREDENTIALS, {
+				method: 'POST',
+				path: '/event/register',
+				body: registrant,
+			}),
+		);
+
+		// No cause at all: the only thing holding the body would be ApiError.
+		expect(error.cause).toBeUndefined();
+		expect(error.errors).toEqual(['Your email is not verified.']);
+		expect(error.method).toBe('POST');
+
+		for (const view of [
+			error.message,
+			inspect(error, { depth: 10, showHidden: true }),
+			JSON.stringify(error),
+		]) {
+			expect(view).not.toContain(registrant.name);
+			expect(view).not.toContain(registrant.email);
+		}
+	});
+
+	// A transport failure never reached Demio, so it carries no body to keep.
+	it('keeps the cause for a transport failure', async () => {
+		fetchMock.mockRejectedValueOnce(new Error('socket hang up'));
+
+		const error = await failure(
+			makeDemioRequest(CREDENTIALS, { method: 'GET', path: '/events' }),
+		);
+
+		expect(error.cause).toBeInstanceOf(Error);
+		expect(inspect(error, { depth: 5 })).not.toContain(CREDENTIALS.apiKey);
+	});
+
 	it('wraps a transport failure and keeps no response', async () => {
 		fetchMock.mockRejectedValueOnce(new Error('socket hang up'));
 

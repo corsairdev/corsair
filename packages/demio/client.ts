@@ -98,9 +98,11 @@ export class DemioAPIError extends Error {
 			method?: string;
 		} = {},
 	) {
-		// The cause stays attached: it holds no request body and no key. Demio
-		// keeps both credentials in headers, which ApiError never prints, and its
-		// failures carry nothing beyond the message arrays copied below.
+		// `cause` is set only for a transport failure, which never reached Demio
+		// and so carries no request body. A provider rejection is passed as
+		// copied fields instead: ApiError keeps the request on `request.body`,
+		// and a failed registration's body holds the registrant's name and
+		// email, which `util.inspect` and console.error would print.
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'DemioAPIError';
 		const cause = options.cause instanceof ApiError ? options.cause : undefined;
@@ -187,9 +189,19 @@ export async function makeDemioRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// Not passed as `cause`: ApiError retains the registration body with
+			// the registrant's name and email. The fields the handlers read are
+			// copied onto this error instead, so nothing holding that body is
+			// reachable from it.
 			throw new DemioAPIError(
 				describeDemioError(error.status, error.body, error.message),
-				{ cause: error, method },
+				{
+					status: error.status,
+					retryAfter: error.retryAfter,
+					messages: readMessages(error.body),
+					errors: readErrors(error.body),
+					method,
+				},
 			);
 		}
 		// DOMException (a fetch timeout) can fail instanceof Error across realms.
