@@ -604,10 +604,10 @@ await corsair.zenrows.api.extract.prepareDomain({ domain: 'example.com', example
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `domain` | `string` | Yes | The domain to prepare, without scheme: "example.com". Zenrows drops a leading `www.`, and prepares each subdomain separately. |
-| `exampleUrls` | `string[]` | No | 1 to 5 URLs on that domain. Three or more of the same page type work best, because Extract compares them. When present they replace discovery. |
+| `exampleUrls` | `string[]` | No | 1 to 5 URLs on that domain. Three or more of the same page type work best, because Extract compares them. Zenrows answers 400 without them for a domain that is not already ready (checked live 11-10); for a ready domain the call just returns its record. |
 | `idempotencyKey` | `string` | No | The same key with the same body returns the original submission; a different body answers 409. |
 
-Preparation is free and needs no credits, but it takes one slot of the monthly allowance and minutes to finish. Poll `extract.getDomainStatus` rather than blocking.
+Preparation is free and needs no credits, but it takes one slot of the monthly allowance and minutes to finish. Send `exampleUrls`: a domain that is not already ready is refused without them. A failed attempt that Zenrows could not fetch does not use a slot. Poll `extract.getDomainStatus` rather than blocking.
 
 
 
@@ -844,10 +844,10 @@ await corsair.zenrows.api.fetch.jsonResponse({ url: 'https://example.com', jsRen
 | `waitFor` | `string` | No | CSS selector to wait for before capture. Needs `jsRender`; Zenrows gives up with a 422 after 3 minutes. |
 | `wait` | `number` | No | Milliseconds to wait after load before capture. Needs `jsRender` or `mode: "auto"`. Defaults to 0. |
 | `blockResources` | `(image \| media \| font \| stylesheet \| script \| xhr \| fetch \| other \| eventsource \| manifest \| websocket \| texttrack)[]` | No | Resource types to block, such as ["image","font"]. Images and stylesheets are already blocked by default, so this customises that rather than adding to nothing. |
-| `cssExtractor` | `Record<string, string>` | No | Selectors to apply to the captured page; the result arrives under `css_extractor`, not `parsed`. |
-| `outputs` | `(emails \| phone_numbers \| headings \| images \| audios \| videos \| links \| menus \| hashtags \| metadata \| tables \| favicon)[]` | No | Data types to pull out of the captured page; the result arrives under `outputs`. |
+| `cssExtractor` | `Record<string, string>` | No | Selectors to apply to the captured page; the result arrives under `css_extractor.data`, keyed as the map named them. Cannot be combined with `outputs`. |
+| `outputs` | `(emails \| phone_numbers \| headings \| images \| audios \| videos \| links \| menus \| hashtags \| metadata \| tables \| favicon)[]` | No | Data types to pull out of the captured page; the result arrives under `outputs`. Cannot be combined with `cssExtractor`. |
 
-Needs `jsRender` or `mode: 'auto'`. Selectors arrive under `css_extractor` and output filters under `outputs`, inside the envelope.
+Needs `jsRender` or `mode: 'auto'`. Selectors arrive under `css_extractor.data` and output filters under `outputs`, inside the envelope. Send one or the other: with both, ZenRows drops `outputs`.
 
 
 
