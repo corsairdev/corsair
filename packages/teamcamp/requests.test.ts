@@ -1,16 +1,20 @@
+import type { TeamcampAPIError } from './client';
 import { Endpoints } from './endpoints';
 import type { TeamcampEndpointOutputSchemas as Outputs } from './endpoints/types';
 import { captureError } from './test-errors';
 import {
 	archivedProject,
+	customer,
 	customerList,
 	deleteMessage,
 	groupList,
+	priorityDisabled,
 	project,
 	projectDetail,
 	projectList,
 	task,
 	taskList,
+	taskNotFoundBody,
 	userList,
 	workspace,
 } from './test-fixtures';
@@ -74,6 +78,16 @@ describe('customers.list', () => {
 
 		expect(lastRequest().path).toBe('/v1.0/company/customers');
 		expect(result.customers).toEqual([]);
+	});
+
+	it('reads a customer row as the live API sends it', async () => {
+		respond([customer]);
+
+		const result = (await invoke(Endpoints.customersList)) as ReturnType<
+			typeof Outputs.customersList.parse
+		>;
+
+		expect(result.customers).toEqual([customer]);
 	});
 });
 
@@ -395,6 +409,24 @@ describe('tasks.create', () => {
 		).rejects.toThrow(/yyyy-MM-dd/);
 	});
 
+	it("passes on Teamcamp's 400 when the project has task priorities off", async () => {
+		respond(priorityDisabled, 400);
+
+		const error = (await captureError(
+			invoke(Endpoints.tasksCreate, {
+				projectId: 'p1',
+				taskName: 'x',
+				priority: 'high',
+			}),
+		)) as TeamcampAPIError;
+
+		expect(error.status).toBe(400);
+		expect(error.message).toBe(
+			'Teamcamp 400: Not enable priority in your project.',
+		);
+		expect(calls()).toBe(1);
+	});
+
 	it('rejects a file with a missing field', async () => {
 		await expect(
 			invoke(Endpoints.tasksCreate, {
@@ -409,6 +441,17 @@ describe('tasks.create', () => {
 });
 
 describe('resource-scoped 403s reach the caller as missing resources', () => {
+	it('reports the 404 Teamcamp gives an unknown task id with a valid key', async () => {
+		respond(taskNotFoundBody, 404);
+
+		const error = (await captureError(
+			invoke(Endpoints.tasksGet, { taskId: 'nope' }),
+		)) as TeamcampAPIError;
+
+		expect(error.status).toBe(404);
+		expect(error.message).toBe('Teamcamp 404: Task Not Found!');
+	});
+
 	it('reports a 403 on a task read as a missing task, not a bad key', async () => {
 		respond('"Invalid API key!!!"', 403);
 

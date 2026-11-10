@@ -23,6 +23,19 @@ export const userList = [user];
 // unknown: the live answer was an empty array, so there is no element shape to
 export const customerList = [] as unknown[];
 
+// A customer row as the live API answered it on 2026-11-10 (a customer made in
+// the Teamcamp app with only a company name).
+export const customer = {
+	customerId: 'kBpnWy_RFmhMmpU5cSIzQ',
+	address: '',
+	firstName: null,
+	lastName: null,
+	email: null,
+	companyName: 'corsair-plugin-test',
+	phone: null,
+	clients: [],
+};
+
 export const project = {
 	projectId: '0uUAD4N11-tUA00rNE2EB',
 	projectName: 'Corsair Probe Project',
@@ -139,3 +152,11 @@ export const invalidKeyBody = '"Invalid API key!!!"';
 export const missingProjectId = { error: 'ProjectId is required' };
 
 export const missingTaskName = { error: 'Task Name is required.' };
+
+// Live answers from 2026-11-10: a task with a priority on a project whose task
+// priorities are off, and a read of a task id that does not exist.
+export const priorityDisabled = {
+	error: 'Not enable priority in your project.',
+};
+
+export const taskNotFoundBody = '"Task Not Found!"';
