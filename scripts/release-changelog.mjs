@@ -47,10 +47,29 @@ const SDK_PACKAGES = new Set([
 	'@corsair-dev/ui',
 ]);
 
-// Every new plugin adds one line to core/constants.ts. That is the plugin's news,
-// not the SDK's: 27 of the 29 commits behind corsair 0.1.158 are only this.
+/**
+ * core/constants.ts with its three provider lists emptied. A list the patterns
+ * don't find stays as it is, so a reshaped file reads as changed.
+ */
+export function withoutProviderLists(source) {
+	return source
+		.replace(
+			/^(export const BaseProviders = \[)\n[\s\S]*?^(\] as const;)/m,
+			'$1$2',
+		)
+		.replace(
+			/^(export const ProviderDisplayNames = \{)\n[\s\S]*?^(\} as const)/m,
+			'$1$2',
+		)
+		.replace(/^(export type AllProviders =)\n[\s\S]*?;/m, '$1;');
+}
+
+// Every new plugin adds a line to each provider list in core/constants.ts. That
+// is the plugin's news, not the SDK's: 27 of the 29 commits behind corsair
+// 0.1.158 are only this. A change to anything else in the file (AuthTypes,
+// AllErrors) is the SDK's, so each entry maps a file to what to compare.
 const REGISTRATION_ONLY = new Map([
-	['packages/corsair', new Set(['core/constants.ts'])],
+	['packages/corsair', new Map([['core/constants.ts', withoutProviderLists]])],
 ]);
 
 const MERGE_PR = /^Merge pull request #(\d+) from /;
@@ -133,11 +152,14 @@ function changedShippedFiles(cwd, sha, dir) {
 		.map((path) => path.slice(dir.length + 1))
 		.some((path) => {
 			if (!isShippedPath(path, dir)) return false;
-			if (REGISTRATION_ONLY.get(dir)?.has(path)) return false;
-			if (path !== 'package.json') return true;
-			const before = tryGit(cwd, ['show', `${sha}^1:${dir}/package.json`]);
-			const after = tryGit(cwd, ['show', `${sha}:${dir}/package.json`]);
-			return !before || !after || packageJsonChanged(before, after);
+			const strip = REGISTRATION_ONLY.get(dir)?.get(path);
+			if (!strip && path !== 'package.json') return true;
+			const before = tryGit(cwd, ['show', `${sha}^1:${dir}/${path}`]);
+			const after = tryGit(cwd, ['show', `${sha}:${dir}/${path}`]);
+			if (!before || !after) return true;
+			return strip
+				? strip(before) !== strip(after)
+				: packageJsonChanged(before, after);
 		});
 }
 
@@ -297,16 +319,50 @@ export function backfillEntries({ cwd, plan, since }) {
 	);
 }
 
-/** Escapes text for MDX. A bad page can fail the docs deploy, and titles are free text. */
+function backtickRun(text, at) {
+	let n = 0;
+	while (text[at + n] === '`') n++;
+	return n;
+}
+
+/** Start of the next run of exactly `n` backticks at or after `from`, or -1. */
+function closingRun(text, from, n) {
+	let i = from;
+	while (i < text.length) {
+		if (text[i] !== '`') {
+			i++;
+			continue;
+		}
+		const run = backtickRun(text, i);
+		if (run === n) return i;
+		i += run;
+	}
+	return -1;
+}
+
+/**
+ * Escapes text for MDX. A bad page can fail the docs deploy, and titles are free
+ * text. Code spans stay as written, since MDX doesn't parse them: a span opens
+ * with a run of backticks and closes at the next run of the same length
+ * (CommonMark), and a run with no match is plain text.
+ */
 export function escapeMdx(text) {
-	return String(text)
-		.replace(/\s*[\r\n]+\s*/g, ' ')
-		.split(/(`[^`]+`)/)
-		.map((part, i) =>
-			// Odd parts are code spans, which MDX doesn't parse.
-			i % 2 === 1 ? part : part.replace(/[\\<>{}[\]*_`|]/g, '\\$&'),
-		)
-		.join('');
+	const flat = String(text).replace(/\s*[\r\n]+\s*/g, ' ');
+	let out = '';
+	let i = 0;
+	while (i < flat.length) {
+		if (flat[i] !== '`') {
+			out += flat[i].replace(/[\\<>{}[\]*_|]/, '\\$&');
+			i++;
+			continue;
+		}
+		const open = backtickRun(flat, i);
+		const close = closingRun(flat, i + open, open);
+		const end = close === -1 ? i + open : close + open;
+		out += close === -1 ? '\\`'.repeat(open) : flat.slice(i, end);
+		i = end;
+	}
+	return out;
 }
 
 function mondayOf(date) {

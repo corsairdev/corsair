@@ -93,6 +93,16 @@ describe('escapeMdx', () => {
 	it('escapes a backtick with no partner', () => {
 		assert.equal(escapeMdx('Stray ` and <b>'), 'Stray \\` and \\<b\\>');
 	});
+	it('keeps a double-backtick span that holds a backtick', () => {
+		assert.equal(
+			escapeMdx('Run ``a ` <b>`` then <c>'),
+			'Run ``a ` <b>`` then \\<c\\>',
+		);
+	});
+	it('escapes a run of backticks that never closes', () => {
+		assert.equal(escapeMdx('``x` <y>'), '\\`\\`x\\` \\<y\\>');
+		assert.equal(escapeMdx('`a` then `` <b>'), '`a` then \\`\\` \\<b\\>');
+	});
 	it('keeps a title on one line', () => {
 		assert.equal(escapeMdx('one\ntwo\r\n three'), 'one two three');
 	});
@@ -339,15 +349,35 @@ describe('on a git repo', () => {
 			commit('fix(gmail): bump a dev tool (#7)');
 			assert.deepEqual(run(tag), []);
 		});
-		it('does not call a plugin registration an SDK change', () => {
+		const constants = ({ providers = ['ably'], auth = ['oauth_2'] } = {}) =>
+			[
+				'export type AllErrors =',
+				"\t| 'RATE_LIMIT_ERROR'",
+				'\t| (string & {});',
+				'',
+				'export const BaseProviders = [',
+				...providers.map((p) => `\t'${p}',`),
+				'] as const;',
+				'',
+				'export const ProviderDisplayNames = {',
+				...providers.map((p) => `\t${p}: '${p}',`),
+				'} as const satisfies Record<(typeof BaseProviders)[number], string>;',
+				'',
+				'export type AllProviders =',
+				...providers.map((p) => `\t| '${p}'`),
+				'\t| (string & {});',
+				'',
+				'export type AuthTypes =',
+				...auth.map((a) => `\t| '${a}'`),
+				"\t| 'api_key';",
+				'',
+			].join('\n');
+		const sdkChanges = (edit) => {
 			pkg('packages/corsair', 'corsair', '0.1.157');
-			write('packages/corsair/core/constants.ts', 'a\n');
+			write('packages/corsair/core/constants.ts', constants());
 			write('packages/corsair/core/index.ts', 'a\n');
 			const sha = commit('feat: core (#1)');
-			write('packages/corsair/core/constants.ts', 'a\nfal\n');
-			commit('feat(fal): add fal plugin (#2100)');
-			write('packages/corsair/core/index.ts', 'b\n');
-			commit('fix(inspect): render types (#2090)');
+			edit();
 			const [entry] = entriesFromPlan({
 				cwd,
 				date: '2026-11-08',
@@ -356,9 +386,47 @@ describe('on a git repo', () => {
 					bumps: [bump('corsair', 'packages/corsair', '0.1.157', '0.1.158')],
 				}),
 			});
+			return entry.changes.map((c) => c.pr);
+		};
+		it('does not call a plugin registration an SDK change', () => {
 			assert.deepEqual(
-				entry.changes.map((c) => c.pr),
+				sdkChanges(() => {
+					write(
+						'packages/corsair/core/constants.ts',
+						constants({ providers: ['ably', 'fal'] }),
+					);
+					commit('feat(fal): add fal plugin (#2100)');
+					write('packages/corsair/core/index.ts', 'b\n');
+					commit('fix(inspect): render types (#2090)');
+				}),
 				[2090],
+			);
+		});
+		it('calls a change outside the provider lists an SDK change', () => {
+			assert.deepEqual(
+				sdkChanges(() => {
+					write(
+						'packages/corsair/core/constants.ts',
+						constants({ auth: ['oauth_2', 'bot_token'] }),
+					);
+					commit('feat(core): add bot_token auth (#2200)');
+				}),
+				[2200],
+			);
+		});
+		it('counts a registration that also changes an auth type', () => {
+			assert.deepEqual(
+				sdkChanges(() => {
+					write(
+						'packages/corsair/core/constants.ts',
+						constants({
+							providers: ['ably', 'fal'],
+							auth: ['oauth_2', 'bot_token'],
+						}),
+					);
+					commit('feat(fal): add fal plugin (#2100)');
+				}),
+				[2100],
 			);
 		});
 		it('keeps an SDK version even with nothing to say', () => {
