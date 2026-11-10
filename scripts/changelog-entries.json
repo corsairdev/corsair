@@ -1448,5 +1448,32 @@
     "date": "2026-11-07",
     "isNew": true,
     "changes": []
+  },
+  {
+    "package": "@corsair-dev/elevenlabs",
+    "dir": "packages/elevenlabs",
+    "name": "ElevenLabs",
+    "version": null,
+    "date": "2026-11-10",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/higgsfield",
+    "dir": "packages/higgsfield",
+    "name": "Higgsfield",
+    "version": null,
+    "date": "2026-11-10",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "package": "@corsair-dev/inboxkit",
+    "dir": "packages/inboxkit",
+    "name": "InboxKit",
+    "version": null,
+    "date": "2026-11-10",
+    "isNew": true,
+    "changes": []
   }
 ]
