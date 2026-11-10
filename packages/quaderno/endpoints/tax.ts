@@ -1,0 +1,231 @@
+import type { QuadernoEndpoints } from '..';
+import { segment } from '../client';
+import { call, wrap } from './call';
+import {
+	QuadernoEndpointInputSchemas as Inputs,
+	QuadernoEndpointOutputSchemas as Outputs,
+} from './types';
+
+export const ping: QuadernoEndpoints['ping'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'ping',
+			input: Inputs.ping,
+			output: Outputs.ping,
+			toRequest: () => ({ method: 'GET', path: '/ping' }),
+		},
+		input,
+		{
+			log: (_, result) => ({ status: result.status }),
+		},
+	);
+
+/**
+ * The only route that works with a key alone, and the way to find which account
+ * a key belongs to: `identity.href` is that account's base URL. It answers the
+ * same on the bare `quadernoapp.com` host and on an account host.
+ */
+export const authorization: QuadernoEndpoints['authorization'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'authorization',
+			input: Inputs.authorization,
+			output: Outputs.authorization,
+			toRequest: () => ({ method: 'GET', path: '/authorization' }),
+		},
+		input,
+		{
+			log: (_, result) => ({
+				account: result.identity.href ?? undefined,
+				name: result.identity.name ?? undefined,
+			}),
+		},
+	);
+
+export const calculate: QuadernoEndpoints['taxRatesCalculate'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'taxRates.calculate',
+			input: Inputs.taxRatesCalculate,
+			output: Outputs.taxRatesCalculate,
+			toRequest: ({
+				to_country,
+				to_postal_code,
+				to_region,
+				tax_code,
+				amount,
+			}) => ({
+				method: 'GET',
+				path: '/tax_rates/calculate',
+				query: {
+					to_country,
+					to_postal_code,
+					to_region,
+					tax_code,
+					amount,
+				},
+			}),
+		},
+		input,
+		{
+			log: ({ to_country }, result) => ({
+				country: to_country,
+				rate: result.rate ?? undefined,
+				status: result.status ?? undefined,
+			}),
+		},
+	);
+
+export const validateTaxId: QuadernoEndpoints['taxIdsValidate'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'taxIds.validate',
+			input: Inputs.taxIdsValidate,
+			output: Outputs.taxIdsValidate,
+			toRequest: ({ tax_id, country }) => ({
+				method: 'GET',
+				path: '/tax_ids/validate',
+				query: { tax_id, country },
+			}),
+		},
+		input,
+		{
+			log: ({ country }, result) => ({
+				country,
+				valid: result.valid ?? undefined,
+			}),
+		},
+	);
+
+export const taxCodesList: QuadernoEndpoints['taxCodesList'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'taxCodes.list',
+			input: Inputs.taxCodesList,
+			output: Outputs.taxCodesList,
+			toRequest: ({ limit }) => ({
+				method: 'GET',
+				path: '/tax_codes',
+				query: { limit },
+			}),
+		},
+		input,
+		{
+			// Verified live: this route honours `limit`, unlike `/jurisdictions`.
+			shape: (raw) => ({ tax_codes: Array.isArray(raw) ? raw : [] }),
+			log: (_, result) => ({ count: result.tax_codes.length }),
+		},
+	);
+
+export const taxCodesGet: QuadernoEndpoints['taxCodesGet'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'taxCodes.get',
+			input: Inputs.taxCodesGet,
+			output: Outputs.taxCodesGet,
+			toRequest: ({ id }) => ({
+				method: 'GET',
+				path: `/tax_codes/${segment(id)}`,
+			}),
+		},
+		input,
+		{
+			shape: (raw) => wrap('tax_code', raw),
+			log: ({ id }) => ({ code: id }),
+		},
+	);
+
+export const jurisdictionsList: QuadernoEndpoints['jurisdictionsList'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'jurisdictions.list',
+			input: Inputs.jurisdictionsList,
+			output: Outputs.jurisdictionsList,
+			toRequest: ({ country }) => ({
+				method: 'GET',
+				path: '/jurisdictions',
+				query: { country },
+			}),
+		},
+		input,
+		{
+			// Verified live: `/jurisdictions` ignores `limit` and always answers the
+			// full static list, so no paging parameters are offered for it.
+			shape: (raw) => ({ jurisdictions: Array.isArray(raw) ? raw : [] }),
+			log: (_, result) => ({ count: result.jurisdictions.length }),
+		},
+	);
+
+export const jurisdictionsGet: QuadernoEndpoints['jurisdictionsGet'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'jurisdictions.get',
+			input: Inputs.jurisdictionsGet,
+			output: Outputs.jurisdictionsGet,
+			toRequest: ({ id }) => ({
+				method: 'GET',
+				path: `/jurisdictions/${segment(id)}`,
+			}),
+		},
+		input,
+		{
+			shape: (raw) => wrap('jurisdiction', raw),
+			log: ({ id }) => ({ jurisdictionId: id }),
+		},
+	);
+
+export const createTransaction: QuadernoEndpoints['transactionsCreate'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'transactions.create',
+			input: Inputs.transactionsCreate,
+			output: Outputs.transactionsCreate,
+			toRequest: (body) => ({ method: 'POST', path: '/transactions', body }),
+		},
+		input,
+		{
+			shape: (raw) => wrap('transaction', raw),
+			log: ({ payment_method }, result) => ({
+				transactionId: result.transaction.id,
+				number: result.transaction.number ?? undefined,
+				paid: payment_method !== undefined,
+			}),
+		},
+	);
+
+export const webhooksList: QuadernoEndpoints['webhooksList'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'webhooks.list',
+			input: Inputs.webhooksList,
+			output: Outputs.webhooksList,
+			toRequest: () => ({ method: 'GET', path: '/webhooks' }),
+		},
+		input,
+		{
+			shape: (raw) => ({ webhooks: Array.isArray(raw) ? raw : [] }),
+			log: (_, result) => ({ count: result.webhooks.length }),
+		},
+	);
