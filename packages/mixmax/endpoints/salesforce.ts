@@ -210,7 +210,11 @@ export const salesforceGetContactOrLead: MixmaxEndpoints['salesforceGetContactOr
 		await logEventFromContext(
 			ctx,
 			'mixmax.salesforce.getContactOrLead',
-			{ ...input },
+			{
+				// The address being looked up is private; log the options only.
+				withRelatedObjects: input.withRelatedObjects,
+				fetch: input.fetch,
+			},
 			'completed',
 		);
 		return result;
@@ -409,7 +413,12 @@ export const salesforceSearch: MixmaxEndpoints['salesforceSearch'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.salesforce.search',
-		{ ...input },
+		{
+			// The search text is often a name or an address; log the object
+			// type and the fields asked for, not the text.
+			type: input.type,
+			fields: input.fields,
+		},
 		'completed',
 	);
 	return result;

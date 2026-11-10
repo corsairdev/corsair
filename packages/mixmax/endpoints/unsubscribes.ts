@@ -25,7 +25,14 @@ export const unsubscribesList: MixmaxEndpoints['unsubscribesList'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.unsubscribes.list',
-		{ ...input },
+		{
+			// The address being looked up is private; log that a filter was
+			// used and the paging, not the address.
+			filteredByEmail: input.email !== undefined,
+			sort: input.sort,
+			sortAscending: input.sortAscending,
+			limit: input.limit,
+		},
 		'completed',
 	);
 	return result;
@@ -80,7 +87,8 @@ export const unsubscribesRemove: MixmaxEndpoints['unsubscribesRemove'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.unsubscribes.remove',
-		{ ...input },
+		// The address is private; log the number of addresses only.
+		{ addresses: 1 },
 		'completed',
 	);
 	return result;

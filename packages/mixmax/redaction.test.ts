@@ -209,4 +209,42 @@ describe('Mixmax event history redaction', () => {
 			{ id: '00Q000000000001', fields: 3 },
 		]);
 	});
+	it('never logs the address or search text on unsubscribe, team create and Salesforce lookups', async () => {
+		// The mocked response is `{}`. A read rejects that after it has logged,
+		// which is all this test looks at, so the rejection is swallowed.
+		const ignoreOutput = () => undefined;
+		await endpoints.unsubscribes
+			.list(ctx, { email: 'ada@example.com' })
+			.catch(ignoreOutput);
+		await endpoints.unsubscribes.remove(ctx, { email: 'ada@example.com' });
+		await endpoints.teams.create(ctx, {
+			name: 'Sales',
+			members: [{ email: 'grace@example.com', role: 'member' }],
+		} as never);
+		await endpoints.salesforce
+			.getContactOrLead(ctx, { email: 'linus@example.com' } as never)
+			.catch(ignoreOutput);
+		await endpoints.salesforce
+			.search(ctx, {
+				type: 'Contact',
+				q: 'Private Person',
+				fields: 'Id,Name',
+			} as never)
+			.catch(ignoreOutput);
+
+		const payloads = logEvent.mock.calls
+			.filter((call) => !String(call[1]).endsWith('.outputMismatch'))
+			.map((call) => call[2] as Record<string, unknown>);
+		expect(payloads).toHaveLength(5);
+		for (const payload of payloads) {
+			const serialized = JSON.stringify(payload);
+			expect(serialized).not.toContain('@');
+			expect(serialized).not.toContain('Private');
+		}
+		// The log stays useful: what kind of call it was is still recorded.
+		expect(payloads[0]).toMatchObject({ filteredByEmail: true });
+		expect(payloads[1]).toEqual({ addresses: 1 });
+		expect(payloads[2]).toMatchObject({ name: 'Sales', members: 1 });
+		expect(payloads[4]).toMatchObject({ type: 'Contact' });
+	});
 });

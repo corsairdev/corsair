@@ -50,7 +50,12 @@ export const teamsCreate: MixmaxEndpoints['teamsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'mixmax.teams.create',
-		{ ...input },
+		{
+			// Invitee addresses are private; log the team and the count.
+			name: input.name,
+			orgId: input.orgId,
+			members: input.members?.length ?? 0,
+		},
 		'completed',
 	);
 	return result;
