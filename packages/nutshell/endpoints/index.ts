@@ -123,8 +123,8 @@ export const nutshellEndpointMeta = {
 		description: 'Delete an account',
 	},
 	'leads.updateInstallments': {
-		riskLevel: 'write',
-		description: 'Update installments for a lead',
+		riskLevel: 'destructive',
+		description: "Replace a lead's installment schedule",
 	},
 	'tasks.list': { riskLevel: 'read', description: 'Get a list of tasks' },
 	'contacts.create': { riskLevel: 'write', description: 'Create a contact' },

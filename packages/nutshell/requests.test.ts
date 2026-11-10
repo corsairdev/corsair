@@ -1,5 +1,5 @@
 import { createCorsair } from 'corsair/core';
-import { nutshell } from './index';
+import { nutshell, nutshellEndpointMeta } from './index';
 
 const corsair = createCorsair({
 	plugins: [nutshell({ key: 'owner@example.com:api-key' })],
@@ -72,5 +72,11 @@ describe('Nutshell request guards', () => {
 		expect(JSON.parse(String(init.body))).toEqual([
 			{ op: 'remove', path: '/accounts/0/links/contacts/1-contacts' },
 		]);
+	});
+
+	it('rates replacing a lead installment schedule as destructive', () => {
+		expect(nutshellEndpointMeta['leads.updateInstallments'].riskLevel).toBe(
+			'destructive',
+		);
 	});
 });

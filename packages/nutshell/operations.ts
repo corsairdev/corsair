@@ -308,8 +308,10 @@ export const NUTSHELL_OPERATIONS = [
 		hasResponseBody: true,
 		mediaType: 'application/json',
 		responseEncoding: 'json',
-		riskLevel: 'write',
-		description: 'Update installments for a lead',
+		// The request replaces the whole installment schedule: installments
+		// missing from the body are dropped, and there is no undo route.
+		riskLevel: 'destructive',
+		description: "Replace a lead's installment schedule",
 	},
 	{
 		key: 'tasks.list',
