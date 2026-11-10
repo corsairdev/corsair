@@ -14,7 +14,8 @@ import { bodyRecord } from './tenant-matcher';
 // plugin's webhook secret is sent by the caller as a header on every delivery
 // and compared in constant time here. A webhook configured in the tl;dv app
 // cannot attach headers, which means enabling one requires a proxy that adds
-// this header, or accepting unverified deliveries by leaving the secret unset.
+// this header. With no secret configured every delivery is refused. The check
+// proves a delivery came through that proxy, not that tl;dv sent it.
 
 /** Header that carries the shared secret on each delivery. */
 export const TLDV_WEBHOOK_SECRET_HEADER = 'x-corsair-webhook-secret';

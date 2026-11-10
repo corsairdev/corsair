@@ -141,7 +141,7 @@ export const tldvEndpointSchemas = {
 const tldvWebhookSchemas = {
 	'meetings.meetingReady': {
 		description:
-			'A meeting finished processing and its transcript and notes exist',
+			'A meeting finished processing. Carries its notes when they exist, and its transcript when the subscription includes one',
 		payload: MeetingReadyEventSchema,
 		response: MeetingReadyEventSchema,
 	},

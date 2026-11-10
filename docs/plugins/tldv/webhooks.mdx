@@ -24,25 +24,11 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
-    // Read the raw text, not `request.json()`.
-    const body = await request.text();
-    // Pass the URL query: `processWebhook` takes the tenant from
-    // `query.tenantId`, and without it every delivery runs under `default`.
-    const query = Object.fromEntries(new URL(request.url).searchParams);
-    const result = await processWebhook(corsair, headers, body, query);
-    // `result.response` is a plain object, not a Response. No match means no
-    // plugin claimed the delivery, so answer 404 rather than 200.
-    return Response.json(result.response ?? { success: false }, {
-        status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
-    });
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
 }
 ```
-
-Three details decide whether a bad delivery is visible:
-
-- **A rejected delivery must throw.** `processWebhook` ignores a handler's `statusCode` and answers `{ success: true }` for a returned `success: false`, keeping a failure only when the handler throws. The plugin's handlers throw when the shared secret does not match or the payload does not parse, so `success` is a reliable failure signal here.
-- **tl;dv does not sign webhooks.** It publishes no signature scheme, so the plugin compares a shared secret you supply in `x-corsair-webhook-secret`. A webhook configured in the tl;dv app cannot attach headers, so a proxy that adds this header is required. The plugin rejects every delivery when no secret is configured, so leaving it unset means none are accepted rather than unverified ones.
-- **tl;dv waits 10 seconds** for a 2xx before retrying, so answer quickly. A `MeetingReady` delivery with `include.transcript` enabled can be several hundred KB.
 
 ## Events
 
@@ -52,7 +38,7 @@ Three details decide whether a bad delivery is visible:
 
 `meetings.meetingReady`
 
-A meeting finished processing and its transcript and notes exist
+A meeting finished processing. Carries its notes when they exist, and its transcript when the subscription includes one
 
 **Payload**
 
@@ -89,20 +75,20 @@ A meeting finished processing and its transcript and notes exist
     conferenceId?: string | null
   } | null,
   phoneNumber?: string | null,
-  metadata?: Record<string, unknown> | null,
+  metadata?: Record<string, any> | null,
   notes?: {
     markdownContent?: string | null,
     structuredNotes?: {
-      segmentId: string,
+      segmentId?: string | null,
       timestamp: number,
-      text: string,
-      topicId: string
+      text?: string | null,
+      topicId?: string | null
     }[] | null,
     topics?: {
       id: string,
       order: number,
       title: string,
-      summary: string
+      summary?: string | null
     }[] | null
   } | null,
   transcript?: {
@@ -151,20 +137,20 @@ A meeting finished processing and its transcript and notes exist
       conferenceId?: string | null
     } | null,
     phoneNumber?: string | null,
-    metadata?: Record<string, unknown> | null,
+    metadata?: Record<string, any> | null,
     notes?: {
       markdownContent?: string | null,
       structuredNotes?: {
-        segmentId: string,
+        segmentId?: string | null,
         timestamp: number,
-        text: string,
-        topicId: string
+        text?: string | null,
+        topicId?: string | null
       }[] | null,
       topics?: {
         id: string,
         order: number,
         title: string,
-        summary: string
+        summary?: string | null
       }[] | null
     } | null,
     transcript?: {
