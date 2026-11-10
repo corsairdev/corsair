@@ -1,0 +1,190 @@
+---
+title: API
+description: "API reference for Mails.so: every `mailsso.api.*` operation with input and output types."
+---
+
+Every `mailsso.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Validations
+
+### batch
+
+`validations.batch`
+
+Start a batch validation job for at least 2 different email addresses; needs a paid Mails.so plan, and the job cannot be deleted through the API. It returns the job at once with no results: follow it with validations.getBatch until status is completed (it reads processing meanwhile).
+
+**Risk:** `write`
+
+```ts
+await corsair.mailsso.api.validations.batch({ emails: ['first@example.com', 'second@example.com', 'third@example.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | The addresses to validate. Mails.so refuses a batch with fewer than 2 different addresses (use validations.single for one). Needs a paid Mails.so plan. |
+
+Needs a paid Mails.so plan and at least 2 different addresses. Returns the job at once with status pending and no results; read it with validations.getBatch. A write: it starts a job on your account that the API cannot delete, and it is never replayed after a 5xx.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Id of the batch job |
+| `name` | `string \| null` | No | Name of the batch job, often empty |
+| `created_at` | `string` | Yes | When the job was created, ISO 8601 |
+| `updated_at` | `string` | Yes | When the job last changed, ISO 8601 |
+| `deleted_at` | `string \| null` | No | When the job was deleted, if it was |
+| `finished_at` | `string \| null` | No | When the job finished; null while it is still running |
+| `archived_at` | `string \| null` | No | When the job was archived, if it was |
+| `user_id` | `string` | Yes | Id of the account that started the job |
+| `size` | `number` | Yes | Number of addresses in the batch |
+| `progress` | `number \| null` | No | Progress counter reported by Mails.so |
+| `duration` | `number \| null` | No | How long the job took |
+| `duplicates` | `number \| null` | No | Number of duplicate addresses |
+| `type` | `string \| null` | No | Kind of job; list for a batch |
+| `file_type` | `string \| null` | No | Set by Mails.so; empty on batches started with this plugin |
+| `file_key` | `string \| null` | No | Set by Mails.so; empty on batches started with this plugin |
+| `skip_emails` | `boolean \| null` | No | Set by Mails.so; true on batches started with this plugin |
+| `status` | `string \| null` | No | Job status; pending right after the job is created |
+
+
+
+---
+
+### getBatch
+
+`validations.getBatch`
+
+Read a batch validation job by id: status processing while it runs, and once completed the counts per result and the validation of every address
+
+**Risk:** `read`
+
+```ts
+await corsair.mailsso.api.validations.getBatch({ id: '3aace594-f454-42e4-9cb3-198b6253320c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The batch job id returned by validations.batch, for example 3aace594-f454-42e4-9cb3-198b6253320c. |
+
+Reads processing with only the id and created_at while the job runs (HTTP 202 with a progress note in error), then completed with stats and emails. Mails.so documents no failed status and no cancel route.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Id of the batch job |
+| `name` | `string \| null` | No | Name of the batch job, often empty |
+| `created_at` | `string` | Yes | When the job was created, ISO 8601 |
+| `updated_at` | `string \| null` | No | When the job last changed, ISO 8601 |
+| `deleted_at` | `string \| null` | No | When the job was deleted, if it was |
+| `finished_at` | `string \| null` | No | When the job finished; null while it is still running |
+| `archived_at` | `string \| null` | No | When the job was archived, if it was |
+| `user_id` | `string \| null` | No | Id of the account that started the job |
+| `size` | `number \| null` | No | Number of addresses in the batch |
+| `progress` | `number \| null` | No | Progress counter reported by Mails.so |
+| `duration` | `number \| null` | No | How long the job took |
+| `duplicates` | `number \| null` | No | Number of duplicate addresses |
+| `type` | `string \| null` | No | Kind of job; list for a batch |
+| `file_type` | `string \| null` | No | Set by Mails.so; empty on batches started with this plugin |
+| `file_key` | `string \| null` | No | Set by Mails.so; empty on batches started with this plugin |
+| `skip_emails` | `boolean \| null` | No | Set by Mails.so; true on batches started with this plugin |
+| `status` | `string` | Yes | Job status: processing while running, completed when finished |
+| `stats` | `Record<string, number> \| null` | No | Counts for a finished job: the total, one per verdict, and one per reason |
+| `emails` | `object[] \| null` | No | One validation result per address; present on completed jobs, so treat it as absent while the job is processing |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  username?: string | null,
+  domain?: string | null,
+  did_you_mean?: string | null,
+  mx_record?: string | null,
+  provider?: string | null,
+  score?: number | null,
+  isv_format?: boolean | null,
+  isv_domain?: boolean | null,
+  isv_mx?: boolean | null,
+  isv_noblock?: boolean | null,
+  isv_nocatchall?: boolean | null,
+  isv_nogeneric?: boolean | null,
+  is_disposable?: boolean | null,
+  is_free?: boolean | null,
+  avatar?: string | null,
+  result: string,
+  reason?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### single
+
+`validations.single`
+
+Validate one email address: deliverability result and reason, a 0-100 score, and format, domain, MX, block-list, catch-all, generic, disposable and free-provider checks
+
+**Risk:** `read`
+
+```ts
+await corsair.mailsso.api.validations.single({ email: 'hello@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The email address to validate. A malformed address is not an error: Mails.so answers it as undeliverable with reason invalid_format. |
+
+A malformed address answers 200 with result undeliverable and reason invalid_format, not an error. Mails.so reports the failure of a request as { data: null, error }, which the plugin throws as MailssoAPIError.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Id of the validation |
+| `email` | `string` | Yes | The address that was validated |
+| `username` | `string \| null` | No | The part of the address before the @ |
+| `domain` | `string \| null` | No | The part of the address after the @ |
+| `did_you_mean` | `string \| null` | No | A suggested correction when the domain looks misspelled |
+| `mx_record` | `string \| null` | No | Mail server of the domain |
+| `provider` | `string \| null` | No | Mailbox provider, for example google_workspace |
+| `score` | `number \| null` | No | Overall validity score, 0 to 100 |
+| `isv_format` | `boolean \| null` | No | The format is valid |
+| `isv_domain` | `boolean \| null` | No | The domain is valid |
+| `isv_mx` | `boolean \| null` | No | The MX record is valid; null when it was not checked |
+| `isv_noblock` | `boolean \| null` | No | Not on a block list |
+| `isv_nocatchall` | `boolean \| null` | No | The domain does not accept every address (not catch-all) |
+| `isv_nogeneric` | `boolean \| null` | No | Not a generic role address such as info@ or admin@ |
+| `is_disposable` | `boolean \| null` | No | The address belongs to a disposable email service |
+| `is_free` | `boolean \| null` | No | The address belongs to a free email provider |
+| `avatar` | `string \| null` | No | Avatar URL, when one was found |
+| `result` | `string` | Yes | Overall verdict: deliverable, undeliverable, risky, or a fourth value for checks that could not finish |
+| `reason` | `string \| null` | No | Why Mails.so reached that verdict, for example accepted_email, invalid_domain, invalid_format or catch_all |
+
+
+
+---
+

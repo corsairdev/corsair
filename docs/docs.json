@@ -2598,6 +2598,14 @@
                 ]
               },
               {
+                "group": "Mails.so",
+                "pages": [
+                  "plugins/mailsso/overview",
+                  "plugins/mailsso/api",
+                  "plugins/mailsso/database"
+                ]
+              },
+              {
                 "group": "Mailtrap",
                 "pages": [
                   "plugins/mailtrap/overview",
