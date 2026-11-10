@@ -39,9 +39,10 @@ export async function makeKlipfolioRequest<T>(
 		// unknown: Klipfolio request bodies differ by operation and are
 		// validated by the corresponding endpoint schema before this boundary.
 		body?: Record<string, unknown>;
-		// unknown: Klipfolio documents offset-based list pagination with
-		// scalar query parameters.
-		query?: Record<string, string | number | boolean | undefined>;
+		// unknown: Klipfolio documents offset-based list pagination and
+		// scoping filters as scalar query parameters; passthrough extras ride
+		// along as opaque values.
+		query?: Record<string, unknown>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
