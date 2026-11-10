@@ -42,6 +42,7 @@ import type {
 } from './webhooks';
 import {
 	EventbriteWebhookPayloadSchema,
+	EventbriteWebhookResponseSchema,
 	isEventbriteNotification,
 	matchEventbriteTenantWebhook,
 	Notifications,
@@ -416,7 +417,7 @@ const eventbriteWebhookSchemas = {
 		description:
 			'An Eventbrite webhook delivery: the notification naming the changed object’s `api_url` and the `config.action` that fired, not the object itself',
 		payload: EventbriteWebhookPayloadSchema,
-		response: EventbriteWebhookPayloadSchema,
+		response: EventbriteWebhookResponseSchema,
 	},
 } as const satisfies RequiredPluginWebhookSchemas<
 	typeof eventbriteWebhooksNested

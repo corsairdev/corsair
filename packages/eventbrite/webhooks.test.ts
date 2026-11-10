@@ -4,7 +4,12 @@ import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import type { EventbriteWebhookPayload } from './index';
 import { eventbrite } from './index';
 import { webhookDelivery, webhookTestDelivery } from './test-fixtures';
-import { actionOf, notification, organizationIdOf } from './webhooks';
+import {
+	actionOf,
+	EventbriteWebhookResponseSchema,
+	notification,
+	organizationIdOf,
+} from './webhooks';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -99,6 +104,23 @@ describe('notification.handler', () => {
 			action: 'order.placed',
 			organizationId: '154830740213',
 			api_url: 'https://www.eventbriteapi.com/v3/orders/9876543210/',
+		});
+	});
+
+	it('registers a response schema that declares the derived fields', async () => {
+		const registered =
+			eventbrite().webhookSchemas?.['notifications.delivery']?.response;
+		const handled = await notification.handler(ctx, request(webhookDelivery));
+
+		// The docs and get_schema() are generated from the registered schema, so
+		// it has to name the fields the handler adds, not only the notification.
+		expect(registered).toBe(EventbriteWebhookResponseSchema);
+		expect(Object.keys(EventbriteWebhookResponseSchema.shape)).toEqual(
+			expect.arrayContaining(['api_url', 'config', 'action', 'organizationId']),
+		);
+		expect(EventbriteWebhookResponseSchema.parse(handled.data)).toMatchObject({
+			action: 'order.placed',
+			organizationId: '154830740213',
 		});
 	});
 

@@ -56,12 +56,25 @@ export type EventbriteWebhookPayload = z.infer<
 	typeof EventbriteWebhookPayloadSchema
 >;
 
+/**
+ * What the handler returns: the notification plus the two fields it derives,
+ * so the registered response schema and the generated docs show them.
+ */
+export const EventbriteWebhookResponseSchema =
+	EventbriteWebhookPayloadSchema.extend({
+		action: z
+			.string()
+			.nullable()
+			.describe('`config.action`, e.g. `order.placed`; null when absent.'),
+		organizationId: z
+			.string()
+			.nullable()
+			.describe('`config.user_id`; null when absent.'),
+	});
+
 export type EventbriteWebhookOutputs = {
 	/** One entry per delivery; the payload is the notification, not the object. */
-	notification: EventbriteWebhookPayload & {
-		action: string | null;
-		organizationId: string | null;
-	};
+	notification: z.infer<typeof EventbriteWebhookResponseSchema>;
 };
 
 /**
