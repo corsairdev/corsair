@@ -1,0 +1,767 @@
+{
+  "id": "higgsfield",
+  "displayName": "Higgsfield",
+  "description": "Generative media API with image and video models from Higgsfield, Kling, Seedance, Wan, MiniMax and others; find models, price and run generations, follow or cancel requests, upload input files and read usage.",
+  "npmPackageName": "@corsair-dev/higgsfield",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "higgsfield.api.files.createUploadUrl",
+      "shortPath": "files.createUploadUrl",
+      "description": "Get a presigned URL to PUT an input file to yourself, and the public URL it will have. For most uses files.upload does both steps.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "image/png | image/jpeg | image/jpg | image/gif | image/webp | audio/x-wav | audio/wav | audio/mpeg | audio/mp3 | audio/mp4 | audio/x-m4a | audio/aac | audio/ogg | audio/flac | audio/x-flac | audio/webm | video/mp4",
+            "description": "The type of the file you will upload; the PUT must use the same one."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "public_url",
+            "optional": false,
+            "type": "string",
+            "description": "Pass this as a model input (image_url, video_url, audio_url) once the file is uploaded."
+          },
+          {
+            "key": "upload_url",
+            "optional": false,
+            "type": "string",
+            "description": "A presigned storage URL, good for one hour. PUT the file here with every upload_headers entry and no Higgsfield credentials."
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "upload_headers",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "higgsfield.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload an image, audio or video file from base64 and get the public URL to pass as a model input. A file already at a public https URL needs no upload: pass that URL to the model.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file’s bytes, base64 encoded (a data: URL prefix is fine). Up to 100 MB."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "image/png | image/jpeg | image/jpg | image/gif | image/webp | audio/x-wav | audio/wav | audio/mpeg | audio/mp3 | audio/mp4 | audio/x-m4a | audio/aac | audio/ogg | audio/flac | audio/x-flac | audio/webm | video/mp4",
+            "description": "The file’s type."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "public_url",
+            "optional": false,
+            "type": "string",
+            "description": "Pass this as a model input (image_url, video_url, audio_url). Uploaded files are deleted within seven days, so upload again rather than keeping the URL for later."
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "higgsfield.api.generations.estimate",
+      "shortPath": "generations.estimate",
+      "description": "What a generation with these inputs would cost, in US dollars and credits. Free; nothing runs.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modelPath",
+            "optional": false,
+            "type": "string",
+            "description": "The model path, for example higgsfield-ai/soul/v2/standard or kling-video/v2.5-turbo/pro/text-to-video. Find paths with models.list."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The model's input fields, for example { prompt: 'a quiet alpine lake at sunrise' }. Each model has its own; read them with models.get({ modelPath })."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "usd",
+            "optional": true,
+            "type": "string | null",
+            "description": "The estimated price in US dollars, as a decimal string."
+          },
+          {
+            "key": "discount",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "higgsfield.api.generations.run",
+      "shortPath": "generations.run",
+      "description": "Generate and wait up to waitSeconds (default 10, at most 15) for the output; spends account balance when it completes. Answers like requests.status: queued or in_progress is a job to follow with requests.status, and video usually takes longer than the wait. Outputs expire after 7 days by default.",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "request_id",
+        "status": {
+          "op": "requests.status",
+          "idArg": "requestId",
+          "statusPath": "status",
+          "done": ["completed"],
+          "failed": ["failed", "nsfw", "canceled"]
+        },
+        "cancel": {
+          "op": "requests.cancel",
+          "idArg": "requestId"
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modelPath",
+            "optional": false,
+            "type": "string",
+            "description": "The model path, for example higgsfield-ai/soul/v2/standard or kling-video/v2.5-turbo/pro/text-to-video. Find paths with models.list."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The model's input fields, for example { prompt: 'a quiet alpine lake at sunrise' }. Each model has its own; read them with models.get({ modelPath })."
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string",
+            "description": "An https URL Higgsfield POSTs the result to when the request finishes (see the requests.completed webhook)."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Identifies this one generation. Repeating the same call with the same key returns the original request with no second charge; the same key with a different modelPath, input, webhookUrl or expiresAfter is a 422. Left out, one is generated for this call and its retries and returned as idempotency_key. A caller that replays a step or starts a new script gets a new key each time, so it must pass its own to be safe across attempts."
+          },
+          {
+            "key": "expiresAfter",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds to keep the outputs after the request finishes, at least 3600. Default and most accounts’ maximum: 604800 (7 days)."
+          },
+          {
+            "key": "waitSeconds",
+            "optional": true,
+            "type": "number",
+            "description": "How long the call waits, counted from the start of the submit: default 10 and at most 15 seconds. A request still going then comes back as it stands."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | in_progress | completed | failed | nsfw | canceled | string",
+            "description": "queued and in_progress: still running (a queued request can still be canceled). completed: the outputs are in images, video or audio. failed: see error, not charged. nsfw: moderation rejected the input or output, not charged. canceled: canceled while queued, refunded."
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancel_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | Record<string, any> | null"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the output files are deleted and their URLs stop working: 7 days after the request finished by default. Copy anything you want to keep before then."
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ url?: string | null, content_type?: string | null }[] | null"
+          },
+          {
+            "key": "video",
+            "optional": true,
+            "type": "{ url?: string | null, content_type?: string | null } | null"
+          },
+          {
+            "key": "audio",
+            "optional": true,
+            "type": "{ url?: string | null, content_type?: string | null } | null"
+          },
+          {
+            "key": "audios",
+            "optional": true,
+            "type": "{ url?: string | null, content_type?: string | null }[] | null"
+          },
+          {
+            "key": "expires_after",
+            "optional": true,
+            "type": "number | null",
+            "description": "Seconds the outputs are kept after the request finishes."
+          },
+          {
+            "key": "idempotency_key",
+            "optional": false,
+            "type": "string",
+            "description": "Repeat the call with this key and no second charge is made."
+          }
+        ]
+      }
+    },
+    {
+      "path": "higgsfield.api.generations.submit",
+      "shortPath": "generations.submit",
+      "description": "Queue a generation (image, video…) and get a request id back at once; spends account balance when it completes. Follow it with requests.status until it is completed, failed, nsfw or canceled, or pass webhookUrl. Outputs expire after 7 days by default. Repeating with the returned idempotency_key is never charged twice.",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "request_id",
+        "status": {
+          "op": "requests.status",
+          "idArg": "requestId",
+          "statusPath": "status",
+          "done": ["completed"],
+          "failed": ["failed", "nsfw", "canceled"]
+        },
+        "cancel": {
+          "op": "requests.cancel",
+          "idArg": "requestId"
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modelPath",
+            "optional": false,
+            "type": "string",
+            "description": "The model path, for example higgsfield-ai/soul/v2/standard or kling-video/v2.5-turbo/pro/text-to-video. Find paths with models.list."
+          },
+          {
+            "key": "input",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The model's input fields, for example { prompt: 'a quiet alpine lake at sunrise' }. Each model has its own; read them with models.get({ modelPath })."
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string",
+            "description": "An https URL Higgsfield POSTs the result to when the request finishes (see the requests.completed webhook)."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Identifies this one generation. Repeating the same call with the same key returns the original request with no second charge; the same key with a different modelPath, input, webhookUrl or expiresAfter is a 422. Left out, one is generated for this call and its retries and returned as idempotency_key. A caller that replays a step or starts a new script gets a new key each time, so it must pass its own to be safe across attempts."
+          },
+          {
+            "key": "expiresAfter",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds to keep the outputs after the request finishes, at least 3600. Default and most accounts’ maximum: 604800 (7 days)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "An acceptance receipt, not the current status: a repeat with the same key can say queued for a request that has since finished. Read requests.status."
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string",
+            "description": "Pass to requests.status as requestId."
+          },
+          {
+            "key": "status_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancel_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires_after",
+            "optional": true,
+            "type": "number | null",
+            "description": "Seconds the outputs are kept after the request finishes."
+          },
+          {
+            "key": "idempotency_key",
+            "optional": false,
+            "type": "string",
+            "description": "Repeat the call with this key and no second charge is made."
+          }
+        ]
+      }
+    },
+    {
+      "path": "higgsfield.api.models.get",
+      "shortPath": "models.get",
+      "description": "One model by its path, with its input fields (input_schema). Read this before a generation: every model takes its own fields.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "modelPath",
+            "optional": false,
+            "type": "string",
+            "description": "The model path, for example higgsfield-ai/soul/v2/standard or kling-video/v2.5-turbo/pro/text-to-video. Find paths with models.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "The model path to pass as modelPath, except where a model’s docs page names another endpoint."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "operation_type",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "For example text2image, image2video, text2video."
+          },
+          {
+            "key": "output_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "For example image or video."
+          },
+          {
+            "key": "base_credits",
+            "optional": true,
+            "type": "string | null",
+            "description": "Not a price (most models say 0.0000). Use generations.estimate."
+          },
+          {
+            "key": "is_workflow",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "input_schema",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "JSON Schema of the model’s input fields. It drives the Console’s playground, so its defaults can differ from what the API applies when a field is left out: pass the fields you care about."
+          }
+        ]
+      }
+    },
+    {
+      "path": "higgsfield.api.models.list",
+      "shortPath": "models.list",
+      "description": "Find Higgsfield models by text, output type or operation; includeSchema adds their input fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Free text, for example soul or kling."
+          },
+          {
+            "key": "outputType",
+            "optional": true,
+            "type": "string",
+            "description": "For example image or video."
+          },
+          {
+            "key": "operationType",
+            "optional": true,
+            "type": "string",
+            "description": "For example text2image, image_edit, text2video, image2video or video2video."
+          },
+          {
+            "key": "includeSchema",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include each model's input_schema (its input fields). All of them come to about 110 KB, so prefer models.get for one model."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ slug: string, title?: string | null, description?: string | null, operation_type?: string[] | null, output_type?: string | null, base_credits?: string | null, is_workflow?: boolean | null, input_schema?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "higgsfield.api.requests.cancel",
+      "shortPath": "requests.cancel",
+      "description": "Cancel a request that is still queued and refund it. Once it has started it cannot be canceled, and this errors.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string",
+            "description": "The request_id generations.submit or generations.run returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "canceled",
+            "description": "The request was still queued. It will not run and is refunded."
+          }
+        ]
+      }
+    },
+    {
+      "path": "higgsfield.api.requests.delete",
+      "shortPath": "requests.delete",
+      "description": "Delete a finished request's files, prompt and parameters now. Billing records stay. A request still running gets a 409.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string",
+            "description": "The request_id generations.submit or generations.run returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "deleted, also when the request was already deleted."
+          }
+        ]
+      }
+    },
+    {
+      "path": "higgsfield.api.requests.status",
+      "shortPath": "requests.status",
+      "description": "Where a request stands, with its output URLs once completed. Output URLs stop working at expires_at, 7 days after it finished by default.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string",
+            "description": "The request_id generations.submit or generations.run returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "queued | in_progress | completed | failed | nsfw | canceled | string",
+            "description": "queued and in_progress: still running (a queued request can still be canceled). completed: the outputs are in images, video or audio. failed: see error, not charged. nsfw: moderation rejected the input or output, not charged. canceled: canceled while queued, refunded."
+          },
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancel_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | Record<string, any> | null"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the output files are deleted and their URLs stop working: 7 days after the request finished by default. Copy anything you want to keep before then."
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "{ url?: string | null, content_type?: string | null }[] | null"
+          },
+          {
+            "key": "video",
+            "optional": true,
+            "type": "{ url?: string | null, content_type?: string | null } | null"
+          },
+          {
+            "key": "audio",
+            "optional": true,
+            "type": "{ url?: string | null, content_type?: string | null } | null"
+          },
+          {
+            "key": "audios",
+            "optional": true,
+            "type": "{ url?: string | null, content_type?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "higgsfield.api.usage.get",
+      "shortPath": "usage.get",
+      "description": "Completed generations and their estimated cost by model and time bucket. For monitoring: it can lag and is not a billing record.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 time, for example 2026-11-01T00:00:00Z. Default: 24 hours ago. The range is at most 31 days."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 time. Default: now."
+          },
+          {
+            "key": "timeframe",
+            "optional": true,
+            "type": "hour | day | week | month",
+            "description": "Bucket size, default hour."
+          },
+          {
+            "key": "boundToTimeframe",
+            "optional": true,
+            "type": "boolean",
+            "description": "Align start and end to bucket boundaries. Default true."
+          },
+          {
+            "key": "models",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these model paths."
+          },
+          {
+            "key": "byApiKey",
+            "optional": true,
+            "type": "boolean",
+            "description": "Break the results down by API key id (auth_method)."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Buckets per page, default 50 and at most 100."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_series",
+            "optional": true,
+            "type": "{ bucket: string, results: { model?: string | null, unit?: string | null, quantity?: string | null, unit_price?: string | null, cost?: string | null, currency?: string | null, auth_method?: string | null }[] }[] | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "higgsfield.webhooks.requests.completed",
+      "shortPath": "requests.completed",
+      "description": "A request reached completed (with its output), failed or nsfw. Signed with Standard Webhooks; only signed deliveries are accepted.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "request_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "completed: the output is in payload. failed: see error. nsfw: moderation rejected the input or output. Failed and nsfw requests are not charged."
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | Record<string, any> | null"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the files in payload are deleted and their URLs stop working: 7 days after the request finished by default. Download them before then."
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "{ images?: { url?: string | null, content_type?: string | null }[] | null, video?: { url?: string | null, content_type?: string | null } | null, audio?: { url?: string | null, content_type?: string | null } | null, audios?: { url?: string | null, content_type?: string | null }[] | null } | null",
+            "description": "The output, present when status is completed. Some video and 3D operations add artifacts such as zip, mov, jsx, fbx or ply."
+          }
+        ]
+      },
+      "responseType": "{ request_id: string, status: string, error?: string | Record<string, any> | null, expires_at?: string | null, payload?: { images?: { url?: string | null, content_type?: string | null }[] | null, video?: { url?: string | null, content_type?: string | null } | null, audio?: { url?: string | null, content_type?: string | null } | null, audios?: { url?: string | null, content_type?: string | null }[] | null } | null, webhook_id?: string | null }",
+      "usageExample": "higgsfield({\n    webhookHooks: {\n        requests: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

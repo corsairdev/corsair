@@ -122,11 +122,14 @@ jobs:
       - name: Test review scripts
         run: >-
           node --experimental-strip-types --test
+          scripts/catalog-bot.test.mjs
           scripts/pr-review/gate.test.ts
           scripts/pr-review/loop.test.ts
+          scripts/release-changelog.test.mjs
           scripts/pr-review/package-shards.test.ts
           scripts/pr-review/pr-scope.test.ts
           scripts/plugin-docs-requirements.test.ts
+          scripts/release-on-merge.test.mjs
           scripts/plugin-icon-svg.test.ts
 
       # ts-jest only transpiles (isolatedModules in tsconfig.base.json), so test
