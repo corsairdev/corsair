@@ -95,7 +95,11 @@ export async function makeFinageRequest<T>(
 			);
 		}
 		if (error instanceof Error) {
-			throw new FinageAPIError(error.message);
+			// A failure before a response (a bad URL, a dropped connection) can
+			// quote the request URL, which carries the key in its query string.
+			throw new FinageAPIError(
+				apiKey ? error.message.split(apiKey).join('[redacted]') : error.message,
+			);
 		}
 		throw new FinageAPIError('Unknown Finage API error');
 	}

@@ -124,6 +124,25 @@ describe('Finage HTTP client', () => {
 		},
 	);
 
+	it('redacts the API key from a failure that quotes the request URL', async () => {
+		// A request that never gets a response is not an ApiError, and Node quotes
+		// the whole URL, key included, when it cannot parse or reach it.
+		httpRequest.mockRejectedValueOnce(
+			new TypeError(
+				'Failed to parse URL from https://api.finage.co.uk/last/stock/AAPL?apikey=secret-key',
+			),
+		);
+
+		const error = await makeFinageRequest(
+			'/last/stock/AAPL',
+			'secret-key',
+		).catch((caught: Error) => caught);
+
+		expect(error).toBeInstanceOf(Error);
+		expect((error as Error).message).not.toContain('secret-key');
+		expect((error as Error).message).toContain('[redacted]');
+	});
+
 	it('never carries the API key or the request URL on the thrown error', async () => {
 		// Core's ApiError keeps the request URL and query, and its redaction list
 		// does not include Finage's `apikey` parameter name.
