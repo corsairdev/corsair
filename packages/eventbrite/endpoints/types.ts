@@ -1704,7 +1704,7 @@ const DiscountCreateFieldsSchema = z.object({
 		.regex(/^\d+(\.\d{1,2})?$/, 'A decimal amount, e.g. `10` or `10.50`.')
 		.optional()
 		.describe(
-			'Fixed reduction. Eventbrite requires one of `amount_off` and `percent_off`.',
+			'Fixed reduction. A `coded` or `public` discount needs one of `amount_off` and `percent_off`; on an `access` code both are optional.',
 		),
 	percent_off: z
 		.string()
@@ -1741,12 +1741,19 @@ const DiscountCreateFieldsSchema = z.object({
 
 const DiscountCreateBodySchema = DiscountCreateFieldsSchema.superRefine(
 	(value, ctx) => {
-		if (value.amount_off === undefined && value.percent_off === undefined) {
+		// Eventbrite documents the amount as optional on an access code (it only
+		// unlocks hidden tickets) and says nothing either way for a hold code,
+		// so only the two types that are a price cut require one.
+		const needsAmount = value.type === 'coded' || value.type === 'public';
+		if (
+			needsAmount &&
+			value.amount_off === undefined &&
+			value.percent_off === undefined
+		) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['amount_off'],
-				message:
-					'Set `amount_off` or `percent_off`; Eventbrite rejects a discount with neither.',
+				message: `Set \`amount_off\` or \`percent_off\`; Eventbrite rejects a \`${value.type}\` discount with neither.`,
 			});
 		}
 		if (value.amount_off !== undefined && value.percent_off !== undefined) {

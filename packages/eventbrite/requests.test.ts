@@ -1151,6 +1151,45 @@ describe('discounts', () => {
 		expect(h.fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('creates an access code with no amount, which Eventbrite documents as optional', async () => {
+		h.respond({ id: '12345', code: 'VIP', type: 'access' });
+
+		const result = await invoke(Discounts.create, {
+			organization_id: ORG,
+			discount: { code: 'VIP', type: 'access', event_id: EVENT },
+		});
+
+		expect(h.lastRequest().body).toEqual({
+			discount: { code: 'VIP', type: 'access', event_id: EVENT },
+		});
+		expect(result).toMatchObject({ id: '12345', type: 'access' });
+	});
+
+	it('leaves a hold code with no amount for Eventbrite to judge', async () => {
+		h.respond({ id: '12346', code: 'HELD', type: 'hold' });
+
+		await invoke(Discounts.create, {
+			organization_id: ORG,
+			discount: { code: 'HELD', type: 'hold', hold_ids: ['H1234'] },
+		});
+
+		expect(h.lastRequest().body).toEqual({
+			discount: { code: 'HELD', type: 'hold', hold_ids: ['H1234'] },
+		});
+	});
+
+	it('still rejects a public discount with no amount', async () => {
+		const caught = await h.failure<Error>(
+			invoke(Discounts.create, {
+				organization_id: ORG,
+				discount: { code: 'SPRING', type: 'public' },
+			}),
+		);
+
+		expect(caught.name).toBe('ZodError');
+		expect(h.fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects both amount_off and percent_off', async () => {
 		const caught = await h.failure<Error>(
 			invoke(Discounts.create, {

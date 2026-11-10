@@ -616,7 +616,7 @@ export const eventbriteEndpointMeta = {
 	'discounts.create': {
 		riskLevel: 'write',
 		description:
-			'Create a discount code: a fixed amount or a percentage off, optionally limited by quantity, dates or ticket classes',
+			'Create a discount or access code: a fixed amount or a percentage off (optional on an access code), optionally limited by quantity, dates or ticket classes',
 	},
 	'discounts.update': {
 		riskLevel: 'write',
