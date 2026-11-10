@@ -12,6 +12,7 @@ import {
 	predictionEnvelope,
 	queryRows,
 	requestFileId,
+	uploadTrainingUrlsResponse,
 } from './test-fixtures';
 
 jest.mock('corsair/core', () => ({
@@ -316,15 +317,28 @@ describe('predictions.getFileByFileId', () => {
 });
 
 describe('models.uploadTrainingUrls', () => {
-	it('POSTs a bare JSON array of urls to UploadUrls/', async () => {
-		respond(modelObject);
+	it('POSTs the documented { data, urls } object to UploadUrls/', async () => {
+		respond(uploadTrainingUrlsResponse);
 
+		const data = [
+			{
+				filename: 'https://img.example/train-1.png',
+				object: [
+					{
+						name: 'total_amount',
+						ocr_text: '120.00',
+						bndbox: { xmin: 1, ymin: 1, xmax: 100, ymax: 100 },
+					},
+				],
+			},
+		];
 		const result = await invoke(Models.uploadTrainingUrls, {
 			model_id: modelId,
 			urls: [
 				'https://img.example/train-1.png',
 				'https://img.example/train-2.png',
 			],
+			data,
 		});
 
 		expectAuthenticated();
@@ -334,18 +348,37 @@ describe('models.uploadTrainingUrls', () => {
 		});
 		const body = lastInit().body;
 		expect(typeof body).toBe('string');
-		expect(JSON.parse(body as string)).toEqual([
-			'https://img.example/train-1.png',
-			'https://img.example/train-2.png',
-		]);
+		expect(JSON.parse(body as string)).toEqual({
+			data,
+			urls: [
+				'https://img.example/train-1.png',
+				'https://img.example/train-2.png',
+			],
+		});
 		expect(lastRequest().contentType).toBe('application/json');
-		expect(result.state).toBe(5);
+		expect(result.Meta?.ModelID).toBe(modelId);
+		expect(result.Data?.[0]?.filename).toBe('train-1.png');
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'nanonets.models.uploadTrainingUrls',
 			{ model_id: modelId, urls: 2 },
 			'completed',
 		);
+	});
+
+	it('sends an empty data list when no annotations are given', async () => {
+		respond(modelObject);
+
+		const result = await invoke(Models.uploadTrainingUrls, {
+			model_id: modelId,
+			urls: ['https://img.example/train-1.png'],
+		});
+
+		expect(JSON.parse(lastInit().body as string)).toEqual({
+			data: [],
+			urls: ['https://img.example/train-1.png'],
+		});
+		expect(result.state).toBe(5);
 	});
 });
 

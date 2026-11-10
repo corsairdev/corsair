@@ -200,7 +200,8 @@ const nanonetsEndpointMeta = {
 	},
 	'models.uploadTrainingUrls': {
 		riskLevel: 'write',
-		description: 'Add training images to a model by URL before (re)training',
+		description:
+			'Add training images to a model by URL, with optional box annotations, before (re)training',
 	},
 	'models.train': {
 		riskLevel: 'write',

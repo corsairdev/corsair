@@ -82,6 +82,36 @@ export const modelObject = {
 	message: 'Model trained successfully',
 };
 
+// The documented answer of Upload training images by Url:
+// https://docs.nanonets.com/reference/ocrmodeluploadurlsbymodelidpost-1
+export const uploadTrainingUrlsResponse = {
+	Meta: {
+		ModelID: modelId,
+		ModelType: 'ocr',
+		State: 0,
+		Categories: [
+			{ name: 'total_amount', count: 1 },
+			{ name: 'tax_amount', count: 0 },
+		],
+		Accuracy: 0,
+		Status: 'Current Status',
+	},
+	Data: [
+		{
+			filename: 'train-1.png',
+			size: { width: 1024, height: 1024 },
+			object: [
+				{
+					name: 'total_amount',
+					ocr_text: '120.00',
+					bndbox: { xmin: 1, ymin: 1, xmax: 100, ymax: 100 },
+				},
+			],
+			id: '7d2e9b14-5c3a-4f86-a1d7-9e0b6c4f2a58',
+		},
+	],
+};
+
 // Model Object state 4: still training.
 export const modelTrainingObject = {
 	model_id: modelId,

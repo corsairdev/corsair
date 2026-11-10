@@ -315,16 +315,90 @@ export type PredictionsGetFileByFileIdResponse = z.infer<
 
 // ── models.uploadTrainingUrls ──────────────────────────────────────────────
 
+// Body and answer follow Upload training images by Url:
+// https://docs.nanonets.com/reference/ocrmodeluploadurlsbymodelidpost-1
+const TrainingAnnotationSchema = z.object({
+	filename: z
+		.string()
+		.min(1)
+		.describe('The image URL the boxes belong to; one of urls.'),
+	object: z
+		.array(
+			z.object({
+				name: z.string().min(1).describe('The label of the box.'),
+				ocr_text: z.string().optional().describe('The text inside the box.'),
+				bndbox: z.object({
+					xmin: z.number(),
+					ymin: z.number(),
+					xmax: z.number(),
+					ymax: z.number(),
+				}),
+			}),
+		)
+		.describe('The labelled boxes on that image.'),
+});
+
 const ModelsUploadTrainingUrlsInputSchema = z.object({
 	model_id: ModelIdSchema,
 	urls: z.array(z.string().min(1)).min(1).describe('Training image URLs.'),
+	data: z
+		.array(TrainingAnnotationSchema)
+		.optional()
+		.describe(
+			'Annotations for the images, one entry per labelled image; omit to upload the images without boxes.',
+		),
 });
 
 export type ModelsUploadTrainingUrlsInput = z.input<
 	typeof ModelsUploadTrainingUrlsInputSchema
 >;
 
-const ModelsUploadTrainingUrlsResponseSchema = ModelObjectSchema;
+// The documented answer is { Meta, Data }; the Model Object fields stay
+// because the 200 is also described as a Model Object.
+const ModelsUploadTrainingUrlsResponseSchema = z
+	.object({
+		...ModelObjectSchema.shape,
+		Meta: z
+			.object({
+				ModelID: z.string().nullish(),
+				ModelType: z.string().nullish(),
+				State: z.union([z.string(), z.number()]).nullish(),
+				Categories: z
+					.array(
+						z
+							.object({
+								name: z.string().nullish(),
+								count: z.number().nullish(),
+							})
+							.loose(),
+					)
+					.nullish(),
+				Accuracy: z.number().nullish(),
+				Status: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+		Data: z
+			.array(
+				z
+					.object({
+						id: z.string().nullish(),
+						filename: z.string().nullish(),
+						size: z
+							.object({
+								width: z.number().nullish(),
+								height: z.number().nullish(),
+							})
+							.loose()
+							.nullish(),
+						// unknown: the stored annotations echo whatever was uploaded.
+						object: z.array(z.record(z.string(), z.unknown())).nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
+	})
+	.loose();
 
 export type ModelsUploadTrainingUrlsResponse = z.infer<
 	typeof ModelsUploadTrainingUrlsResponseSchema

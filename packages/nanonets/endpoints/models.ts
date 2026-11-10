@@ -15,10 +15,12 @@ export const uploadTrainingUrls: NanonetsEndpoints['modelsUploadTrainingUrls'] =
 				output: Outputs.modelsUploadTrainingUrls,
 			},
 			input,
-			({ model_id, urls }) => ({
+			({ model_id, urls, data }) => ({
 				method: 'POST',
 				path: `/OCR/Model/${encodeURIComponent(model_id)}/UploadUrls/`,
-				body: urls,
+				// Nanonets documents a JSON object with both keys required, so an
+				// upload without annotations still sends an empty data list.
+				body: { data: data ?? [], urls },
 			}),
 			{
 				log: ({ model_id, urls }) => ({ model_id, urls: urls.length }),
