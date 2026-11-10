@@ -602,7 +602,8 @@ export const metricsList: KlaviyoEndpoints['metricsList'] = (ctx, input) =>
 			query: {
 				filter: parsed.filter,
 				'fields[metric]': fieldsQuery(parsed.fields),
-				...pageQuery(parsed),
+				// No page[size]: the metrics route rejects it.
+				'page[cursor]': parsed.cursor,
 			},
 		}),
 		{

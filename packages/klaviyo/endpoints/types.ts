@@ -626,10 +626,15 @@ const MetricSchema = z
 
 export type KlaviyoMetric = z.infer<typeof MetricSchema>;
 
+/**
+ * Metrics take no `page[size]`: Klaviyo answers 400
+ * `'page_size' is not a valid field for the resource 'metric'`, verified live.
+ * Only `filter`, the sparse fieldset and a cursor are accepted.
+ */
 const MetricsListInputSchema = z.object({
 	filter: FilterSchema,
 	fields: FieldsSchema,
-	...PageSchema,
+	cursor: PageSchema.cursor,
 });
 
 export type MetricsListInput = z.input<typeof MetricsListInputSchema>;
