@@ -1,0 +1,158 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: Lemon Squeezy
+description: Sell software and digital products as a merchant of record. Read stores, products, orders and subscriptions, issue refunds, record metered usage, and create checkout links and discount codes.
+domain: lemonsqueezy.com
+recommendedAuth: api_key
+overviewNote: |
+  Every call goes through `https://api.lemonsqueezy.com` with the key as a Bearer token. The API speaks JSON:API 1.0, so responses carry `data`, `links`, `meta` and `jsonapi`, and a write body is `{ data: { type, id?, attributes, relationships? } }`. Those envelopes are returned as they arrive: `data.attributes` holds the fields.
+
+  Lists page with `pageNumber` and `pageSize`, capped at 100 per page, and `meta.page.lastPage` says when to stop. Filters take the provider's own names as an id, and a filter a resource does not support answers 400 rather than being ignored, so the parameter is fixed rather than silently dropped.
+
+  Money is in cents and its currency is the store's. A refund takes an optional `amount`; omit it to refund in full. A partial refund cannot be undone through the API, which is why `orders.refund` and `subscriptionInvoices.refund` are destructive.
+
+  A webhook is registered per store through `webhooks.create` with its own `secret`, and Lemon Squeezy signs each delivery with it. Deliveries are not routed through this plugin; verify them where they arrive.
+examples:
+  read:
+    path: orders.list
+    title: Read the latest orders
+    args:
+      pageSize: 10
+  write:
+    path: checkouts.create
+    title: Create a checkout link for a variant
+    args:
+      storeId: 1
+      variantId: 1
+apiExamples:
+  users.get:
+    call: "{}"
+  stores.list:
+    call: "{ pageSize: 10 }"
+  stores.get:
+    call: "{ storeId: '1' }"
+  products.list:
+    call: "{ storeId: 1, pageSize: 20 }"
+  variants.list:
+    call: "{ productId: 1, status: 'published' }"
+  prices.list:
+    call: "{ variantId: 1 }"
+  files.list:
+    call: "{ variantId: 1 }"
+  orders.list:
+    call: "{ storeId: 1, userEmail: 'buyer@example.com', pageSize: 10 }"
+  orders.get:
+    call: "{ orderId: '1' }"
+  orders.generateInvoice:
+    call: "{ orderId: '1', name: 'Acme Ltd' }"
+  orders.refund:
+    call: "{ orderId: '1', amount: 500 }"
+  orderItems.list:
+    call: "{ orderId: 1 }"
+  subscriptions.list:
+    call: "{ storeId: 1, status: 'active' }"
+  subscriptions.get:
+    call: "{ subscriptionId: '1' }"
+  subscriptions.update:
+    call: "{ subscriptionId: '1', variantId: 2, invoiceImmediately: true }"
+  subscriptions.cancel:
+    call: "{ subscriptionId: '1' }"
+  subscriptionItems.list:
+    call: "{ subscriptionId: 1 }"
+  subscriptionItems.usage:
+    call: "{ subscriptionItemId: '1' }"
+  subscriptionItems.update:
+    call: "{ subscriptionItemId: '1', quantity: 5 }"
+  subscriptionInvoices.list:
+    call: "{ subscriptionId: 1, status: 'paid' }"
+  subscriptionInvoices.refund:
+    call: "{ subscriptionInvoiceId: '1' }"
+  usageRecords.list:
+    call: "{ subscriptionItemId: 1 }"
+  usageRecords.create:
+    call: "{ subscriptionItemId: 1, quantity: 5 }"
+  customers.list:
+    call: "{ storeId: 1, email: 'buyer@example.com' }"
+  customers.create:
+    call: "{ storeId: 1, name: 'Ada Lovelace', email: 'ada@example.com' }"
+  customers.update:
+    call: "{ customerId: '1', name: 'Ada Byron' }"
+  discounts.list:
+    call: "{ storeId: 1 }"
+  discounts.create:
+    call: "{ storeId: 1, name: 'Launch', code: 'LAUNCH10', amount: 10, amountType: 'percent', duration: 'once' }"
+  discounts.delete:
+    call: "{ discountId: '1' }"
+  discountRedemptions.list:
+    call: "{ discountId: 1 }"
+  licenseKeys.list:
+    call: "{ storeId: 1, status: 'active' }"
+  licenseKeys.get:
+    call: "{ licenseKeyId: '1' }"
+  licenseKeys.update:
+    call: "{ licenseKeyId: '1', disabled: true }"
+  licenseKeyInstances.list:
+    call: "{ licenseKeyId: 1 }"
+  checkouts.list:
+    call: "{ storeId: 1 }"
+  checkouts.create:
+    call: "{ storeId: 1, variantId: 1, checkoutData: { email: 'buyer@example.com' } }"
+  webhooks.list:
+    call: "{ storeId: 1 }"
+  webhooks.create:
+    call: "{ storeId: 1, url: 'https://example.com/hooks/lemonsqueezy', events: ['order_created'], secret: '<signing secret>' }"
+  webhooks.update:
+    call: "{ webhookId: '1', events: ['order_created', 'order_refunded'] }"
+  webhooks.delete:
+    call: "{ webhookId: '1' }"
+  affiliates.list:
+    call: "{ storeId: 1 }"
+  webhooks.get:
+    call: "{ webhookId: '1' }"
+  variants.get:
+    call: "{ variantId: '1' }"
+  usageRecords.get:
+    call: "{ usageRecordId: '1' }"
+  subscriptionItems.get:
+    call: "{ subscriptionItemId: '1' }"
+  subscriptionInvoices.get:
+    call: "{ subscriptionInvoiceId: '1' }"
+  subscriptionInvoices.generate:
+    call: "{ subscriptionInvoiceId: '1', name: 'Acme Ltd' }"
+  products.get:
+    call: "{ productId: '1' }"
+  prices.get:
+    call: "{ priceId: '1' }"
+  orderItems.get:
+    call: "{ orderItemId: '1' }"
+  licenseKeyInstances.get:
+    call: "{ licenseKeyInstanceId: '1' }"
+  files.get:
+    call: "{ fileId: '1' }"
+  discounts.get:
+    call: "{ discountId: '1' }"
+  discountRedemptions.get:
+    call: "{ discountRedemptionId: '1' }"
+  customers.get:
+    call: "{ customerId: '1' }"
+  checkouts.get:
+    call: "{ checkoutId: '1' }"
+  affiliates.get:
+    call: "{ affiliateId: '1' }"
+apiNotes:
+  orders.refund: 'A partial refund cannot be undone through the API. The amount is in cents and its currency is the store currency; omit it to refund the order in full.'
+  orders.generateInvoice: 'Builds the invoice PDF and returns the order with its invoice URL. No money moves.'
+  subscriptions.update: 'A variant change prorates the next charge unless `invoiceImmediately` or `disableProrations` says otherwise. `pause` and `unpause` are opposite actions, and at least one change is required.'
+  subscriptions.cancel: 'Cancels an active subscription. It stays readable and keeps its history, but stops renewing.'
+  subscriptionInvoices.refund: 'The same rules as an order refund: the amount is optional and in cents, and a partial refund cannot be undone through the API.'
+  usageRecords.create: '`quantity` adds to the period total by default; `action: "set"` replaces it. Only a usage-based subscription item accepts records.'
+  checkouts.create: 'The answer''s `data.attributes.url` is the page to send a buyer to. `customPrice` is only valid for a pay-what-you-want product.'
+  customers.create: 'Creates the customer record only. Lemon Squeezy does not send the customer an invitation.'
+  customers.update: 'Give `name`, `email`, or both.'
+  discounts.create: '`amount` is a percentage when `amountType` is percent and cents when it is fixed. `durationInMonths` is only read for a `repeating` discount, and `maxRedemptions` only with `isLimitedRedemptions`.'
+  discounts.delete: 'Deleting a code cannot be undone. Discounts already applied to an order keep their effect.'
+  licenseKeys.get: 'Returns the full license key string. Prefer `licenseKeys.list` when only metadata is needed; it also returns the full key, so treat either as sensitive.'
+  licenseKeys.update: 'Give `activationLimit`, `expiresAt` or `disabled`.'
+  webhooks.create: '`secret` is required, and Lemon Squeezy signs each delivery with it in the `X-Signature` header. The secret is never returned in a response.'
+  webhooks.update: 'Give `url`, `events` or `secret`. A new `events` list replaces the old one.'
+  webhooks.delete: 'Deliveries to the URL stop immediately, and the webhook cannot be restored.'
+  products.list: 'A page holds at most 100 rows. `meta.page.lastPage` says how many pages there are.'

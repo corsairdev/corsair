@@ -288,6 +288,7 @@ export const BaseProviders = [
 	'kibana',
 	'kling',
 	'leexi',
+	'lemonsqueezy',
 	'lever',
 	'linear',
 	'linkedin',
@@ -731,6 +732,7 @@ export const ProviderDisplayNames = {
 	kibana: 'Kibana',
 	kling: 'Kling',
 	leexi: 'Leexi',
+	lemonsqueezy: 'Lemon Squeezy',
 	lever: 'Lever',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
@@ -1178,6 +1180,7 @@ export type AllProviders =
 	| 'kibana'
 	| 'kling'
 	| 'leexi'
+	| 'lemonsqueezy'
 	| 'lever'
 	| 'linear'
 	| 'linkedin'
