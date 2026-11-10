@@ -121,6 +121,7 @@ export type RecordsGetResponse = z.infer<typeof RecordsGetResponseSchema>;
 
 const RecordsCreateInputSchema = z.object({
 	table: z.string().min(1),
+	// unknown: columns are per-instance, so the values cannot be typed here.
 	fields: z
 		.record(z.string(), z.unknown())
 		.describe(
@@ -146,6 +147,7 @@ export type RecordsCreateResponse = z.infer<typeof RecordsCreateResponseSchema>;
 const RecordsUpdateInputSchema = z.object({
 	table: z.string().min(1),
 	sys_id: sysId,
+	// unknown: columns are per-instance, so the values cannot be typed here.
 	fields: z.record(z.string(), z.unknown()),
 	sysparm_input_display_value: z.boolean().optional(),
 });
