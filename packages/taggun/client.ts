@@ -51,6 +51,12 @@ export class TaggunAPIError extends Error {
 	constructor(
 		message: string,
 		options: {
+			/**
+			 * Only for a transport failure, which never reached Taggun and so
+			 * never carried a document. An `ApiError` is never passed here: its
+			 * `request` keeps the original body, so a cause would leak the
+			 * receipt into any reporter that walks the chain.
+			 */
 			cause?: Error;
 			status?: number;
 			statusText?: string;
@@ -60,16 +66,12 @@ export class TaggunAPIError extends Error {
 			isTransportError?: boolean;
 		} = {},
 	) {
-		// The body is deliberately not kept: it can carry the caller's receipt
-		// content, and the key travels in a header that ApiError redaction does
-		// not cover.
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'TaggunAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.statusText = options.statusText ?? cause?.statusText;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
+		this.status = options.status;
+		this.statusText = options.statusText;
+		this.retryAfter = options.retryAfter;
+		this.method = options.method;
 		this.result = options.result;
 		this.isTransportError = options.isTransportError ?? false;
 	}
@@ -189,10 +191,19 @@ export async function makeTaggunRequest(
 		// A failure this function raised itself already carries its status; the
 		// generic branch below would re-wrap it and drop that.
 		if (error instanceof TaggunAPIError) throw error;
+		// The fields are copied and the ApiError is not attached as a cause:
+		// `ApiError.request` keeps the original body after redaction, so a cause
+		// would hand an error reporter the base64 document, a signed source URL,
+		// and the forwarded headers of a protected URL.
 		if (error instanceof ApiError) {
 			throw new TaggunAPIError(
 				describeTaggunError(error.status, error.body, error.message),
-				{ cause: error, method },
+				{
+					status: error.status,
+					statusText: error.statusText,
+					retryAfter: error.retryAfter,
+					method,
+				},
 			);
 		}
 		// DOMException (fetch timeouts) fails instanceof Error across realms.

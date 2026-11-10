@@ -244,6 +244,48 @@ describe('key hygiene', () => {
 		expect(JSON.stringify(error)).not.toContain('secret-key');
 		expect(error.message).not.toContain('secret-key');
 	});
+
+	it('attaches no cause, so nothing walks back to the request body', async () => {
+		// `ApiError.request` keeps the original body after redaction. A cause
+		// would hand an error reporter the base64 document or a signed source
+		// URL, so the fields are copied instead.
+		respond(
+			fetchMock,
+			{ statusCode: 400, error: 'Bad Request', message: 'Invalid payload' },
+			400,
+		);
+
+		const error = asTaggunError(
+			await captureError(
+				makeTaggunRequest('secret-key', {
+					method: 'POST',
+					path: '/api/x',
+					body: { image: 'BASE64-DOCUMENT-CONTENT' },
+				}),
+			),
+		);
+
+		expect(error.cause).toBeUndefined();
+		// The status and method still travel, which is what handlers read.
+		expect(error.status).toBe(400);
+		expect(error.method).toBe('POST');
+	});
+
+	it('keeps a transport cause, which never carried a document', async () => {
+		// A dropped connection never reached Taggun, so its error holds no body
+		// and the cause is safe to keep for diagnosis.
+		const failure = new TypeError('fetch failed');
+		fetchMock.mockRejectedValueOnce(failure);
+
+		const error = asTaggunError(
+			await captureError(
+				makeTaggunRequest('k', { method: 'GET', path: '/api/x' }),
+			),
+		);
+
+		expect(error.cause).toBe(failure);
+		expect(error.isTransportError).toBe(true);
+	});
 });
 
 describe('describeTaggunError', () => {
