@@ -330,9 +330,9 @@ export function parseDelivery(
 }
 
 /**
- * Builds the webhook handler. It takes the secret as an argument rather than
- * closing over the plugin options, so the same function serves a caller who
- * passes `webhookSecret` inline and one who stored it on the account.
+ * Builds the webhook handler. `secret` is the inline `webhookSecret` option;
+ * when it is absent the handler falls back to `ctx.key`, which the keyBuilder
+ * resolves from the account's stored `webhook_signature`.
  */
 export function createNotificationHandler(secret: string | undefined) {
 	return {
@@ -341,7 +341,12 @@ export function createNotificationHandler(secret: string | undefined) {
 			// Throwing, not returning `success: false`: processWebhook rewrites a
 			// returned refusal to a successful delivery, so an unauthenticated
 			// delivery must throw to be reported as a failure.
-			const verification = verifyShippoWebhook(request, secret);
+			// `ctx.key` is what the keyBuilder resolved for a webhook: the inline
+			// option, else the account's stored `webhook_signature`. Reading only
+			// the inline option left a stored secret unused, so those accounts
+			// accepted unsigned deliveries.
+			const effectiveSecret = secret?.trim() ? secret : ctx.key;
+			const verification = verifyShippoWebhook(request, effectiveSecret);
 			if (!verification.valid) {
 				throw new Error(
 					`Shippo webhook rejected: ${verification.error ?? 'signature verification failed'}`,

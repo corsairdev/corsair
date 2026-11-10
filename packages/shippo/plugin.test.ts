@@ -12,8 +12,8 @@ const INLINE_KEY = 'shippo_test_inline';
 
 /**
  * The real key manager implements a dozen account methods; the keyBuilder only
- * reads `get_api_key`, so the fixture supplies that one and is cast through
- * unknown. A fixture implementing the whole type would prove nothing about what
+ * reads `get_api_key` and `get_webhook_signature`, so the fixture supplies
+ * those two and is cast through unknown. A fixture implementing the whole type would prove nothing about what
  * the runtime actually provides.
  */
 function keyContext(keys: { api_key?: string }): ShippoKeyBuilderContext {
@@ -21,8 +21,10 @@ function keyContext(keys: { api_key?: string }): ShippoKeyBuilderContext {
 		authType: 'api_key',
 		keys: {
 			get_api_key: async () => keys.api_key ?? null,
+			// Nothing stored: the real getter resolves null for an unset field.
+			get_webhook_signature: async () => null,
 		},
-		// unknown: the fixture implements one key manager method, not the type.
+		// unknown: the fixture implements two key manager methods, not the type.
 	} as unknown as ShippoKeyBuilderContext;
 }
 
@@ -157,6 +159,27 @@ describe('shippo plugin', () => {
 		);
 
 		expect(resolved).toBe('');
+	});
+
+	it('does not accept a delivery unsigned when the stored secret cannot be read', async () => {
+		// A decryption or database failure is not "no secret configured":
+		// swallowing it would turn verification off for an account that has
+		// a secret stored.
+		const resolving = shippo().keyBuilder?.(
+			{
+				authType: 'api_key',
+				keys: {
+					get_api_key: async () => null,
+					get_webhook_signature: async () => {
+						throw new Error('Invalid encrypted data format');
+					},
+				},
+				// unknown: the fixture implements two methods, not the full type.
+			} as unknown as ShippoKeyBuilderContext,
+			'webhook',
+		);
+
+		await expect(resolving).rejects.toThrow('Invalid encrypted data format');
 	});
 
 	it('matches only a Shippo delivery at the plugin level', () => {

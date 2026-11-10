@@ -799,6 +799,16 @@ function shippoWebhooksNestedFor(secret: string | undefined) {
 /** The no-secret tree, for the type and the schemas. */
 const shippoWebhooksNested = shippoWebhooksNestedFor(undefined);
 
+/**
+ * True for the key manager's "this account has no DEK yet" error, which is how
+ * an account with nothing stored reads. Core throws a plain Error for it, so
+ * the message is the only signal.
+ */
+// unknown: a caught value; narrowed to Error before its message is read.
+function isUninitialisedAccount(error: unknown): boolean {
+	return error instanceof Error && error.message.startsWith('No DEK found');
+}
+
 export function shippo<const T extends ShippoPluginOptions>(
 	incomingOptions: ShippoPluginOptions & T = {} as ShippoPluginOptions & T,
 ): ExternalShippoPlugin<T> {
@@ -833,12 +843,16 @@ export function shippo<const T extends ShippoPluginOptions>(
 				if (options.webhookSecret) return options.webhookSecret;
 				try {
 					return (await ctx.keys.get_webhook_signature()) ?? '';
-				} catch {
+				} catch (error) {
 					// Reading a stored secret needs the account DEK. An account
 					// that was never initialised has none, and that must not turn
 					// into a refused delivery: no secret is configured, so the
 					// handler accepts it as unverified.
-					return '';
+					if (isUninitialisedAccount(error)) return '';
+					// Any other failure (decryption, the database) is not "no
+					// secret": swallowing it would switch verification off for an
+					// account that has one stored.
+					throw error;
 				}
 			}
 

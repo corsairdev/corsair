@@ -493,6 +493,48 @@ describe('a delivery through processWebhook', () => {
 		}
 	});
 
+	it('verifies against a secret stored on the account, with no inline option', async () => {
+		const { corsair, testDb } = await createClient(true);
+		try {
+			await corsair.shippo.keys.set_webhook_signature('whsec_stored');
+			const raw = JSON.stringify(trackDelivery);
+
+			// Unsigned: a stored secret means HMAC is on, so this is refused
+			// rather than accepted with `signatureVerified: false`.
+			const unsigned = await processWebhook(
+				corsair,
+				{ 'content-type': 'application/json' },
+				raw,
+			);
+			expect(unsigned.plugin).toBe('shippo');
+			expect(unsigned.response).toMatchObject({ success: false });
+
+			// Signed with a different secret: refused too.
+			const forged = await processWebhook(
+				corsair,
+				{
+					'content-type': 'application/json',
+					[SHIPPO_SIGNATURE_HEADER]: `t=1688493073,v1=${computeSignature('whsec_other', '1688493073', raw)}`,
+				},
+				raw,
+			);
+			expect(forged.response).toMatchObject({ success: false });
+
+			// Signed with the stored secret: accepted.
+			const signed = await processWebhook(
+				corsair,
+				{
+					'content-type': 'application/json',
+					[SHIPPO_SIGNATURE_HEADER]: `t=1688493073,v1=${computeSignature('whsec_stored', '1688493073', raw)}`,
+				},
+				raw,
+			);
+			expect(signed.response).toMatchObject({ success: true });
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('reports a delivery it cannot parse as a failure', async () => {
 		const { corsair, testDb } = await createClient(false);
 		try {
