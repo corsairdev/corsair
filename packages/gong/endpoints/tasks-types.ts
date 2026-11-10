@@ -20,9 +20,9 @@ const task = z
 		userId: z.number().optional(),
 		created: z.string().optional(),
 		updated: z.string().optional(),
-		status: z.enum(['OPEN', 'DONE', 'DISMISSED']).optional(),
-		type: z.enum(['FLOW', 'MANUAL']).optional(),
-		actions: z.array(z.enum(['CALL'])).optional(),
+		status: z.string().optional(),
+		type: z.string().optional(),
+		actions: z.array(z.string()).optional(),
 		dueDate: z.string().optional(),
 		title: z.string().optional(),
 		priority: priority.optional(),
@@ -46,9 +46,7 @@ export const GongTasksOutputSchemas = {
 		.object({
 			requestId: z.string(),
 			tasks: z.array(task),
-			crmType: z
-				.enum(['SALESFORCE', 'HUBSPOT', 'MICROSOFT_DYNAMICS', 'GENERIC'])
-				.optional(),
+			crmType: z.string().optional(),
 		})
 		.passthrough(),
 	updateReminder: z.object({ requestId: z.string() }).passthrough(),

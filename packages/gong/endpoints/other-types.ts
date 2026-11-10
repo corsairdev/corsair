@@ -39,11 +39,28 @@ const contact = z.object({
 		})
 		.optional(),
 });
+// Gong returns one entry per requested data category; `data` differs by category.
+const enrichedDataCategory = z
+	.object({
+		dataCategory: z.string().optional(),
+		status: z.string().optional(),
+		enriched: z.boolean().optional(),
+		data: z.record(z.string(), z.unknown()).nullable().optional(),
+	})
+	.passthrough();
 const accountEnrichResponse = z
 	.object({
 		id: z.string(),
 		matched: z.boolean(),
-		dataCategories: z.record(z.string(), z.unknown()).optional(),
+		dataCategories: z.array(enrichedDataCategory).optional(),
+	})
+	.passthrough();
+// Each answer item carries its text and the calls and emails it was drawn from.
+const entityAnswer = z
+	.object({
+		answerItems: z.array(z.string()).optional(),
+		emailFindings: z.array(objectInput).optional(),
+		callFindings: z.array(objectInput).optional(),
 	})
 	.passthrough();
 const contactEnrichResponse = accountEnrichResponse;
@@ -147,7 +164,7 @@ export const GongOtherOutputSchemas = {
 	askEntity: envelope.extend({
 		numOfCallsSearched: z.number(),
 		numOfEmailsSearched: z.number(),
-		answer: z.string(),
+		answer: z.array(entityAnswer),
 	}),
 	listCoaching: envelope,
 	listCallOutcomes: envelope.extend({ outcomes: z.array(objectInput) }),

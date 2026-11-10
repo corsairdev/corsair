@@ -15,7 +15,14 @@ const libraryCall = z
 		addedBy: z.string().optional(),
 		created: z.string().optional(),
 		url: z.string().optional(),
-		snippet: z.string().optional(),
+		snippet: z
+			.object({
+				fromSec: z.number().optional(),
+				toSec: z.number().optional(),
+			})
+			.passthrough()
+			.nullable()
+			.optional(),
 	})
 	.passthrough();
 export const GongLibraryInputSchemas = {

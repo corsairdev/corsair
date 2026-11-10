@@ -197,7 +197,7 @@ const outputFixtures: GongOpaqueRecord = {
 		requestId: 'r',
 		numOfCallsSearched: 0,
 		numOfEmailsSearched: 0,
-		answer: 'Answer',
+		answer: [{ answerItems: ['Answer'] }],
 	},
 	'coaching.list': { requestId: 'r' },
 	'outcomes.list': { requestId: 'r', outcomes: [] },

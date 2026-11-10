@@ -6,6 +6,15 @@ const callAccess = z.object({
 	callId: z.string().min(1),
 	userIds: z.array(z.string().min(1)).min(1),
 });
+// Gong answers with a `users` list per call, not the `userIds` it takes on input.
+const callAccessDetails = z
+	.object({
+		callId: z.string(),
+		users: z
+			.array(z.object({ userId: z.string().optional() }).passthrough())
+			.optional(),
+	})
+	.passthrough();
 export const GongPermissionsInputSchemas = {
 	getPermissionProfile: z.object({ profileId: z.string().min(1) }),
 	updatePermissionProfile: z.object({
@@ -30,7 +39,7 @@ export const GongPermissionsOutputSchemas = {
 	createPermissionProfile: response.extend({ profile: record }),
 	addUsersAccessToCalls: response,
 	getUsersAccessToCalls: response.extend({
-		callAccessList: z.array(callAccess),
+		callAccessList: z.array(callAccessDetails),
 	}),
 	deleteUsersAccessToCalls: response,
 	listPermissionProfileUsers: response.extend({ users: z.array(record) }),

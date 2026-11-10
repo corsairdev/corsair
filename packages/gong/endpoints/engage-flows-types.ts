@@ -7,7 +7,7 @@ const flow = z
 		name: z.string().optional(),
 		folderId: z.string().optional(),
 		folderName: z.string().optional(),
-		visibility: z.enum(['Company', 'Personal', 'Shared']).optional(),
+		visibility: z.string().optional(),
 		creationDate: z.string().optional(),
 		exclusive: z.boolean().optional(),
 	})
@@ -22,16 +22,7 @@ const assignedFlow = z
 		flowInstanceOwnerEmail: z.string().optional(),
 		flowInstanceOwnerFullName: z.string().optional(),
 		flowInstanceCreateDate: z.string().optional(),
-		flowInstanceStatus: z
-			.enum([
-				'Pending',
-				'Running',
-				'Paused',
-				'FinishedNoReply',
-				'FinishedResponse',
-				'Finished',
-			])
-			.optional(),
+		flowInstanceStatus: z.string().optional(),
 		workspaceId: z.string().optional(),
 		exclusive: z.boolean().optional(),
 	})
@@ -51,11 +42,9 @@ const prospect = z
 const assignmentResult = z
 	.object({
 		prospect: prospect.optional(),
-		status: z
-			.enum(['CRM_OPERATION_FAILED', 'FLOW_ASSIGNMENT_FAILED', 'ASSIGNED'])
-			.optional(),
+		status: z.string().optional(),
 		crmId: z.string().optional(),
-		crmObjectType: z.enum(['CONTACT', 'LEAD']).optional(),
+		crmObjectType: z.string().optional(),
 		flowInstanceId: z.string().optional(),
 		errorCode: z.string().optional(),
 		errorMessage: z.string().optional(),
@@ -65,7 +54,7 @@ const flowBulkResult = z
 	.object({
 		requestId: z.string(),
 		id: z.string(),
-		status: z.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'FAILED']),
+		status: z.string(),
 		totalCount: z.number(),
 		processedCount: z.number(),
 		successCount: z.number(),
@@ -174,7 +163,9 @@ export const GongEngageFlowsOutputSchemas = {
 		.object({
 			requestId: z.string(),
 			records: records.optional(),
-			folders: z.array(opaqueObject),
+			// Gong's reference documents the list under `flows`; `folders` is accepted too.
+			flows: z.array(opaqueObject).optional(),
+			folders: z.array(opaqueObject).optional(),
 		})
 		.passthrough(),
 } as const;

@@ -19,9 +19,9 @@ export const GongTargetsOutputSchemas = {
 						id: z.string().optional(),
 						name: z.string().optional(),
 						description: z.string().optional(),
-						type: z.enum(['CURRENCY', 'UNIT']).optional(),
+						type: z.string().optional(),
 						unit: z.string().optional(),
-						hierarchyType: z.enum(['TEAM', 'TERRITORY']).optional(),
+						hierarchyType: z.string().optional(),
 						createdDateTime: z.string().nullable().optional(),
 					})
 					.passthrough(),

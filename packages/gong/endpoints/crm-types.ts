@@ -35,6 +35,8 @@ const field = z
 		orderedValueList: z.array(z.string()).optional(),
 	})
 	.passthrough();
+// The same field as Gong returns it: a field type added later must not fail the read.
+const returnedField = field.extend({ type: z.string() });
 const integration = z.record(z.string(), z.unknown());
 const requestResponse = z.object({ requestId: z.string() }).passthrough();
 const asyncResponse = z
@@ -88,16 +90,17 @@ export const GongCrmOutputSchemas = {
 	listSchemaFields: z
 		.object({
 			requestId: z.string(),
-			objectTypeToSelectedFields: z.record(z.string(), z.array(field)),
+			objectTypeToSelectedFields: z.record(z.string(), z.array(returnedField)),
 		})
 		.passthrough(),
 	uploadSchemaFields: requestResponse,
 	getObjects: z
 		.object({
 			requestId: z.string(),
+			// CRM id -> the object's fields (name -> value of any JSON type), or null when Gong has no such object.
 			crmObjectsMap: z.record(
 				z.string(),
-				z.record(z.string(), z.record(z.string(), z.unknown())),
+				z.record(z.string(), z.unknown()).nullable(),
 			),
 		})
 		.passthrough(),
@@ -105,9 +108,16 @@ export const GongCrmOutputSchemas = {
 	getRequestStatus: z
 		.object({
 			requestId: z.string(),
-			status: z.enum(['PENDING', 'IN_PROGRESS', 'DONE', 'FAILED']),
+			status: z.string(),
 			errors: z
-				.array(z.object({ line: z.number().int(), description: z.string() }))
+				.array(
+					z
+						.object({
+							line: z.number().int().optional(),
+							description: z.string().optional(),
+						})
+						.passthrough(),
+				)
 				.optional(),
 			totalErrorCount: z.number().int().optional(),
 			totalSuccessCount: z.number().int().optional(),

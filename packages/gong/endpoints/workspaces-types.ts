@@ -9,7 +9,11 @@ export const GongWorkspacesOutputSchemas = {
 			requestId: z.string(),
 			workspaces: z.array(
 				z
-					.object({ id: z.string(), name: z.string(), description: z.string() })
+					.object({
+						id: z.string(),
+						name: z.string(),
+						description: z.string().nullable().optional(),
+					})
 					.passthrough(),
 			),
 		})
