@@ -2320,5 +2320,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/lemonsqueezy",
+    "dir": "packages/lemonsqueezy",
+    "name": "Lemon Squeezy",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/linguapop",
+    "dir": "packages/linguapop",
+    "name": "Linguapop",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
