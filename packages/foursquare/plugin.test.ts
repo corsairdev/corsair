@@ -84,8 +84,15 @@ describe('foursquare plugin definition', () => {
 	it('rejects an unknown search sort before sending', () => {
 		const search = foursquareEndpointSchemas['places.search'];
 		expect(search.input.safeParse({ sort: 'DISTANCE' }).success).toBe(true);
-		// The API only documents RELEVANCE, DISTANCE and RATING.
+		// The API documents RELEVANCE, RATING, DISTANCE and POPULARITY.
 		expect(search.input.safeParse({ sort: 'PRICE' }).success).toBe(false);
+	});
+
+	it('accepts every search sort the reference lists', () => {
+		const search = foursquareEndpointSchemas['places.search'];
+		for (const sort of ['RELEVANCE', 'RATING', 'DISTANCE', 'POPULARITY']) {
+			expect(search.input.safeParse({ sort }).success).toBe(true);
+		}
 	});
 
 	it('rejects a search limit above the documented cap of 50', () => {

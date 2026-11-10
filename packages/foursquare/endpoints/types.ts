@@ -172,7 +172,7 @@ const PlacesSearchInputSchema = z.object({
 	open_now: z.boolean().optional(),
 	open_at: z.string().optional().describe('A local day and time window'),
 	sort: z
-		.enum(['RELEVANCE', 'DISTANCE', 'RATING'])
+		.enum(['RELEVANCE', 'RATING', 'DISTANCE', 'POPULARITY'])
 		.optional()
 		.describe('Defaults to RELEVANCE'),
 	tel_format: z.string().optional().describe('E164, INTERNATIONAL or NATIONAL'),
