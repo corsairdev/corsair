@@ -171,7 +171,7 @@ await corsair.codereadr.api.databases.showValues({ database_id: 120, valuelike: 
 | `responselike` | `string` | No | Partial match on the response text. |
 | `validity` | `1 \| 0` | No | `1` only valid values, `0` only invalid ones. |
 | `limit` | `number` | No | Page size. |
-| `offset` | `number` | No | Rows to skip. Only valid with `limit`. |
+| `offset` | `number` | No | Rows to skip. Needs `limit`. |
 
 
 
@@ -248,7 +248,7 @@ await corsair.codereadr.api.databases.upsertValue({ database_id: 120, value: 'A1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `database_id` | `number` | No | Database for every value that does not name its own. A value with neither is skipped. |
+| `database_id` | `number` | Yes | The database to write the value to. |
 | `value` | `string` | Yes | The barcode value. Longer than 500 characters is truncated without an error. |
 | `response` | `string` | No | Text shown when the value is scanned. |
 | `validity` | `1 \| 0` | No | `1` valid, `0` invalid. Defaults to 1. |
@@ -576,14 +576,14 @@ await corsair.codereadr.api.scans.list({ service_id: [927], status: ['1'], start
 | `device_id` | `number[] \| all` | No | Devices that made the scans. `all` by default. |
 | `user_id` | `number[] \| all` | No | Users who made the scans. `all` by default. |
 | `scan_id` | `number[] \| all` | No | Only these scans. |
-| `status` | `('0' \| '1' \| '-1')[]` | No | '1' valid, '0' invalid, '-1' could not be validated offline. `all` by default. |
+| `status` | `(1 \| 0 \| -1 \| 0 \| 1 \| -1)[]` | No | `1` valid, `0` invalid, `-1` could not be validated offline, as numbers or strings. All statuses by default. |
 | `start_date` | `string` | No | YYYY-MM-DD. Scans made on or after this date. |
 | `start_time` | `string` | No | HH:mm:ss, 24-hour. Only valid with `start_date`. |
 | `end_date` | `string` | No | YYYY-MM-DD. Scans made on or before this date. |
 | `end_time` | `string` | No | HH:mm:ss, 24-hour. Only valid with `end_date`. |
 | `upload_id` | `number[] \| all` | No | Only scans from these uploads. |
 | `limit` | `number` | No | Page size. Defaults to 10000. |
-| `offset` | `number` | No | Rows to skip. Only valid with `limit`. |
+| `offset` | `number` | No | Rows to skip. The API ignores it without `limit`, so the default 10000 is sent when `limit` is omitted. |
 | `show_properties` | `boolean` | No | Include each scan's stored properties. Defaults to false. |
 | `include_property` | `string[]` | No | Only scans carrying these properties. |
 | `exclude_property` | `string[]` | No | Drop scans carrying any of these properties. |
@@ -596,7 +596,7 @@ await corsair.codereadr.api.scans.list({ service_id: [927], status: ['1'], start
 | `timestamp_received` | `boolean` | No | Include when CodeREADr received each scan; also filters the dates on that timestamp. |
 | `timestamp_modified` | `boolean` | No | Include when each scan was last edited; also filters the dates on that timestamp. |
 | `modified_diff` | `string` | No | Filter on the gap between creation and last edit, such as `< 2 minute` or `> 1 hour`. |
-| `timezone` | `string` | No | IANA name for the returned timestamps. Defaults to the account timezone; `account` uses it explicitly. |
+| `timezone` | `string` | No | IANA name for the returned timestamps, such as `Europe/London`. Defaults to `America/New_York`, not the account timezone; pass `account` to use the one set on the account. |
 | `order_by` | `string` | No | Sort keys, comma-separated, such as `timestamp_desc`. Append `_desc` for descending. Keys: barcode, device_name, device_id, response, scan_id, service_id, service_name, status, timestamp, timestamp_received, timestamp_modified, user_id, user_name. |
 | `only_recent` | `boolean` | No | Return only the most recent scan per barcode. Defaults to false. |
 
@@ -781,7 +781,7 @@ await corsair.codereadr.api.services.list({});
 {
   id?: number | null,
   name?: string | null,
-  validation_method?: record | ondevicerecord | database | ondevicedatabase | webview | postback | null,
+  validation_method?: string | null,
   postback_url?: string | null,
   database_id?: number | null,
   duplicate_scan_value?: number | null,
@@ -885,7 +885,7 @@ await corsair.codereadr.api.uploads.list({ service_id: [927], limit: 20 });
 | `device_id` | `number[] \| all` | No | Devices that made the uploads. `all` by default. |
 | `user_id` | `number[] \| all` | No | Users who made the uploads. `all` by default. |
 | `limit` | `number` | No | Page size. |
-| `offset` | `number` | No | Rows to skip. Only valid with `limit`. |
+| `offset` | `number` | No | Rows to skip. Needs `limit`. |
 
 
 
