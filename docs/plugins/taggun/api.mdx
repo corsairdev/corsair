@@ -2727,6 +2727,9 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   regions?: {
     x: number,
     y: number
+  }[] | {
+    x: number,
+    y: number
   }[][]
 }
 ```
@@ -3472,6 +3475,9 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
 {
   text?: string,
   regions?: {
+    x: number,
+    y: number
+  }[] | {
     x: number,
     y: number
   }[][]
@@ -4220,6 +4226,9 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
 {
   text?: string,
   regions?: {
+    x: number,
+    y: number
+  }[] | {
     x: number,
     y: number
   }[][]

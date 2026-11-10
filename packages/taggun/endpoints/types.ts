@@ -16,6 +16,15 @@ const PointSchema = z.object({ x: z.number(), y: z.number() }).loose();
 const RegionsSchema = z.array(z.array(PointSchema)).optional();
 
 /**
+ * The full-page `text.regions` is different: live verbose answers give it as one
+ * flat box of four points. The nested form is still accepted, so a document
+ * where Taggun splits the text into several boxes does not lose a billed scan.
+ */
+const TextRegionsSchema = z
+	.union([z.array(PointSchema), z.array(z.array(PointSchema))])
+	.optional();
+
+/**
  * A field Taggun returns as `{ data, confidenceLevel }`, plus verbose-only
  * helpers. `data` can be absent while the object is present, so nothing here
  * is required: the docs say optional properties are omitted, not nulled.
@@ -332,7 +341,7 @@ export const VerboseReceiptSchema = SimpleReceiptSchema.extend({
 	text: z
 		.object({
 			text: z.string().optional(),
-			regions: RegionsSchema,
+			regions: TextRegionsSchema,
 		})
 		.loose()
 		.optional(),

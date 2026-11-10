@@ -9,6 +9,7 @@ import {
 	CAMPAIGN_VALIDATION_FAILED,
 	CAMPAIGN_VALIDATION_PASSED,
 	CREATE_ACK,
+	LIVE_VERBOSE_RECEIPT,
 	NOT_FOUND_ACK,
 	SIMPLE_RECEIPT,
 	TOTAL_AMOUNT_REGIONS,
@@ -76,6 +77,20 @@ describe('output parsing', () => {
 		expect(result.totalAmount.regions).toEqual(TOTAL_AMOUNT_REGIONS);
 		expect(result.totalAmount.regions?.[0]?.[0]?.x).toBe(437);
 		expect(result.totalAmount.regions?.[0]?.at(-1)?.y).toBe(807);
+	});
+
+	it('parses a real verbose answer, whose full-text region is one flat box', async () => {
+		// Field regions nest shapes of points; `text.regions` is a single box.
+		// Reading it as nested rejected every live verbose scan after billing it.
+		respond(fetchMock, LIVE_VERBOSE_RECEIPT);
+
+		const result = (await invoke(Verbose.file, {
+			file: pngFile(),
+		})) as typeof LIVE_VERBOSE_RECEIPT;
+
+		expect(result.text.regions).toEqual(LIVE_VERBOSE_RECEIPT.text.regions);
+		expect(result.totalAmount.regions[1]?.[0]?.x).toBe(563);
+		expect(result.entities.invoiceNumber.data).toBe('48213');
 	});
 
 	it('rejects a region whose points are not coordinates', async () => {

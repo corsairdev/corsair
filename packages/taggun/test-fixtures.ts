@@ -171,6 +171,78 @@ export const VERBOSE_RECEIPT = {
 	elapsed: 4538.480549000204,
 };
 
+/**
+ * A real `verbose/file` answer (11-10), trimmed: a generated test receipt with
+ * a made-up merchant. Field `regions` nest shapes of points, but the full-page
+ * `text.regions` is one flat box of four points. Empty detections come back as
+ * `{ confidenceLevel: 0 }` with no `data`.
+ */
+export const LIVE_VERBOSE_RECEIPT = {
+	totalAmount: {
+		data: 11.88,
+		confidenceLevel: 0.92,
+		text: 'TOTAL 11.88',
+		index: 12,
+		keyword: '-',
+		currencyCode: 'USD',
+		regions: [
+			[
+				{ x: 56, y: 619 },
+				{ x: 136, y: 621 },
+				{ x: 137, y: 649 },
+				{ x: 53, y: 647 },
+			],
+			[
+				{ x: 563, y: 621 },
+				{ x: 645, y: 621 },
+				{ x: 647, y: 647 },
+				{ x: 563, y: 646 },
+			],
+		],
+	},
+	discountAmount: { confidenceLevel: 0 },
+	confidenceLevel: 0.898,
+	date: {
+		data: '2026-11-09T14:32:00.000Z',
+		confidenceLevel: 0.92,
+		text: 'Date: 11/09/2026 Time: 14:32',
+		index: 5,
+	},
+	dueDate: { confidenceLevel: 0 },
+	text: {
+		text: 'CORSAIR TEST CAFE\n100 Example Street\n',
+		regions: [
+			{ x: 50, y: 57 },
+			{ x: 654, y: 57 },
+			{ x: 654, y: 852 },
+			{ x: 50, y: 851 },
+		],
+	},
+	amounts: [{ data: 7, index: 6, regions: [], text: '2 Latte @3.50 7.00' }],
+	entities: {
+		IBAN: { confidenceLevel: 0 },
+		invoiceNumber: {
+			data: '48213',
+			confidenceLevel: 0.83,
+			text: 'Receipt No: 48213',
+			keyword: '-',
+		},
+	},
+	lineAmounts: [],
+	itemsCount: { data: 0, confidenceLevel: 0 },
+	trackingId: 'T-20261110-0000000',
+	merchantName: {
+		data: 'CORSAIR TEST CAFE',
+		confidenceLevel: 0.81,
+		text: 'CORSAIR TEST CAFE',
+		index: 0,
+	},
+	merchantTypes: { confidenceLevel: 0 },
+	merchantTaxId: { confidenceLevel: 0 },
+	targetRotation: 0,
+	elapsed: 4095.64,
+};
+
 /** A receipt Taggun could not read: every field is absent, only the id is set. */
 export const UNREADABLE_RECEIPT = { trackingId: 'T-20241008-0000000' };
 
