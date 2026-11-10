@@ -515,18 +515,28 @@ const FetchJsonResponseInputSchema = z
 			)
 			.optional()
 			.describe(
-				'Selectors to apply to the captured page; the result arrives under `css_extractor`, not `parsed`.',
+				'Selectors to apply to the captured page; the result arrives under `css_extractor.data`, keyed as the map named them. Cannot be combined with `outputs`.',
 			),
 		outputs: z
 			.array(OutputFilterSchema)
 			.min(1)
 			.optional()
 			.describe(
-				'Data types to pull out of the captured page; the result arrives under `outputs`.',
+				'Data types to pull out of the captured page; the result arrives under `outputs`. Cannot be combined with `cssExtractor`.',
 			),
 	})
 	.superRefine((value, ctx) => {
 		refineFetchCommon(value, ctx, { jsonResponse: true });
+		// Checked live (11-10): with both set, ZenRows answers the selector
+		// results and silently drops `outputs` from the envelope.
+		if (value.outputs !== undefined && value.cssExtractor !== undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['outputs'],
+				message:
+					'outputs and cssExtractor cannot be combined: ZenRows drops outputs when selectors are set, so send them in two calls',
+			});
+		}
 	});
 
 export type FetchJsonResponseInput = z.input<
@@ -536,6 +546,7 @@ export type FetchJsonResponseInput = z.input<
 /**
  * The envelope Zenrows builds when `json_response=true`: the captured HTML, the
  * XHR and fetch calls the page made, and one key per extra mode asked for.
+ * Selector results sit one level down, in `css_extractor.data` (checked live).
  */
 const JsonResponseSchema = z
 	.object({

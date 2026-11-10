@@ -41,6 +41,17 @@ export const jsonResponseEnvelope = {
 	js_instructions_report: null,
 };
 
+/**
+ * `json_response=true` with `css_extractor`, trimmed from a live answer
+ * (scrapingcourse.com, 11-10). The selector results are nested in `data`.
+ */
+export const jsonResponseWithCssExtractor = {
+	css_extractor: { data: { h1: 'Shop', title: 'Ecommerce Test Site' } },
+	html: '<!doctype html><html></html>',
+	js_instructions_report: null,
+	xhr: [],
+};
+
 /** `POST /v1/crawls` answered 202. */
 export const crawlStarted = {
 	crawl_id: 'c_01M72F709NDF8XFBYKBXRZ3QFA',

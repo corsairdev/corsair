@@ -11,6 +11,7 @@ import {
 	extractPreparation,
 	extractServedDomain,
 	jsonResponseEnvelope,
+	jsonResponseWithCssExtractor,
 	productsExtract,
 	selectorsResult,
 	subscriptionDetails,
@@ -538,12 +539,11 @@ describe('fetch.jsonResponse', () => {
 		expect(result.xhr).toEqual([]);
 	});
 
-	it('carries selectors and filters inside the envelope', async () => {
+	it('carries filters inside the envelope under outputs', async () => {
 		respond(
 			{
-				html: '<html></html>',
-				xhr: [],
-				outputs: { links: ['https://a.test'] },
+				...jsonResponseEnvelope,
+				outputs: { headings: ['Shop'], emails: null },
 			},
 			200,
 			'text/plain',
@@ -552,17 +552,46 @@ describe('fetch.jsonResponse', () => {
 		const result = (await invoke(Fetch.fetchJsonResponse, {
 			url: 'https://example.com',
 			mode: 'auto',
-			outputs: ['links'],
-			cssExtractor: { title: 'h1' },
+			outputs: ['headings', 'emails'],
 		})) as ReturnType<typeof Outputs.fetchJsonResponse.parse>;
 
 		expect(lastRequest().query).toMatchObject({
 			mode: 'auto',
 			json_response: 'true',
-			outputs: 'links',
-			css_extractor: '{"title":"h1"}',
+			outputs: 'headings,emails',
 		});
-		expect(result.outputs).toEqual({ links: ['https://a.test'] });
+		expect(result.outputs).toEqual({ headings: ['Shop'], emails: null });
+	});
+
+	it('carries selector results under css_extractor.data', async () => {
+		// Live answer (11-10): the selector map's keys sit one level down, in `data`.
+		respond(jsonResponseWithCssExtractor, 200, 'text/plain');
+
+		const result = (await invoke(Fetch.fetchJsonResponse, {
+			url: 'https://example.com',
+			jsRender: true,
+			cssExtractor: { h1: 'h1', title: 'title' },
+		})) as ReturnType<typeof Outputs.fetchJsonResponse.parse>;
+
+		expect(lastRequest().query).toMatchObject({
+			json_response: 'true',
+			css_extractor: '{"h1":"h1","title":"title"}',
+		});
+		expect(result.css_extractor).toEqual({
+			data: { h1: 'Shop', title: 'Ecommerce Test Site' },
+		});
+	});
+
+	it('rejects outputs together with cssExtractor, which ZenRows answers without outputs', async () => {
+		await expect(
+			invoke(Fetch.fetchJsonResponse, {
+				url: 'https://example.com',
+				mode: 'auto',
+				outputs: ['links'],
+				cssExtractor: { title: 'h1' },
+			}),
+		).rejects.toThrow(/outputs and cssExtractor/);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects a request with no browser to render in', async () => {

@@ -59,7 +59,7 @@ apiNotes:
   fetch.browse: 'A write: browser actions reach the site, so this is not available to a read-only caller. Needs `jsRender` or `mode: ''auto''`, and the whole sequence has 40 seconds.'
   fetch.extract: 'Needs a domain prepared for Extract, or a 403 REQS007. `extract` defaults to `auto`; `extractFields` narrows the fields and requires `extract`.'
   fetch.cssExtract: 'The answer is the extracted keys at the top level, not an Extract envelope. A selector that matched nothing comes back as an empty string rather than a missing key.'
-  fetch.jsonResponse: 'Needs `jsRender` or `mode: ''auto''`. Selectors arrive under `css_extractor` and output filters under `outputs`, inside the envelope.'
+  fetch.jsonResponse: 'Needs `jsRender` or `mode: ''auto''`. Selectors arrive under `css_extractor.data` and output filters under `outputs`, inside the envelope. Send one or the other: with both, ZenRows drops `outputs`.'
   fetch.post: 'The forwarded body reaches the target, so the site''s state can change. `jsRender` cannot be combined with a JSON body, because ZenRows reads the body as a query parameter.'
   fetch.put: 'The forwarded body reaches the target, so the site''s state can change.'
   crawl.start: 'The page limit is the cost cap, because each page opened is one billed Fetch request. `webhookUrl` needs a ZenRows webhook signing key on the account and an `https` host that resolves publicly, and the URL cannot change after the start.'
