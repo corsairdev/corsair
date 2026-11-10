@@ -60,11 +60,11 @@ A meeting finished processing. Carries its notes when they exist, and its transc
   url: string,
   duration: number,
   organizer: {
-    name: string,
+    name?: string | null,
     email: string
   },
   invitees: {
-    name: string,
+    name?: string | null,
     email: string
   }[],
   template?: {
@@ -122,11 +122,11 @@ A meeting finished processing. Carries its notes when they exist, and its transc
     url: string,
     duration: number,
     organizer: {
-      name: string,
+      name?: string | null,
       email: string
     },
     invitees: {
-      name: string,
+      name?: string | null,
       email: string
     }[],
     template?: {

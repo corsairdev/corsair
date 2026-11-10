@@ -124,6 +124,29 @@ describe('tl;dv output parsing', () => {
 
 		expect(result.template).toBeNull();
 	});
+
+	it('accepts invitees whose name is missing or null', async () => {
+		// Calendar guests often have an email and no display name; one such guest
+		// must not fail the whole read.
+		mockFetch(
+			jsonResponse({
+				...meetingDetail,
+				invitees: [
+					{ email: 'guest@example.org' },
+					{ name: null, email: 'b@example.org' },
+				],
+			}),
+		);
+
+		const result = await endpoints.meetings.get(makeCtx(), {
+			meetingId: 'meeting-123',
+		});
+
+		expect(result.invitees.map((i) => i.email)).toEqual([
+			'guest@example.org',
+			'b@example.org',
+		]);
+	});
 });
 
 describe('tl;dv shape rejections', () => {
@@ -143,6 +166,14 @@ describe('tl;dv shape rejections', () => {
 
 	it('rejects an organizer that is a string, not an object', async () => {
 		mockFetch(jsonResponse({ ...meetingDetail, organizer: 'jordan@x.org' }));
+
+		await expect(
+			endpoints.meetings.get(makeCtx(), { meetingId: 'm1' }),
+		).rejects.toThrow();
+	});
+
+	it('rejects an invitee with no email', async () => {
+		mockFetch(jsonResponse({ ...meetingDetail, invitees: [{ name: 'Sam' }] }));
 
 		await expect(
 			endpoints.meetings.get(makeCtx(), { meetingId: 'm1' }),

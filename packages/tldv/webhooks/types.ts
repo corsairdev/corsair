@@ -74,7 +74,11 @@ export function verifyTldvWebhook(
 // Both triggers share `{ id, event, data, executedAt }`; `event` names the
 // trigger. From the spec's MeetingReadyPayload and TranscriptReadyPayload.
 
-const UserSchema = z.object({ name: z.string(), email: z.string() }).loose();
+// `name` is nullish for the same reason as in endpoints/types.ts: a guest with
+// no display name must not make the whole delivery unparseable.
+const UserSchema = z
+	.object({ name: z.string().nullish(), email: z.string() })
+	.loose();
 
 // The webhook's note and topic are looser than the notes endpoint's: the spec's
 // MeetingWebhookNote requires `timestamp` only and MeetingWebhookTopic leaves

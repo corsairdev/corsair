@@ -110,7 +110,7 @@ await corsair.tldv.api.meetings.get({ meetingId: 'meeting-123' });
 
 ```ts
 {
-  name: string,
+  name?: string | null,
   email: string
 }
 ```
@@ -120,7 +120,7 @@ await corsair.tldv.api.meetings.get({ meetingId: 'meeting-123' });
 
 ```ts
 {
-  name: string,
+  name?: string | null,
   email: string
 }[]
 ```
@@ -240,11 +240,11 @@ Answers `{ page, pages, total, pageSize, results }`. `limit` caps at 100. `meeti
   url: string,
   duration: number,
   organizer: {
-    name: string,
+    name?: string | null,
     email: string
   },
   invitees: {
-    name: string,
+    name?: string | null,
     email: string
   }[],
   template?: {

@@ -237,6 +237,22 @@ describe('tl;dv webhook payloads', () => {
 		expect(parsed.data?.data.transcript).toBeNull();
 	});
 
+	it('parses a MeetingReady delivery with a nameless invitee', () => {
+		const parsed = MeetingReadyEventSchema.safeParse({
+			...meetingReadyEvent,
+			data: {
+				...meetingReadyEvent.data,
+				invitees: [
+					{ email: 'guest@example.org' },
+					{ name: null, email: 'b@example.org' },
+				],
+			},
+		});
+
+		expect(parsed.success).toBe(true);
+		expect(parsed.data?.data.invitees).toHaveLength(2);
+	});
+
 	it('parses a TranscriptReady delivery', () => {
 		const parsed = TranscriptReadyEventSchema.safeParse(transcriptReadyEvent);
 

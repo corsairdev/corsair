@@ -8,9 +8,11 @@ import { z } from 'zod';
 /** An ISO 8601 timestamp, e.g. `2024-01-15T10:00:00Z`. */
 const isoTimestamp = z.string().describe('ISO 8601 timestamp');
 
+// The spec marks `name` required, but a calendar guest can have an email and
+// no display name, and one such invitee must not fail the whole read.
 const UserSchema = z
 	.object({
-		name: z.string(),
+		name: z.string().nullish(),
 		email: z.string(),
 	})
 	.loose();
