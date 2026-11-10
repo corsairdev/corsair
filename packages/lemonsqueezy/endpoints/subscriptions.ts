@@ -120,7 +120,7 @@ export const subscriptionsUpdate: LemonSqueezyEndpoints['subscriptionsUpdate'] =
 							// The API takes `unpause` as a bare flag.
 							unpause: parsed.unpause,
 							billing_anchor: parsed.billingAnchor,
-						} as Record<string, unknown>,
+						},
 					},
 				},
 			}),

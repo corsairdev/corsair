@@ -1,4 +1,7 @@
-import { LemonSqueezyEndpointOutputSchemas } from './endpoints/types';
+import {
+	LemonSqueezyEndpointInputSchemas,
+	LemonSqueezyEndpointOutputSchemas,
+} from './endpoints/types';
 import {
 	bareNotFound,
 	customer,
@@ -159,10 +162,17 @@ describe('input schemas pin the provider rules', () => {
 	});
 
 	it('rejects an empty include list', () => {
-		// include: [] would send `include=` and the API reads that as no include.
-		expect(() =>
-			LemonSqueezyEndpointOutputSchemas.storesList.parse(storeList),
-		).not.toThrow();
+		// `include: []` would send `include=` and the API reads that as no
+		// include, so an empty list is refused rather than quietly dropped.
+		expect(
+			LemonSqueezyEndpointInputSchemas.storesList.safeParse({ include: [] })
+				.success,
+		).toBe(false);
+		expect(
+			LemonSqueezyEndpointInputSchemas.storesList.safeParse({
+				include: ['products'],
+			}).success,
+		).toBe(true);
 	});
 });
 
