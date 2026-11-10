@@ -1,0 +1,579 @@
+---
+title: API
+description: "API reference for SatisMeter: every `satismeter.api.*` operation with input and output types."
+---
+
+Every `satismeter.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Projects
+
+### get
+
+`projects.get`
+
+Read one project by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.satismeter.api.projects.get({ projectId: '61fce0adea447e24ec27d606' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | Project ID, from Settings &gt; Integrations &gt; API in the SatisMeter dashboard. |
+
+The project ID comes from Settings > Integrations > API. No endpoint lists projects, so this is the only way to read one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id: string,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Responses
+
+### list
+
+`responses.list`
+
+List responses from every survey in a project, paged by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.satismeter.api.responses.list({ projectId: '61fce0adea447e24ec27d606', pageSize: 100, startDate: '2026-01-01T00:00:00.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | Project ID, from Settings &gt; Integrations &gt; API in the SatisMeter dashboard. |
+| `startDate` | `string` | No | Only include results recorded after this time, in ISO 8601. Defaults to 30 days ago, so older responses need an explicit `startDate`. |
+| `endDate` | `string` | No | Only include results recorded before this time, in ISO 8601. Defaults to now. |
+| `pageCursor` | `string` | No | The `page.next_page_cursor` of the previous page. Omit it for the first page; when the answer has no cursor, that was the last page. |
+| `pageSize` | `number` | No | Results per page, 1 to 100. Defaults to 20. |
+
+Every response in the project across all its surveys. Defaults to the last 30 days and 20 rows per page; pass `startDate` for older data and `pageCursor` to continue.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responses` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="responses full type">
+
+```ts
+{
+  id: string,
+  project?: string | null,
+  campaign?: string | null,
+  created?: string | null,
+  answers?: {
+    id?: string | null,
+    label?: string | null,
+    value?: string | number | string[] | null,
+    type?: string | null,
+    metric?: string | null
+  }[] | null,
+  user?: {
+    id?: string | null,
+    userId?: string | null,
+    anonymousId?: string | null,
+    deleted?: boolean | null,
+    traits?: Record<string, unknown> | null,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  ip?: string | null,
+  location?: {
+    country?: {
+      code?: string | null,
+      name?: string | null
+    } | null,
+    region?: {
+      code?: string | null,
+      name?: string | null
+    } | null,
+    city?: string | null
+  } | null,
+  referrer?: string | null,
+  method?: string | null,
+  language?: string | null,
+  device?: {
+    type?: string | null,
+    os?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  nextPageCursor?: string | null,
+  hasNextPage: boolean,
+  size?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForSurvey
+
+`responses.listForSurvey`
+
+List one survey’s responses, paged by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.satismeter.api.responses.listForSurvey({ projectId: '61fce0adea447e24ec27d606', surveyId: '61fce0adea447e24ec27d609', pageCursor: 'eyJjcmVhdGVkIjoiMjAyMi0wMi0wNFQxMDoyMjo0OC42MThaIn0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | Project ID, from Settings &gt; Integrations &gt; API in the SatisMeter dashboard. |
+| `surveyId` | `string` | Yes | Survey ID, from Settings &gt; Integrations &gt; API &gt; Survey Keys. |
+| `startDate` | `string` | No | Only include results recorded after this time, in ISO 8601. Defaults to 30 days ago, so older responses need an explicit `startDate`. |
+| `endDate` | `string` | No | Only include results recorded before this time, in ISO 8601. Defaults to now. |
+| `pageCursor` | `string` | No | The `page.next_page_cursor` of the previous page. Omit it for the first page; when the answer has no cursor, that was the last page. |
+| `pageSize` | `number` | No | Results per page, 1 to 100. Defaults to 20. |
+
+One survey\u2019s responses, with the same date-range and cursor paging.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `responses` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="responses full type">
+
+```ts
+{
+  id: string,
+  project?: string | null,
+  campaign?: string | null,
+  created?: string | null,
+  answers?: {
+    id?: string | null,
+    label?: string | null,
+    value?: string | number | string[] | null,
+    type?: string | null,
+    metric?: string | null
+  }[] | null,
+  user?: {
+    id?: string | null,
+    userId?: string | null,
+    anonymousId?: string | null,
+    deleted?: boolean | null,
+    traits?: Record<string, unknown> | null,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  ip?: string | null,
+  location?: {
+    country?: {
+      code?: string | null,
+      name?: string | null
+    } | null,
+    region?: {
+      code?: string | null,
+      name?: string | null
+    } | null,
+    city?: string | null
+  } | null,
+  referrer?: string | null,
+  method?: string | null,
+  language?: string | null,
+  device?: {
+    type?: string | null,
+    os?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  nextPageCursor?: string | null,
+  hasNextPage: boolean,
+  size?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Surveys
+
+### get
+
+`surveys.get`
+
+Read one survey by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.satismeter.api.surveys.get({ projectId: '61fce0adea447e24ec27d606', surveyId: '61fce0adea447e24ec27d609' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | Project ID, from Settings &gt; Integrations &gt; API in the SatisMeter dashboard. |
+| `surveyId` | `string` | Yes | Survey ID, from Settings &gt; Integrations &gt; API &gt; Survey Keys. |
+
+Reads one survey by ID.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `survey` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="survey full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  state?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`surveys.list`
+
+List the surveys in a project with their template and state
+
+**Risk:** `read`
+
+```ts
+await corsair.satismeter.api.surveys.list({ projectId: '61fce0adea447e24ec27d606' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | Project ID, from Settings &gt; Integrations &gt; API in the SatisMeter dashboard. |
+
+The API calls these campaigns internally; this operation is the surveys in a project with their template (`nps`, `ces`, `csat`, `pmf`, `custom`) and state (`live`, `paused`, `draft`).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `surveys` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="surveys full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  state?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### statistics
+
+`surveys.statistics`
+
+Read response counts, display counts and the metric per question for one survey
+
+**Risk:** `read`
+
+```ts
+await corsair.satismeter.api.surveys.statistics({ projectId: '61fce0adea447e24ec27d606', surveyId: '61fce0adea447e24ec27d609', startDate: '2026-01-01T00:00:00.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | Project ID, from Settings &gt; Integrations &gt; API in the SatisMeter dashboard. |
+| `surveyId` | `string` | Yes | Survey ID, from Settings &gt; Integrations &gt; API &gt; Survey Keys. |
+| `startDate` | `string` | No | Only include results recorded after this time, in ISO 8601. Defaults to 30 days ago, so older responses need an explicit `startDate`. |
+| `endDate` | `string` | No | Only include results recorded before this time, in ISO 8601. Defaults to now. |
+
+Counts responses and displays with a response rate, plus a per-question breakdown: an answers count per choice, and the metric (NPS, CSAT, CES or PMF) with its value. A `long-text` question carries a count and no per-value breakdown.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `statistics` | `object` | Yes | Counts for the survey as a whole. |
+| `questions` | `object[]` | Yes | Per-question breakdown. |
+
+<AccordionGroup>
+<Accordion title="statistics full type">
+
+```ts
+{
+  responses?: number | null,
+  displays?: number | null,
+  responseRate?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="questions full type">
+
+```ts
+{
+  id?: string | null,
+  label?: string | null,
+  type?: string | null,
+  statistics?: {
+    answers?: number | null,
+    values?: {
+      value?: string | number | null,
+      answers?: number | null
+    }[] | null,
+    metric?: {
+      type?: string | null,
+      value?: number | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### list
+
+`users.list`
+
+List the users in a project, or look one up by userId
+
+**Risk:** `read`
+
+```ts
+await corsair.satismeter.api.users.list({ projectId: '61fce0adea447e24ec27d606', userId: '007' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | Project ID, from Settings &gt; Integrations &gt; API in the SatisMeter dashboard. |
+| `userId` | `string` | No | Only the user with this userId. The API still answers a list, holding one entry or none. |
+
+Every user in the project, or one user when `userId` is given: the API still answers a list, holding one entry or none.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id?: string | null,
+  userId?: string | null,
+  project?: string | null,
+  email?: string | null,
+  name?: string | null,
+  unsubscribed?: boolean | null,
+  created?: string | null,
+  lastSeen?: string | null,
+  traits?: Record<string, unknown> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`users.remove`
+
+Delete a user’s personal data by internal id; their responses are anonymised, not deleted
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.satismeter.api.users.remove({ userId: '5808e7031a943c7e564cdb17' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | The user's internal `id` from `users.list`, not the `userId` you supplied. Deleting anonymises the user's responses rather than removing them. |
+
+Takes the internal `id` from `users.list`, not your own `userId`. It deletes personal data and anonymises the user\u2019s responses rather than deleting them, and cannot be undone.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `removed` | `true` | Yes | — |
+
+
+
+---
+
+### track
+
+`users.track`
+
+Record a user event that survey targeting can match on; each call counts once
+
+**Risk:** `write`
+
+```ts
+await corsair.satismeter.api.users.track({ projectId: '61fce0adea447e24ec27d606', userId: '007', event: 'completed-checkout' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | Project ID, from Settings &gt; Integrations &gt; API in the SatisMeter dashboard. |
+| `userId` | `string` | Yes | Your own ID for this user, matching the one sent to the browser snippet. |
+| `event` | `string` | Yes | A name you choose, such as `completed-checkout`. Survey targeting can match on it. |
+
+Records an event that survey targeting can match on. Each call counts as one event, so it is never retried automatically.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `event` | `string` | Yes | — |
+| `accepted` | `true` | Yes | — |
+
+
+
+---
+
+### upsert
+
+`users.upsert`
+
+Create or update a user and their traits, and optionally set the date they next see a survey
+
+**Risk:** `write`
+
+```ts
+await corsair.satismeter.api.users.upsert({ projectId: '61fce0adea447e24ec27d606', userId: '007', traits: { name: 'James Bond', plan: 'Gold' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | Project ID, from Settings &gt; Integrations &gt; API in the SatisMeter dashboard. |
+| `userId` | `string` | Yes | Your own ID for this user, the same one the browser snippet sends. |
+| `traits` | `Record<string, unknown>` | No | Custom traits used for survey targeting, such as name, email, createdAt and plan. Sent as given. |
+| `surveyDate` | `string` | No | When the user next sees a survey. Use it to survey someone earlier or later than the targeting rules would. |
+
+Creates the user if they do not exist and updates their traits. `surveyDate` sets when the user next sees a survey, which is how you survey someone earlier or later than their targeting rules would.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `accepted` | `true` | Yes | — |
+
+
+
+---
+

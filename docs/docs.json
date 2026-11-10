@@ -3149,6 +3149,14 @@
                 ]
               },
               {
+                "group": "SatisMeter",
+                "pages": [
+                  "plugins/satismeter/overview",
+                  "plugins/satismeter/api",
+                  "plugins/satismeter/database"
+                ]
+              },
+              {
                 "group": "Scale AI",
                 "pages": [
                   "plugins/scaleai/overview",

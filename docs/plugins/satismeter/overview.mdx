@@ -1,0 +1,140 @@
+---
+title: Overview
+description: "Customer feedback with SatisMeter - read projects, surveys, responses and survey statistics, manage users and their traits, and record events that survey targeting can match on."
+---
+
+Use **SatisMeter** through Corsair: one client, typed API calls.
+
+Create an API key in SatisMeter under Settings > Integrations > API. That page also shows the Project ID, and the Survey Keys section lists each survey's ID. The plugin needs both: no API endpoint lists projects, so the project ID has to come from the dashboard.
+
+Things to know before you call:
+
+- **Use the API key, not the read or write key.** In newer projects a read request made with the read key returns 403, and a Users API request made with the write key returns 403 too. Your browser snippet keeps using the write key; leave it as it is.
+- **A 404 usually means the project ID.** Both bases look the project up before they check the key, so a wrong key and a wrong project ID return the same `404 Project not found`. If a call 404s, check the project ID first, then the key.
+- **One key, two bases.** Survey reads live under `/api/v3`; the users operations live under `/api` with no version. The plugin handles this, but it is why the users API's errors differ: it answers `403 Not authorized` for a bad key where a read answers a misleading 404.
+- **Two calls page by cursor.** `responses.list` and `responses.listForSurvey` return at most 20 rows unless you pass `pageSize` (up to 100). Read `page.next_page_cursor` and pass it back as `pageCursor`; when it is absent there are no more pages.
+- **The default date range is 30 days.** Both response listings only return the last month unless you pass `startDate`, so older responses need an explicit range.
+- **Writes are not retried.** `users.track` counts the event every time it arrives and `users.upsert` re-applies traits, so a failed write is reported rather than replayed: the write may have landed. Reads are replayed on a 500 or a dropped connection.
+- **`users.remove` is irreversible.** It takes the internal `id` from `users.list`, not the `userId` you sent, and deleting a user does not delete their responses: it anonymises them.
+- **Personal data.** Responses carry the answering user's email, traits and IP address. The plugin stores none of it locally; `referrer` is returned because the API returns it, but it is never written to the event log, since a URL can carry a token.
+- **No webhooks.** SatisMeter does not send them.
+
+**What you get:**
+
+- 10 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/satismeter better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/satismeter better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/satismeter better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/satismeter better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { satismeter } from '@corsair-dev/satismeter';
+
+export const corsair = createCorsair({
+	plugins: [
+		satismeter(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. A call with no saved key throws `AuthMissingError`, which may carry a `connectUrl` for the connection flow.
+
+```ts
+satismeter()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'satismeter',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List a project's surveys**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.satismeter.api.surveys.list({ projectId: '61fce0adea447e24ec27d606' });
+```
+
+
+**Record an event for survey targeting**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.satismeter.api.users.track({ projectId: '61fce0adea447e24ec27d606', userId: '007', event: 'completed-checkout' });
+```
+
+
+See the full list on the [API](/plugins/satismeter/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/satismeter/api">
+    Every `satismeter.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
