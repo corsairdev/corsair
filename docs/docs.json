@@ -1849,6 +1849,15 @@
                 ]
               },
               {
+                "group": "Eventbrite",
+                "pages": [
+                  "plugins/eventbrite/overview",
+                  "plugins/eventbrite/api",
+                  "plugins/eventbrite/database",
+                  "plugins/eventbrite/webhooks"
+                ]
+              },
+              {
                 "group": "Everhour",
                 "pages": [
                   "plugins/everhour/overview",

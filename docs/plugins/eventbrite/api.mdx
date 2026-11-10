@@ -1,0 +1,6062 @@
+---
+title: API
+description: "API reference for Eventbrite: every `eventbrite.api.*` operation with input and output types."
+---
+
+Every `eventbrite.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Attendees
+
+### get
+
+`attendees.get`
+
+Read one attendee of an event
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.attendees.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event that owns the attendee. |
+| `attendee_id` | `string \| number` | Yes | The attendee to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `event_id` | `string \| null` | No | — |
+| `order_id` | `string \| null` | No | — |
+| `ticket_class_id` | `string \| null` | No | — |
+| `ticket_class_name` | `string \| null` | No | — |
+| `variant_id` | `string \| null` | No | — |
+| `quantity` | `number \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `changed` | `string \| null` | No | — |
+| `checked_in` | `boolean \| null` | No | — |
+| `cancelled` | `boolean \| null` | No | — |
+| `refunded` | `boolean \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `delivery_method` | `string \| null` | No | — |
+| `guestlist_id` | `string \| null` | No | — |
+| `invited_by` | `string \| null` | No | — |
+| `affiliate` | `string \| null` | No | — |
+| `profile` | `object \| null` | No | — |
+| `barcodes` | `object[] \| null` | No | — |
+| `costs` | `object \| null` | No | — |
+| `answers` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  prefix?: string | null,
+  suffix?: string | null,
+  age?: number | null,
+  job_title?: string | null,
+  company?: string | null,
+  website?: string | null,
+  blog?: string | null,
+  gender?: string | null,
+  birth_date?: string | null,
+  cell_phone?: string | null,
+  work_phone?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="barcodes full type">
+
+```ts
+{
+  barcode?: string | null,
+  status?: string | null,
+  created?: string | null,
+  changed?: string | null,
+  checkin_type?: number | null,
+  is_printed?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="costs full type">
+
+```ts
+{
+  base_price?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  gross?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  eventbrite_fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  payment_fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  tax?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="answers full type">
+
+```ts
+{
+  question_id?: string | null,
+  question?: string | null,
+  type?: string | null,
+  answer?: string | number | boolean | {
+    address_1?: string | null,
+    address_2?: string | null,
+    city?: string | null,
+    region?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    latitude?: string | null,
+    longitude?: string | null,
+    localized_address_display?: string | null,
+    localized_area_display?: string | null,
+    localized_multi_line_address_display?: string[] | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`attendees.list`
+
+List an event's attendees with their ticket class, order, check-in state and barcodes. Private: requires access to the event
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.attendees.list({ event_id: '2000937221092', status: 'attending' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event whose attendees to list. |
+| `status` | `attending \| not_attending \| unpaid` | No | Attendee status filter. |
+| `changed_since` | `string` | No | Only attendees changed at or after this instant. |
+| `last_item_seen` | `number` | No | With `changed_since`, only attendees with a later ID. |
+| `attendee_ids` | `(string \| number)[]` | No | Only these attendee IDs. |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `attendees` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="attendees full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  event_id?: string | null,
+  order_id?: string | null,
+  ticket_class_id?: string | null,
+  ticket_class_name?: string | null,
+  variant_id?: string | null,
+  quantity?: number | null,
+  created?: string | null,
+  changed?: string | null,
+  checked_in?: boolean | null,
+  cancelled?: boolean | null,
+  refunded?: boolean | null,
+  status?: string | null,
+  delivery_method?: string | null,
+  guestlist_id?: string | null,
+  invited_by?: string | null,
+  affiliate?: string | null,
+  profile?: {
+    name?: string | null,
+    email?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    prefix?: string | null,
+    suffix?: string | null,
+    age?: number | null,
+    job_title?: string | null,
+    company?: string | null,
+    website?: string | null,
+    blog?: string | null,
+    gender?: string | null,
+    birth_date?: string | null,
+    cell_phone?: string | null,
+    work_phone?: string | null
+  } | null,
+  barcodes?: {
+    barcode?: string | null,
+    status?: string | null,
+    created?: string | null,
+    changed?: string | null,
+    checkin_type?: number | null,
+    is_printed?: boolean | null
+  }[] | null,
+  costs?: {
+    base_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    gross?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    eventbrite_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    payment_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    tax?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null
+  } | null,
+  answers?: {
+    question_id?: string | null,
+    question?: string | null,
+    type?: string | null,
+    answer?: string | number | boolean | {
+      address_1?: string | null,
+      address_2?: string | null,
+      city?: string | null,
+      region?: string | null,
+      postal_code?: string | null,
+      country?: string | null,
+      latitude?: string | null,
+      longitude?: string | null,
+      localized_address_display?: string | null,
+      localized_area_display?: string | null,
+      localized_multi_line_address_display?: string[] | null
+    } | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Discounts
+
+### create
+
+`discounts.create`
+
+Create a discount code: a fixed amount or a percentage off, optionally limited by quantity, dates or ticket classes
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.discounts.create({ organization_id: '154830740213', discount: { code: 'CORSAIR20', type: 'coded', percent_off: '20', event_id: '2000937221092' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string \| number` | Yes | The organization the discount belongs to. |
+| `discount` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="discount full type">
+
+```ts
+{
+  code: string,
+  type: access | coded | hold | public,
+  amount_off?: string,
+  percent_off?: string,
+  event_id?: string | number,
+  ticket_class_ids?: (string | number)[],
+  quantity_available?: number,
+  start_date?: string,
+  end_date?: string,
+  start_date_relative?: number,
+  end_date_relative?: number,
+  ticket_group_id?: string | number,
+  hold_ids?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `code` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `amount_off` | `string \| null` | No | — |
+| `percent_off` | `string \| null` | No | — |
+| `event_id` | `string \| null` | No | — |
+| `ticket_class_ids` | `string[] \| null` | No | — |
+| `quantity_available` | `number \| null` | No | — |
+| `quantity_sold` | `number \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `start_date_relative` | `number \| null` | No | — |
+| `end_date_relative` | `number \| null` | No | — |
+| `ticket_group_id` | `string \| null` | No | — |
+| `hold_ids` | `string[] \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`discounts.delete`
+
+Delete a discount code. Only an unused code can be deleted, and a deleted code cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.eventbrite.api.discounts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discount_id` | `string \| number` | Yes | The discount to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean` | Yes | — |
+| `discount` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="discount full type">
+
+```ts
+{
+  id?: string | null,
+  code?: string | null,
+  type?: string | null,
+  amount_off?: string | null,
+  percent_off?: string | null,
+  event_id?: string | null,
+  ticket_class_ids?: string[] | null,
+  quantity_available?: number | null,
+  quantity_sold?: number | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  start_date_relative?: number | null,
+  end_date_relative?: number | null,
+  ticket_group_id?: string | null,
+  hold_ids?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`discounts.get`
+
+Read one discount code with its amount and usage
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.discounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discount_id` | `string \| number` | Yes | The discount to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `code` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `amount_off` | `string \| null` | No | — |
+| `percent_off` | `string \| null` | No | — |
+| `event_id` | `string \| null` | No | — |
+| `ticket_class_ids` | `string[] \| null` | No | — |
+| `quantity_available` | `number \| null` | No | — |
+| `quantity_sold` | `number \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `start_date_relative` | `number \| null` | No | — |
+| `end_date_relative` | `number \| null` | No | — |
+| `ticket_group_id` | `string \| null` | No | — |
+| `hold_ids` | `string[] \| null` | No | — |
+
+
+
+---
+
+### list
+
+`discounts.list`
+
+List an organization’s discounts for one scope (`event`, `multi_events` or `user`), optionally by code
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.discounts.list({ organization_id: '154830740213', scope: 'event', event_id: '2000937221092' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string \| number` | Yes | The organization whose discounts to list. |
+| `scope` | `event \| multi_events \| user` | Yes | Discount scope. Eventbrite requires it. |
+| `event_id` | `string \| number` | No | Required when `scope` is `event`; rejected with `multi_events`. |
+| `code_filter` | `string` | No | Approximate code or name match. |
+| `code` | `string` | No | Exact code or name match. |
+| `type` | `access \| coded \| hold \| public` | No | — |
+| `ticket_group_id` | `string \| number` | No | — |
+| `hold_ids` | `string[]` | No | — |
+| `order_by` | `code_asc \| code_desc \| discount_type_asc \| discount_type_desc \| start_asc \| start_desc` | No | Sorting is only allowed together with exactly one of `code` and `code_filter`. |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+`scope` is required, and `event` scope also requires `event_id`. Sorting needs exactly one of `code` and `code_filter`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discounts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="discounts full type">
+
+```ts
+{
+  id?: string | null,
+  code?: string | null,
+  type?: string | null,
+  amount_off?: string | null,
+  percent_off?: string | null,
+  event_id?: string | null,
+  ticket_class_ids?: string[] | null,
+  quantity_available?: number | null,
+  quantity_sold?: number | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  start_date_relative?: number | null,
+  end_date_relative?: number | null,
+  ticket_group_id?: string | null,
+  hold_ids?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`discounts.update`
+
+Change a discount code
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.discounts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discount_id` | `string \| number` | Yes | The discount to change. |
+| `discount` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="discount full type">
+
+```ts
+{
+  code?: string,
+  type?: access | coded | hold | public,
+  amount_off?: string,
+  percent_off?: string,
+  event_id?: string | number,
+  ticket_class_ids?: (string | number)[],
+  quantity_available?: number,
+  start_date?: string,
+  end_date?: string,
+  start_date_relative?: number,
+  end_date_relative?: number,
+  ticket_group_id?: string | number,
+  hold_ids?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `code` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `amount_off` | `string \| null` | No | — |
+| `percent_off` | `string \| null` | No | — |
+| `event_id` | `string \| null` | No | — |
+| `ticket_class_ids` | `string[] \| null` | No | — |
+| `quantity_available` | `number \| null` | No | — |
+| `quantity_sold` | `number \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `start_date_relative` | `number \| null` | No | — |
+| `end_date_relative` | `number \| null` | No | — |
+| `ticket_group_id` | `string \| null` | No | — |
+| `hold_ids` | `string[] \| null` | No | — |
+
+
+
+---
+
+## Events
+
+### cancel
+
+`events.cancel`
+
+Cancel an event. Refused while it has any pending or completed orders; a canceled event cannot be reopened, only copied
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.eventbrite.api.events.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `canceled` | `true` | Yes | — |
+
+
+
+---
+
+### copy
+
+`events.copy`
+
+Duplicate an event into a new draft with a new ID, copying its payment options, payout method, refund policy and tax settings
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.events.copy({ event_id: '2000937221092', name: 'Launch night (copy)', timezone: 'America/New_York', start_date: '2027-06-08T14:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event to duplicate. |
+| `name` | `string` | No | Name for the copy. |
+| `start_date` | `string` | No | Start of the copy, e.g. `2027-06-01T14:00:00Z`. |
+| `end_date` | `string` | No | End of the copy. |
+| `timezone` | `string` | No | Olson timezone for the copy, e.g. `America/New_York`. |
+| `summary` | `string` | No | — |
+
+This route takes the copy's fields bare, not wrapped in `event`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `name` | `object \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `description` | `object \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `vanity_url` | `string \| null` | No | — |
+| `start` | `object \| null` | No | — |
+| `end` | `object \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `changed` | `string \| null` | No | — |
+| `published` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `online_event` | `boolean \| null` | No | — |
+| `organization_id` | `string \| null` | No | — |
+| `organizer_id` | `string \| null` | No | — |
+| `venue_id` | `string \| null` | No | — |
+| `format_id` | `string \| null` | No | — |
+| `category_id` | `string \| null` | No | — |
+| `subcategory_id` | `string \| null` | No | — |
+| `logo_id` | `string \| null` | No | — |
+| `logo` | `object \| null` | No | — |
+| `organizer` | `object \| null` | No | — |
+| `venue` | `object \| null` | No | — |
+| `format` | `object \| null` | No | — |
+| `category` | `object \| null` | No | — |
+| `subcategory` | `object \| null` | No | — |
+| `ticket_availability` | `object \| null` | No | — |
+| `listed` | `boolean \| null` | No | — |
+| `shareable` | `boolean \| null` | No | — |
+| `invite_only` | `boolean \| null` | No | — |
+| `show_remaining` | `boolean \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `capacity` | `number \| null` | No | — |
+| `capacity_is_custom` | `boolean \| null` | No | — |
+| `tx_time_limit` | `number \| null` | No | — |
+| `hide_start_date` | `boolean \| null` | No | — |
+| `hide_end_date` | `boolean \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `is_locked` | `boolean \| null` | No | — |
+| `privacy_setting` | `string \| null` | No | — |
+| `is_series` | `boolean \| null` | No | — |
+| `is_series_parent` | `boolean \| null` | No | — |
+| `series_id` | `string \| null` | No | — |
+| `is_reserved_seating` | `boolean \| null` | No | — |
+| `show_pick_a_seat` | `boolean \| null` | No | — |
+| `show_seatmap_thumbnail` | `boolean \| null` | No | — |
+| `show_colors_in_seatmap_thumbnail` | `boolean \| null` | No | — |
+| `is_free` | `boolean \| null` | No | — |
+| `is_externally_ticketed` | `boolean \| null` | No | — |
+| `inventory_type` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `facebook_event_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  text?: string | null,
+  html?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+{
+  text?: string | null,
+  html?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="start full type">
+
+```ts
+{
+  timezone?: string | null,
+  utc?: string | null,
+  local?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="end full type">
+
+```ts
+{
+  timezone?: string | null,
+  utc?: string | null,
+  local?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="logo full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  aspect_ratio?: string | null,
+  edge_color?: string | null,
+  edge_color_set?: boolean | null,
+  original?: {
+    url?: string | null,
+    width?: number | null,
+    height?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organizer full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  description?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  long_description?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  url?: string | null,
+  vanity_url?: string | null,
+  website?: string | null,
+  twitter?: string | null,
+  facebook?: string | null,
+  organization_id?: string | null,
+  num_past_events?: number | null,
+  num_future_events?: number | null,
+  logo_id?: string | null,
+  disable_marketing_opt_in?: boolean | null,
+  follow_status?: {
+    followed_by_you?: boolean | null,
+    followed_at?: string | null,
+    num_followers?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="venue full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  age_restriction?: string | null,
+  capacity?: number | null,
+  latitude?: string | null,
+  longitude?: string | null,
+  address?: {
+    address_1?: string | null,
+    address_2?: string | null,
+    city?: string | null,
+    region?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    latitude?: string | null,
+    longitude?: string | null,
+    localized_address_display?: string | null,
+    localized_area_display?: string | null,
+    localized_multi_line_address_display?: string[] | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="format full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  name_localized?: string | null,
+  short_name?: string | null,
+  short_name_localized?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="category full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  name_localized?: string | null,
+  short_name?: string | null,
+  short_name_localized?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="subcategory full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  name_localized?: string | null,
+  parent_category?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    short_name?: string | null,
+    short_name_localized?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="ticket_availability full type">
+
+```ts
+{
+  has_available_tickets?: boolean | null,
+  is_sold_out?: boolean | null,
+  waitlist_available?: boolean | null,
+  minimum_ticket_price?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  maximum_ticket_price?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  start_sales_date?: {
+    timezone?: string | null,
+    utc?: string | null,
+    local?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`events.create`
+
+Create an event under an organization: name, start and end, currency, and optionally a venue or online-only, category, format and listing options
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.events.create({ organization_id: '154830740213', event: { name: { html: 'Launch night' }, start: { timezone: 'America/New_York', utc: '2027-06-01T14:00:00Z' }, end: { timezone: 'America/New_York', utc: '2027-06-01T18:00:00Z' }, currency: 'USD' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string \| number` | Yes | The organization that will own the event. |
+| `event` | `object` | Yes | — |
+
+`name` and `description` must be `{ html }` objects; Eventbrite rejects a bare string with `event.name - Unknown parameter`.
+
+<AccordionGroup>
+<Accordion title="event full type">
+
+```ts
+{
+  name: {
+    html: string
+  },
+  start: {
+    timezone: string,
+    utc: string
+  },
+  end: {
+    timezone: string,
+    utc: string
+  },
+  currency: string,
+  summary?: string,
+  description?: {
+    html: string
+  },
+  organizer_id?: string | number,
+  venue_id?: string | number,
+  online_event?: boolean,
+  format_id?: string | number,
+  category_id?: string | number,
+  subcategory_id?: string | number,
+  logo_id?: string | number,
+  listed?: boolean,
+  shareable?: boolean,
+  invite_only?: boolean,
+  show_remaining?: boolean,
+  password?: string,
+  capacity?: number,
+  hide_start_date?: boolean,
+  hide_end_date?: boolean,
+  is_series?: boolean,
+  source?: string,
+  locale?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `name` | `object \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `description` | `object \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `vanity_url` | `string \| null` | No | — |
+| `start` | `object \| null` | No | — |
+| `end` | `object \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `changed` | `string \| null` | No | — |
+| `published` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `online_event` | `boolean \| null` | No | — |
+| `organization_id` | `string \| null` | No | — |
+| `organizer_id` | `string \| null` | No | — |
+| `venue_id` | `string \| null` | No | — |
+| `format_id` | `string \| null` | No | — |
+| `category_id` | `string \| null` | No | — |
+| `subcategory_id` | `string \| null` | No | — |
+| `logo_id` | `string \| null` | No | — |
+| `logo` | `object \| null` | No | — |
+| `organizer` | `object \| null` | No | — |
+| `venue` | `object \| null` | No | — |
+| `format` | `object \| null` | No | — |
+| `category` | `object \| null` | No | — |
+| `subcategory` | `object \| null` | No | — |
+| `ticket_availability` | `object \| null` | No | — |
+| `listed` | `boolean \| null` | No | — |
+| `shareable` | `boolean \| null` | No | — |
+| `invite_only` | `boolean \| null` | No | — |
+| `show_remaining` | `boolean \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `capacity` | `number \| null` | No | — |
+| `capacity_is_custom` | `boolean \| null` | No | — |
+| `tx_time_limit` | `number \| null` | No | — |
+| `hide_start_date` | `boolean \| null` | No | — |
+| `hide_end_date` | `boolean \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `is_locked` | `boolean \| null` | No | — |
+| `privacy_setting` | `string \| null` | No | — |
+| `is_series` | `boolean \| null` | No | — |
+| `is_series_parent` | `boolean \| null` | No | — |
+| `series_id` | `string \| null` | No | — |
+| `is_reserved_seating` | `boolean \| null` | No | — |
+| `show_pick_a_seat` | `boolean \| null` | No | — |
+| `show_seatmap_thumbnail` | `boolean \| null` | No | — |
+| `show_colors_in_seatmap_thumbnail` | `boolean \| null` | No | — |
+| `is_free` | `boolean \| null` | No | — |
+| `is_externally_ticketed` | `boolean \| null` | No | — |
+| `inventory_type` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `facebook_event_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  text?: string | null,
+  html?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+{
+  text?: string | null,
+  html?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="start full type">
+
+```ts
+{
+  timezone?: string | null,
+  utc?: string | null,
+  local?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="end full type">
+
+```ts
+{
+  timezone?: string | null,
+  utc?: string | null,
+  local?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="logo full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  aspect_ratio?: string | null,
+  edge_color?: string | null,
+  edge_color_set?: boolean | null,
+  original?: {
+    url?: string | null,
+    width?: number | null,
+    height?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organizer full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  description?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  long_description?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  url?: string | null,
+  vanity_url?: string | null,
+  website?: string | null,
+  twitter?: string | null,
+  facebook?: string | null,
+  organization_id?: string | null,
+  num_past_events?: number | null,
+  num_future_events?: number | null,
+  logo_id?: string | null,
+  disable_marketing_opt_in?: boolean | null,
+  follow_status?: {
+    followed_by_you?: boolean | null,
+    followed_at?: string | null,
+    num_followers?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="venue full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  age_restriction?: string | null,
+  capacity?: number | null,
+  latitude?: string | null,
+  longitude?: string | null,
+  address?: {
+    address_1?: string | null,
+    address_2?: string | null,
+    city?: string | null,
+    region?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    latitude?: string | null,
+    longitude?: string | null,
+    localized_address_display?: string | null,
+    localized_area_display?: string | null,
+    localized_multi_line_address_display?: string[] | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="format full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  name_localized?: string | null,
+  short_name?: string | null,
+  short_name_localized?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="category full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  name_localized?: string | null,
+  short_name?: string | null,
+  short_name_localized?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="subcategory full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  name_localized?: string | null,
+  parent_category?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    short_name?: string | null,
+    short_name_localized?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="ticket_availability full type">
+
+```ts
+{
+  has_available_tickets?: boolean | null,
+  is_sold_out?: boolean | null,
+  waitlist_available?: boolean | null,
+  minimum_ticket_price?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  maximum_ticket_price?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  start_sales_date?: {
+    timezone?: string | null,
+    utc?: string | null,
+    local?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`events.delete`
+
+Permanently delete an event and, for a series parent, every occurrence. Refused while any of them has orders
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.eventbrite.api.events.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### description
+
+`events.description`
+
+Read the event’s fully rendered HTML description, which the event object itself no longer returns
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.events.description({ event_id: '2000937221092' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string \| null` | No | — |
+
+
+
+---
+
+### displaySettings
+
+`events.displaySettings`
+
+Read what the listing page shows: dates, times, timezone, map and the Facebook options
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.events.displaySettings({ event_id: '2000937221092' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource_uri` | `string \| null` | No | — |
+| `show_start_date` | `boolean \| null` | No | — |
+| `show_end_date` | `boolean \| null` | No | — |
+| `show_start_end_time` | `boolean \| null` | No | — |
+| `show_timezone` | `boolean \| null` | No | — |
+| `show_map` | `boolean \| null` | No | — |
+| `show_remaining` | `boolean \| null` | No | — |
+| `show_organizer_facebook` | `boolean \| null` | No | — |
+| `show_organizer_twitter` | `boolean \| null` | No | — |
+| `show_facebook_friends_going` | `boolean \| null` | No | — |
+| `terminology` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`events.get`
+
+Read one event by ID, optionally inlining its venue, organizer, category, format, logo and ticket availability
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.events.get({ event_id: '2000937221092', expand: ['venue', 'organizer', 'ticket_availability'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event to read. |
+| `expand` | `(logo \| venue \| organizer \| format \| category \| subcategory \| ticket_availability \| bookmark_info \| refund_policy \| has_digital_content)[]` | No | Related objects to inline, sent as one comma-separated `expand` value. Each one slows the request slightly. |
+
+Event reads take `expand` as one comma-separated value; the plugin joins the array for you.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `name` | `object \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `description` | `object \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `vanity_url` | `string \| null` | No | — |
+| `start` | `object \| null` | No | — |
+| `end` | `object \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `changed` | `string \| null` | No | — |
+| `published` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `online_event` | `boolean \| null` | No | — |
+| `organization_id` | `string \| null` | No | — |
+| `organizer_id` | `string \| null` | No | — |
+| `venue_id` | `string \| null` | No | — |
+| `format_id` | `string \| null` | No | — |
+| `category_id` | `string \| null` | No | — |
+| `subcategory_id` | `string \| null` | No | — |
+| `logo_id` | `string \| null` | No | — |
+| `logo` | `object \| null` | No | — |
+| `organizer` | `object \| null` | No | — |
+| `venue` | `object \| null` | No | — |
+| `format` | `object \| null` | No | — |
+| `category` | `object \| null` | No | — |
+| `subcategory` | `object \| null` | No | — |
+| `ticket_availability` | `object \| null` | No | — |
+| `listed` | `boolean \| null` | No | — |
+| `shareable` | `boolean \| null` | No | — |
+| `invite_only` | `boolean \| null` | No | — |
+| `show_remaining` | `boolean \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `capacity` | `number \| null` | No | — |
+| `capacity_is_custom` | `boolean \| null` | No | — |
+| `tx_time_limit` | `number \| null` | No | — |
+| `hide_start_date` | `boolean \| null` | No | — |
+| `hide_end_date` | `boolean \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `is_locked` | `boolean \| null` | No | — |
+| `privacy_setting` | `string \| null` | No | — |
+| `is_series` | `boolean \| null` | No | — |
+| `is_series_parent` | `boolean \| null` | No | — |
+| `series_id` | `string \| null` | No | — |
+| `is_reserved_seating` | `boolean \| null` | No | — |
+| `show_pick_a_seat` | `boolean \| null` | No | — |
+| `show_seatmap_thumbnail` | `boolean \| null` | No | — |
+| `show_colors_in_seatmap_thumbnail` | `boolean \| null` | No | — |
+| `is_free` | `boolean \| null` | No | — |
+| `is_externally_ticketed` | `boolean \| null` | No | — |
+| `inventory_type` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `facebook_event_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  text?: string | null,
+  html?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+{
+  text?: string | null,
+  html?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="start full type">
+
+```ts
+{
+  timezone?: string | null,
+  utc?: string | null,
+  local?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="end full type">
+
+```ts
+{
+  timezone?: string | null,
+  utc?: string | null,
+  local?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="logo full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  aspect_ratio?: string | null,
+  edge_color?: string | null,
+  edge_color_set?: boolean | null,
+  original?: {
+    url?: string | null,
+    width?: number | null,
+    height?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organizer full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  description?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  long_description?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  url?: string | null,
+  vanity_url?: string | null,
+  website?: string | null,
+  twitter?: string | null,
+  facebook?: string | null,
+  organization_id?: string | null,
+  num_past_events?: number | null,
+  num_future_events?: number | null,
+  logo_id?: string | null,
+  disable_marketing_opt_in?: boolean | null,
+  follow_status?: {
+    followed_by_you?: boolean | null,
+    followed_at?: string | null,
+    num_followers?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="venue full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  age_restriction?: string | null,
+  capacity?: number | null,
+  latitude?: string | null,
+  longitude?: string | null,
+  address?: {
+    address_1?: string | null,
+    address_2?: string | null,
+    city?: string | null,
+    region?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    latitude?: string | null,
+    longitude?: string | null,
+    localized_address_display?: string | null,
+    localized_area_display?: string | null,
+    localized_multi_line_address_display?: string[] | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="format full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  name_localized?: string | null,
+  short_name?: string | null,
+  short_name_localized?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="category full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  name_localized?: string | null,
+  short_name?: string | null,
+  short_name_localized?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="subcategory full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  name_localized?: string | null,
+  parent_category?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    short_name?: string | null,
+    short_name_localized?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="ticket_availability full type">
+
+```ts
+{
+  has_available_tickets?: boolean | null,
+  is_sold_out?: boolean | null,
+  waitlist_available?: boolean | null,
+  minimum_ticket_price?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  maximum_ticket_price?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  start_sales_date?: {
+    timezone?: string | null,
+    utc?: string | null,
+    local?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listByOrganization
+
+`events.listByOrganization`
+
+List an organization's events, filtered by status, name, currency, time window, series membership, venue, organizer or explicit IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.events.listByOrganization({ organization_id: '154830740213', status: ['live', 'started'], time_filter: 'current_future' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string \| number` | Yes | The organization whose events to list. |
+| `status` | `(draft \| live \| started \| ended \| completed \| canceled \| all)[]` | No | Only events in these statuses, sent as one comma-separated value. `all` includes every status. |
+| `name_filter` | `string` | No | Only events whose name matches. |
+| `currency_filter` | `string` | No | Only events in this ISO 4217 currency. |
+| `order_by` | `start_asc \| start_desc \| created_asc \| created_desc \| name_asc \| name_desc` | No | — |
+| `time_filter` | `all \| past \| current_future` | No | Restrict to past or to current and future events. Defaults to `all`. |
+| `series_filter` | `(allevents \| children \| parents \| nonseries \| allseries)[]` | No | Filter on series membership; takes precedence over `show_series_parent`. |
+| `show_series_parent` | `boolean` | No | True lists the series parent instead of its occurrences. Defaults to false. |
+| `venue_filter` | `(string \| number)[]` | No | Only events at these venue IDs. |
+| `organizer_filter` | `(string \| number)[]` | No | Only events by these organizer IDs. |
+| `inventory_type_filter` | `(limited \| reserved \| externally_ticketed)[]` | No | Only events with this inventory type. |
+| `event_ids` | `(string \| number)[]` | No | Only these event IDs. |
+| `event_ids_to_exclude` | `(string \| number)[]` | No | Exclude these event IDs. |
+| `event_group_id` | `string` | No | — |
+| `collection_id` | `string` | No | — |
+| `collection_ids_to_exclude` | `(string \| number)[]` | No | Collections to exclude; wins over `event_group_id` and `collection_id`. |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+Pass `pagination.continuation` from the previous page as `continuation` to walk the list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  summary?: string | null,
+  description?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  url?: string | null,
+  vanity_url?: string | null,
+  start?: {
+    timezone?: string | null,
+    utc?: string | null,
+    local?: string | null
+  } | null,
+  end?: {
+    timezone?: string | null,
+    utc?: string | null,
+    local?: string | null
+  } | null,
+  created?: string | null,
+  changed?: string | null,
+  published?: string | null,
+  status?: string | null,
+  currency?: string | null,
+  online_event?: boolean | null,
+  organization_id?: string | null,
+  organizer_id?: string | null,
+  venue_id?: string | null,
+  format_id?: string | null,
+  category_id?: string | null,
+  subcategory_id?: string | null,
+  logo_id?: string | null,
+  logo?: {
+    id?: string | null,
+    url?: string | null,
+    aspect_ratio?: string | null,
+    edge_color?: string | null,
+    edge_color_set?: boolean | null,
+    original?: {
+      url?: string | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null,
+  organizer?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    description?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    long_description?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    url?: string | null,
+    vanity_url?: string | null,
+    website?: string | null,
+    twitter?: string | null,
+    facebook?: string | null,
+    organization_id?: string | null,
+    num_past_events?: number | null,
+    num_future_events?: number | null,
+    logo_id?: string | null,
+    disable_marketing_opt_in?: boolean | null,
+    follow_status?: {
+      followed_by_you?: boolean | null,
+      followed_at?: string | null,
+      num_followers?: number | null
+    } | null
+  } | null,
+  venue?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    age_restriction?: string | null,
+    capacity?: number | null,
+    latitude?: string | null,
+    longitude?: string | null,
+    address?: {
+      address_1?: string | null,
+      address_2?: string | null,
+      city?: string | null,
+      region?: string | null,
+      postal_code?: string | null,
+      country?: string | null,
+      latitude?: string | null,
+      longitude?: string | null,
+      localized_address_display?: string | null,
+      localized_area_display?: string | null,
+      localized_multi_line_address_display?: string[] | null
+    } | null
+  } | null,
+  format?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    short_name?: string | null,
+    short_name_localized?: string | null
+  } | null,
+  category?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    short_name?: string | null,
+    short_name_localized?: string | null
+  } | null,
+  subcategory?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    parent_category?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      name_localized?: string | null,
+      short_name?: string | null,
+      short_name_localized?: string | null
+    } | null
+  } | null,
+  ticket_availability?: {
+    has_available_tickets?: boolean | null,
+    is_sold_out?: boolean | null,
+    waitlist_available?: boolean | null,
+    minimum_ticket_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    maximum_ticket_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    start_sales_date?: {
+      timezone?: string | null,
+      utc?: string | null,
+      local?: string | null
+    } | null
+  } | null,
+  listed?: boolean | null,
+  shareable?: boolean | null,
+  invite_only?: boolean | null,
+  show_remaining?: boolean | null,
+  password?: string | null,
+  capacity?: number | null,
+  capacity_is_custom?: boolean | null,
+  tx_time_limit?: number | null,
+  hide_start_date?: boolean | null,
+  hide_end_date?: boolean | null,
+  locale?: string | null,
+  is_locked?: boolean | null,
+  privacy_setting?: string | null,
+  is_series?: boolean | null,
+  is_series_parent?: boolean | null,
+  series_id?: string | null,
+  is_reserved_seating?: boolean | null,
+  show_pick_a_seat?: boolean | null,
+  show_seatmap_thumbnail?: boolean | null,
+  show_colors_in_seatmap_thumbnail?: boolean | null,
+  is_free?: boolean | null,
+  is_externally_ticketed?: boolean | null,
+  inventory_type?: string | null,
+  source?: string | null,
+  version?: string | null,
+  facebook_event_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBySeries
+
+`events.listBySeries`
+
+List the occurrences of a recurring event series
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.events.listBySeries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_series_id` | `string \| number` | Yes | The series parent’s event ID (`series_id` on an occurrence, or the ID returned with `is_series: true`). |
+| `time_filter` | `all \| past \| current_future` | No | — |
+| `order_by` | `start_asc \| start_desc \| created_asc \| created_desc` | No | — |
+| `start_date.range_start` | `string` | No | — |
+| `start_date.range_end` | `string` | No | — |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  summary?: string | null,
+  description?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  url?: string | null,
+  vanity_url?: string | null,
+  start?: {
+    timezone?: string | null,
+    utc?: string | null,
+    local?: string | null
+  } | null,
+  end?: {
+    timezone?: string | null,
+    utc?: string | null,
+    local?: string | null
+  } | null,
+  created?: string | null,
+  changed?: string | null,
+  published?: string | null,
+  status?: string | null,
+  currency?: string | null,
+  online_event?: boolean | null,
+  organization_id?: string | null,
+  organizer_id?: string | null,
+  venue_id?: string | null,
+  format_id?: string | null,
+  category_id?: string | null,
+  subcategory_id?: string | null,
+  logo_id?: string | null,
+  logo?: {
+    id?: string | null,
+    url?: string | null,
+    aspect_ratio?: string | null,
+    edge_color?: string | null,
+    edge_color_set?: boolean | null,
+    original?: {
+      url?: string | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null,
+  organizer?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    description?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    long_description?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    url?: string | null,
+    vanity_url?: string | null,
+    website?: string | null,
+    twitter?: string | null,
+    facebook?: string | null,
+    organization_id?: string | null,
+    num_past_events?: number | null,
+    num_future_events?: number | null,
+    logo_id?: string | null,
+    disable_marketing_opt_in?: boolean | null,
+    follow_status?: {
+      followed_by_you?: boolean | null,
+      followed_at?: string | null,
+      num_followers?: number | null
+    } | null
+  } | null,
+  venue?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    age_restriction?: string | null,
+    capacity?: number | null,
+    latitude?: string | null,
+    longitude?: string | null,
+    address?: {
+      address_1?: string | null,
+      address_2?: string | null,
+      city?: string | null,
+      region?: string | null,
+      postal_code?: string | null,
+      country?: string | null,
+      latitude?: string | null,
+      longitude?: string | null,
+      localized_address_display?: string | null,
+      localized_area_display?: string | null,
+      localized_multi_line_address_display?: string[] | null
+    } | null
+  } | null,
+  format?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    short_name?: string | null,
+    short_name_localized?: string | null
+  } | null,
+  category?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    short_name?: string | null,
+    short_name_localized?: string | null
+  } | null,
+  subcategory?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    parent_category?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      name_localized?: string | null,
+      short_name?: string | null,
+      short_name_localized?: string | null
+    } | null
+  } | null,
+  ticket_availability?: {
+    has_available_tickets?: boolean | null,
+    is_sold_out?: boolean | null,
+    waitlist_available?: boolean | null,
+    minimum_ticket_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    maximum_ticket_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    start_sales_date?: {
+      timezone?: string | null,
+      utc?: string | null,
+      local?: string | null
+    } | null
+  } | null,
+  listed?: boolean | null,
+  shareable?: boolean | null,
+  invite_only?: boolean | null,
+  show_remaining?: boolean | null,
+  password?: string | null,
+  capacity?: number | null,
+  capacity_is_custom?: boolean | null,
+  tx_time_limit?: number | null,
+  hide_start_date?: boolean | null,
+  hide_end_date?: boolean | null,
+  locale?: string | null,
+  is_locked?: boolean | null,
+  privacy_setting?: string | null,
+  is_series?: boolean | null,
+  is_series_parent?: boolean | null,
+  series_id?: string | null,
+  is_reserved_seating?: boolean | null,
+  show_pick_a_seat?: boolean | null,
+  show_seatmap_thumbnail?: boolean | null,
+  show_colors_in_seatmap_thumbnail?: boolean | null,
+  is_free?: boolean | null,
+  is_externally_ticketed?: boolean | null,
+  inventory_type?: string | null,
+  source?: string | null,
+  version?: string | null,
+  facebook_event_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listByVenue
+
+`events.listByVenue`
+
+List the events held at a venue, optionally in a start-date window
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.events.listByVenue({ venue_id: '299411783', status: ['live'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `venue_id` | `string \| number` | Yes | The venue whose events to list. |
+| `status` | `(draft \| live \| started \| ended \| completed \| canceled \| all)[]` | No | Only events in these statuses, sent as one comma-separated value. `all` includes every status. |
+| `order_by` | `start_asc \| start_desc \| created_asc \| created_desc` | No | — |
+| `only_public` | `boolean` | No | True lists only publicly listed events. |
+| `start_date.range_start` | `string` | No | Only events starting at or after this instant, e.g. `2027-01-01T00:00:00Z`. |
+| `start_date.range_end` | `string` | No | Only events starting at or before this instant. |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="events full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  summary?: string | null,
+  description?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  url?: string | null,
+  vanity_url?: string | null,
+  start?: {
+    timezone?: string | null,
+    utc?: string | null,
+    local?: string | null
+  } | null,
+  end?: {
+    timezone?: string | null,
+    utc?: string | null,
+    local?: string | null
+  } | null,
+  created?: string | null,
+  changed?: string | null,
+  published?: string | null,
+  status?: string | null,
+  currency?: string | null,
+  online_event?: boolean | null,
+  organization_id?: string | null,
+  organizer_id?: string | null,
+  venue_id?: string | null,
+  format_id?: string | null,
+  category_id?: string | null,
+  subcategory_id?: string | null,
+  logo_id?: string | null,
+  logo?: {
+    id?: string | null,
+    url?: string | null,
+    aspect_ratio?: string | null,
+    edge_color?: string | null,
+    edge_color_set?: boolean | null,
+    original?: {
+      url?: string | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null,
+  organizer?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    description?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    long_description?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    url?: string | null,
+    vanity_url?: string | null,
+    website?: string | null,
+    twitter?: string | null,
+    facebook?: string | null,
+    organization_id?: string | null,
+    num_past_events?: number | null,
+    num_future_events?: number | null,
+    logo_id?: string | null,
+    disable_marketing_opt_in?: boolean | null,
+    follow_status?: {
+      followed_by_you?: boolean | null,
+      followed_at?: string | null,
+      num_followers?: number | null
+    } | null
+  } | null,
+  venue?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    age_restriction?: string | null,
+    capacity?: number | null,
+    latitude?: string | null,
+    longitude?: string | null,
+    address?: {
+      address_1?: string | null,
+      address_2?: string | null,
+      city?: string | null,
+      region?: string | null,
+      postal_code?: string | null,
+      country?: string | null,
+      latitude?: string | null,
+      longitude?: string | null,
+      localized_address_display?: string | null,
+      localized_area_display?: string | null,
+      localized_multi_line_address_display?: string[] | null
+    } | null
+  } | null,
+  format?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    short_name?: string | null,
+    short_name_localized?: string | null
+  } | null,
+  category?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    short_name?: string | null,
+    short_name_localized?: string | null
+  } | null,
+  subcategory?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    parent_category?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      name_localized?: string | null,
+      short_name?: string | null,
+      short_name_localized?: string | null
+    } | null
+  } | null,
+  ticket_availability?: {
+    has_available_tickets?: boolean | null,
+    is_sold_out?: boolean | null,
+    waitlist_available?: boolean | null,
+    minimum_ticket_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    maximum_ticket_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    start_sales_date?: {
+      timezone?: string | null,
+      utc?: string | null,
+      local?: string | null
+    } | null
+  } | null,
+  listed?: boolean | null,
+  shareable?: boolean | null,
+  invite_only?: boolean | null,
+  show_remaining?: boolean | null,
+  password?: string | null,
+  capacity?: number | null,
+  capacity_is_custom?: boolean | null,
+  tx_time_limit?: number | null,
+  hide_start_date?: boolean | null,
+  hide_end_date?: boolean | null,
+  locale?: string | null,
+  is_locked?: boolean | null,
+  privacy_setting?: string | null,
+  is_series?: boolean | null,
+  is_series_parent?: boolean | null,
+  series_id?: string | null,
+  is_reserved_seating?: boolean | null,
+  show_pick_a_seat?: boolean | null,
+  show_seatmap_thumbnail?: boolean | null,
+  show_colors_in_seatmap_thumbnail?: boolean | null,
+  is_free?: boolean | null,
+  is_externally_ticketed?: boolean | null,
+  inventory_type?: string | null,
+  source?: string | null,
+  version?: string | null,
+  facebook_event_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publish
+
+`events.publish`
+
+Publish an event so it can take registrations and purchases. It needs a name, an organizer, at least one ticket and valid payment options
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.events.publish({ event_id: '2000937221092' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `published` | `true` | Yes | — |
+
+
+
+---
+
+### unpublish
+
+`events.unpublish`
+
+Take a published event back to draft. Refused while the event has any pending or completed orders, unless it is completed and paid out
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.events.unpublish({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event to act on. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `unpublished` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`events.update`
+
+Change an event; on a series parent, name, dates, currency, capacity, password and show_remaining also apply to every occurrence
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.events.update({ event_id: '2000937221092', event: { summary: 'One evening, three talks' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event to change. |
+| `event` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="event full type">
+
+```ts
+{
+  name?: {
+    html: string
+  },
+  start?: {
+    timezone: string,
+    utc: string
+  },
+  end?: {
+    timezone: string,
+    utc: string
+  },
+  currency?: string,
+  summary?: string,
+  description?: {
+    html: string
+  },
+  organizer_id?: string | number,
+  venue_id?: string | number,
+  online_event?: boolean,
+  format_id?: string | number,
+  category_id?: string | number,
+  subcategory_id?: string | number,
+  logo_id?: string | number,
+  listed?: boolean,
+  shareable?: boolean,
+  invite_only?: boolean,
+  show_remaining?: boolean,
+  password?: string,
+  capacity?: number,
+  hide_start_date?: boolean,
+  hide_end_date?: boolean,
+  is_series?: boolean,
+  source?: string,
+  locale?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `name` | `object \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `description` | `object \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `vanity_url` | `string \| null` | No | — |
+| `start` | `object \| null` | No | — |
+| `end` | `object \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `changed` | `string \| null` | No | — |
+| `published` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `online_event` | `boolean \| null` | No | — |
+| `organization_id` | `string \| null` | No | — |
+| `organizer_id` | `string \| null` | No | — |
+| `venue_id` | `string \| null` | No | — |
+| `format_id` | `string \| null` | No | — |
+| `category_id` | `string \| null` | No | — |
+| `subcategory_id` | `string \| null` | No | — |
+| `logo_id` | `string \| null` | No | — |
+| `logo` | `object \| null` | No | — |
+| `organizer` | `object \| null` | No | — |
+| `venue` | `object \| null` | No | — |
+| `format` | `object \| null` | No | — |
+| `category` | `object \| null` | No | — |
+| `subcategory` | `object \| null` | No | — |
+| `ticket_availability` | `object \| null` | No | — |
+| `listed` | `boolean \| null` | No | — |
+| `shareable` | `boolean \| null` | No | — |
+| `invite_only` | `boolean \| null` | No | — |
+| `show_remaining` | `boolean \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `capacity` | `number \| null` | No | — |
+| `capacity_is_custom` | `boolean \| null` | No | — |
+| `tx_time_limit` | `number \| null` | No | — |
+| `hide_start_date` | `boolean \| null` | No | — |
+| `hide_end_date` | `boolean \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `is_locked` | `boolean \| null` | No | — |
+| `privacy_setting` | `string \| null` | No | — |
+| `is_series` | `boolean \| null` | No | — |
+| `is_series_parent` | `boolean \| null` | No | — |
+| `series_id` | `string \| null` | No | — |
+| `is_reserved_seating` | `boolean \| null` | No | — |
+| `show_pick_a_seat` | `boolean \| null` | No | — |
+| `show_seatmap_thumbnail` | `boolean \| null` | No | — |
+| `show_colors_in_seatmap_thumbnail` | `boolean \| null` | No | — |
+| `is_free` | `boolean \| null` | No | — |
+| `is_externally_ticketed` | `boolean \| null` | No | — |
+| `inventory_type` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `facebook_event_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="name full type">
+
+```ts
+{
+  text?: string | null,
+  html?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+{
+  text?: string | null,
+  html?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="start full type">
+
+```ts
+{
+  timezone?: string | null,
+  utc?: string | null,
+  local?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="end full type">
+
+```ts
+{
+  timezone?: string | null,
+  utc?: string | null,
+  local?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="logo full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  aspect_ratio?: string | null,
+  edge_color?: string | null,
+  edge_color_set?: boolean | null,
+  original?: {
+    url?: string | null,
+    width?: number | null,
+    height?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organizer full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  description?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  long_description?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  url?: string | null,
+  vanity_url?: string | null,
+  website?: string | null,
+  twitter?: string | null,
+  facebook?: string | null,
+  organization_id?: string | null,
+  num_past_events?: number | null,
+  num_future_events?: number | null,
+  logo_id?: string | null,
+  disable_marketing_opt_in?: boolean | null,
+  follow_status?: {
+    followed_by_you?: boolean | null,
+    followed_at?: string | null,
+    num_followers?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="venue full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  age_restriction?: string | null,
+  capacity?: number | null,
+  latitude?: string | null,
+  longitude?: string | null,
+  address?: {
+    address_1?: string | null,
+    address_2?: string | null,
+    city?: string | null,
+    region?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    latitude?: string | null,
+    longitude?: string | null,
+    localized_address_display?: string | null,
+    localized_area_display?: string | null,
+    localized_multi_line_address_display?: string[] | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="format full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  name_localized?: string | null,
+  short_name?: string | null,
+  short_name_localized?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="category full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  name_localized?: string | null,
+  short_name?: string | null,
+  short_name_localized?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="subcategory full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  name_localized?: string | null,
+  parent_category?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    short_name?: string | null,
+    short_name_localized?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="ticket_availability full type">
+
+```ts
+{
+  has_available_tickets?: boolean | null,
+  is_sold_out?: boolean | null,
+  waitlist_available?: boolean | null,
+  minimum_ticket_price?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  maximum_ticket_price?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  start_sales_date?: {
+    timezone?: string | null,
+    utc?: string | null,
+    local?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateDisplaySettings
+
+`events.updateDisplaySettings`
+
+Change what the event listing page shows
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.events.updateDisplaySettings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event whose listing settings to change. |
+| `display_settings` | `object` | Yes | — |
+
+This route requires the `display_settings` wrapper; the other write routes each name their own wrapper.
+
+<AccordionGroup>
+<Accordion title="display_settings full type">
+
+```ts
+{
+  show_start_date?: boolean | null,
+  show_end_date?: boolean | null,
+  show_start_end_time?: boolean | null,
+  show_timezone?: boolean | null,
+  show_map?: boolean | null,
+  show_remaining?: boolean | null,
+  show_organizer_facebook?: boolean | null,
+  show_organizer_twitter?: boolean | null,
+  show_facebook_friends_going?: boolean | null,
+  terminology?: tickets_vertical | endurance_vertical
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resource_uri` | `string \| null` | No | — |
+| `show_start_date` | `boolean \| null` | No | — |
+| `show_end_date` | `boolean \| null` | No | — |
+| `show_start_end_time` | `boolean \| null` | No | — |
+| `show_timezone` | `boolean \| null` | No | — |
+| `show_map` | `boolean \| null` | No | — |
+| `show_remaining` | `boolean \| null` | No | — |
+| `show_organizer_facebook` | `boolean \| null` | No | — |
+| `show_organizer_twitter` | `boolean \| null` | No | — |
+| `show_facebook_friends_going` | `boolean \| null` | No | — |
+| `terminology` | `string \| null` | No | — |
+
+
+
+---
+
+## Orders
+
+### get
+
+`orders.get`
+
+Read one order with its buyer details and cost breakdown
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.orders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `string \| number` | Yes | The order to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `changed` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `event_id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `started`, `pending`, `placed` or `abandoned`. |
+| `time_remaining` | `number \| null` | No | — |
+| `costs` | `object \| null` | No | — |
+| `attendees` | `object[] \| null` | No | — |
+| `event` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="costs full type">
+
+```ts
+{
+  base_price?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  display_price?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  display_fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  gross?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  eventbrite_fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  payment_fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  tax?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  discount_amount?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="attendees full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  event_id?: string | null,
+  order_id?: string | null,
+  ticket_class_id?: string | null,
+  ticket_class_name?: string | null,
+  variant_id?: string | null,
+  quantity?: number | null,
+  created?: string | null,
+  changed?: string | null,
+  checked_in?: boolean | null,
+  cancelled?: boolean | null,
+  refunded?: boolean | null,
+  status?: string | null,
+  delivery_method?: string | null,
+  guestlist_id?: string | null,
+  invited_by?: string | null,
+  affiliate?: string | null,
+  profile?: {
+    name?: string | null,
+    email?: string | null,
+    first_name?: string | null,
+    last_name?: string | null,
+    prefix?: string | null,
+    suffix?: string | null,
+    age?: number | null,
+    job_title?: string | null,
+    company?: string | null,
+    website?: string | null,
+    blog?: string | null,
+    gender?: string | null,
+    birth_date?: string | null,
+    cell_phone?: string | null,
+    work_phone?: string | null
+  } | null,
+  barcodes?: {
+    barcode?: string | null,
+    status?: string | null,
+    created?: string | null,
+    changed?: string | null,
+    checkin_type?: number | null,
+    is_printed?: boolean | null
+  }[] | null,
+  costs?: {
+    base_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    gross?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    eventbrite_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    payment_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    tax?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null
+  } | null,
+  answers?: {
+    question_id?: string | null,
+    question?: string | null,
+    type?: string | null,
+    answer?: string | number | boolean | {
+      address_1?: string | null,
+      address_2?: string | null,
+      city?: string | null,
+      region?: string | null,
+      postal_code?: string | null,
+      country?: string | null,
+      latitude?: string | null,
+      longitude?: string | null,
+      localized_address_display?: string | null,
+      localized_area_display?: string | null,
+      localized_multi_line_address_display?: string[] | null
+    } | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="event full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  summary?: string | null,
+  description?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  url?: string | null,
+  vanity_url?: string | null,
+  start?: {
+    timezone?: string | null,
+    utc?: string | null,
+    local?: string | null
+  } | null,
+  end?: {
+    timezone?: string | null,
+    utc?: string | null,
+    local?: string | null
+  } | null,
+  created?: string | null,
+  changed?: string | null,
+  published?: string | null,
+  status?: string | null,
+  currency?: string | null,
+  online_event?: boolean | null,
+  organization_id?: string | null,
+  organizer_id?: string | null,
+  venue_id?: string | null,
+  format_id?: string | null,
+  category_id?: string | null,
+  subcategory_id?: string | null,
+  logo_id?: string | null,
+  logo?: {
+    id?: string | null,
+    url?: string | null,
+    aspect_ratio?: string | null,
+    edge_color?: string | null,
+    edge_color_set?: boolean | null,
+    original?: {
+      url?: string | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null,
+  organizer?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    description?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    long_description?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    url?: string | null,
+    vanity_url?: string | null,
+    website?: string | null,
+    twitter?: string | null,
+    facebook?: string | null,
+    organization_id?: string | null,
+    num_past_events?: number | null,
+    num_future_events?: number | null,
+    logo_id?: string | null,
+    disable_marketing_opt_in?: boolean | null,
+    follow_status?: {
+      followed_by_you?: boolean | null,
+      followed_at?: string | null,
+      num_followers?: number | null
+    } | null
+  } | null,
+  venue?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    age_restriction?: string | null,
+    capacity?: number | null,
+    latitude?: string | null,
+    longitude?: string | null,
+    address?: {
+      address_1?: string | null,
+      address_2?: string | null,
+      city?: string | null,
+      region?: string | null,
+      postal_code?: string | null,
+      country?: string | null,
+      latitude?: string | null,
+      longitude?: string | null,
+      localized_address_display?: string | null,
+      localized_area_display?: string | null,
+      localized_multi_line_address_display?: string[] | null
+    } | null
+  } | null,
+  format?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    short_name?: string | null,
+    short_name_localized?: string | null
+  } | null,
+  category?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    short_name?: string | null,
+    short_name_localized?: string | null
+  } | null,
+  subcategory?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: string | null,
+    name_localized?: string | null,
+    parent_category?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      name_localized?: string | null,
+      short_name?: string | null,
+      short_name_localized?: string | null
+    } | null
+  } | null,
+  ticket_availability?: {
+    has_available_tickets?: boolean | null,
+    is_sold_out?: boolean | null,
+    waitlist_available?: boolean | null,
+    minimum_ticket_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    maximum_ticket_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    start_sales_date?: {
+      timezone?: string | null,
+      utc?: string | null,
+      local?: string | null
+    } | null
+  } | null,
+  listed?: boolean | null,
+  shareable?: boolean | null,
+  invite_only?: boolean | null,
+  show_remaining?: boolean | null,
+  password?: string | null,
+  capacity?: number | null,
+  capacity_is_custom?: boolean | null,
+  tx_time_limit?: number | null,
+  hide_start_date?: boolean | null,
+  hide_end_date?: boolean | null,
+  locale?: string | null,
+  is_locked?: boolean | null,
+  privacy_setting?: string | null,
+  is_series?: boolean | null,
+  is_series_parent?: boolean | null,
+  series_id?: string | null,
+  is_reserved_seating?: boolean | null,
+  show_pick_a_seat?: boolean | null,
+  show_seatmap_thumbnail?: boolean | null,
+  show_colors_in_seatmap_thumbnail?: boolean | null,
+  is_free?: boolean | null,
+  is_externally_ticketed?: boolean | null,
+  inventory_type?: string | null,
+  source?: string | null,
+  version?: string | null,
+  facebook_event_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listByEvent
+
+`orders.listByEvent`
+
+List the orders of one event, filtered by status, change time, buyer email or refund request status
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.orders.listByEvent({ event_id: '2000937221092', status: 'active' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event whose orders to list. |
+| `status` | `active \| inactive \| both \| all_not_deleted` | No | `active` is attending orders; `inactive` not attending; `both` every order; `all_not_deleted` excludes deleted ones. |
+| `changed_since` | `string` | No | — |
+| `last_item_seen` | `string` | No | With `changed_since`, only orders with a larger ID. |
+| `only_emails` | `string[]` | No | — |
+| `exclude_emails` | `string[]` | No | — |
+| `refund_request_statuses` | `(completed \| pending \| outside_policy \| disputed \| denied)[]` | No | Only orders whose refund request is in one of these states. |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `orders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="orders full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  created?: string | null,
+  changed?: string | null,
+  name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  event_id?: string | null,
+  status?: string | null,
+  time_remaining?: number | null,
+  costs?: {
+    base_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    display_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    display_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    gross?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    eventbrite_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    payment_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    tax?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    discount_amount?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null
+  } | null,
+  attendees?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    event_id?: string | null,
+    order_id?: string | null,
+    ticket_class_id?: string | null,
+    ticket_class_name?: string | null,
+    variant_id?: string | null,
+    quantity?: number | null,
+    created?: string | null,
+    changed?: string | null,
+    checked_in?: boolean | null,
+    cancelled?: boolean | null,
+    refunded?: boolean | null,
+    status?: string | null,
+    delivery_method?: string | null,
+    guestlist_id?: string | null,
+    invited_by?: string | null,
+    affiliate?: string | null,
+    profile?: {
+      name?: string | null,
+      email?: string | null,
+      first_name?: string | null,
+      last_name?: string | null,
+      prefix?: string | null,
+      suffix?: string | null,
+      age?: number | null,
+      job_title?: string | null,
+      company?: string | null,
+      website?: string | null,
+      blog?: string | null,
+      gender?: string | null,
+      birth_date?: string | null,
+      cell_phone?: string | null,
+      work_phone?: string | null
+    } | null,
+    barcodes?: {
+      barcode?: string | null,
+      status?: string | null,
+      created?: string | null,
+      changed?: string | null,
+      checkin_type?: number | null,
+      is_printed?: boolean | null
+    }[] | null,
+    costs?: {
+      base_price?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      gross?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      eventbrite_fee?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      payment_fee?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      tax?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null
+    } | null,
+    answers?: {
+      question_id?: string | null,
+      question?: string | null,
+      type?: string | null,
+      answer?: string | number | boolean | {
+        address_1?: string | null,
+        address_2?: string | null,
+        city?: string | null,
+        region?: string | null,
+        postal_code?: string | null,
+        country?: string | null,
+        latitude?: string | null,
+        longitude?: string | null,
+        localized_address_display?: string | null,
+        localized_area_display?: string | null,
+        localized_multi_line_address_display?: string[] | null
+      } | null
+    }[] | null
+  }[] | null,
+  event?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    summary?: string | null,
+    description?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    url?: string | null,
+    vanity_url?: string | null,
+    start?: {
+      timezone?: string | null,
+      utc?: string | null,
+      local?: string | null
+    } | null,
+    end?: {
+      timezone?: string | null,
+      utc?: string | null,
+      local?: string | null
+    } | null,
+    created?: string | null,
+    changed?: string | null,
+    published?: string | null,
+    status?: string | null,
+    currency?: string | null,
+    online_event?: boolean | null,
+    organization_id?: string | null,
+    organizer_id?: string | null,
+    venue_id?: string | null,
+    format_id?: string | null,
+    category_id?: string | null,
+    subcategory_id?: string | null,
+    logo_id?: string | null,
+    logo?: {
+      id?: string | null,
+      url?: string | null,
+      aspect_ratio?: string | null,
+      edge_color?: string | null,
+      edge_color_set?: boolean | null,
+      original?: {
+        url?: string | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    organizer?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      description?: {
+        text?: string | null,
+        html?: string | null
+      } | null,
+      long_description?: {
+        text?: string | null,
+        html?: string | null
+      } | null,
+      url?: string | null,
+      vanity_url?: string | null,
+      website?: string | null,
+      twitter?: string | null,
+      facebook?: string | null,
+      organization_id?: string | null,
+      num_past_events?: number | null,
+      num_future_events?: number | null,
+      logo_id?: string | null,
+      disable_marketing_opt_in?: boolean | null,
+      follow_status?: {
+        followed_by_you?: boolean | null,
+        followed_at?: string | null,
+        num_followers?: number | null
+      } | null
+    } | null,
+    venue?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      age_restriction?: string | null,
+      capacity?: number | null,
+      latitude?: string | null,
+      longitude?: string | null,
+      address?: {
+        address_1?: string | null,
+        address_2?: string | null,
+        city?: string | null,
+        region?: string | null,
+        postal_code?: string | null,
+        country?: string | null,
+        latitude?: string | null,
+        longitude?: string | null,
+        localized_address_display?: string | null,
+        localized_area_display?: string | null,
+        localized_multi_line_address_display?: string[] | null
+      } | null
+    } | null,
+    format?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      name_localized?: string | null,
+      short_name?: string | null,
+      short_name_localized?: string | null
+    } | null,
+    category?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      name_localized?: string | null,
+      short_name?: string | null,
+      short_name_localized?: string | null
+    } | null,
+    subcategory?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      name_localized?: string | null,
+      parent_category?: {
+        id?: string | null,
+        resource_uri?: string | null,
+        name?: string | null,
+        name_localized?: string | null,
+        short_name?: string | null,
+        short_name_localized?: string | null
+      } | null
+    } | null,
+    ticket_availability?: {
+      has_available_tickets?: boolean | null,
+      is_sold_out?: boolean | null,
+      waitlist_available?: boolean | null,
+      minimum_ticket_price?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      maximum_ticket_price?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      start_sales_date?: {
+        timezone?: string | null,
+        utc?: string | null,
+        local?: string | null
+      } | null
+    } | null,
+    listed?: boolean | null,
+    shareable?: boolean | null,
+    invite_only?: boolean | null,
+    show_remaining?: boolean | null,
+    password?: string | null,
+    capacity?: number | null,
+    capacity_is_custom?: boolean | null,
+    tx_time_limit?: number | null,
+    hide_start_date?: boolean | null,
+    hide_end_date?: boolean | null,
+    locale?: string | null,
+    is_locked?: boolean | null,
+    privacy_setting?: string | null,
+    is_series?: boolean | null,
+    is_series_parent?: boolean | null,
+    series_id?: string | null,
+    is_reserved_seating?: boolean | null,
+    show_pick_a_seat?: boolean | null,
+    show_seatmap_thumbnail?: boolean | null,
+    show_colors_in_seatmap_thumbnail?: boolean | null,
+    is_free?: boolean | null,
+    is_externally_ticketed?: boolean | null,
+    inventory_type?: string | null,
+    source?: string | null,
+    version?: string | null,
+    facebook_event_id?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listByOrganization
+
+`orders.listByOrganization`
+
+List the orders placed against an organization's events
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.orders.listByOrganization({ organization_id: '154830740213' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string \| number` | Yes | The organization whose orders to list. |
+| `status` | `active \| inactive \| both \| all_not_deleted` | No | `active` is attending orders; `inactive` not attending; `both` every order; `all_not_deleted` excludes deleted ones. |
+| `changed_since` | `string` | No | Only orders changed at or after this instant. |
+| `only_emails` | `string[]` | No | Only orders placed by these email addresses. |
+| `exclude_emails` | `string[]` | No | Skip orders placed by these email addresses. |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `orders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="orders full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  created?: string | null,
+  changed?: string | null,
+  name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  event_id?: string | null,
+  status?: string | null,
+  time_remaining?: number | null,
+  costs?: {
+    base_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    display_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    display_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    gross?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    eventbrite_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    payment_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    tax?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    discount_amount?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null
+  } | null,
+  attendees?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    event_id?: string | null,
+    order_id?: string | null,
+    ticket_class_id?: string | null,
+    ticket_class_name?: string | null,
+    variant_id?: string | null,
+    quantity?: number | null,
+    created?: string | null,
+    changed?: string | null,
+    checked_in?: boolean | null,
+    cancelled?: boolean | null,
+    refunded?: boolean | null,
+    status?: string | null,
+    delivery_method?: string | null,
+    guestlist_id?: string | null,
+    invited_by?: string | null,
+    affiliate?: string | null,
+    profile?: {
+      name?: string | null,
+      email?: string | null,
+      first_name?: string | null,
+      last_name?: string | null,
+      prefix?: string | null,
+      suffix?: string | null,
+      age?: number | null,
+      job_title?: string | null,
+      company?: string | null,
+      website?: string | null,
+      blog?: string | null,
+      gender?: string | null,
+      birth_date?: string | null,
+      cell_phone?: string | null,
+      work_phone?: string | null
+    } | null,
+    barcodes?: {
+      barcode?: string | null,
+      status?: string | null,
+      created?: string | null,
+      changed?: string | null,
+      checkin_type?: number | null,
+      is_printed?: boolean | null
+    }[] | null,
+    costs?: {
+      base_price?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      gross?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      eventbrite_fee?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      payment_fee?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      tax?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null
+    } | null,
+    answers?: {
+      question_id?: string | null,
+      question?: string | null,
+      type?: string | null,
+      answer?: string | number | boolean | {
+        address_1?: string | null,
+        address_2?: string | null,
+        city?: string | null,
+        region?: string | null,
+        postal_code?: string | null,
+        country?: string | null,
+        latitude?: string | null,
+        longitude?: string | null,
+        localized_address_display?: string | null,
+        localized_area_display?: string | null,
+        localized_multi_line_address_display?: string[] | null
+      } | null
+    }[] | null
+  }[] | null,
+  event?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    summary?: string | null,
+    description?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    url?: string | null,
+    vanity_url?: string | null,
+    start?: {
+      timezone?: string | null,
+      utc?: string | null,
+      local?: string | null
+    } | null,
+    end?: {
+      timezone?: string | null,
+      utc?: string | null,
+      local?: string | null
+    } | null,
+    created?: string | null,
+    changed?: string | null,
+    published?: string | null,
+    status?: string | null,
+    currency?: string | null,
+    online_event?: boolean | null,
+    organization_id?: string | null,
+    organizer_id?: string | null,
+    venue_id?: string | null,
+    format_id?: string | null,
+    category_id?: string | null,
+    subcategory_id?: string | null,
+    logo_id?: string | null,
+    logo?: {
+      id?: string | null,
+      url?: string | null,
+      aspect_ratio?: string | null,
+      edge_color?: string | null,
+      edge_color_set?: boolean | null,
+      original?: {
+        url?: string | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    organizer?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      description?: {
+        text?: string | null,
+        html?: string | null
+      } | null,
+      long_description?: {
+        text?: string | null,
+        html?: string | null
+      } | null,
+      url?: string | null,
+      vanity_url?: string | null,
+      website?: string | null,
+      twitter?: string | null,
+      facebook?: string | null,
+      organization_id?: string | null,
+      num_past_events?: number | null,
+      num_future_events?: number | null,
+      logo_id?: string | null,
+      disable_marketing_opt_in?: boolean | null,
+      follow_status?: {
+        followed_by_you?: boolean | null,
+        followed_at?: string | null,
+        num_followers?: number | null
+      } | null
+    } | null,
+    venue?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      age_restriction?: string | null,
+      capacity?: number | null,
+      latitude?: string | null,
+      longitude?: string | null,
+      address?: {
+        address_1?: string | null,
+        address_2?: string | null,
+        city?: string | null,
+        region?: string | null,
+        postal_code?: string | null,
+        country?: string | null,
+        latitude?: string | null,
+        longitude?: string | null,
+        localized_address_display?: string | null,
+        localized_area_display?: string | null,
+        localized_multi_line_address_display?: string[] | null
+      } | null
+    } | null,
+    format?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      name_localized?: string | null,
+      short_name?: string | null,
+      short_name_localized?: string | null
+    } | null,
+    category?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      name_localized?: string | null,
+      short_name?: string | null,
+      short_name_localized?: string | null
+    } | null,
+    subcategory?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      name_localized?: string | null,
+      parent_category?: {
+        id?: string | null,
+        resource_uri?: string | null,
+        name?: string | null,
+        name_localized?: string | null,
+        short_name?: string | null,
+        short_name_localized?: string | null
+      } | null
+    } | null,
+    ticket_availability?: {
+      has_available_tickets?: boolean | null,
+      is_sold_out?: boolean | null,
+      waitlist_available?: boolean | null,
+      minimum_ticket_price?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      maximum_ticket_price?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      start_sales_date?: {
+        timezone?: string | null,
+        utc?: string | null,
+        local?: string | null
+      } | null
+    } | null,
+    listed?: boolean | null,
+    shareable?: boolean | null,
+    invite_only?: boolean | null,
+    show_remaining?: boolean | null,
+    password?: string | null,
+    capacity?: number | null,
+    capacity_is_custom?: boolean | null,
+    tx_time_limit?: number | null,
+    hide_start_date?: boolean | null,
+    hide_end_date?: boolean | null,
+    locale?: string | null,
+    is_locked?: boolean | null,
+    privacy_setting?: string | null,
+    is_series?: boolean | null,
+    is_series_parent?: boolean | null,
+    series_id?: string | null,
+    is_reserved_seating?: boolean | null,
+    show_pick_a_seat?: boolean | null,
+    show_seatmap_thumbnail?: boolean | null,
+    show_colors_in_seatmap_thumbnail?: boolean | null,
+    is_free?: boolean | null,
+    is_externally_ticketed?: boolean | null,
+    inventory_type?: string | null,
+    source?: string | null,
+    version?: string | null,
+    facebook_event_id?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listByUser
+
+`orders.listByUser`
+
+List the orders one user placed. `me` reads the authenticated user’s
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.orders.listByUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string \| number` | Yes | The user whose purchases to list. `me` is accepted. |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `orders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="orders full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  created?: string | null,
+  changed?: string | null,
+  name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  event_id?: string | null,
+  status?: string | null,
+  time_remaining?: number | null,
+  costs?: {
+    base_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    display_price?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    display_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    gross?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    eventbrite_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    payment_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    tax?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    discount_amount?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null
+  } | null,
+  attendees?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    event_id?: string | null,
+    order_id?: string | null,
+    ticket_class_id?: string | null,
+    ticket_class_name?: string | null,
+    variant_id?: string | null,
+    quantity?: number | null,
+    created?: string | null,
+    changed?: string | null,
+    checked_in?: boolean | null,
+    cancelled?: boolean | null,
+    refunded?: boolean | null,
+    status?: string | null,
+    delivery_method?: string | null,
+    guestlist_id?: string | null,
+    invited_by?: string | null,
+    affiliate?: string | null,
+    profile?: {
+      name?: string | null,
+      email?: string | null,
+      first_name?: string | null,
+      last_name?: string | null,
+      prefix?: string | null,
+      suffix?: string | null,
+      age?: number | null,
+      job_title?: string | null,
+      company?: string | null,
+      website?: string | null,
+      blog?: string | null,
+      gender?: string | null,
+      birth_date?: string | null,
+      cell_phone?: string | null,
+      work_phone?: string | null
+    } | null,
+    barcodes?: {
+      barcode?: string | null,
+      status?: string | null,
+      created?: string | null,
+      changed?: string | null,
+      checkin_type?: number | null,
+      is_printed?: boolean | null
+    }[] | null,
+    costs?: {
+      base_price?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      gross?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      eventbrite_fee?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      payment_fee?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      tax?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null
+    } | null,
+    answers?: {
+      question_id?: string | null,
+      question?: string | null,
+      type?: string | null,
+      answer?: string | number | boolean | {
+        address_1?: string | null,
+        address_2?: string | null,
+        city?: string | null,
+        region?: string | null,
+        postal_code?: string | null,
+        country?: string | null,
+        latitude?: string | null,
+        longitude?: string | null,
+        localized_address_display?: string | null,
+        localized_area_display?: string | null,
+        localized_multi_line_address_display?: string[] | null
+      } | null
+    }[] | null
+  }[] | null,
+  event?: {
+    id?: string | null,
+    resource_uri?: string | null,
+    name?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    summary?: string | null,
+    description?: {
+      text?: string | null,
+      html?: string | null
+    } | null,
+    url?: string | null,
+    vanity_url?: string | null,
+    start?: {
+      timezone?: string | null,
+      utc?: string | null,
+      local?: string | null
+    } | null,
+    end?: {
+      timezone?: string | null,
+      utc?: string | null,
+      local?: string | null
+    } | null,
+    created?: string | null,
+    changed?: string | null,
+    published?: string | null,
+    status?: string | null,
+    currency?: string | null,
+    online_event?: boolean | null,
+    organization_id?: string | null,
+    organizer_id?: string | null,
+    venue_id?: string | null,
+    format_id?: string | null,
+    category_id?: string | null,
+    subcategory_id?: string | null,
+    logo_id?: string | null,
+    logo?: {
+      id?: string | null,
+      url?: string | null,
+      aspect_ratio?: string | null,
+      edge_color?: string | null,
+      edge_color_set?: boolean | null,
+      original?: {
+        url?: string | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    organizer?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      description?: {
+        text?: string | null,
+        html?: string | null
+      } | null,
+      long_description?: {
+        text?: string | null,
+        html?: string | null
+      } | null,
+      url?: string | null,
+      vanity_url?: string | null,
+      website?: string | null,
+      twitter?: string | null,
+      facebook?: string | null,
+      organization_id?: string | null,
+      num_past_events?: number | null,
+      num_future_events?: number | null,
+      logo_id?: string | null,
+      disable_marketing_opt_in?: boolean | null,
+      follow_status?: {
+        followed_by_you?: boolean | null,
+        followed_at?: string | null,
+        num_followers?: number | null
+      } | null
+    } | null,
+    venue?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      age_restriction?: string | null,
+      capacity?: number | null,
+      latitude?: string | null,
+      longitude?: string | null,
+      address?: {
+        address_1?: string | null,
+        address_2?: string | null,
+        city?: string | null,
+        region?: string | null,
+        postal_code?: string | null,
+        country?: string | null,
+        latitude?: string | null,
+        longitude?: string | null,
+        localized_address_display?: string | null,
+        localized_area_display?: string | null,
+        localized_multi_line_address_display?: string[] | null
+      } | null
+    } | null,
+    format?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      name_localized?: string | null,
+      short_name?: string | null,
+      short_name_localized?: string | null
+    } | null,
+    category?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      name_localized?: string | null,
+      short_name?: string | null,
+      short_name_localized?: string | null
+    } | null,
+    subcategory?: {
+      id?: string | null,
+      resource_uri?: string | null,
+      name?: string | null,
+      name_localized?: string | null,
+      parent_category?: {
+        id?: string | null,
+        resource_uri?: string | null,
+        name?: string | null,
+        name_localized?: string | null,
+        short_name?: string | null,
+        short_name_localized?: string | null
+      } | null
+    } | null,
+    ticket_availability?: {
+      has_available_tickets?: boolean | null,
+      is_sold_out?: boolean | null,
+      waitlist_available?: boolean | null,
+      minimum_ticket_price?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      maximum_ticket_price?: {
+        currency?: string | null,
+        value?: number | null,
+        major_value?: string | null,
+        display?: string | null
+      } | null,
+      start_sales_date?: {
+        timezone?: string | null,
+        utc?: string | null,
+        local?: string | null
+      } | null
+    } | null,
+    listed?: boolean | null,
+    shareable?: boolean | null,
+    invite_only?: boolean | null,
+    show_remaining?: boolean | null,
+    password?: string | null,
+    capacity?: number | null,
+    capacity_is_custom?: boolean | null,
+    tx_time_limit?: number | null,
+    hide_start_date?: boolean | null,
+    hide_end_date?: boolean | null,
+    locale?: string | null,
+    is_locked?: boolean | null,
+    privacy_setting?: string | null,
+    is_series?: boolean | null,
+    is_series_parent?: boolean | null,
+    series_id?: string | null,
+    is_reserved_seating?: boolean | null,
+    show_pick_a_seat?: boolean | null,
+    show_seatmap_thumbnail?: boolean | null,
+    show_colors_in_seatmap_thumbnail?: boolean | null,
+    is_free?: boolean | null,
+    is_externally_ticketed?: boolean | null,
+    inventory_type?: string | null,
+    source?: string | null,
+    version?: string | null,
+    facebook_event_id?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### list
+
+`organizations.list`
+
+List the organizations a user belongs to, which is how you find the organization_id every other call needs
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.organizations.list({ });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string \| number` | No | Whose organizations to list. Defaults to the authenticated user (`me`). |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `organizations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="organizations full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  vertical?: string | null,
+  image_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Questions
+
+### create
+
+`questions.create`
+
+Add a custom registration question: text, paragraph, checkbox, dropdown, radio or waiver, asked of the buyer or each attendee
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.questions.create({ event_id: '2000937221092', question: { question: { html: 'Which session?' }, type: 'dropdown', choices: [{ answer: { html: 'Morning' } }, { answer: { html: 'Evening' } }] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event the question belongs to. |
+| `question` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="question full type">
+
+```ts
+{
+  question: {
+    html: string
+  },
+  type: checkbox | dropdown | text | paragraph | radio | waiver,
+  required?: boolean,
+  display_answer_on_order?: boolean,
+  respondent?: ticket_buyer | attendee,
+  waiver?: string,
+  choices?: {
+    answer: {
+      html: string
+    }
+  }[],
+  ticket_classes?: {
+    id: string | number
+  }[],
+  parent_id?: string | number,
+  parent_choice_id?: string | number,
+  sorting?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `question` | `object \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `required` | `boolean \| null` | No | — |
+| `display_answer_on_order` | `boolean \| null` | No | — |
+| `respondent` | `string \| null` | No | — |
+| `waiver` | `string \| null` | No | — |
+| `sorting` | `number \| null` | No | — |
+| `parent_id` | `string \| null` | No | — |
+| `parent_choice_id` | `string \| null` | No | — |
+| `include` | `boolean \| null` | No | — |
+| `choices` | `object[] \| null` | No | — |
+| `ticket_classes` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="question full type">
+
+```ts
+{
+  text?: string | null,
+  html?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="choices full type">
+
+```ts
+{
+  id?: string | null,
+  answer?: {
+    text?: string | null,
+    html?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="ticket_classes full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`questions.delete`
+
+Delete a custom registration question and the answers already collected with it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.eventbrite.api.questions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event that owns the question. |
+| `question_id` | `string \| number` | Yes | The custom question to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`questions.get`
+
+Read one custom registration question
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.questions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event that owns the question. |
+| `question_id` | `string \| number` | Yes | The custom question to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `question` | `object \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `required` | `boolean \| null` | No | — |
+| `display_answer_on_order` | `boolean \| null` | No | — |
+| `respondent` | `string \| null` | No | — |
+| `waiver` | `string \| null` | No | — |
+| `sorting` | `number \| null` | No | — |
+| `parent_id` | `string \| null` | No | — |
+| `parent_choice_id` | `string \| null` | No | — |
+| `include` | `boolean \| null` | No | — |
+| `choices` | `object[] \| null` | No | — |
+| `ticket_classes` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="question full type">
+
+```ts
+{
+  text?: string | null,
+  html?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="choices full type">
+
+```ts
+{
+  id?: string | null,
+  answer?: {
+    text?: string | null,
+    html?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="ticket_classes full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`questions.list`
+
+List the custom registration questions of an event
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.questions.list({ event_id: '2000937221092' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event whose custom questions to list. |
+| `as_owner` | `boolean` | No | Return private events and fields. |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `questions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="questions full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  question?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  type?: string | null,
+  required?: boolean | null,
+  display_answer_on_order?: boolean | null,
+  respondent?: string | null,
+  waiver?: string | null,
+  sorting?: number | null,
+  parent_id?: string | null,
+  parent_choice_id?: string | null,
+  include?: boolean | null,
+  choices?: {
+    id?: string | null,
+    answer?: {
+      text?: string | null,
+      html?: string | null
+    } | null
+  }[] | null,
+  ticket_classes?: {
+    id?: string | null,
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCanned
+
+`questions.listCanned`
+
+List the default questions Eventbrite adds to every event, with whether each is currently included
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.questions.listCanned({ event_id: '2000937221092', include_all: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event whose default questions to list. |
+| `include_all` | `boolean` | No | Return every default question, included or not. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `questions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="questions full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  question?: {
+    text?: string | null,
+    html?: string | null
+  } | null,
+  type?: string | null,
+  required?: boolean | null,
+  display_answer_on_order?: boolean | null,
+  respondent?: string | null,
+  waiver?: string | null,
+  sorting?: number | null,
+  parent_id?: string | null,
+  parent_choice_id?: string | null,
+  include?: boolean | null,
+  choices?: {
+    id?: string | null,
+    answer?: {
+      text?: string | null,
+      html?: string | null
+    } | null
+  }[] | null,
+  ticket_classes?: {
+    id?: string | null,
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ticket Classes
+
+### create
+
+`ticketClasses.create`
+
+Add a ticket class to an event: free, donation or priced, with capacity, sale window and sales channels
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.ticketClasses.create({ event_id: '2000937221092', ticket_class: { name: 'Early bird', cost: 'USD,4500', capacity: 50, auto_hide: true, sales_channels: ['online'] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event the ticket class belongs to. |
+| `ticket_class` | `object` | Yes | — |
+
+`cost` is `'<CURRENCY>,<minor units>'`, so `'USD,4500'` is 45.00 USD. A charged ticket needs `cost` and `capacity`; a free or donation ticket must not have `cost`.
+
+<AccordionGroup>
+<Accordion title="ticket_class full type">
+
+```ts
+{
+  name: string,
+  cost?: string,
+  free?: boolean,
+  donation?: boolean,
+  capacity?: number,
+  description?: string,
+  sorting?: number,
+  hide_description?: boolean,
+  hidden?: boolean,
+  include_fee?: boolean,
+  split_fee?: boolean,
+  auto_hide?: boolean,
+  auto_hide_before?: string,
+  auto_hide_after?: string,
+  sales_start?: string,
+  sales_end?: string,
+  sales_start_after?: string | number,
+  sales_channels?: (online | atd)[],
+  minimum_quantity?: number,
+  maximum_quantity?: number,
+  has_pdf_ticket?: boolean,
+  order_confirmation_message?: string,
+  delivery_methods?: (electronic | will_call | standard_shipping | third_party_shipping)[],
+  inventory_tier_id?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `event_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `sorting` | `number \| null` | No | — |
+| `capacity` | `number \| null` | No | — |
+| `quantity_total` | `number \| null` | No | — |
+| `quantity_sold` | `number \| null` | No | — |
+| `donation` | `boolean \| null` | No | — |
+| `free` | `boolean \| null` | No | — |
+| `include_fee` | `boolean \| null` | No | — |
+| `hide_description` | `boolean \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `hidden_currently` | `boolean \| null` | No | — |
+| `on_sale_status` | `string \| null` | No | One of `AVAILABLE`, `NOT_YET_ON_SALE`, `SOLD_OUT`, `HIDDEN`, `UNAVAILABLE` or `UNKNOWN`. |
+| `sales_start` | `string \| null` | No | — |
+| `sales_end` | `string \| null` | No | — |
+| `sales_channels` | `string[] \| null` | No | — |
+| `delivery_methods` | `string[] \| null` | No | — |
+| `minimum_quantity` | `number \| null` | No | — |
+| `maximum_quantity` | `number \| null` | No | — |
+| `maximum_quantity_per_order` | `number \| null` | No | — |
+| `has_pdf_ticket` | `boolean \| null` | No | — |
+| `order_confirmation_message` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `image_id` | `string \| null` | No | — |
+| `inventory_tier_id` | `string \| null` | No | — |
+| `cost` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="cost full type">
+
+```ts
+{
+  actual_cost?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  actual_fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  cost?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  tax?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`ticketClasses.delete`
+
+Delete a ticket class. Refused once tickets have been sold from it, and not allowed for the last ticket while the event is live
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.eventbrite.api.ticketClasses.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event that owns the ticket class. |
+| `ticket_class_id` | `string \| number` | Yes | The ticket class to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`ticketClasses.get`
+
+Read one ticket class of an event
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.ticketClasses.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event that owns the ticket class. |
+| `ticket_class_id` | `string \| number` | Yes | The ticket class to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `event_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `sorting` | `number \| null` | No | — |
+| `capacity` | `number \| null` | No | — |
+| `quantity_total` | `number \| null` | No | — |
+| `quantity_sold` | `number \| null` | No | — |
+| `donation` | `boolean \| null` | No | — |
+| `free` | `boolean \| null` | No | — |
+| `include_fee` | `boolean \| null` | No | — |
+| `hide_description` | `boolean \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `hidden_currently` | `boolean \| null` | No | — |
+| `on_sale_status` | `string \| null` | No | One of `AVAILABLE`, `NOT_YET_ON_SALE`, `SOLD_OUT`, `HIDDEN`, `UNAVAILABLE` or `UNKNOWN`. |
+| `sales_start` | `string \| null` | No | — |
+| `sales_end` | `string \| null` | No | — |
+| `sales_channels` | `string[] \| null` | No | — |
+| `delivery_methods` | `string[] \| null` | No | — |
+| `minimum_quantity` | `number \| null` | No | — |
+| `maximum_quantity` | `number \| null` | No | — |
+| `maximum_quantity_per_order` | `number \| null` | No | — |
+| `has_pdf_ticket` | `boolean \| null` | No | — |
+| `order_confirmation_message` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `image_id` | `string \| null` | No | — |
+| `inventory_tier_id` | `string \| null` | No | — |
+| `cost` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="cost full type">
+
+```ts
+{
+  actual_cost?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  actual_fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  cost?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  tax?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`ticketClasses.list`
+
+List an event’s ticket classes with their capacity, sold count and on-sale status
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.ticketClasses.list({ event_id: '2000937221092' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event whose ticket classes to list. |
+| `pos` | `online \| at_the_door` | No | Only classes valid for this point of sale. |
+| `category` | `(all \| admission \| add_on \| donation)[]` | No | Only classes in these categories, comma separated. |
+| `include_holds` | `boolean` | No | Include hold ticket classes. |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `ticket_classes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="ticket_classes full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  event_id?: string | null,
+  name?: string | null,
+  display_name?: string | null,
+  description?: string | null,
+  sorting?: number | null,
+  capacity?: number | null,
+  quantity_total?: number | null,
+  quantity_sold?: number | null,
+  donation?: boolean | null,
+  free?: boolean | null,
+  include_fee?: boolean | null,
+  hide_description?: boolean | null,
+  hidden?: boolean | null,
+  hidden_currently?: boolean | null,
+  on_sale_status?: string | null,
+  sales_start?: string | null,
+  sales_end?: string | null,
+  sales_channels?: string[] | null,
+  delivery_methods?: string[] | null,
+  minimum_quantity?: number | null,
+  maximum_quantity?: number | null,
+  maximum_quantity_per_order?: number | null,
+  has_pdf_ticket?: boolean | null,
+  order_confirmation_message?: string | null,
+  category?: string | null,
+  image_id?: string | null,
+  inventory_tier_id?: string | null,
+  cost?: {
+    actual_cost?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    actual_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    cost?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    tax?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForSale
+
+`ticketClasses.listForSale`
+
+List the ticket classes currently purchasable at a point of sale, optionally for one promo code
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.ticketClasses.listForSale({ event_id: '2000937221092', pos: 'online' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event whose purchasable ticket classes to list. |
+| `pos` | `online \| at_the_door` | No | Point of sale. Defaults to `online`. |
+| `code` | `string` | No | Promo code the classes must accept. |
+| `hold_id` | `string` | No | — |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `ticket_classes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="ticket_classes full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  event_id?: string | null,
+  name?: string | null,
+  display_name?: string | null,
+  description?: string | null,
+  sorting?: number | null,
+  capacity?: number | null,
+  quantity_total?: number | null,
+  quantity_sold?: number | null,
+  donation?: boolean | null,
+  free?: boolean | null,
+  include_fee?: boolean | null,
+  hide_description?: boolean | null,
+  hidden?: boolean | null,
+  hidden_currently?: boolean | null,
+  on_sale_status?: string | null,
+  sales_start?: string | null,
+  sales_end?: string | null,
+  sales_channels?: string[] | null,
+  delivery_methods?: string[] | null,
+  minimum_quantity?: number | null,
+  maximum_quantity?: number | null,
+  maximum_quantity_per_order?: number | null,
+  has_pdf_ticket?: boolean | null,
+  order_confirmation_message?: string | null,
+  category?: string | null,
+  image_id?: string | null,
+  inventory_tier_id?: string | null,
+  cost?: {
+    actual_cost?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    actual_fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    cost?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    fee?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null,
+    tax?: {
+      currency?: string | null,
+      value?: number | null,
+      major_value?: string | null,
+      display?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`ticketClasses.update`
+
+Change a ticket class. The price cannot change once any ticket has sold
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.ticketClasses.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_id` | `string \| number` | Yes | The event that owns the ticket class. |
+| `ticket_class_id` | `string \| number` | Yes | The ticket class to change. |
+| `ticket_class` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ticket_class full type">
+
+```ts
+{
+  name?: string,
+  cost?: string,
+  free?: boolean,
+  donation?: boolean,
+  capacity?: number,
+  description?: string,
+  sorting?: number,
+  hide_description?: boolean,
+  hidden?: boolean,
+  include_fee?: boolean,
+  split_fee?: boolean,
+  auto_hide?: boolean,
+  auto_hide_before?: string,
+  auto_hide_after?: string,
+  sales_start?: string,
+  sales_end?: string,
+  sales_start_after?: string | number,
+  sales_channels?: (online | atd)[],
+  minimum_quantity?: number,
+  maximum_quantity?: number,
+  has_pdf_ticket?: boolean,
+  order_confirmation_message?: string,
+  delivery_methods?: (electronic | will_call | standard_shipping | third_party_shipping)[],
+  inventory_tier_id?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `event_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `sorting` | `number \| null` | No | — |
+| `capacity` | `number \| null` | No | — |
+| `quantity_total` | `number \| null` | No | — |
+| `quantity_sold` | `number \| null` | No | — |
+| `donation` | `boolean \| null` | No | — |
+| `free` | `boolean \| null` | No | — |
+| `include_fee` | `boolean \| null` | No | — |
+| `hide_description` | `boolean \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `hidden_currently` | `boolean \| null` | No | — |
+| `on_sale_status` | `string \| null` | No | One of `AVAILABLE`, `NOT_YET_ON_SALE`, `SOLD_OUT`, `HIDDEN`, `UNAVAILABLE` or `UNKNOWN`. |
+| `sales_start` | `string \| null` | No | — |
+| `sales_end` | `string \| null` | No | — |
+| `sales_channels` | `string[] \| null` | No | — |
+| `delivery_methods` | `string[] \| null` | No | — |
+| `minimum_quantity` | `number \| null` | No | — |
+| `maximum_quantity` | `number \| null` | No | — |
+| `maximum_quantity_per_order` | `number \| null` | No | — |
+| `has_pdf_ticket` | `boolean \| null` | No | — |
+| `order_confirmation_message` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `image_id` | `string \| null` | No | — |
+| `inventory_tier_id` | `string \| null` | No | — |
+| `cost` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="cost full type">
+
+```ts
+{
+  actual_cost?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  actual_fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  cost?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  fee?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null,
+  tax?: {
+    currency?: string | null,
+    value?: number | null,
+    major_value?: string | null,
+    display?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Read a user by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string \| number` | Yes | The user to read. `me` is accepted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `is_public` | `boolean \| null` | No | — |
+| `image_id` | `string \| null` | No | — |
+| `emails` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  email?: string | null,
+  verified?: boolean | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### me
+
+`users.me`
+
+Read the authenticated user: id, name and verified emails
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.users.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `is_public` | `boolean \| null` | No | — |
+| `image_id` | `string \| null` | No | — |
+| `emails` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  email?: string | null,
+  verified?: boolean | null,
+  primary?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Venues
+
+### create
+
+`venues.create`
+
+Create a venue under an organization, with its address
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.venues.create({ organization_id: '154830740213', venue: { name: 'Crimson House', address: { address_1: '1-14-1 Tamagawa', city: 'Setagaya City', country: 'JP' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string \| number` | Yes | The organization that will own the venue. |
+| `venue` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="venue full type">
+
+```ts
+{
+  name: string,
+  address?: {
+    address_1?: string,
+    address_2?: string,
+    city?: string,
+    region?: string,
+    postal_code?: string,
+    country?: string,
+    latitude?: string,
+    longitude?: string
+  },
+  age_restriction?: AGE_RESTRICTION_ALL_AGES | AGE_RESTRICTION_MIN_TWELVE | AGE_RESTRICTION_MIN_THIRTEEN | AGE_RESTRICTION_MIN_FOURTEEN | AGE_RESTRICTION_MIN_FIFTEEN | AGE_RESTRICTION_MIN_SIXTEEN | AGE_RESTRICTION_MIN_SEVENTEEN | AGE_RESTRICTION_MIN_EIGHTEEN | AGE_RESTRICTION_MIN_NINETEEN | AGE_RESTRICTION_MIN_TWENTY_ONE | AGE_RESTRICTION_UNDER_TWENTY_ONE_WITH_GUARDIAN | AGE_RESTRICTION_UNDER_EIGHTEEN_WITH_GUARDIAN,
+  capacity?: number,
+  organizer_id?: string | number,
+  google_place_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `age_restriction` | `string \| null` | No | — |
+| `capacity` | `number \| null` | No | — |
+| `latitude` | `string \| null` | No | — |
+| `longitude` | `string \| null` | No | — |
+| `address` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  address_1?: string | null,
+  address_2?: string | null,
+  city?: string | null,
+  region?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  latitude?: string | null,
+  longitude?: string | null,
+  localized_address_display?: string | null,
+  localized_area_display?: string | null,
+  localized_multi_line_address_display?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`venues.get`
+
+Read one venue with its address and coordinates
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.venues.get({ venue_id: '299411783' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `venue_id` | `string \| number` | Yes | The venue to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `age_restriction` | `string \| null` | No | — |
+| `capacity` | `number \| null` | No | — |
+| `latitude` | `string \| null` | No | — |
+| `longitude` | `string \| null` | No | — |
+| `address` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  address_1?: string | null,
+  address_2?: string | null,
+  city?: string | null,
+  region?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  latitude?: string | null,
+  longitude?: string | null,
+  localized_address_display?: string | null,
+  localized_area_display?: string | null,
+  localized_multi_line_address_display?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`venues.list`
+
+List an organization's venues
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.venues.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string \| number` | Yes | The organization whose venues to list. |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+Answers 500 `INTERNAL_ERROR` for an organization with no venues rather than an empty page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `venues` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="venues full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  name?: string | null,
+  age_restriction?: string | null,
+  capacity?: number | null,
+  latitude?: string | null,
+  longitude?: string | null,
+  address?: {
+    address_1?: string | null,
+    address_2?: string | null,
+    city?: string | null,
+    region?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    latitude?: string | null,
+    longitude?: string | null,
+    localized_address_display?: string | null,
+    localized_area_display?: string | null,
+    localized_multi_line_address_display?: string[] | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`venues.update`
+
+Change a venue’s name, address or capacity
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.venues.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `venue_id` | `string \| number` | Yes | The venue to change. |
+| `venue` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="venue full type">
+
+```ts
+{
+  name?: string,
+  address?: {
+    address_1?: string,
+    address_2?: string,
+    city?: string,
+    region?: string,
+    postal_code?: string,
+    country?: string,
+    latitude?: string,
+    longitude?: string
+  },
+  age_restriction?: AGE_RESTRICTION_ALL_AGES | AGE_RESTRICTION_MIN_TWELVE | AGE_RESTRICTION_MIN_THIRTEEN | AGE_RESTRICTION_MIN_FOURTEEN | AGE_RESTRICTION_MIN_FIFTEEN | AGE_RESTRICTION_MIN_SIXTEEN | AGE_RESTRICTION_MIN_SEVENTEEN | AGE_RESTRICTION_MIN_EIGHTEEN | AGE_RESTRICTION_MIN_NINETEEN | AGE_RESTRICTION_MIN_TWENTY_ONE | AGE_RESTRICTION_UNDER_TWENTY_ONE_WITH_GUARDIAN | AGE_RESTRICTION_UNDER_EIGHTEEN_WITH_GUARDIAN,
+  capacity?: number,
+  organizer_id?: string | number,
+  google_place_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `age_restriction` | `string \| null` | No | — |
+| `capacity` | `number \| null` | No | — |
+| `latitude` | `string \| null` | No | — |
+| `longitude` | `string \| null` | No | — |
+| `address` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  address_1?: string | null,
+  address_2?: string | null,
+  city?: string | null,
+  region?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  latitude?: string | null,
+  longitude?: string | null,
+  localized_address_display?: string | null,
+  localized_area_display?: string | null,
+  localized_multi_line_address_display?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Subscribe an HTTPS endpoint to event, order, attendee, organizer, ticket class or venue actions
+
+**Risk:** `write`
+
+```ts
+await corsair.eventbrite.api.webhooks.create({ organization_id: '154830740213', endpoint_url: 'https://myapp.com/webhooks/eventbrite', actions: ['order.placed', 'attendee.checked_in'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string \| number` | Yes | The organization the webhook belongs to. |
+| `endpoint_url` | `string` | Yes | HTTPS URL Eventbrite POSTs to. Use a private URL, not a public one. |
+| `actions` | `(attendee.checked_in \| attendee.checked_out \| attendee.updated \| event.created \| event.published \| event.updated \| event.unpublished \| order.placed \| order.refunded \| order.updated \| organizer.updated \| ticket_class.created \| ticket_class.deleted \| ticket_class.updated \| venue.updated)[]` | Yes | Actions that trigger the webhook. Eventbrite takes them as one comma-separated string. |
+| `event_id` | `string \| number` | No | Only fire for this event. Omit for all events. |
+
+`actions` is sent as one comma-separated string. Eventbrite does not sign deliveries and allows no custom header on the subscription.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `resource_uri` | `string \| null` | No | — |
+| `endpoint_url` | `string \| null` | No | — |
+| `actions` | `string[] \| null` | No | — |
+| `event_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook subscription together with its delivery history
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.eventbrite.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string \| number` | Yes | The webhook to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List an organization's webhook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.eventbrite.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `string \| number` | Yes | The organization whose webhooks to list. |
+| `page_size` | `number` | No | Results per page. Eventbrite defaults to 50 and caps the value at 300. |
+| `continuation` | `string` | No | Cursor from the previous response’s `pagination.continuation`. Pass it instead of `page` to walk the list. |
+| `page` | `number` | No | Page number, starting at 1. Ignored when `continuation` is set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `webhooks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  object_count?: number | null,
+  page_number?: number | null,
+  page_size?: number | null,
+  page_count?: number | null,
+  has_more_items?: boolean | null,
+  continuation?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id?: string | null,
+  resource_uri?: string | null,
+  endpoint_url?: string | null,
+  actions?: string[] | null,
+  event_id?: string | null,
+  user_id?: string | null,
+  created?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

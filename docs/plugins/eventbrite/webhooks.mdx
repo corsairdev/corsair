@@ -1,0 +1,107 @@
+---
+title: Webhooks
+description: "Eventbrite incoming webhooks: event paths, payloads, and response data."
+---
+
+The Eventbrite plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/eventbrite/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `notifications`
+  - `delivery` (`notifications.delivery`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+	const body = await request.text();
+	const headers = Object.fromEntries(request.headers);
+	const query = Object.fromEntries(new URL(request.url).searchParams);
+	const result = await processWebhook(corsair, headers, body, query);
+	return Response.json(result.response ?? { success: false }, {
+		status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
+	});
+}
+```
+
+Read the body as text, not `request.json()`: a handler that verifies a signature needs the exact bytes. The `query` argument carries `tenantId`; without it every delivery routes to the default tenant.
+
+Eventbrite does not sign deliveries and does not allow a custom header on the subscription, so this plugin has nothing to verify. Keep the receiving URL private; the notification's `api_url` is read back with the tenant's own token, which is what proves the delivery belongs to that tenant.
+
+## Events
+
+## Notifications
+
+### Delivery
+
+`notifications.delivery`
+
+An Eventbrite webhook delivery: the notification naming the changed object’s `api_url` and the `config.action` that fired, not the object itself
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `api_url` | `string` | Yes | Absolute v3 API URL of the object that changed. |
+| `config` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  action?: string | null,
+  endpoint_url?: string | null,
+  user_id?: string | null,
+  webhook_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  api_url: string,
+  config?: {
+    action?: string | null,
+    endpoint_url?: string | null,
+    user_id?: string | null,
+    webhook_id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+eventbrite({
+    webhookHooks: {
+        notifications: {
+            delivery: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
