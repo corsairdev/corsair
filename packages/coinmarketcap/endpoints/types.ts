@@ -281,7 +281,7 @@ const CryptocurrencyMapInputSchema = z
 			.optional()
 			.describe('Field to sort by. Defaults to id.'),
 		symbol: csvArray(
-			'Tickers to resolve to CMC IDs, such as ["BTC", "ETH"]. When set, every other option is ignored by the API.',
+			'Tickers to resolve to CMC IDs, such as ["BTC", "ETH"]. When set, the API ignores every other option except `aux`.',
 		).optional(),
 		aux: z
 			.string()
@@ -292,10 +292,11 @@ const CryptocurrencyMapInputSchema = z
 	})
 	.superRefine((value, ctx) => {
 		if (value.symbol === undefined) return;
-		// CoinMarketCap ignores the rest of the query when `symbol` is set, so a
-		// paged lookup here would silently return the wrong rows.
+		// CoinMarketCap ignores the filter, paging and sort options when `symbol`
+		// is set, so a paged lookup here would silently return the wrong rows.
+		// `aux` is still applied, so it is allowed.
 		const ignored = (
-			['listing_status', 'start', 'limit', 'sort', 'aux'] as const
+			['listing_status', 'start', 'limit', 'sort'] as const
 		).filter((key) => value[key] !== undefined);
 		if (ignored.length === 0) return;
 		ctx.addIssue({

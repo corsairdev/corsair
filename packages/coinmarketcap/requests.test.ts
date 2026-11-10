@@ -201,12 +201,34 @@ describe('cryptocurrency.map', () => {
 	});
 
 	it('rejects symbol combined with options the API would ignore', async () => {
-		// CoinMarketCap ignores every other parameter when `symbol` is set, so a
-		// paged lookup here would silently return the wrong rows.
+		// CoinMarketCap ignores the filter, paging and sort options when `symbol`
+		// is set, so a paged lookup here would silently return the wrong rows.
 		await expect(invoke(map, { symbol: ['BTC'], limit: 10 })).rejects.toThrow(
 			/ignore limit/,
 		);
+		for (const ignored of [
+			{ listing_status: ['inactive'] },
+			{ start: 5 },
+			{ sort: 'cmc_rank' },
+		]) {
+			await expect(
+				invoke(map, { symbol: ['BTC'], ...ignored }),
+			).rejects.toThrow(/ignore/);
+		}
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('sends aux with a symbol, which the API does apply', async () => {
+		// Live on 2026-11-10: ?symbol=BTC&aux=platform,status returned `status`
+		// and dropped the default first_historical_data, so aux is honoured.
+		respond(mapResponse);
+
+		await invoke(map, { symbol: ['BTC'], aux: 'platform,status' });
+
+		expect(lastRequest().query).toEqual({
+			symbol: 'BTC',
+			aux: 'platform,status',
+		});
 	});
 
 	it('sends listing status and paging without a symbol', async () => {

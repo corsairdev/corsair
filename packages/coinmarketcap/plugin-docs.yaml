@@ -48,6 +48,6 @@ apiExamples:
     call: "{ slug: ['binance'], aux: 'logo,urls,description' }"
   key.info: {}
 apiNotes:
-  cryptocurrency.map: 'When `symbol` is set, CoinMarketCap ignores every other option, so this operation rejects that combination rather than sending a request that would silently return the wrong rows. To page the full asset list with `aux` fields, omit `symbol`.'
+  cryptocurrency.map: 'When `symbol` is set, CoinMarketCap ignores `listing_status`, `start`, `limit` and `sort`, so this operation rejects those combinations rather than sending a request that would silently return the wrong rows. `aux` still applies with `symbol`.'
   cryptocurrency.quotes: 'Pass exactly one of `id`, `slug` or `symbol`. Two at once is rejected by the API as a conflict between exclusive peers.'
   tools.priceConversion: 'Pass exactly one of `id` or `symbol`, and pass `id` as a single number: the route refuses a comma-separated list here even though the quote routes accept one.'
