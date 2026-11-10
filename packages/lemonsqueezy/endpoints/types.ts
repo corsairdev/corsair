@@ -209,7 +209,9 @@ export const PriceSchema = ResourceBaseSchema.extend({
 			scheme: z.string().nullish(),
 			usage_aggregation: z.string().nullish(),
 			unit_price: z.number().nullish(),
-			unit_price_decimal: z.string().nullish(),
+			// The docs call it a decimal string; a live metered price sends the
+			// number 5000 (₹50.00). Both are accepted.
+			unit_price_decimal: z.union([z.number(), z.string()]).nullish(),
 			setup_fee_enabled: z.boolean().nullish(),
 			setup_fee: z.number().nullish(),
 			package_size: z.number().nullish(),

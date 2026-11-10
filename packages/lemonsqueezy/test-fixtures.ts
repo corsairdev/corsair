@@ -350,3 +350,40 @@ export const generatedInvoice = {
 		},
 	},
 };
+
+/**
+ * A usage-based price, from a live `GET /v1/prices/:id` on a test store
+ * (2026-11-10). Metered prices leave `unit_price` null and carry the price in
+ * `unit_price_decimal`, which arrives as a number (5000 = ₹50.00), not the
+ * decimal string the docs describe.
+ */
+export const usagePrice = {
+	jsonapi: { version: '1.0' },
+	links: { self: 'https://api.lemonsqueezy.com/v1/prices/3977077' },
+	data: {
+		type: 'prices',
+		id: '3977077',
+		attributes: {
+			variant_id: 2359185,
+			category: 'subscription',
+			scheme: 'standard',
+			usage_aggregation: 'sum',
+			unit_price: null,
+			unit_price_decimal: 5000,
+			setup_fee_enabled: false,
+			setup_fee: null,
+			package_size: 1,
+			tiers: null,
+			renewal_interval_unit: 'month',
+			renewal_interval_quantity: 1,
+			trial_interval_unit: null,
+			trial_interval_quantity: null,
+			min_price: null,
+			suggested_price: null,
+			tax_code: 'saas',
+			created_at: '2026-11-10T17:13:00.000000Z',
+			updated_at: '2026-11-10T17:13:00.000000Z',
+		},
+		links: { self: 'https://api.lemonsqueezy.com/v1/prices/3977077' },
+	},
+};

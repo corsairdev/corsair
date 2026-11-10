@@ -14,6 +14,7 @@ import {
 	storeList,
 	taxedOrder,
 	unauthorized,
+	usagePrice,
 	user,
 	webhook,
 	webhookMissingSecret,
@@ -90,6 +91,19 @@ describe('output schemas parse live answers', () => {
 		expect(output.data.attributes.currency_rate).toBe('1.0000');
 		expect(output.data.attributes.total).toBe(1199);
 		expect(output.data.attributes.tax_name).toBe('VAT');
+	});
+
+	it('prices.get reads a usage-based price, where unit_price_decimal is a number', () => {
+		const output =
+			LemonSqueezyEndpointOutputSchemas.pricesGet.parse(usagePrice);
+		expect(output.data.attributes.unit_price).toBeNull();
+		expect(output.data.attributes.unit_price_decimal).toBe(5000);
+		expect(
+			LemonSqueezyEndpointOutputSchemas.pricesList.parse({
+				...storeList,
+				data: [usagePrice.data],
+			}).data[0]?.attributes.usage_aggregation,
+		).toBe('sum');
 	});
 
 	it('a delete reports what it removed', () => {
