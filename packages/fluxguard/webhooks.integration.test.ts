@@ -1,9 +1,10 @@
 import { createHmac } from 'node:crypto';
-import { processWebhook } from 'corsair';
+import { processWebhook, resolveTenantIdFromWebhookLink } from 'corsair';
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { fluxguard } from './index';
 import { changeEvent } from './test-fixtures';
+import { matchFluxguardTenantWebhook } from './webhooks/tenant-matcher';
 import { FLUXGUARD_SIGNATURE_HEADER } from './webhooks/types';
 
 const SECRET = 'whsec-fluxguard-integration-secret';
@@ -112,6 +113,184 @@ describe('Fluxguard change webhook through processWebhook', () => {
 				success: false,
 				error: 'Invalid Fluxguard change payload',
 			});
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
+
+/**
+ * The docs tell users to store the webhook's secret with
+ * `keys.set_webhook_signature`. These run without the `webhookSecret` option
+ * and through the real key manager, so they prove the stored secret is the one
+ * the handler verifies with.
+ */
+describe('Fluxguard change webhook with a stored secret', () => {
+	async function createStoredSecretClient() {
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'fluxguard', 'default');
+		const corsair = createCorsair({
+			plugins: [fluxguard({ key: 'fg-test-key' })],
+			database: testDb.db,
+			kek: KEK,
+		});
+		await corsair.fluxguard.keys.issue_new_dek();
+		return { corsair, testDb };
+	}
+
+	it('accepts a delivery signed with the stored secret', async () => {
+		const { corsair, testDb } = await createStoredSecretClient();
+		try {
+			await corsair.fluxguard.keys.set_webhook_signature(SECRET);
+			const body = JSON.stringify(changeEvent);
+
+			const result = await processWebhook(corsair, signedHeaders(body), body);
+
+			expect(result.action).toBe('change.detected');
+			expect(result.response).toEqual({ success: true });
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('rejects a delivery signed with any other secret', async () => {
+		const { corsair, testDb } = await createStoredSecretClient();
+		try {
+			await corsair.fluxguard.keys.set_webhook_signature(SECRET);
+			const body = JSON.stringify(changeEvent);
+
+			const result = await processWebhook(
+				corsair,
+				signedHeaders(body, 'whsec-wrong-secret'),
+				body,
+			);
+
+			expect(result.response).toMatchObject({
+				success: false,
+				error: 'Invalid webhook signature',
+			});
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('rejects an unsigned delivery', async () => {
+		const { corsair, testDb } = await createStoredSecretClient();
+		try {
+			await corsair.fluxguard.keys.set_webhook_signature(SECRET);
+
+			const result = await processWebhook(
+				corsair,
+				{},
+				JSON.stringify(changeEvent),
+			);
+
+			expect(result.plugin).toBe('fluxguard');
+			expect(result.response).toMatchObject({
+				success: false,
+				error: `Missing or malformed ${FLUXGUARD_SIGNATURE_HEADER} header`,
+			});
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('rejects every delivery while no secret is stored', async () => {
+		const { corsair, testDb } = await createStoredSecretClient();
+		try {
+			const body = JSON.stringify(changeEvent);
+
+			const result = await processWebhook(corsair, signedHeaders(body), body);
+
+			expect(result.response).toMatchObject({ success: false });
+			expect(String(result.response?.error)).toContain(
+				'No Fluxguard webhook secret is set',
+			);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
+
+/**
+ * With `multiTenancy`, `processWebhook` takes the tenant from `query.tenantId`
+ * and falls back to `default`; only Hub looks a tenant up by `orgId`, and only
+ * once the org id was stored with `keys.set_tenant_external_id`.
+ */
+describe('Fluxguard change webhook with tenants', () => {
+	async function createTenantClient() {
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'fluxguard', 'acme');
+		const corsair = createCorsair({
+			plugins: [fluxguard({ key: 'fg-test-key' })],
+			database: testDb.db,
+			kek: KEK,
+			multiTenancy: true,
+		});
+		const tenant = corsair.withTenant('acme');
+		await tenant.fluxguard.keys.issue_new_dek();
+		await tenant.fluxguard.keys.set_webhook_signature(SECRET);
+		return { corsair, tenant, testDb };
+	}
+
+	it('verifies with the secret of the tenant named in the query', async () => {
+		const { corsair, testDb } = await createTenantClient();
+		try {
+			const body = JSON.stringify(changeEvent);
+
+			const result = await processWebhook(corsair, signedHeaders(body), body, {
+				tenantId: 'acme',
+			});
+
+			expect(result.response).toEqual({ success: true });
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('fails closed when the route names no tenant', async () => {
+		const { corsair, testDb } = await createTenantClient();
+		try {
+			const body = JSON.stringify(changeEvent);
+
+			const result = await processWebhook(corsair, signedHeaders(body), body);
+
+			// No tenant means `default`, which has no stored secret.
+			expect(result.response).toMatchObject({ success: false });
+			expect(String(result.response?.error)).toContain(
+				'No Fluxguard webhook secret is set',
+			);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('resolves the tenant from orgId once the org id is stored', async () => {
+		const { tenant, testDb } = await createTenantClient();
+		try {
+			const match = matchFluxguardTenantWebhook({
+				headers: {},
+				body: JSON.stringify(changeEvent),
+			});
+			expect(match).toEqual({
+				linkType: 'tenant_external_id',
+				externalId: changeEvent.orgId,
+			});
+			const lookup = {
+				database: testDb.database,
+				kek: KEK,
+				pluginId: 'fluxguard',
+				linkType: match!.linkType,
+				externalId: match!.externalId,
+			};
+
+			await expect(resolveTenantIdFromWebhookLink(lookup)).resolves.toBeNull();
+
+			await tenant.fluxguard.keys.set_tenant_external_id(changeEvent.orgId);
+
+			await expect(resolveTenantIdFromWebhookLink(lookup)).resolves.toBe(
+				'acme',
+			);
 		} finally {
 			testDb.cleanup();
 		}
