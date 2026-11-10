@@ -239,6 +239,10 @@
   "mem0": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/mem0.svg"
   },
+  "mixmax": {
+    "from": "https://www.mixmax.com/_astro/mixmax-mark.De_LqLaT_ZC7Ac.svg",
+    "note": "the standalone mark mixmax.com uses next to its wordmark (light and dark logos use the same colours); the 32px favicon is an older navy variant"
+  },
   "monday": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/monday.svg"
   },
