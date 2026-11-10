@@ -28,6 +28,7 @@ import {
 	similarDomains,
 	tech,
 	traffic,
+	unreachable,
 } from './test-fixtures';
 
 jest.mock('corsair/core', () => ({
@@ -427,6 +428,50 @@ describe('plan restriction', () => {
 		await expect(
 			invoke(Categorize.all, { url: 'https://cbsnews.com' }),
 		).rejects.toThrow(KlazifyAPIError);
+	});
+});
+
+describe('failures reported inside a 200', () => {
+	// Klazify does not bill for these, and the reason is the only thing the
+	// caller can act on, so it must survive rather than becoming a ZodError.
+	it('raises the provider reason instead of a schema error', async () => {
+		respond(unreachable);
+
+		const error = await invoke(Categorize.all, {
+			url: 'https://nope.invalid',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(KlazifyAPIError);
+		expect(error).not.toHaveProperty('issues');
+		expect((error as KlazifyAPIError).message).toContain('/Unreachable');
+		expect((error as KlazifyAPIError).detail).toBe(
+			'Error category: /Unreachable',
+		);
+	});
+
+	// The handler matches on the message, so the category has to reach it.
+	it('classifies an unreachable site as a classification error', async () => {
+		const { errorHandlers } = await import('./error-handlers');
+		respond(unreachable);
+
+		const error = (await invoke(Categorize.all, {
+			url: 'https://nope.invalid',
+		}).catch((caught: unknown) => caught)) as Error;
+		const matched = Object.entries(errorHandlers).find(([, entry]) =>
+			entry.match(error),
+		);
+
+		expect(matched?.[0]).toBe('CLASSIFICATION_ERROR');
+	});
+
+	it('accepts a success answer unchanged', async () => {
+		respond(categorize);
+
+		const result = (await invoke(Categorize.all, {
+			url: 'https://cbsnews.com',
+		})) as typeof categorize;
+
+		expect(result.success).toBe(true);
 	});
 });
 

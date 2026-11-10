@@ -1,10 +1,45 @@
 import { logEventFromContext } from 'corsair/core';
-import type { z } from 'zod';
+import { z } from 'zod';
 import type { KlazifyContext } from '..';
 import type { KlazifyRequest } from '../client';
-import { makeKlazifyRequest } from '../client';
+import { KlazifyAPIError, makeKlazifyRequest } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
+
+/**
+ * The slice of a Klazify answer that reports a failure. Validated with zod
+ * rather than an assertion, so a body of another shape is left for the
+ * endpoint's own schema to reject.
+ */
+const FailureFlagSchema = z.object({
+	success: z.literal(false),
+	message: z.string().optional(),
+	error: z.string().optional(),
+});
+
+/**
+ * Klazify reports an internal failure inside a 200 with `success: false`, and
+ * the docs name two such categories: `/Unreachable` and `/No indexable
+ * content`. Parsing the answer with the endpoint's output schema first would
+ * throw a missing-field `ZodError` and lose that reason, which is the one thing
+ * a caller needs, so a failure is raised before the schema runs.
+ */
+// unknown: the raw body is unparsed here. The one shape this reads is validated
+// by FailureFlagSchema, and a body that does not match is left to the caller's
+// schema, which owns the success shape.
+function raiseIfFailed(raw: unknown, event: string): void {
+	const failure = FailureFlagSchema.safeParse(raw);
+	// An endpoint without a success flag (the discovery search) is not a failure.
+	if (!failure.success) return;
+
+	const detail = failure.data.message ?? failure.data.error;
+	throw new KlazifyAPIError(
+		detail
+			? `Klazify ${event} failed: ${detail}`
+			: `Klazify ${event} reported a failure with no message.`,
+		{ status: 200, errorLabel: 'success: false', detail },
+	);
+}
 
 /**
  * Validates the input, sends the request, validates the answer, then logs the
@@ -26,6 +61,7 @@ export async function callKlazify<
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
 	const raw = await makeKlazifyRequest(ctx.key, toRequest(parsed));
+	raiseIfFailed(raw, operation.event);
 	const result = operation.output.parse(raw);
 
 	await logEventFromContext(

@@ -85,11 +85,13 @@ export const search = (
 		},
 		{
 			// The search text is the caller's own query, so only the shape of the
-			// answer is logged.
-			log: (_parsed, result) => ({
+			// answer is logged. `page` is the requested page, which is what a
+			// debugging session needs alongside the page count.
+			log: (parsed, result) => ({
 				results: result.results.length,
 				total: result.total,
-				page: result.total_pages,
+				page: parsed.page ?? 1,
+				total_pages: result.total_pages,
 			}),
 		},
 	);

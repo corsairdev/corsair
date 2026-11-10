@@ -91,13 +91,25 @@ describe('klazify plugin', () => {
 	});
 
 	describe('keyBuilder', () => {
-		// unknown: the fixture implements only the accessor the key builder reads,
-		// not the full AccountKeyManager an api_key context carries.
-		const keyContext = (apiKey?: string) =>
-			({
-				authType: 'api_key',
-				keys: { get_api_key: async () => apiKey },
-			}) as unknown as KlazifyKeyBuilderContext;
+		/**
+		 * A context carrying only what the key builder reads, typed as the real
+		 * `KlazifyKeyBuilderContext` rather than asserted into it. The key manager
+		 * members the builder never calls are stubbed so the type is satisfied
+		 * without a cast.
+		 */
+		const keyContext = (apiKey?: string): KlazifyKeyBuilderContext => ({
+			authType: 'api_key',
+			options: {},
+			tenantId: 'default',
+			keys: {
+				get_dek: async () => 'test-dek',
+				issue_new_dek: async () => 'test-dek',
+				get_api_key: async () => apiKey ?? null,
+				get_webhook_signature: async () => null,
+				set_api_key: async () => undefined,
+				set_webhook_signature: async () => undefined,
+			},
+		});
 
 		it('returns the explicitly configured key', async () => {
 			const configured = klazify({ key: 'inline-token' });
