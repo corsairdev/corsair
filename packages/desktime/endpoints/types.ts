@@ -51,15 +51,29 @@ const TimestampSchema = z
 
 /** `notes` is empty in practice, and its row shape is undocumented. */
 // A record already accepts unknown keys, so it needs no `.loose()`.
-const NoteSchema = z.record(z.string(), z.string());
+// unknown: no filled row was ever captured and the reference shows none, so a
+// row's values are not narrowed. A numeric id in a note must not fail the read.
+const NoteSchema = z.record(z.string(), z.unknown());
 
-/** `activeProject` is an array, empty when nothing is being tracked. */
-const ActiveProjectSchema = z
+const ActiveProjectRowSchema = z
 	.object({
 		project: z.string().nullish(),
 		task: z.string().nullish(),
 	})
 	.loose();
+
+/**
+ * `activeProject` was only ever captured as the empty array, on an account
+ * with nothing running, and the reference's example stops before it. A PHP
+ * backend sends an empty map as `[]` and a filled one as an object, so a
+ * running project may arrive as one bare object rather than a list. Both
+ * parse: `employees.list` returns every employee in one response, and one
+ * person's running timer must not fail the whole call.
+ */
+const ActiveProjectSchema = z.union([
+	z.array(ActiveProjectRowSchema),
+	ActiveProjectRowSchema,
+]);
 
 export const EmployeeSchema = z
 	.object({
@@ -86,7 +100,7 @@ export const EmployeeSchema = z
 		work_ends: TimestampSchema,
 		notes: z.array(NoteSchema).nullish(),
 		timezone: z.string().nullish(),
-		activeProject: z.array(ActiveProjectSchema).nullish(),
+		activeProject: ActiveProjectSchema.nullish(),
 	})
 	.loose();
 

@@ -116,6 +116,61 @@ describe('employee', () => {
 		expect(output.work_ends).toBe(false);
 	});
 
+	it('reads a running project sent as one object instead of a list', () => {
+		// Only the empty array was ever captured. If a running project arrives
+		// as a bare object, it must not fail the read.
+		const output = Outputs.employeeBasic.parse({
+			...EMPLOYEE,
+			activeProject: { project_id: 67973, project_title: 'Blue Book' },
+		});
+		expect(output.activeProject).toEqual({
+			project_id: 67973,
+			project_title: 'Blue Book',
+		});
+	});
+
+	it('still reads a running project sent as a list', () => {
+		const output = Outputs.employeeBasic.parse({
+			...EMPLOYEE,
+			activeProject: [{ project: 'Blue Book', task: 'Cover' }],
+		});
+		expect(output.activeProject).toEqual([
+			{ project: 'Blue Book', task: 'Cover' },
+		]);
+	});
+
+	it('does not fail a whole employee list over one running project', () => {
+		const output = Outputs.employees.parse(
+			withBuckets({
+				employees: {
+					'2026-11-08': {
+						'1': { ...EMPLOYEE, id: 1 },
+						'2': {
+							...EMPLOYEE,
+							id: 2,
+							activeProject: { project_id: 67973 },
+						},
+					},
+				},
+			}),
+		);
+		expect(output.buckets[0]?.employees).toHaveLength(2);
+	});
+
+	it('reads a note row whose values are not all strings', () => {
+		const output = Outputs.employeeBasic.parse({
+			...EMPLOYEE,
+			notes: [{ id: 12, note: 'left early' }],
+		});
+		expect(output.notes).toEqual([{ id: 12, note: 'left early' }]);
+	});
+
+	it('rejects an active project that is neither a list nor an object', () => {
+		expect(() =>
+			Outputs.employeeBasic.parse({ ...EMPLOYEE, activeProject: 'nope' }),
+		).toThrow();
+	});
+
 	it('accepts timestamps once the employee has arrived', () => {
 		const output = Outputs.employeeBasic.parse(EMPLOYEE_ARRIVED);
 		expect(output.arrived).toBe('2026-11-08 05:13:00');

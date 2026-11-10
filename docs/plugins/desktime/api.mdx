@@ -92,9 +92,9 @@ await corsair.desktime.api.employee.apps({ id: 789760 });
 | `efficiency` | `number \| null` | No | — |
 | `work_starts` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
 | `work_ends` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
-| `notes` | `Record<string, string>[] \| null` | No | — |
+| `notes` | `Record<string, any>[] \| null` | No | — |
 | `timezone` | `string \| null` | No | — |
-| `activeProject` | `object[] \| null` | No | — |
+| `activeProject` | `object[] \| object \| null` | No | — |
 | `apps` | `object \| null` | No | Tracked apps keyed by productivity class, where `-1` is unrated, `0` neutral and `1` productive. |
 | `apps_by_productivity` | `object` | No | The same apps relabelled from the numeric productivity keys to `unrated`, `neutral` and `productive`. |
 
@@ -105,7 +105,10 @@ await corsair.desktime.api.employee.apps({ id: 789760 });
 {
   project?: string | null,
   task?: string | null
-}[] | null
+}[] | {
+  project?: string | null,
+  task?: string | null
+} | null
 ```
 </Accordion>
 
@@ -194,9 +197,9 @@ await corsair.desktime.api.employee.basic({ id: 789760, date: '2026-11-08' });
 | `efficiency` | `number \| null` | No | — |
 | `work_starts` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
 | `work_ends` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
-| `notes` | `Record<string, string>[] \| null` | No | — |
+| `notes` | `Record<string, any>[] \| null` | No | — |
 | `timezone` | `string \| null` | No | — |
-| `activeProject` | `object[] \| null` | No | — |
+| `activeProject` | `object[] \| object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="activeProject full type">
@@ -205,7 +208,10 @@ await corsair.desktime.api.employee.basic({ id: 789760, date: '2026-11-08' });
 {
   project?: string | null,
   task?: string | null
-}[] | null
+}[] | {
+  project?: string | null,
+  task?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -260,9 +266,9 @@ await corsair.desktime.api.employee.projects({ id: 789760, date: '2026-11-08' })
 | `efficiency` | `number \| null` | No | — |
 | `work_starts` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
 | `work_ends` | `string \| false \| null` | No | A timestamp, or `false` when it has not happened yet. |
-| `notes` | `Record<string, string>[] \| null` | No | — |
+| `notes` | `Record<string, any>[] \| null` | No | — |
 | `timezone` | `string \| null` | No | — |
-| `activeProject` | `object[] \| null` | No | — |
+| `activeProject` | `object[] \| object \| null` | No | — |
 | `projects` | `object[] \| null` | No | — |
 
 <AccordionGroup>
@@ -272,7 +278,10 @@ await corsair.desktime.api.employee.projects({ id: 789760, date: '2026-11-08' })
 {
   project?: string | null,
   task?: string | null
-}[] | null
+}[] | {
+  project?: string | null,
+  task?: string | null
+} | null
 ```
 </Accordion>
 
@@ -349,12 +358,15 @@ Record<string, Record<string, {
   efficiency?: number | null,
   work_starts?: string | false | null,
   work_ends?: string | false | null,
-  notes?: Record<string, string>[] | null,
+  notes?: Record<string, any>[] | null,
   timezone?: string | null,
   activeProject?: {
     project?: string | null,
     task?: string | null
-  }[] | null
+  }[] | {
+    project?: string | null,
+    task?: string | null
+  } | null
 }>>
 ```
 </Accordion>
@@ -386,12 +398,15 @@ Record<string, Record<string, {
     efficiency?: number | null,
     work_starts?: string | false | null,
     work_ends?: string | false | null,
-    notes?: Record<string, string>[] | null,
+    notes?: Record<string, any>[] | null,
     timezone?: string | null,
     activeProject?: {
       project?: string | null,
       task?: string | null
-    }[] | null
+    }[] | {
+      project?: string | null,
+      task?: string | null
+    } | null
   }[]
 }[]
 ```
