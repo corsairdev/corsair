@@ -9,7 +9,8 @@ type LogFields = Record<string, string | number | boolean | undefined>;
 /**
  * Resolves the brand host from the plugin option first, then the stored `host`
  * key, so a single-brand setup can configure it once. Re:amaze has no shared
- * API host, so this has to be present before any request.
+ * API host, so this has to be present before any request. Both sources go
+ * through `normalizeReamazeHost`, which only ever returns `{brand}.reamaze.io`.
  */
 export async function resolveHost(ctx: ReamazeContext): Promise<string> {
 	const fromOptions = ctx.options?.host?.trim();

@@ -6,6 +6,7 @@ jest.mock('corsair/core', () => {
 import * as fixtures from './test-fixtures';
 import {
 	BASE,
+	currentFetch,
 	endpoints,
 	installFetchMock,
 	jsonResponse,
@@ -66,6 +67,43 @@ describe('Re:amaze transport', () => {
 		);
 
 		expect(lastCall().url).toBe(`${BASE}/conversations`);
+	});
+
+	it('builds the host from a stored brand name', async () => {
+		mockFetch(jsonResponse(fixtures.conversationsResponse));
+
+		await endpoints.conversations.list(
+			makeCtx({ host: null, storedHost: 'acme' }),
+			{},
+		);
+
+		expect(lastCall().url).toBe(`${BASE}/conversations`);
+	});
+
+	it.each([
+		'internal.example.com',
+		'https://169.254.169.254/',
+		'acme.reamaze.io.example.com',
+		'acme.reamaze.io:8443',
+	])('sends nothing when the stored host is %j', async (storedHost) => {
+		// A tenant controls the stored value. Anything that is not a brand must
+		// fail before a request, which would carry the Basic credentials, is made.
+		await expect(
+			endpoints.conversations.list(makeCtx({ host: null, storedHost }), {}),
+		).rejects.toThrow(/brand/);
+
+		expect(currentFetch()).not.toHaveBeenCalled();
+	});
+
+	it('holds the plugin option to the same rule as a stored host', async () => {
+		await expect(
+			endpoints.conversations.list(
+				makeCtx({ host: 'internal.example.com' }),
+				{},
+			),
+		).rejects.toThrow(/brand/);
+
+		expect(currentFetch()).not.toHaveBeenCalled();
 	});
 
 	it('sends the client credential pair as Basic auth', async () => {

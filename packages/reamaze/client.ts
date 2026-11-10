@@ -8,18 +8,31 @@ import { ApiError, request } from 'corsair/http';
 
 /**
  * Re:amaze has no shared API host. Requests are scoped by **brand**, and each
- * brand is reached at `https://{brand}.reamaze.io/api/v1`; the host is found on
- * the brand's settings page. So the host is configuration, as it is for
- * ServiceNow and Workday.
+ * brand is reached at `https://{brand}.reamaze.io/api/v1`; the brand is found on
+ * the brand's settings page. Only the brand name is configuration. The domain
+ * is fixed here, so a stored value can never point a request, or the Basic
+ * credentials it carries, at another machine.
  */
 export const DEFAULT_REAMAZE_HOST = 'example.reamaze.io';
 
-/** A bare hostname, optionally with a port. No path, no credentials. */
-const HOST_PATTERN = /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?(:\d{1,5})?$/i;
+/** The API domain every brand lives under. */
+const REAMAZE_API_DOMAIN = 'reamaze.io';
 
 /**
- * Strips the scheme and trailing slashes, rejecting anything that is not a bare
- * hostname. Accepts `https://acme.reamaze.io/`, which is what people paste.
+ * Domains a brand address is pasted with. `{brand}.reamaze.com` is the address
+ * staff see in the browser and names the same brand, so it is accepted and
+ * rewritten to the API domain.
+ */
+const BRAND_ADDRESS_SUFFIXES = ['.reamaze.io', '.reamaze.com'] as const;
+
+/** A brand is one DNS label: letters, digits and inner hyphens, 63 at most. */
+const BRAND_PATTERN = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+
+/**
+ * Reduces what was configured to `{brand}.reamaze.io`. Accepts the brand name
+ * (`acme`), the host (`acme.reamaze.io`) or the address people paste
+ * (`https://acme.reamaze.io/`), and rejects everything else: another domain, an
+ * IP address, a port, a path, a nested subdomain.
  */
 export function normalizeReamazeHost(host: string): string {
 	const trimmed = host.trim();
@@ -49,10 +62,20 @@ export function normalizeReamazeHost(host: string): string {
 	while (value.endsWith('/')) {
 		value = value.slice(0, -1);
 	}
-	if (!HOST_PATTERN.test(value)) {
-		throw new Error('[reamaze] brand host must be a bare hostname');
+
+	let brand = value.toLowerCase();
+	for (const suffix of BRAND_ADDRESS_SUFFIXES) {
+		if (brand.endsWith(suffix)) {
+			brand = brand.slice(0, -suffix.length);
+			break;
+		}
 	}
-	return value;
+	if (!BRAND_PATTERN.test(brand)) {
+		throw new Error(
+			'[reamaze] brand host must be a Re:amaze brand, e.g. acme or acme.reamaze.io',
+		);
+	}
+	return `${brand}.${REAMAZE_API_DOMAIN}`;
 }
 
 /** `https://{host}/api/v1`, the base every documented path hangs off. */

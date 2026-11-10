@@ -41,8 +41,9 @@ import { ReamazeSchema } from './schema';
 export type ReamazePluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	/**
-	 * The brand host, e.g. `acme.reamaze.io`. Re:amaze has no shared API host, so
-	 * either this or a stored `host` key is required.
+	 * The brand, as `acme.reamaze.io` or just `acme`. Re:amaze has no shared API
+	 * host, so either this or a stored `host` key is required. Requests only go
+	 * to `https://{brand}.reamaze.io`; any other domain is rejected.
 	 */
 	host?: string;
 	/** A login email and API token already joined as `{"email":...,"token":...}`. */
@@ -297,7 +298,8 @@ const defaultAuthType: 'api_key' = 'api_key';
  * and `get_host`-style accessors only exist for fields declared here.
  *
  * `host` is an account field too: it is per-brand, and the resolver reads it
- * from the same manager.
+ * from the same manager. A tenant controls that value, so it is only ever used
+ * as a brand name under `reamaze.io` (see `normalizeReamazeHost`).
  */
 export const reamazeAuthConfig = {
 	api_key: {

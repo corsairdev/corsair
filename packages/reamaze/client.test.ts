@@ -13,6 +13,23 @@ describe('Re:amaze host normalization', () => {
 		expect(normalizeReamazeHost('acme.reamaze.io')).toBe('acme.reamaze.io');
 	});
 
+	it('accepts the brand name on its own', () => {
+		expect(normalizeReamazeHost('acme')).toBe('acme.reamaze.io');
+		expect(normalizeReamazeHost('acme-support-2')).toBe(
+			'acme-support-2.reamaze.io',
+		);
+	});
+
+	it('accepts the brand address on reamaze.com and builds the API host', () => {
+		expect(normalizeReamazeHost('https://acme.reamaze.com/')).toBe(
+			'acme.reamaze.io',
+		);
+	});
+
+	it('lowercases the brand', () => {
+		expect(normalizeReamazeHost('Acme.Reamaze.IO')).toBe('acme.reamaze.io');
+	});
+
 	it('strips a scheme', () => {
 		expect(normalizeReamazeHost('https://acme.reamaze.io')).toBe(
 			'acme.reamaze.io',
@@ -26,10 +43,30 @@ describe('Re:amaze host normalization', () => {
 		expect(normalizeReamazeHost('acme.reamaze.io///')).toBe('acme.reamaze.io');
 	});
 
-	it('keeps a port', () => {
-		expect(normalizeReamazeHost('acme.reamaze.io:8443')).toBe(
-			'acme.reamaze.io:8443',
-		);
+	// The host is built from the brand name, so nothing a tenant stores can
+	// point a request, and the Basic credentials on it, at another machine.
+	it.each([
+		'internal.example.com',
+		'https://internal.example.com',
+		'https://169.254.169.254',
+		'169.254.169.254',
+		'acme.reamaze.io.example.com',
+		'example.com/.reamaze.io',
+		'https://example.com/#.reamaze.io',
+		'https://example.com/?next=.reamaze.io',
+		'acme.reamaze.io@example.com',
+		'acme.reamaze.io:8443',
+		'https://acme.reamaze.io:8443',
+		'staging.acme.reamaze.io',
+		'acme.reamaze.io.',
+		'.reamaze.io',
+		'-acme',
+		'acme-',
+		'ac me',
+		'acme\n.example.com',
+		`${'a'.repeat(64)}.reamaze.io`,
+	])('rejects %j, which is not a Re:amaze brand', (host) => {
+		expect(() => normalizeReamazeHost(host)).toThrow(/brand/);
 	});
 
 	it('rejects http, because the API is HTTPS only', () => {
@@ -46,7 +83,7 @@ describe('Re:amaze host normalization', () => {
 
 	it('rejects a host with a path', () => {
 		expect(() => normalizeReamazeHost('acme.reamaze.io/api/v1')).toThrow(
-			/bare hostname/,
+			/brand/,
 		);
 	});
 
@@ -58,6 +95,7 @@ describe('Re:amaze host normalization', () => {
 		expect(reamazeBase('https://acme.reamaze.io/')).toBe(
 			'https://acme.reamaze.io/api/v1',
 		);
+		expect(reamazeBase('acme')).toBe('https://acme.reamaze.io/api/v1');
 	});
 
 	it('pins the documented default host as a placeholder, not a real brand', () => {

@@ -3,7 +3,7 @@ description: Customer support inbox for Re:amaze - read and reply to conversatio
 domain: reamaze.com
 recommendedAuth: api_key
 overviewNote: |
-  **Every Re:amaze customer runs their own brand**, so there is no shared API host. Set `reamaze({ host: 'acme.reamaze.io' })` or store it with `keys.set_host(host)`. A pasted `https://acme.reamaze.io/` is accepted and reduced to the bare host. Without one the plugin throws before it sends anything.
+  **Every Re:amaze customer runs their own brand**, so there is no shared API host. Set `reamaze({ host: 'acme.reamaze.io' })` or store it with `keys.set_host(host)`. The brand name on its own (`acme`) and a pasted `https://acme.reamaze.io/` are accepted too. Requests only go to `https://<brand>.reamaze.io`: another domain, an IP address or a port is rejected before anything is sent. Without a host the plugin throws before it sends anything.
 
   Credentials are a **login email and a personal API token**, sent as HTTP Basic. The token lives under Settings, then API tokens, inside the brand. Store the pair as the account's `api_key`, JSON-encoded as `{"email":"...","token":"..."}`, which is how a single-string key carries two values; `reamaze({ key })` takes the same string.
 
