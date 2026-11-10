@@ -2018,5 +2018,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.32",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.10",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/nutshell",
+    "dir": "packages/nutshell",
+    "name": "Nutshell",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
