@@ -189,12 +189,15 @@ describe('servicenow plugin definition', () => {
 });
 
 describe('servicenow key builder', () => {
-	function ctx(stored: string | null) {
+	function ctx(stored: string | null, storedHost: string | null = 'acme') {
 		return {
 			authType: 'api_key' as const,
 			options: {},
 			tenantId: 'default',
-			keys: { get_api_key: jest.fn().mockResolvedValue(stored) },
+			keys: {
+				get_api_key: jest.fn().mockResolvedValue(stored),
+				get_host: jest.fn().mockResolvedValue(storedHost),
+			},
 		};
 	}
 
@@ -222,6 +225,23 @@ describe('servicenow key builder', () => {
 		await expect(
 			servicenow().keyBuilder?.(ctx(null) as never, 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	// A stored pair with no instance cannot reach anything, so it has to read
+	// as "not connected" for Corsair to offer a connect link.
+	it('throws AuthMissingError when a pair is stored but no instance is', async () => {
+		await expect(
+			servicenow().keyBuilder?.(ctx(PAIR, null) as never, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('accepts a stored pair when the instance comes from the host option', async () => {
+		await expect(
+			servicenow({ host: 'acme' }).keyBuilder?.(
+				ctx(PAIR, null) as never,
+				'endpoint',
+			),
+		).resolves.toBe(PAIR);
 	});
 
 	it('refuses a webhook source, because there are no webhooks', async () => {

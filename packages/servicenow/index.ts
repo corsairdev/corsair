@@ -206,8 +206,13 @@ export function servicenow<const T extends ServicenowPluginOptions>(
 			// fall through to the same AuthMissingError as a missing stored key.
 			if (!ctx.keys) throw new AuthMissingError('servicenow', 'api_key');
 			const stored = await ctx.keys.get_api_key();
-			if (stored) return stored;
-			throw new AuthMissingError('servicenow', 'api_key');
+			if (!stored) throw new AuthMissingError('servicenow', 'api_key');
+			// The instance is the other half of a stored credential. Without it
+			// the account is not connected yet, and only an AuthMissingError from
+			// here gets the caller a connect link; `workable` does the same.
+			const host = options.host ?? (await ctx.keys.get_host());
+			if (!host?.trim()) throw new AuthMissingError('servicenow', 'api_key');
+			return stored;
 		},
 	} satisfies InternalServicenowPlugin;
 }
