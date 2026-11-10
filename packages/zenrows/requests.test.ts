@@ -1,0 +1,783 @@
+import { logEventFromContext } from 'corsair/core';
+import { ZenRowsAPIError } from './client';
+import { Crawls, Extract, Fetch } from './endpoints';
+import {
+	crawlPage,
+	crawlStarted,
+	crawlSummary,
+	extractAllowance,
+	extractPreparation,
+	extractServedDomain,
+	jsonResponseEnvelope,
+	productsExtract,
+	selectorsResult,
+	subscriptionDetails,
+	textPage,
+} from './test-fixtures';
+
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: jest.fn().mockResolvedValue(null),
+}));
+
+const mockLog = jest.mocked(logEventFromContext);
+const API_KEY = 'zr-test-key';
+
+// never parameters: every concrete endpoint is assignable to this because
+// parameters are contravariant. Each returns its own output type, so the shared
+// return is unknown.
+type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
+
+// unknown: negative cases pass values no schema accepts.
+function invoke(endpoint: AnyEndpoint, input: unknown = {}) {
+	// The fake context only carries what the endpoints read (ctx.key).
+	return endpoint({ key: API_KEY } as never, input as never);
+}
+
+let fetchMock: jest.SpyInstance;
+
+// unknown: response bodies are arbitrary provider JSON or page text.
+function respond(
+	body: unknown,
+	status = 200,
+	contentType = 'application/json',
+) {
+	fetchMock.mockResolvedValueOnce(
+		new Response(typeof body === 'string' ? body : JSON.stringify(body), {
+			status,
+			headers: { 'Content-Type': contentType },
+		}),
+	);
+}
+
+function lastRequest() {
+	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
+	const parsed = new URL(url);
+	return {
+		origin: parsed.origin,
+		path: parsed.pathname,
+		query: Object.fromEntries(parsed.searchParams),
+		method: init.method,
+		headers: new Headers(init.headers),
+		rawBody: init.body as string | undefined,
+		// unknown: the request body is whatever the endpoint serialised, and a
+		// forwarded Fetch body can be a urlencoded or plain string.
+		body: parseJsonBodyOrUndefined(init.body),
+	};
+}
+
+// unknown: only a JSON body is parsed; a forwarded string body stays raw.
+function parseJsonBodyOrUndefined(body: RequestInit['body']): unknown {
+	if (typeof body !== 'string') return undefined;
+	try {
+		return JSON.parse(body);
+	} catch {
+		return undefined;
+	}
+}
+
+function expectAuthenticated() {
+	const sent = lastRequest();
+	expect(sent.origin).toBe('https://api.zenrows.com');
+	expect(sent.headers.get('x-api-key')).toBe(API_KEY);
+	expect(sent.headers.get('authorization')).toBeNull();
+}
+
+beforeEach(() => {
+	fetchMock = jest.spyOn(globalThis, 'fetch');
+	mockLog.mockClear();
+});
+
+afterEach(() => {
+	fetchMock.mockRestore();
+});
+
+describe('fetch.page', () => {
+	it('GETs /v1/ with the url and asks for markdown', async () => {
+		respond(textPage.markdown, 200, 'text/plain');
+
+		const result = (await invoke(Fetch.fetchPage, {
+			url: 'https://example.com',
+			responseType: 'markdown',
+		})) as { body: string; responseType: string };
+
+		expectAuthenticated();
+		const sent = lastRequest();
+		expect(sent.method).toBe('GET');
+		expect(sent.path).toBe('/v1/');
+		expect(sent.query).toEqual({
+			url: 'https://example.com',
+			response_type: 'markdown',
+		});
+		expect(result.responseType).toBe('markdown');
+		expect(result.body).toBe(textPage.markdown);
+	});
+
+	it('defaults responseType to html and sends every rendering option', async () => {
+		respond(textPage.html, 200, 'text/plain');
+
+		const result = (await invoke(Fetch.fetchPage, {
+			url: 'https://example.com',
+			jsRender: true,
+			premiumProxy: true,
+			proxyCountry: 'us',
+			waitFor: '.price',
+			wait: 500,
+			blockResources: ['image', 'font'],
+			allowedStatusCodes: [404, 500],
+			sessionId: 12345,
+			originalStatus: true,
+			jsInstructions: [{ click: '.more' }, { wait: 200 }],
+		})) as { responseType: string };
+
+		const sent = lastRequest();
+		expect(result.responseType).toBe('html');
+		expect(sent.query).toMatchObject({
+			js_render: 'true',
+			premium_proxy: 'true',
+			proxy_country: 'us',
+			wait_for: '.price',
+			wait: '500',
+			block_resources: 'image,font',
+			allowed_status_codes: '404,500',
+			session_id: '12345',
+			original_status: 'true',
+			js_instructions: '[{"click":".more"},{"wait":200}]',
+		});
+	});
+
+	it('rejects mode=auto combined with jsRender or premiumProxy', async () => {
+		await expect(
+			invoke(Fetch.fetchPage, {
+				url: 'https://example.com',
+				mode: 'auto',
+				jsRender: true,
+			}),
+		).rejects.toThrow(/picks rendering itself/);
+		await expect(
+			invoke(Fetch.fetchPage, {
+				url: 'https://example.com',
+				mode: 'auto',
+				premiumProxy: true,
+			}),
+		).rejects.toThrow(/picks proxies itself/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects the options Zenrows only accepts with a browser', async () => {
+		await expect(
+			invoke(Fetch.fetchPage, {
+				url: 'https://example.com',
+				jsInstructions: [{ click: '.x' }],
+			}),
+		).rejects.toThrow(/jsInstructions needs jsRender/);
+		await expect(
+			invoke(Fetch.fetchPage, {
+				url: 'https://example.com',
+				waitFor: '.x',
+			}),
+		).rejects.toThrow(/waitFor needs jsRender/);
+		await expect(
+			invoke(Fetch.fetchPage, {
+				url: 'https://example.com',
+				proxyCountry: 'us',
+			}),
+		).rejects.toThrow(/proxyCountry needs premiumProxy/);
+	});
+
+	it('rejects a non-http url and an instruction with two actions', async () => {
+		await expect(
+			invoke(Fetch.fetchPage, { url: 'ftp://example.com' }),
+		).rejects.toThrow(/http or https/);
+		await expect(
+			invoke(Fetch.fetchPage, {
+				url: 'https://example.com',
+				jsRender: true,
+				jsInstructions: [{ click: '.a', wait: 10 }],
+			}),
+		).rejects.toThrow(/exactly one action key/);
+		await expect(
+			invoke(Fetch.fetchPage, {
+				url: 'https://example.com',
+				jsRender: true,
+				// A mistyped key would be ignored by the browser rather than rejected.
+				jsInstructions: [{ clik: '.a' }],
+			}),
+		).rejects.toThrow();
+	});
+});
+
+describe('fetch.extract', () => {
+	it('defaults extract to auto and returns the parsed fields', async () => {
+		respond(productsExtract, 200, 'text/plain');
+
+		const result = (await invoke(Fetch.fetchExtract, {
+			url: 'https://www.scrapingcourse.com/ecommerce/product/abominable-hoodie/',
+		})) as { parsed?: Record<string, unknown> };
+
+		expectAuthenticated();
+		const sent = lastRequest();
+		expect(sent.query).toMatchObject({
+			url: 'https://www.scrapingcourse.com/ecommerce/product/abominable-hoodie/',
+			extract: 'auto',
+		});
+		expect(result.parsed).toEqual(productsExtract.parsed);
+	});
+
+	it('narrows fields and never sends extract with a selector map', async () => {
+		respond(productsExtract, 200, 'text/plain');
+		await invoke(Fetch.fetchExtract, {
+			url: 'https://example.com/p/1',
+			extract: 'native',
+			extractFields: ['product.name', 'product.price'],
+		});
+		expect(lastRequest().query).toMatchObject({
+			extract: 'native',
+			extract_fields: 'product.name,product.price',
+		});
+	});
+
+	it('rejects extractFields without extract', async () => {
+		await expect(
+			invoke(Fetch.fetchExtract, {
+				url: 'https://example.com',
+				extractFields: ['a'],
+			}),
+		).rejects.toThrow(/only narrows an Extract call/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('fails loudly when a JSON mode answers HTML', async () => {
+		respond('<html></html>', 200, 'text/plain');
+
+		const error = await invoke(Fetch.fetchExtract, {
+			url: 'https://example.com',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ZenRowsAPIError);
+		expect((error as ZenRowsAPIError).message).toContain('not JSON');
+	});
+});
+
+describe('fetch.cssExtract', () => {
+	it('sends the selector map and returns the keys at the top level', async () => {
+		respond(selectorsResult, 200, 'text/plain');
+
+		const result = (await invoke(Fetch.fetchCssExtract, {
+			url: 'https://example.com',
+			cssExtractor: { title: 'h1', links: 'a @href' },
+		})) as Record<string, unknown>;
+
+		expectAuthenticated();
+		const sent = lastRequest();
+		expect(sent.query.css_extractor).toBe('{"title":"h1","links":"a @href"}');
+		// No envelope: Extract is off, so nothing is sent for it.
+		expect(sent.query.extract).toBeUndefined();
+		expect(result).toEqual(selectorsResult);
+	});
+
+	it('rejects an empty selector map', async () => {
+		await expect(
+			invoke(Fetch.fetchCssExtract, {
+				url: 'https://example.com',
+				cssExtractor: {},
+			}),
+		).rejects.toThrow(/at least one selector/);
+	});
+});
+
+describe('fetch.outputs', () => {
+	it('sends the filters comma-joined', async () => {
+		respond({ emails: ['a@example.com'], links: [] }, 200, 'text/plain');
+
+		const result = (await invoke(Fetch.fetchOutputs, {
+			url: 'https://example.com',
+			outputs: ['emails', 'links', 'phone_numbers'],
+		})) as Record<string, unknown>;
+
+		expectAuthenticated();
+		expect(lastRequest().query.outputs).toBe('emails,links,phone_numbers');
+		expect(result.emails).toEqual(['a@example.com']);
+	});
+
+	it('keeps a null filter result rather than dropping the key', async () => {
+		// A live page with no emails answers `{"emails":null,"phone_numbers":[]}`.
+		respond({ emails: null, phone_numbers: [] }, 200, 'text/plain');
+
+		const result = (await invoke(Fetch.fetchOutputs, {
+			url: 'https://example.com',
+			outputs: ['emails', 'phone_numbers'],
+		})) as Record<string, unknown>;
+
+		expect(result).toEqual({ emails: null, phone_numbers: [] });
+	});
+
+	it('rejects an unknown filter and an empty list', async () => {
+		await expect(
+			invoke(Fetch.fetchOutputs, {
+				url: 'https://example.com',
+				outputs: ['bogus'],
+			}),
+		).rejects.toThrow();
+		await expect(
+			invoke(Fetch.fetchOutputs, { url: 'https://example.com', outputs: [] }),
+		).rejects.toThrow();
+	});
+});
+
+describe('fetch.jsonResponse', () => {
+	it('sets json_response and returns the envelope with captured XHR calls', async () => {
+		respond(jsonResponseEnvelope, 200, 'text/plain');
+
+		const result = (await invoke(Fetch.fetchJsonResponse, {
+			url: 'https://example.com',
+			jsRender: true,
+		})) as { html?: string; xhr?: unknown[] };
+
+		expectAuthenticated();
+		expect(lastRequest().query).toMatchObject({
+			url: 'https://example.com',
+			js_render: 'true',
+			json_response: 'true',
+		});
+		expect(result.html).toBe(jsonResponseEnvelope.html);
+		expect(result.xhr).toEqual([]);
+	});
+
+	it('carries selectors and filters inside the envelope', async () => {
+		respond(
+			{
+				html: '<html></html>',
+				xhr: [],
+				outputs: { links: ['https://a.test'] },
+			},
+			200,
+			'text/plain',
+		);
+
+		const result = (await invoke(Fetch.fetchJsonResponse, {
+			url: 'https://example.com',
+			mode: 'auto',
+			outputs: ['links'],
+			cssExtractor: { title: 'h1' },
+		})) as { outputs?: Record<string, unknown> };
+
+		expect(lastRequest().query).toMatchObject({
+			mode: 'auto',
+			json_response: 'true',
+			outputs: 'links',
+			css_extractor: '{"title":"h1"}',
+		});
+		expect(result.outputs).toEqual({ links: ['https://a.test'] });
+	});
+
+	it('rejects a request with no browser to render in', async () => {
+		await expect(
+			invoke(Fetch.fetchJsonResponse, { url: 'https://example.com' }),
+		).rejects.toThrow(/json_response needs jsRender/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('fetch.post and fetch.put', () => {
+	it('relays a JSON body to the target and returns the page', async () => {
+		respond('<html>posted</html>', 200, 'text/plain');
+
+		const result = (await invoke(Fetch.fetchPost, {
+			url: 'https://httpbin.io/anything',
+			body: { type: 'json', value: { hello: 'world' } },
+		})) as { body: string };
+
+		const sent = lastRequest();
+		expectAuthenticated();
+		expect(sent.method).toBe('POST');
+		expect(sent.query.url).toBe('https://httpbin.io/anything');
+		expect(sent.headers.get('content-type')).toBe('application/json');
+		expect(sent.body).toEqual({ hello: 'world' });
+		expect(result.body).toBe('<html>posted</html>');
+	});
+
+	it('relays form fields as urlencoded text', async () => {
+		respond('ok', 200, 'text/plain');
+
+		await invoke(Fetch.fetchPost, {
+			url: 'https://httpbin.io/anything',
+			body: { type: 'form', value: { a: '1', b: 'two words' } },
+		});
+
+		const sent = lastRequest();
+		expect(sent.headers.get('content-type')).toBe(
+			'application/x-www-form-urlencoded',
+		);
+		expect(sent.rawBody).toBe('a=1&b=two+words');
+	});
+
+	it('relays a verbatim body with its own content type', async () => {
+		respond('ok', 200, 'text/plain');
+
+		await invoke(Fetch.fetchPost, {
+			url: 'https://httpbin.io/anything',
+			body: { type: 'text', value: '<x/>', contentType: 'text/xml' },
+		});
+
+		const sent = lastRequest();
+		expect(sent.headers.get('content-type')).toBe('text/xml');
+		expect(sent.rawBody).toBe('<x/>');
+	});
+
+	it('sends PUT with no body when none is given', async () => {
+		respond('ok', 200, 'text/plain');
+
+		await invoke(Fetch.fetchPut, { url: 'https://httpbin.io/anything' });
+
+		const sent = lastRequest();
+		expect(sent.method).toBe('PUT');
+		expect(sent.rawBody).toBeUndefined();
+		expect(sent.headers.get('content-type')).toBeNull();
+	});
+
+	it('moves the key to the query when the caller forwards headers', async () => {
+		respond('ok', 200, 'text/plain');
+
+		await invoke(Fetch.fetchPost, {
+			url: 'https://httpbin.io/anything',
+			customHeaders: true,
+		});
+
+		const sent = lastRequest();
+		expect(sent.headers.get('x-api-key')).toBeNull();
+		expect(sent.query.apikey).toBe(API_KEY);
+		expect(sent.query.custom_headers).toBe('true');
+	});
+
+	it('rejects a body type it cannot relay', async () => {
+		await expect(
+			invoke(Fetch.fetchPost, {
+				url: 'https://httpbin.io/anything',
+				body: { type: 'text', value: 'x' },
+			}),
+		).rejects.toThrow();
+	});
+});
+
+describe('crawl.start', () => {
+	it('POSTs the crawl body with snake_case fields and returns the running crawl', async () => {
+		respond(crawlStarted, 202);
+
+		const result = (await invoke(Crawls.start, {
+			url: 'https://www.scrapingcourse.com/ecommerce/',
+			maxPages: 10,
+			maxItems: 100,
+			depth: 2,
+			includePatterns: ['/product/'],
+			excludePatterns: ['/cart/'],
+			outputFormat: 'html',
+			idempotencyKey: 'crawl-1',
+		})) as { crawl_id: string; status: string };
+
+		expectAuthenticated();
+		const sent = lastRequest();
+		expect(sent.method).toBe('POST');
+		expect(sent.path).toBe('/v1/crawls');
+		expect(sent.headers.get('idempotency-key')).toBe('crawl-1');
+		expect(sent.body).toEqual({
+			url: 'https://www.scrapingcourse.com/ecommerce/',
+			depth: 2,
+			max_items: 100,
+			max_pages: 10,
+			include_patterns: ['/product/'],
+			exclude_patterns: ['/cart/'],
+			output_format: 'html',
+		});
+		expect(result.crawl_id).toBe(crawlStarted.crawl_id);
+		expect(result.status).toBe('running');
+	});
+
+	it('nests the webhook as Zenrows expects it', async () => {
+		respond(crawlStarted, 202);
+
+		await invoke(Crawls.start, {
+			url: 'https://example.com',
+			webhookUrl: 'https://hooks.example.com/zenrows',
+			webhookEvents: ['crawl.completed'],
+			webhookMetadata: { site: 'example' },
+		});
+
+		const sent = lastRequest().body as {
+			webhook: {
+				url: string;
+				events: string[];
+				metadata: Record<string, string>;
+			};
+		};
+		expect(sent.webhook).toEqual({
+			url: 'https://hooks.example.com/zenrows',
+			events: ['crawl.completed'],
+			metadata: { site: 'example' },
+		});
+	});
+
+	it('rejects out-of-range limits, a non-https webhook and an unparsable url', async () => {
+		await expect(
+			invoke(Crawls.start, { url: 'https://example.com', maxPages: 0 }),
+		).rejects.toThrow();
+		await expect(
+			invoke(Crawls.start, {
+				url: 'https://example.com',
+				webhookUrl: 'http://hooks.example.com/x',
+			}),
+		).rejects.toThrow(/https/);
+		await expect(invoke(Crawls.start, { url: 'example.com' })).rejects.toThrow(
+			/http or https/,
+		);
+	});
+});
+
+describe('crawl.list', () => {
+	it('GETs /v1/crawls with the cursor and limit, then reports the next cursor', async () => {
+		respond({ crawls: [crawlSummary], next_cursor: 'cur_2' });
+
+		const result = (await invoke(Crawls.list, {
+			cursor: 'cur_1',
+			limit: 50,
+		})) as { crawls: unknown[]; next_cursor?: string | null };
+
+		expectAuthenticated();
+		const sent = lastRequest();
+		expect(sent.method).toBe('GET');
+		expect(sent.path).toBe('/v1/crawls');
+		expect(sent.query).toEqual({ cursor: 'cur_1', limit: '50' });
+		expect(result.crawls).toHaveLength(1);
+		expect(result.next_cursor).toBe('cur_2');
+	});
+
+	it('accepts a last page with no next_cursor at all', async () => {
+		respond({ crawls: [crawlSummary] });
+
+		const result = (await invoke(Crawls.list, {})) as {
+			next_cursor?: string | null;
+		};
+
+		expect(result.next_cursor).toBeUndefined();
+	});
+});
+
+describe('crawl.get', () => {
+	it('GETs one crawl with its results and cursor', async () => {
+		respond(crawlPage);
+
+		const result = (await invoke(Crawls.get, {
+			crawlId: crawlPage.crawl_id,
+			cursor: 'cur_1',
+			limit: 5,
+		})) as { results?: unknown[]; next_cursor?: string | null };
+
+		expectAuthenticated();
+		const sent = lastRequest();
+		expect(sent.path).toBe(`/v1/crawls/${crawlPage.crawl_id}`);
+		expect(sent.query).toEqual({ cursor: 'cur_1', limit: '5' });
+		expect(result.results).toHaveLength(1);
+		expect(result.next_cursor).toBeNull();
+	});
+
+	it('encodes the crawl id in the path', async () => {
+		respond(crawlPage);
+
+		await invoke(Crawls.get, { crawlId: 'c_1/../2' });
+
+		expect(lastRequest().path).toBe('/v1/crawls/c_1%2F..%2F2');
+	});
+});
+
+describe('crawl.getContent', () => {
+	it('GETs one page as text, taking the ids as separate segments', async () => {
+		respond('<html>cart</html>', 200, 'text/html');
+
+		const result = (await invoke(Crawls.getContent, {
+			crawlId: 'c_01M72F709NDF8XFBYKBXRZ3QFA',
+			contentId: 'ct_43c2cdbac1508bc68fe4d9788c11caf3',
+			download: true,
+		})) as { body: string };
+
+		expectAuthenticated();
+		const sent = lastRequest();
+		expect(sent.path).toBe(
+			'/v1/crawls/c_01M72F709NDF8XFBYKBXRZ3QFA/contents/ct_43c2cdbac1508bc68fe4d9788c11caf3',
+		);
+		expect(sent.query).toEqual({ download: 'true' });
+		expect(result.body).toBe('<html>cart</html>');
+	});
+});
+
+describe('crawl.stop', () => {
+	it('POSTs to the stop action with no body and returns the stop state', async () => {
+		respond({
+			crawl_id: 'c_01M72F709NDF8XFBYKBXRZ3QFA',
+			status: 'completed',
+			stop_reason: 'max_pages',
+			finished_at: '2026-11-10T10:14:20.445560976Z',
+		});
+
+		const result = (await invoke(Crawls.stop, {
+			crawlId: 'c_01M72F709NDF8XFBYKBXRZ3QFA',
+		})) as { status: string; stop_reason?: string | null };
+
+		expectAuthenticated();
+		const sent = lastRequest();
+		expect(sent.method).toBe('POST');
+		expect(sent.path).toBe('/v1/crawls/c_01M72F709NDF8XFBYKBXRZ3QFA/stop');
+		expect(sent.rawBody).toBeUndefined();
+		expect(result.status).toBe('completed');
+		expect(result.stop_reason).toBe('max_pages');
+	});
+});
+
+describe('extract.domains', () => {
+	it('GETs the served domains with their verticals', async () => {
+		respond({ domains: [extractServedDomain] });
+
+		const result = (await invoke(Extract.domains)) as {
+			domains: { domain: string }[];
+		};
+
+		expectAuthenticated();
+		expect(lastRequest().path).toBe('/v1/extract/domains');
+		expect(result.domains[0]?.domain).toBe('scrapingcourse.com');
+	});
+});
+
+describe('extract.prepareDomain', () => {
+	it('POSTs the domain and its example URLs, returning the preparation', async () => {
+		respond(extractPreparation, 202);
+
+		const result = (await invoke(Extract.prepareDomain, {
+			domain: 'scrapingcourse.com',
+			exampleUrls: [
+				'https://www.scrapingcourse.com/ecommerce/product/abominable-hoodie/',
+			],
+			idempotencyKey: 'prep-1',
+		})) as { domain: string; status: string };
+
+		expectAuthenticated();
+		const sent = lastRequest();
+		expect(sent.method).toBe('POST');
+		expect(sent.path).toBe('/v1/extract/prepared-domains');
+		expect(sent.headers.get('idempotency-key')).toBe('prep-1');
+		expect(sent.body).toEqual({
+			domain: 'scrapingcourse.com',
+			example_urls: [
+				'https://www.scrapingcourse.com/ecommerce/product/abominable-hoodie/',
+			],
+		});
+		expect(result.domain).toBe('scrapingcourse.com');
+		expect(result.status).toBe('preparing');
+	});
+
+	it('rejects a scheme in the domain and more than five example URLs', async () => {
+		await expect(
+			invoke(Extract.prepareDomain, { domain: 'https://example.com' }),
+		).rejects.toThrow(/bare domain/);
+		await expect(
+			invoke(Extract.prepareDomain, {
+				domain: 'example.com',
+				exampleUrls: Array.from(
+					{ length: 6 },
+					(_value, index) => `https://example.com/${index}`,
+				),
+			}),
+		).rejects.toThrow();
+	});
+});
+
+describe('extract.getDomainStatus', () => {
+	it('GETs one domain preparation', async () => {
+		respond(extractPreparation);
+
+		const result = (await invoke(Extract.getDomainStatus, {
+			domain: 'scrapingcourse.com',
+		})) as { domain: string; roles?: unknown[] };
+
+		expectAuthenticated();
+		expect(lastRequest().path).toBe(
+			'/v1/extract/prepared-domains/scrapingcourse.com',
+		);
+		expect(result.domain).toBe('scrapingcourse.com');
+		expect(result.roles).toBeDefined();
+	});
+});
+
+describe('extract.listPreparedDomains', () => {
+	it('GETs this account submissions with the allowance', async () => {
+		respond({ allowance: extractAllowance, domains: [extractPreparation] });
+
+		const result = (await invoke(Extract.listPreparedDomains)) as {
+			domains: unknown[];
+			allowance?: { remaining?: number | null };
+		};
+
+		expectAuthenticated();
+		expect(lastRequest().path).toBe('/v1/extract/prepared-domains');
+		expect(result.domains).toHaveLength(1);
+		expect(result.allowance?.remaining).toBe(10);
+	});
+});
+
+describe('extract.allowance', () => {
+	it('GETs the monthly preparation allowance', async () => {
+		respond(extractAllowance);
+
+		const result = (await invoke(Extract.allowance)) as {
+			used: number;
+			limit: number;
+			month: string;
+		};
+
+		expectAuthenticated();
+		expect(lastRequest().path).toBe('/v1/extract/prepared-domains/allowance');
+		expect(result).toEqual(extractAllowance);
+	});
+});
+
+describe('account.subscription', () => {
+	it('GETs the plan behind the key', async () => {
+		respond(subscriptionDetails);
+
+		const result = (await invoke(Extract.subscription)) as {
+			status: string;
+			plan?: { name?: string | null };
+		};
+
+		expectAuthenticated();
+		expect(lastRequest().path).toBe('/v1/subscriptions/self/details');
+		expect(result.status).toBe('TRIALING');
+		expect(result.plan?.name).toBe('Free');
+	});
+});
+
+describe('logging', () => {
+	it('logs an event per call with the operation name and no page content', async () => {
+		respond(textPage.markdown, 200, 'text/plain');
+
+		await invoke(Fetch.fetchPage, {
+			url: 'https://example.com',
+			responseType: 'markdown',
+		});
+
+		expect(mockLog).toHaveBeenCalledTimes(1);
+		const [, event, payload] = mockLog.mock.calls[0] as [
+			unknown,
+			string,
+			Record<string, unknown>,
+		];
+		expect(event).toBe('zenrows.fetch.page');
+		expect(payload).toEqual({
+			responseType: 'markdown',
+			bytes: textPage.markdown.length,
+			jsRender: undefined,
+			premiumProxy: undefined,
+			mode: undefined,
+		});
+		// The URL is never logged: with customHeaders the key rides in the query.
+		expect(JSON.stringify(payload)).not.toContain('example.com');
+	});
+});
