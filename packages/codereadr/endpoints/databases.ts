@@ -145,10 +145,11 @@ export const showValues: CodereadrEndpoints['databasesShowValues'] = (
 			shape: (root, parsed) => {
 				const shaped = shapeDatabaseValues(root);
 				const offset = parsed.offset ?? 0;
+				// Rows returned, not `<count>`, which may be the total of all matches.
 				return {
 					...shaped,
 					next_offset:
-						parsed.limit !== undefined && (shaped.count ?? 0) >= parsed.limit
+						parsed.limit !== undefined && shaped.values.length >= parsed.limit
 							? offset + parsed.limit
 							: undefined,
 				};

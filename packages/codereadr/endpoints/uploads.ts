@@ -1,6 +1,6 @@
 import type { CodereadrEndpoints } from '..';
 import { call, idList } from './call';
-import { readCount, shapeUploads } from './shape';
+import { shapeUploads } from './shape';
 import {
 	CodereadrEndpointInputSchemas as Inputs,
 	CodereadrEndpointOutputSchemas as Outputs,
@@ -26,11 +26,13 @@ export const list: CodereadrEndpoints['uploadsList'] = (ctx, input) =>
 		}),
 		{
 			shape: (root, parsed) => {
+				const shaped = shapeUploads(root);
 				const offset = parsed.offset ?? 0;
+				// Rows returned, not `<count>`, which may be the total of all matches.
 				return {
-					...shapeUploads(root),
+					...shaped,
 					next_offset:
-						parsed.limit !== undefined && (readCount(root) ?? 0) >= parsed.limit
+						parsed.limit !== undefined && shaped.uploads.length >= parsed.limit
 							? offset + parsed.limit
 							: undefined,
 				};

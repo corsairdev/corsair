@@ -74,7 +74,9 @@ const ScansListInputSchema = z.object({
 		.int()
 		.nonnegative()
 		.optional()
-		.describe('Rows to skip. Only valid with `limit`.'),
+		.describe(
+			`Rows to skip. The API ignores it without \`limit\`, so the default ${SCANS_DEFAULT_LIMIT} is sent when \`limit\` is omitted.`,
+		),
 	show_properties: z
 		.boolean()
 		.optional()
@@ -659,30 +661,47 @@ const DatabaseValueSchema = z
 
 export type CodereadrDatabaseValue = z.infer<typeof DatabaseValueSchema>;
 
-const DatabasesShowValuesInputSchema = z.object({
-	database_id: IdSchema.describe('The database to read.'),
-	value: z.string().optional().describe('Exact match on the stored value.'),
-	valuelike: z
-		.string()
-		.optional()
-		.describe('Partial match on the stored value.'),
-	response: z.string().optional().describe('Exact match on the response text.'),
-	responselike: z
-		.string()
-		.optional()
-		.describe('Partial match on the response text.'),
-	validity: z
-		.union([z.literal(1), z.literal(0)])
-		.optional()
-		.describe('`1` only valid values, `0` only invalid ones.'),
-	limit: z.number().int().positive().optional().describe('Page size.'),
-	offset: z
-		.number()
-		.int()
-		.nonnegative()
-		.optional()
-		.describe('Rows to skip. Only valid with `limit`.'),
-});
+const DatabasesShowValuesInputSchema = z
+	.object({
+		database_id: IdSchema.describe('The database to read.'),
+		value: z.string().optional().describe('Exact match on the stored value.'),
+		valuelike: z
+			.string()
+			.optional()
+			.describe('Partial match on the stored value.'),
+		response: z
+			.string()
+			.optional()
+			.describe('Exact match on the response text.'),
+		responselike: z
+			.string()
+			.optional()
+			.describe('Partial match on the response text.'),
+		validity: z
+			.union([z.literal(1), z.literal(0)])
+			.optional()
+			.describe('`1` only valid values, `0` only invalid ones.'),
+		limit: z.number().int().positive().optional().describe('Page size.'),
+		offset: z
+			.number()
+			.int()
+			.nonnegative()
+			.optional()
+			.describe('Rows to skip. Needs `limit`.'),
+	})
+	.superRefine((value, ctx) => {
+		// The API ignores `offset` unless `limit` comes with it and has no
+		// documented default page size here, so an offset on its own would
+		// silently return the first rows again.
+		if (value.offset !== undefined && value.limit === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['limit'],
+				message:
+					'limit is required with offset; CodeREADr ignores an offset sent without it',
+			});
+		}
+	});
 
 export type DatabasesShowValuesInput = z.input<
 	typeof DatabasesShowValuesInputSchema
@@ -1052,24 +1071,38 @@ const UploadSchema = z
 
 export type CodereadrUpload = z.infer<typeof UploadSchema>;
 
-const UploadsListInputSchema = z.object({
-	service_id: IdListSchema.optional().describe(
-		'Services to read uploads from. `all` by default.',
-	),
-	device_id: IdListSchema.optional().describe(
-		'Devices that made the uploads. `all` by default.',
-	),
-	user_id: IdListSchema.optional().describe(
-		'Users who made the uploads. `all` by default.',
-	),
-	limit: z.number().int().positive().optional().describe('Page size.'),
-	offset: z
-		.number()
-		.int()
-		.nonnegative()
-		.optional()
-		.describe('Rows to skip. Only valid with `limit`.'),
-});
+const UploadsListInputSchema = z
+	.object({
+		service_id: IdListSchema.optional().describe(
+			'Services to read uploads from. `all` by default.',
+		),
+		device_id: IdListSchema.optional().describe(
+			'Devices that made the uploads. `all` by default.',
+		),
+		user_id: IdListSchema.optional().describe(
+			'Users who made the uploads. `all` by default.',
+		),
+		limit: z.number().int().positive().optional().describe('Page size.'),
+		offset: z
+			.number()
+			.int()
+			.nonnegative()
+			.optional()
+			.describe('Rows to skip. Needs `limit`.'),
+	})
+	.superRefine((value, ctx) => {
+		// The API ignores `offset` unless `limit` comes with it and has no
+		// documented default page size here, so an offset on its own would
+		// silently return the first rows again.
+		if (value.offset !== undefined && value.limit === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['limit'],
+				message:
+					'limit is required with offset; CodeREADr ignores an offset sent without it',
+			});
+		}
+	});
 
 export type UploadsListInput = z.input<typeof UploadsListInputSchema>;
 

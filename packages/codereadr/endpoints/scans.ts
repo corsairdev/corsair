@@ -1,7 +1,7 @@
 import type { CodereadrEndpoints } from '..';
 import type { CodereadrParams } from '../client';
 import { call, flag, idList } from './call';
-import { readCount, shapeScans } from './shape';
+import { shapeScans } from './shape';
 import {
 	CodereadrEndpointInputSchemas as Inputs,
 	CodereadrEndpointOutputSchemas as Outputs,
@@ -32,7 +32,13 @@ export const list: CodereadrEndpoints['scansList'] = (ctx, input) =>
 				end_date: parsed.end_date,
 				end_time: parsed.end_time,
 				upload_id: idList(parsed.upload_id),
-				limit: parsed.limit,
+				// The API only applies `offset` when `limit` is sent with it. A caller
+				// following `next_offset` from a default page sends no limit, so the
+				// documented default goes out explicitly; without it every "next" page
+				// would be the first page again.
+				limit:
+					parsed.limit ??
+					(parsed.offset !== undefined ? SCANS_DEFAULT_LIMIT : undefined),
 				offset: parsed.offset,
 				showProperties: flag(parsed.show_properties),
 				includeProperty: parsed.include_property?.join(','),
@@ -61,15 +67,19 @@ export const list: CodereadrEndpoints['scansList'] = (ctx, input) =>
 		},
 		{
 			shape: (root, parsed) => {
-				const count = readCount(root);
+				const shaped = shapeScans(root);
 				// Omitting `limit` does not mean unlimited: the API caps the page at
 				// its documented default of 10,000, so a full default page can still
 				// have more behind it.
 				const pageSize = parsed.limit ?? SCANS_DEFAULT_LIMIT;
 				const offset = parsed.offset ?? 0;
+				// The rows returned decide, not `<count>`: the docs do not say
+				// whether count is this page or every match, and a total would keep
+				// offering a next page after the last one.
 				return {
-					...shapeScans(root),
-					next_offset: (count ?? 0) >= pageSize ? offset + pageSize : undefined,
+					...shaped,
+					next_offset:
+						shaped.scans.length >= pageSize ? offset + pageSize : undefined,
 				};
 			},
 			log: (_, result) => ({ count: result.scans.length }),

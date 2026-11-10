@@ -1,7 +1,13 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { codereadr } from './index';
-import { CREATED_XML, SCANS_XML, SUCCESS_XML } from './test-fixtures';
+import {
+	CREATED_XML,
+	DATABASE_VALUES_XML,
+	SCANS_XML,
+	SUCCESS_XML,
+	UPLOADS_XML,
+} from './test-fixtures';
 
 async function createClient() {
 	const testDb = createTestDatabase();
@@ -558,6 +564,136 @@ describe('request shape per operation', () => {
 			expect(form.get('section')).toBe('limits');
 			expect(form.get('action')).toBe('retrieve');
 			expect([...form.keys()].sort()).toEqual(['action', 'api_key', 'section']);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
+
+/**
+ * `offset` only takes effect together with `limit`, and the docs do not say
+ * whether the root `<count>` is the rows on this page or every match. Paging
+ * has to hold under both readings, or a caller following `next_offset` either
+ * re-reads the first page forever or walks empty pages forever.
+ */
+describe('paging', () => {
+	it('scans.list sends the default limit with an offset so the offset applies', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respondXml(SCANS_XML);
+
+			await corsair.codereadr.api.scans.list({ offset: 10_000 });
+
+			const form = sentForm();
+			expect(form.get('offset')).toBe('10000');
+			expect(form.get('limit')).toBe('10000');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('scans.list leaves limit out when there is no offset to anchor', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respondXml(SCANS_XML);
+
+			await corsair.codereadr.api.scans.list({});
+
+			expect(sentForm().has('limit')).toBe(false);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('scans.list reports the next offset for a full page', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respondXml(SCANS_XML);
+
+			const result = await corsair.codereadr.api.scans.list({
+				limit: 2,
+				offset: 4,
+			});
+
+			expect(result.next_offset).toBe(6);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('scans.list stops paging on an empty page even when count is the total', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			// A total-style count: 25 matches, none of them on this page.
+			respondXml('<xml><status>1</status><count>25</count></xml>');
+
+			const result = await corsair.codereadr.api.scans.list({
+				limit: 10,
+				offset: 30,
+			});
+
+			expect(result.scans).toEqual([]);
+			expect(result.next_offset).toBeUndefined();
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('databases.showValues pages on the rows returned, not the count', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respondXml(DATABASE_VALUES_XML);
+			respondXml('<xml><status>1</status><count>25</count></xml>');
+
+			const full = await corsair.codereadr.api.databases.showValues({
+				database_id: 120,
+				limit: 2,
+			});
+			const empty = await corsair.codereadr.api.databases.showValues({
+				database_id: 120,
+				limit: 2,
+				offset: 30,
+			});
+
+			expect(full.next_offset).toBe(2);
+			expect(empty.next_offset).toBeUndefined();
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('uploads.list pages on the rows returned, not the count', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respondXml(UPLOADS_XML);
+			respondXml('<xml><status>1</status><count>25</count></xml>');
+
+			const full = await corsair.codereadr.api.uploads.list({ limit: 2 });
+			const empty = await corsair.codereadr.api.uploads.list({
+				limit: 2,
+				offset: 30,
+			});
+
+			expect(full.next_offset).toBe(2);
+			expect(empty.next_offset).toBeUndefined();
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('rejects an offset without a limit where the API has no default page size', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			await expect(
+				corsair.codereadr.api.databases.showValues({
+					database_id: 120,
+					offset: 20,
+				}),
+			).rejects.toThrow(/limit/);
+			await expect(
+				corsair.codereadr.api.uploads.list({ offset: 20 }),
+			).rejects.toThrow(/limit/);
+			expect(fetchMock).not.toHaveBeenCalled();
 		} finally {
 			testDb.cleanup();
 		}
