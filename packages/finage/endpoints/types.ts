@@ -7,7 +7,7 @@ import {
 	FinageGlobalMarketInputSchemas,
 	FinageGlobalMarketOutputSchemas,
 } from './global-market-types';
-import { finageJsonValue } from './json-value';
+import { finageJsonValue, outArray, outNumber, outText } from './json-value';
 
 export type { FinageJsonValue } from './json-value';
 
@@ -167,59 +167,59 @@ const baseFinageInputSchemas = {
 const providerObject = z.record(z.string(), finageJsonValue);
 const quoteResponse = z
 	.object({
-		symbol: text,
-		ask: z.number(),
-		bid: z.number(),
-		asize: z.number().optional(),
-		bsize: z.number().optional(),
-		timestamp: z.number(),
+		symbol: outText,
+		ask: outNumber,
+		bid: outNumber,
+		asize: outNumber.optional(),
+		bsize: outNumber.optional(),
+		timestamp: outNumber,
 	})
 	.catchall(finageJsonValue);
 const tradeResponse = z
 	.object({
-		symbol: text,
-		price: z.number(),
-		size: z.number().optional(),
-		timestamp: z.number(),
+		symbol: outText,
+		price: outNumber,
+		size: outNumber.optional(),
+		timestamp: outNumber,
 	})
 	.catchall(finageJsonValue);
 const conversionResponse = z
 	.object({
-		from: text,
-		to: text,
-		amount: z.number(),
-		value: z.number(),
-		timestamp: z.number(),
+		from: outText,
+		to: outText,
+		amount: outNumber,
+		value: outNumber,
+		timestamp: outNumber,
 	})
 	.catchall(finageJsonValue);
 const aggregateBar = z
 	.object({
-		o: z.number(),
-		h: z.number(),
-		l: z.number(),
-		c: z.number(),
-		v: z.number().optional(),
+		o: outNumber,
+		h: outNumber,
+		l: outNumber,
+		c: outNumber,
+		v: outNumber.optional(),
 		// A millisecond timestamp by default; a datetime string when the request
 		// sets date_format to dt.
-		t: z.union([z.number(), z.string()]),
+		t: z.union([outNumber, z.string()]),
 	})
 	.catchall(finageJsonValue);
 const aggregateResponse = z
 	.object({
-		symbol: text,
-		totalResults: z.number(),
-		results: z.array(aggregateBar),
+		symbol: outText,
+		totalResults: outNumber,
+		results: outArray(aggregateBar),
 	})
 	.catchall(finageJsonValue);
 const snapshotQuote = z
 	.object({
-		s: text.optional(),
-		symbol: text.optional(),
-		a: z.number().optional(),
-		b: z.number().optional(),
-		asz: z.number().optional(),
-		bsz: z.number().optional(),
-		t: z.number().optional(),
+		s: outText.optional(),
+		symbol: outText.optional(),
+		a: outNumber.optional(),
+		b: outNumber.optional(),
+		asz: outNumber.optional(),
+		bsz: outNumber.optional(),
+		t: outNumber.optional(),
 	})
 	.catchall(finageJsonValue)
 	// Every documented quote carries at least one price or size; an empty entry
@@ -234,12 +234,12 @@ const snapshotQuote = z
 	);
 const snapshotTrade = z
 	.object({
-		s: text.optional(),
-		symbol: text.optional(),
-		p: z.number().optional(),
-		price: z.number().optional(),
-		sz: z.number().optional(),
-		t: z.number().optional(),
+		s: outText.optional(),
+		symbol: outText.optional(),
+		p: outNumber.optional(),
+		price: outNumber.optional(),
+		sz: outNumber.optional(),
+		t: outNumber.optional(),
 	})
 	.catchall(finageJsonValue)
 	.refine(
@@ -251,16 +251,16 @@ const snapshotTrade = z
 	);
 const snapshotResponse = z
 	.object({
-		totalResults: z.number().optional(),
-		lastQuotes: z.array(snapshotQuote).optional(),
-		lastTrades: z.array(snapshotTrade).optional(),
+		totalResults: outNumber.optional(),
+		lastQuotes: outArray(snapshotQuote).optional(),
+		lastTrades: outArray(snapshotTrade).optional(),
 	})
 	.catchall(finageJsonValue);
 const marketStatusResponse = z
 	.object({
-		market: z.string().optional(),
-		timezone: z.string().optional(),
-		country: z.string().optional(),
+		market: outText.optional(),
+		timezone: outText.optional(),
+		country: outText.optional(),
 		exchanges: providerObject.optional(),
 		currencies: providerObject.optional(),
 	})
@@ -268,29 +268,29 @@ const marketStatusResponse = z
 
 const newsItem = z
 	.object({
-		source: text,
-		title: text,
-		description: text,
-		url: text,
-		date: text,
+		source: outText,
+		title: outText,
+		description: outText,
+		url: outText,
+		date: outText,
 	})
 	.catchall(finageJsonValue);
 const newsResponse = z
 	.object({
-		ticker: text,
-		limit: z.number(),
-		news: z.array(newsItem),
+		ticker: outText,
+		limit: outNumber,
+		news: outArray(newsItem),
 	})
 	.catchall(finageJsonValue);
 
 const countryDetail = z
 	.object({
-		country: text,
-		country_code: text,
-		currency: text,
-		currency_code: text,
-		phone_code: text,
-		country_flag: text,
+		country: outText,
+		country_code: outText,
+		currency: outText,
+		currency_code: outText,
+		phone_code: outText,
+		country_flag: outText,
 	})
 	.catchall(finageJsonValue);
 // The reference wraps each detail record in an array; the API returns the
@@ -300,19 +300,19 @@ const itemOrArray = <T extends z.ZodType>(item: T) =>
 const countryDetailResponse = itemOrArray(countryDetail);
 const currencyDetail = z
 	.object({
-		symbol: text,
-		from: text,
-		to: text,
-		from_flag: text,
-		to_flag: text,
+		symbol: outText,
+		from: outText,
+		to: outText,
+		from_flag: outText,
+		to_flag: outText,
 	})
 	.catchall(finageJsonValue);
 const currencyDetailResponse = itemOrArray(currencyDetail);
 const companyDetail = z
 	.object({
-		symbol: text,
+		symbol: outText,
 		logo: optionalText,
-		name: text,
+		name: outText,
 		url: optionalText,
 		description: optionalText,
 		exchange: optionalText,
@@ -326,35 +326,32 @@ const companyDetail = z
 	})
 	.catchall(finageJsonValue);
 
-const activeFlag = z
-	.union([z.boolean(), z.string()])
-	.nullable()
-	.optional();
+const activeFlag = z.union([z.boolean(), z.string()]).nullable().optional();
 const cryptoDeveloper = z
-	.object({ name: text, position: text })
+	.object({ name: outText, position: outText })
 	.catchall(finageJsonValue);
 const cryptoLinks = z
 	.object({
-		explorer: z.array(text).optional(),
-		facebook: z.array(text).optional(),
-		reddit: z.array(text).optional(),
-		source_code: z.array(text).optional(),
-		website: z.array(text).optional(),
-		youtube: z.array(text).optional(),
+		explorer: outArray(outText).optional(),
+		facebook: outArray(outText).optional(),
+		reddit: outArray(outText).optional(),
+		source_code: outArray(outText).optional(),
+		website: outArray(outText).optional(),
+		youtube: outArray(outText).optional(),
 	})
 	.catchall(finageJsonValue);
 const cryptoDetail = z
 	.object({
-		name: text,
-		symbol: text,
-		type: text,
+		name: outText,
+		symbol: outText,
+		type: outText,
 		isActive: optionalBoolean,
 		// The API sends is_active (a boolean here, a "true"/"false" string in
 		// search results) and snake_case names for the fields below; the
 		// reference documents camelCase.
 		is_active: activeFlag,
 		description: optionalText,
-		developers: z.array(cryptoDeveloper).nullable().optional(),
+		developers: outArray(cryptoDeveloper).optional(),
 		opensource: optionalBoolean,
 		startedAt: optionalText,
 		hashAlgorithm: optionalText,
@@ -371,129 +368,129 @@ const cryptoDetail = z
 	.catchall(finageJsonValue);
 const cryptoDetailedItem = z
 	.object({
-		symbol: text,
-		name: text,
-		price: z.number(),
-		changesPercentage: z.number(),
-		change: z.number(),
-		high: z.number(),
-		open: z.number(),
-		low: z.number(),
-		close: z.number(),
-		yearHigh: z.number(),
-		yearLow: z.number(),
-		marketCap: z.number(),
-		priceAvg50: z.number(),
-		priceAvg200: z.number(),
-		volume: z.number(),
-		avgVolume: z.number(),
-		exchange: text,
-		sharesOutstanding: z.number(),
-		timestamp: z.number(),
+		symbol: outText,
+		name: outText,
+		price: outNumber,
+		changesPercentage: outNumber,
+		change: outNumber,
+		high: outNumber,
+		open: outNumber,
+		low: outNumber,
+		close: outNumber,
+		yearHigh: outNumber,
+		yearLow: outNumber,
+		marketCap: outNumber,
+		priceAvg50: outNumber,
+		priceAvg200: outNumber,
+		volume: outNumber,
+		avgVolume: outNumber,
+		exchange: outText,
+		sharesOutstanding: outNumber,
+		timestamp: outNumber,
 	})
 	.catchall(finageJsonValue);
 
 const marketSearchResult = z
-	.object({ symbol: text, description: text, s_type: text })
+	.object({ symbol: outText, description: outText, s_type: outText })
 	.catchall(finageJsonValue);
 const countrySearchResult = countryDetail;
 const currencySearchResult = currencyDetail;
 const cryptoSearchResult = z
 	.object({
-		name: text,
-		symbol: text,
-		type: text,
+		name: outText,
+		symbol: outText,
+		type: outText,
 		isActive: optionalBoolean,
 		is_active: activeFlag,
 	})
 	.catchall(finageJsonValue);
 const marketSearchEnvelope = z
 	.object({
-		key: text,
-		market: text,
-		limit: z.number(),
-		results: z.array(marketSearchResult),
+		key: outText,
+		market: outText,
+		limit: outNumber,
+		results: outArray(marketSearchResult),
 	})
 	.catchall(finageJsonValue);
 const countrySearchEnvelope = z
 	.object({
-		key: text,
-		limit: z.number(),
-		results: z.array(countrySearchResult),
+		key: outText,
+		limit: outNumber,
+		results: outArray(countrySearchResult),
 	})
 	.catchall(finageJsonValue);
 const currencySearchEnvelope = z
 	.object({
-		key: text,
-		limit: z.number(),
-		results: z.array(currencySearchResult),
+		key: outText,
+		limit: outNumber,
+		results: outArray(currencySearchResult),
 	})
 	.catchall(finageJsonValue);
 const cryptoSearchEnvelope = z
 	.object({
-		key: text,
-		limit: z.number(),
-		results: z.array(cryptoSearchResult),
+		key: outText,
+		limit: outNumber,
+		results: outArray(cryptoSearchResult),
 	})
 	.catchall(finageJsonValue);
 
 const marketInformationItem = z
 	.object({
-		symbol: text,
-		price: text,
-		change: text,
-		change_percentage: text,
-		company_name: text,
+		symbol: outText,
+		price: outText,
+		change: outText,
+		change_percentage: outText,
+		company_name: outText,
 	})
 	.catchall(finageJsonValue);
 const mostActiveItem = z
 	.object({
-		symbol: text,
-		price: text,
-		change: z.number(),
-		change_percentage: text,
-		company_name: text,
+		symbol: outText,
+		price: outText,
+		change: outNumber,
+		change_percentage: outText,
+		company_name: outText,
 	})
 	.catchall(finageJsonValue);
 const sectorPerformanceItem = z
-	.object({ sector: text, change_percentage: text })
+	.object({ sector: outText, change_percentage: outText })
 	.catchall(finageJsonValue);
 const rssFeedItem = z
 	.object({
-		title: text,
-		date: text,
-		link: text,
-		cik: text,
-		form_type: text,
-		ticker: text,
+		title: outText,
+		date: outText,
+		link: outText,
+		cik: outText,
+		form_type: outText,
+		ticker: outText,
 	})
 	.catchall(finageJsonValue);
 const cryptocurrencyListItem = z
 	.object({
-		symbol: text,
-		name: text,
-		thumbnail: text,
-		market_cap: z.number(),
-		ath: z.number(),
-		ath_date: text,
-		order: z.number(),
+		symbol: outText,
+		name: outText,
+		thumbnail: outText,
+		market_cap: outNumber,
+		ath: outNumber,
+		ath_date: outText,
+		order: outNumber,
 	})
 	.catchall(finageJsonValue);
 const cryptocurrencyListEnvelope = z
 	.object({
 		// The reference documents totalResults; the API sends total_results.
-		totalResults: z.number().optional(),
-		total_results: z.number().optional(),
-		results: z.array(cryptocurrencyListItem),
+		totalResults: outNumber.optional(),
+		total_results: outNumber.optional(),
+		results: outArray(cryptocurrencyListItem),
 	})
 	.catchall(finageJsonValue);
 const symbolListItem = z
-	.object({ symbol: text, name: text })
+	.object({ symbol: outText, name: outText })
 	.catchall(finageJsonValue);
 const symbolListResponse = z
 	.object({
-		page: z.number().optional(),
-		symbols: z.array(symbolListItem),
+		page: outNumber.optional(),
+		symbols: outArray(symbolListItem),
 	})
 	.catchall(finageJsonValue);
 
@@ -536,14 +533,14 @@ const baseFinageOutputSchemas = {
 	getTechnicalIndicators: z.array(
 		z
 			.object({
-				type: text,
-				date: text,
-				open: text,
-				high: text,
-				low: text,
-				close: text,
-				volume: text,
-				value: text,
+				type: outText,
+				date: outText,
+				open: outText,
+				high: outText,
+				low: outText,
+				close: outText,
+				volume: outText,
+				value: outText,
 			})
 			.catchall(finageJsonValue),
 	),
@@ -551,9 +548,9 @@ const baseFinageOutputSchemas = {
 	getTopLosers: z.array(marketInformationItem),
 	getBondsRate: z
 		.object({
-			symbol: text,
-			value: z.number(),
-			date: text,
+			symbol: outText,
+			value: outNumber,
+			date: outText,
 		})
 		.catchall(finageJsonValue),
 	listCryptocurrencies: envelopeOrArray(cryptocurrencyListEnvelope),

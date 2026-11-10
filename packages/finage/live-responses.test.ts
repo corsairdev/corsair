@@ -78,8 +78,18 @@ describe('Finage live responses', () => {
 			limit: 3,
 			key: 'bitcoin',
 			results: [
-				{ name: '0xBitcoin', symbol: '0xBTC', type: 'token', is_active: 'true' },
-				{ name: 'BitCoin One', symbol: 'BTCONE', type: 'token', is_active: 'false' },
+				{
+					name: '0xBitcoin',
+					symbol: '0xBTC',
+					type: 'token',
+					is_active: 'true',
+				},
+				{
+					name: 'BitCoin One',
+					symbol: 'BTCONE',
+					type: 'token',
+					is_active: 'false',
+				},
 			],
 		});
 		expect(search.success).toBe(true);
@@ -134,5 +144,77 @@ describe('Finage live responses', () => {
 			],
 		});
 		expect(parsed.success).toBe(true);
+	});
+
+	it('accepts null and blank values in response fields', () => {
+		// Previous close with no bar for the day.
+		expect(
+			FinageOutputSchemas.getStockPreviousClose.safeParse({
+				symbol: 'AAPL',
+				totalResults: 0,
+				results: null,
+			}).success,
+		).toBe(true);
+		// Snapshots on the free plan: one blank entry with an empty symbol.
+		const blankSnapshot = {
+			totalResults: 1,
+			lastQuotes: [{ s: '', a: 0, b: 0, asz: 0, bsz: 0, t: 0 }],
+			lastTrades: [{ s: '', p: 0, sz: 0, t: 0 }],
+		};
+		for (const operation of [
+			'getStockSnapshot',
+			'getForexSnapshot',
+			'getCryptoSnapshot',
+		] as const) {
+			expect(
+				FinageOutputSchemas[operation].safeParse(blankSnapshot).success,
+			).toBe(true);
+		}
+		// Market search leaves s_type blank.
+		expect(
+			FinageOutputSchemas.searchMarket.safeParse({
+				key: 'apple',
+				market: 'us',
+				limit: 2,
+				results: [
+					{
+						symbol: 'APLE',
+						description: 'Apple Hospitality REIT, Inc.',
+						s_type: '',
+					},
+					{
+						symbol: 'AAPL',
+						description: 'Apple Inc. Common Stock',
+						s_type: '',
+					},
+				],
+			}).success,
+		).toBe(true);
+		// A null where the reference shows a value does not fail the response.
+		expect(
+			FinageOutputSchemas.getStockLastQuote.safeParse({
+				symbol: 'AAPL',
+				ask: null,
+				bid: 351.5828,
+				timestamp: 1794312944558,
+			}).success,
+		).toBe(true);
+		expect(
+			FinageOutputSchemas.getUkMarketLastPrice.safeParse({
+				symbol: 'BP',
+				price: null,
+				timestamp: 1794312944558,
+			}).success,
+		).toBe(true);
+	});
+
+	it('still fails a response that leaves out a documented field', () => {
+		expect(
+			FinageOutputSchemas.getStockLastQuote.safeParse({
+				symbol: 'AAPL',
+				bid: 1,
+				timestamp: 1,
+			}).success,
+		).toBe(false);
 	});
 });

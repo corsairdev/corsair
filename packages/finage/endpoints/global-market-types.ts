@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { finageJsonValue } from './json-value';
+import { finageJsonValue, outArray, outNumber, outText } from './json-value';
 
 const text = z.string().min(1);
 const positiveInteger = z.number().int().positive();
@@ -20,26 +20,26 @@ const time = z.enum([
 // documented for each market family.
 const priceResponse = z
 	.object({
-		symbol: text,
-		price: z.number(),
-		timestamp: z.union([z.number(), text]),
+		symbol: outText,
+		price: outNumber,
+		timestamp: z.union([outNumber, outText]),
 	})
 	.catchall(finageJsonValue);
 const aggregateBar = z
 	.object({
-		o: z.union([z.number(), text]),
-		h: z.union([z.number(), text]),
-		l: z.union([z.number(), text]),
-		c: z.union([z.number(), text]),
-		v: z.union([z.number(), text]).optional(),
-		t: z.union([z.number(), text]),
+		o: z.union([outNumber, outText]),
+		h: z.union([outNumber, outText]),
+		l: z.union([outNumber, outText]),
+		c: z.union([outNumber, outText]),
+		v: z.union([outNumber, outText]).optional(),
+		t: z.union([outNumber, outText]),
 	})
 	.catchall(finageJsonValue);
 const aggregateResponse = z
 	.object({
-		symbol: text,
-		totalResults: z.number(),
-		results: z.array(aggregateBar),
+		symbol: outText,
+		totalResults: outNumber,
+		results: outArray(aggregateBar),
 	})
 	.catchall(finageJsonValue);
 

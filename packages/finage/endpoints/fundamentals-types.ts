@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { outBoolean, outNumber, outText } from './json-value';
 
 const text = z.string().min(1);
 const positiveInteger = z.number().int().positive();
@@ -29,9 +30,9 @@ const jsonValue: z.ZodType<FinageJsonValue> = z.lazy(() =>
 
 const balanceSheetSchema = z
 	.object({
-		symbol: text,
-		date: text,
-		period: text,
+		symbol: outText,
+		date: outText,
+		period: outText,
 		fillingDate: optionalText,
 		filingDate: optionalText,
 		acceptedDate: optionalText,
@@ -83,9 +84,9 @@ const balanceSheetSchema = z
 
 const cashFlowSchema = z
 	.object({
-		symbol: text,
-		date: text,
-		period: text,
+		symbol: outText,
+		date: outText,
+		period: outText,
 		fillingDate: optionalText,
 		filingDate: optionalText,
 		acceptedDate: optionalText,
@@ -126,9 +127,9 @@ const cashFlowSchema = z
 
 const incomeStatementSchema = z
 	.object({
-		symbol: text,
-		date: text,
-		period: text,
+		symbol: outText,
+		date: outText,
+		period: outText,
 		fillingDate: optionalText,
 		filingDate: optionalText,
 		acceptedDate: optionalText,
@@ -167,11 +168,11 @@ const incomeStatementSchema = z
 
 const financialRatioSchema = z
 	.object({
-		symbol: text,
-		date: text,
-		fiscalYear: text,
-		period: text,
-		reportedCurrency: text,
+		symbol: outText,
+		date: outText,
+		fiscalYear: outText,
+		period: outText,
+		reportedCurrency: outText,
 		grossProfitMargin: optionalNumber,
 		ebitMargin: optionalNumber,
 		ebitdaMargin: optionalNumber,
@@ -237,25 +238,25 @@ const financialRatioSchema = z
 // "Forex Technical Indicators" shows the same route with the object inside an
 // array. Accept both documented forms.
 const signalItem = z.object({
-	timestamp: text,
-	symbol: text,
+	timestamp: outText,
+	symbol: outText,
 	// A plain string and an unbounded number: a signal label or confidence scale
 	// Finage adds later must not fail the response.
-	signal: text,
-	confidence: z.number(),
+	signal: outText,
+	confidence: outNumber,
 	indicators: z.object({
-		sma_20: z.number(),
-		sma_50: z.number(),
-		rsi: z.number(),
-		macd: z.number(),
-		macd_signal: z.number(),
-		macd_diff: z.number(),
-		bollinger_high: z.number(),
-		bollinger_low: z.number(),
-		ma_crossover: z.boolean(),
-		macd_cross: z.boolean(),
+		sma_20: outNumber,
+		sma_50: outNumber,
+		rsi: outNumber,
+		macd: outNumber,
+		macd_signal: outNumber,
+		macd_diff: outNumber,
+		bollinger_high: outNumber,
+		bollinger_low: outNumber,
+		ma_crossover: outBoolean,
+		macd_cross: outBoolean,
 	}),
-	price: z.number(),
+	price: outNumber,
 });
 const signalResponse = z.union([signalItem, z.array(signalItem)]);
 
@@ -307,7 +308,7 @@ export const FinageFundamentalOutputSchemas = {
 	getCashFlowStatements: z.array(cashFlowSchema),
 	getDelistedCompanies: z.array(
 		z.object({
-			symbol: text,
+			symbol: outText,
 			company_name: optionalText,
 			exchange: optionalText,
 			ipo_date: optionalText,
@@ -316,27 +317,27 @@ export const FinageFundamentalOutputSchemas = {
 	),
 	getDividendsCalendar: z.array(
 		z.object({
-			symbol: text,
+			symbol: outText,
 			label: optionalText,
 			adj_dividend: optionalNumber,
-			date: text,
+			date: outText,
 		}),
 	),
 	getEarningsCalendar: z.array(
 		z.object({
-			symbol: text,
+			symbol: outText,
 			eps: optionalNumber,
 			estimated_eps: optionalNumber,
 			revenue: optionalNumber,
 			estimated_revenue: optionalNumber,
 			time: optionalText,
-			date: text,
+			date: outText,
 		}),
 	),
 	getEconomicCalendar: z.array(
 		z.object({
-			event: text,
-			date: text,
+			event: outText,
+			date: outText,
 			country: optionalText,
 			countryFlag: optionalText,
 			actual: optionalNumber,
@@ -356,7 +357,7 @@ export const FinageFundamentalOutputSchemas = {
 			record_date: optionalText,
 			payment_date: optionalText,
 			declaration_date: optionalText,
-			date: text,
+			date: outText,
 		}),
 	),
 	getHistoricalStockSplitCalendar: z.array(
@@ -364,13 +365,13 @@ export const FinageFundamentalOutputSchemas = {
 			numerator_factor: optionalNumber,
 			denominator_factor: optionalNumber,
 			label: optionalText,
-			date: text,
+			date: outText,
 		}),
 	),
 	getIncomeStatements: z.array(incomeStatementSchema),
 	getInstitutionalHolders: z.array(
 		z.object({
-			holder: text,
+			holder: outText,
 			shares: optionalNumber,
 			change: optionalNumber,
 			report_date: optionalText,
@@ -378,8 +379,8 @@ export const FinageFundamentalOutputSchemas = {
 	),
 	getIpoCalendar: z.array(
 		z.object({
-			symbol: text,
-			date: text,
+			symbol: outText,
+			date: outText,
 			exchange: optionalText,
 			status: optionalText,
 			shares: optionalNumber,
@@ -390,7 +391,7 @@ export const FinageFundamentalOutputSchemas = {
 	),
 	getMutualFundHolders: z.array(
 		z.object({
-			holder: text,
+			holder: outText,
 			shares: optionalNumber,
 			change: optionalNumber,
 			report_date: optionalText,
@@ -399,7 +400,7 @@ export const FinageFundamentalOutputSchemas = {
 	),
 	getSharesFloat: z.array(
 		z.object({
-			symbol: text,
+			symbol: outText,
 			public_float: optionalNumber,
 			stock_float: optionalNumber,
 			outstanding_shares: optionalNumber,
@@ -408,11 +409,11 @@ export const FinageFundamentalOutputSchemas = {
 	),
 	getStockSplitCalendar: z.array(
 		z.object({
-			symbol: text,
+			symbol: outText,
 			numerator_factor: optionalNumber,
 			denominator_factor: optionalNumber,
 			label: optionalText,
-			date: text,
+			date: outText,
 		}),
 	),
 	getUsStocksSignal: signalResponse,
