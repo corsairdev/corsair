@@ -1,0 +1,147 @@
+---
+title: Overview
+description: "Manage contacts, send and read messages, assign and close conversations, and read workspace channels, templates and custom fields with respond.io."
+---
+
+Use **respond.io** through Corsair: one client, typed API calls.
+
+Create an Access Token under **Settings, Integrations, Developer API** in respond.io. A workspace can hold up to 10, and the Developer API needs the **Growth plan or above**. The token goes in `Authorization: Bearer`.
+
+**A contact is always addressed by a prefixed identifier**: `id:123`, `email:a@b.com` or `phone:+60123456789`. A bare value is treated as an `id:`, and a value that already carries a prefix is passed through unchanged, so both forms work.
+
+Things to know before you send anything:
+
+- **`messages.send` reaches the customer.** Without a `channelId` respond.io uses the last channel the contact interacted on, which is convenient but can send somewhere unexpected if the contact has moved; a `customPayload` message *requires* the channel. A `449` means the message cannot be delivered there — most often a Facebook or Instagram message outside the 24-hour window without a `messageTag`.
+- **A created contact is not immediately usable.** respond.io needs processing time after a create, and the docs say to wait before acting on it. Use `contacts.upsert` when you do not know whether the contact already exists — it is a separate route, not a flag.
+- **`contacts.list` needs a filter or a search.** It is a POST so the filter can be a body, and it takes `$and` or `$or` (exactly one of the two). Operators include `isEqualTo`, `hasAnyOf` for tags and lifecycle, and `isTimestampBetween`, which takes `{from, to}`. Give `timezone` when a timestamp condition needs a local day boundary.
+- **`messages.list` can return an empty page with more to come.** With `includeComments: true` the list mixes comments in and each item carries a `type`; an empty page can still have `pagination.next` set, so keep paging until `next` is `null`. `limit` stops at 50.
+- **`conversations.assign` unassigns with `null`,** which the plugin always sends when no assignee is given — an absent key would read as "no change".
+- **A close takes a closing note and a summary**, but `summary` is ignored unless `category` is set. Use `space.listClosingNotes` for the valid names.
+- **Writes answer a code and a message, not the record.** `contacts.create`, `update`, `delete`, both tag routes and both conversation routes answer `{code, message}`; the code is a *string* there, unlike an error's number. To get the contact back, read it.
+- **`space.listCustomFields` is what a contact write needs.** A custom field's `value` must match its type: a date is `yyyy-mm-dd`, a time `HH:MM` in 24-hour form, a checkbox `"true"`/`"false"`, and a number has no quotes. Only this route tells you the type and, for a list field, its allowed options.
+- **`contacts.channels` is plural** (`/channels`) where every other contact sub-route is singular. The channel IDs it returns are what a custom-payload message needs.
+- **Rate limit.** 5 requests a second per HTTP method per request path, tracked independently, with `Retry-After` and `X-RateLimit-*` on a `429`.
+
+**What you get:**
+
+- 23 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/respondio better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/respondio better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/respondio better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/respondio better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { respondio } from '@corsair-dev/respondio';
+
+export const corsair = createCorsair({
+	plugins: [
+		respondio(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+respondio()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'respondio',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a contact**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.respondio.api.contacts.get({ identifier: 'id:12345' });
+```
+
+
+**Send a text message**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.respondio.api.messages.send({
+	identifier: 'id:12345',
+	channelId: 42,
+	message: { type: 'text', text: 'Your order has shipped.' },
+});
+```
+
+
+See the full list on the [API](/plugins/respondio/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/respondio/api">
+    Every `respondio.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
