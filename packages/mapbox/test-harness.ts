@@ -15,7 +15,12 @@ export type FetchMock = jest.SpyInstance<
 >;
 
 export function installFetchMock(): FetchMock {
-	return jest.spyOn(globalThis, 'fetch');
+	// The default rejects rather than falling through to the real `fetch`: once
+	// the responses queued by `respond` run out, a stray request or a retry would
+	// otherwise reach Mapbox and let an offline test pass on live data.
+	return jest
+		.spyOn(globalThis, 'fetch')
+		.mockRejectedValue(new Error('Unexpected fetch call in an offline test'));
 }
 
 /**
@@ -64,8 +69,10 @@ export function lastRequest(fetchMock: FetchMock): RecordedRequest {
 
 // unknown: a promise can reject with any value, so the rejection reason has no
 // static type; each caller narrows it to the fields it asserts on.
-export async function captureError<T>(promise: Promise<T>): Promise<unknown> {
-	return promise.catch((caught: unknown) => caught);
+export async function captureError<T>(
+	promise: Promise<T>,
+): Promise<unknown /* unknown: a rejection reason has no static type */> {
+	return promise.catch((caught: unknown /* unknown: see above */) => caught);
 }
 
 export type LoggedContext = {
