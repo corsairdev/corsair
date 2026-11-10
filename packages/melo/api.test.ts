@@ -183,6 +183,11 @@ describeWrites('Melo live search round trip', () => {
 		const id = iri?.split('/').pop();
 		if (!id) throw new Error(`Create returned no search id: ${String(iri)}`);
 
+		// A cleanup that throws inside `finally` replaces the body's error, so a
+		// failed delete would be reported as the cause of an unrelated assertion
+		// failure. The flag lets cleanup stay an assertion while the body passes,
+		// and only a warning while it does not.
+		let bodyFailed = false;
 		try {
 			expect(created.title).toBe(title);
 
@@ -201,9 +206,21 @@ describeWrites('Melo live search round trip', () => {
 			expect(updated.title).toBe(`${title}-updated`);
 			expect(reread.title).toBe(`${title}-updated`);
 			expect(reread.propertyTypes).toEqual([0, 1]);
+		} catch (error) {
+			bodyFailed = true;
+			throw error;
 		} finally {
-			const removed = await client.corsair.melo.api.searches.delete({ id });
-			expect(removed).toEqual({ id, deleted: true });
+			try {
+				const removed = await client.corsair.melo.api.searches.delete({ id });
+				expect(removed).toEqual({ id, deleted: true });
+			} catch (cleanupError) {
+				if (!bodyFailed) throw cleanupError;
+				// Name the leftover search: the account still holds it, and whoever
+				// reads the real failure needs the id to delete it by hand.
+				console.warn(
+					`[melo api.test] cleanup did not delete saved search ${id}: ${String(cleanupError)}`,
+				);
+			}
 		}
 	});
 });
