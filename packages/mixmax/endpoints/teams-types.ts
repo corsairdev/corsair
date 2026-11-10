@@ -23,8 +23,9 @@ export const TeamMemberSchema = z
 		email: z.string().optional(),
 		// The member's name; only with `members.userId` expanded.
 		name: z.string().optional(),
-		// The member's role on the team.
-		role: z.enum(['admin', 'member']),
+		// The member's role on the team: `admin` or `member` today. A plain
+		// string on output so a role Mixmax adds later does not fail the call.
+		role: z.string(),
 		// `true` once the invite is accepted, `false` if it was declined;
 		// missing while the invite is pending.
 		accepted: z.boolean().optional(),

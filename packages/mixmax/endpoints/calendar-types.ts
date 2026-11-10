@@ -175,6 +175,10 @@ export type MeetingTypeWrite = z.infer<typeof MeetingTypeWriteSchema>;
 // on copied meeting types).
 export const MeetingTypeSchema = MeetingTypeWriteSchema.extend({
 	_id: z.string().optional(),
+	// `Personal` or `Round Robin` today. The write schema keeps the enum;
+	// responses take any string so a type Mixmax adds later does not fail
+	// every list of meeting templates.
+	type: z.string().optional(),
 	userId: z.string().optional(),
 	// The `_id` of the meeting type this one was copied from, or `null`.
 	copyOf: z.string().nullable().optional(),

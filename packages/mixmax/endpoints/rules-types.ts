@@ -144,7 +144,12 @@ export const RuleSchema = z
 		name: z.string().optional(),
 		// What runs the rule; `null` on rules saved in the app before a
 		// trigger was picked.
-		trigger: z.union([RuleTriggerSchema, z.null()]).optional(),
+		// The last union member takes any other object: a trigger kind Mixmax
+		// adds later, or an app-built trigger missing a field the reference
+		// requires, must not make every rules call for the account throw.
+		trigger: z
+			.union([RuleTriggerSchema, z.null(), z.object({}).passthrough()])
+			.optional(),
 		// A JSON-encoded condition, in MongoDB query syntax, that events must
 		// match. Absent means every event.
 		filter: z.string().optional(),
@@ -178,12 +183,15 @@ export const RuleEventSchema = z
 		_id: z.string().optional(),
 		// When the rule ran; pass it as `date` to GET /v1/rules/events/{id}.
 		date: z.string().optional(),
-		type: z.enum(['rules']).optional(),
+		// Always `rules` today; a plain string on output.
+		type: z.string().optional(),
 		// The `_id` of the rule's owner.
 		userId: z.string().optional(),
 		// Only in GET /v1/rules/events responses.
 		email: z.string().optional(),
-		status: z.enum(['success', 'filtered', 'pending', 'error']).optional(),
+		// `success`, `filtered`, `pending` or `error` today; a plain string on
+		// output so a status Mixmax adds later does not fail the history.
+		status: z.string().optional(),
 		// What happened, for example why the event did not match the filter.
 		message: z.string().optional(),
 		// The event the rule ran on; its shape depends on the trigger.

@@ -84,8 +84,9 @@ export const MeetingSummarySchema = z
 			.nullable()
 			.optional(),
 		// `owner` for your own meetings, `sharedWith` for meetings shared
-		// with you.
-		ownershipLevel: z.enum(['owner', 'sharedWith']),
+		// with you. A plain string on output so a level Mixmax adds later
+		// does not fail the whole search.
+		ownershipLevel: z.string(),
 		// Whether anyone outside your organization attended.
 		isExternalMeeting: z.boolean(),
 		// ISO 8601 date-time string.
@@ -95,7 +96,9 @@ export const MeetingSummarySchema = z
 		sharedWithCount: z.number().int(),
 		// Whether the summary is still being generated; left out on older
 		// summaries.
-		status: z.enum(['processing', 'completed']).optional(),
+		// `processing` or `completed` today; a plain string on output so a
+		// status Mixmax adds later does not fail the whole search.
+		status: z.string().optional(),
 		// The CRMs the summary was synced to.
 		syncedTo: z
 			.array(

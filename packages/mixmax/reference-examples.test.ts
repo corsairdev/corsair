@@ -209,3 +209,124 @@ describe('Mixmax responses from the reference examples', () => {
 		).resolves.toEqual(recipients);
 	});
 });
+
+// Output enums must not throw on a value the provider adds later: the
+// validated tree parses every response, so one unknown value in one row
+// would otherwise fail the whole call.
+describe('Mixmax responses with values the reference does not list yet', () => {
+	beforeEach(() => {
+		request.mockReset();
+	});
+
+	it('rules.list returns a rule whose trigger kind is not one of the four documented ones', async () => {
+		const page = {
+			results: [
+				{
+					_id: 'rule-1',
+					name: 'Known trigger',
+					trigger: { type: 'event', eventName: 'message:sent' },
+				},
+				{
+					_id: 'rule-2',
+					name: 'New trigger kind',
+					trigger: { type: 'calendarEvent', calendarId: 'primary' },
+				},
+				// An app-built recurring rule without the `rrule` the reference
+				// marks required.
+				{ _id: 'rule-3', trigger: { type: 'recurring', subtype: 'interval' } },
+				{ _id: 'rule-4', trigger: null },
+			],
+			hasNext: false,
+		};
+		request.mockResolvedValue(page);
+
+		await expect(endpoints.rules.list(ctx, {})).resolves.toEqual(page);
+	});
+
+	it('rules.events.list returns a run with a new status', async () => {
+		const page = {
+			records: [{ _id: 'event-1', type: 'rules', status: 'retrying' }],
+		};
+		request.mockResolvedValue(page);
+
+		await expect(endpoints.rules.events.list(ctx, {})).resolves.toEqual(page);
+	});
+
+	it('tasks.list returns a task with a new type', async () => {
+		const page = {
+			results: [{ _id: 'task-1', type: 'sms', status: 'Open' }],
+			total: 1,
+			next: null,
+			previous: null,
+			hasNext: false,
+			hasPrevious: false,
+		};
+		request.mockResolvedValue(page);
+
+		await expect(endpoints.tasks.list(ctx, {})).resolves.toEqual(page);
+	});
+
+	it('teams.members.list returns a member with a new role', async () => {
+		const page = {
+			results: [
+				{
+					memberId: 'member-1',
+					role: 'owner',
+					invitedAt: '2026-01-02T03:04:05.000Z',
+				},
+			],
+		};
+		request.mockResolvedValue(page);
+
+		await expect(
+			endpoints.teams.members.list(ctx, { id: 'team-1' }),
+		).resolves.toEqual(page);
+	});
+
+	it('meetingTypes.list returns a meeting template with a new type', async () => {
+		const page = {
+			results: [{ _id: 'type-1', name: 'Intro call', type: 'Collective' }],
+		};
+		request.mockResolvedValue(page);
+
+		await expect(endpoints.meetingTypes.list(ctx, {})).resolves.toEqual(page);
+	});
+
+	it('meetingTypes.create still rejects a type the reference does not accept', async () => {
+		await expect(
+			endpoints.meetingTypes.create(ctx, {
+				name: 'Intro call',
+				type: 'Collective',
+			} as never),
+		).rejects.toThrow();
+		expect(request).not.toHaveBeenCalled();
+	});
+
+	it('meetings.searchSummaries returns a summary with a new ownership level and status', async () => {
+		const response = {
+			meetings: [
+				{
+					id: '64f1c2a9e4b0a1b2c3d4e5f6/abc-defg-hij/2025-01-15T10:00:00.000Z',
+					calendarId: null,
+					title: 'Weekly Team Standup',
+					startTime: '1/15/2025, 10:00 AM UTC',
+					endTime: '1/15/2025, 10:30 AM UTC',
+					actionItemsCount: 2,
+					participants: [],
+					ownershipLevel: 'delegate',
+					isExternalMeeting: false,
+					meetingCreatedAt: '2025-01-15T10:00:00.000Z',
+					sharedWithCount: 0,
+					status: 'failed',
+				},
+			],
+			total: 1,
+			hasMore: false,
+		};
+		request.mockResolvedValue(response);
+
+		await expect(
+			endpoints.meetings.searchSummaries(ctx, {}),
+		).resolves.toEqual(response);
+	});
+});

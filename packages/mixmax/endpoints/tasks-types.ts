@@ -23,7 +23,9 @@ export const TaskSchema = z
 	.object({
 		// Mixmax task identifier.
 		_id: z.string(),
-		type: z.enum(['email', 'call', 'linkedin', 'todo']),
+		// `email`, `call`, `linkedin` or `todo` today; a plain string on
+		// output so a task type Mixmax adds later does not fail the whole list.
+		type: z.string(),
 		subject: z.string().optional(),
 		description: z.string().optional(),
 		status: z.string(),
