@@ -15,9 +15,10 @@ export const list: ShippoEndpoints['carrierAccountsList'] = (ctx, input) =>
 			output: Outputs.carrierAccountsList,
 		},
 		input,
-		({ shippo_account_id }) => ({
+		({ page, results, shippo_account_id }) => ({
 			method: 'GET',
 			path: '/carrier_accounts',
+			query: { page, results },
 			shippoAccountId: shippo_account_id,
 		}),
 		{
@@ -146,7 +147,7 @@ export const registrationStatus: ShippoEndpoints['carrierAccountsRegistrationSta
 			{
 				log: ({ carrier }, result) => ({
 					carrier,
-					status: result.registration_status ?? undefined,
+					status: result.status ?? result.registration_status ?? undefined,
 				}),
 			},
 		);

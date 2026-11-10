@@ -933,23 +933,58 @@ describe('carrier accounts', () => {
 	it('creates and updates with PUT', async () => {
 		h.respond(carrierAccount);
 		await invoke(CarrierAccounts.create, {
-			carrier: 'usps',
-			parameters: { account_number: '1234567890' },
+			carrier: 'fedex',
+			account_id: '321123',
+			parameters: { first_name: 'Shwan' },
 		});
 		expect(h.lastRequest()).toMatchObject({
 			method: 'POST',
 			path: '/carrier_accounts',
 		});
+		// `account_id` is one of the three fields the spec requires.
+		expect(h.lastRequest().body).toEqual({
+			carrier: 'fedex',
+			account_id: '321123',
+			parameters: { first_name: 'Shwan' },
+		});
 
 		h.respond(carrierAccount);
 		await invoke(CarrierAccounts.update, {
 			carrier_account_id: carrierAccount.object_id,
+			account_id: '321123',
+			carrier: 'fedex',
 			active: false,
 		});
 		expect(h.lastRequest()).toMatchObject({
 			method: 'PUT',
 			path: `/carrier_accounts/${carrierAccount.object_id}`,
 		});
+		// The spec lists `account_id` and `carrier` as required on the PUT, so
+		// a caller must be able to send them.
+		expect(h.lastRequest().body).toEqual({
+			account_id: '321123',
+			carrier: 'fedex',
+			active: false,
+		});
+	});
+
+	it('rejects a new carrier account with no account_id', async () => {
+		const error = await h.failure<Error>(
+			invoke(CarrierAccounts.create, {
+				carrier: 'fedex',
+				parameters: { first_name: 'Shwan' },
+			}),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(h.fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('pages the carrier account list', async () => {
+		h.respond(paged([carrierAccount]));
+		await invoke(CarrierAccounts.list, { page: 2, results: 50 });
+
+		expect(h.lastRequest().query).toEqual({ page: '2', results: '50' });
 	});
 
 	it('registers a Shippo-supplied carrier and reads its status', async () => {
@@ -960,10 +995,20 @@ describe('carrier accounts', () => {
 		});
 		expect(h.lastRequest().path).toBe('/carrier_accounts/register/new');
 
-		h.respond({ registration_status: 'APPROVED' });
+		// The spec's field is `status`.
+		h.respond({
+			carrier_account: carrierAccount.object_id,
+			status: 'PENDING_TERMS',
+		});
 		await invoke(CarrierAccounts.registrationStatus, { carrier: 'usps' });
 		expect(h.lastRequest().path).toBe('/carrier_accounts/reg-status');
 		expect(h.lastRequest().query).toEqual({ carrier: 'usps' });
+		expect(mockLog).toHaveBeenLastCalledWith(
+			expect.anything(),
+			'shippo.carrierAccounts.registrationStatus',
+			{ carrier: 'usps', status: 'PENDING_TERMS' },
+			'completed',
+		);
 	});
 });
 

@@ -1604,6 +1604,7 @@ export const CarrierAccountSchema = z
 export type ShippoCarrierAccount = z.infer<typeof CarrierAccountSchema>;
 
 const CarrierAccountsListInputSchema = z.object({
+	...PagingShape,
 	...accountIdHeader,
 });
 
@@ -1625,6 +1626,12 @@ const CarrierAccountCreateInputSchema = z.object({
 		.string()
 		.min(1)
 		.describe('Carrier slug, e.g. `usps`, `fedex`, `ups`, `dhl_express`.'),
+	account_id: z
+		.string()
+		.min(1)
+		.describe(
+			'Your account number or id with the carrier. Together with `carrier` it identifies the account.',
+		),
 	parameters: z
 		// unknown: the credential set is carrier-specific, with its own documented
 		// parameters object per carrier.
@@ -1641,6 +1648,22 @@ export type CarrierAccountCreateInput = z.input<
 
 const CarrierAccountUpdateInputSchema = z.object({
 	carrier_account_id: Id.describe('The carrier account to change.'),
+	// The spec marks both as required on the PUT body while saying neither
+	// can be changed, so they are forwarded when given rather than enforced.
+	account_id: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'The account’s existing `account_id`. Shippo’s reference lists it as required on an update; it cannot be changed.',
+		),
+	carrier: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'The account’s existing carrier slug. Shippo’s reference lists it as required on an update; it cannot be changed.',
+		),
 	parameters: z
 		// unknown: see CarrierAccountCreateInputSchema.
 		.record(z.string(), z.unknown())
@@ -1674,10 +1697,13 @@ export type CarrierAccountRegisterInput = z.input<
 const CarrierAccountRegistrationStatusSchema = z
 	.object({
 		carrier_account: z.string().nullish(),
-		registration_status: z
+		status: z
 			.string()
 			.nullish()
-			.describe('Whether the carrier has approved the account for live rates.'),
+			.describe(
+				'Registration state, e.g. `PENDING_TERMS`: whether the carrier has approved the account for live rates.',
+			),
+		registration_status: z.string().nullish(),
 		registration_steps: z
 			// unknown: the step list is carrier-specific and passed through.
 			.unknown()
