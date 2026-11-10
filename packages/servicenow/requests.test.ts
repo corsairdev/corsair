@@ -12,6 +12,7 @@ import {
 } from './test-fixtures';
 import {
 	BASE,
+	currentFetch,
 	endpoints,
 	installFetchMock,
 	jsonResponse,
@@ -201,24 +202,69 @@ describe('ServiceNow request shapes', () => {
 		mockFetch(jsonResponse(listResponse));
 
 		await endpoints.records.list(
-			makeCtx({ host: null, storedHost: 'stored.example.com' }),
+			makeCtx({ host: null, storedHost: 'stored.service-now.com' }),
 			{ table: 'incident' },
 		);
 
 		// The option wins when set, but a plugin configured once with
 		// keys.set_host must still work with no per-call option.
-		expect(new URL(lastCall().url).host).toBe('stored.example.com');
+		expect(new URL(lastCall().url).host).toBe('stored.service-now.com');
+	});
+
+	it('builds the host from a stored instance name', async () => {
+		mockFetch(jsonResponse(listResponse));
+
+		await endpoints.records.list(
+			makeCtx({ host: null, storedHost: 'stored' }),
+			{ table: 'incident' },
+		);
+
+		expect(lastCall().url).toBe(
+			'https://stored.service-now.com/api/now/table/incident',
+		);
 	});
 
 	it('prefers the host option over a stored one', async () => {
 		mockFetch(jsonResponse(listResponse));
 
 		await endpoints.records.list(
-			makeCtx({ host: 'option.example.com', storedHost: 'stored.example.com' }),
+			makeCtx({
+				host: 'option.service-now.com',
+				storedHost: 'stored.service-now.com',
+			}),
 			{ table: 'incident' },
 		);
 
-		expect(new URL(lastCall().url).host).toBe('option.example.com');
+		expect(new URL(lastCall().url).host).toBe('option.service-now.com');
+	});
+
+	// The stored host is tenant input. Anything that is not a ServiceNow
+	// instance must fail before a request leaves, because the request carries
+	// the Basic credentials.
+	it.each([
+		'stored.example.com',
+		'https://internal.example.com/',
+		'169.254.169.254',
+		'localhost:8443',
+		'acme.service-now.com.example.com',
+	])('sends nothing to a stored host of %s', async (storedHost) => {
+		await expect(
+			endpoints.records.list(makeCtx({ host: null, storedHost }), {
+				table: 'incident',
+			}),
+		).rejects.toThrow(/instance name or \{instance\}\.service-now\.com/);
+
+		expect(currentFetch()).not.toHaveBeenCalled();
+	});
+
+	it('sends nothing to a host option outside ServiceNow', async () => {
+		await expect(
+			endpoints.records.list(makeCtx({ host: 'option.example.com' }), {
+				table: 'incident',
+			}),
+		).rejects.toThrow(/instance name or \{instance\}\.service-now\.com/);
+
+		expect(currentFetch()).not.toHaveBeenCalled();
 	});
 
 	it('sends a credential pair the client can parse', async () => {

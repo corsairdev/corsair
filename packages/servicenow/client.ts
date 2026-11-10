@@ -9,21 +9,34 @@ import { ApiError, request } from 'corsair/http';
 /**
  * ServiceNow has no shared API host: every customer runs their own instance at
  * `https://{instance}.service-now.com`, and the Table API lives under
- * `/api/now/table`. So the host is configuration, not a constant. `workday`
- * handles the same shape the same way.
+ * `/api/now/table`. So the instance is configuration, not a constant.
  */
 export const DEFAULT_SERVICENOW_HOST = 'dev00000.service-now.com';
 
 /**
- * A bare hostname, optionally with a port. Deliberately excludes a path and
- * credentials so a pasted console URL cannot smuggle either in.
+ * The domains ServiceNow hosts instances on: `service-now.com` for commercial
+ * instances and `servicenowservices.com` for government cloud ones. The host is
+ * always built as `{instance}.{one of these}`, never taken as given: a stored
+ * host is tenant input, and a free hostname would let a tenant point the
+ * request, with its Basic credentials, at any server the runtime can reach.
+ *
+ * A custom URL (`support.acme.com`) is an alias of the instance's own
+ * `service-now.com` name, so the instance name still reaches it.
  */
-const HOST_PATTERN = /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?(:\d{1,5})?$/i;
+const COMMERCIAL_DOMAIN = 'service-now.com';
+const SERVICENOW_DOMAINS = [COMMERCIAL_DOMAIN, 'servicenowservices.com'];
+
+/** An instance name is one DNS label: letters, digits and inner hyphens. */
+const INSTANCE_NAME_PATTERN = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+
+const INSTANCE_HOST_HINT =
+	'[servicenow] instance host must be an instance name or {instance}.service-now.com, e.g. acme or acme.service-now.com';
 
 /**
- * Strips the scheme and trailing slashes, rejecting anything that is not a bare
- * hostname. Accepts `https://acme.service-now.com/` because that is what people
- * paste from the address bar.
+ * Reduces what was configured to `{instance}.service-now.com` and rejects
+ * everything else. Accepts the instance name alone (`acme`), the host
+ * (`acme.service-now.com`) and `https://acme.service-now.com/`, because that is
+ * what people paste from the address bar.
  */
 export function normalizeServicenowHost(host: string): string {
 	const trimmed = host.trim();
@@ -47,6 +60,7 @@ export function normalizeServicenowHost(host: string): string {
 				'[servicenow] instance host must not contain credentials',
 			);
 		}
+		// `host` keeps a non-default port, which the checks below then reject.
 		value = url.host;
 	}
 
@@ -55,10 +69,17 @@ export function normalizeServicenowHost(host: string): string {
 	while (value.endsWith('/')) {
 		value = value.slice(0, -1);
 	}
-	if (!HOST_PATTERN.test(value)) {
-		throw new Error('[servicenow] instance host must be a bare hostname');
+	value = value.toLowerCase();
+
+	const domain = SERVICENOW_DOMAINS.find((known) =>
+		value.endsWith(`.${known}`),
+	);
+	// With no known domain the value has to be the instance name on its own.
+	const instance = domain ? value.slice(0, -(domain.length + 1)) : value;
+	if (!INSTANCE_NAME_PATTERN.test(instance)) {
+		throw new Error(INSTANCE_HOST_HINT);
 	}
-	return value;
+	return `${instance}.${domain ?? COMMERCIAL_DOMAIN}`;
 }
 
 /** `https://{host}/api/now`, the base every Table API path hangs off. */

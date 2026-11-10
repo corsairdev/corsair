@@ -27,8 +27,10 @@ import { ServicenowSchema } from './schema';
 export type ServicenowPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	/**
-	 * The instance host, e.g. `acme.service-now.com`. ServiceNow has no shared
-	 * API host, so either this or a stored `host` key is required.
+	 * The instance, as `acme.service-now.com` or the instance name `acme`.
+	 * ServiceNow has no shared API host, so either this or a stored `host` key
+	 * is required. Requests only go to `{instance}.service-now.com` (or
+	 * `{instance}.servicenowservices.com`); any other host is rejected.
 	 */
 	host?: string;
 	/** A username and password already joined as `{"username":...,"password":...}`. */

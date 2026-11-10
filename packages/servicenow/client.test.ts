@@ -8,9 +8,22 @@ import {
 } from './client';
 
 describe('ServiceNow host normalization', () => {
-	it('accepts a bare hostname', () => {
+	it('accepts the instance host', () => {
 		expect(normalizeServicenowHost('acme.service-now.com')).toBe(
 			'acme.service-now.com',
+		);
+	});
+
+	it('builds the host from an instance name alone', () => {
+		expect(normalizeServicenowHost('acme')).toBe('acme.service-now.com');
+		expect(normalizeServicenowHost('dev-12345')).toBe(
+			'dev-12345.service-now.com',
+		);
+	});
+
+	it('accepts a government cloud instance', () => {
+		expect(normalizeServicenowHost('agency.servicenowservices.com')).toBe(
+			'agency.servicenowservices.com',
 		);
 	});
 
@@ -29,9 +42,37 @@ describe('ServiceNow host normalization', () => {
 		);
 	});
 
-	it('keeps a port', () => {
-		expect(normalizeServicenowHost('acme.service-now.com:8443')).toBe(
-			'acme.service-now.com:8443',
+	it('lowercases the host', () => {
+		expect(normalizeServicenowHost('ACME.Service-Now.com')).toBe(
+			'acme.service-now.com',
+		);
+	});
+
+	// The host is tenant input when it comes from the stored `host` key. A free
+	// hostname would send the request, and the Basic credentials with it, to any
+	// server the runtime can reach.
+	it.each([
+		['another domain', 'stored.example.com'],
+		['a pasted URL on another domain', 'https://internal.example.com/'],
+		['an internal name with a port', 'localhost:8443'],
+		['an IPv4 address', '169.254.169.254'],
+		['an IPv6 address', 'https://[::1]/'],
+		['a lookalike suffix', 'acme.service-now.com.example.com'],
+		['a lookalike domain', 'acmeservice-now.com'],
+		['a nested subdomain', 'internal.acme.service-now.com'],
+		['the bare domain', 'service-now.com'],
+		['an empty instance name', '.service-now.com'],
+		['a port', 'acme.service-now.com:8443'],
+		['a pasted URL with a port', 'https://acme.service-now.com:8443'],
+		['a path smuggled before the domain', 'example.com/.service-now.com'],
+		['a fragment smuggled before the domain', 'example.com#.service-now.com'],
+		['userinfo without a scheme', 'acme.service-now.com@example.com'],
+		['a leading hyphen', '-acme.service-now.com'],
+		['a trailing dot', 'acme.service-now.com.'],
+		['an underscore', 'ac_me'],
+	])('rejects %s', (_, host) => {
+		expect(() => normalizeServicenowHost(host)).toThrow(
+			/instance name or \{instance\}\.service-now\.com/,
 		);
 	});
 
@@ -50,7 +91,7 @@ describe('ServiceNow host normalization', () => {
 	it('rejects a host with a path', () => {
 		expect(() =>
 			normalizeServicenowHost('acme.service-now.com/api/now'),
-		).toThrow(/bare hostname/);
+		).toThrow(/instance name/);
 	});
 
 	it('rejects an empty host', () => {
@@ -61,6 +102,7 @@ describe('ServiceNow host normalization', () => {
 		expect(servicenowBase('https://acme.service-now.com/')).toBe(
 			'https://acme.service-now.com/api/now',
 		);
+		expect(servicenowBase('acme')).toBe('https://acme.service-now.com/api/now');
 	});
 
 	it('pins the documented default host as a placeholder, not a real instance', () => {
