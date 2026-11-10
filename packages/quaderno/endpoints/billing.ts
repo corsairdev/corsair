@@ -195,7 +195,16 @@ export const recordPayment: QuadernoEndpoints['invoicesRecordPayment'] = (
 		},
 	);
 
-/** A GET that sends email, which is why it is a write here, not a read. */
+/**
+ * A GET that sends email, which is why it is a write here, not a read.
+ *
+ * The four deliver routes answer 200 with **no body**, so there is no document
+ * to return: the result only confirms Quaderno accepted the request. Parsing a
+ * document out of an empty response would throw after the email had gone, and
+ * the caller would deliver it a second time.
+ */
+const delivered = () => ({ delivered: true as const });
+
 export const deliver: QuadernoEndpoints['invoicesDeliver'] = (ctx, input) =>
 	call(
 		ctx,
@@ -203,20 +212,15 @@ export const deliver: QuadernoEndpoints['invoicesDeliver'] = (ctx, input) =>
 			event: 'invoices.deliver',
 			input: Inputs.invoicesDeliver,
 			output: Outputs.invoicesDeliver,
-			toRequest: ({ id, email }) => ({
+			toRequest: ({ id }) => ({
 				method: 'GET',
 				path: `/invoices/${segment(id)}/deliver`,
-				query: { email },
 			}),
 		},
 		input,
 		{
-			shape: (raw) => wrap('invoice', raw),
-			log: ({ id, email }, result) => ({
-				invoiceId: id,
-				customRecipient: email !== undefined,
-				deliveryState: result.invoice.delivery_state ?? undefined,
-			}),
+			shape: delivered,
+			log: ({ id }) => ({ invoiceId: id }),
 		},
 	);
 
@@ -322,15 +326,14 @@ export const receiptsDeliver: QuadernoEndpoints['receiptsDeliver'] = (
 			event: 'receipts.deliver',
 			input: Inputs.receiptsDeliver,
 			output: Outputs.receiptsDeliver,
-			toRequest: ({ id, email }) => ({
+			toRequest: ({ id }) => ({
 				method: 'GET',
 				path: `/receipts/${segment(id)}/deliver`,
-				query: { email },
 			}),
 		},
 		input,
 		{
-			shape: (raw) => wrap('receipt', raw),
+			shape: delivered,
 			log: ({ id }) => ({ receiptId: id }),
 		},
 	);
@@ -454,15 +457,14 @@ export const creditsDeliver: QuadernoEndpoints['creditsDeliver'] = (
 			event: 'credits.deliver',
 			input: Inputs.creditsDeliver,
 			output: Outputs.creditsDeliver,
-			toRequest: ({ id, email }) => ({
+			toRequest: ({ id }) => ({
 				method: 'GET',
 				path: `/credits/${segment(id)}/deliver`,
-				query: { email },
 			}),
 		},
 		input,
 		{
-			shape: (raw) => wrap('credit', raw),
+			shape: delivered,
 			log: ({ id }) => ({ creditId: id }),
 		},
 	);
@@ -618,15 +620,14 @@ export const proformasDeliver: QuadernoEndpoints['proformasDeliver'] = (
 			event: 'proformas.deliver',
 			input: Inputs.proformasDeliver,
 			output: Outputs.proformasDeliver,
-			toRequest: ({ id, email }) => ({
+			toRequest: ({ id }) => ({
 				method: 'GET',
 				path: `/proformas/${segment(id)}/deliver`,
-				query: { email },
 			}),
 		},
 		input,
 		{
-			shape: (raw) => wrap('proforma', raw),
+			shape: delivered,
 			log: ({ id }) => ({ proformaId: id }),
 		},
 	);

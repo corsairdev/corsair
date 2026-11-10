@@ -366,20 +366,21 @@ describe('invoices', () => {
 		expect(body.contact).toEqual({ id: 78395726 });
 	});
 
-	it('invoices.deliver sends a GET, with no body', async () => {
-		respond(invoiceFixture);
+	it('invoices.deliver sends a GET, with no body and no query', async () => {
+		// The reference documents a 200 with no content for every deliver route.
+		respond(undefined);
 
-		await run(
-			{ id: 181235103, email: 'probe@example.com' },
-			endpoints.invoices.deliver,
-		);
+		const { result } = await run({ id: 181235103 }, endpoints.invoices.deliver);
 
 		const { parsed, init, body } = lastCall();
 		// A GET that sends email, which is why it is a write in the metadata.
 		expect(init.method).toBe('GET');
 		expect(parsed.pathname).toBe('/api/invoices/181235103/deliver');
-		expect(parsed.searchParams.get('email')).toBe('probe@example.com');
+		expect(parsed.search).toBe('');
 		expect(body).toBeUndefined();
+		// The email has gone by now, so an empty answer must not be an error: a
+		// throw here would make the caller deliver a second time.
+		expect(result).toEqual({ delivered: true });
 	});
 });
 
@@ -435,18 +436,16 @@ describe('receipts, credits and proformas', () => {
 	});
 
 	it('receipts.deliver GETs the deliver route and sends no body', async () => {
-		respond(invoiceFixture);
+		respond(undefined);
 
-		await run(
-			{ id: 181235200, email: 'probe@example.com' },
-			endpoints.receipts.deliver,
-		);
+		const { result } = await run({ id: 181235200 }, endpoints.receipts.deliver);
 
 		const { parsed, init, body } = lastCall();
 		expect(init.method).toBe('GET');
 		expect(parsed.pathname).toBe('/api/receipts/181235200/deliver');
-		expect(parsed.searchParams.get('email')).toBe('probe@example.com');
+		expect(parsed.search).toBe('');
 		expect(body).toBeUndefined();
+		expect(result).toEqual({ delivered: true });
 	});
 
 	it('receipts.void PUTs the void route with a reason', async () => {
@@ -532,13 +531,14 @@ describe('receipts, credits and proformas', () => {
 	});
 
 	it('credits.deliver GETs the deliver route', async () => {
-		respond(invoiceFixture);
+		respond(undefined);
 
-		await run({ id: 181235112 }, endpoints.credits.deliver);
+		const { result } = await run({ id: 181235112 }, endpoints.credits.deliver);
 
 		const { parsed, init } = lastCall();
 		expect(init.method).toBe('GET');
 		expect(parsed.pathname).toBe('/api/credits/181235112/deliver');
+		expect(result).toEqual({ delivered: true });
 	});
 
 	it('proformas.list GETs /proformas', async () => {
@@ -611,6 +611,7 @@ describe('receipts, credits and proformas', () => {
 
 		expect(lastCall().init.method).toBe('GET');
 		expect(lastCall().parsed.pathname).toBe('/api/proformas/9/deliver');
+		expect(result).toEqual({ delivered: true });
 	});
 });
 

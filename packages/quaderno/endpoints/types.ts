@@ -611,18 +611,30 @@ export type InvoiceRecordPaymentInput = z.input<
 	typeof InvoiceRecordPaymentInputSchema
 >;
 
+/**
+ * A deliver takes the document id and nothing else. Quaderno sends to the
+ * address on file for the contact; the reference documents no way to name
+ * another recipient, so none is offered here.
+ */
 const InvoiceDeliverInputSchema = z.object({
-	id: IdSchema,
-	email: z
-		.string()
-		.min(3)
-		.optional()
-		.describe('Send to this address instead of the contact default.'),
+	id: IdSchema.describe('The invoice to email to its contact.'),
 });
 
 export type InvoiceDeliverInput = z.input<typeof InvoiceDeliverInputSchema>;
 
 const InvoiceResponseSchema = z.object({ invoice: DocumentSchema });
+
+/**
+ * The four `deliver` routes answer **200 with no body**: the reference lists no
+ * response content for them. There is no document to parse, so the output only
+ * confirms the request was accepted. Requiring a document here would throw
+ * after the email had already gone out, and a caller would send it again.
+ */
+const DeliverResponseSchema = z.object({
+	delivered: z.literal(true),
+});
+
+export type DeliverResponse = z.infer<typeof DeliverResponseSchema>;
 
 export type InvoiceResponse = z.infer<typeof InvoiceResponseSchema>;
 
@@ -672,8 +684,7 @@ const ReceiptVoidInputSchema = z.object({
 export type ReceiptVoidInput = z.input<typeof ReceiptVoidInputSchema>;
 
 const ReceiptDeliverInputSchema = z.object({
-	id: IdSchema,
-	email: z.string().min(3).optional(),
+	id: IdSchema.describe('The receipt to email to its contact.'),
 });
 
 export type ReceiptDeliverInput = z.input<typeof ReceiptDeliverInputSchema>;
@@ -762,8 +773,7 @@ const CreditVoidInputSchema = z.object({
 export type CreditVoidInput = z.input<typeof CreditVoidInputSchema>;
 
 const CreditDeliverInputSchema = z.object({
-	id: IdSchema,
-	email: z.string().min(3).optional(),
+	id: IdSchema.describe('The credit note to email to its contact.'),
 });
 
 export type CreditDeliverInput = z.input<typeof CreditDeliverInputSchema>;
@@ -814,8 +824,7 @@ const ProformaActionInputSchema = z.object({
 export type ProformaActionInput = z.input<typeof ProformaActionInputSchema>;
 
 const ProformaDeliverInputSchema = z.object({
-	id: IdSchema,
-	email: z.string().min(3).optional(),
+	id: IdSchema.describe('The proforma to email to its contact.'),
 });
 
 export type ProformaDeliverInput = z.input<typeof ProformaDeliverInputSchema>;
@@ -1246,18 +1255,18 @@ export type QuadernoEndpointOutputs = {
 	invoicesVoid: InvoiceResponse;
 	invoicesMarkUncollectible: InvoiceResponse;
 	invoicesRecordPayment: PaymentResponse;
-	invoicesDeliver: InvoiceResponse;
+	invoicesDeliver: DeliverResponse;
 	receiptsList: ReceiptsListResponse;
 	receiptsCreate: ReceiptResponse;
 	receiptsGet: ReceiptResponse;
 	receiptsVoid: ReceiptResponse;
-	receiptsDeliver: ReceiptResponse;
+	receiptsDeliver: DeliverResponse;
 	creditsList: CreditsListResponse;
 	creditsCreate: CreditResponse;
 	creditsGet: CreditResponse;
 	creditsUpdate: CreditResponse;
 	creditsVoid: CreditResponse;
-	creditsDeliver: CreditResponse;
+	creditsDeliver: DeliverResponse;
 	proformasList: ProformasListResponse;
 	proformasCreate: ProformaResponse;
 	proformasGet: ProformaResponse;
@@ -1351,18 +1360,18 @@ export const QuadernoEndpointOutputSchemas = {
 	invoicesVoid: InvoiceResponseSchema,
 	invoicesMarkUncollectible: InvoiceResponseSchema,
 	invoicesRecordPayment: PaymentResponseSchema,
-	invoicesDeliver: InvoiceResponseSchema,
+	invoicesDeliver: DeliverResponseSchema,
 	receiptsList: ReceiptsListResponseSchema,
 	receiptsCreate: ReceiptResponseSchema,
 	receiptsGet: ReceiptResponseSchema,
 	receiptsVoid: ReceiptResponseSchema,
-	receiptsDeliver: ReceiptResponseSchema,
+	receiptsDeliver: DeliverResponseSchema,
 	creditsList: CreditsListResponseSchema,
 	creditsCreate: CreditResponseSchema,
 	creditsGet: CreditResponseSchema,
 	creditsUpdate: CreditResponseSchema,
 	creditsVoid: CreditResponseSchema,
-	creditsDeliver: CreditResponseSchema,
+	creditsDeliver: DeliverResponseSchema,
 	proformasList: ProformasListResponseSchema,
 	proformasCreate: ProformaResponseSchema,
 	proformasGet: ProformaResponseSchema,

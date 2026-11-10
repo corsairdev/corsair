@@ -190,7 +190,7 @@ describe('quaderno plugin', () => {
 		);
 	});
 
-	it('registers no webhooks: Quaderno sends unsigned deliveries', () => {
+	it('registers no inbound webhooks, so no delivery is accepted unverified', () => {
 		expect(plugin.webhooks).toEqual({});
 		expect(plugin.webhookSchemas).toEqual({});
 		expect(

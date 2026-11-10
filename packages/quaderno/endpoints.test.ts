@@ -42,6 +42,21 @@ describe('output schemas accept the real responses', () => {
 			{ jurisdictions: jurisdictionsFixture },
 		],
 		['webhooks.list', Outputs.webhooksList, { webhooks: [] }],
+		// The reference types `stock` as a string and the identity `id` as a
+		// string; neither may fail a read.
+		[
+			'products.get with a string stock',
+			Outputs.productsGet,
+			{ product: { ...productFixture, stock: '12' } },
+		],
+		[
+			'authorization with a string id',
+			Outputs.authorization,
+			{ identity: { ...authorizationFixture.identity, id: '999' } },
+		],
+		// `valid` is null when the external registry is unreachable.
+		['taxIds.validate, registry down', Outputs.taxIdsValidate, { valid: null }],
+		['invoices.deliver', Outputs.invoicesDeliver, { delivered: true }],
 	] as const;
 
 	for (const [name, schema, fixture] of cases) {
@@ -156,6 +171,30 @@ describe('input schemas reject what the API would refuse', () => {
 			Inputs.contactsCreate.safeParse({ kind: 'company', first_name: 'Acme' })
 				.success,
 		).toBe(true);
+	});
+
+	it('offers no recipient override on a deliver, since the API has none', () => {
+		// Quaderno sends to the address on file for the contact. An `email` input
+		// would be dropped by the API and the document would go to someone else.
+		for (const schema of [
+			Inputs.invoicesDeliver,
+			Inputs.receiptsDeliver,
+			Inputs.creditsDeliver,
+			Inputs.proformasDeliver,
+		]) {
+			expect(Object.keys(schema.shape)).toEqual(['id']);
+		}
+	});
+
+	it('describes the date filter as a range, the only documented format', () => {
+		for (const schema of [
+			Inputs.invoicesList,
+			Inputs.receiptsList,
+			Inputs.creditsList,
+			Inputs.proformasList,
+		]) {
+			expect(schema.shape.date.description).toContain('2026-01-01,2026-12-31');
+		}
 	});
 
 	it('rejects a two-letter country that is not two letters', () => {

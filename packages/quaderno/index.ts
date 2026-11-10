@@ -131,9 +131,10 @@ export type QuadernoEndpoints = {
 };
 
 /**
- * Quaderno sends webhooks, but they are configured in the dashboard and carry
- * no signing secret in the docs, so nothing here can verify a delivery. No
- * inbound webhook is registered and `pluginWebhookMatcher` refuses everything.
+ * Quaderno sends webhooks and signs each delivery with that endpoint's
+ * `auth_key`. This plugin does not receive them yet: no inbound webhook is
+ * registered and `pluginWebhookMatcher` refuses everything, so an unverified
+ * delivery can never be accepted by mistake.
  */
 export type QuadernoWebhooks = Record<never, never>;
 
@@ -444,7 +445,7 @@ const quadernoEndpointMeta = {
 	'contacts.create': {
 		riskLevel: 'write',
 		description:
-			'Adds a customer. Quaderno rejects a duplicate email with 422, so this is safe to call from a retry.',
+			'Adds a customer. `first_name` is required, and holds the company name for a `company`. Give an `email` if documents will be delivered to this contact.',
 	},
 	'contacts.get': {
 		riskLevel: 'read',
@@ -527,7 +528,7 @@ const quadernoEndpointMeta = {
 	'invoices.deliver': {
 		riskLevel: 'write',
 		description:
-			'Sends the invoice to the customer by email using the account template. A **GET that mutates**, so it is a write here and never replayed: delivering twice emails twice. Records delivery history and needs a contact with a valid email.',
+			'Sends the invoice by email to the address on file for its contact, using the account template. A **GET that mutates**, so it is a write here and never replayed: delivering twice emails twice. The contact needs a valid email. Answers no document, only `delivered: true`.',
 	},
 	'receipts.list': {
 		riskLevel: 'read',
@@ -553,7 +554,7 @@ const quadernoEndpointMeta = {
 	'receipts.deliver': {
 		riskLevel: 'write',
 		description:
-			'Emails the receipt to the customer. A GET that mutates, so it is a write and is never replayed.',
+			'Emails the receipt to the address on file for its contact. A GET that mutates, so it is a write and is never replayed. Answers `delivered: true`.',
 	},
 	'credits.list': {
 		riskLevel: 'read',
@@ -584,7 +585,7 @@ const quadernoEndpointMeta = {
 	'credits.deliver': {
 		riskLevel: 'write',
 		description:
-			'Emails the credit note. A GET that mutates, so it is a write and is never replayed.',
+			'Emails the credit note to the address on file for its contact. A GET that mutates, so it is a write and is never replayed. Answers `delivered: true`.',
 	},
 	'proformas.list': {
 		riskLevel: 'read',
@@ -629,7 +630,7 @@ const quadernoEndpointMeta = {
 	'proformas.deliver': {
 		riskLevel: 'write',
 		description:
-			'Emails the proforma. A GET that mutates, so it is a write and is never replayed.',
+			'Emails the proforma to the address on file for its contact. A GET that mutates, so it is a write and is never replayed. Answers `delivered: true`.',
 	},
 	'taxRates.calculate': {
 		riskLevel: 'read',
