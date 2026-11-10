@@ -39,9 +39,10 @@ export const get: ShippoEndpoints['batchesGet'] = (ctx, input) =>
 			output: Outputs.batchesGet,
 		},
 		input,
-		({ batch_id, shippo_account_id }) => ({
+		({ batch_id, page, results, shippo_account_id }) => ({
 			method: 'GET',
 			path: `/batches/${segment(batch_id)}`,
+			query: { page, results },
 			shippoAccountId: shippo_account_id,
 		}),
 		{
@@ -68,8 +69,9 @@ export const addShipments: ShippoEndpoints['batchesAddShipments'] = (
 		({ batch_id, shipments, shippo_account_id }) => ({
 			method: 'POST',
 			path: `/batches/${segment(batch_id)}/add_shipments`,
-			// This route takes a bare `{ shipments: [...] }`, not the batch shape.
-			body: { shipments },
+			// The request body is a bare array of batch shipments, not an object
+			// wrapping one and not the batch shape.
+			body: shipments,
 			shippoAccountId: shippo_account_id,
 		}),
 		{
@@ -95,7 +97,8 @@ export const removeShipments: ShippoEndpoints['batchesRemoveShipments'] = (
 		({ batch_id, shipments, shippo_account_id }) => ({
 			method: 'POST',
 			path: `/batches/${segment(batch_id)}/remove_shipments`,
-			body: { shipments },
+			// A bare array of shipment ids.
+			body: shipments,
 			shippoAccountId: shippo_account_id,
 		}),
 		{

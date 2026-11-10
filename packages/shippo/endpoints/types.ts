@@ -1121,9 +1121,13 @@ export const BatchSchema = z
 export type ShippoBatch = z.infer<typeof BatchSchema>;
 
 const BatchShipmentInputSchema = z.object({
-	shipment: Id.describe(
-		'An existing shipment `object_id`; the rate comes from the carrier and servicelevel on this entry or the batch default.',
-	),
+	// The spec types this as a nested shipment; Shippo's batch guide also adds
+	// existing shipments by id, so both are accepted.
+	shipment: z
+		.union([Id, ShipmentFieldsSchema])
+		.describe(
+			'An existing shipment `object_id`, or a nested shipment to create. The rate comes from the carrier and servicelevel on this entry or the batch default.',
+		),
 	carrier_account: Id.optional(),
 	servicelevel_token: z.string().optional(),
 	metadata: z.string().optional(),
@@ -1171,8 +1175,11 @@ const BatchCreateInputSchema = z
 
 export type BatchCreateInput = z.input<typeof BatchCreateInputSchema>;
 
+// `page`/`results` page the `batch_shipments` list inside the batch, which is
+// where the per-shipment results are.
 const BatchGetInputSchema = z.object({
 	batch_id: Id.describe('The batch `object_id`.'),
+	...PagingShape,
 	...accountIdHeader,
 });
 
@@ -1200,7 +1207,10 @@ export type BatchRemoveShipmentsInput = z.input<
 	typeof BatchRemoveShipmentsInputSchema
 >;
 
-const BatchPurchaseInputSchema = BatchGetInputSchema;
+const BatchPurchaseInputSchema = z.object({
+	batch_id: Id.describe('The batch `object_id`.'),
+	...accountIdHeader,
+});
 
 export type BatchPurchaseInput = z.input<typeof BatchPurchaseInputSchema>;
 

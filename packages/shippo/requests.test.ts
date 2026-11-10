@@ -675,10 +675,9 @@ describe('batches', () => {
 		expect(h.lastRequest().path).toBe(
 			`/batches/${batch.object_id}/add_shipments`,
 		);
-		// This route takes a bare `{ shipments }`.
-		expect(h.lastRequest().body).toEqual({
-			shipments: [{ shipment: 'another-shipment' }],
-		});
+		// The spec's request body is a bare array of batch shipments, not an
+		// object wrapping one.
+		expect(h.lastRequest().body).toEqual([{ shipment: 'another-shipment' }]);
 
 		h.respond(batch);
 		await invoke(Batches.removeShipments, {
@@ -688,6 +687,8 @@ describe('batches', () => {
 		expect(h.lastRequest().path).toBe(
 			`/batches/${batch.object_id}/remove_shipments`,
 		);
+		// Likewise a bare array of shipment ids.
+		expect(h.lastRequest().body).toEqual(['another-shipment']);
 
 		h.respond(purchasedBatch);
 		const purchased = await invoke(Batches.purchase, {
@@ -695,6 +696,44 @@ describe('batches', () => {
 		});
 		expect(h.lastRequest().path).toBe(`/batches/${batch.object_id}/purchase`);
 		expect(purchased.label_url).toHaveLength(1);
+	});
+});
+
+describe('batch paging and nested shipments', () => {
+	it('pages the shipments inside a batch', async () => {
+		h.respond(batch);
+		await invoke(Batches.get, {
+			batch_id: batch.object_id,
+			page: 2,
+			results: 50,
+		});
+
+		// A batch holds its shipments as a paged list, so without these a
+		// caller only ever sees the first page of per-shipment results.
+		expect(h.lastRequest().query).toEqual({ page: '2', results: '50' });
+	});
+
+	it('accepts a nested shipment as well as a shipment id', async () => {
+		h.respond(batch);
+		await invoke(Batches.create, {
+			default_carrier_account: '078870331023437cb917f5187429b093',
+			default_servicelevel_token: 'usps_priority',
+			batch_shipments: [
+				{
+					shipment: {
+						address_from: ADDRESS_ID,
+						address_to: { country: 'US', name: 'Mr Hippo', street1: '1 Main' },
+						parcels: ['parcel-id'],
+					},
+				},
+			],
+		});
+
+		expect(h.lastRequest().body).toMatchObject({
+			batch_shipments: [
+				{ shipment: { address_from: ADDRESS_ID, parcels: ['parcel-id'] } },
+			],
+		});
 	});
 });
 
