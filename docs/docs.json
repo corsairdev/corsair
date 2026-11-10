@@ -2681,6 +2681,14 @@
                 ]
               },
               {
+                "group": "Nanonets",
+                "pages": [
+                  "plugins/nanonets/overview",
+                  "plugins/nanonets/api",
+                  "plugins/nanonets/database"
+                ]
+              },
+              {
                 "group": "Neon",
                 "pages": [
                   "plugins/neon/overview",

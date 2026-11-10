@@ -317,6 +317,7 @@ export const BaseProviders = [
 	'missive',
 	'monday',
 	'mrscraper',
+	'nanonets',
 	'neon',
 	'netsuite',
 	'nextdns',
@@ -779,6 +780,7 @@ export const ProviderDisplayNames = {
 	missive: 'Missive',
 	monday: 'Monday',
 	mrscraper: 'MrScraper',
+	nanonets: 'Nanonets',
 	neon: 'Neon',
 	netsuite: 'NetSuite',
 	nextdns: 'NextDNS',
@@ -1245,6 +1247,7 @@ export type AllProviders =
 	| 'missive'
 	| 'monday'
 	| 'mrscraper'
+	| 'nanonets'
 	| 'neon'
 	| 'netsuite'
 	| 'nextdns'
