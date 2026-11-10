@@ -66,6 +66,13 @@ export const errorHandlers = {
 		match: (error: Error) => isApi(error) && error.isTimeout,
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	// Headers arrived but the body did not: the request ran, so this is not a
+	// transport failure and must not be replayed. Listed before TIMEOUT_ERROR and
+	// NETWORK_ERROR, either of which could otherwise claim it.
+	BODY_READ_ERROR: {
+		match: (error: Error) => isApi(error) && error.isBodyReadFailure,
+		handler: async () => ({ maxRetries: 0 }),
+	},
 	// A connection that never produced a response did not reach SatisMeter, so
 	// a read can be replayed. A write may still have been applied by a proxy, so
 	// it is not replayed.

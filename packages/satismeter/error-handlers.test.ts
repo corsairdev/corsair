@@ -139,6 +139,15 @@ describe('error handler selection', () => {
 		expect(await strategyFor(error)).toEqual({ maxRetries: 0 });
 	});
 
+	it('does not replay a body that failed to read', async () => {
+		const error = new SatisMeterAPIError('body unreadable', {
+			bodyReadFailed: true,
+			method: 'GET',
+		});
+		expect(firstMatch(error)).toBe('BODY_READ_ERROR');
+		expect(await strategyFor(error)).toEqual({ maxRetries: 0 });
+	});
+
 	it('does not retry the client deadline', async () => {
 		const error = new SatisMeterAPIError('timed out', {
 			transport: true,

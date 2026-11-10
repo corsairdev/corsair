@@ -290,6 +290,58 @@ function sentQuery(url: URL): string | undefined {
 	return url.search.length > 1 ? url.search : undefined;
 }
 
+describe('a body that fails to read after the headers arrived', () => {
+	/** Headers in, body read rejecting: what a deadline mid-body looks like. */
+	function headersThenBrokenBody(): Response {
+		return {
+			ok: true,
+			status: 200,
+			headers: new Headers({ 'Content-Type': 'application/json' }),
+			text: async () => {
+				const error = new Error('The operation was aborted');
+				error.name = 'TimeoutError';
+				throw error;
+			},
+			// unknown: a real Response cannot have headers with an unreadable body,
+			// and that is the one case this test needs to represent.
+		} as unknown as Response;
+	}
+
+	it('is not reported as a transport failure', async () => {
+		(globalThis.fetch as jest.Mock).mockResolvedValueOnce(
+			headersThenBrokenBody(),
+		);
+
+		const error = await failure(
+			makeSatisMeterRequest(API_KEY, {
+				base: SATISMETER_API_V3,
+				method: 'GET',
+				path: '/projects/abc',
+			}),
+		);
+
+		// The request landed; claiming transport would let it be replayed.
+		expect(error.isBodyReadFailure).toBe(true);
+		expect(error.isTransport).toBe(false);
+	});
+
+	it('is never replayed, even for a read', async () => {
+		(globalThis.fetch as jest.Mock).mockResolvedValueOnce(
+			headersThenBrokenBody(),
+		);
+
+		const error = await failure(
+			makeSatisMeterRequest(API_KEY, {
+				base: SATISMETER_API_V3,
+				method: 'GET',
+				path: '/projects/abc',
+			}),
+		);
+
+		expect(error.message).toContain('the request ran');
+	});
+});
+
 describe('parseJsonBody', () => {
 	it('parses JSON', () => {
 		expect(parseJsonBody('{"data":{"id":"a"}}')).toEqual({ data: { id: 'a' } });

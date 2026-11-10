@@ -73,6 +73,11 @@ export type SatisMeterErrorOptions = {
 	transport?: boolean;
 	/** True when the transport gave up on its own deadline. */
 	timedOut?: boolean;
+	/**
+	 * True when the answer's headers arrived but its body could not be read: the
+	 * request ran, so this is never a transport failure.
+	 */
+	bodyReadFailed?: boolean;
 	cause?: Error;
 };
 
@@ -94,6 +99,8 @@ export class SatisMeterAPIError extends Error {
 	readonly method?: string;
 	readonly isTransport: boolean;
 	readonly isTimeout: boolean;
+	/** True when the request ran but its answer could not be read. */
+	readonly isBodyReadFailure: boolean;
 
 	constructor(message: string, options: SatisMeterErrorOptions = {}) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
@@ -104,6 +111,7 @@ export class SatisMeterAPIError extends Error {
 		this.method = options.method;
 		this.isTransport = options.transport === true;
 		this.isTimeout = options.timedOut === true;
+		this.isBodyReadFailure = options.bodyReadFailed === true;
 	}
 
 	/** 403 with `Not authorized` or `Forbidden`: the key itself was refused. */
@@ -234,16 +242,17 @@ export async function makeSatisMeterRequest(
 	try {
 		text = await response.text();
 	} catch (error) {
-		// Headers arrived, so SatisMeter already handled the request. The body
-		// is unreadable, which for a read is worth one replay and for a write is
-		// not: `method` carries that decision to the error handlers.
+		// Headers arrived, so SatisMeter already handled the request and this is
+		// not a transport failure: claiming it was would let a write be replayed
+		// on a request that landed. A read still cannot confirm what came back,
+		// so it is reported as a body-read failure and left to the caller.
 		const timedOut =
 			error instanceof Error &&
 			(error.name === 'TimeoutError' || error.name === 'AbortError');
 		throw new SatisMeterAPIError(
-			'the response body could not be read after the headers arrived',
+			'the response body could not be read after the headers arrived, so the request ran',
 			{
-				transport: method === 'GET',
+				bodyReadFailed: true,
 				timedOut,
 				method,
 				cause: error instanceof Error ? error : undefined,
