@@ -1,0 +1,2213 @@
+---
+title: API
+description: "API reference for ERPNext: every `erpnext.api.*` operation with input and output types."
+---
+
+Every `erpnext.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Desk
+
+### addComment
+
+`desk.addComment`
+
+Add a comment to any document; the caller supplies the reference, content, and commenter identity
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.desk.addComment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  reference_doctype: string,
+  reference_name: string,
+  content: string,
+  comment_email: string,
+  comment_by: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addTag
+
+`desk.addTag`
+
+Add a tag to a document, optionally with a color, for organization and filtering
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.desk.addTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  tag: string,
+  dt: string,
+  dn: string,
+  color?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### searchGlobal
+
+`desk.searchGlobal`
+
+Search a DocType by text across its searchable fields, with optional custom search method, filters, and result limit
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.desk.searchGlobal({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `txt` | `string` | Yes | — |
+| `query` | `string` | No | Name of a whitelisted method implementing a custom search for the DocType; defaults to the standard search |
+| `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["customer_type","=","Company"]], passed verbatim |
+| `page_length` | `number` | No | Maximum number of result rows to return |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `any[]` | Yes | — |
+
+
+
+---
+
+## Doctypes
+
+### getMeta
+
+`doctypes.getMeta`
+
+Read the complete metadata of a DocType: field definitions, types, permissions, and configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.doctypes.getMeta({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `with_parent` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  meta: {
+  },
+  docs: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`doctypes.list`
+
+List the DocTypes available on the instance with optional filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.doctypes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["module","=","Core"]], passed verbatim |
+| `limit_start` | `number` | No | — |
+| `limit_page_length` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Documents
+
+### cancel
+
+`documents.cancel`
+
+Cancel a submitted document by doctype and name through the frappe.client RPC
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.documents.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  doctype: string,
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`documents.create`
+
+Create a document of any DocType from its field values; the response carries the created document
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.documents.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`documents.delete`
+
+Delete a document of a DocType by its name
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.erpnext.api.documents.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`documents.get`
+
+Read one document of a DocType by its name
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.documents.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getClient
+
+`documents.getClient`
+
+Read a single document through the frappe.client RPC by doctype and name
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.documents.getClient({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCount
+
+`documents.getCount`
+
+Count the documents of a DocType matching optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.documents.getCount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `filters` | `string` | No | JSON string filter expression, for example [["status","=","Open"]], passed verbatim |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `number` | Yes | — |
+
+
+
+---
+
+### getList
+
+`documents.getList`
+
+Query documents through the frappe.client RPC with filtering, field selection, and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.documents.getList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `fields` | `string` | No | JSON array string of field names to return, for example ["name","customer_name"], passed verbatim to Frappe |
+| `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["customer_type","=","Company"]], passed verbatim |
+| `order_by` | `string` | No | — |
+| `limit_start` | `number` | No | — |
+| `limit_page_length` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getValue
+
+`documents.getValue`
+
+Read specific field values from documents matching filters without loading the whole document
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.documents.getValue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `fieldname` | `string` | Yes | — |
+| `filters` | `string` | No | JSON string filter expression identifying the record, for example {"name":"CUST-00001"}, passed verbatim |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `any` | Yes | — |
+
+
+
+---
+
+### getWithMeta
+
+`documents.getWithMeta`
+
+Read a document with its desk metadata: attachments, comments, activity logs, and related information
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.documents.getWithMeta({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docs` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="docs full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insert
+
+`documents.insert`
+
+Insert a document through the frappe.client RPC, passing the full document object including its doctype field
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.documents.insert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  doc: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insertMany
+
+`documents.insertMany`
+
+Insert multiple documents in one call for efficiency; each item carries its doctype and field values
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.documents.insertMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  docs: {
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `any[]` | Yes | — |
+
+
+
+---
+
+### list
+
+`documents.list`
+
+List documents of a DocType with field selection, filters, ordering, and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.documents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `fields` | `string` | No | JSON array string of field names to return, for example ["name","customer_name"], passed verbatim to Frappe |
+| `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["customer_type","=","Company"]], passed verbatim |
+| `order_by` | `string` | No | — |
+| `limit_start` | `number` | No | — |
+| `limit_page_length` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### renameDoc
+
+`documents.renameDoc`
+
+Rename a document by changing its primary identifier, optionally merging into an existing name
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.documents.renameDoc({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  doctype: string,
+  old_name: string,
+  new_name: string,
+  merge?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `any` | Yes | — |
+
+
+
+---
+
+### saveDocs
+
+`documents.saveDocs`
+
+Save, submit, cancel, or update a document by sending its docstatus and fields through the frappe.client RPC
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.documents.saveDocs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  doc: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### saveDocument
+
+`documents.saveDocument`
+
+Save an existing document through the frappe.client RPC, passing the complete document object with its changes
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.documents.saveDocument({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  doc: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchLink
+
+`documents.searchLink`
+
+Search documents of a DocType for Link-field autocomplete suggestions by name or text
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.documents.searchLink({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `txt` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  value: string,
+  description: string,
+  label?: string,
+  image?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setValue
+
+`documents.setValue`
+
+Set one field value on a document without loading or rewriting the whole document
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.documents.setValue({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  doctype: string,
+  name: string,
+  fieldname: string | {
+  },
+  value?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `any` | Yes | — |
+
+
+
+---
+
+### submit
+
+`documents.submit`
+
+Submit a submittable document, moving it from draft to submitted through the frappe.client RPC
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.documents.submit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  doc: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`documents.update`
+
+Update a document by name; the body carries the fields to change
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.documents.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Erp
+
+### getExchangeRate
+
+`erp.getExchangeRate`
+
+Get the exchange rate between two currencies on an optional date; Frappe requires the date when the currencies differ
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.erp.getExchangeRate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_currency` | `string` | Yes | — |
+| `to_currency` | `string` | Yes | — |
+| `transaction_date` | `string` | No | ISO date the rate applies to, for example 2026-01-15; Frappe requires it when the two currencies differ |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `number` | Yes | — |
+
+
+
+---
+
+### getItemDetails
+
+`erp.getItemDetails`
+
+Get the pricing, tax, and stock details ERPNext computes for an item in a selling or buying context
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.erp.getItemDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ctx` | `string` | Yes | JSON string of the item and pricing context, for example {"item_code":"WIDGET","qty":2}, passed verbatim to Frappe |
+| `for_validate` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPartyDetails
+
+`erp.getPartyDetails`
+
+Get the address, contact, currency, and payment-term details ERPNext attaches to a customer or supplier
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.erp.getPartyDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `party` | `string` | Yes | — |
+| `party_type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPaymentEntry
+
+`erp.getPaymentEntry`
+
+Get a prefilled payment entry draft for an outstanding sales invoice, purchase invoice, or order
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.erp.getPaymentEntry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dt` | `string` | Yes | — |
+| `dn` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStockBalance
+
+`erp.getStockBalance`
+
+Get the available stock balance of an item in a warehouse as of an optional posting date
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.erp.getStockBalance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item_code` | `string` | Yes | — |
+| `warehouse` | `string` | Yes | — |
+| `posting_date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `number` | Yes | — |
+
+
+
+---
+
+### makeDeliveryNote
+
+`erp.makeDeliveryNote`
+
+Map a sales order into a draft delivery note, preserving the linked item rows
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.erp.makeDeliveryNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  source_name: string,
+  target_doc?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### makePurchaseOrder
+
+`erp.makePurchaseOrder`
+
+Map a sales order or material request into draft purchase orders grouped by supplier
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.erp.makePurchaseOrder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  source_name: string,
+  selected_items?: string | string[],
+  target_doc?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### makeSalesInvoice
+
+`erp.makeSalesInvoice`
+
+Map a sales order into a draft sales invoice, preserving the linked item rows
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.erp.makeSalesInvoice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  source_name: string,
+  target_doc?: string,
+  args?: string,
+  ignore_permissions?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### makeStockEntry
+
+`erp.makeStockEntry`
+
+Create a stock entry for material transfers, receipts, or issues between warehouses
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.erp.makeStockEntry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### downloadFile
+
+`files.downloadFile`
+
+Download a stored file by its URL path; the plugin returns the bytes base64-encoded
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.files.downloadFile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base64` | `string` | Yes | — |
+
+
+
+---
+
+### downloadPdf
+
+`files.downloadPdf`
+
+Download a document as PDF through a print format; the plugin returns the bytes base64-encoded
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.files.downloadPdf({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doctype` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `format` | `string` | No | — |
+| `no_letterhead` | `boolean` | No | — |
+| `letterhead` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `base64` | `string` | Yes | — |
+
+
+
+---
+
+## People
+
+### listEmployees
+
+`people.listEmployees`
+
+List the employees recorded on the instance
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.people.listEmployees({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | JSON array string of field names to return, for example ["name","employee_name","department"], passed verbatim to Frappe |
+| `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["status","=","Active"]], passed verbatim |
+| `limit_start` | `number` | No | — |
+| `limit_page_length` | `number` | No | Maximum rows per page; Frappe treats 0 as no page limit and returns every employee |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProjects
+
+`people.listProjects`
+
+List the projects recorded on the instance
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.people.listProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | JSON array string of field names to return, for example ["name","project_name","status"], passed verbatim to Frappe |
+| `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["status","=","Open"]], passed verbatim |
+| `limit_start` | `number` | No | — |
+| `limit_page_length` | `number` | No | Maximum rows per page; Frappe treats 0 as no page limit and returns every project |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## System
+
+### getAllLanguages
+
+`system.getAllLanguages`
+
+List the languages available on the instance for translation and localization; pass limit_page_length 0 for all
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.system.getAllLanguages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | JSON array string of field names to return, for example ["language_code","language_name"], passed verbatim to Frappe |
+| `limit_page_length` | `number` | No | Maximum rows per page; Frappe treats 0 as no page limit and returns every language |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAllRoles
+
+`system.getAllRoles`
+
+List the roles defined on the instance
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.system.getAllRoles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | JSON array string of field names to return, for example ["name","desk_access"], passed verbatim to Frappe |
+| `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["desk_access","=",1]], passed verbatim |
+| `limit_start` | `number` | No | — |
+| `limit_page_length` | `number` | No | Maximum rows per page; Frappe treats 0 as no page limit and returns every role |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFiscalYear
+
+`system.getFiscalYear`
+
+List the fiscal years configured on the instance for accounting periods
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.system.getFiscalYear({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | JSON array string of field names to return, for example ["name","year_start_date","year_end_date"], passed verbatim to Frappe |
+| `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["disabled","=",0]], passed verbatim |
+| `limit_start` | `number` | No | — |
+| `limit_page_length` | `number` | No | Maximum rows per page; Frappe treats 0 as no page limit and returns every fiscal year |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFrameworkVersion
+
+`system.getFrameworkVersion`
+
+Get the Frappe framework version and all installed app versions; requires a desk user
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.system.getFrameworkVersion({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLoggedUser
+
+`system.getLoggedUser`
+
+Get the user account the token authenticates as
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.system.getLoggedUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### getTimezones
+
+`system.getTimezones`
+
+List all timezone identifiers available for user configuration and scheduling
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.system.getTimezones({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  timezones: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUserRoles
+
+`system.getUserRoles`
+
+List role assignments (the Has Role child records) with optional user and role filters
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.system.getUserRoles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | JSON array string of field names to return, for example ["parent","role"], passed verbatim to Frappe |
+| `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["parenttype","=","User"]], passed verbatim |
+| `limit_start` | `number` | No | — |
+| `limit_page_length` | `number` | No | Maximum rows per page; Frappe treats 0 as no page limit and returns every assignment |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ping
+
+`system.ping`
+
+Check that the site answers authenticated API requests
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.system.ping({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+## Timesheets
+
+### create
+
+`timesheets.create`
+
+Create a timesheet with time log entries for an employee or project
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.timesheets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`timesheets.list`
+
+List the timesheets recorded on the instance
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.timesheets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | JSON array string of field names to return, for example ["name","employee","total_hours"], passed verbatim to Frappe |
+| `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["docstatus","=",0]], passed verbatim |
+| `limit_start` | `number` | No | — |
+| `limit_page_length` | `number` | No | Maximum rows per page; Frappe treats 0 as no page limit and returns every timesheet |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook subscription that fires on a DocType event such as create, update, or submit
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the configured webhook subscriptions on the instance
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filters` | `string` | No | JSON string filter expression in Frappe list format, for example [["webhook_doctype","=","Sales Invoice"]], passed verbatim |
+| `limit_start` | `number` | No | — |
+| `limit_page_length` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workflow
+
+### apply
+
+`workflow.apply`
+
+Apply a workflow action to a document, transitioning it through its configured workflow states
+
+**Risk:** `write`
+
+```ts
+await corsair.erpnext.api.workflow.apply({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  doc: {
+  },
+  action: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTransitions
+
+`workflow.getTransitions`
+
+List the workflow transitions available for a document, optionally scoped to a role
+
+**Risk:** `read`
+
+```ts
+await corsair.erpnext.api.workflow.getTransitions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `doc` | `string` | Yes | JSON object string identifying the document, for example {"doctype":"Sales Invoice","name":"ACC-SINV-2026-00001"}, passed verbatim to Frappe |
+| `workflow` | `string` | No | Name of the Workflow to consult; defaults to the active workflow on the document type |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
