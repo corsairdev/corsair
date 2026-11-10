@@ -253,3 +253,5 @@ Small docs fixes can be straightforward, but anything larger should have issue c
 You don't need to change a package's version. Every merge to `main` releases the packages it changed: when a package's shipped files differ from its last release, `.github/workflows/release-on-merge.yml` moves it to the next free patch past the higher of its repo version and npm's latest, and `deploy.yml` publishes it to npm. Changes to tests, READMEs, `plugin-docs.yaml` and devDependencies don't release anything, apart from the helpers `corsair/tests` publishes and Studio's bundled devDependencies. Neither do changes to shared build config such as `tsconfig.base.json`. When one of those, or a devDependency that changes the build, alters what packages ship, raise their versions in the same pull request.
 
 For a minor or major release, raise the version in your pull request. That version is published as it is.
+
+Each release adds its pull requests to the [changelog](https://docs.corsair.dev/changelog), using their titles, so write the title for someone using the package. Every title appears there unless it starts with `chore`, `ci`, `docs`, `test`, `refactor`, `style` or `build`.
