@@ -35,12 +35,22 @@ const ScansListInputSchema = z.object({
 		'Users who made the scans. `all` by default.',
 	),
 	scan_id: IdListSchema.optional().describe('Only these scans.'),
+	// The API takes 1, 0 and -1. Both spellings are accepted because the docs
+	// and catalog render string enums without quotes, so a caller reading
+	// `(1 | 0 | -1)[]` there sends numbers.
 	status: z
-		.array(z.enum(['1', '0', '-1']))
+		.array(
+			z.union([
+				z.literal(1),
+				z.literal(0),
+				z.literal(-1),
+				z.enum(['1', '0', '-1']),
+			]),
+		)
 		.min(1)
 		.optional()
 		.describe(
-			"'1' valid, '0' invalid, '-1' could not be validated offline. `all` by default.",
+			'`1` valid, `0` invalid, `-1` could not be validated offline, as numbers or strings. All statuses by default.',
 		),
 	start_date: z
 		.string()
@@ -137,7 +147,7 @@ const ScansListInputSchema = z.object({
 		.string()
 		.optional()
 		.describe(
-			'IANA name for the returned timestamps. Defaults to the account timezone; `account` uses it explicitly.',
+			'IANA name for the returned timestamps, such as `Europe/London`. Defaults to `America/New_York`, not the account timezone; pass `account` to use the one set on the account.',
 		),
 	order_by: z
 		.string()
@@ -254,7 +264,14 @@ const ServiceSchema = z
 	.object({
 		id: z.number().nullish(),
 		name: z.string().nullish(),
-		validation_method: ValidationMethodSchema.nullish(),
+		// A string rather than the enum: a method the API adds later must not
+		// fail the whole services.list read.
+		validation_method: z
+			.string()
+			.nullish()
+			.describe(
+				'`record`, `ondevicerecord`, `database`, `ondevicedatabase`, `webview` or `postback`.',
+			),
 		postback_url: z.string().nullish(),
 		database_id: z.number().nullish(),
 		duplicate_scan_value: z.number().nullish(),
@@ -753,9 +770,9 @@ export type CodereadrDatabaseValueWrite = z.input<
 >;
 
 const DatabasesUpsertValueInputSchema = z.object({
-	database_id: IdSchema.optional().describe(
-		'Database for every value that does not name its own. A value with neither is skipped.',
-	),
+	// Required by the API for this action. Only the bulk action has a per-value
+	// database to fall back on.
+	database_id: IdSchema.describe('The database to write the value to.'),
 	value: z
 		.string()
 		.min(1)

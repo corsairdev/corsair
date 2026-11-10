@@ -182,11 +182,16 @@ describe('services', () => {
 		expect(output.services[1]?.duplicate_scan_value).toBe(1);
 	});
 
-	it('rejects a validation method the API does not define', () => {
+	it('keeps a validation method the API does not define yet readable', () => {
+		const output = Outputs.servicesList.parse({
+			services: [{ id: 1, validation_method: 'telepathy' }],
+		});
+		expect(output.services[0]?.validation_method).toBe('telepathy');
+	});
+
+	it('still rejects an unknown validation method on create', () => {
 		expect(() =>
-			Outputs.servicesList.parse({
-				services: [{ id: 1, validation_method: 'telepathy' }],
-			}),
+			Inputs.servicesCreate.parse({ validation_method: 'telepathy' }),
 		).toThrow();
 	});
 

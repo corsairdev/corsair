@@ -699,3 +699,51 @@ describe('paging', () => {
 		}
 	});
 });
+
+describe('inputs and outputs against the reference', () => {
+	it('databases.upsertValue requires the database, as the API does', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			await expect(
+				corsair.codereadr.api.databases.upsertValue(
+					// The cast stands in for an untyped caller, such as an agent.
+					{ value: 'A1B2C3D' } as never,
+				),
+			).rejects.toThrow(/database_id/);
+			expect(fetchMock).not.toHaveBeenCalled();
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('services.list keeps a validation method the API adds later', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respondXml(
+				'<xml><status>1</status><service id="9"><name>Kiosk</name><validationmethod>kiosk</validationmethod></service></xml>',
+			);
+
+			const result = await corsair.codereadr.api.services.list({});
+
+			expect(result.services[0]?.validation_method).toBe('kiosk');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('scans.list accepts the status filter as numbers or strings', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respondXml(SCANS_XML);
+			respondXml(SCANS_XML);
+
+			await corsair.codereadr.api.scans.list({ status: [1, -1] });
+			await corsair.codereadr.api.scans.list({ status: ['0', '1'] });
+
+			expect(sentForm(0).get('status')).toBe('1,-1');
+			expect(sentForm(1).get('status')).toBe('0,1');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
