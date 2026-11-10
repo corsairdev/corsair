@@ -1,10 +1,27 @@
 // Fixtures are the canonical responses from developers.taggun.io: the simple
 // and verbose examples for the Chipotle receipt that Taggun publishes, and the
-// pass/fail campaign-validation examples. Region arrays are emptied there for
-// readability and are left empty here for the same reason.
+// pass/fail campaign-validation examples. Coordinate arrays are emptied in the
+// published examples for readability; one is filled in here from the spec's own
+// example, so the nested shape is actually exercised.
+//
+// `regions` is an array of shapes, each shape an array of `{x, y}` points.
+
+/** The region the Taggun spec publishes for `totalAmount`. */
+export const TOTAL_AMOUNT_REGIONS = [
+	[
+		{ x: 437, y: 787 },
+		{ x: 499, y: 788 },
+		{ x: 499, y: 808 },
+		{ x: 437, y: 807 },
+	],
+];
 
 export const SIMPLE_RECEIPT = {
-	totalAmount: { data: 14.42, confidenceLevel: 0.9199999999999999 },
+	totalAmount: {
+		data: 14.42,
+		confidenceLevel: 0.9199999999999999,
+		regions: TOTAL_AMOUNT_REGIONS,
+	},
 	taxAmount: { data: 0.82, confidenceLevel: 0.9199999999999999 },
 	confidenceLevel: 0.898,
 	date: {
@@ -32,7 +49,7 @@ export const VERBOSE_RECEIPT = {
 		index: 20,
 		keyword: '-',
 		currencyCode: 'USD',
-		regions: [],
+		regions: TOTAL_AMOUNT_REGIONS,
 	},
 	taxAmount: {
 		data: 0.82,
