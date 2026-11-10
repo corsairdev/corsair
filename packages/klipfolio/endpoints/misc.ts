@@ -34,10 +34,12 @@ export const createDashboardPublishedLinks: KlipfolioEndpoints['createDashboardP
 			),
 			{ method: 'POST', body: rest },
 		);
+		// Published-link passwords authenticate access to the link; they are
+		// redacted before the input lands in the event log.
 		await logEventFromContext(
 			ctx,
 			'klipfolio.misc.createDashboardPublishedLinks',
-			input,
+			{ ...input, password: '[redacted]' },
 			'completed',
 		);
 		return response;
@@ -71,10 +73,12 @@ export const updateDashboardPublishedLinks: KlipfolioEndpoints['updateDashboardP
 			),
 			{ method: 'PUT', body: rest },
 		);
+		// Published-link passwords authenticate access to the link; they are
+		// redacted before the input lands in the event log.
 		await logEventFromContext(
 			ctx,
 			'klipfolio.misc.updateDashboardPublishedLinks',
-			input,
+			{ ...input, password: '[redacted]' },
 			'completed',
 		);
 		return response;
