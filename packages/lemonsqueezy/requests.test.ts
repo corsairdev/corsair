@@ -791,6 +791,30 @@ describe('webhooks', () => {
 		).rejects.toThrow();
 	});
 
+	it('accepts customer_updated and affiliate_activated, refuses an undocumented event', async () => {
+		respond(webhook);
+		await invoke(Billing.webhooksCreate, {
+			storeId: 1,
+			url: 'https://example.com/hook',
+			events: ['customer_updated', 'affiliate_activated'],
+			secret: 'secret-value',
+		});
+		expect(lastRequest().body?.data.attributes?.events).toEqual([
+			'customer_updated',
+			'affiliate_activated',
+		]);
+
+		// Not in Lemon Squeezy's event list, so the API would refuse it.
+		await expect(
+			invoke(Billing.webhooksCreate, {
+				storeId: 1,
+				url: 'https://example.com/hook',
+				events: ['subscription_trial_will_end'],
+				secret: 'secret-value',
+			}),
+		).rejects.toThrow();
+	});
+
 	it('webhooks.update PATCHes only what changed', async () => {
 		respond(webhook);
 

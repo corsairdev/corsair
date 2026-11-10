@@ -2034,9 +2034,11 @@ export type CreateCheckoutResponse = z.infer<
 
 // ── webhooks ──────────────────────────────────────────────────────────────
 
+/** The event types Lemon Squeezy documents (help/webhooks/event-types). */
 export const LEMONSQUEEZY_WEBHOOK_EVENTS = [
 	'order_created',
 	'order_refunded',
+	'customer_updated',
 	'subscription_created',
 	'subscription_updated',
 	'subscription_cancelled',
@@ -2048,9 +2050,9 @@ export const LEMONSQUEEZY_WEBHOOK_EVENTS = [
 	'subscription_payment_failed',
 	'subscription_payment_recovered',
 	'subscription_payment_refunded',
-	'subscription_trial_will_end',
 	'license_key_created',
 	'license_key_updated',
+	'affiliate_activated',
 ] as const;
 
 const WebhookEventSchema = z.enum(LEMONSQUEEZY_WEBHOOK_EVENTS);
