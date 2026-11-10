@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-07T11:55:43.011Z",
-  "corsairVersion": "0.1.157",
+  "generatedAt": "2026-11-10T04:33:52.845Z",
+  "corsairVersion": "0.1.158",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -1283,7 +1283,7 @@
     {
       "id": "bonsai",
       "displayName": "Bonsai",
-      "description": "Freelance business management for contracts, invoices, proposals, and client billing.",
+      "description": "Managed Elasticsearch and OpenSearch hosting. Look up your clusters and the regions (spaces) they can run in.",
       "npmPackageName": "@corsair-dev/bonsai",
       "authTypes": [
         "api_key"
@@ -2984,6 +2984,21 @@
       }
     },
     {
+      "id": "elevenlabs",
+      "displayName": "ElevenLabs",
+      "description": "AI audio platform; generate speech, dialogue, sound effects and music, transcribe and align audio, change or isolate voices, dub video, manage voices and history, and run conversational agents.",
+      "npmPackageName": "@corsair-dev/elevenlabs",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 50,
+        "webhooks": 8,
+        "db": 0
+      }
+    },
+    {
       "id": "emailoctopus",
       "displayName": "EmailOctopus",
       "description": "EmailOctopus lists, contacts, tags, custom fields, campaigns and automations on API v2.",
@@ -3801,6 +3816,21 @@
       }
     },
     {
+      "id": "higgsfield",
+      "displayName": "Higgsfield",
+      "description": "Generative media API with image and video models from Higgsfield, Kling, Seedance, Wan, MiniMax and others; find models, price and run generations, follow or cancel requests, upload input files and read usage.",
+      "npmPackageName": "@corsair-dev/higgsfield",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 11,
+        "webhooks": 1,
+        "db": 0
+      }
+    },
+    {
       "id": "hookdeck",
       "displayName": "Hookdeck",
       "description": "Webhook infrastructure platform, with endpoints for creating and managing connections that route events from sources to destinations.",
@@ -3935,6 +3965,21 @@
         "api": 2,
         "webhooks": 0,
         "db": 1
+      }
+    },
+    {
+      "id": "inboxkit",
+      "displayName": "InboxKit",
+      "description": "Cold email infrastructure from InboxKit; buy and connect domains and Google or Microsoft mailboxes, manage DNS, warmup and sequencer exports, and watch deliverability",
+      "npmPackageName": "@corsair-dev/inboxkit",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 181,
+        "webhooks": 4,
+        "db": 3
       }
     },
     {
@@ -5424,8 +5469,8 @@
     },
     {
       "id": "studiobyai21labs",
-      "displayName": "ElevenLabs Studio",
-      "description": "AI audio studio for voice generation, dubbing, and long-form spoken content production.",
+      "displayName": "AI21 Studio",
+      "description": "AI21 Labs' model platform: Jamba chat completions, Maestro runs, and a file library to ground answers in your documents.",
       "npmPackageName": "@corsair-dev/studiobyai21labs",
       "authTypes": [
         "api_key"
@@ -53798,6 +53843,354 @@
       "haystack": "workspaces.update dynapictures.api.workspaces.update update an existing workspace name by workspace id write"
     },
     {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "account.subscription",
+      "haystack": "account.subscription elevenlabs.api.account.subscription the plan, credits used and limits. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "account.usageStats",
+      "haystack": "account.usagestats elevenlabs.api.account.usagestats credits used over a time range, by product or model. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "account.user",
+      "haystack": "account.user elevenlabs.api.account.user the account’s user and workspace ids and its subscription. key fields are removed from the result. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "agents.conversationDelete",
+      "haystack": "agents.conversationdelete elevenlabs.api.agents.conversationdelete delete a conversation, for good. destructive"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "agents.conversationGet",
+      "haystack": "agents.conversationget elevenlabs.api.agents.conversationget read a conversation’s transcript, metadata and analysis. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "agents.conversationsList",
+      "haystack": "agents.conversationslist elevenlabs.api.agents.conversationslist list conversations, optionally for one agent. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "agents.create",
+      "haystack": "agents.create elevenlabs.api.agents.create create a conversational agent. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "agents.delete",
+      "haystack": "agents.delete elevenlabs.api.agents.delete delete an agent, for good. destructive"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "agents.get",
+      "haystack": "agents.get elevenlabs.api.agents.get read an agent’s full configuration. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "agents.list",
+      "haystack": "agents.list elevenlabs.api.agents.list list conversational agents. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "agents.signedUrl",
+      "haystack": "agents.signedurl elevenlabs.api.agents.signedurl mint a short-lived websocket url a client can use to talk to an agent; the conversation spends credits. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "agents.update",
+      "haystack": "agents.update elevenlabs.api.agents.update change an agent’s configuration, name or tags. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "audioIsolation.isolate",
+      "haystack": "audioisolation.isolate elevenlabs.api.audioisolation.isolate remove background noise from audio and keep the voices; spends credits by audio length. the cleaned audio comes back in the result. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "dubbing.create",
+      "haystack": "dubbing.create elevenlabs.api.dubbing.create start dubbing a video or audio file into another language; spends credits by length. returns at once with a dubbing_id; follow it with dubbing.get until status is dubbed or failed. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "dubbing.delete",
+      "haystack": "dubbing.delete elevenlabs.api.dubbing.delete delete a dub, for good. destructive"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "dubbing.get",
+      "haystack": "dubbing.get elevenlabs.api.dubbing.get where a dub stands: status dubbed or failed are final. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "dubbing.getAudio",
+      "haystack": "dubbing.getaudio elevenlabs.api.dubbing.getaudio download a finished dub as base64 (audio or video), subject to the same size limit as other audio. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "dubbing.getTranscript",
+      "haystack": "dubbing.gettranscript elevenlabs.api.dubbing.gettranscript read a dub’s transcript as srt, webvtt or json. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "dubbing.list",
+      "haystack": "dubbing.list elevenlabs.api.dubbing.list list dubs, newest first by default. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "forcedAlignment.create",
+      "haystack": "forcedalignment.create elevenlabs.api.forcedalignment.create line up known text with audio to get word and character timings; spends credits by audio length. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "history.delete",
+      "haystack": "history.delete elevenlabs.api.history.delete delete a history item and its audio, for good. destructive"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "history.get",
+      "haystack": "history.get elevenlabs.api.history.get read one history item: its text, voice, model and cost. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "history.getAudio",
+      "haystack": "history.getaudio elevenlabs.api.history.getaudio download a history item’s audio as base64, subject to a size limit you can raise with maxbytes. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "history.list",
+      "haystack": "history.list elevenlabs.api.history.list list generated speech, newest first by default. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "models.list",
+      "haystack": "models.list elevenlabs.api.models.list list available models with their languages and rates. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "music.compose",
+      "haystack": "music.compose elevenlabs.api.music.compose generate a song from a prompt or a composition plan; spends credits by length. elevenlabs keeps no copy, so the audio comes back in the result. at the default format, about 24 kb/s, a song over about 31 s is too big to return from a script on corsair’s cloud, whose cap is 1,000,000 bytes: pick a lower-bitrate outputformat, or pass contentbase64 to the next operation and return only metadata. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "music.plan",
+      "haystack": "music.plan elevenlabs.api.music.plan draft a composition plan from a prompt, to edit and pass to music.compose. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "music.separateStems",
+      "haystack": "music.separatestems elevenlabs.api.music.separatestems split a song into stems, returned as a zip; spends credits by audio length. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "singleUseTokens.create",
+      "haystack": "singleusetokens.create elevenlabs.api.singleusetokens.create mint a single-use token, valid 15 minutes, to give a client instead of the api key. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "soundEffects.generate",
+      "haystack": "soundeffects.generate elevenlabs.api.soundeffects.generate generate a sound effect from a description; spends credits by duration. elevenlabs keeps no copy, so the audio comes back in the result. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "speechToText.convert",
+      "haystack": "speechtotext.convert elevenlabs.api.speechtotext.convert transcribe audio or video from a url or a base64 file; spends credits by audio length. with webhook true it returns at once and delivers the transcript by webhook. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "speechToText.deleteTranscript",
+      "haystack": "speechtotext.deletetranscript elevenlabs.api.speechtotext.deletetranscript delete a stored transcript, for good. destructive"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "speechToText.getTranscript",
+      "haystack": "speechtotext.gettranscript elevenlabs.api.speechtotext.gettranscript read a transcript by the transcription_id speechtotext.convert returned. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "textToDialogue.convert",
+      "haystack": "texttodialogue.convert elevenlabs.api.texttodialogue.convert turn lines spoken by several voices into one audio clip; spends credits by text length. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "textToSpeech.convert",
+      "haystack": "texttospeech.convert elevenlabs.api.texttospeech.convert turn text into speech; spends credits by text length. returns the audio as base64 with its history item id; set includecontent false to keep a long clip out of the result and read it later with history.getaudio. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "textToSpeech.convertWithTimestamps",
+      "haystack": "texttospeech.convertwithtimestamps elevenlabs.api.texttospeech.convertwithtimestamps turn text into speech with the start and end time of each character; spends credits by text length. same audio fields as texttospeech.convert. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voiceChanger.convert",
+      "haystack": "voicechanger.convert elevenlabs.api.voicechanger.convert say the same thing in a different voice, from a base64 audio file; spends credits by audio length. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voiceDesign.create",
+      "haystack": "voicedesign.create elevenlabs.api.voicedesign.create save a designed preview as a voice in this account; uses a voice slot. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voiceDesign.design",
+      "haystack": "voicedesign.design elevenlabs.api.voicedesign.design generate voice previews from a description; spends credits. hear one with voicedesign.getpreview, then pass its generated_voice_id to voicedesign.create. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voiceDesign.getPreview",
+      "haystack": "voicedesign.getpreview elevenlabs.api.voicedesign.getpreview read a preview's audio by its generated_voice_id, without generating again. subject to a size limit you can raise with maxbytes. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voiceDesign.remix",
+      "haystack": "voicedesign.remix elevenlabs.api.voicedesign.remix generate previews of a changed version of an existing voice; spends credits. hear one with voicedesign.getpreview. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voices.addFromLibrary",
+      "haystack": "voices.addfromlibrary elevenlabs.api.voices.addfromlibrary add a voice from the shared library to this account; uses a voice slot. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voices.defaultSettings",
+      "haystack": "voices.defaultsettings elevenlabs.api.voices.defaultsettings the settings a voice has by default. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voices.delete",
+      "haystack": "voices.delete elevenlabs.api.voices.delete delete a voice from this account, for good. destructive"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voices.edit",
+      "haystack": "voices.edit elevenlabs.api.voices.edit change a voice’s name, description or labels. write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voices.editSettings",
+      "haystack": "voices.editsettings elevenlabs.api.voices.editsettings change a voice’s stored settings (stability, similarity and so on). write"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voices.get",
+      "haystack": "voices.get elevenlabs.api.voices.get read one voice with its settings and labels. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voices.getSettings",
+      "haystack": "voices.getsettings elevenlabs.api.voices.getsettings read a voice’s stored settings. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voices.list",
+      "haystack": "voices.list elevenlabs.api.voices.list list the voices this account can use. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "api",
+      "shortPath": "voices.searchLibrary",
+      "haystack": "voices.searchlibrary elevenlabs.api.voices.searchlibrary search the shared voice library. read"
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "webhook",
+      "shortPath": "conversations.callInitiationFailure",
+      "haystack": "conversations.callinitiationfailure elevenlabs.webhooks.conversations.callinitiationfailure a phone call could not be started: busy, no answer or unknown."
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "webhook",
+      "shortPath": "conversations.postCallAudio",
+      "haystack": "conversations.postcallaudio elevenlabs.webhooks.conversations.postcallaudio a conversation ended: the whole conversation as base64 mp3."
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "webhook",
+      "shortPath": "conversations.postCallTranscription",
+      "haystack": "conversations.postcalltranscription elevenlabs.webhooks.conversations.postcalltranscription a conversation ended and its analysis is ready: transcript, metadata and analysis."
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "webhook",
+      "shortPath": "speechToText.transcriptionCompleted",
+      "haystack": "speechtotext.transcriptioncompleted elevenlabs.webhooks.speechtotext.transcriptioncompleted a transcription started with webhook true finished."
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "webhook",
+      "shortPath": "speechToText.transcriptionFailed",
+      "haystack": "speechtotext.transcriptionfailed elevenlabs.webhooks.speechtotext.transcriptionfailed a transcription started with webhook true failed."
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "webhook",
+      "shortPath": "voices.removalNotice",
+      "haystack": "voices.removalnotice elevenlabs.webhooks.voices.removalnotice a shared voice in use is scheduled to be removed."
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "webhook",
+      "shortPath": "voices.removalNoticeWithdrawn",
+      "haystack": "voices.removalnoticewithdrawn elevenlabs.webhooks.voices.removalnoticewithdrawn a shared voice is no longer scheduled for removal."
+    },
+    {
+      "pluginId": "elevenlabs",
+      "kind": "webhook",
+      "shortPath": "voices.removed",
+      "haystack": "voices.removed elevenlabs.webhooks.voices.removed a shared voice was removed and can no longer be used."
+    },
+    {
       "pluginId": "emailoctopus",
       "kind": "api",
       "shortPath": "automations.start",
@@ -67286,6 +67679,78 @@
       "haystack": "webhooksquota.updateendpointv3 heygen.api.webhooksquota.updateendpointv3 modify the url or subscribed events of an existing v3 webhook endpoint write"
     },
     {
+      "pluginId": "higgsfield",
+      "kind": "api",
+      "shortPath": "files.createUploadUrl",
+      "haystack": "files.createuploadurl higgsfield.api.files.createuploadurl get a presigned url to put an input file to yourself, and the public url it will have. for most uses files.upload does both steps. write"
+    },
+    {
+      "pluginId": "higgsfield",
+      "kind": "api",
+      "shortPath": "files.upload",
+      "haystack": "files.upload higgsfield.api.files.upload upload an image, audio or video file from base64 and get the public url to pass as a model input. a file already at a public https url needs no upload: pass that url to the model. write"
+    },
+    {
+      "pluginId": "higgsfield",
+      "kind": "api",
+      "shortPath": "generations.estimate",
+      "haystack": "generations.estimate higgsfield.api.generations.estimate what a generation with these inputs would cost, in us dollars and credits. free; nothing runs. read"
+    },
+    {
+      "pluginId": "higgsfield",
+      "kind": "api",
+      "shortPath": "generations.run",
+      "haystack": "generations.run higgsfield.api.generations.run generate and wait up to waitseconds (default 10, at most 15) for the output; spends account balance when it completes. answers like requests.status: queued or in_progress is a job to follow with requests.status, and video usually takes longer than the wait. outputs expire after 7 days by default. write"
+    },
+    {
+      "pluginId": "higgsfield",
+      "kind": "api",
+      "shortPath": "generations.submit",
+      "haystack": "generations.submit higgsfield.api.generations.submit queue a generation (image, video…) and get a request id back at once; spends account balance when it completes. follow it with requests.status until it is completed, failed, nsfw or canceled, or pass webhookurl. outputs expire after 7 days by default. repeating with the returned idempotency_key is never charged twice. write"
+    },
+    {
+      "pluginId": "higgsfield",
+      "kind": "api",
+      "shortPath": "models.get",
+      "haystack": "models.get higgsfield.api.models.get one model by its path, with its input fields (input_schema). read this before a generation: every model takes its own fields. read"
+    },
+    {
+      "pluginId": "higgsfield",
+      "kind": "api",
+      "shortPath": "models.list",
+      "haystack": "models.list higgsfield.api.models.list find higgsfield models by text, output type or operation; includeschema adds their input fields read"
+    },
+    {
+      "pluginId": "higgsfield",
+      "kind": "api",
+      "shortPath": "requests.cancel",
+      "haystack": "requests.cancel higgsfield.api.requests.cancel cancel a request that is still queued and refund it. once it has started it cannot be canceled, and this errors. write"
+    },
+    {
+      "pluginId": "higgsfield",
+      "kind": "api",
+      "shortPath": "requests.delete",
+      "haystack": "requests.delete higgsfield.api.requests.delete delete a finished request's files, prompt and parameters now. billing records stay. a request still running gets a 409. destructive"
+    },
+    {
+      "pluginId": "higgsfield",
+      "kind": "api",
+      "shortPath": "requests.status",
+      "haystack": "requests.status higgsfield.api.requests.status where a request stands, with its output urls once completed. output urls stop working at expires_at, 7 days after it finished by default. read"
+    },
+    {
+      "pluginId": "higgsfield",
+      "kind": "api",
+      "shortPath": "usage.get",
+      "haystack": "usage.get higgsfield.api.usage.get completed generations and their estimated cost by model and time bucket. for monitoring: it can lag and is not a billing record. read"
+    },
+    {
+      "pluginId": "higgsfield",
+      "kind": "webhook",
+      "shortPath": "requests.completed",
+      "haystack": "requests.completed higgsfield.webhooks.requests.completed a request reached completed (with its output), failed or nsfw. signed with standard webhooks; only signed deliveries are accepted."
+    },
+    {
       "pluginId": "hookdeck",
       "kind": "api",
       "shortPath": "connections.create",
@@ -69456,6 +69921,1116 @@
       "kind": "api",
       "shortPath": "images.upload",
       "haystack": "images.upload imgbb.api.images.upload upload an image to imgbb and return the hosted image urls and metadata write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "account.get",
+      "haystack": "account.get inboxkit.api.account.get the team's wallet balance, mailbox slots, current plan, auto top-up settings and price per mailbox. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "billing.addCredits",
+      "haystack": "billing.addcredits inboxkit.api.billing.addcredits spends money. buy wallet credits. with direct_charge the saved card is charged at once; otherwise this returns a hosted checkout link. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "billing.cancelSubscription",
+      "haystack": "billing.cancelsubscription inboxkit.api.billing.cancelsubscription cancel the active subscription. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "billing.changeSubscription",
+      "haystack": "billing.changesubscription inboxkit.api.billing.changesubscription spends money. switch to another plan or start one. may charge the saved card at once or return a payment link. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "billing.getPaymentStatus",
+      "haystack": "billing.getpaymentstatus inboxkit.api.billing.getpaymentstatus whether a hosted-checkout or guest-mode payment has finished and its credits were applied. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "billing.getPortalLink",
+      "haystack": "billing.getportallink inboxkit.api.billing.getportallink a stripe billing portal link for this team. whoever holds the link can manage payment methods and invoices, so keep it private. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "billing.getPricingPlans",
+      "haystack": "billing.getpricingplans inboxkit.api.billing.getpricingplans available pricing plans, with upgrade and downgrade options from the current plan. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "billing.getSubscription",
+      "haystack": "billing.getsubscription inboxkit.api.billing.getsubscription the current subscription and the available plans. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "billing.getWallet",
+      "haystack": "billing.getwallet inboxkit.api.billing.getwallet wallet balance, credits used and auto top-up settings. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "billing.getWalletLogs",
+      "haystack": "billing.getwalletlogs inboxkit.api.billing.getwalletlogs wallet activity log, with filters by type, kind, status, workspace and date. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "billing.listTransactions",
+      "haystack": "billing.listtransactions inboxkit.api.billing.listtransactions wallet transactions, newest first, with the balance after each one. send next_cursor back as cursor for the next page. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "billing.updateAutoTopup",
+      "haystack": "billing.updateautotopup inboxkit.api.billing.updateautotopup can spend money. turn automatic wallet top-ups on or off and set the threshold and amount. while on, inboxkit charges the saved card with no further call. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "clientIdRequests.getStatus",
+      "haystack": "clientidrequests.getstatus inboxkit.api.clientidrequests.getstatus current status of a client id request. microsoft stays processing for minutes, so poll. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "clientIdRequests.initiate",
+      "haystack": "clientidrequests.initiate inboxkit.api.clientidrequests.initiate authorize an app's client id on a domain, as a trusted app or with domain-wide delegation on google, or tenant-wide consent on microsoft. this can give the app access to every mailbox on the domain. the domain needs an admin mailbox. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "clientIdRequests.list",
+      "haystack": "clientidrequests.list inboxkit.api.clientidrequests.list client id requests, filtered by status or domain. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "cloudflare.connect",
+      "haystack": "cloudflare.connect inboxkit.api.cloudflare.connect connect domains from a cloudflare account, using an api token or global api key. limited to 10 requests per 5 minutes. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "cloudflare.disconnect",
+      "haystack": "cloudflare.disconnect inboxkit.api.cloudflare.disconnect disconnect cloudflare domains from the workspace. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "cloudflare.get",
+      "haystack": "cloudflare.get inboxkit.api.cloudflare.get one cloudflare-connected domain, by uid or name. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "cloudflare.list",
+      "haystack": "cloudflare.list inboxkit.api.cloudflare.list domains connected through cloudflare. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "cloudflare.listZones",
+      "haystack": "cloudflare.listzones inboxkit.api.cloudflare.listzones zones in the connected cloudflare account. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "consentRequests.getStatus",
+      "haystack": "consentrequests.getstatus inboxkit.api.consentrequests.getstatus current status of a consent request. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "consentRequests.initiate",
+      "haystack": "consentrequests.initiate inboxkit.api.consentrequests.initiate process an oauth consent url for a mailbox, by uid or username and domain, which can give that app access to the mailbox. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "consentRequests.list",
+      "haystack": "consentrequests.list inboxkit.api.consentrequests.list consent requests, filtered by mailbox or status. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "dns.add",
+      "haystack": "dns.add inboxkit.api.dns.add add dns records to a domain. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "dns.deleteRecords",
+      "haystack": "dns.deleterecords inboxkit.api.dns.deleterecords delete dns records from a domain, by id or all of them. removing mx, spf, dkim or dmarc records stops mail from working. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "dns.list",
+      "haystack": "dns.list inboxkit.api.dns.list dns records of one domain, by name or uid. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "dns.repair",
+      "haystack": "dns.repair inboxkit.api.dns.repair fix missing or broken email dns records on one or more domains. run dns.verify first to see what would change. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "dns.update",
+      "haystack": "dns.update inboxkit.api.dns.update update dns records on a domain. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "dns.verify",
+      "haystack": "dns.verify inboxkit.api.dns.verify check the health of the email dns records of one or more domains. nothing changes. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.checkAvailability",
+      "haystack": "domains.checkavailability inboxkit.api.domains.checkavailability whether one domain can be registered, with its price and ban status. takes no workspace. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.checkBanned",
+      "haystack": "domains.checkbanned inboxkit.api.domains.checkbanned whether one domain is banned from registration. takes no workspace. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.checkPropagation",
+      "haystack": "domains.checkpropagation inboxkit.api.domains.checkpropagation whether the nameservers of these domains have propagated. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.checkWorkspaceAvailability",
+      "haystack": "domains.checkworkspaceavailability inboxkit.api.domains.checkworkspaceavailability whether domains can be used with google workspace or microsoft 365. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.connect",
+      "haystack": "domains.connect inboxkit.api.domains.connect connect domains you already own to the workspace and get the nameservers to set at your registrar. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.getMoveStatus",
+      "haystack": "domains.getmovestatus inboxkit.api.domains.getmovestatus whether a move started with domains.moveworkspace has finished. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.getRenewalStatus",
+      "haystack": "domains.getrenewalstatus inboxkit.api.domains.getrenewalstatus renewal status of purchased domains, filtered by name, uid or status. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.getRotationStatus",
+      "haystack": "domains.getrotationstatus inboxkit.api.domains.getrotationstatus progress of a rotation. poll every 30 to 60 seconds until completed, partially_completed or failed. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.list",
+      "haystack": "domains.list inboxkit.api.domains.list the workspace's domains with status, nameservers and dns records. paginated, with filters by keyword, status and uid. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.listAssignable",
+      "haystack": "domains.listassignable inboxkit.api.domains.listassignable domains that can take more mailboxes. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.moveWorkspace",
+      "haystack": "domains.moveworkspace inboxkit.api.domains.moveworkspace move domains to another workspace in the team, with their mailboxes and dns records. run domains.previewmove first. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.previewMove",
+      "haystack": "domains.previewmove inboxkit.api.domains.previewmove what moving domains to another workspace would do, and why any cannot move. nothing changes. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.previewRotation",
+      "haystack": "domains.previewrotation inboxkit.api.domains.previewrotation whether a domain can rotate onto a replacement, which mailboxes would move and their new addresses. nothing changes. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.regenerateNameservers",
+      "haystack": "domains.regeneratenameservers inboxkit.api.domains.regeneratenameservers create new cloudflare zones and nameservers for domains that need reconfiguring. the registrar then has to be pointed at the new nameservers. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.register",
+      "haystack": "domains.register inboxkit.api.domains.register spends money. register domains with contact details and configuration, paid from the wallet or a checkout. never repeat after a timeout without checking domains.list first. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.remove",
+      "haystack": "domains.remove inboxkit.api.domains.remove remove domains from the workspace. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.removeCatchAll",
+      "haystack": "domains.removecatchall inboxkit.api.domains.removecatchall remove the catch-all address from these domains. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.removeDmarc",
+      "haystack": "domains.removedmarc inboxkit.api.domains.removedmarc reset these domains to the default dmarc record. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.requestRenewal",
+      "haystack": "domains.requestrenewal inboxkit.api.domains.requestrenewal spends money. renew purchased domains from the wallet, up to 50 at once. if the wallet cannot cover the whole batch, none are queued. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.rotate",
+      "haystack": "domains.rotate inboxkit.api.domains.rotate start moving every mailbox on a domain to a replacement domain in the same workspace. mailbox addresses change. run domains.previewrotation first. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.search",
+      "haystack": "domains.search inboxkit.api.domains.search search for domains to register by keyword or name, with prices and google or microsoft availability. limited to 50 requests a minute. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.setCatchAll",
+      "haystack": "domains.setcatchall inboxkit.api.domains.setcatchall send mail for unknown addresses on these domains to one email address. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.setDmarc",
+      "haystack": "domains.setdmarc inboxkit.api.domains.setdmarc set a custom dmarc record on these domains. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.setForwarding",
+      "haystack": "domains.setforwarding inboxkit.api.domains.setforwarding set or remove the website url domains redirect to. an empty forwarding_url removes it. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.updateContacts",
+      "haystack": "domains.updatecontacts inboxkit.api.domains.updatecontacts update the whois contact details of a domain registered through inboxkit, for all four contact roles. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "domains.updatePrivacy",
+      "haystack": "domains.updateprivacy inboxkit.api.domains.updateprivacy turn whois privacy on or off for a domain registered through inboxkit. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getCampaignReplyRate",
+      "haystack": "emailinsights.getcampaignreplyrate inboxkit.api.emailinsights.getcampaignreplyrate reply rate for each campaign and sequence step. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getDailyStats",
+      "haystack": "emailinsights.getdailystats inboxkit.api.emailinsights.getdailystats daily email volume across the workspace. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getHighBounceMailboxes",
+      "haystack": "emailinsights.gethighbouncemailboxes inboxkit.api.emailinsights.gethighbouncemailboxes mailboxes whose bounce rate is above a threshold. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxActivity",
+      "haystack": "emailinsights.getmailboxactivity inboxkit.api.emailinsights.getmailboxactivity most recent email events for one mailbox, newest first. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxAuthFailures",
+      "haystack": "emailinsights.getmailboxauthfailures inboxkit.api.emailinsights.getmailboxauthfailures inbound messages to one mailbox that did not pass spf, dkim or dmarc. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxBodyTemplates",
+      "haystack": "emailinsights.getmailboxbodytemplates inboxkit.api.emailinsights.getmailboxbodytemplates groups of outbound emails from one mailbox that share a body structure. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxBounceEvents",
+      "haystack": "emailinsights.getmailboxbounceevents inboxkit.api.emailinsights.getmailboxbounceevents delivery failures for one mailbox, with the reason the receiving server gave. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxDeliverability",
+      "haystack": "emailinsights.getmailboxdeliverability inboxkit.api.emailinsights.getmailboxdeliverability bounce and authentication detail for one mailbox. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxesHealth",
+      "haystack": "emailinsights.getmailboxeshealth inboxkit.api.emailinsights.getmailboxeshealth seven-day activity summary for each mailbox in the workspace. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxFirstTouchFunnel",
+      "haystack": "emailinsights.getmailboxfirsttouchfunnel inboxkit.api.emailinsights.getmailboxfirsttouchfunnel recipients one mailbox contacted for the first time, by day. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxHealth",
+      "haystack": "emailinsights.getmailboxhealth inboxkit.api.emailinsights.getmailboxhealth activity status for one mailbox. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxMessageBreakdown",
+      "haystack": "emailinsights.getmailboxmessagebreakdown inboxkit.api.emailinsights.getmailboxmessagebreakdown sent and received messages for one mailbox, by type and by day. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxRecipientEspBreakdown",
+      "haystack": "emailinsights.getmailboxrecipientespbreakdown inboxkit.api.emailinsights.getmailboxrecipientespbreakdown sending volume and reply rate for one mailbox, by the recipient's email provider. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxReplyRateByDomain",
+      "haystack": "emailinsights.getmailboxreplyratebydomain inboxkit.api.emailinsights.getmailboxreplyratebydomain emails sent and replies received for one mailbox, by recipient domain. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxReplyTimeHeatmap",
+      "haystack": "emailinsights.getmailboxreplytimeheatmap inboxkit.api.emailinsights.getmailboxreplytimeheatmap how quickly replies arrive at one mailbox, by day of week and hour. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxSendingIpBreakdown",
+      "haystack": "emailinsights.getmailboxsendingipbreakdown inboxkit.api.emailinsights.getmailboxsendingipbreakdown sending ips one mailbox used, with gmail placement and blacklist status. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxStats",
+      "haystack": "emailinsights.getmailboxstats inboxkit.api.emailinsights.getmailboxstats event totals and rates for one mailbox over a period. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxSubjectAnalysis",
+      "haystack": "emailinsights.getmailboxsubjectanalysis inboxkit.api.emailinsights.getmailboxsubjectanalysis most common subject line keywords for one mailbox, with length statistics. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxTopRecipientDomains",
+      "haystack": "emailinsights.getmailboxtoprecipientdomains inboxkit.api.emailinsights.getmailboxtoprecipientdomains domains one mailbox sent to most often. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxTopRecipients",
+      "haystack": "emailinsights.getmailboxtoprecipients inboxkit.api.emailinsights.getmailboxtoprecipients addresses one mailbox sent to most often. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxTrends",
+      "haystack": "emailinsights.getmailboxtrends inboxkit.api.emailinsights.getmailboxtrends daily event counts for one mailbox, oldest first. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxVelocityOverlay",
+      "haystack": "emailinsights.getmailboxvelocityoverlay inboxkit.api.emailinsights.getmailboxvelocityoverlay hourly sending and reply volume for one mailbox. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getMailboxWarmupStats",
+      "haystack": "emailinsights.getmailboxwarmupstats inboxkit.api.emailinsights.getmailboxwarmupstats warmup volume for one mailbox compared with real sending, with spf, dkim and dmarc pass rates. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getOverview",
+      "haystack": "emailinsights.getoverview inboxkit.api.emailinsights.getoverview totals and rates across every mailbox in the workspace for a period. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "emailInsights.getWorkspaceActivity",
+      "haystack": "emailinsights.getworkspaceactivity inboxkit.api.emailinsights.getworkspaceactivity most recent email events across the workspace, newest first. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "forwarding.deleteRule",
+      "haystack": "forwarding.deleterule inboxkit.api.forwarding.deleterule delete a rule. its mailboxes stop forwarding. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "forwarding.getCapabilities",
+      "haystack": "forwarding.getcapabilities inboxkit.api.forwarding.getcapabilities what advanced forwarding can filter on for google and microsoft mailboxes, and the limits. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "forwarding.getRule",
+      "haystack": "forwarding.getrule inboxkit.api.forwarding.getrule one advanced forwarding rule. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "forwarding.listJobs",
+      "haystack": "forwarding.listjobs inboxkit.api.forwarding.listjobs status of forwarding jobs. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "forwarding.listRules",
+      "haystack": "forwarding.listrules inboxkit.api.forwarding.listrules advanced forwarding rules, newest first, with conditions, mailboxes and status. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "forwarding.remove",
+      "haystack": "forwarding.remove inboxkit.api.forwarding.remove turn off forwarding for mailboxes. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "forwarding.setup",
+      "haystack": "forwarding.setup inboxkit.api.forwarding.setup forward all mail from these mailboxes to one address. setup takes a few minutes; follow it with forwarding.listjobs. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "forwarding.setupAdvanced",
+      "haystack": "forwarding.setupadvanced inboxkit.api.forwarding.setupadvanced forward only the messages that match your conditions. a rule is created per google domain or microsoft account, and replaces any forwarding the mailbox had. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "forwarding.update",
+      "haystack": "forwarding.update inboxkit.api.forwarding.update change the forwarding address of mailboxes that already forward. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "forwarding.updateRule",
+      "haystack": "forwarding.updaterule inboxkit.api.forwarding.updaterule change a rule's conditions, match, forwarding address or mailboxes. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "inboxPlacement.createTest",
+      "haystack": "inboxplacement.createtest inboxkit.api.inboxplacement.createtest spends money. run an inbox placement test from your mailboxes, once or on a schedule. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "inboxPlacement.deleteScheduled",
+      "haystack": "inboxplacement.deletescheduled inboxkit.api.inboxplacement.deletescheduled delete a scheduled inbox placement test. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "inboxPlacement.getScheduled",
+      "haystack": "inboxplacement.getscheduled inboxkit.api.inboxplacement.getscheduled one scheduled inbox placement test. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "inboxPlacement.getTest",
+      "haystack": "inboxplacement.gettest inboxkit.api.inboxplacement.gettest results of one inbox placement test. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "inboxPlacement.listScheduled",
+      "haystack": "inboxplacement.listscheduled inboxkit.api.inboxplacement.listscheduled scheduled inbox placement tests. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "inboxPlacement.listTests",
+      "haystack": "inboxplacement.listtests inboxkit.api.inboxplacement.listtests inbox placement tests. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "inboxPlacement.pauseScheduled",
+      "haystack": "inboxplacement.pausescheduled inboxkit.api.inboxplacement.pausescheduled pause a scheduled inbox placement test. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "inboxPlacement.resumeScheduled",
+      "haystack": "inboxplacement.resumescheduled inboxkit.api.inboxplacement.resumescheduled can spend money. resume a scheduled inbox placement test, so its later runs are charged. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.acknowledgeAlert",
+      "haystack": "infraguard.acknowledgealert inboxkit.api.infraguard.acknowledgealert mark an alert as acknowledged. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.cancel",
+      "haystack": "infraguard.cancel inboxkit.api.infraguard.cancel stop infraguard monitoring and billing for domains. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.dismissActionItem",
+      "haystack": "infraguard.dismissactionitem inboxkit.api.infraguard.dismissactionitem dismiss an action item. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.enable",
+      "haystack": "infraguard.enable inboxkit.api.infraguard.enable spends money. turn on infraguard monitoring for domains, billed per domain. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.get",
+      "haystack": "infraguard.get inboxkit.api.infraguard.get the infraguard subscription of one domain. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.getActionItemStats",
+      "haystack": "infraguard.getactionitemstats inboxkit.api.infraguard.getactionitemstats action item counts for the workspace. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.getBlacklistHistory",
+      "haystack": "infraguard.getblacklisthistory inboxkit.api.infraguard.getblacklisthistory blacklist checks of one domain over time. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.getBounceHistory",
+      "haystack": "infraguard.getbouncehistory inboxkit.api.infraguard.getbouncehistory bounce checks of one domain over time. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.getBounceMetrics",
+      "haystack": "infraguard.getbouncemetrics inboxkit.api.infraguard.getbouncemetrics current bounce metrics of one domain. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.getDnsHistory",
+      "haystack": "infraguard.getdnshistory inboxkit.api.infraguard.getdnshistory dns checks of one domain over time. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.getPricing",
+      "haystack": "infraguard.getpricing inboxkit.api.infraguard.getpricing infraguard pricing. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.getStats",
+      "haystack": "infraguard.getstats inboxkit.api.infraguard.getstats infraguard statistics for the workspace. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.list",
+      "haystack": "infraguard.list inboxkit.api.infraguard.list domains protected by infraguard, with their health. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.listActionItems",
+      "haystack": "infraguard.listactionitems inboxkit.api.infraguard.listactionitems infraguard action items, filtered by domain, category, severity or status. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.listAlerts",
+      "haystack": "infraguard.listalerts inboxkit.api.infraguard.listalerts infraguard alerts, filtered by domain, status, severity or type. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.resolveActionItem",
+      "haystack": "infraguard.resolveactionitem inboxkit.api.infraguard.resolveactionitem mark an action item as resolved. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.resolveAlert",
+      "haystack": "infraguard.resolvealert inboxkit.api.infraguard.resolvealert mark an alert as resolved, with an optional note. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.triggerCheck",
+      "haystack": "infraguard.triggercheck inboxkit.api.infraguard.triggercheck run an infraguard check on a domain now. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "infraGuard.updateSettings",
+      "haystack": "infraguard.updatesettings inboxkit.api.infraguard.updatesettings change a domain's alert preferences, bounce thresholds and scheduled placement tests. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.addSignature",
+      "haystack": "mailboxes.addsignature inboxkit.api.mailboxes.addsignature add or replace the signature on several mailboxes. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.buy",
+      "haystack": "mailboxes.buy inboxkit.api.mailboxes.buy spends money. buy mailboxes on domains already in the workspace, from subscription slots, the wallet, or (azure) always the wallet. never repeat after a timeout without checking mailboxes.list first. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.cancel",
+      "haystack": "mailboxes.cancel inboxkit.api.mailboxes.cancel schedule mailboxes for cancellation. billing stops at the next renewal. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.changePassword",
+      "haystack": "mailboxes.changepassword inboxkit.api.mailboxes.changepassword change a mailbox's password. anything signed in with the old password, such as a sequencer, stops working. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.changeUsername",
+      "haystack": "mailboxes.changeusername inboxkit.api.mailboxes.changeusername change a mailbox's username, which changes its email address. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.checkAvailability",
+      "haystack": "mailboxes.checkavailability inboxkit.api.mailboxes.checkavailability whether a username is free on a domain. takes no workspace. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.deleteSignature",
+      "haystack": "mailboxes.deletesignature inboxkit.api.mailboxes.deletesignature delete the signature from several mailboxes. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.generateTotp",
+      "haystack": "mailboxes.generatetotp inboxkit.api.mailboxes.generatetotp a current two-factor code for a mailbox. keep the result out of logs and shared chats. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.get",
+      "haystack": "mailboxes.get inboxkit.api.mailboxes.get one mailbox by uid. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.getFailureReason",
+      "haystack": "mailboxes.getfailurereason inboxkit.api.mailboxes.getfailurereason why a mailbox failed to set up. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.getResetupStatus",
+      "haystack": "mailboxes.getresetupstatus inboxkit.api.mailboxes.getresetupstatus the most recent resetup job for a domain. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.getStatus",
+      "haystack": "mailboxes.getstatus inboxkit.api.mailboxes.getstatus status of mailboxes by uid or domain. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.list",
+      "haystack": "mailboxes.list inboxkit.api.mailboxes.list the workspace's mailboxes. paginated, with filters by keyword, domain, platform, status and uid. never includes passwords. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.reactivate",
+      "haystack": "mailboxes.reactivate inboxkit.api.mailboxes.reactivate can spend money. reactivate microsoft 365 and azure mailboxes scheduled for cancellation or whose renewal failed. with allow_charge a re-purchase may be charged to the wallet. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.reactivateRebuy",
+      "haystack": "mailboxes.reactivaterebuy inboxkit.api.mailboxes.reactivaterebuy spends money. approve the charge for microsoft 365 and azure mailboxes paused at needs_rebuy. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.resetup",
+      "haystack": "mailboxes.resetup inboxkit.api.mailboxes.resetup schedule a renewal-resetup for google workspace mailboxes. mail delivery on the domain is paused for up to 24 hours while it runs. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.showCredentials",
+      "haystack": "mailboxes.showcredentials inboxkit.api.mailboxes.showcredentials a mailbox's plaintext password, secret and app password, by uid or email. keep the result out of logs and shared chats. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.uncancel",
+      "haystack": "mailboxes.uncancel inboxkit.api.mailboxes.uncancel can spend money. undo a scheduled cancellation for google workspace mailboxes within the 10-day recovery window, so billing continues. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.update",
+      "haystack": "mailboxes.update inboxkit.api.mailboxes.update update a mailbox's first or last name, profile picture or tags. to change its address, use mailboxes.changeusername. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "mailboxes.updateProfilePicture",
+      "haystack": "mailboxes.updateprofilepicture inboxkit.api.mailboxes.updateprofilepicture set a mailbox's profile picture from a url. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "orders.place",
+      "haystack": "orders.place inboxkit.api.orders.place spends money. order new domains and their mailboxes in one request, charged to the wallet. never repeat after a timeout without checking domains.list first. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "prewarm.buy",
+      "haystack": "prewarm.buy inboxkit.api.prewarm.buy spends money. buy prewarmed domains with every active mailbox on them, charged to the wallet when the order is placed. never repeat after a timeout without checking first. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "prewarm.checkAvailability",
+      "haystack": "prewarm.checkavailability inboxkit.api.prewarm.checkavailability whether prewarmed domains are still for sale. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "prewarm.getOrderStatus",
+      "haystack": "prewarm.getorderstatus inboxkit.api.prewarm.getorderstatus status of a prewarmed domain order. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "prewarm.searchDomains",
+      "haystack": "prewarm.searchdomains inboxkit.api.prewarm.searchdomains search prewarmed domains for sale. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "prewarm.searchMailboxes",
+      "haystack": "prewarm.searchmailboxes inboxkit.api.prewarm.searchmailboxes search prewarmed mailboxes for sale. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "sequencers.add",
+      "haystack": "sequencers.add inboxkit.api.sequencers.add connect a sequencer account such as instantly, smartlead or lemlist, with the fields sequencers.listplatforms names for that platform. most take a login and password, and a few take only an api key. no mailboxes go to it until sequencers.exportmailboxes, unless auto export is on for it in the inboxkit dashboard. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "sequencers.delete",
+      "haystack": "sequencers.delete inboxkit.api.sequencers.delete remove sequencers from the workspace. mailboxes can no longer be exported to them. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "sequencers.exportMailboxes",
+      "haystack": "sequencers.exportmailboxes inboxkit.api.sequencers.exportmailboxes send mailboxes into a sequencer, which receives their credentials. runs in the background; follow it with sequencers.getexportstatus. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "sequencers.getExportStatus",
+      "haystack": "sequencers.getexportstatus inboxkit.api.sequencers.getexportstatus status of mailbox exports, with the error if a connection failed. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "sequencers.getTags",
+      "haystack": "sequencers.gettags inboxkit.api.sequencers.gettags tags on a sequencer account, using its platform and api key. only instantly has them today. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "sequencers.list",
+      "haystack": "sequencers.list inboxkit.api.sequencers.list sequencers connected to the workspace, filtered by platform, status, keyword or uid. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "sequencers.listPlatforms",
+      "haystack": "sequencers.listplatforms inboxkit.api.sequencers.listplatforms every sequencer platform inboxkit supports, with the fields each one needs to connect. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "sequencers.update",
+      "haystack": "sequencers.update inboxkit.api.sequencers.update rename a sequencer, rotate its credentials or change its auto-reconnect setting. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "sequencers.verifyLemlistOtp",
+      "haystack": "sequencers.verifylemlistotp inboxkit.api.sequencers.verifylemlistotp resume a lemlist connection paused with verification_required, using the link and code from its email. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "tags.assign",
+      "haystack": "tags.assign inboxkit.api.tags.assign add, remove or replace tags on domains or mailboxes in bulk. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "tags.create",
+      "haystack": "tags.create inboxkit.api.tags.create create a tag in the workspace. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "tags.delete",
+      "haystack": "tags.delete inboxkit.api.tags.delete delete a tag and remove it from everything it is on. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "tags.list",
+      "haystack": "tags.list inboxkit.api.tags.list all tags in the workspace. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "verifiedDomains.add",
+      "haystack": "verifieddomains.add inboxkit.api.verifieddomains.add add a website to mask domains to. it must then be verified with a txt record. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "verifiedDomains.list",
+      "haystack": "verifieddomains.list inboxkit.api.verifieddomains.list websites the team has added for url masking, with each one's status and txt record. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "verifiedDomains.remove",
+      "haystack": "verifieddomains.remove inboxkit.api.verifieddomains.remove remove a website from the verified destinations. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "verifiedDomains.verify",
+      "haystack": "verifieddomains.verify inboxkit.api.verifieddomains.verify check whether the txt record for a destination is published, and mark it verified if so. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.add",
+      "haystack": "warmup.add inboxkit.api.warmup.add spends money. add warmup to mailboxes, billed monthly. mailboxes that are not ready start once they are; activate_immediately charges the first month to the wallet now. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.addSmtpMailboxes",
+      "haystack": "warmup.addsmtpmailboxes inboxkit.api.warmup.addsmtpmailboxes spends money. connect up to 10 smtp mailboxes you own and start their warmup. the first month is charged to the wallet for each one that signs in. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.cancel",
+      "haystack": "warmup.cancel inboxkit.api.warmup.cancel stop warmup and its billing for mailboxes. the mailboxes stay connected. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.createConnectLink",
+      "haystack": "warmup.createconnectlink inboxkit.api.warmup.createconnectlink can spend money. a one-time sign-in link to connect a google workspace or microsoft 365 mailbox you own. anyone with the link can use it; with start_warmup the first month is charged when it connects. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.disconnectMailbox",
+      "haystack": "warmup.disconnectmailbox inboxkit.api.warmup.disconnectmailbox disconnect a mailbox you connected yourself and cancel its warmup. connecting it again charges a new first month. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.get",
+      "haystack": "warmup.get inboxkit.api.warmup.get the warmup subscription of one mailbox, with its current settings. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.getConnectLink",
+      "haystack": "warmup.getconnectlink inboxkit.api.warmup.getconnectlink what happened to a link from warmup.createconnectlink. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.getPricing",
+      "haystack": "warmup.getpricing inboxkit.api.warmup.getpricing the monthly warmup price per mailbox. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.getStats",
+      "haystack": "warmup.getstats inboxkit.api.warmup.getstats warmup counts for the workspace. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.list",
+      "haystack": "warmup.list inboxkit.api.warmup.list warmup subscriptions in the workspace. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.listConnectedMailboxes",
+      "haystack": "warmup.listconnectedmailboxes inboxkit.api.warmup.listconnectedmailboxes mailboxes you connected yourself, newest first. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.pause",
+      "haystack": "warmup.pause inboxkit.api.warmup.pause pause warmup for mailboxes. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.resume",
+      "haystack": "warmup.resume inboxkit.api.warmup.resume resume warmup for mailboxes. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "warmup.updateSettings",
+      "haystack": "warmup.updatesettings inboxkit.api.warmup.updatesettings change warmup settings for mailboxes. only the settings you send change. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "workspaces.create",
+      "haystack": "workspaces.create inboxkit.api.workspaces.create create a workspace. all team members are copied into it unless admins_only is set. set a webhook url afterwards with workspaces.updatewebhook. write"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "workspaces.delete",
+      "haystack": "workspaces.delete inboxkit.api.workspaces.delete delete a workspace permanently. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "workspaces.get",
+      "haystack": "workspaces.get inboxkit.api.workspaces.get one workspace by uid. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "workspaces.inviteMember",
+      "haystack": "workspaces.invitemember inboxkit.api.workspaces.invitemember invite someone to a workspace, or resend an invite. sends them an email and gives them access to its domains and mailboxes. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "workspaces.list",
+      "haystack": "workspaces.list inboxkit.api.workspaces.list every workspace in the team, with its uid. pass a uid as workspaceid to the operations that act on one workspace. read"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "workspaces.update",
+      "haystack": "workspaces.update inboxkit.api.workspaces.update rename a workspace and set its webhook url. that url can receive mailbox passwords in plaintext, so only point it at an endpoint you control. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "api",
+      "shortPath": "workspaces.updateWebhook",
+      "haystack": "workspaces.updatewebhook inboxkit.api.workspaces.updatewebhook set a workspace's webhook url. that url can receive mailbox passwords in plaintext, so only point it at an endpoint you control. destructive"
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "webhook",
+      "shortPath": "clientIdRequests.statusChanged",
+      "haystack": "clientidrequests.statuschanged inboxkit.webhooks.clientidrequests.statuschanged a client id request's status changed."
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "webhook",
+      "shortPath": "consentRequests.statusChanged",
+      "haystack": "consentrequests.statuschanged inboxkit.webhooks.consentrequests.statuschanged an oauth consent request's status changed."
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "webhook",
+      "shortPath": "domains.statusChanged",
+      "haystack": "domains.statuschanged inboxkit.webhooks.domains.statuschanged a domain's status changed."
+    },
+    {
+      "pluginId": "inboxkit",
+      "kind": "webhook",
+      "shortPath": "mailboxes.statusChanged",
+      "haystack": "mailboxes.statuschanged inboxkit.webhooks.mailboxes.statuschanged a mailbox's status changed. unless the team has turned it off, inboxkit sends the mailbox's passwords in this delivery; the plugin removes them before a handler returns. use mailboxes.showcredentials if you need them."
     },
     {
       "pluginId": "insightoai",
