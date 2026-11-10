@@ -1917,6 +1917,14 @@
                 ]
               },
               {
+                "group": "Fidel",
+                "pages": [
+                  "plugins/fidel/overview",
+                  "plugins/fidel/api",
+                  "plugins/fidel/database"
+                ]
+              },
+              {
                 "group": "Figma",
                 "pages": [
                   "plugins/figma/overview",

@@ -33,7 +33,7 @@ pnpm add @corsair-dev/fidel
 | `marketplace.createOfferFromMarketplaceOffer` | `fidel.api.marketplace.createOfferFromMarketplaceOffer` | `write` | Create an offer from a marketplace offer |
 | `marketplace.listMarketplaceOffers` | `fidel.api.marketplace.listMarketplaceOffers` | `read` | List the offers available in the Fidel marketplace |
 | `mid-insights.listMidInsights` | `fidel.api.mid-insights.listMidInsights` | `read` | List the MID insights of a program |
-| `mid-requests.createMidRequest` | `fidel.api.mid-requests.createMidRequest` | `write` | Create a MID request for a program |
+| `mid-requests.createMidRequest` | `fidel.api.mid-requests.createMidRequest` | `write` | Create a MID request to onboard, offboard or reassign a merchant ID; offboarding stops transaction tracking for that MID |
 | `mid-requests.listMidRequests` | `fidel.api.mid-requests.listMidRequests` | `read` | List the MID requests of a program |
 | `mid-requests.retrieveMidRequest` | `fidel.api.mid-requests.retrieveMidRequest` | `read` | Retrieve a MID request by ID |
 | `mids.listMids` | `fidel.api.mids.listMids` | `read` | List the merchant IDs of a program |
@@ -49,7 +49,7 @@ pnpm add @corsair-dev/fidel
 | `offers.listOffers` | `fidel.api.offers.listOffers` | `read` | List the offers of a program |
 | `offers.retrieveActiveOfferOnCard` | `fidel.api.offers.retrieveActiveOfferOnCard` | `read` | Check whether an offer is active on a linked card |
 | `offers.retrieveOffer` | `fidel.api.offers.retrieveOffer` | `read` | Retrieve an offer by ID |
-| `offers.sendOfferToBrand` | `fidel.api.offers.sendOfferToBrand` | `destructive` | Notify a brand about an offer on the live environment |
+| `offers.sendOfferToBrand` | `fidel.api.offers.sendOfferToBrand` | `write` | Send an offer to its brand for approval; this notifies the brand and works only in the live environment |
 | `offers.unlinkCardFromOffer` | `fidel.api.offers.unlinkCardFromOffer` | `destructive` | Deactivate an offer on a linked card and reset its usage |
 | `offers.unlinkLocationToOffer` | `fidel.api.offers.unlinkLocationToOffer` | `destructive` | Unlink a location from an offer |
 | `offers.updateOffer` | `fidel.api.offers.updateOffer` | `write` | Update the details of an offer |
