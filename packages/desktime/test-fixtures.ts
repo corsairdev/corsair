@@ -30,7 +30,8 @@ export const COMPANY_BODY = {
 export const EMPLOYEE = {
 	id: 789760,
 	name: 'corsair test',
-	email: 'corsairtest00@gmail.com',
+	// The captured address was a real mailbox; this one is a placeholder.
+	email: 'corsair.test@example.com',
 	groupId: 0,
 	group: '-',
 	profileUrl: 'https://desktime.com/app/employee/789760/2026-11-08',
