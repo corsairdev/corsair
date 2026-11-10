@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { gongRequest } from '../client';
 import type { GongFamilyContext } from './family-context';
-import { gongCredentials } from './family-context';
+import { gongCredentials, gongEventPayload } from './family-context';
 import type {
 	GongIntegrationSettingsInputs,
 	GongIntegrationSettingsOutputs,
@@ -23,7 +23,7 @@ export async function updateIntegrationSettings(
 	await logEventFromContext(
 		ctx,
 		'gong.integrationSettings.update',
-		input,
+		gongEventPayload(input),
 		'completed',
 	);
 	return result;

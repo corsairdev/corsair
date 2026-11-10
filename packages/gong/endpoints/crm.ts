@@ -3,7 +3,7 @@ import type { GongOpaqueRecord, GongOpaqueValue } from '../client';
 import { gongRequest } from '../client';
 import type { GongCrmInputs, GongCrmOutputs } from './crm-types';
 import type { GongFamilyContext } from './family-context';
-import { gongCredentials } from './family-context';
+import { gongCredentials, gongEventPayload } from './family-context';
 
 async function run<K extends keyof GongCrmInputs>(
 	ctx: GongFamilyContext,
@@ -29,12 +29,7 @@ async function run<K extends keyof GongCrmInputs>(
 	await logEventFromContext(
 		ctx,
 		`gong.crm.${action}`,
-		method === 'POST' && formData
-			? {
-					integrationId: (input as GongCrmInputs['uploadObjects'])
-						.integrationId,
-				}
-			: input,
+		gongEventPayload(input),
 		'completed',
 	);
 	return response;

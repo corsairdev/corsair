@@ -4,7 +4,7 @@ import type { GongOpaqueRecord, GongOpaqueValue } from '../client';
 import { gongRequest } from '../client';
 import type { GongCallsOutputs } from './calls-types';
 import type { GongFamilyContext } from './family-context';
-import { gongCredentials } from './family-context';
+import { gongCredentials, gongEventPayload } from './family-context';
 
 function credentials(ctx: GongFamilyContext) {
 	return gongCredentials(ctx);
@@ -13,6 +13,7 @@ function credentials(ctx: GongFamilyContext) {
 // Gong call filters and records are provider-defined; registered Zod schemas validate each public operation.
 async function call<T>(
 	ctx: GongContext,
+	operation: string,
 	method: 'GET' | 'POST',
 	path: string,
 	input: GongOpaqueRecord,
@@ -29,19 +30,27 @@ async function call<T>(
 	});
 	await logEventFromContext(
 		ctx,
-		`gong.calls.${path.replaceAll('/', '.')}`,
-		{ input },
+		`gong.calls.${operation}`,
+		gongEventPayload(input),
 		'completed',
 	);
 	return result;
 }
 
 export const listCalls: GongEndpoints['callsListCalls'] = (ctx, input) =>
-	call<GongCallsOutputs['listCalls']>(ctx, 'GET', '/v2/calls', input, input);
+	call<GongCallsOutputs['listCalls']>(
+		ctx,
+		'listCalls',
+		'GET',
+		'/v2/calls',
+		input,
+		input,
+	);
 export const getCall: GongEndpoints['callsGetCall'] = (ctx, input) =>
 	/^[0-9]{1,20}$/.test(input.id)
 		? call<GongCallsOutputs['getCall']>(
 				ctx,
+				'getCall',
 				'GET',
 				`/v2/calls/${encodeURIComponent(input.id)}`,
 				input,
@@ -53,6 +62,7 @@ export const listCallsExtensive: GongEndpoints['callsListCallsExtensive'] = (
 ) =>
 	call<GongCallsOutputs['listCallsExtensive']>(
 		ctx,
+		'listCallsExtensive',
 		'POST',
 		'/v2/calls/extensive',
 		input,
@@ -65,6 +75,7 @@ export const getCallTranscripts: GongEndpoints['callsGetCallTranscripts'] = (
 ) =>
 	call<GongCallsOutputs['getCallTranscripts']>(
 		ctx,
+		'getCallTranscripts',
 		'POST',
 		'/v2/calls/transcript',
 		input,
@@ -74,6 +85,7 @@ export const getCallTranscripts: GongEndpoints['callsGetCallTranscripts'] = (
 export const addCall: GongEndpoints['callsAddCall'] = (ctx, input) =>
 	call<GongCallsOutputs['addCall']>(
 		ctx,
+		'addCall',
 		'POST',
 		'/v2/calls',
 		input,

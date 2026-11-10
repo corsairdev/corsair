@@ -6,7 +6,7 @@ import type {
 	GongEngageFlowsOutputs,
 } from './engage-flows-types';
 import type { GongFamilyContext } from './family-context';
-import { gongCredentials } from './family-context';
+import { gongCredentials, gongEventPayload } from './family-context';
 
 type LocalGongContext = GongFamilyContext;
 type Endpoint<K extends keyof GongEngageFlowsInputs> = (
@@ -41,7 +41,7 @@ async function logged<T>(
 	await logEventFromContext(
 		ctx,
 		`gong.engageFlows.${id}`,
-		{ input },
+		gongEventPayload(input),
 		'completed',
 	);
 	return result;

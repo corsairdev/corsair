@@ -2,11 +2,12 @@ import { logEventFromContext } from 'corsair/core';
 import type { GongContext, GongUserEndpoints } from '..';
 import type { GongOpaqueRecord, GongOpaqueValue } from '../client';
 import { gongRequest } from '../client';
-import { gongCredentials } from './family-context';
+import { gongCredentials, gongEventPayload } from './family-context';
 import type { GongUsersOutputs } from './users-types';
 
 async function call<T>(
 	ctx: GongContext,
+	operation: string,
 	method: 'GET' | 'POST',
 	path: string,
 	input: GongOpaqueRecord,
@@ -24,21 +25,29 @@ async function call<T>(
 	});
 	await logEventFromContext(
 		ctx,
-		`gong.users.${path.replaceAll('/', '.')}`,
-		{ input },
+		`gong.users.${operation}`,
+		gongEventPayload(input),
 		'completed',
 	);
 	return result;
 }
 
 export const listUsers: GongUserEndpoints['listUsers'] = (ctx, input) =>
-	call<GongUsersOutputs['listUsers']>(ctx, 'GET', '/v2/users', input, input);
+	call<GongUsersOutputs['listUsers']>(
+		ctx,
+		'listUsers',
+		'GET',
+		'/v2/users',
+		input,
+		input,
+	);
 export const listMultipleUsers: GongUserEndpoints['listMultipleUsers'] = (
 	ctx,
 	input,
 ) =>
 	call<GongUsersOutputs['listMultipleUsers']>(
 		ctx,
+		'listMultipleUsers',
 		'POST',
 		'/v2/users/extensive',
 		input,
@@ -53,6 +62,7 @@ function safeUserId(id: string): string {
 export const getUser: GongUserEndpoints['getUser'] = (ctx, input) =>
 	call<GongUsersOutputs['getUser']>(
 		ctx,
+		'getUser',
 		'GET',
 		`/v2/users/${safeUserId(input.id)}`,
 		input,
@@ -63,6 +73,7 @@ export const getUserHistory: GongUserEndpoints['getUserHistory'] = (
 ) =>
 	call<GongUsersOutputs['getUserHistory']>(
 		ctx,
+		'getUserHistory',
 		'GET',
 		`/v2/users/${safeUserId(input.id)}/settings-history`,
 		input,

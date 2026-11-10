@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { GongOpaqueRecord, GongOpaqueValue } from '../client';
 import { gongRequest } from '../client';
 import type { GongFamilyContext } from './family-context';
-import { gongCredentials } from './family-context';
+import { gongCredentials, gongEventPayload } from './family-context';
 import type { GongOtherOutputs } from './other-types';
 
 type OtherOp = keyof GongOtherOutputs;
@@ -31,7 +31,12 @@ async function send<T>(
 		query,
 		body,
 	});
-	await logEventFromContext(ctx, `gong.${op}`, input, 'completed');
+	await logEventFromContext(
+		ctx,
+		`gong.${op}`,
+		gongEventPayload(input),
+		'completed',
+	);
 	return response;
 }
 

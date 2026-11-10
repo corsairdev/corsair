@@ -34,7 +34,7 @@ export const listTargetDefinitions: Endpoint<'listTargetDefinitions'> = async (
 	await logEventFromContext(
 		ctx,
 		'gong.targets.listTargetDefinitions',
-		{ input },
+		{ workspaceId: input.workspaceId },
 		'completed',
 	);
 	return result;

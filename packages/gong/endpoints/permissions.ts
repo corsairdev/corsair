@@ -2,11 +2,12 @@ import { logEventFromContext } from 'corsair/core';
 import type { GongOpaqueRecord, GongOpaqueValue } from '../client';
 import { gongRequest } from '../client';
 import type { GongFamilyContext } from './family-context';
-import { gongCredentials } from './family-context';
+import { gongCredentials, gongEventPayload } from './family-context';
 import type { GongPermissionsOutputs } from './permissions-types';
 
 async function call<T>(
 	ctx: GongFamilyContext,
+	operation: string,
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE',
 	path: string,
 	input: GongOpaqueRecord,
@@ -22,7 +23,12 @@ async function call<T>(
 		query,
 		body,
 	});
-	await logEventFromContext(ctx, 'gong.permissions', { input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		`gong.permissions.${operation}`,
+		gongEventPayload(input),
+		'completed',
+	);
 	return result;
 }
 export const getPermissionProfile = (
@@ -31,6 +37,7 @@ export const getPermissionProfile = (
 ) =>
 	call<GongPermissionsOutputs['getPermissionProfile']>(
 		ctx,
+		'getPermissionProfile',
 		'GET',
 		'/v2/permission-profile',
 		input,
@@ -42,6 +49,7 @@ export const updatePermissionProfile = (
 ) =>
 	call<GongPermissionsOutputs['updatePermissionProfile']>(
 		ctx,
+		'updatePermissionProfile',
 		'PUT',
 		'/v2/permission-profile',
 		input,
@@ -54,6 +62,7 @@ export const createPermissionProfile = (
 ) =>
 	call<GongPermissionsOutputs['createPermissionProfile']>(
 		ctx,
+		'createPermissionProfile',
 		'POST',
 		'/v2/permission-profile',
 		input,
@@ -66,6 +75,7 @@ export const addUsersAccessToCalls = (
 ) =>
 	call<GongPermissionsOutputs['addUsersAccessToCalls']>(
 		ctx,
+		'addUsersAccessToCalls',
 		'PUT',
 		'/v2/calls/users-access',
 		input,
@@ -78,6 +88,7 @@ export const getUsersAccessToCalls = (
 ) =>
 	call<GongPermissionsOutputs['getUsersAccessToCalls']>(
 		ctx,
+		'getUsersAccessToCalls',
 		'POST',
 		'/v2/calls/users-access',
 		input,
@@ -90,6 +101,7 @@ export const deleteUsersAccessToCalls = (
 ) =>
 	call<GongPermissionsOutputs['deleteUsersAccessToCalls']>(
 		ctx,
+		'deleteUsersAccessToCalls',
 		'DELETE',
 		'/v2/calls/users-access',
 		input,
@@ -102,6 +114,7 @@ export const listPermissionProfileUsers = (
 ) =>
 	call<GongPermissionsOutputs['listPermissionProfileUsers']>(
 		ctx,
+		'listPermissionProfileUsers',
 		'GET',
 		'/v2/permission-profile/users',
 		input,
@@ -113,6 +126,7 @@ export const listPermissionProfile = (
 ) =>
 	call<GongPermissionsOutputs['listPermissionProfile']>(
 		ctx,
+		'listPermissionProfile',
 		'GET',
 		'/v2/all-permission-profiles',
 		input,
