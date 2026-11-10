@@ -532,16 +532,20 @@ const FilesUpdateFieldsInputSchema = z.object({
 		.int()
 		.optional()
 		.describe('The page number of that page, copied from the read.'),
+	// Nanonets finds the page by these two with the id: without them the live
+	// API answers 400 "Couldn't find any image level inferences".
 	day_since_epoch: z
 		.number()
 		.int()
-		.optional()
-		.describe('The day_since_epoch of that page, copied from the read.'),
+		.describe(
+			'The day_since_epoch of that page, copied from the read. Required: Nanonets looks the page up by it.',
+		),
 	hour_of_day: z
 		.number()
 		.int()
-		.optional()
-		.describe('The hour_of_day of that page, copied from the read.'),
+		.describe(
+			'The hour_of_day of that page, copied from the read. Required: Nanonets looks the page up by it.',
+		),
 	is_moderated: z
 		.boolean()
 		.optional()

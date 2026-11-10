@@ -599,19 +599,41 @@ describe('files.updateFields', () => {
 		);
 	});
 
-	it('sends only the page id when the other page keys are not given', async () => {
+	it('leaves page and is_moderated out when they are not given', async () => {
 		respondEmpty();
 
 		await invoke(Files.updateFields, {
 			model_id: modelId,
 			id: PAGE_ID,
+			day_since_epoch: 20767,
+			hour_of_day: 12,
 			moderated_boxes: [],
 		});
 
 		expect(JSON.parse(lastInit().body as string)).toEqual({
 			moderated_boxes: [],
 			id: PAGE_ID,
+			day_since_epoch: 20767,
+			hour_of_day: 12,
 		});
+	});
+
+	// Live 11-10: a PATCH with the page id but without day_since_epoch and
+	// hour_of_day answered 400 "Couldn't find any image level inferences
+	// matching the query"; the same body with both keys succeeded.
+	it.each([
+		['day_since_epoch', { hour_of_day: 12 }],
+		['hour_of_day', { day_since_epoch: 20767 }],
+	])('rejects a call without %s, without fetching', async (_, keys) => {
+		await expect(
+			invoke(Files.updateFields, {
+				model_id: modelId,
+				id: PAGE_ID,
+				moderated_boxes: [],
+				...keys,
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects a call that does not name the page, without fetching', async () => {
