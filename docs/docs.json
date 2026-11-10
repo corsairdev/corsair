@@ -3369,6 +3369,14 @@
                 ]
               },
               {
+                "group": "Taggun",
+                "pages": [
+                  "plugins/taggun/overview",
+                  "plugins/taggun/api",
+                  "plugins/taggun/database"
+                ]
+              },
+              {
                 "group": "Tally",
                 "pages": [
                   "plugins/tally/overview",
@@ -3392,14 +3400,6 @@
                   "plugins/tavilymcp/overview",
                   "plugins/tavilymcp/api",
                   "plugins/tavilymcp/database"
-                ]
-              },
-              {
-                "group": "Taggun",
-                "pages": [
-                  "plugins/taggun/overview",
-                  "plugins/taggun/api",
-                  "plugins/taggun/database"
                 ]
               },
               {

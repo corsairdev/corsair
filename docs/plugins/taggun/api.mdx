@@ -429,28 +429,30 @@ A failed rule is a successful call reporting `successful: false` with `failedVal
 | `successful` | `boolean` | Yes | True only when every enabled check passed. A receipt that fails a rule is a successful call with `false` here, not an error. |
 | `failedValidations` | `string[]` | No | Validation keys that failed. |
 | `passedValidations` | `string[]` | No | Validation keys that passed. |
-| `productLineItems` | `object[]` | No | — |
+| `productLineItems` | `object[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
 | `matchedProductLineItems` | `object[]` | No | Items matched by the campaign rules. |
-| `date` | `string` | No | — |
-| `merchantName` | `string` | No | — |
-| `merchantAddress` | `string` | No | — |
-| `merchantCity` | `string` | No | — |
-| `merchantState` | `string` | No | — |
-| `merchantCountryCode` | `string` | No | — |
-| `merchantPostalCode` | `string` | No | — |
-| `productCodes` | `string[]` | No | — |
-| `serialNumber` | `string` | No | — |
-| `balanceAmount` | `number \| null` | No | — |
-| `smartValidate` | `Record<string, boolean>` | No | Boolean answer per configured SmartValidate prompt. |
+| `date` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantName` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantAddress` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCity` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantState` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCountryCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantPostalCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `productCodes` | `string[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `serialNumber` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `balanceAmount` | `number \| object \| null` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `smartValidate` | `object` | No | Boolean answer per configured SmartValidate prompt. |
 | `totalAmount` | `number` | No | — |
 | `currencyCode` | `string` | No | — |
-| `receiptNumber` | `string \| null` | No | — |
-| `invoiceNumber` | `string \| null` | No | — |
+| `receiptNumber` | `string \| number \| null` | No | — |
+| `invoiceNumber` | `string \| number \| null` | No | — |
+| `purchaseOrderNumber` | `string \| number \| null` | No | — |
 | `trackingId` | `string` | No | — |
 | `targetRotation` | `number` | No | — |
 | `similarReceipts` | `object[]` | No | — |
 | `tamperDetection` | `object` | No | — |
 | `digitalDetection` | `object` | No | — |
+| `fraudDetection` | `object` | No | Inline validation only: one verdict per enabled detector, e.g. `handwritingDetection`. |
 
 <AccordionGroup>
 <Accordion title="productLineItems full type">
@@ -461,7 +463,17 @@ A failed rule is a successful call reporting `successful: false` with `failedVal
   unitPrice?: number,
   totalPrice?: number,
   quantity?: number
-}[]
+}[] | {
+  data?: {
+    name?: string,
+    unitPrice?: number,
+    totalPrice?: number,
+    quantity?: number
+  }[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
 ```
 </Accordion>
 
@@ -474,6 +486,138 @@ A failed rule is a successful call reporting `successful: false` with `failedVal
   totalPrice?: number,
   quantity?: number
 }[]
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="productCodes full type">
+
+```ts
+string[] | {
+  data?: string[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="serialNumber full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="balanceAmount full type">
+
+```ts
+number | {
+  data?: number | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="smartValidate full type">
+
+```ts
+Record<string, boolean | {
+  data?: boolean | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
 ```
 </Accordion>
 
@@ -508,6 +652,18 @@ A failed rule is a successful call reporting `successful: false` with `failedVal
     digitalScore?: number
   }
 }
+```
+</Accordion>
+
+<Accordion title="fraudDetection full type">
+
+```ts
+Record<string, any | {
+  data?: any | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -554,28 +710,30 @@ Validates against the rules stored under `campaignId`. A failed rule is a succes
 | `successful` | `boolean` | Yes | True only when every enabled check passed. A receipt that fails a rule is a successful call with `false` here, not an error. |
 | `failedValidations` | `string[]` | No | Validation keys that failed. |
 | `passedValidations` | `string[]` | No | Validation keys that passed. |
-| `productLineItems` | `object[]` | No | — |
+| `productLineItems` | `object[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
 | `matchedProductLineItems` | `object[]` | No | Items matched by the campaign rules. |
-| `date` | `string` | No | — |
-| `merchantName` | `string` | No | — |
-| `merchantAddress` | `string` | No | — |
-| `merchantCity` | `string` | No | — |
-| `merchantState` | `string` | No | — |
-| `merchantCountryCode` | `string` | No | — |
-| `merchantPostalCode` | `string` | No | — |
-| `productCodes` | `string[]` | No | — |
-| `serialNumber` | `string` | No | — |
-| `balanceAmount` | `number \| null` | No | — |
-| `smartValidate` | `Record<string, boolean>` | No | Boolean answer per configured SmartValidate prompt. |
+| `date` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantName` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantAddress` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCity` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantState` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCountryCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantPostalCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `productCodes` | `string[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `serialNumber` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `balanceAmount` | `number \| object \| null` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `smartValidate` | `object` | No | Boolean answer per configured SmartValidate prompt. |
 | `totalAmount` | `number` | No | — |
 | `currencyCode` | `string` | No | — |
-| `receiptNumber` | `string \| null` | No | — |
-| `invoiceNumber` | `string \| null` | No | — |
+| `receiptNumber` | `string \| number \| null` | No | — |
+| `invoiceNumber` | `string \| number \| null` | No | — |
+| `purchaseOrderNumber` | `string \| number \| null` | No | — |
 | `trackingId` | `string` | No | — |
 | `targetRotation` | `number` | No | — |
 | `similarReceipts` | `object[]` | No | — |
 | `tamperDetection` | `object` | No | — |
 | `digitalDetection` | `object` | No | — |
+| `fraudDetection` | `object` | No | Inline validation only: one verdict per enabled detector, e.g. `handwritingDetection`. |
 
 <AccordionGroup>
 <Accordion title="productLineItems full type">
@@ -586,7 +744,17 @@ Validates against the rules stored under `campaignId`. A failed rule is a succes
   unitPrice?: number,
   totalPrice?: number,
   quantity?: number
-}[]
+}[] | {
+  data?: {
+    name?: string,
+    unitPrice?: number,
+    totalPrice?: number,
+    quantity?: number
+  }[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
 ```
 </Accordion>
 
@@ -599,6 +767,138 @@ Validates against the rules stored under `campaignId`. A failed rule is a succes
   totalPrice?: number,
   quantity?: number
 }[]
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="productCodes full type">
+
+```ts
+string[] | {
+  data?: string[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="serialNumber full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="balanceAmount full type">
+
+```ts
+number | {
+  data?: number | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="smartValidate full type">
+
+```ts
+Record<string, boolean | {
+  data?: boolean | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
 ```
 </Accordion>
 
@@ -633,6 +933,18 @@ Validates against the rules stored under `campaignId`. A failed rule is a succes
     digitalScore?: number
   }
 }
+```
+</Accordion>
+
+<Accordion title="fraudDetection full type">
+
+```ts
+Record<string, any | {
+  data?: any | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -771,28 +1083,30 @@ The inline `validation` rules travel as a JSON string inside the multipart body,
 | `successful` | `boolean` | Yes | True only when every enabled check passed. A receipt that fails a rule is a successful call with `false` here, not an error. |
 | `failedValidations` | `string[]` | No | Validation keys that failed. |
 | `passedValidations` | `string[]` | No | Validation keys that passed. |
-| `productLineItems` | `object[]` | No | — |
+| `productLineItems` | `object[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
 | `matchedProductLineItems` | `object[]` | No | Items matched by the campaign rules. |
-| `date` | `string` | No | — |
-| `merchantName` | `string` | No | — |
-| `merchantAddress` | `string` | No | — |
-| `merchantCity` | `string` | No | — |
-| `merchantState` | `string` | No | — |
-| `merchantCountryCode` | `string` | No | — |
-| `merchantPostalCode` | `string` | No | — |
-| `productCodes` | `string[]` | No | — |
-| `serialNumber` | `string` | No | — |
-| `balanceAmount` | `number \| null` | No | — |
-| `smartValidate` | `Record<string, boolean>` | No | Boolean answer per configured SmartValidate prompt. |
+| `date` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantName` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantAddress` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCity` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantState` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCountryCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantPostalCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `productCodes` | `string[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `serialNumber` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `balanceAmount` | `number \| object \| null` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `smartValidate` | `object` | No | Boolean answer per configured SmartValidate prompt. |
 | `totalAmount` | `number` | No | — |
 | `currencyCode` | `string` | No | — |
-| `receiptNumber` | `string \| null` | No | — |
-| `invoiceNumber` | `string \| null` | No | — |
+| `receiptNumber` | `string \| number \| null` | No | — |
+| `invoiceNumber` | `string \| number \| null` | No | — |
+| `purchaseOrderNumber` | `string \| number \| null` | No | — |
 | `trackingId` | `string` | No | — |
 | `targetRotation` | `number` | No | — |
 | `similarReceipts` | `object[]` | No | — |
 | `tamperDetection` | `object` | No | — |
 | `digitalDetection` | `object` | No | — |
+| `fraudDetection` | `object` | No | Inline validation only: one verdict per enabled detector, e.g. `handwritingDetection`. |
 
 <AccordionGroup>
 <Accordion title="productLineItems full type">
@@ -803,7 +1117,17 @@ The inline `validation` rules travel as a JSON string inside the multipart body,
   unitPrice?: number,
   totalPrice?: number,
   quantity?: number
-}[]
+}[] | {
+  data?: {
+    name?: string,
+    unitPrice?: number,
+    totalPrice?: number,
+    quantity?: number
+  }[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
 ```
 </Accordion>
 
@@ -816,6 +1140,138 @@ The inline `validation` rules travel as a JSON string inside the multipart body,
   totalPrice?: number,
   quantity?: number
 }[]
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="productCodes full type">
+
+```ts
+string[] | {
+  data?: string[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="serialNumber full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="balanceAmount full type">
+
+```ts
+number | {
+  data?: number | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="smartValidate full type">
+
+```ts
+Record<string, boolean | {
+  data?: boolean | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
 ```
 </Accordion>
 
@@ -850,6 +1306,18 @@ The inline `validation` rules travel as a JSON string inside the multipart body,
     digitalScore?: number
   }
 }
+```
+</Accordion>
+
+<Accordion title="fraudDetection full type">
+
+```ts
+Record<string, any | {
+  data?: any | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -994,28 +1462,30 @@ Nothing is stored: the rules in `validation` apply to this request only. Set `re
 | `successful` | `boolean` | Yes | True only when every enabled check passed. A receipt that fails a rule is a successful call with `false` here, not an error. |
 | `failedValidations` | `string[]` | No | Validation keys that failed. |
 | `passedValidations` | `string[]` | No | Validation keys that passed. |
-| `productLineItems` | `object[]` | No | — |
+| `productLineItems` | `object[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
 | `matchedProductLineItems` | `object[]` | No | Items matched by the campaign rules. |
-| `date` | `string` | No | — |
-| `merchantName` | `string` | No | — |
-| `merchantAddress` | `string` | No | — |
-| `merchantCity` | `string` | No | — |
-| `merchantState` | `string` | No | — |
-| `merchantCountryCode` | `string` | No | — |
-| `merchantPostalCode` | `string` | No | — |
-| `productCodes` | `string[]` | No | — |
-| `serialNumber` | `string` | No | — |
-| `balanceAmount` | `number \| null` | No | — |
-| `smartValidate` | `Record<string, boolean>` | No | Boolean answer per configured SmartValidate prompt. |
+| `date` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantName` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantAddress` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCity` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantState` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantCountryCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `merchantPostalCode` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `productCodes` | `string[] \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `serialNumber` | `string \| object` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `balanceAmount` | `number \| object \| null` | No | The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict. |
+| `smartValidate` | `object` | No | Boolean answer per configured SmartValidate prompt. |
 | `totalAmount` | `number` | No | — |
 | `currencyCode` | `string` | No | — |
-| `receiptNumber` | `string \| null` | No | — |
-| `invoiceNumber` | `string \| null` | No | — |
+| `receiptNumber` | `string \| number \| null` | No | — |
+| `invoiceNumber` | `string \| number \| null` | No | — |
+| `purchaseOrderNumber` | `string \| number \| null` | No | — |
 | `trackingId` | `string` | No | — |
 | `targetRotation` | `number` | No | — |
 | `similarReceipts` | `object[]` | No | — |
 | `tamperDetection` | `object` | No | — |
 | `digitalDetection` | `object` | No | — |
+| `fraudDetection` | `object` | No | Inline validation only: one verdict per enabled detector, e.g. `handwritingDetection`. |
 
 <AccordionGroup>
 <Accordion title="productLineItems full type">
@@ -1026,7 +1496,17 @@ Nothing is stored: the rules in `validation` apply to this request only. Set `re
   unitPrice?: number,
   totalPrice?: number,
   quantity?: number
-}[]
+}[] | {
+  data?: {
+    name?: string,
+    unitPrice?: number,
+    totalPrice?: number,
+    quantity?: number
+  }[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
 ```
 </Accordion>
 
@@ -1039,6 +1519,138 @@ Nothing is stored: the rules in `validation` apply to this request only. Set `re
   totalPrice?: number,
   quantity?: number
 }[]
+```
+</Accordion>
+
+<Accordion title="date full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantName full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantAddress full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCity full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantState full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantCountryCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="merchantPostalCode full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="productCodes full type">
+
+```ts
+string[] | {
+  data?: string[] | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="serialNumber full type">
+
+```ts
+string | {
+  data?: string | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}
+```
+</Accordion>
+
+<Accordion title="balanceAmount full type">
+
+```ts
+number | {
+  data?: number | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+} | null
+```
+</Accordion>
+
+<Accordion title="smartValidate full type">
+
+```ts
+Record<string, boolean | {
+  data?: boolean | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
 ```
 </Accordion>
 
@@ -1073,6 +1685,18 @@ Nothing is stored: the rules in `validation` apply to this request only. Set `re
     digitalScore?: number
   }
 }
+```
+</Accordion>
+
+<Accordion title="fraudDetection full type">
+
+```ts
+Record<string, any | {
+  data?: any | null,
+  valid?: boolean,
+  expected?: any,
+  confidenceLevel?: number
+}>
 ```
 </Accordion>
 </AccordionGroup>
@@ -1143,7 +1767,10 @@ await corsair.taggun.api.simple.encoded({ image: '<base64 of the document>', fil
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1158,7 +1785,10 @@ await corsair.taggun.api.simple.encoded({ image: '<base64 of the document>', fil
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1173,7 +1803,10 @@ await corsair.taggun.api.simple.encoded({ image: '<base64 of the document>', fil
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1188,7 +1821,10 @@ await corsair.taggun.api.simple.encoded({ image: '<base64 of the document>', fil
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1203,7 +1839,10 @@ await corsair.taggun.api.simple.encoded({ image: '<base64 of the document>', fil
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1218,7 +1857,10 @@ await corsair.taggun.api.simple.encoded({ image: '<base64 of the document>', fil
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1233,7 +1875,10 @@ await corsair.taggun.api.simple.encoded({ image: '<base64 of the document>', fil
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1248,7 +1893,10 @@ await corsair.taggun.api.simple.encoded({ image: '<base64 of the document>', fil
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1263,7 +1911,10 @@ await corsair.taggun.api.simple.encoded({ image: '<base64 of the document>', fil
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1343,7 +1994,10 @@ The file must be under 20 MB. The request-size limit counts multipart framing, s
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1358,7 +2012,10 @@ The file must be under 20 MB. The request-size limit counts multipart framing, s
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1373,7 +2030,10 @@ The file must be under 20 MB. The request-size limit counts multipart framing, s
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1388,7 +2048,10 @@ The file must be under 20 MB. The request-size limit counts multipart framing, s
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1403,7 +2066,10 @@ The file must be under 20 MB. The request-size limit counts multipart framing, s
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1418,7 +2084,10 @@ The file must be under 20 MB. The request-size limit counts multipart framing, s
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1433,7 +2102,10 @@ The file must be under 20 MB. The request-size limit counts multipart framing, s
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1448,7 +2120,10 @@ The file must be under 20 MB. The request-size limit counts multipart framing, s
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1463,7 +2138,10 @@ The file must be under 20 MB. The request-size limit counts multipart framing, s
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1544,7 +2222,10 @@ Only https URLs are accepted, and localhost, loopback, link-local and private-ne
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1559,7 +2240,10 @@ Only https URLs are accepted, and localhost, loopback, link-local and private-ne
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1574,7 +2258,10 @@ Only https URLs are accepted, and localhost, loopback, link-local and private-ne
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1589,7 +2276,10 @@ Only https URLs are accepted, and localhost, loopback, link-local and private-ne
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1604,7 +2294,10 @@ Only https URLs are accepted, and localhost, loopback, link-local and private-ne
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1619,7 +2312,10 @@ Only https URLs are accepted, and localhost, loopback, link-local and private-ne
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1634,7 +2330,10 @@ Only https URLs are accepted, and localhost, loopback, link-local and private-ne
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1649,7 +2348,10 @@ Only https URLs are accepted, and localhost, loopback, link-local and private-ne
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1664,7 +2366,10 @@ Only https URLs are accepted, and localhost, loopback, link-local and private-ne
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1762,7 +2467,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1777,7 +2485,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1792,7 +2503,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1807,7 +2521,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1822,7 +2539,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1837,7 +2557,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1852,7 +2575,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1867,7 +2593,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1882,7 +2611,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1907,7 +2639,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1922,7 +2657,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1937,7 +2675,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1952,7 +2693,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1967,7 +2711,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1977,7 +2724,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
 ```ts
 {
   text?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -1990,7 +2740,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   text?: string,
   index?: number,
   classifyResult?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }[]
 ```
 </Accordion>
@@ -2003,7 +2756,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   text?: string,
   index?: number,
   classifyResult?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }[]
 ```
 </Accordion>
@@ -2016,7 +2772,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   text?: string,
   index?: number,
   classifyResult?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }[]
 ```
 </Accordion>
@@ -2034,7 +2793,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       unitPrice?: {
         data?: number,
@@ -2043,7 +2805,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       totalPrice?: {
         data?: number,
@@ -2052,7 +2817,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       name?: {
         data?: string,
@@ -2061,7 +2829,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       sku?: {
         data?: string,
@@ -2070,7 +2841,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       itemNumber?: {
         data?: string,
@@ -2079,7 +2853,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       discountAmount?: {
         data?: number,
@@ -2088,7 +2865,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       category?: {
         data?: string,
@@ -2097,13 +2877,19 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       }
     },
     confidenceLevel?: number,
     text?: string,
     index?: number,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   }[],
   multiTaxLineItems?: {
     data?: {
@@ -2114,7 +2900,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       netAmount?: {
         data?: number,
@@ -2123,7 +2912,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       grossAmount?: {
         data?: number,
@@ -2132,7 +2924,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       taxRate?: {
         data?: number,
@@ -2141,7 +2936,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       taxType?: {
         data?: string,
@@ -2150,7 +2948,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       }
     },
     confidenceLevel?: number,
@@ -2164,7 +2965,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   receiptNumber?: {
     data?: string,
@@ -2173,7 +2977,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   purchaseOrderNumber?: {
     data?: string,
@@ -2182,7 +2989,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   last4?: {
     data?: string,
@@ -2191,7 +3001,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   category?: {
     data?: string,
@@ -2200,7 +3013,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   masterCategory?: {
     data?: string,
@@ -2209,7 +3025,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   expenseType?: {
     data?: string,
@@ -2218,7 +3037,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   merchantVerification?: {
     verificationId?: string,
@@ -2237,7 +3059,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   }
 }
 ```
@@ -2253,7 +3078,10 @@ await corsair.taggun.api.verbose.encoded({ image: '<base64 of the document>', fi
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2386,7 +3214,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2401,7 +3232,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2416,7 +3250,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2431,7 +3268,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2446,7 +3286,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2461,7 +3304,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2476,7 +3322,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2491,7 +3340,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2506,7 +3358,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2531,7 +3386,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2546,7 +3404,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2561,7 +3422,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2576,7 +3440,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2591,7 +3458,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2601,7 +3471,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
 ```ts
 {
   text?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -2614,7 +3487,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   text?: string,
   index?: number,
   classifyResult?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }[]
 ```
 </Accordion>
@@ -2627,7 +3503,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   text?: string,
   index?: number,
   classifyResult?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }[]
 ```
 </Accordion>
@@ -2640,7 +3519,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   text?: string,
   index?: number,
   classifyResult?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }[]
 ```
 </Accordion>
@@ -2658,7 +3540,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       unitPrice?: {
         data?: number,
@@ -2667,7 +3552,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       totalPrice?: {
         data?: number,
@@ -2676,7 +3564,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       name?: {
         data?: string,
@@ -2685,7 +3576,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       sku?: {
         data?: string,
@@ -2694,7 +3588,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       itemNumber?: {
         data?: string,
@@ -2703,7 +3600,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       discountAmount?: {
         data?: number,
@@ -2712,7 +3612,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       category?: {
         data?: string,
@@ -2721,13 +3624,19 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       }
     },
     confidenceLevel?: number,
     text?: string,
     index?: number,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   }[],
   multiTaxLineItems?: {
     data?: {
@@ -2738,7 +3647,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       netAmount?: {
         data?: number,
@@ -2747,7 +3659,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       grossAmount?: {
         data?: number,
@@ -2756,7 +3671,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       taxRate?: {
         data?: number,
@@ -2765,7 +3683,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       taxType?: {
         data?: string,
@@ -2774,7 +3695,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       }
     },
     confidenceLevel?: number,
@@ -2788,7 +3712,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   receiptNumber?: {
     data?: string,
@@ -2797,7 +3724,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   purchaseOrderNumber?: {
     data?: string,
@@ -2806,7 +3736,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   last4?: {
     data?: string,
@@ -2815,7 +3748,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   category?: {
     data?: string,
@@ -2824,7 +3760,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   masterCategory?: {
     data?: string,
@@ -2833,7 +3772,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   expenseType?: {
     data?: string,
@@ -2842,7 +3784,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   merchantVerification?: {
     verificationId?: string,
@@ -2861,7 +3806,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   }
 }
 ```
@@ -2877,7 +3825,10 @@ The verbose form is the one to evaluate Taggun with: it returns line items, the 
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3011,7 +3962,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3026,7 +3980,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3041,7 +3998,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3056,7 +4016,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3071,7 +4034,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3086,7 +4052,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3101,7 +4070,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3116,7 +4088,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3131,7 +4106,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3156,7 +4134,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3171,7 +4152,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3186,7 +4170,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3201,7 +4188,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3216,7 +4206,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3226,7 +4219,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
 ```ts
 {
   text?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>
@@ -3239,7 +4235,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   text?: string,
   index?: number,
   classifyResult?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }[]
 ```
 </Accordion>
@@ -3252,7 +4251,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   text?: string,
   index?: number,
   classifyResult?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }[]
 ```
 </Accordion>
@@ -3265,7 +4267,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   text?: string,
   index?: number,
   classifyResult?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }[]
 ```
 </Accordion>
@@ -3283,7 +4288,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       unitPrice?: {
         data?: number,
@@ -3292,7 +4300,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       totalPrice?: {
         data?: number,
@@ -3301,7 +4312,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       name?: {
         data?: string,
@@ -3310,7 +4324,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       sku?: {
         data?: string,
@@ -3319,7 +4336,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       itemNumber?: {
         data?: string,
@@ -3328,7 +4348,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       discountAmount?: {
         data?: number,
@@ -3337,7 +4360,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       category?: {
         data?: string,
@@ -3346,13 +4372,19 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       }
     },
     confidenceLevel?: number,
     text?: string,
     index?: number,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   }[],
   multiTaxLineItems?: {
     data?: {
@@ -3363,7 +4395,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       netAmount?: {
         data?: number,
@@ -3372,7 +4407,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       grossAmount?: {
         data?: number,
@@ -3381,7 +4419,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       taxRate?: {
         data?: number,
@@ -3390,7 +4431,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       },
       taxType?: {
         data?: string,
@@ -3399,7 +4443,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
         index?: number,
         keyword?: string,
         currencyCode?: string,
-        regions?: Record<string, number>[]
+        regions?: {
+          x: number,
+          y: number
+        }[][]
       }
     },
     confidenceLevel?: number,
@@ -3413,7 +4460,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   receiptNumber?: {
     data?: string,
@@ -3422,7 +4472,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   purchaseOrderNumber?: {
     data?: string,
@@ -3431,7 +4484,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   last4?: {
     data?: string,
@@ -3440,7 +4496,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   category?: {
     data?: string,
@@ -3449,7 +4508,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   masterCategory?: {
     data?: string,
@@ -3458,7 +4520,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   expenseType?: {
     data?: string,
@@ -3467,7 +4532,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   },
   merchantVerification?: {
     verificationId?: string,
@@ -3486,7 +4554,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
     index?: number,
     keyword?: string,
     currencyCode?: string,
-    regions?: Record<string, number>[]
+    regions?: {
+      x: number,
+      y: number
+    }[][]
   }
 }
 ```
@@ -3502,7 +4573,10 @@ await corsair.taggun.api.verbose.url({ url: 'https://files.readme.io/01cb130cf98
   index?: number,
   keyword?: string,
   currencyCode?: string,
-  regions?: Record<string, number>[]
+  regions?: {
+    x: number,
+    y: number
+  }[][]
 }
 ```
 </Accordion>

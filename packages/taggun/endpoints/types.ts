@@ -889,19 +889,23 @@ const DigitalDetectionSchema = z
  * lost to a parse error over which form came back.
  */
 function checked<T extends z.ZodType>(value: T) {
-	return z.union([
-		value,
-		z
-			.object({
-				data: value.nullish(),
-				valid: z.boolean().optional(),
-				// unknown: the spec types `expected` as a string, but the
-				// handwriting rule documents it as `{ "isHandwritten": false }`.
-				expected: z.unknown().optional(),
-				confidenceLevel: z.number().optional(),
-			})
-			.loose(),
-	]);
+	return z
+		.union([
+			value,
+			z
+				.object({
+					data: value.nullish(),
+					valid: z.boolean().optional(),
+					// unknown: the spec types `expected` as a string, but the
+					// handwriting rule documents it as `{ "isHandwritten": false }`.
+					expected: z.unknown().optional(),
+					confidenceLevel: z.number().optional(),
+				})
+				.loose(),
+		])
+		.describe(
+			'The value itself, or `{ data, valid, expected, confidenceLevel }` when Taggun returns it with its verdict.',
+		);
 }
 
 /** Taggun lists string or number for the document numbers. */
