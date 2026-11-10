@@ -211,6 +211,15 @@ describe('orders', () => {
 		});
 	});
 
+	it('drops a provider-style filter name, so the list is unfiltered', async () => {
+		// The overview tells callers to use the camelCase fields for this reason.
+		respond(emptyList);
+
+		await invoke(Catalog.ordersList, { store_id: 520119 });
+
+		expect(lastRequest().query).toEqual({});
+	});
+
 	it('rejects an email that is not an address', async () => {
 		await expect(
 			invoke(Catalog.ordersList, { userEmail: 'not-an-email' }),
