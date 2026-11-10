@@ -189,12 +189,24 @@ describeIfReady('Quaderno live smoke', () => {
 			expect(parsed.data.payment.payment_method).toBe('cash');
 		} finally {
 			// An invoice cannot be deleted, only voided, so cleanup has to run even
-			// when an assertion above fails, or a real invoice is left behind.
-			await makeQuadernoRequest(API_KEY as string, ACCOUNT as string, {
-				method: 'PUT',
-				path: `/invoices/${invoice.id}/void`,
-				body: { void_reason: 'Live probe cleanup' },
-			}).catch(() => undefined);
+			// when an assertion above fails. A cleanup failure is surfaced with the
+			// invoice id rather than swallowed: a silent failure would leave a real
+			// invoice behind and the test would still pass.
+			const voided = await makeQuadernoRequest(
+				API_KEY as string,
+				ACCOUNT as string,
+				{
+					method: 'PUT',
+					path: `/invoices/${invoice.id}/void`,
+					body: { void_reason: 'Live probe cleanup' },
+				},
+			).catch((caught: unknown) => caught);
+
+			if (voided instanceof Error) {
+				throw new Error(
+					`Cleanup failed: invoice ${invoice.id} was not voided. Void it by hand. ${voided.message}`,
+				);
+			}
 		}
 	});
 
