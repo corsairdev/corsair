@@ -1,0 +1,134 @@
+---
+title: Overview
+description: "Web data infrastructure for agents and applications. Fetch any page through anti-bot bypasses, a headless browser and residential proxies, extract structured JSON, crawl a site from one URL, and track the credits behind it all."
+---
+
+Use **ZenRows** through Corsair: one client, typed API calls.
+
+Every call goes through `https://api.zenrows.com`. The key travels in the `X-API-Key` header, or in the `apikey` query parameter when `customHeaders` is on, because ZenRows copies every request header onto the target page in that mode.
+
+A Fetch answer is not always JSON. `fetch.page` returns the page itself as HTML, Markdown or plaintext, `fetch.cssExtract` and `fetch.outputs` return a JSON object, and `fetch.extract` returns `{ html, parsed }`. ZenRows labels all of these `text/plain`, so the operation you call is what tells you the shape.
+
+A crawl is a job. `crawl.start` returns a `crawl_id` and spends credits per page, `crawl.get` reads its `status` and one page of results, and polling it with the same `cursor` returns only new URLs. On Corsair's cloud, `get_job` and the job card follow it for you.
+
+Extract needs a domain prepared first. `extract.getDomainStatus` says whether it is ready; `extract.prepareDomain` asks for it, which takes minutes and one slot of the monthly allowance. `fetch.cssExtract` works on any site with no preparation.
+
+**What you get:**
+
+- 18 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/zenrows better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/zenrows better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/zenrows better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/zenrows better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { zenrows } from '@corsair-dev/zenrows';
+
+export const corsair = createCorsair({
+	plugins: [
+		zenrows(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key. A call with no saved key throws `AuthMissingError`, which may carry a `connectUrl` to send the tenant to.
+
+```ts
+zenrows()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'zenrows',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a page as Markdown**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zenrows.api.fetch.page({ url: 'https://example.com' });
+```
+
+
+**Crawl the first two pages of a site**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zenrows.api.crawl.start({ url: 'https://www.scrapingcourse.com/ecommerce/', maxPages: 2 });
+```
+
+
+See the full list on the [API](/plugins/zenrows/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/zenrows/api">
+    Every `zenrows.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
