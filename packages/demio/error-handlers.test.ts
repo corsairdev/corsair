@@ -28,8 +28,15 @@ function apiError(
 	});
 }
 
+/** What a handler may return, from the core type so it cannot drift. */
+type RetryStrategy = Awaited<
+	ReturnType<NonNullable<CorsairErrorHandler['DEFAULT']>['handler']>
+>;
+
 /** Finds the first handler that matches, the way core resolves them. */
-async function resolve(error: Error) {
+async function resolve(
+	error: Error,
+): Promise<{ name: string; result: RetryStrategy }> {
 	for (const [name, entry] of Object.entries(errorHandlers)) {
 		if (!entry.match(error)) continue;
 		return { name, result: await entry.handler(error) };
@@ -43,6 +50,23 @@ describe('error handler classification', () => {
 
 		expect(name).toBe('RATE_LIMIT_ERROR');
 		expect(result.maxRetries).toBeGreaterThan(0);
+		// No Retry-After on this error, so the documented minute is the delay.
+		expect(result.headersRetryAfterMs).toBe(60_000);
+	});
+
+	// A Retry-After from Demio is a real answer for this account and must win
+	// over the documented fallback.
+	it('prefers a Retry-After header over the minute fallback', async () => {
+		const { result } = await resolve(
+			new DemioAPIError('Demio 417', {
+				status: 417,
+				method: 'GET',
+				messages: rateLimited.messages,
+				retryAfter: 5_000,
+			}),
+		);
+
+		expect(result.headersRetryAfterMs).toBe(5_000);
 	});
 
 	// Both limits share a status, so the daily allowance has to win on its

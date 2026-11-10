@@ -5,6 +5,9 @@ function statusOf(error: Error): number | undefined {
 	return error instanceof DemioAPIError ? error.status : undefined;
 }
 
+/** Demio documents at most 180 requests a minute, so the window is one minute. */
+const PER_MINUTE_WINDOW_MS = 60_000;
+
 /**
  * Demio answers 417 for both limits it documents. A per-minute limit clears on
  * its own; the daily allowance does not, so the two need different handlers and
@@ -17,9 +20,9 @@ export const errorHandlers = {
 			error instanceof DemioAPIError && error.isDailyLimit,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// The documented ceiling is 180 requests a minute and Demio sends no
-	// Retry-After, so the delay is the window itself: a shorter one only spends
-	// another attempt against a limit that has not reset.
+	// A real Retry-After wins. Demio does not always send one, and the default
+	// one-second backoff would retry inside the same minute and fail again, so
+	// the documented window is the fallback.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof DemioAPIError && error.isRateLimit) return true;
@@ -29,7 +32,8 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 2,
 			headersRetryAfterMs:
-				error instanceof DemioAPIError ? error.retryAfter : undefined,
+				(error instanceof DemioAPIError ? error.retryAfter : undefined) ??
+				PER_MINUTE_WINDOW_MS,
 		}),
 	},
 	// 401 is always the credential pair. 403 is the inactive account, which

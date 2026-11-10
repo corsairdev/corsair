@@ -110,6 +110,7 @@ describe('stored credentials', () => {
 describe('retry behaviour', () => {
 	// Demio answers 417, not 429. The transport does not recognise 417 on its
 	// own, so this retry only happens if the client's rate-limit config names it.
+	// No Retry-After here, so the documented one-minute window is the delay.
 	it('retries a 417 and returns the next response', async () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient();
@@ -120,10 +121,34 @@ describe('retry behaviour', () => {
 			const pending = corsair.demio.api.events.list({});
 			await Promise.resolve();
 			await Promise.resolve();
-			await jest.advanceTimersByTimeAsync(1_100);
+			await jest.advanceTimersByTimeAsync(60_100);
 			const result = await pending;
 
 			expect(result).toHaveLength(1);
+			expect(calls()).toBe(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	// Without a fallback the binder's one-second default retries inside the same
+	// minute and fails again, which spends an attempt for nothing.
+	it('waits the documented minute when no Retry-After is sent', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient();
+		try {
+			respondJson(rateLimited, 417);
+			respondJson([eventSummary]);
+
+			const pending = corsair.demio.api.events.list({});
+			await Promise.resolve();
+			await Promise.resolve();
+			// Past the binder's one-second default and still inside the minute.
+			await jest.advanceTimersByTimeAsync(30_000);
+			expect(calls()).toBe(1);
+
+			await jest.advanceTimersByTimeAsync(31_000);
+			await pending;
 			expect(calls()).toBe(2);
 		} finally {
 			testDb.cleanup();
@@ -167,7 +192,7 @@ describe('retry behaviour', () => {
 				.catch((caught: unknown) => caught);
 			for (let step = 0; step < 4; step++) {
 				await Promise.resolve();
-				await jest.advanceTimersByTimeAsync(1_100);
+				await jest.advanceTimersByTimeAsync(60_100);
 			}
 			const error = await pending;
 
