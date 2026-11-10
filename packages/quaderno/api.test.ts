@@ -172,29 +172,30 @@ describeIfReady('Quaderno live smoke', () => {
 			},
 		)) as { id: number };
 
-		const payment = await makeQuadernoRequest(
-			API_KEY as string,
-			ACCOUNT as string,
-			{
-				method: 'POST',
-				path: `/invoices/${invoice.id}/payments`,
-				body: { date: '2026-11-10', amount: 10, payment_method: 'cash' },
-			},
-		);
+		try {
+			const payment = await makeQuadernoRequest(
+				API_KEY as string,
+				ACCOUNT as string,
+				{
+					method: 'POST',
+					path: `/invoices/${invoice.id}/payments`,
+					body: { date: '2026-11-10', amount: 10, payment_method: 'cash' },
+				},
+			);
 
-		const parsed = Outputs.invoicesRecordPayment.safeParse({
-			payment,
-		});
-		expect(parsed.success).toBe(true);
-		if (!parsed.success) return;
-		expect(parsed.data.payment.payment_method).toBe('cash');
-
-		// Clean up: void the invoice, then delete the contact.
-		await makeQuadernoRequest(API_KEY as string, ACCOUNT as string, {
-			method: 'PUT',
-			path: `/invoices/${invoice.id}/void`,
-			body: { void_reason: 'Live probe cleanup' },
-		});
+			const parsed = Outputs.invoicesRecordPayment.safeParse({ payment });
+			expect(parsed.success).toBe(true);
+			if (!parsed.success) return;
+			expect(parsed.data.payment.payment_method).toBe('cash');
+		} finally {
+			// An invoice cannot be deleted, only voided, so cleanup has to run even
+			// when an assertion above fails, or a real invoice is left behind.
+			await makeQuadernoRequest(API_KEY as string, ACCOUNT as string, {
+				method: 'PUT',
+				path: `/invoices/${invoice.id}/void`,
+				body: { void_reason: 'Live probe cleanup' },
+			}).catch(() => undefined);
+		}
 	});
 
 	it('reports a wrong key as an auth error', async () => {

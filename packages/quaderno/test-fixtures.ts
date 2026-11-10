@@ -6,13 +6,13 @@
 /** `GET /ping` answers exactly this. */
 export const pingFixture = { status: 'OK' } as const;
 
-/** `GET /authorization`, captured live. Values replaced with placeholders. */
+/** `GET /authorization`. Every value is a placeholder, not a real account. */
 export const authorizationFixture = {
 	identity: {
 		id: 100000,
 		name: 'Example Account',
 		email: 'owner@example.com',
-		publishable_key: 'pk_live_example000000000000000',
+		publishable_key: 'example-publishable-key',
 		href: 'https://example-000000.quadernoapp.com/api/',
 		default_api_version: 20241028,
 	},
