@@ -109,6 +109,11 @@ export type ScrapingAntErrorOptions = {
 	transport?: boolean;
 	/** True when the transport gave up on its own deadline. */
 	timedOut?: boolean;
+	/**
+	 * True when response headers arrived but the body could not be read. The
+	 * scrape itself ran and was charged, so this is never replayable.
+	 */
+	bodyReadFailed?: boolean;
 	/** The target page's status, when the outer response carried one. */
 	pageStatus?: number;
 	cause?: Error;
@@ -131,6 +136,11 @@ export class ScrapingAntAPIError extends Error {
 	readonly isTransport: boolean;
 	/** True when the transport hit its own deadline. */
 	readonly isTimeout: boolean;
+	/**
+	 * True when ScrapingAnt answered and its body could not be read: the scrape
+	 * ran and was charged, so a retry would spend those credits again.
+	 */
+	readonly isBodyReadFailure: boolean;
 	readonly pageStatus?: number;
 
 	constructor(message: string, options: ScrapingAntErrorOptions = {}) {
@@ -141,6 +151,7 @@ export class ScrapingAntAPIError extends Error {
 		this.retryAfter = options.retryAfter;
 		this.isTransport = options.transport === true;
 		this.isTimeout = options.timedOut === true;
+		this.isBodyReadFailure = options.bodyReadFailed === true;
 		this.pageStatus = options.pageStatus;
 	}
 
@@ -210,10 +221,22 @@ async function readRaw(
 	try {
 		body = await response.text();
 	} catch (error) {
+		// Headers arrived, so ScrapingAnt already ran and charged for the
+		// scrape. This is deliberately neither `transport` nor `timedOut`: both
+		// of those are replayable, and replaying here would pay a second time
+		// for a scrape that did happen. The deadline is the usual cause, but a
+		// dropped connection mid-body looks the same and costs the same.
+		const timedOut =
+			error instanceof Error &&
+			(error.name === 'TimeoutError' || error.name === 'AbortError');
 		throw new ScrapingAntAPIError(
-			`${transportMessage}: the response body could not be read`,
+			`${transportMessage}: the body could not be read after the response headers arrived, so the scrape ran and was charged; it was not retried`,
 			{
-				transport: true,
+				bodyReadFailed: true,
+				timedOut,
+				pageStatus: parseNumberHeader(
+					response.headers.get('Ant-page-status-code'),
+				),
 				cause: error instanceof Error ? error : undefined,
 			},
 		);
@@ -293,6 +316,35 @@ export async function makeScrapingAntRequest(
 	}
 
 	return readRaw(response, 'ScrapingAnt response failed');
+}
+
+/**
+ * Strips the parts of a URL that carry a secret before it reaches the event
+ * log. `corsair_events.payload` keeps the value unless `encryptDataAtRest` is
+ * on, and a signed download URL or a URL with `user:password@` would then have
+ * a second durable copy there.
+ *
+ * The host and path stay, because they identify the site and are what makes the
+ * log useful; the query and fragment go, because that is where a token lives.
+ */
+export function redactUrlForLog(value: string): string {
+	try {
+		const url = new URL(value);
+		const hadSecret = url.search.length > 0 || url.hash.length > 0;
+		url.search = '';
+		url.hash = '';
+		// Credentials can appear without a query or fragment.
+		if (url.username || url.password) {
+			url.username = '';
+			url.password = '';
+			return `${url.origin}${url.pathname} (credentials redacted)`;
+		}
+		return hadSecret ? `${url.origin}${url.pathname} (query redacted)` : value;
+	} catch {
+		// A URL the input schema already accepted parses here; a value that does
+		// not is not a URL, so there is nothing structured to strip.
+		return value;
+	}
 }
 
 /**

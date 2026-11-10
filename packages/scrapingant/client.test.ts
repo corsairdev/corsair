@@ -3,6 +3,7 @@ import {
 	makeScrapingAntRequest,
 	parseJsonBody,
 	parseJsonObject,
+	redactUrlForLog,
 	SCRAPINGANT_API_BASE,
 	ScrapingAntAPIError,
 } from './client';
@@ -216,6 +217,73 @@ describe('makeScrapingAntRequest', () => {
 	});
 });
 
+describe('a body that fails to read after the headers arrived', () => {
+	/**
+	 * A response whose headers are already in and whose body read rejects, the
+	 * shape a deadline produces when it fires mid-body.
+	 */
+	function headersThenBrokenBody(status = 200): Response {
+		return {
+			ok: status >= 200 && status < 300,
+			status,
+			headers: new Headers({ 'Ant-page-status-code': '200' }),
+			text: async () => {
+				const error = new Error('The operation was aborted');
+				error.name = 'TimeoutError';
+				throw error;
+			},
+			// unknown: a real Response cannot have headers without a readable body,
+			// and the point here is the one case it cannot represent.
+		} as unknown as Response;
+	}
+
+	it('is neither replayable nor reported as a plain transport failure', async () => {
+		(globalThis.fetch as jest.Mock).mockResolvedValueOnce(
+			headersThenBrokenBody(),
+		);
+
+		const error = await failure(
+			makeScrapingAntRequest(API_KEY, '/v2/general', {
+				query: { url: 'https://example.com/' },
+			}),
+		);
+
+		// The scrape ran and was charged once the headers came back, so both
+		// flags that permit a replay must stay false.
+		expect(error.isBodyReadFailure).toBe(true);
+		expect(error.isTransport).toBe(false);
+	});
+
+	it('says the scrape was charged and not retried', async () => {
+		(globalThis.fetch as jest.Mock).mockResolvedValueOnce(
+			headersThenBrokenBody(),
+		);
+
+		const error = await failure(
+			makeScrapingAntRequest(API_KEY, '/v2/general', {
+				query: { url: 'https://example.com/' },
+			}),
+		);
+
+		expect(error.message).toContain('was charged');
+		expect(error.message).toContain('not retried');
+	});
+
+	it('keeps the target status the headers carried', async () => {
+		(globalThis.fetch as jest.Mock).mockResolvedValueOnce(
+			headersThenBrokenBody(),
+		);
+
+		const error = await failure(
+			makeScrapingAntRequest(API_KEY, '/v2/general', {
+				query: { url: 'https://example.com/' },
+			}),
+		);
+
+		expect(error.pageStatus).toBe(200);
+	});
+});
+
 describe('parseJsonBody', () => {
 	it('parses a JSON answer', () => {
 		expect(parseJsonBody({ body: '{"a":1}' })).toEqual({ a: 1 });
@@ -241,5 +309,43 @@ describe('parseJsonObject', () => {
 
 	it('throws on a bare JSON scalar', () => {
 		expect(() => parseJsonObject({ body: '42' })).toThrow(ScrapingAntAPIError);
+	});
+});
+
+describe('redactUrlForLog', () => {
+	it('keeps a plain URL untouched', () => {
+		expect(redactUrlForLog('https://example.com/pricing')).toBe(
+			'https://example.com/pricing',
+		);
+	});
+
+	it('drops a query string that could hold a token', () => {
+		// A signed download URL is the case that matters: the signature is in
+		// the query, and the event payload would keep a second copy of it.
+		expect(
+			redactUrlForLog('https://cdn.example.com/file.zip?signature=abc123'),
+		).toBe('https://cdn.example.com/file.zip (query redacted)');
+	});
+
+	it('drops a fragment', () => {
+		expect(redactUrlForLog('https://example.com/page#access_token=xyz')).toBe(
+			'https://example.com/page (query redacted)',
+		);
+	});
+
+	it('drops embedded credentials', () => {
+		expect(redactUrlForLog('https://user:secret@example.com/admin')).toBe(
+			'https://example.com/admin (credentials redacted)',
+		);
+	});
+
+	it('keeps the host and path, which identify the site', () => {
+		const redacted = redactUrlForLog('https://shop.example.com/a/b?token=x');
+		expect(redacted).toContain('shop.example.com/a/b');
+		expect(redacted).not.toContain('token');
+	});
+
+	it('leaves a value that is not a URL alone', () => {
+		expect(redactUrlForLog('not a url')).toBe('not a url');
 	});
 });

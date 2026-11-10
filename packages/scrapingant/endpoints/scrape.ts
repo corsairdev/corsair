@@ -1,6 +1,6 @@
 import type { ScrapingAntEndpoints } from '..';
 import type { ScrapingAntQuery } from '../client';
-import { parseJsonObject } from '../client';
+import { parseJsonObject, redactUrlForLog } from '../client';
 import { call } from './call';
 import {
 	ScrapingAntEndpointInputSchemas as Inputs,
@@ -62,7 +62,7 @@ export const html: ScrapingAntEndpoints['scrapeHtml'] = (ctx, input) =>
 				page_status: raw.pageStatus,
 				credits_cost: raw.creditsCost,
 			}),
-			log: (parsed) => ({ url: parsed.url }),
+			log: (parsed) => ({ url: redactUrlForLog(parsed.url) }),
 		},
 	);
 
@@ -87,7 +87,7 @@ export const markdown: ScrapingAntEndpoints['scrapeMarkdown'] = (ctx, input) =>
 				};
 			},
 			log: (parsed, result) => ({
-				url: parsed.url,
+				url: redactUrlForLog(parsed.url),
 				markdownLength: result.markdown.length,
 			}),
 		},
@@ -110,7 +110,7 @@ export const extended: ScrapingAntEndpoints['scrapeExtended'] = (ctx, input) =>
 				return { ...body, credits_cost: raw.creditsCost };
 			},
 			log: (parsed, result) => ({
-				url: parsed.url,
+				url: redactUrlForLog(parsed.url),
 				pageStatus: result.status_code,
 			}),
 		},

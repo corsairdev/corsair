@@ -1,5 +1,5 @@
 import type { ScrapingAntEndpoints } from '..';
-import { parseJsonObject } from '../client';
+import { parseJsonObject, redactUrlForLog } from '../client';
 import { call } from './call';
 import {
 	ScrapingAntEndpointInputSchemas as Inputs,
@@ -39,7 +39,7 @@ export const data: ScrapingAntEndpoints['extractData'] = (ctx, input) =>
 			path: '/v2/extract',
 			shape: (raw) => parseJsonObject(raw),
 			log: (parsed, result) => ({
-				url: parsed.url,
+				url: redactUrlForLog(parsed.url),
 				properties: Object.keys(result).length,
 			}),
 		},

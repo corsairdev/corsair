@@ -13,8 +13,13 @@ function isApi(error: Error): error is ScrapingAntAPIError {
  * The 409 on a free plan is the one failure with a stated retry rule: wait for
  * the active request to finish and send one request, so it gets the longest
  * delay and the fewest attempts. ScrapingAnt sends no `Retry-After` on any
- * documented failure, `headersRetryAfterMs` is therefore never set from a
- * header and the strategies below are the whole schedule.
+ * documented failure; only a 429 from a gateway in front of it carries one, and
+ * that is the single place `headersRetryAfterMs` is read from a header.
+ *
+ * The cost of a wrong retry here is money, not just time: every scrape spends
+ * credits, so a replay after an outcome the provider already charged for pays
+ * twice. That is why the body-read failure and the client deadline both stop,
+ * while a connection that never reached the provider may retry.
  */
 export const errorHandlers = {
 	// 403 "Requests quota limit reached". No retry can restore credits, and the
@@ -65,6 +70,13 @@ export const errorHandlers = {
 			retryStrategy: 'linear_2s' as const,
 		}),
 	},
+	// Headers arrived but the body did not: the scrape ran and was charged, so a
+	// retry spends those credits again for the same page. Listed before
+	// TIMEOUT_ERROR and NETWORK_ERROR because it can look like either.
+	BODY_READ_ERROR: {
+		match: (error: Error) => isApi(error) && error.isBodyReadFailure,
+		handler: async () => ({ maxRetries: 0 }),
+	},
 	// The client's own deadline, listed before NETWORK_ERROR because a timeout
 	// is also a transport failure and would otherwise be retried by it. The
 	// provider allows up to 60 seconds per scrape, so a client timeout may leave
@@ -77,11 +89,29 @@ export const errorHandlers = {
 	// A connection that never produced a response did not reach the provider,
 	// so replaying the GET cannot duplicate a charge for a scrape that ran.
 	NETWORK_ERROR: {
-		match: (error: Error) => isApi(error) && error.isTransport,
+		match: (error: Error) =>
+			isApi(error) && error.isTransport && !error.isBodyReadFailure,
 		handler: async () => ({
 			maxRetries: 1,
 			retryStrategy: 'linear_2s' as const,
 		}),
+	},
+	// ScrapingAnt documents no throughput limit and sends no Retry-After of its
+	// own, but a gateway in front of it can answer 429. Retried so the call does
+	// not die on a throttle the provider never intended to be terminal, using
+	// Retry-After when the gateway supplies one.
+	RATE_LIMIT_ERROR: {
+		match: (error: Error) => isApi(error) && error.status === 429,
+		handler: async (error: Error) => {
+			const retryAfter =
+				error instanceof ScrapingAntAPIError ? error.retryAfter : undefined;
+			return retryAfter === undefined
+				? {
+						maxRetries: 2,
+						retryStrategy: 'exponential_backoff_jitter' as const,
+					}
+				: { maxRetries: 2, headersRetryAfterMs: retryAfter };
+		},
 	},
 	// 500 covers server failures and both extraction stages (AI and Markdown),
 	// which the docs say to retry with bounded delays. Every operation is a GET,

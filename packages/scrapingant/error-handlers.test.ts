@@ -130,6 +130,52 @@ describe('error handler selection', () => {
 		expect(await strategyFor(error)).toEqual({ maxRetries: 0 });
 	});
 
+	it('does not retry a body that failed to read after the headers arrived', async () => {
+		const error = new ScrapingAntAPIError('body read failed', {
+			bodyReadFailed: true,
+		});
+
+		// The scrape ran and was charged; HEADERS already came back. Replaying
+		// would pay for the same page twice.
+		expect(firstMatch(error)).toBe('BODY_READ_ERROR');
+		expect(await strategyFor(error)).toEqual({ maxRetries: 0 });
+	});
+
+	it('does not replay a body-read failure even when the deadline caused it', async () => {
+		const error = new ScrapingAntAPIError('body read failed', {
+			bodyReadFailed: true,
+			timedOut: true,
+		});
+
+		// BODY_READ_ERROR is listed first, so neither TIMEOUT_ERROR nor
+		// NETWORK_ERROR can claim this and replay a charged scrape.
+		expect(firstMatch(error)).toBe('BODY_READ_ERROR');
+		expect(await strategyFor(error)).toEqual({ maxRetries: 0 });
+	});
+
+	it('retries a 429 with the gateway Retry-After when one is sent', async () => {
+		const error = new ScrapingAntAPIError('slow down', {
+			status: 429,
+			retryAfter: 3000,
+		});
+
+		expect(firstMatch(error)).toBe('RATE_LIMIT_ERROR');
+		expect(await strategyFor(error)).toEqual({
+			maxRetries: 2,
+			headersRetryAfterMs: 3000,
+		});
+	});
+
+	it('retries a 429 with backoff when it carries no Retry-After', async () => {
+		const error = new ScrapingAntAPIError('slow down', { status: 429 });
+
+		expect(firstMatch(error)).toBe('RATE_LIMIT_ERROR');
+		expect(await strategyFor(error)).toEqual({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff_jitter',
+		});
+	});
+
 	it('retries a 500 with exponential backoff', async () => {
 		const error = apiError(500, 'Internal server error');
 

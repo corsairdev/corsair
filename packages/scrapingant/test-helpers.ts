@@ -1,8 +1,9 @@
 import type { ScrapingAntContext } from './index';
 
 /**
- * A context the endpoints read. Only `key` matters to them; the event log is
- * mocked at the module level by each suite that calls an endpoint.
+ * A context the endpoints read. Only `key` matters to them; each suite that
+ * calls an endpoint mocks `logEventFromContext` at module level with
+ * `jest.mock('corsair/core', …)`, so no account resolver is needed here.
  */
 export function makeCtx(key = 'sa-test-key'): ScrapingAntContext {
 	// unknown: a full context needs a database and an account resolver that no

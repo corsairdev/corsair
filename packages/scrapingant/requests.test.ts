@@ -1,3 +1,8 @@
+jest.mock('corsair/core', () => {
+	const actual = jest.requireActual('corsair/core');
+	return { ...actual, logEventFromContext: jest.fn().mockResolvedValue('evt') };
+});
+
 import { scrapingant } from './index';
 import {
 	EXTENDED_BODY,
@@ -224,5 +229,44 @@ describe('account.usage', () => {
 		expect([...sentQuery().keys()]).toEqual([]);
 		expect(result.plan_name).toBe(USAGE_BODY.plan_name);
 		expect(result.remained_credits).toBe(USAGE_BODY.remained_credits);
+	});
+});
+
+describe('event log payloads', () => {
+	// The logger is mocked at the top of this file, and the event table keeps
+	// whatever it is given unless encryptDataAtRest is on.
+	const loggedPayload = (): string => {
+		const log = jest.requireMock('corsair/core').logEventFromContext;
+		// unknown: jest types a mock's recorded arguments as unknown[], and the
+		// third one is the payload this helper reads.
+		const lastCall = log.mock.calls[log.mock.calls.length - 1] as [
+			unknown,
+			string,
+			Record<string, unknown>,
+		];
+		return JSON.stringify(lastCall[2]);
+	};
+
+	it('logs a url without its query, so a signed link is not copied', async () => {
+		respond(HTML_BODY);
+
+		await endpoints().scrape.html(makeCtx(), {
+			url: 'https://cdn.example.com/report.pdf?signature=supersecret',
+		});
+
+		const payload = loggedPayload();
+		expect(payload).not.toContain('supersecret');
+		expect(payload).toContain('cdn.example.com/report.pdf');
+	});
+
+	it('logs a url without embedded credentials', async () => {
+		respond(MARKDOWN_BODY);
+
+		await endpoints().scrape.markdown(makeCtx(), {
+			url: 'https://user:hunter2@example.com/admin',
+			browser: false,
+		});
+
+		expect(loggedPayload()).not.toContain('hunter2');
 	});
 });

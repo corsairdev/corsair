@@ -197,4 +197,34 @@ describe('retry behaviour', () => {
 			testDb.cleanup();
 		}
 	});
+
+	it('retries a gateway 429 and honors its Retry-After', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient({ key: 'sa-test-key' });
+		try {
+			// A gateway in front of ScrapingAnt can throttle a burst even though
+			// the API itself documents no throughput limit.
+			respond({ detail: 'Too Many Requests' }, 429, { 'Retry-After': '2' });
+			respond(HTML_BODY, 200, {
+				'Ant-credits-cost': '1',
+				'Ant-page-status-code': '200',
+			});
+
+			const pending = corsair.scrapingant.api.scrape.html({
+				url: 'https://example.com/',
+			});
+			await Promise.resolve();
+			await Promise.resolve();
+			// Under the requested wait it has not retried yet.
+			await jest.advanceTimersByTimeAsync(1_000);
+			expect(fetchCallCount()).toBe(1);
+
+			await jest.advanceTimersByTimeAsync(1_500);
+			const result = await pending;
+			expect(result.page_status).toBe(200);
+			expect(fetchCallCount()).toBe(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
 });
