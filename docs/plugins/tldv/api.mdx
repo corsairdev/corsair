@@ -215,7 +215,7 @@ await corsair.tldv.api.meetings.list({ limit: 10, meetingType: 'external' });
 | `folderIds` | `string[]` | No | Folders to include |
 | `folderIdsOp` | `and \| or` | No | Whether a meeting must be in every folder or any |
 
-Answers `{ page, pages, total, pageSize, results }`. `limit` caps at 100. `meetingType: 'internal'` keeps only meetings whose participants are all in your organization; `'external'` keeps the rest. `from` and `to` accept a date or a date-time. The input schema rejects a `meetingType` other than these two before any request is sent.
+Answers `{ page, pages, total, pageSize, results }`. `limit` caps at 100. `meetingType: 'internal'` keeps only meetings whose participants are all in your organization; `'external'` keeps the rest. `from` and `to` accept a date or a date-time. The input schema rejects a `meetingType` other than these two before any request is sent. `query` matches whole words: a meeting named `weekly-sync` is found by `weekly sync`, but not by `weekly-sync`.
 
 
 

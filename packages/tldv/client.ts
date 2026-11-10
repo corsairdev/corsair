@@ -24,7 +24,7 @@ export const TLDV_USER_AGENT = 'Corsair-tldv-integration/1.0';
 /**
  * tl;dv has two error bodies, and they differ by status:
  *
- * - **400** validation: `{ message, errors: [{ property, constraints }] }`
+ * - **400** validation: `{ name, message, errors: [{ property, constraints }] }`
  * - **401/403/404/500** everything else: `{ name, message }`
  *
  * Both carry a string `message`, so `describeTldvError` reads that and adds the
