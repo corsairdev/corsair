@@ -293,7 +293,11 @@ const countryDetail = z
 		country_flag: text,
 	})
 	.catchall(finageJsonValue);
-const countryDetailResponse = z.array(countryDetail);
+// The reference wraps each detail record in an array; the API returns the
+// record itself. Both forms are accepted.
+const itemOrArray = <T extends z.ZodType>(item: T) =>
+	z.union([item, z.array(item)]);
+const countryDetailResponse = itemOrArray(countryDetail);
 const currencyDetail = z
 	.object({
 		symbol: text,
@@ -303,7 +307,7 @@ const currencyDetail = z
 		to_flag: text,
 	})
 	.catchall(finageJsonValue);
-const currencyDetailResponse = z.array(currencyDetail);
+const currencyDetailResponse = itemOrArray(currencyDetail);
 const companyDetail = z
 	.object({
 		symbol: text,
@@ -495,7 +499,7 @@ const baseFinageOutputSchemas = {
 	getCryptoPreviousClose: aggregateResponse,
 	getCryptoSnapshot: snapshotResponse,
 	getCurrencyDetail: currencyDetailResponse,
-	getCryptoDetailed: z.array(cryptoDetailedItem),
+	getCryptoDetailed: itemOrArray(cryptoDetailedItem),
 	getForexLastQuote: quoteResponse,
 	getForexLastTrade: tradeResponse,
 	getForexMarketAggregates: aggregateResponse,
@@ -505,7 +509,7 @@ const baseFinageOutputSchemas = {
 	getMostActiveStocks: z.array(mostActiveItem),
 	getSecRssFeed: z.array(rssFeedItem),
 	getSectorPerformance: z.array(sectorPerformanceItem),
-	getStockCompanyDetails: z.array(companyDetail),
+	getStockCompanyDetails: itemOrArray(companyDetail),
 	getStockMarketAggregates: aggregateResponse,
 	getStockLastQuote: quoteResponse,
 	getStockLastTrade: tradeResponse,
