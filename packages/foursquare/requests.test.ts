@@ -207,6 +207,34 @@ describe('Foursquare request shapes', () => {
 		expect(queryParam('cursor')).toBe('c3I6Mw');
 	});
 
+	it('returns nextCursor from the link response header', async () => {
+		mockFetch(
+			jsonResponse(searchResponse, {
+				headers: {
+					'Content-Type': 'application/json',
+					link: '<https://places-api.foursquare.com/places/search?limit=3&near=Chicago%2CIL&cursor=c3I6Mw>; rel="next"',
+				},
+			}),
+		);
+
+		const result = await endpoints.places.search(makeCtx(), {
+			near: 'Chicago, IL',
+			limit: 3,
+		});
+
+		expect(result.nextCursor).toBe('c3I6Mw');
+	});
+
+	it('returns no nextCursor on the last page', async () => {
+		mockFetch(jsonResponse(searchResponse));
+
+		const result = await endpoints.places.search(makeCtx(), {
+			near: 'Chicago, IL',
+		});
+
+		expect(result.nextCursor).toBeUndefined();
+	});
+
 	it('omits the cursor on a first page', async () => {
 		mockFetch(jsonResponse(searchResponse));
 
