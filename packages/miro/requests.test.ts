@@ -1076,7 +1076,13 @@ describe('tags', () => {
 		expect(lastRequest().body).toEqual({ title: 'priority', fillColor: 'red' });
 	});
 
-	it.each(['light_blue', 'light_yellow', 'light_red', 'light_magenta', 'dark_red'])(
+	it.each([
+		'light_blue',
+		'light_yellow',
+		'light_red',
+		'light_magenta',
+		'dark_red',
+	])(
 		'rejects the tag colour %s, which Miro does not list',
 		async (fillColor) => {
 			await expect(
