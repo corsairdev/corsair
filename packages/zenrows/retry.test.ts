@@ -1,6 +1,7 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { zenrows } from './index';
+import { captureError } from './test-fixtures';
 
 async function createClient() {
 	const testDb = createTestDatabase();
@@ -100,9 +101,7 @@ describe('Zenrows retries through createCorsair', () => {
 		try {
 			for (let attempt = 0; attempt < 4; attempt++) respond(rateLimited(), 429);
 
-			const pending = corsair.zenrows.api.crawl
-				.list({})
-				.catch((caught: unknown) => caught);
+			const pending = captureError(corsair.zenrows.api.crawl.list({}));
 			// maxRetries 3 means four attempts: 1s + 1s + 1s of linear work here
 			// is really 1s, then the exponential fallback for the rest.
 			await jest.advanceTimersByTimeAsync(20_000);
@@ -122,9 +121,12 @@ describe('Zenrows retries through createCorsair', () => {
 		try {
 			respond({ code: 'internal', status: 500, title: 'Internal' }, 500);
 
-			const error = await corsair.zenrows.api.crawl
-				.start({ url: 'https://example.com', maxPages: 1 })
-				.catch((caught: unknown) => caught);
+			const error = await captureError(
+				corsair.zenrows.api.crawl.start({
+					url: 'https://example.com',
+					maxPages: 1,
+				}),
+			);
 
 			expect(error).toBeInstanceOf(Error);
 			// One attempt only: a replay could start a second billed crawl.
@@ -161,9 +163,7 @@ describe('Zenrows retries through createCorsair', () => {
 				402,
 			);
 
-			const error = await corsair.zenrows.api.crawl
-				.list({})
-				.catch((caught: unknown) => caught);
+			const error = await captureError(corsair.zenrows.api.crawl.list({}));
 
 			expect((error as Error).message).toContain('AUTH004');
 			expect(fetchMock).toHaveBeenCalledTimes(1);

@@ -1,7 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import { ZenRowsAPIError } from './client';
 import { Crawls, Extract, Fetch } from './endpoints';
+import type { ZenRowsEndpointOutputSchemas as Outputs } from './endpoints/types';
 import {
+	captureError,
 	crawlPage,
 	crawlStarted,
 	crawlSummary,
@@ -25,10 +27,13 @@ const API_KEY = 'zr-test-key';
 
 // never parameters: every concrete endpoint is assignable to this because
 // parameters are contravariant. Each returns its own output type, so the shared
-// return is unknown.
+// return is unknown, and each assertion below casts to the fields it reads.
+// unknown: see the note above; the shared return type cannot be narrowed
+// without listing every operation's output.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
-// unknown: negative cases pass values no schema accepts.
+// unknown: negative cases pass values no schema accepts, and a positive case
+// passes the operation's own input. The endpoint validates it either way.
 function invoke(endpoint: AnyEndpoint, input: unknown = {}) {
 	// The fake context only carries what the endpoints read (ctx.key).
 	return endpoint({ key: API_KEY } as never, input as never);
@@ -66,7 +71,8 @@ function lastRequest() {
 	};
 }
 
-// unknown: only a JSON body is parsed; a forwarded string body stays raw.
+// unknown: only a JSON body is parsed; a forwarded string or urlencoded body
+// stays raw, and the caller asserts on `rawBody` instead.
 function parseJsonBodyOrUndefined(body: RequestInit['body']): unknown {
 	if (typeof body !== 'string') return undefined;
 	try {
@@ -127,7 +133,6 @@ describe('fetch.page', () => {
 			allowedStatusCodes: [404, 500],
 			sessionId: 12345,
 			originalStatus: true,
-			jsInstructions: [{ click: '.more' }, { wait: 200 }],
 		})) as { responseType: string };
 
 		const sent = lastRequest();
@@ -142,8 +147,9 @@ describe('fetch.page', () => {
 			allowed_status_codes: '404,500',
 			session_id: '12345',
 			original_status: 'true',
-			js_instructions: '[{"click":".more"},{"wait":200}]',
 		});
+		// Browser actions are a write, so a read never carries them.
+		expect(sent.query.js_instructions).toBeUndefined();
 	});
 
 	it('rejects mode=auto combined with jsRender or premiumProxy', async () => {
@@ -168,12 +174,6 @@ describe('fetch.page', () => {
 		await expect(
 			invoke(Fetch.fetchPage, {
 				url: 'https://example.com',
-				jsInstructions: [{ click: '.x' }],
-			}),
-		).rejects.toThrow(/jsInstructions needs jsRender/);
-		await expect(
-			invoke(Fetch.fetchPage, {
-				url: 'https://example.com',
 				waitFor: '.x',
 			}),
 		).rejects.toThrow(/waitFor needs jsRender/);
@@ -185,25 +185,136 @@ describe('fetch.page', () => {
 		).rejects.toThrow(/proxyCountry needs premiumProxy/);
 	});
 
-	it('rejects a non-http url and an instruction with two actions', async () => {
+	it('rejects a non-http url', async () => {
 		await expect(
 			invoke(Fetch.fetchPage, { url: 'ftp://example.com' }),
 		).rejects.toThrow(/http or https/);
+	});
+});
+
+describe('fetch.browse', () => {
+	it('sends browser actions only through the write operation', async () => {
+		respond(textPage.html, 200, 'text/plain');
+
+		const result = (await invoke(Fetch.fetchBrowse, {
+			url: 'https://example.com',
+			jsRender: true,
+			jsInstructions: [{ fill: ['#q', 'shoes'] }, { click: '#submit' }],
+		})) as { body: string; responseType: string };
+
+		expectAuthenticated();
+		const sent = lastRequest();
+		expect(sent.query.js_instructions).toBe(
+			'[{"fill":["#q","shoes"]},{"click":"#submit"}]',
+		);
+		expect(sent.query.js_render).toBe('true');
+		expect(result.responseType).toBe('html');
+		expect(result.body).toBe(textPage.html);
+	});
+
+	it('requires at least one action and a browser', async () => {
 		await expect(
-			invoke(Fetch.fetchPage, {
+			invoke(Fetch.fetchBrowse, {
+				url: 'https://example.com',
+				jsRender: true,
+				jsInstructions: [],
+			}),
+		).rejects.toThrow();
+		// No jsRender and no mode: nothing would run the actions.
+		await expect(
+			invoke(Fetch.fetchBrowse, {
+				url: 'https://example.com',
+				jsInstructions: [{ click: '#a' }],
+			}),
+		).rejects.toThrow(/jsRender/);
+	});
+
+	it('rejects an instruction with two actions and a mistyped action key', async () => {
+		await expect(
+			invoke(Fetch.fetchBrowse, {
 				url: 'https://example.com',
 				jsRender: true,
 				jsInstructions: [{ click: '.a', wait: 10 }],
 			}),
 		).rejects.toThrow(/exactly one action key/);
 		await expect(
-			invoke(Fetch.fetchPage, {
+			invoke(Fetch.fetchBrowse, {
 				url: 'https://example.com',
 				jsRender: true,
-				// A mistyped key would be ignored by the browser rather than rejected.
+				// A mistyped key would be ignored by the browser, not rejected.
 				jsInstructions: [{ clik: '.a' }],
 			}),
 		).rejects.toThrow();
+	});
+});
+
+describe('caller headers', () => {
+	it('forwards headers to the target and moves the key off the header', async () => {
+		respond(textPage.html, 200, 'text/plain');
+
+		await invoke(Fetch.fetchPage, {
+			url: 'https://example.com',
+			headers: { Referer: 'https://www.google.com', Cookie: 'session=abc' },
+		});
+
+		const sent = lastRequest();
+		// ZenRows copies every request header onto the target when forwarding,
+		// so the key must ride in the query string.
+		expect(sent.headers.get('x-api-key')).toBeNull();
+		expect(sent.query.apikey).toBe(API_KEY);
+		expect(sent.headers.get('referer')).toBe('https://www.google.com');
+		expect(sent.headers.get('cookie')).toBe('session=abc');
+		// headers imply the switch that turns forwarding on.
+		expect(sent.query.custom_headers).toBe('true');
+	});
+
+	it('forwards headers on every Fetch operation that accepts them', async () => {
+		// unknown: each entry pairs an operation with that operation's own input,
+		// which no single type can describe; `invoke` validates it per endpoint.
+		const ops: [AnyEndpoint, unknown][] = [
+			[Fetch.fetchPage, { url: 'https://example.com' }],
+			[
+				Fetch.fetchBrowse,
+				{
+					url: 'https://example.com',
+					jsRender: true,
+					jsInstructions: [{ wait: 10 }],
+				},
+			],
+			[
+				Fetch.fetchCssExtract,
+				{ url: 'https://example.com', cssExtractor: { t: 'h1' } },
+			],
+			[Fetch.fetchOutputs, { url: 'https://example.com', outputs: ['links'] }],
+			[Fetch.fetchJsonResponse, { url: 'https://example.com', jsRender: true }],
+			[Fetch.fetchExtract, { url: 'https://example.com' }],
+		];
+		for (const [op, input] of ops) {
+			fetchMock.mockClear();
+			respond('{"ok":true}', 200, 'text/plain');
+			await invoke(op, {
+				...(input as object),
+				headers: { 'User-Agent': 'corsair-test' },
+			});
+			const sent = lastRequest();
+			expect(sent.headers.get('user-agent')).toBe('corsair-test');
+			expect(sent.headers.get('x-api-key')).toBeNull();
+			expect(sent.query.apikey).toBe(API_KEY);
+		}
+	});
+
+	it('refuses a header the client owns', async () => {
+		for (const name of ['X-API-Key', 'apikey', 'Content-Type']) {
+			await expect(
+				invoke(Fetch.fetchPage, {
+					url: 'https://example.com',
+					headers: { [name]: 'x' },
+				}),
+			).rejects.toThrow(/set by Corsair/);
+		}
+		await expect(
+			invoke(Fetch.fetchPage, { url: 'https://example.com', headers: {} }),
+		).rejects.toThrow(/at least one header/);
 	});
 });
 
@@ -213,7 +324,7 @@ describe('fetch.extract', () => {
 
 		const result = (await invoke(Fetch.fetchExtract, {
 			url: 'https://www.scrapingcourse.com/ecommerce/product/abominable-hoodie/',
-		})) as { parsed?: Record<string, unknown> };
+		})) as ReturnType<typeof Outputs.fetchExtract.parse>;
 
 		expectAuthenticated();
 		const sent = lastRequest();
@@ -250,14 +361,20 @@ describe('fetch.extract', () => {
 	it('fails loudly when a JSON mode answers HTML', async () => {
 		respond('<html></html>', 200, 'text/plain');
 
-		const error = await invoke(Fetch.fetchExtract, {
-			url: 'https://example.com',
-		}).catch((caught: unknown) => caught);
+		const error = await captureError(
+			invoke(Fetch.fetchExtract, {
+				url: 'https://example.com',
+			}),
+		);
 
 		expect(error).toBeInstanceOf(ZenRowsAPIError);
 		expect((error as ZenRowsAPIError).message).toContain('not JSON');
 	});
 });
+
+// unknown: the casts in this file narrow an operation's output to the fields the
+// test reads. Declaring every operation's full output type here would duplicate
+// the schemas this suite is meant to check.
 
 describe('fetch.cssExtract', () => {
 	it('sends the selector map and returns the keys at the top level', async () => {
@@ -266,7 +383,7 @@ describe('fetch.cssExtract', () => {
 		const result = (await invoke(Fetch.fetchCssExtract, {
 			url: 'https://example.com',
 			cssExtractor: { title: 'h1', links: 'a @href' },
-		})) as Record<string, unknown>;
+		})) as ReturnType<typeof Outputs.fetchCssExtract.parse>;
 
 		expectAuthenticated();
 		const sent = lastRequest();
@@ -293,7 +410,7 @@ describe('fetch.outputs', () => {
 		const result = (await invoke(Fetch.fetchOutputs, {
 			url: 'https://example.com',
 			outputs: ['emails', 'links', 'phone_numbers'],
-		})) as Record<string, unknown>;
+		})) as ReturnType<typeof Outputs.fetchCssExtract.parse>;
 
 		expectAuthenticated();
 		expect(lastRequest().query.outputs).toBe('emails,links,phone_numbers');
@@ -307,7 +424,7 @@ describe('fetch.outputs', () => {
 		const result = (await invoke(Fetch.fetchOutputs, {
 			url: 'https://example.com',
 			outputs: ['emails', 'phone_numbers'],
-		})) as Record<string, unknown>;
+		})) as ReturnType<typeof Outputs.fetchCssExtract.parse>;
 
 		expect(result).toEqual({ emails: null, phone_numbers: [] });
 	});
@@ -332,7 +449,7 @@ describe('fetch.jsonResponse', () => {
 		const result = (await invoke(Fetch.fetchJsonResponse, {
 			url: 'https://example.com',
 			jsRender: true,
-		})) as { html?: string; xhr?: unknown[] };
+		})) as ReturnType<typeof Outputs.fetchJsonResponse.parse>;
 
 		expectAuthenticated();
 		expect(lastRequest().query).toMatchObject({
@@ -360,7 +477,7 @@ describe('fetch.jsonResponse', () => {
 			mode: 'auto',
 			outputs: ['links'],
 			cssExtractor: { title: 'h1' },
-		})) as { outputs?: Record<string, unknown> };
+		})) as ReturnType<typeof Outputs.fetchJsonResponse.parse>;
 
 		expect(lastRequest().query).toMatchObject({
 			mode: 'auto',
@@ -448,6 +565,26 @@ describe('fetch.post and fetch.put', () => {
 		expect(sent.headers.get('x-api-key')).toBeNull();
 		expect(sent.query.apikey).toBe(API_KEY);
 		expect(sent.query.custom_headers).toBe('true');
+	});
+
+	it('refuses a raw string sent as JSON, which would be re-encoded', async () => {
+		await expect(
+			invoke(Fetch.fetchPost, {
+				url: 'https://httpbin.io/anything',
+				body: {
+					type: 'text',
+					value: '{"id":1}',
+					contentType: 'application/json',
+				},
+			}),
+		).rejects.toThrow(/use body type/);
+		// A JSON body goes through the json mode, which sends an object.
+		respond('ok', 200, 'text/plain');
+		await invoke(Fetch.fetchPost, {
+			url: 'https://httpbin.io/anything',
+			body: { type: 'json', value: { id: 1 } },
+		});
+		expect(lastRequest().body).toEqual({ id: 1 });
 	});
 
 	it('rejects a body type it cannot relay', async () => {
@@ -540,7 +677,7 @@ describe('crawl.list', () => {
 		const result = (await invoke(Crawls.list, {
 			cursor: 'cur_1',
 			limit: 50,
-		})) as { crawls: unknown[]; next_cursor?: string | null };
+		})) as ReturnType<typeof Outputs.crawlList.parse>;
 
 		expectAuthenticated();
 		const sent = lastRequest();
@@ -570,7 +707,7 @@ describe('crawl.get', () => {
 			crawlId: crawlPage.crawl_id,
 			cursor: 'cur_1',
 			limit: 5,
-		})) as { results?: unknown[]; next_cursor?: string | null };
+		})) as ReturnType<typeof Outputs.crawlGet.parse>;
 
 		expectAuthenticated();
 		const sent = lastRequest();
@@ -695,7 +832,7 @@ describe('extract.getDomainStatus', () => {
 
 		const result = (await invoke(Extract.getDomainStatus, {
 			domain: 'scrapingcourse.com',
-		})) as { domain: string; roles?: unknown[] };
+		})) as ReturnType<typeof Outputs.extractGetDomainStatus.parse>;
 
 		expectAuthenticated();
 		expect(lastRequest().path).toBe(
@@ -710,10 +847,9 @@ describe('extract.listPreparedDomains', () => {
 	it('GETs this account submissions with the allowance', async () => {
 		respond({ allowance: extractAllowance, domains: [extractPreparation] });
 
-		const result = (await invoke(Extract.listPreparedDomains)) as {
-			domains: unknown[];
-			allowance?: { remaining?: number | null };
-		};
+		const result = (await invoke(Extract.listPreparedDomains)) as ReturnType<
+			typeof Outputs.extractListPreparedDomains.parse
+		>;
 
 		expectAuthenticated();
 		expect(lastRequest().path).toBe('/v1/extract/prepared-domains');
@@ -764,6 +900,8 @@ describe('logging', () => {
 		});
 
 		expect(mockLog).toHaveBeenCalledTimes(1);
+		// unknown: jest types a mock call as an array of `unknown` arguments, so
+		// each position is narrowed here to what this plugin's logger receives.
 		const [, event, payload] = mockLog.mock.calls[0] as [
 			unknown,
 			string,

@@ -1,7 +1,7 @@
 // Responses in this file are copied from live Zenrows answers on 2026-11-10,
 // not from the docs' examples: the docs show a crawl's `depth` as always
 // present (it is absent when unset) and do not show the bare `{ status: 404 }`
-// an unknown route returns.
+// a route that does not exist returns.
 
 export const textPage = {
 	html: '<!doctype html><html lang=en><head><title>Example Domain</title></head><body><h1>Example Domain</h1></body></html>',
@@ -185,5 +185,17 @@ export const couldNotGetContent = {
 	type: 'https://docs.zenrows.com/api-error-codes#RESP001',
 };
 
-/** An unknown route answers a bare status object. */
+// A route that does not exist answers a bare status object.
 export const bareNotFound = { status: 404 };
+
+/**
+ * Resolves a rejected promise to its error, for tests that assert on a thrown
+ * value. The rejection reason is `unknown` by the language's own definition:
+ * a promise can reject with any value, so a narrower type here would be a claim
+ * no caller can make. One annotated helper replaces the same cast at every call
+ * site.
+ */
+// unknown: see the doc comment above; the rejection reason has no static type.
+export async function captureError<T>(promise: Promise<T>): Promise<unknown> {
+	return promise.catch((caught: unknown) => caught);
+}

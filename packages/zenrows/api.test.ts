@@ -1,4 +1,6 @@
 import { makeZenrowsRequest, parseJsonBody } from './client';
+import { ZenRowsEndpointOutputSchemas } from './endpoints/types';
+import { captureError } from './test-fixtures';
 
 // Live smoke tests. CI skips `api.test.ts` by design, and so does the plugin
 // gate; run it with `pnpm --filter @corsair-dev/zenrows test:live`.
@@ -23,7 +25,7 @@ describeIfKey('Zenrows live', () => {
 			query: { url: 'https://example.com', response_type: 'markdown' },
 		});
 		// Zenrows labels every text mode text/plain, including Markdown.
-		expect(response.contentType).toContain('text/plain');
+		expect(response.bodyFormat).toBe('text');
 		// The converter drops the page's <title> and <h1>, so the body of the
 		// paragraph is what proves a real page came back.
 		expect(response.text).toContain('documentation examples');
@@ -39,10 +41,9 @@ describeIfKey('Zenrows live', () => {
 				extract: 'native',
 			},
 		});
-		const body = parseJsonBody(response, '/v1/') as {
-			parsed?: Record<string, unknown>;
-			html?: string;
-		};
+		const body = ZenRowsEndpointOutputSchemas.fetchExtract.parse(
+			parseJsonBody(response, '/v1/'),
+		);
 		expect(typeof body.html).toBe('string');
 		expect(body.parsed).toBeDefined();
 		expect(Object.keys(body.parsed ?? {}).length).toBeGreaterThan(0);
@@ -54,7 +55,9 @@ describeIfKey('Zenrows live', () => {
 			path: '/v1/',
 			query: { url: 'https://example.com', outputs: 'emails,links' },
 		});
-		const body = parseJsonBody(response, '/v1/') as Record<string, unknown>;
+		const body = ZenRowsEndpointOutputSchemas.fetchOutputs.parse(
+			parseJsonBody(response, '/v1/'),
+		);
 		expect(body).toHaveProperty('emails');
 		expect(Array.isArray(body.links)).toBe(true);
 	});
@@ -65,9 +68,9 @@ describeIfKey('Zenrows live', () => {
 			path: '/v1/crawls',
 			query: { limit: 2 },
 		});
-		const body = parseJsonBody(response, '/v1/crawls') as {
-			crawls?: unknown[];
-		};
+		const body = ZenRowsEndpointOutputSchemas.crawlList.parse(
+			parseJsonBody(response, '/v1/crawls'),
+		);
 		expect(Array.isArray(body.crawls)).toBe(true);
 	});
 
@@ -76,10 +79,9 @@ describeIfKey('Zenrows live', () => {
 			method: 'GET',
 			path: '/v1/subscriptions/self/details',
 		});
-		const body = parseJsonBody(response, '/v1/subscriptions/self/details') as {
-			status?: string;
-			credit_limit?: number;
-		};
+		const body = ZenRowsEndpointOutputSchemas.accountSubscription.parse(
+			parseJsonBody(response, '/v1/subscriptions/self/details'),
+		);
 		expect(typeof body.status).toBe('string');
 		expect(typeof body.credit_limit).toBe('number');
 	});
@@ -89,19 +91,20 @@ describeIfKey('Zenrows live', () => {
 			method: 'GET',
 			path: '/v1/extract/prepared-domains/allowance',
 		});
-		const body = parseJsonBody(
-			response,
-			'/v1/extract/prepared-domains/allowance',
-		) as { limit?: number; remaining?: number; month?: string };
+		const body = ZenRowsEndpointOutputSchemas.extractAllowance.parse(
+			parseJsonBody(response, '/v1/extract/prepared-domains/allowance'),
+		);
 		expect(typeof body.limit).toBe('number');
 		expect(body.month).toMatch(/^\d{4}-\d{2}$/);
 	});
 
 	it('rejects a bad key with Zenrows own code', async () => {
-		const error = await makeZenrowsRequest('bogus-key', {
-			method: 'GET',
-			path: '/v1/crawls',
-		}).catch((caught: unknown) => caught);
+		const error = await captureError(
+			makeZenrowsRequest('bogus-key', {
+				method: 'GET',
+				path: '/v1/crawls',
+			}),
+		);
 		expect((error as { code?: string }).code).toBe('AUTH002');
 		expect((error as { status?: number }).status).toBe(401);
 	});

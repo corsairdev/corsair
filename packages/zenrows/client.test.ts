@@ -7,6 +7,7 @@ import {
 	ZENROWS_API_BASE,
 	ZenRowsAPIError,
 } from './client';
+import { captureError } from './test-fixtures';
 
 let fetchMock: jest.SpyInstance;
 
@@ -18,7 +19,8 @@ afterEach(() => {
 	fetchMock.mockRestore();
 });
 
-// unknown: response bodies are arbitrary provider JSON.
+// unknown: response bodies are arbitrary provider JSON, and the test decides
+// what shape each one has.
 function respond(
 	body: unknown,
 	status = 200,
@@ -140,7 +142,7 @@ describe('response reading', () => {
 			path: '/v1/crawls',
 		});
 
-		expect(response.contentType).toBe('application/json');
+		expect(response.bodyFormat).toBe('json');
 		expect(response.json).toEqual({ crawl_id: 'c_1', status: 'running' });
 		expect(JSON.parse(response.text)).toEqual(response.json);
 	});
@@ -174,7 +176,7 @@ describe('response reading', () => {
 	it('throws rather than returning an empty object for a non-JSON body', () => {
 		expect(() =>
 			parseJsonBody(
-				{ status: 200, contentType: 'text/plain', text: '<html></html>' },
+				{ status: 200, bodyFormat: 'text', text: '<html></html>' },
 				'/v1/',
 			),
 		).toThrow(ZenRowsAPIError);
@@ -198,10 +200,12 @@ describe('error translation', () => {
 			),
 		);
 
-		const error = await makeZenrowsRequest(KEY, {
-			method: 'GET',
-			path: '/v1/',
-		}).catch((caught: unknown) => caught);
+		const error = await captureError(
+			makeZenrowsRequest(KEY, {
+				method: 'GET',
+				path: '/v1/',
+			}),
+		);
 
 		expect(error).toBeInstanceOf(ZenRowsAPIError);
 		const apiError = error as ZenRowsAPIError;
@@ -220,19 +224,23 @@ describe('error translation', () => {
 					headers: { 'Content-Type': 'application/problem+json' },
 				}),
 			);
-			const error = (await makeZenrowsRequest(KEY, {
-				method: 'GET',
-				path: '/v1/',
-			}).catch((caught: unknown) => caught)) as ZenRowsAPIError;
+			const error = (await captureError(
+				makeZenrowsRequest(KEY, {
+					method: 'GET',
+					path: '/v1/',
+				}),
+			)) as ZenRowsAPIError;
 			expect(error.code).toBe(code);
 			expect(error.isRateLimit).toBe(true);
 		}
 
 		fetchMock.mockResolvedValueOnce(new Response(null, { status: 429 }));
-		const bare = (await makeZenrowsRequest(KEY, {
-			method: 'GET',
-			path: '/v1/',
-		}).catch((caught: unknown) => caught)) as ZenRowsAPIError;
+		const bare = (await captureError(
+			makeZenrowsRequest(KEY, {
+				method: 'GET',
+				path: '/v1/',
+			}),
+		)) as ZenRowsAPIError;
 		expect(bare.code).toBeUndefined();
 		expect(bare.isRateLimit).toBe(true);
 	});
@@ -240,11 +248,13 @@ describe('error translation', () => {
 	it('records the method so a write is never replayed on a 5xx', async () => {
 		respond({ code: 'internal', status: 500 }, 500);
 
-		const error = (await makeZenrowsRequest(KEY, {
-			method: 'POST',
-			path: '/v1/crawls',
-			body: {},
-		}).catch((caught: unknown) => caught)) as ZenRowsAPIError;
+		const error = (await captureError(
+			makeZenrowsRequest(KEY, {
+				method: 'POST',
+				path: '/v1/crawls',
+				body: {},
+			}),
+		)) as ZenRowsAPIError;
 
 		expect(error.method).toBe('POST');
 		expect(error.status).toBe(500);
@@ -261,12 +271,14 @@ describe('error translation', () => {
 			401,
 		);
 
-		const error = (await makeZenrowsRequest(KEY, {
-			method: 'GET',
-			path: '/v1/',
-			auth: 'query',
-			query: { url: 'https://example.com' },
-		}).catch((caught: unknown) => caught)) as ZenRowsAPIError;
+		const error = (await captureError(
+			makeZenrowsRequest(KEY, {
+				method: 'GET',
+				path: '/v1/',
+				auth: 'query',
+				query: { url: 'https://example.com' },
+			}),
+		)) as ZenRowsAPIError;
 
 		expect(error.message).not.toContain(KEY);
 		expect(JSON.stringify(error)).not.toContain(KEY);

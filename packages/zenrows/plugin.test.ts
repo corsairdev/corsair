@@ -33,6 +33,7 @@ const operations = [
 	'extract.getDomainStatus',
 	'extract.listPreparedDomains',
 	'extract.prepareDomain',
+	'fetch.browse',
 	'fetch.cssExtract',
 	'fetch.extract',
 	'fetch.jsonResponse',
@@ -56,7 +57,7 @@ describe('zenrows plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the eighteen catalog operations', () => {
+	it('exposes exactly the nineteen catalog operations', () => {
 		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
@@ -96,7 +97,9 @@ describe('zenrows plugin definition', () => {
 			'crawl.start',
 			'crawl.stop',
 			'extract.prepareDomain',
-			// A forwarded POST and PUT reach the target with the caller's body.
+			// Browser actions reach the site, and a forwarded POST or PUT
+			// reaches it with the caller's body.
+			'fetch.browse',
 			'fetch.post',
 			'fetch.put',
 		]);
@@ -161,6 +164,8 @@ describe('zenrows crawl job', () => {
 		expect(cancelOp === undefined ? undefined : meta[cancelOp]).toBeDefined();
 		// A zod object's `shape` is not public on the base type, so the schema
 		// is narrowed to the one member this test reads.
+		// unknown: `shape` is not on the base zod type, so the schema is narrowed
+		// to the single member this assertion reads.
 		const shape = (
 			ZenRowsEndpointOutputSchemas.crawlStart as unknown as {
 				shape: Record<string, unknown>;

@@ -23,7 +23,7 @@ describe('output schemas parse real answers', () => {
 	it('fetch.page keeps the text and the mode', () => {
 		const output = ZenRowsEndpointOutputSchemas.fetchPage.parse({
 			body: textPage.markdown,
-			contentType: 'text/plain',
+			bodyFormat: 'text',
 			responseType: 'markdown',
 		});
 		expect(output.body).toBe(textPage.markdown);
@@ -83,9 +83,9 @@ describe('output schemas parse real answers', () => {
 	it('fetch.post keeps a forwarded text answer', () => {
 		const output = ZenRowsEndpointOutputSchemas.fetchPost.parse({
 			body: 'ok',
-			contentType: 'text/plain',
+			bodyFormat: 'text',
 		});
-		expect(output).toEqual({ body: 'ok', contentType: 'text/plain' });
+		expect(output).toEqual({ body: 'ok', bodyFormat: 'text' });
 	});
 
 	it('crawl.start reads the running crawl with an empty result page', () => {
@@ -118,7 +118,7 @@ describe('output schemas parse real answers', () => {
 	it('crawl.getContent reads an HTML page served as text', () => {
 		const output = ZenRowsEndpointOutputSchemas.crawlGetContent.parse({
 			body: '<!doctype html><html></html>',
-			contentType: 'text/html; charset=utf-8',
+			bodyFormat: 'text',
 		});
 		expect(output.body).toContain('doctype');
 	});
@@ -227,7 +227,7 @@ describe('output schemas reject the wrong shape', () => {
 	it('rejects a text answer with no body', () => {
 		expect(() =>
 			ZenRowsEndpointOutputSchemas.fetchPage.parse({
-				contentType: 'text/plain',
+				bodyFormat: 'text',
 				responseType: 'html',
 			}),
 		).toThrow();
