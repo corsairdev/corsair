@@ -1,0 +1,3979 @@
+{
+  "id": "elevenlabs",
+  "displayName": "ElevenLabs",
+  "description": "AI audio platform; generate speech, dialogue, sound effects and music, transcribe and align audio, change or isolate voices, dub video, manage voices and history, and run conversational agents.",
+  "npmPackageName": "@corsair-dev/elevenlabs",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 50,
+    "webhooks": 8,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "elevenlabs.api.account.subscription",
+      "shortPath": "account.subscription",
+      "description": "The plan, credits used and limits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tier",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "character_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "character_limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "voice_slots_used",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "voice_limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "can_use_instant_voice_cloning",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "can_use_professional_voice_cloning",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_character_count_reset_unix",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.account.usageStats",
+      "shortPath": "account.usageStats",
+      "description": "Credits used over a time range, by product or model.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startTime",
+            "optional": false,
+            "type": "number",
+            "description": "Start of the range, Unix time in milliseconds."
+          },
+          {
+            "key": "endTime",
+            "optional": false,
+            "type": "number",
+            "description": "End of the range, Unix time in milliseconds."
+          },
+          {
+            "key": "intervalSeconds",
+            "optional": true,
+            "type": "number",
+            "description": "Bucket size: 3600 hourly, 86400 daily. Default 86400."
+          },
+          {
+            "key": "groupBy",
+            "optional": true,
+            "type": "string[]",
+            "description": "Columns to split by, for example product_type or model."
+          },
+          {
+            "key": "timeZone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA time zone for the buckets, for example Asia/Kolkata."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "columns",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "column_types",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "column_units",
+            "optional": true,
+            "type": "(string | null)[] | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "any[][] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.account.user",
+      "shortPath": "account.user",
+      "description": "The account’s user and workspace ids and its subscription. Key fields are removed from the result.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "{ tier?: string | null, status?: string | null, character_count?: number | null, character_limit?: number | null, voice_slots_used?: number | null, voice_limit?: number | null, can_use_instant_voice_cloning?: boolean | null, can_use_professional_voice_cloning?: boolean | null, currency?: string | null, next_character_count_reset_unix?: number | null } | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "seat_type",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.agents.conversationDelete",
+      "shortPath": "agents.conversationDelete",
+      "description": "Delete a conversation, for good.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string",
+            "description": "conversation_id from agents.conversationsList."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "elevenlabs.api.agents.conversationGet",
+      "shortPath": "agents.conversationGet",
+      "description": "Read a conversation’s transcript, metadata and analysis.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string",
+            "description": "conversation_id from agents.conversationsList."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversation_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "agent_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "analysis",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "has_audio",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.agents.conversationsList",
+      "shortPath": "agents.conversationsList",
+      "description": "List conversations, optionally for one agent.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "1 to 100. Default 30."
+          },
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "summaryMode",
+            "optional": true,
+            "type": "exclude | include"
+          },
+          {
+            "key": "sortDirection",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversations",
+            "optional": false,
+            "type": "{ conversation_id: string, agent_id?: string | null, agent_name?: string | null, status?: string | null, start_time_unix_secs?: number | null, call_duration_secs?: number | null, message_count?: number | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.agents.create",
+      "shortPath": "agents.create",
+      "description": "Create a conversational agent.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationConfig",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The agent’s configuration with the API’s field names, for example { agent: { first_message: \"Hi\", prompt: { prompt: \"You are...\" } }, tts: { voice_id: \"...\" } }."
+          },
+          {
+            "key": "platformSettings",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "workflow",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.agents.delete",
+      "shortPath": "agents.delete",
+      "description": "Delete an agent, for good.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string",
+            "description": "Agent id, for example agent_3701k3ttaq12ewp8b7qv5rfyszkz."
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean",
+            "description": "Delete even if other agents use this one as a subagent."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "elevenlabs.api.agents.get",
+      "shortPath": "agents.get",
+      "description": "Read an agent’s full configuration.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string",
+            "description": "Agent id, for example agent_3701k3ttaq12ewp8b7qv5rfyszkz."
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branchId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "conversation_config",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "platform_settings",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "workflow",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "version_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "branch_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.agents.list",
+      "shortPath": "agents.list",
+      "description": "List conversational agents.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "1 to 100. Default 30."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "showOnlyOwnedAgents",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "name | created_at | updated_at | call_count_7d"
+          },
+          {
+            "key": "sortDirection",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agents",
+            "optional": false,
+            "type": "{ agent_id: string, name?: string | null, tags?: string[] | null, created_at_unix_secs?: number | null, updated_at_unix_secs?: number | null, archived?: boolean | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.agents.signedUrl",
+      "shortPath": "agents.signedUrl",
+      "description": "Mint a short-lived WebSocket URL a client can use to talk to an agent; the conversation spends credits.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string",
+            "description": "Agent id, for example agent_3701k3ttaq12ewp8b7qv5rfyszkz."
+          },
+          {
+            "key": "includeConversationId",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "branchId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signed_url",
+            "optional": false,
+            "type": "string",
+            "description": "WebSocket URL a client can open to talk to the agent. Valid about 15 minutes; treat it as a secret."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.agents.update",
+      "shortPath": "agents.update",
+      "description": "Change an agent’s configuration, name or tags.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string",
+            "description": "Agent id, for example agent_3701k3ttaq12ewp8b7qv5rfyszkz."
+          },
+          {
+            "key": "conversationConfig",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "platformSettings",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "workflow",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "versionDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "branchId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agent_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "conversation_config",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "platform_settings",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "workflow",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "version_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "branch_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.audioIsolation.isolate",
+      "shortPath": "audioIsolation.isolate",
+      "description": "Remove background noise from audio and keep the voices; spends credits by audio length. The cleaned audio comes back in the result.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file, base64-encoded (at most 100 MB once decoded)."
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "Media type of the file, for example audio/mpeg."
+          },
+          {
+            "key": "fileFormat",
+            "optional": true,
+            "type": "pcm_s16le_16 | other",
+            "description": "pcm_s16le_16 for raw 16-bit 16 kHz mono PCM, which is faster. Default other."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The output, base64-encoded. Missing when contentOmitted is set."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the output, for example audio/mpeg."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the output in bytes."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when contentBase64 was left out: includeContent was false, or the output was over the limit."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "How to get output that was left out."
+          },
+          {
+            "key": "songId",
+            "optional": true,
+            "type": "string",
+            "description": "The `song-id` header, on generated music."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The `request-id` header. Pass it as previousRequestIds for continuity between clips."
+          },
+          {
+            "key": "traceId",
+            "optional": true,
+            "type": "string",
+            "description": "The `x-trace-id` header; quote it to ElevenLabs support."
+          },
+          {
+            "key": "characterCost",
+            "optional": true,
+            "type": "number",
+            "description": "Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost."
+          },
+          {
+            "key": "historyItemId",
+            "optional": true,
+            "type": "string",
+            "description": "The history item holding this audio. Read it again with history.getAudio. Only speech operations have one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.dubbing.create",
+      "shortPath": "dubbing.create",
+      "description": "Start dubbing a video or audio file into another language; spends credits by length. Returns at once with a dubbing_id; follow it with dubbing.get until status is dubbed or failed.",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "dubbing_id",
+        "status": {
+          "op": "dubbing.get",
+          "idArg": "dubbingId",
+          "statusPath": "status",
+          "done": ["dubbed"],
+          "failed": ["failed"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded (at most 100 MB once decoded)."
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "Media type of the file, for example audio/mpeg."
+          },
+          {
+            "key": "sourceUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL of the video or audio, instead of fileBase64."
+          },
+          {
+            "key": "targetLang",
+            "optional": false,
+            "type": "string",
+            "description": "Language to dub into, as an ISO 639 code."
+          },
+          {
+            "key": "sourceLang",
+            "optional": true,
+            "type": "string",
+            "description": "Default auto."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "numSpeakers",
+            "optional": true,
+            "type": "number",
+            "description": "0 (default) detects them."
+          },
+          {
+            "key": "watermark",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "highestResolution",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dropBackgroundAudio",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "useProfanityFilter",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disableVoiceCloning",
+            "optional": true,
+            "type": "boolean",
+            "description": "true uses a similar voice from the library instead of cloning the speakers in the source."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dubbing_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "expected_duration_sec",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.dubbing.delete",
+      "shortPath": "dubbing.delete",
+      "description": "Delete a dub, for good.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dubbingId",
+            "optional": false,
+            "type": "string",
+            "description": "The dubbing_id that dubbing.create returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.dubbing.get",
+      "shortPath": "dubbing.get",
+      "description": "Where a dub stands: status dubbed or failed are final.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dubbingId",
+            "optional": false,
+            "type": "string",
+            "description": "The dubbing_id that dubbing.create returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dubbing_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Where the dub stands: queued, preparing, dubbing, dubbed, failed."
+          },
+          {
+            "key": "source_language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "target_languages",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "editable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "media_metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.dubbing.getAudio",
+      "shortPath": "dubbing.getAudio",
+      "description": "Download a finished dub as base64 (audio or video), subject to the same size limit as other audio.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dubbingId",
+            "optional": false,
+            "type": "string",
+            "description": "The dubbing_id that dubbing.create returned."
+          },
+          {
+            "key": "languageCode",
+            "optional": false,
+            "type": "string",
+            "description": "A target language of the dub; for transcripts also `source`."
+          },
+          {
+            "key": "includeContent",
+            "optional": true,
+            "type": "boolean",
+            "description": "false returns the size and type only. Default true."
+          },
+          {
+            "key": "maxBytes",
+            "optional": true,
+            "type": "number",
+            "description": "Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The output, base64-encoded. Missing when contentOmitted is set."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the output, for example audio/mpeg."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the output in bytes."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when contentBase64 was left out: includeContent was false, or the output was over the limit."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "How to get output that was left out."
+          },
+          {
+            "key": "songId",
+            "optional": true,
+            "type": "string",
+            "description": "The `song-id` header, on generated music."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The `request-id` header. Pass it as previousRequestIds for continuity between clips."
+          },
+          {
+            "key": "traceId",
+            "optional": true,
+            "type": "string",
+            "description": "The `x-trace-id` header; quote it to ElevenLabs support."
+          },
+          {
+            "key": "characterCost",
+            "optional": true,
+            "type": "number",
+            "description": "Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost."
+          },
+          {
+            "key": "historyItemId",
+            "optional": true,
+            "type": "string",
+            "description": "The history item holding this audio. Read it again with history.getAudio. Only speech operations have one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.dubbing.getTranscript",
+      "shortPath": "dubbing.getTranscript",
+      "description": "Read a dub’s transcript as srt, webvtt or json.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dubbingId",
+            "optional": false,
+            "type": "string",
+            "description": "The dubbing_id that dubbing.create returned."
+          },
+          {
+            "key": "languageCode",
+            "optional": false,
+            "type": "string",
+            "description": "A target language of the dub; for transcripts also `source`."
+          },
+          {
+            "key": "formatType",
+            "optional": true,
+            "type": "srt | webvtt | json",
+            "description": "Default srt."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcript_format",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "srt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webvtt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "json",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.dubbing.list",
+      "shortPath": "dubbing.list",
+      "description": "List dubs, newest first by default.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "1 to 200. Default 100."
+          },
+          {
+            "key": "dubbingStatus",
+            "optional": true,
+            "type": "dubbing | dubbed | failed"
+          },
+          {
+            "key": "filterByCreator",
+            "optional": true,
+            "type": "personal | others | all"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "created_at | name"
+          },
+          {
+            "key": "orderDirection",
+            "optional": true,
+            "type": "DESCENDING | ASCENDING"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dubs",
+            "optional": false,
+            "type": "{ dubbing_id: string, name?: string | null, status: string, source_language?: string | null, target_languages?: string[] | null, editable?: boolean | null, created_at?: string | null, media_metadata?: Record<string, any> | null, error?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.forcedAlignment.create",
+      "shortPath": "forcedAlignment.create",
+      "description": "Line up known text with audio to get word and character timings; spends credits by audio length.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file, base64-encoded (at most 100 MB once decoded)."
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "Media type of the file, for example audio/mpeg."
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The text spoken in the audio."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "characters",
+            "optional": true,
+            "type": "{ text?: string | null, start?: number | null, end?: number | null }[] | null"
+          },
+          {
+            "key": "words",
+            "optional": true,
+            "type": "{ text?: string | null, start?: number | null, end?: number | null }[] | null"
+          },
+          {
+            "key": "loss",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.history.delete",
+      "shortPath": "history.delete",
+      "description": "Delete a history item and its audio, for good.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "historyItemId",
+            "optional": false,
+            "type": "string",
+            "description": "historyItemId from a speech operation, or history_item_id from history.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.history.get",
+      "shortPath": "history.get",
+      "description": "Read one history item: its text, voice, model and cost.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "historyItemId",
+            "optional": false,
+            "type": "string",
+            "description": "historyItemId from a speech operation, or history_item_id from history.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "history_item_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "voice_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "model_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "voice_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "voice_category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_unix",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "character_count_change_from",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "character_count_change_to",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "output_format",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.history.getAudio",
+      "shortPath": "history.getAudio",
+      "description": "Download a history item’s audio as base64, subject to a size limit you can raise with maxBytes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "historyItemId",
+            "optional": false,
+            "type": "string",
+            "description": "historyItemId from a speech operation, or history_item_id from history.list."
+          },
+          {
+            "key": "includeContent",
+            "optional": true,
+            "type": "boolean",
+            "description": "false returns the size and type only. Default true."
+          },
+          {
+            "key": "maxBytes",
+            "optional": true,
+            "type": "number",
+            "description": "Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The output, base64-encoded. Missing when contentOmitted is set."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the output, for example audio/mpeg."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the output in bytes."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when contentBase64 was left out: includeContent was false, or the output was over the limit."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "How to get output that was left out."
+          },
+          {
+            "key": "songId",
+            "optional": true,
+            "type": "string",
+            "description": "The `song-id` header, on generated music."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The `request-id` header. Pass it as previousRequestIds for continuity between clips."
+          },
+          {
+            "key": "traceId",
+            "optional": true,
+            "type": "string",
+            "description": "The `x-trace-id` header; quote it to ElevenLabs support."
+          },
+          {
+            "key": "characterCost",
+            "optional": true,
+            "type": "number",
+            "description": "Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost."
+          },
+          {
+            "key": "historyItemId",
+            "optional": true,
+            "type": "string",
+            "description": "The history item holding this audio. Read it again with history.getAudio. Only speech operations have one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.history.list",
+      "shortPath": "history.list",
+      "description": "List generated speech, newest first by default.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "1 to 1000. Default 100. Deleted items count, so a page can be short or empty while has_more is true."
+          },
+          {
+            "key": "startAfterHistoryItemId",
+            "optional": true,
+            "type": "string",
+            "description": "last_history_item_id from the previous page."
+          },
+          {
+            "key": "voiceId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dateBeforeUnix",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "dateAfterUnix",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sortDirection",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "TTS | STS | Flows"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "history",
+            "optional": false,
+            "type": "{ history_item_id: string, request_id?: string | null, voice_id?: string | null, model_id?: string | null, voice_name?: string | null, voice_category?: string | null, text?: string | null, date_unix?: number | null, character_count_change_from?: number | null, character_count_change_to?: number | null, content_type?: string | null, state?: string | null, source?: string | null, output_format?: string | null }[]"
+          },
+          {
+            "key": "last_history_item_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "scanned_until",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.models.list",
+      "shortPath": "models.list",
+      "description": "List available models with their languages and rates.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "models",
+            "optional": false,
+            "type": "{ model_id: string, name?: string | null, description?: string | null, can_do_text_to_speech?: boolean | null, can_do_voice_conversion?: boolean | null, maximum_text_length_per_request?: number | null, languages?: Record<string, any>[] | null, model_rates?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.music.compose",
+      "shortPath": "music.compose",
+      "description": "Generate a song from a prompt or a composition plan; spends credits by length. ElevenLabs keeps no copy, so the audio comes back in the result. At the default format, about 24 KB/s, a song over about 31 s is too big to return from a script on Corsair’s cloud, whose cap is 1,000,000 bytes: pick a lower-bitrate outputFormat, or pass contentBase64 to the next operation and return only metadata.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string",
+            "description": "What the song should be."
+          },
+          {
+            "key": "compositionPlan",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "A plan from music.plan, instead of prompt."
+          },
+          {
+            "key": "musicLengthMs",
+            "optional": true,
+            "type": "number",
+            "description": "3 s to 10 min. Only with prompt."
+          },
+          {
+            "key": "lyricsText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "generationMode",
+            "optional": true,
+            "type": "track | loop | ambience | video_to_music"
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string",
+            "description": "Model id. Default music_v2_5."
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "forceInstrumental",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string",
+            "description": "codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The output, base64-encoded. Missing when contentOmitted is set."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the output, for example audio/mpeg."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the output in bytes."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when contentBase64 was left out: includeContent was false, or the output was over the limit."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "How to get output that was left out."
+          },
+          {
+            "key": "songId",
+            "optional": true,
+            "type": "string",
+            "description": "The `song-id` header, on generated music."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The `request-id` header. Pass it as previousRequestIds for continuity between clips."
+          },
+          {
+            "key": "traceId",
+            "optional": true,
+            "type": "string",
+            "description": "The `x-trace-id` header; quote it to ElevenLabs support."
+          },
+          {
+            "key": "characterCost",
+            "optional": true,
+            "type": "number",
+            "description": "Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost."
+          },
+          {
+            "key": "historyItemId",
+            "optional": true,
+            "type": "string",
+            "description": "The history item holding this audio. Read it again with history.getAudio. Only speech operations have one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.music.plan",
+      "shortPath": "music.plan",
+      "description": "Draft a composition plan from a prompt, to edit and pass to music.compose.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string",
+            "description": "What the song should be."
+          },
+          {
+            "key": "musicLengthMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sourceCompositionPlan",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string",
+            "description": "Model id. Default music_v2_5."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chunks",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "sections",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "positive_global_styles",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "negative_global_styles",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.music.separateStems",
+      "shortPath": "music.separateStems",
+      "description": "Split a song into stems, returned as a zip; spends credits by audio length.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file, base64-encoded (at most 100 MB once decoded)."
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "Media type of the file, for example audio/mpeg."
+          },
+          {
+            "key": "stemVariationId",
+            "optional": true,
+            "type": "two_stems_v1 | six_stems_v1",
+            "description": "Two stems (vocals, rest) or six. Default six_stems_v1."
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string",
+            "description": "codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The output, base64-encoded. Missing when contentOmitted is set."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the output, for example audio/mpeg."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the output in bytes."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when contentBase64 was left out: includeContent was false, or the output was over the limit."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "How to get output that was left out."
+          },
+          {
+            "key": "songId",
+            "optional": true,
+            "type": "string",
+            "description": "The `song-id` header, on generated music."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The `request-id` header. Pass it as previousRequestIds for continuity between clips."
+          },
+          {
+            "key": "traceId",
+            "optional": true,
+            "type": "string",
+            "description": "The `x-trace-id` header; quote it to ElevenLabs support."
+          },
+          {
+            "key": "characterCost",
+            "optional": true,
+            "type": "number",
+            "description": "Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost."
+          },
+          {
+            "key": "historyItemId",
+            "optional": true,
+            "type": "string",
+            "description": "The history item holding this audio. Read it again with history.getAudio. Only speech operations have one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.singleUseTokens.create",
+      "shortPath": "singleUseTokens.create",
+      "description": "Mint a single-use token, valid 15 minutes, to give a client instead of the API key.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tokenType",
+            "optional": false,
+            "type": "realtime_scribe | batch_scribe | tts_websocket"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string",
+            "description": "Expires after 15 minutes and works once. Hand it to a client instead of the API key."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.soundEffects.generate",
+      "shortPath": "soundEffects.generate",
+      "description": "Generate a sound effect from a description; spends credits by duration. ElevenLabs keeps no copy, so the audio comes back in the result.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "What the sound should be."
+          },
+          {
+            "key": "durationSeconds",
+            "optional": true,
+            "type": "number",
+            "description": "0.5 to 30 s. Left out, the model picks a length."
+          },
+          {
+            "key": "loop",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "promptInfluence",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string",
+            "description": "Model id. Default eleven_text_to_sound_v3."
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string",
+            "description": "codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The output, base64-encoded. Missing when contentOmitted is set."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the output, for example audio/mpeg."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the output in bytes."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when contentBase64 was left out: includeContent was false, or the output was over the limit."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "How to get output that was left out."
+          },
+          {
+            "key": "songId",
+            "optional": true,
+            "type": "string",
+            "description": "The `song-id` header, on generated music."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The `request-id` header. Pass it as previousRequestIds for continuity between clips."
+          },
+          {
+            "key": "traceId",
+            "optional": true,
+            "type": "string",
+            "description": "The `x-trace-id` header; quote it to ElevenLabs support."
+          },
+          {
+            "key": "characterCost",
+            "optional": true,
+            "type": "number",
+            "description": "Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost."
+          },
+          {
+            "key": "historyItemId",
+            "optional": true,
+            "type": "string",
+            "description": "The history item holding this audio. Read it again with history.getAudio. Only speech operations have one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.speechToText.convert",
+      "shortPath": "speechToText.convert",
+      "description": "Transcribe audio or video from a URL or a base64 file; spends credits by audio length. With webhook true it returns at once and delivers the transcript by webhook.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded (at most 100 MB once decoded)."
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "Media type of the file, for example audio/mpeg."
+          },
+          {
+            "key": "sourceUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL of the audio or video to transcribe, instead of fileBase64: a hosted file or a page ElevenLabs can read, such as YouTube."
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string",
+            "description": "Model id. Default scribe_v2."
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tagAudioEvents",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "numSpeakers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timestampsGranularity",
+            "optional": true,
+            "type": "none | word | character"
+          },
+          {
+            "key": "diarize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "keyterms",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fileFormat",
+            "optional": true,
+            "type": "pcm_s16le_16 | other",
+            "description": "pcm_s16le_16 for raw 16-bit 16 kHz mono PCM, which is faster. Default other."
+          },
+          {
+            "key": "useMultiChannel",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "boolean",
+            "description": "true returns at once with request_id and transcription_id, and delivers the transcript to the workspace’s speech-to-text webhooks (the speechToText.transcriptionCompleted event). Needs a webhook set up in ElevenLabs."
+          },
+          {
+            "key": "webhookId",
+            "optional": true,
+            "type": "string",
+            "description": "Send to this webhook only. Needs webhook: true."
+          },
+          {
+            "key": "webhookMetadata",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Sent back as webhook_metadata in the webhook event. Needs webhook: true."
+          },
+          {
+            "key": "enableLogging",
+            "optional": true,
+            "type": "boolean",
+            "description": "false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language_probability",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "words",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "transcription_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "audio_duration_secs",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "transcripts",
+            "optional": true,
+            "type": "{ language_code?: string | null, language_probability?: number | null, text?: string | null, words?: Record<string, any>[] | null, transcription_id?: string | null, audio_duration_secs?: number | null }[] | null",
+            "description": "One transcript per channel, when useMultiChannel is on."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Set in webhook mode."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Set in webhook mode."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.speechToText.deleteTranscript",
+      "shortPath": "speechToText.deleteTranscript",
+      "description": "Delete a stored transcript, for good.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcriptionId",
+            "optional": false,
+            "type": "string",
+            "description": "The transcription_id that speechToText.convert returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.speechToText.getTranscript",
+      "shortPath": "speechToText.getTranscript",
+      "description": "Read a transcript by the transcription_id speechToText.convert returned.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcriptionId",
+            "optional": false,
+            "type": "string",
+            "description": "The transcription_id that speechToText.convert returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "language_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language_probability",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "words",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "transcription_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "audio_duration_secs",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "transcripts",
+            "optional": true,
+            "type": "{ language_code?: string | null, language_probability?: number | null, text?: string | null, words?: Record<string, any>[] | null, transcription_id?: string | null, audio_duration_secs?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.textToDialogue.convert",
+      "shortPath": "textToDialogue.convert",
+      "description": "Turn lines spoken by several voices into one audio clip; spends credits by text length.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inputs",
+            "optional": false,
+            "type": "{ text: string, voiceId: string }[]",
+            "description": "The lines in order, each with the voice that speaks it."
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string",
+            "description": "Model id. Default eleven_v3."
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Dialogue settings (stability and so on), with the API’s field names."
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previousText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "futureText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pronunciationDictionaryLocators",
+            "optional": true,
+            "type": "{ pronunciation_dictionary_id: string, version_id?: string | null }[]"
+          },
+          {
+            "key": "applyTextNormalization",
+            "optional": true,
+            "type": "auto | on | off"
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string",
+            "description": "codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan."
+          },
+          {
+            "key": "enableLogging",
+            "optional": true,
+            "type": "boolean",
+            "description": "false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result."
+          },
+          {
+            "key": "includeContent",
+            "optional": true,
+            "type": "boolean",
+            "description": "false leaves contentBase64 out of the result and returns its metadata only, which keeps a long clip out of an agent’s context. Read the audio later with history.getAudio. Default true."
+          },
+          {
+            "key": "maxBytes",
+            "optional": true,
+            "type": "number",
+            "description": "Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The output, base64-encoded. Missing when contentOmitted is set."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the output, for example audio/mpeg."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the output in bytes."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when contentBase64 was left out: includeContent was false, or the output was over the limit."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "How to get output that was left out."
+          },
+          {
+            "key": "songId",
+            "optional": true,
+            "type": "string",
+            "description": "The `song-id` header, on generated music."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The `request-id` header. Pass it as previousRequestIds for continuity between clips."
+          },
+          {
+            "key": "traceId",
+            "optional": true,
+            "type": "string",
+            "description": "The `x-trace-id` header; quote it to ElevenLabs support."
+          },
+          {
+            "key": "characterCost",
+            "optional": true,
+            "type": "number",
+            "description": "Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost."
+          },
+          {
+            "key": "historyItemId",
+            "optional": true,
+            "type": "string",
+            "description": "The history item holding this audio. Read it again with history.getAudio. Only speech operations have one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.textToSpeech.convert",
+      "shortPath": "textToSpeech.convert",
+      "description": "Turn text into speech; spends credits by text length. Returns the audio as base64 with its history item id; set includeContent false to keep a long clip out of the result and read it later with history.getAudio.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voiceId",
+            "optional": false,
+            "type": "string",
+            "description": "Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list."
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The text to speak."
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string",
+            "description": "Model id from models.list, for example eleven_flash_v2_5 (fast and cheap) or eleven_multilingual_v2 (the default)."
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voiceSettings",
+            "optional": true,
+            "type": "{ stability?: number | null, similarity_boost?: number | null, style?: number | null, use_speaker_boost?: boolean | null, speed?: number | null }",
+            "description": "Overrides the voice’s stored settings for this call. Fields keep the API’s names."
+          },
+          {
+            "key": "pronunciationDictionaryLocators",
+            "optional": true,
+            "type": "{ pronunciation_dictionary_id: string, version_id?: string | null }[]"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previousText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previousRequestIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "nextRequestIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "applyTextNormalization",
+            "optional": true,
+            "type": "auto | on | off"
+          },
+          {
+            "key": "applyLanguageTextNormalization",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string",
+            "description": "codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan."
+          },
+          {
+            "key": "enableLogging",
+            "optional": true,
+            "type": "boolean",
+            "description": "false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result."
+          },
+          {
+            "key": "includeContent",
+            "optional": true,
+            "type": "boolean",
+            "description": "false leaves contentBase64 out of the result and returns its metadata only, which keeps a long clip out of an agent’s context. Read the audio later with history.getAudio. Default true."
+          },
+          {
+            "key": "maxBytes",
+            "optional": true,
+            "type": "number",
+            "description": "Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The output, base64-encoded. Missing when contentOmitted is set."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the output, for example audio/mpeg."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the output in bytes."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when contentBase64 was left out: includeContent was false, or the output was over the limit."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "How to get output that was left out."
+          },
+          {
+            "key": "songId",
+            "optional": true,
+            "type": "string",
+            "description": "The `song-id` header, on generated music."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The `request-id` header. Pass it as previousRequestIds for continuity between clips."
+          },
+          {
+            "key": "traceId",
+            "optional": true,
+            "type": "string",
+            "description": "The `x-trace-id` header; quote it to ElevenLabs support."
+          },
+          {
+            "key": "characterCost",
+            "optional": true,
+            "type": "number",
+            "description": "Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost."
+          },
+          {
+            "key": "historyItemId",
+            "optional": true,
+            "type": "string",
+            "description": "The history item holding this audio. Read it again with history.getAudio. Only speech operations have one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.textToSpeech.convertWithTimestamps",
+      "shortPath": "textToSpeech.convertWithTimestamps",
+      "description": "Turn text into speech with the start and end time of each character; spends credits by text length. Same audio fields as textToSpeech.convert.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voiceId",
+            "optional": false,
+            "type": "string",
+            "description": "Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list."
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The text to speak."
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string",
+            "description": "Model id from models.list, for example eleven_flash_v2_5 (fast and cheap) or eleven_multilingual_v2 (the default)."
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voiceSettings",
+            "optional": true,
+            "type": "{ stability?: number | null, similarity_boost?: number | null, style?: number | null, use_speaker_boost?: boolean | null, speed?: number | null }",
+            "description": "Overrides the voice’s stored settings for this call. Fields keep the API’s names."
+          },
+          {
+            "key": "pronunciationDictionaryLocators",
+            "optional": true,
+            "type": "{ pronunciation_dictionary_id: string, version_id?: string | null }[]"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "previousText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "nextText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previousRequestIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "nextRequestIds",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "applyTextNormalization",
+            "optional": true,
+            "type": "auto | on | off"
+          },
+          {
+            "key": "applyLanguageTextNormalization",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string",
+            "description": "codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan."
+          },
+          {
+            "key": "enableLogging",
+            "optional": true,
+            "type": "boolean",
+            "description": "false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result."
+          },
+          {
+            "key": "includeContent",
+            "optional": true,
+            "type": "boolean",
+            "description": "false leaves contentBase64 out of the result and returns its metadata only, which keeps a long clip out of an agent’s context. Read the audio later with history.getAudio. Default true."
+          },
+          {
+            "key": "maxBytes",
+            "optional": true,
+            "type": "number",
+            "description": "Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The output, base64-encoded. Missing when contentOmitted is set."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the output, for example audio/mpeg."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the output in bytes."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when contentBase64 was left out: includeContent was false, or the output was over the limit."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "How to get output that was left out."
+          },
+          {
+            "key": "songId",
+            "optional": true,
+            "type": "string",
+            "description": "The `song-id` header, on generated music."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The `request-id` header. Pass it as previousRequestIds for continuity between clips."
+          },
+          {
+            "key": "traceId",
+            "optional": true,
+            "type": "string",
+            "description": "The `x-trace-id` header; quote it to ElevenLabs support."
+          },
+          {
+            "key": "characterCost",
+            "optional": true,
+            "type": "number",
+            "description": "Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost."
+          },
+          {
+            "key": "historyItemId",
+            "optional": true,
+            "type": "string",
+            "description": "The history item holding this audio. Read it again with history.getAudio. Only speech operations have one."
+          },
+          {
+            "key": "alignment",
+            "optional": true,
+            "type": "{ characters?: string[] | null, character_start_times_seconds?: number[] | null, character_end_times_seconds?: number[] | null } | null",
+            "description": "When each character of the text starts and ends, in seconds."
+          },
+          {
+            "key": "normalized_alignment",
+            "optional": true,
+            "type": "{ characters?: string[] | null, character_start_times_seconds?: number[] | null, character_end_times_seconds?: number[] | null } | null",
+            "description": "The same for the text after normalization, which is what was spoken."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voiceChanger.convert",
+      "shortPath": "voiceChanger.convert",
+      "description": "Say the same thing in a different voice, from a base64 audio file; spends credits by audio length.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voiceId",
+            "optional": false,
+            "type": "string",
+            "description": "Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list."
+          },
+          {
+            "key": "fileBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file, base64-encoded (at most 100 MB once decoded)."
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string",
+            "description": "Media type of the file, for example audio/mpeg."
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string",
+            "description": "Model id, for example eleven_multilingual_sts_v2. Default eleven_english_sts_v2."
+          },
+          {
+            "key": "voiceSettings",
+            "optional": true,
+            "type": "{ stability?: number | null, similarity_boost?: number | null, style?: number | null, use_speaker_boost?: boolean | null, speed?: number | null }"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "removeBackgroundNoise",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fileFormat",
+            "optional": true,
+            "type": "pcm_s16le_16 | other",
+            "description": "pcm_s16le_16 for raw 16-bit 16 kHz mono PCM, which is faster. Default other."
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string",
+            "description": "codec_samplerate_bitrate, for example mp3_22050_32 or mp3_44100_128 (the usual default). Higher quality formats may need a higher plan."
+          },
+          {
+            "key": "enableLogging",
+            "optional": true,
+            "type": "boolean",
+            "description": "false turns on zero retention (enterprise plans): no history item, so the audio can only come back in this result."
+          },
+          {
+            "key": "includeContent",
+            "optional": true,
+            "type": "boolean",
+            "description": "false leaves contentBase64 out of the result and returns its metadata only, which keeps a long clip out of an agent’s context. Read the audio later with history.getAudio. Default true."
+          },
+          {
+            "key": "maxBytes",
+            "optional": true,
+            "type": "number",
+            "description": "Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The output, base64-encoded. Missing when contentOmitted is set."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the output, for example audio/mpeg."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the output in bytes."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when contentBase64 was left out: includeContent was false, or the output was over the limit."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "How to get output that was left out."
+          },
+          {
+            "key": "songId",
+            "optional": true,
+            "type": "string",
+            "description": "The `song-id` header, on generated music."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The `request-id` header. Pass it as previousRequestIds for continuity between clips."
+          },
+          {
+            "key": "traceId",
+            "optional": true,
+            "type": "string",
+            "description": "The `x-trace-id` header; quote it to ElevenLabs support."
+          },
+          {
+            "key": "characterCost",
+            "optional": true,
+            "type": "number",
+            "description": "Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost."
+          },
+          {
+            "key": "historyItemId",
+            "optional": true,
+            "type": "string",
+            "description": "The history item holding this audio. Read it again with history.getAudio. Only speech operations have one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voiceDesign.create",
+      "shortPath": "voiceDesign.create",
+      "description": "Save a designed preview as a voice in this account; uses a voice slot.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voiceName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voiceDescription",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "generatedVoiceId",
+            "optional": false,
+            "type": "string",
+            "description": "generated_voice_id from a preview of voiceDesign.design or voiceDesign.remix."
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ stability?: number | null, similarity_boost?: number | null, style?: number | null, use_speaker_boost?: boolean | null, speed?: number | null } | null"
+          },
+          {
+            "key": "is_owner",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at_unix",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voiceDesign.design",
+      "shortPath": "voiceDesign.design",
+      "description": "Generate voice previews from a description; spends credits. Hear one with voiceDesign.getPreview, then pass its generated_voice_id to voiceDesign.create.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voiceDescription",
+            "optional": false,
+            "type": "string",
+            "description": "What the voice sounds like, 20 to 1000 characters."
+          },
+          {
+            "key": "modelId",
+            "optional": true,
+            "type": "string",
+            "description": "eleven_multilingual_ttv_v2 (default) or eleven_ttv_v3."
+          },
+          {
+            "key": "shouldEnhance",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "What the previews say, 100 to 1000 characters. Or set autoGenerateText."
+          },
+          {
+            "key": "autoGenerateText",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loudness",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "guidanceScale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string",
+            "description": "The format voiceDesign.getPreview will return, for example mp3_22050_32."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "previews",
+            "optional": false,
+            "type": "{ generated_voice_id: string, media_type?: string | null, duration_secs?: number | null, language?: string | null }[]"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voiceDesign.getPreview",
+      "shortPath": "voiceDesign.getPreview",
+      "description": "Read a preview's audio by its generated_voice_id, without generating again. Subject to a size limit you can raise with maxBytes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "generatedVoiceId",
+            "optional": false,
+            "type": "string",
+            "description": "generated_voice_id from a preview of voiceDesign.design or voiceDesign.remix."
+          },
+          {
+            "key": "includeContent",
+            "optional": true,
+            "type": "boolean",
+            "description": "false returns the size and type only. Default true."
+          },
+          {
+            "key": "maxBytes",
+            "optional": true,
+            "type": "number",
+            "description": "Largest audio to carry in the result, in bytes. Over it, contentBase64 is left out and contentOmitted says so. Default 700000 (about 43 s of 128 kbps mp3), so the base64 fits the 1,000,000 byte cap on a script’s result on Corsair’s cloud. At most 50 MB."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The output, base64-encoded. Missing when contentOmitted is set."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the output, for example audio/mpeg."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the output in bytes."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when contentBase64 was left out: includeContent was false, or the output was over the limit."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "How to get output that was left out."
+          },
+          {
+            "key": "songId",
+            "optional": true,
+            "type": "string",
+            "description": "The `song-id` header, on generated music."
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string",
+            "description": "The `request-id` header. Pass it as previousRequestIds for continuity between clips."
+          },
+          {
+            "key": "traceId",
+            "optional": true,
+            "type": "string",
+            "description": "The `x-trace-id` header; quote it to ElevenLabs support."
+          },
+          {
+            "key": "characterCost",
+            "optional": true,
+            "type": "number",
+            "description": "Credits charged, from the `character-cost` header. Music and stem separation don’t send it; account.usageStats has their cost."
+          },
+          {
+            "key": "historyItemId",
+            "optional": true,
+            "type": "string",
+            "description": "The history item holding this audio. Read it again with history.getAudio. Only speech operations have one."
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voiceDesign.remix",
+      "shortPath": "voiceDesign.remix",
+      "description": "Generate previews of a changed version of an existing voice; spends credits. Hear one with voiceDesign.getPreview.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voiceId",
+            "optional": false,
+            "type": "string",
+            "description": "Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list."
+          },
+          {
+            "key": "voiceDescription",
+            "optional": false,
+            "type": "string",
+            "description": "The changes to make to the voice."
+          },
+          {
+            "key": "promptStrength",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "What the previews say, 100 to 1000 characters. Or set autoGenerateText."
+          },
+          {
+            "key": "autoGenerateText",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "loudness",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "seed",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "guidanceScale",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string",
+            "description": "The format voiceDesign.getPreview will return, for example mp3_22050_32."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "previews",
+            "optional": false,
+            "type": "{ generated_voice_id: string, media_type?: string | null, duration_secs?: number | null, language?: string | null }[]"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voices.addFromLibrary",
+      "shortPath": "voices.addFromLibrary",
+      "description": "Add a voice from the shared library to this account; uses a voice slot.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publicUserId",
+            "optional": false,
+            "type": "string",
+            "description": "public_owner_id from voices.searchLibrary."
+          },
+          {
+            "key": "voiceId",
+            "optional": false,
+            "type": "string",
+            "description": "Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list."
+          },
+          {
+            "key": "newName",
+            "optional": false,
+            "type": "string",
+            "description": "The name it gets in your voices."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voices.defaultSettings",
+      "shortPath": "voices.defaultSettings",
+      "description": "The settings a voice has by default.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stability",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "similarity_boost",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "use_speaker_boost",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "speed",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voices.delete",
+      "shortPath": "voices.delete",
+      "description": "Delete a voice from this account, for good.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voiceId",
+            "optional": false,
+            "type": "string",
+            "description": "Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voices.edit",
+      "shortPath": "voices.edit",
+      "description": "Change a voice’s name, description or labels.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voiceId",
+            "optional": false,
+            "type": "string",
+            "description": "Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The voice’s name; the API requires it."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voices.editSettings",
+      "shortPath": "voices.editSettings",
+      "description": "Change a voice’s stored settings (stability, similarity and so on).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voiceId",
+            "optional": false,
+            "type": "string",
+            "description": "Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list."
+          },
+          {
+            "key": "settings",
+            "optional": false,
+            "type": "{ stability?: number | null, similarity_boost?: number | null, style?: number | null, use_speaker_boost?: boolean | null, speed?: number | null }",
+            "description": "The settings to store, with the API’s field names."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voices.get",
+      "shortPath": "voices.get",
+      "description": "Read one voice with its settings and labels.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voiceId",
+            "optional": false,
+            "type": "string",
+            "description": "Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voice_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "preview_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "{ stability?: number | null, similarity_boost?: number | null, style?: number | null, use_speaker_boost?: boolean | null, speed?: number | null } | null"
+          },
+          {
+            "key": "is_owner",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at_unix",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voices.getSettings",
+      "shortPath": "voices.getSettings",
+      "description": "Read a voice’s stored settings.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voiceId",
+            "optional": false,
+            "type": "string",
+            "description": "Voice id, for example FGY2WhTYpPnrIDTdsKH5. Find ids with voices.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stability",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "similarity_boost",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "style",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "use_speaker_boost",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "speed",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voices.list",
+      "shortPath": "voices.list",
+      "description": "List the voices this account can use.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string",
+            "description": "next_page_token from the previous page."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "1 to 100. Default 10."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "created_at_unix | name"
+          },
+          {
+            "key": "sortDirection",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "voiceType",
+            "optional": true,
+            "type": "string",
+            "description": "personal, community, default, workspace, non-default or saved."
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "premade, cloned, generated or professional."
+          },
+          {
+            "key": "voiceIds",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voices",
+            "optional": false,
+            "type": "{ voice_id: string, name?: string | null, category?: string | null, description?: string | null, labels?: Record<string, any> | null, preview_url?: string | null, settings?: { stability?: number | null, similarity_boost?: number | null, style?: number | null, use_speaker_boost?: boolean | null, speed?: number | null } | null, is_owner?: boolean | null, created_at_unix?: number | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "next_page_token",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "elevenlabs.api.voices.searchLibrary",
+      "shortPath": "voices.searchLibrary",
+      "description": "Search the shared voice library.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number from 0."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "1 to 100. Default 30."
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "age",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "accent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "useCases",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "descriptives",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "featured",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "created_date | usage_character_count_1y | trending | cloned_by_count"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voices",
+            "optional": false,
+            "type": "{ public_owner_id?: string | null, voice_id: string, name?: string | null, accent?: string | null, gender?: string | null, age?: string | null, category?: string | null, language?: string | null, description?: string | null, preview_url?: string | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "elevenlabs.webhooks.conversations.callInitiationFailure",
+      "shortPath": "conversations.callInitiationFailure",
+      "description": "A phone call could not be started: busy, no answer or unknown.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "call_initiation_failure"
+          },
+          {
+            "key": "event_timestamp",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "When the event happened, in Unix time."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ agent_id?: string | null, conversation_id?: string | null, failure_reason?: string | null, metadata?: Record<string, any> | null } | null"
+          }
+        ]
+      },
+      "responseType": "{ type: call_initiation_failure, event_timestamp?: number | string | null, data?: { agent_id?: string | null, conversation_id?: string | null, failure_reason?: string | null, metadata?: Record<string, any> | null } | null }",
+      "usageExample": "elevenlabs({\n    webhookHooks: {\n        conversations: {\n            callInitiationFailure: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "elevenlabs.webhooks.conversations.postCallAudio",
+      "shortPath": "conversations.postCallAudio",
+      "description": "A conversation ended: the whole conversation as base64 MP3.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "post_call_audio"
+          },
+          {
+            "key": "event_timestamp",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "When the event happened, in Unix time."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ agent_id?: string | null, conversation_id?: string | null, full_audio?: string | null } | null"
+          }
+        ]
+      },
+      "responseType": "{ type: post_call_audio, event_timestamp?: number | string | null, data?: { agent_id?: string | null, conversation_id?: string | null, full_audio?: string | null } | null }",
+      "usageExample": "elevenlabs({\n    webhookHooks: {\n        conversations: {\n            postCallAudio: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "elevenlabs.webhooks.conversations.postCallTranscription",
+      "shortPath": "conversations.postCallTranscription",
+      "description": "A conversation ended and its analysis is ready: transcript, metadata and analysis.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "post_call_transcription"
+          },
+          {
+            "key": "event_timestamp",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "When the event happened, in Unix time."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ agent_id?: string | null, conversation_id?: string | null, status?: string | null, transcript?: Record<string, any>[] | null, metadata?: Record<string, any> | null, analysis?: Record<string, any> | null } | null"
+          }
+        ]
+      },
+      "responseType": "{ type: post_call_transcription, event_timestamp?: number | string | null, data?: { agent_id?: string | null, conversation_id?: string | null, status?: string | null, transcript?: Record<string, any>[] | null, metadata?: Record<string, any> | null, analysis?: Record<string, any> | null } | null }",
+      "usageExample": "elevenlabs({\n    webhookHooks: {\n        conversations: {\n            postCallTranscription: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "elevenlabs.webhooks.speechToText.transcriptionCompleted",
+      "shortPath": "speechToText.transcriptionCompleted",
+      "description": "A transcription started with webhook true finished.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "speech_to_text_transcription"
+          },
+          {
+            "key": "event_timestamp",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "When the event happened, in Unix time."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ request_id?: string | null, webhook_metadata?: Record<string, any> | string | null, transcription?: { language_code?: string | null, language_probability?: number | null, text?: string | null, words?: Record<string, any>[] | null, transcription_id?: string | null } | null } | null"
+          }
+        ]
+      },
+      "responseType": "{ type: speech_to_text_transcription, event_timestamp?: number | string | null, data?: { request_id?: string | null, webhook_metadata?: Record<string, any> | string | null, transcription?: { language_code?: string | null, language_probability?: number | null, text?: string | null, words?: Record<string, any>[] | null, transcription_id?: string | null } | null } | null }",
+      "usageExample": "elevenlabs({\n    webhookHooks: {\n        speechToText: {\n            transcriptionCompleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "elevenlabs.webhooks.speechToText.transcriptionFailed",
+      "shortPath": "speechToText.transcriptionFailed",
+      "description": "A transcription started with webhook true failed.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "webhook_error"
+          },
+          {
+            "key": "event_timestamp",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "When the event happened, in Unix time."
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The request_id speechToText.convert returned."
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhook_metadata",
+            "optional": true,
+            "type": "Record<string, any> | string | null"
+          }
+        ]
+      },
+      "responseType": "{ type: webhook_error, event_timestamp?: number | string | null, request_id?: string | null, error_message?: string | null, webhook_metadata?: Record<string, any> | string | null }",
+      "usageExample": "elevenlabs({\n    webhookHooks: {\n        speechToText: {\n            transcriptionFailed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "elevenlabs.webhooks.voices.removalNotice",
+      "shortPath": "voices.removalNotice",
+      "description": "A shared voice in use is scheduled to be removed.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "voice_removal_notice"
+          },
+          {
+            "key": "event_timestamp",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "When the event happened, in Unix time."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      },
+      "responseType": "{ type: voice_removal_notice, event_timestamp?: number | string | null, data?: Record<string, any> | null }",
+      "usageExample": "elevenlabs({\n    webhookHooks: {\n        voices: {\n            removalNotice: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "elevenlabs.webhooks.voices.removalNoticeWithdrawn",
+      "shortPath": "voices.removalNoticeWithdrawn",
+      "description": "A shared voice is no longer scheduled for removal.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "voice_removal_notice_withdrawn"
+          },
+          {
+            "key": "event_timestamp",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "When the event happened, in Unix time."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      },
+      "responseType": "{ type: voice_removal_notice_withdrawn, event_timestamp?: number | string | null, data?: Record<string, any> | null }",
+      "usageExample": "elevenlabs({\n    webhookHooks: {\n        voices: {\n            removalNoticeWithdrawn: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "elevenlabs.webhooks.voices.removed",
+      "shortPath": "voices.removed",
+      "description": "A shared voice was removed and can no longer be used.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "voice_removed"
+          },
+          {
+            "key": "event_timestamp",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "When the event happened, in Unix time."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      },
+      "responseType": "{ type: voice_removed, event_timestamp?: number | string | null, data?: Record<string, any> | null }",
+      "usageExample": "elevenlabs({\n    webhookHooks: {\n        voices: {\n            removed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}
