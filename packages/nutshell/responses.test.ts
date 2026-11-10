@@ -236,4 +236,39 @@ describe('Nutshell responses with unset fields', () => {
 		reply(quotes);
 		await expect(api.quotes.get({ id: '123-quotes' })).resolves.toEqual(quotes);
 	});
+
+	it('accepts the empty answer the reference allows on a delete', async () => {
+		// DELETE /products/{id} and /productmaps/{id} are documented as 200 with
+		// a body or 204 with none.
+		const noContent = () =>
+			jest
+				.spyOn(global, 'fetch')
+				.mockImplementation(async () => new Response(null, { status: 204 }));
+		noContent();
+		await expect(
+			api.products.delete({ id: '3-products' }),
+		).resolves.toBeUndefined();
+		await expect(
+			api.productMaps.delete({ id: '167-productMaps' }),
+		).resolves.toBeUndefined();
+	});
+
+	it('does not require keys on responses the reference leaves undocumented', async () => {
+		const created = { tasks: [{ id: '5-tasks', title: 'Call back' }] };
+		reply(created);
+		await expect(
+			api.tasks.create({ body: { title: 'Call back' } }),
+		).resolves.toEqual(created);
+
+		jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async () => new Response(null, { status: 204 }));
+		await expect(
+			api.leads.createCustomField({ body: { name: 'Score', type: 'Text' } }),
+		).resolves.toBeUndefined();
+
+		const saved = { savedFilters: [{ id: '1-filters' }] };
+		reply(saved);
+		await expect(api.filters.list({})).resolves.toEqual(saved);
+	});
 });

@@ -884,6 +884,7 @@ const NutshellProductsDeleteInputSchema = z
 		id: z.string().min(1),
 	})
 	.strict();
+// The reference documents 200 with this body or 204 with none.
 const NutshellProductsDeleteOutputSchema = z
 	.object({
 		products: z
@@ -936,7 +937,8 @@ const NutshellProductsDeleteOutputSchema = z
 			)
 			.nullish(),
 	})
-	.loose();
+	.loose()
+	.optional();
 
 const NutshellActivitiesCreateInputSchema = z
 	.object({
@@ -1665,7 +1667,8 @@ const NutshellTasksListInputSchema = z
 // Nutshell documents the /tasks list and create routes only as "a list of
 // tasks"; both answer with the shared {meta?, links, tasks} envelope. The
 // envelope is validated and the item fields mirror the documented /tasks/{id}
-// response, kept loose for provider-added fields.
+// response, kept loose for provider-added fields. The reference gives no body
+// schema for either route, so no key is required.
 const NutshellTasksEnvelopeSchema = z
 	.object({
 		meta: z
@@ -1675,40 +1678,42 @@ const NutshellTasksEnvelopeSchema = z
 			})
 			.loose()
 			.nullish(),
-		links: z.object({}).loose(),
-		tasks: z.array(
-			z.intersection(
-				z
-					.object({
-						htmlUrl: z.string().nullish(),
-						htmlUrlPath: z.string().nullish(),
-					})
-					.loose(),
-				z
-					.object({
-						id: z.string().nullish(),
-						recurrenceRule: z
-							.intersection(
-								z
-									.object({
-										htmlUrl: z.string().nullish(),
-										htmlUrlPath: z.string().nullish(),
-									})
-									.loose(),
-								z
-									.object({
-										rule: z.string().nullish(),
-										// Documented values: dueDate, completion. Kept open for later additions.
-										mode: z.string().nullish(),
-										id: z.string().nullish(),
-									})
-									.loose(),
-							)
-							.nullish(),
-					})
-					.loose(),
-			),
-		),
+		links: z.object({}).loose().nullish(),
+		tasks: z
+			.array(
+				z.intersection(
+					z
+						.object({
+							htmlUrl: z.string().nullish(),
+							htmlUrlPath: z.string().nullish(),
+						})
+						.loose(),
+					z
+						.object({
+							id: z.string().nullish(),
+							recurrenceRule: z
+								.intersection(
+									z
+										.object({
+											htmlUrl: z.string().nullish(),
+											htmlUrlPath: z.string().nullish(),
+										})
+										.loose(),
+									z
+										.object({
+											rule: z.string().nullish(),
+											// Documented values: dueDate, completion. Kept open for later additions.
+											mode: z.string().nullish(),
+											id: z.string().nullish(),
+										})
+										.loose(),
+								)
+								.nullish(),
+						})
+						.loose(),
+				),
+			)
+			.nullish(),
 	})
 	.loose();
 const NutshellTasksListOutputSchema = NutshellTasksEnvelopeSchema;
@@ -2901,7 +2906,7 @@ const NutshellTasksCreateInputSchema = z
 			.loose(),
 	})
 	.strict();
-const NutshellTasksCreateOutputSchema = NutshellTasksEnvelopeSchema;
+const NutshellTasksCreateOutputSchema = NutshellTasksEnvelopeSchema.optional();
 
 const NutshellTodosListInputSchema = z
 	.object({
@@ -3549,6 +3554,7 @@ const NutshellProductMapsDeleteInputSchema = z
 		id: z.string().min(1),
 	})
 	.strict();
+// The reference documents 200 with this body or 204 with none.
 const NutshellProductMapsDeleteOutputSchema = z
 	.object({
 		meta: z
@@ -3593,7 +3599,8 @@ const NutshellProductMapsDeleteOutputSchema = z
 			)
 			.nullish(),
 	})
-	.loose();
+	.loose()
+	.optional();
 
 const NutshellLeadsInstallmentsInputSchema = z
 	.object({
@@ -4464,12 +4471,15 @@ const NutshellLeadsCreateCustomFieldInputSchema = z
 	.strict();
 // Nutshell does not document the created-field body; the route answers with
 // the created custom field, validated around its known identifier and name.
+// The reference documents a 200 without a body schema, so nothing is
+// required here and an empty answer is accepted.
 const NutshellLeadsCreateCustomFieldOutputSchema = z
 	.object({
 		id: z.string().nullish(),
 		name: z.string().nullish(),
 	})
-	.loose();
+	.loose()
+	.optional();
 
 const NutshellEventsListInputSchema = z
 	.object({
@@ -4765,14 +4775,18 @@ const NutshellFiltersListInputSchema = z
 // envelope and keep per-filter fields loose.
 const NutshellFiltersListOutputSchema = z
 	.object({
-		filters: z.array(
-			z
-				.object({
-					id: z.string().nullish(),
-					name: z.string().nullish(),
-				})
-				.loose(),
-		),
+		// The reference gives no body schema for this route, so the key is not
+		// required.
+		filters: z
+			.array(
+				z
+					.object({
+						id: z.string().nullish(),
+						name: z.string().nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
 	})
 	.loose();
 
@@ -4800,12 +4814,15 @@ const NutshellAccountsCreateCustomFieldInputSchema = z
 	.strict();
 // Nutshell does not document the created-field body; the route answers with
 // the created custom field, validated around its known identifier and name.
+// The reference documents a 200 without a body schema, so nothing is
+// required here and an empty answer is accepted.
 const NutshellAccountsCreateCustomFieldOutputSchema = z
 	.object({
 		id: z.string().nullish(),
 		name: z.string().nullish(),
 	})
-	.loose();
+	.loose()
+	.optional();
 
 const NutshellContactsListFieldsInputSchema = z.object({}).strict();
 const NutshellContactsListFieldsOutputSchema = z
@@ -6908,12 +6925,15 @@ const NutshellContactsCreateCustomFieldInputSchema = z
 	.strict();
 // Nutshell does not document the created-field body; the route answers with
 // the created custom field, validated around its known identifier and name.
+// The reference documents a 200 without a body schema, so nothing is
+// required here and an empty answer is accepted.
 const NutshellContactsCreateCustomFieldOutputSchema = z
 	.object({
 		id: z.string().nullish(),
 		name: z.string().nullish(),
 	})
-	.loose();
+	.loose()
+	.optional();
 
 const NutshellProductCategoriesGetInputSchema = z
 	.object({
