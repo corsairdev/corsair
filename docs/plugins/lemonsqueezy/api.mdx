@@ -4649,10 +4649,10 @@ await corsair.lemonsqueezy.api.usageRecords.create({ subscriptionItemId: 1, quan
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `subscriptionItemId` | `number` | Yes | The usage-based subscription item to record usage against. |
-| `quantity` | `number` | Yes | The amount to add for this period. Each call adds to the total. |
-| `action` | `increment \| set` | No | `increment` adds the quantity to the period total; `set` replaces it. Defaults to increment. |
+| `quantity` | `number` | Yes | The usage to report: added to the period total with `increment`, or the new total with `set`. |
+| `action` | `increment \| set` | No | `increment` (the default) adds the quantity to the period total and is for a price with "sum of usage" aggregation. `set` makes the quantity the period total and only works with "most recent usage" aggregation; under "sum of usage" a `set` record is added like an increment. |
 
-`quantity` adds to the period total by default; `action: "set"` replaces it. Only a usage-based subscription item accepts records.
+The default `increment` adds `quantity` to the period total and suits a "sum of usage" price. `action: "set"` makes `quantity` the total only on a "most recent usage" price; on a sum price it is added like an increment. Only a usage-based subscription item accepts records.
 
 
 

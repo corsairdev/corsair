@@ -5,9 +5,9 @@ description: "Sell software and digital products as a merchant of record. Read s
 
 Use **Lemon Squeezy** through Corsair: one client, typed API calls.
 
-Every call goes through `https://api.lemonsqueezy.com` with the key as a Bearer token. The API speaks JSON:API 1.0, so responses carry `data`, `links`, `meta` and `jsonapi`, and a write body is `{ data: { type, id?, attributes, relationships? } }`. Those envelopes are returned as they arrive: `data.attributes` holds the fields.
+Every call goes through `https://api.lemonsqueezy.com` with the key as a Bearer token. The API speaks JSON:API 1.0, so responses carry `data`, `links`, `meta` and `jsonapi`, and a write body is `{ data: { type, id?, attributes, relationships? } }`. Those envelopes are returned as they arrive: `data.attributes` holds the fields. Three operations answer with `meta` and no `data`: `subscriptionItems.usage` returns the period's usage in `meta`, and `orders.generateInvoice` and `subscriptionInvoices.generate` return the link in `meta.urls.download_invoice`.
 
-Lists page with `pageNumber` and `pageSize`, capped at 100 per page, and `meta.page.lastPage` says when to stop. Filters take the provider's own names as an id, and a filter a resource does not support answers 400 rather than being ignored, so the parameter is fixed rather than silently dropped.
+Lists page with `pageNumber` and `pageSize`, capped at 100 per page, and `meta.page.lastPage` says when to stop. Filters are each operation's own camelCase fields, such as `storeId` or `userEmail`, and the plugin sends them as `filter[store_id]` and so on. A field the operation does not define, such as a snake_case `store_id`, is dropped before the request, so the list comes back unfiltered rather than failing: use the field names in the API reference.
 
 Money is in cents and its currency is the store's. A refund takes an optional `amount`; omit it to refund in full. A partial refund cannot be undone through the API, which is why `orders.refund` and `subscriptionInvoices.refund` are destructive.
 
