@@ -122,7 +122,7 @@ describe('quaderno through createCorsair', () => {
 			const { url } = lastRequest();
 			expect(url).toContain('https://quadernoapp.com/api/authorization');
 			expect(url).not.toContain('quadernoapp.com/api/authorization?');
-			expect(result.identity.href).toContain('assur-224963');
+			expect(result.identity.href).toContain('example-000000');
 		} finally {
 			testDb.cleanup();
 		}

@@ -296,9 +296,24 @@ const ProductsGetInputSchema = z.object({ id: IdSchema });
 
 export type ProductsGetInput = z.input<typeof ProductsGetInputSchema>;
 
+/**
+ * A PUT here is a partial update: verified live, sending only `name` left the
+ * code, price and tax class unchanged. Every field is therefore optional and
+ * only the id is required, unlike the create schema.
+ */
 const ProductsUpdateInputSchema = z.object({
-	...ProductWriteShape,
 	id: IdSchema,
+	name: ProductWriteShape.name.optional(),
+	code: ProductWriteShape.code.optional(),
+	unit_cost: ProductWriteShape.unit_cost.optional(),
+	currency: ProductWriteShape.currency,
+	description: ProductWriteShape.description,
+	product_type: ProductWriteShape.product_type,
+	kind: ProductWriteShape.kind,
+	tax_class: ProductWriteShape.tax_class,
+	tax_type: ProductWriteShape.tax_type,
+	tax_based_on: ProductWriteShape.tax_based_on,
+	stock: ProductWriteShape.stock,
 });
 
 export type ProductsUpdateInput = z.input<typeof ProductsUpdateInputSchema>;
@@ -504,9 +519,22 @@ const InvoiceGetInputSchema = z.object({ id: IdSchema });
 
 export type InvoiceGetInput = z.input<typeof InvoiceGetInputSchema>;
 
+/**
+ * A partial update, as for products: verified live that omitting a field leaves
+ * it unchanged, so only the id is required.
+ */
 const InvoiceUpdateInputSchema = z.object({
-	...DocumentWriteShape,
 	id: IdSchema,
+	contact: DocumentWriteShape.contact.optional(),
+	items: DocumentWriteShape.items.optional(),
+	currency: DocumentWriteShape.currency,
+	issue_date: DocumentWriteShape.issue_date,
+	due_date: DocumentWriteShape.due_date,
+	notes: DocumentWriteShape.notes,
+	subject: DocumentWriteShape.subject,
+	po_number: DocumentWriteShape.po_number,
+	payment_details: DocumentWriteShape.payment_details,
+	tag_list: DocumentWriteShape.tag_list,
 });
 
 export type InvoiceUpdateInput = z.input<typeof InvoiceUpdateInputSchema>;
@@ -523,6 +551,11 @@ const InvoiceVoidInputSchema = z.object({
 });
 
 export type InvoiceVoidInput = z.input<typeof InvoiceVoidInputSchema>;
+
+/** `POST /invoices/{id}/payments` returns the payment, wrapped here. */
+const PaymentResponseSchema = z.object({ payment: PaymentSchema });
+
+export type PaymentResponse = z.infer<typeof PaymentResponseSchema>;
 
 const InvoiceMarkUncollectibleInputSchema = z.object({ id: IdSchema });
 
@@ -1064,7 +1097,7 @@ export type QuadernoEndpointOutputs = {
 	invoicesUpdate: InvoiceResponse;
 	invoicesVoid: InvoiceResponse;
 	invoicesMarkUncollectible: InvoiceResponse;
-	invoicesRecordPayment: InvoiceResponse;
+	invoicesRecordPayment: PaymentResponse;
 	invoicesDeliver: InvoiceResponse;
 	receiptsList: ReceiptsListResponse;
 	receiptsCreate: ReceiptResponse;
@@ -1169,7 +1202,7 @@ export const QuadernoEndpointOutputSchemas = {
 	invoicesUpdate: InvoiceResponseSchema,
 	invoicesVoid: InvoiceResponseSchema,
 	invoicesMarkUncollectible: InvoiceResponseSchema,
-	invoicesRecordPayment: InvoiceResponseSchema,
+	invoicesRecordPayment: PaymentResponseSchema,
 	invoicesDeliver: InvoiceResponseSchema,
 	receiptsList: ReceiptsListResponseSchema,
 	receiptsCreate: ReceiptResponseSchema,

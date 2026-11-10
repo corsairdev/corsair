@@ -6,14 +6,14 @@
 /** `GET /ping` answers exactly this. */
 export const pingFixture = { status: 'OK' } as const;
 
-/** `GET /authorization`, captured live. */
+/** `GET /authorization`, captured live. Values replaced with placeholders. */
 export const authorizationFixture = {
 	identity: {
-		id: 150095,
-		name: 'corsair test',
-		email: 'corsairtest00@gmail.com',
-		publishable_key: 'pk_live_DhhH1vx8zzajaQbHAej_',
-		href: 'https://assur-224963.quadernoapp.com/api/',
+		id: 100000,
+		name: 'Example Account',
+		email: 'owner@example.com',
+		publishable_key: 'pk_live_example000000000000000',
+		href: 'https://example-000000.quadernoapp.com/api/',
 		default_api_version: 20241028,
 	},
 } as const;
@@ -32,7 +32,7 @@ export const contactFixture = {
 	language: 'EN',
 	notes: null,
 	discount: null,
-	permalink: 'https://assur-224963.quadernoapp.com/billing/abc',
+	permalink: 'https://example-000000.quadernoapp.com/billing/abc',
 	created_at: 1794285133,
 } as const;
 
@@ -54,7 +54,7 @@ export const productFixture = {
 	kind: 'one_off',
 	tax_type: 'excluded',
 	tax_based_on: 'customer_country',
-	url: 'https://assur-224963.quadernoapp.com/api/items/321034',
+	url: 'https://example-000000.quadernoapp.com/api/items/321034',
 } as const;
 
 export const productsFixture = [productFixture] as const;
@@ -104,10 +104,10 @@ export const invoiceFixture = {
 	tag_list: [],
 	secure_id: 'c10ace1a9cea4e1a4863ee180e76e523d27d055a',
 	verification_code: '100669',
-	verification_permalink: 'https://assur-224963.quadernoapp.com/billing/abc',
-	permalink: 'https://assur-224963.quadernoapp.com/billing/abc',
-	pdf: 'https://assur-224963.quadernoapp.com/pdf/abc',
-	url: 'https://assur-224963.quadernoapp.com/api/invoices/181235103',
+	verification_permalink: 'https://example-000000.quadernoapp.com/billing/abc',
+	permalink: 'https://example-000000.quadernoapp.com/billing/abc',
+	pdf: 'https://example-000000.quadernoapp.com/pdf/abc',
+	url: 'https://example-000000.quadernoapp.com/api/invoices/181235103',
 } as const;
 
 export const invoicesFixture = [invoiceFixture] as const;
@@ -140,6 +140,17 @@ export const voidedInvoiceFixture = {
 			total_cents: 1000,
 		},
 	],
+} as const;
+
+/** `POST /invoices/{id}/payments`, captured live. Note there is no created_at. */
+export const paymentFixture = {
+	id: 171741922,
+	date: '2026-11-10',
+	payment_method: 'cash',
+	processor: null,
+	processor_id: null,
+	amount_cents: 1000,
+	url: 'https://example-000000.quadernoapp.com/api/invoices/181235879/payments/171741922.json',
 } as const;
 
 /** A receipt, shaped like an invoice. Not captured: none existed to read. */

@@ -1555,65 +1555,21 @@ await corsair.quaderno.api.invoices.recordPayment({ id: 181235103, date: "2026-1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `invoice` | `object` | Yes | — |
+| `payment` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="invoice full type">
+<Accordion title="payment full type">
 
 ```ts
 {
-  id: number,
-  number?: string | null,
-  issue_date?: string | null,
-  due_date?: string | null,
-  currency?: string | null,
-  state?: string | null,
-  blocked?: boolean | null,
-  delivery_state?: string | null,
-  contact?: Record<string, unknown> | null,
-  items?: {
-    id?: number | null,
-    description?: string | null,
-    quantity?: number | null,
-    unit_price?: string | number | null,
-    discount_rate?: string | number | null,
-    product_code?: string | null,
-    total_amount?: string | number | null,
-    subtotal_cents?: number | null,
-    discount_cents?: number | null,
-    tax_1_name?: string | null,
-    tax_1_rate?: number | null,
-    tax_1_country?: string | null,
-    tax_1_region?: string | null
-  }[] | null,
-  payments?: {
-    id?: number | null,
-    date?: string | null,
-    amount?: string | number | null,
-    amount_cents?: number | null,
-    payment_method?: string | null,
-    processor?: string | null,
-    processor_id?: string | null,
-    created_at?: number | null
-  }[] | null,
-  taxes?: Record<string, unknown>[] | null,
-  subtotal_cents?: number | null,
-  discount_cents?: number | null,
-  total_cents?: number | null,
-  processor_fee_cents?: number | null,
-  notes?: string | null,
-  payment_details?: string | null,
-  subject?: string | null,
-  po_number?: string | null,
-  tag_list?: string[] | null,
-  secure_id?: string | null,
-  verification_code?: string | null,
-  verification_permalink?: string | null,
-  permalink?: string | null,
-  pdf?: string | null,
-  url?: string | null,
-  created_at?: number | null,
-  custom_metadata?: Record<string, unknown> | null
+  id?: number | null,
+  date?: string | null,
+  amount?: string | number | null,
+  amount_cents?: number | null,
+  payment_method?: string | null,
+  processor?: string | null,
+  processor_id?: string | null,
+  created_at?: number | null
 }
 ```
 </Accordion>
@@ -1639,8 +1595,9 @@ await corsair.quaderno.api.invoices.update({ id: 181235103, contact: { id: 78395
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `contact` | `object` | Yes | The contact being billed, by id. Create one with contacts.create first. |
-| `items` | `object[]` | Yes | Line items. Quaderno caps a document at 200 lines. |
+| `id` | `number` | Yes | — |
+| `contact` | `object` | No | The contact being billed, by id. Create one with contacts.create first. |
+| `items` | `object[]` | No | Line items. Quaderno caps a document at 200 lines. |
 | `currency` | `string` | No | — |
 | `issue_date` | `string` | No | ISO date, such as `2026-11-10`. Defaults to today. |
 | `due_date` | `string` | No | ISO date. |
@@ -1649,7 +1606,6 @@ await corsair.quaderno.api.invoices.update({ id: 181235103, contact: { id: 78395
 | `po_number` | `string` | No | — |
 | `payment_details` | `string` | No | — |
 | `tag_list` | `string[]` | No | — |
-| `id` | `number` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="contact full type">
@@ -2204,9 +2160,10 @@ await corsair.quaderno.api.products.update({ id: 321034, name: "Consulting hour"
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | Yes | Product name. |
-| `code` | `string` | Yes | Your own SKU or code. |
-| `unit_cost` | `string \| number` | Yes | Price in major units, such as `10.00` or `10`. |
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | Product name. |
+| `code` | `string` | No | Your own SKU or code. |
+| `unit_cost` | `string \| number` | No | Price in major units, such as `10.00` or `10`. |
 | `currency` | `string` | No | Three-letter ISO currency code. Defaults to the account currency. |
 | `description` | `string` | No | — |
 | `product_type` | `good \| service` | No | `good` for a tangible item, `service` otherwise. Defaults to `service`. |
@@ -2215,7 +2172,6 @@ await corsair.quaderno.api.products.update({ id: 321034, name: "Consulting hour"
 | `tax_type` | `included \| excluded` | No | Whether `unit_cost` includes tax. Defaults to `included`. |
 | `tax_based_on` | `customer_country \| country` | No | — |
 | `stock` | `number` | No | — |
-| `id` | `number` | Yes | — |
 
 
 

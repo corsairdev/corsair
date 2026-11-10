@@ -162,6 +162,12 @@ export const markUncollectible: QuadernoEndpoints['invoicesMarkUncollectible'] =
 			},
 		);
 
+/**
+ * Verified live: this returns the **payment**, not the invoice, as
+ * `{id, date, payment_method, amount_cents, processor, processor_id, url}`.
+ * `created_at` is absent on every live response, so the payment schema does not
+ * require it.
+ */
 export const recordPayment: QuadernoEndpoints['invoicesRecordPayment'] = (
 	ctx,
 	input,
@@ -180,11 +186,11 @@ export const recordPayment: QuadernoEndpoints['invoicesRecordPayment'] = (
 		},
 		input,
 		{
-			shape: (raw) => wrap('invoice', raw),
+			shape: (raw) => wrap('payment', raw),
 			log: ({ id, payment_method }, result) => ({
 				invoiceId: id,
 				paymentMethod: payment_method,
-				state: result.invoice.state ?? undefined,
+				paymentId: result.payment.id ?? undefined,
 			}),
 		},
 	);

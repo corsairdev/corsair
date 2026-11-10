@@ -7,6 +7,7 @@ import {
 	invoiceFixture,
 	invoicesFixture,
 	jurisdictionsFixture,
+	paymentFixture,
 	pingFixture,
 	productFixture,
 	productsFixture,
@@ -101,7 +102,7 @@ describe('credential and account routes', () => {
 		const { result } = await run({}, endpoints.authorization);
 
 		expect(lastCall().parsed.pathname).toBe('/api/authorization');
-		expect(result.identity.href).toContain('assur-224963');
+		expect(result.identity.href).toContain('example-000000');
 	});
 });
 
@@ -318,10 +319,10 @@ describe('invoices', () => {
 		);
 	});
 
-	it('invoices.recordPayment POSTs to the payments sub-route', async () => {
-		respond(invoiceFixture);
+	it('invoices.recordPayment POSTs and returns the payment it created', async () => {
+		respond(paymentFixture, 201);
 
-		await run(
+		const { result } = await run(
 			{
 				id: 181235103,
 				date: '2026-11-10',
@@ -335,6 +336,9 @@ describe('invoices', () => {
 		expect(init.method).toBe('POST');
 		expect(parsed.pathname).toBe('/api/invoices/181235103/payments');
 		expect(body.amount).toBe(10);
+		// The route answers the payment, not the invoice.
+		expect(result.payment.id).toBe(171741922);
+		expect(result.payment.payment_method).toBe('cash');
 	});
 
 	it('invoices.update PUTs without the id in the body', async () => {

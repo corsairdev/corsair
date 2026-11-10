@@ -1,4 +1,5 @@
 import { makeQuadernoRequest } from './client';
+import { QuadernoEndpointOutputSchemas as Outputs } from './endpoints/types';
 
 /**
  * Live smoke against a scratch Quaderno account. Read-only apart from the
@@ -136,6 +137,64 @@ describeIfReady('Quaderno live smoke', () => {
 		});
 		const identity = (auth as { identity?: { href?: string } }).identity;
 		expect(identity?.href).toContain('.quadernoapp.com');
+	});
+
+	it('records a payment and gets the payment back, not the invoice', async () => {
+		// The route answers a payment object with no `created_at`, which an
+		// invoice-shaped schema would reject.
+		const contact = (await makeQuadernoRequest(
+			API_KEY as string,
+			ACCOUNT as string,
+			{
+				method: 'POST',
+				path: '/contacts',
+				body: {
+					kind: 'person',
+					first_name: 'Pay',
+					last_name: 'Probe',
+					email: `pay-probe-${Date.now()}@example.com`,
+					country: 'US',
+				},
+			},
+		)) as { id: number };
+
+		const invoice = (await makeQuadernoRequest(
+			API_KEY as string,
+			ACCOUNT as string,
+			{
+				method: 'POST',
+				path: '/invoices',
+				body: {
+					contact: { id: contact.id },
+					currency: 'USD',
+					items: [{ description: 'Probe', quantity: 1, unit_price: 10 }],
+				},
+			},
+		)) as { id: number };
+
+		const payment = await makeQuadernoRequest(
+			API_KEY as string,
+			ACCOUNT as string,
+			{
+				method: 'POST',
+				path: `/invoices/${invoice.id}/payments`,
+				body: { date: '2026-11-10', amount: 10, payment_method: 'cash' },
+			},
+		);
+
+		const parsed = Outputs.invoicesRecordPayment.safeParse({
+			payment,
+		});
+		expect(parsed.success).toBe(true);
+		if (!parsed.success) return;
+		expect(parsed.data.payment.payment_method).toBe('cash');
+
+		// Clean up: void the invoice, then delete the contact.
+		await makeQuadernoRequest(API_KEY as string, ACCOUNT as string, {
+			method: 'PUT',
+			path: `/invoices/${invoice.id}/void`,
+			body: { void_reason: 'Live probe cleanup' },
+		});
 	});
 
 	it('reports a wrong key as an auth error', async () => {

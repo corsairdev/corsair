@@ -216,214 +216,207 @@ const quadernoEndpointsNested = {
 
 const quadernoWebhooksNested = {} as const;
 
-const schemaEntries = {
-	ping: [QuadernoEndpointInputSchemas.ping, QuadernoEndpointOutputSchemas.ping],
-	authorization: [
-		QuadernoEndpointInputSchemas.authorization,
-		QuadernoEndpointOutputSchemas.authorization,
-	],
-	'contacts.list': [
-		QuadernoEndpointInputSchemas.contactsList,
-		QuadernoEndpointOutputSchemas.contactsList,
-	],
-	'contacts.create': [
-		QuadernoEndpointInputSchemas.contactsCreate,
-		QuadernoEndpointOutputSchemas.contactsCreate,
-	],
-	'contacts.get': [
-		QuadernoEndpointInputSchemas.contactsGet,
-		QuadernoEndpointOutputSchemas.contactsGet,
-	],
-	'contacts.update': [
-		QuadernoEndpointInputSchemas.contactsUpdate,
-		QuadernoEndpointOutputSchemas.contactsUpdate,
-	],
-	'contacts.delete': [
-		QuadernoEndpointInputSchemas.contactsDelete,
-		QuadernoEndpointOutputSchemas.contactsDelete,
-	],
-	'products.list': [
-		QuadernoEndpointInputSchemas.productsList,
-		QuadernoEndpointOutputSchemas.productsList,
-	],
-	'products.create': [
-		QuadernoEndpointInputSchemas.productsCreate,
-		QuadernoEndpointOutputSchemas.productsCreate,
-	],
-	'products.get': [
-		QuadernoEndpointInputSchemas.productsGet,
-		QuadernoEndpointOutputSchemas.productsGet,
-	],
-	'products.update': [
-		QuadernoEndpointInputSchemas.productsUpdate,
-		QuadernoEndpointOutputSchemas.productsUpdate,
-	],
-	'products.delete': [
-		QuadernoEndpointInputSchemas.productsDelete,
-		QuadernoEndpointOutputSchemas.productsDelete,
-	],
-	'invoices.list': [
-		QuadernoEndpointInputSchemas.invoicesList,
-		QuadernoEndpointOutputSchemas.invoicesList,
-	],
-	'invoices.create': [
-		QuadernoEndpointInputSchemas.invoicesCreate,
-		QuadernoEndpointOutputSchemas.invoicesCreate,
-	],
-	'invoices.get': [
-		QuadernoEndpointInputSchemas.invoicesGet,
-		QuadernoEndpointOutputSchemas.invoicesGet,
-	],
-	'invoices.update': [
-		QuadernoEndpointInputSchemas.invoicesUpdate,
-		QuadernoEndpointOutputSchemas.invoicesUpdate,
-	],
-	'invoices.void': [
-		QuadernoEndpointInputSchemas.invoicesVoid,
-		QuadernoEndpointOutputSchemas.invoicesVoid,
-	],
-	'invoices.markUncollectible': [
-		QuadernoEndpointInputSchemas.invoicesMarkUncollectible,
-		QuadernoEndpointOutputSchemas.invoicesMarkUncollectible,
-	],
-	'invoices.recordPayment': [
-		QuadernoEndpointInputSchemas.invoicesRecordPayment,
-		QuadernoEndpointOutputSchemas.invoicesRecordPayment,
-	],
-	'invoices.deliver': [
-		QuadernoEndpointInputSchemas.invoicesDeliver,
-		QuadernoEndpointOutputSchemas.invoicesDeliver,
-	],
-	'receipts.list': [
-		QuadernoEndpointInputSchemas.receiptsList,
-		QuadernoEndpointOutputSchemas.receiptsList,
-	],
-	'receipts.create': [
-		QuadernoEndpointInputSchemas.receiptsCreate,
-		QuadernoEndpointOutputSchemas.receiptsCreate,
-	],
-	'receipts.get': [
-		QuadernoEndpointInputSchemas.receiptsGet,
-		QuadernoEndpointOutputSchemas.receiptsGet,
-	],
-	'receipts.void': [
-		QuadernoEndpointInputSchemas.receiptsVoid,
-		QuadernoEndpointOutputSchemas.receiptsVoid,
-	],
-	'receipts.deliver': [
-		QuadernoEndpointInputSchemas.receiptsDeliver,
-		QuadernoEndpointOutputSchemas.receiptsDeliver,
-	],
-	'credits.list': [
-		QuadernoEndpointInputSchemas.creditsList,
-		QuadernoEndpointOutputSchemas.creditsList,
-	],
-	'credits.create': [
-		QuadernoEndpointInputSchemas.creditsCreate,
-		QuadernoEndpointOutputSchemas.creditsCreate,
-	],
-	'credits.get': [
-		QuadernoEndpointInputSchemas.creditsGet,
-		QuadernoEndpointOutputSchemas.creditsGet,
-	],
-	'credits.update': [
-		QuadernoEndpointInputSchemas.creditsUpdate,
-		QuadernoEndpointOutputSchemas.creditsUpdate,
-	],
-	'credits.void': [
-		QuadernoEndpointInputSchemas.creditsVoid,
-		QuadernoEndpointOutputSchemas.creditsVoid,
-	],
-	'credits.deliver': [
-		QuadernoEndpointInputSchemas.creditsDeliver,
-		QuadernoEndpointOutputSchemas.creditsDeliver,
-	],
-	'proformas.list': [
-		QuadernoEndpointInputSchemas.proformasList,
-		QuadernoEndpointOutputSchemas.proformasList,
-	],
-	'proformas.create': [
-		QuadernoEndpointInputSchemas.proformasCreate,
-		QuadernoEndpointOutputSchemas.proformasCreate,
-	],
-	'proformas.get': [
-		QuadernoEndpointInputSchemas.proformasGet,
-		QuadernoEndpointOutputSchemas.proformasGet,
-	],
-	'proformas.update': [
-		QuadernoEndpointInputSchemas.proformasUpdate,
-		QuadernoEndpointOutputSchemas.proformasUpdate,
-	],
-	'proformas.accept': [
-		QuadernoEndpointInputSchemas.proformasAccept,
-		QuadernoEndpointOutputSchemas.proformasAccept,
-	],
-	'proformas.decline': [
-		QuadernoEndpointInputSchemas.proformasDecline,
-		QuadernoEndpointOutputSchemas.proformasDecline,
-	],
-	'proformas.revert': [
-		QuadernoEndpointInputSchemas.proformasRevert,
-		QuadernoEndpointOutputSchemas.proformasRevert,
-	],
-	'proformas.convert': [
-		QuadernoEndpointInputSchemas.proformasConvert,
-		QuadernoEndpointOutputSchemas.proformasConvert,
-	],
-	'proformas.deliver': [
-		QuadernoEndpointInputSchemas.proformasDeliver,
-		QuadernoEndpointOutputSchemas.proformasDeliver,
-	],
-	'taxRates.calculate': [
-		QuadernoEndpointInputSchemas.taxRatesCalculate,
-		QuadernoEndpointOutputSchemas.taxRatesCalculate,
-	],
-	'taxIds.validate': [
-		QuadernoEndpointInputSchemas.taxIdsValidate,
-		QuadernoEndpointOutputSchemas.taxIdsValidate,
-	],
-	'taxCodes.list': [
-		QuadernoEndpointInputSchemas.taxCodesList,
-		QuadernoEndpointOutputSchemas.taxCodesList,
-	],
-	'taxCodes.get': [
-		QuadernoEndpointInputSchemas.taxCodesGet,
-		QuadernoEndpointOutputSchemas.taxCodesGet,
-	],
-	'jurisdictions.list': [
-		QuadernoEndpointInputSchemas.jurisdictionsList,
-		QuadernoEndpointOutputSchemas.jurisdictionsList,
-	],
-	'jurisdictions.get': [
-		QuadernoEndpointInputSchemas.jurisdictionsGet,
-		QuadernoEndpointOutputSchemas.jurisdictionsGet,
-	],
-	'transactions.create': [
-		QuadernoEndpointInputSchemas.transactionsCreate,
-		QuadernoEndpointOutputSchemas.transactionsCreate,
-	],
-	'webhooks.list': [
-		QuadernoEndpointInputSchemas.webhooksList,
-		QuadernoEndpointOutputSchemas.webhooksList,
-	],
-} as const;
-
 /**
- * `schemaEntries` above lists every operation as a literal and is checked by
- * `satisfies`, so the key set is verified before this runs. `Object.fromEntries`
- * loses the literal key type, which is the only reason a cast is needed here:
- * the map is reshaped from `[input, output]` tuples into `{ input, output }` and
- * adds no keys. `plugin.test.ts` asserts the resulting keys equal the registered
- * operations, so a missing or extra entry fails a test rather than slipping by.
+ * One entry per operation, written out so `satisfies` checks the key set against
+ * the registered endpoints. A literal needs no cast; `Object.fromEntries` over a
+ * tuple map widens the keys to `string` and would have to be asserted back.
  */
-// unknown: `Object.fromEntries` widens the literal key set to `string`; the value
-// shape is preserved, and the key set is pinned by the test named above.
-export const quadernoEndpointSchemas = Object.fromEntries(
-	Object.entries(schemaEntries).map(([path, [input, output]]) => [
-		path,
-		{ input, output },
-	]),
-) as unknown as RequiredPluginEndpointSchemas<typeof quadernoEndpointsNested>;
+export const quadernoEndpointSchemas = {
+	ping: {
+		input: QuadernoEndpointInputSchemas.ping,
+		output: QuadernoEndpointOutputSchemas.ping,
+	},
+	authorization: {
+		input: QuadernoEndpointInputSchemas.authorization,
+		output: QuadernoEndpointOutputSchemas.authorization,
+	},
+	'contacts.list': {
+		input: QuadernoEndpointInputSchemas.contactsList,
+		output: QuadernoEndpointOutputSchemas.contactsList,
+	},
+	'contacts.create': {
+		input: QuadernoEndpointInputSchemas.contactsCreate,
+		output: QuadernoEndpointOutputSchemas.contactsCreate,
+	},
+	'contacts.get': {
+		input: QuadernoEndpointInputSchemas.contactsGet,
+		output: QuadernoEndpointOutputSchemas.contactsGet,
+	},
+	'contacts.update': {
+		input: QuadernoEndpointInputSchemas.contactsUpdate,
+		output: QuadernoEndpointOutputSchemas.contactsUpdate,
+	},
+	'contacts.delete': {
+		input: QuadernoEndpointInputSchemas.contactsDelete,
+		output: QuadernoEndpointOutputSchemas.contactsDelete,
+	},
+	'products.list': {
+		input: QuadernoEndpointInputSchemas.productsList,
+		output: QuadernoEndpointOutputSchemas.productsList,
+	},
+	'products.create': {
+		input: QuadernoEndpointInputSchemas.productsCreate,
+		output: QuadernoEndpointOutputSchemas.productsCreate,
+	},
+	'products.get': {
+		input: QuadernoEndpointInputSchemas.productsGet,
+		output: QuadernoEndpointOutputSchemas.productsGet,
+	},
+	'products.update': {
+		input: QuadernoEndpointInputSchemas.productsUpdate,
+		output: QuadernoEndpointOutputSchemas.productsUpdate,
+	},
+	'products.delete': {
+		input: QuadernoEndpointInputSchemas.productsDelete,
+		output: QuadernoEndpointOutputSchemas.productsDelete,
+	},
+	'invoices.list': {
+		input: QuadernoEndpointInputSchemas.invoicesList,
+		output: QuadernoEndpointOutputSchemas.invoicesList,
+	},
+	'invoices.create': {
+		input: QuadernoEndpointInputSchemas.invoicesCreate,
+		output: QuadernoEndpointOutputSchemas.invoicesCreate,
+	},
+	'invoices.get': {
+		input: QuadernoEndpointInputSchemas.invoicesGet,
+		output: QuadernoEndpointOutputSchemas.invoicesGet,
+	},
+	'invoices.update': {
+		input: QuadernoEndpointInputSchemas.invoicesUpdate,
+		output: QuadernoEndpointOutputSchemas.invoicesUpdate,
+	},
+	'invoices.void': {
+		input: QuadernoEndpointInputSchemas.invoicesVoid,
+		output: QuadernoEndpointOutputSchemas.invoicesVoid,
+	},
+	'invoices.markUncollectible': {
+		input: QuadernoEndpointInputSchemas.invoicesMarkUncollectible,
+		output: QuadernoEndpointOutputSchemas.invoicesMarkUncollectible,
+	},
+	'invoices.recordPayment': {
+		input: QuadernoEndpointInputSchemas.invoicesRecordPayment,
+		output: QuadernoEndpointOutputSchemas.invoicesRecordPayment,
+	},
+	'invoices.deliver': {
+		input: QuadernoEndpointInputSchemas.invoicesDeliver,
+		output: QuadernoEndpointOutputSchemas.invoicesDeliver,
+	},
+	'receipts.list': {
+		input: QuadernoEndpointInputSchemas.receiptsList,
+		output: QuadernoEndpointOutputSchemas.receiptsList,
+	},
+	'receipts.create': {
+		input: QuadernoEndpointInputSchemas.receiptsCreate,
+		output: QuadernoEndpointOutputSchemas.receiptsCreate,
+	},
+	'receipts.get': {
+		input: QuadernoEndpointInputSchemas.receiptsGet,
+		output: QuadernoEndpointOutputSchemas.receiptsGet,
+	},
+	'receipts.void': {
+		input: QuadernoEndpointInputSchemas.receiptsVoid,
+		output: QuadernoEndpointOutputSchemas.receiptsVoid,
+	},
+	'receipts.deliver': {
+		input: QuadernoEndpointInputSchemas.receiptsDeliver,
+		output: QuadernoEndpointOutputSchemas.receiptsDeliver,
+	},
+	'credits.list': {
+		input: QuadernoEndpointInputSchemas.creditsList,
+		output: QuadernoEndpointOutputSchemas.creditsList,
+	},
+	'credits.create': {
+		input: QuadernoEndpointInputSchemas.creditsCreate,
+		output: QuadernoEndpointOutputSchemas.creditsCreate,
+	},
+	'credits.get': {
+		input: QuadernoEndpointInputSchemas.creditsGet,
+		output: QuadernoEndpointOutputSchemas.creditsGet,
+	},
+	'credits.update': {
+		input: QuadernoEndpointInputSchemas.creditsUpdate,
+		output: QuadernoEndpointOutputSchemas.creditsUpdate,
+	},
+	'credits.void': {
+		input: QuadernoEndpointInputSchemas.creditsVoid,
+		output: QuadernoEndpointOutputSchemas.creditsVoid,
+	},
+	'credits.deliver': {
+		input: QuadernoEndpointInputSchemas.creditsDeliver,
+		output: QuadernoEndpointOutputSchemas.creditsDeliver,
+	},
+	'proformas.list': {
+		input: QuadernoEndpointInputSchemas.proformasList,
+		output: QuadernoEndpointOutputSchemas.proformasList,
+	},
+	'proformas.create': {
+		input: QuadernoEndpointInputSchemas.proformasCreate,
+		output: QuadernoEndpointOutputSchemas.proformasCreate,
+	},
+	'proformas.get': {
+		input: QuadernoEndpointInputSchemas.proformasGet,
+		output: QuadernoEndpointOutputSchemas.proformasGet,
+	},
+	'proformas.update': {
+		input: QuadernoEndpointInputSchemas.proformasUpdate,
+		output: QuadernoEndpointOutputSchemas.proformasUpdate,
+	},
+	'proformas.accept': {
+		input: QuadernoEndpointInputSchemas.proformasAccept,
+		output: QuadernoEndpointOutputSchemas.proformasAccept,
+	},
+	'proformas.decline': {
+		input: QuadernoEndpointInputSchemas.proformasDecline,
+		output: QuadernoEndpointOutputSchemas.proformasDecline,
+	},
+	'proformas.revert': {
+		input: QuadernoEndpointInputSchemas.proformasRevert,
+		output: QuadernoEndpointOutputSchemas.proformasRevert,
+	},
+	'proformas.convert': {
+		input: QuadernoEndpointInputSchemas.proformasConvert,
+		output: QuadernoEndpointOutputSchemas.proformasConvert,
+	},
+	'proformas.deliver': {
+		input: QuadernoEndpointInputSchemas.proformasDeliver,
+		output: QuadernoEndpointOutputSchemas.proformasDeliver,
+	},
+	'taxRates.calculate': {
+		input: QuadernoEndpointInputSchemas.taxRatesCalculate,
+		output: QuadernoEndpointOutputSchemas.taxRatesCalculate,
+	},
+	'taxIds.validate': {
+		input: QuadernoEndpointInputSchemas.taxIdsValidate,
+		output: QuadernoEndpointOutputSchemas.taxIdsValidate,
+	},
+	'taxCodes.list': {
+		input: QuadernoEndpointInputSchemas.taxCodesList,
+		output: QuadernoEndpointOutputSchemas.taxCodesList,
+	},
+	'taxCodes.get': {
+		input: QuadernoEndpointInputSchemas.taxCodesGet,
+		output: QuadernoEndpointOutputSchemas.taxCodesGet,
+	},
+	'jurisdictions.list': {
+		input: QuadernoEndpointInputSchemas.jurisdictionsList,
+		output: QuadernoEndpointOutputSchemas.jurisdictionsList,
+	},
+	'jurisdictions.get': {
+		input: QuadernoEndpointInputSchemas.jurisdictionsGet,
+		output: QuadernoEndpointOutputSchemas.jurisdictionsGet,
+	},
+	'transactions.create': {
+		input: QuadernoEndpointInputSchemas.transactionsCreate,
+		output: QuadernoEndpointOutputSchemas.transactionsCreate,
+	},
+	'webhooks.list': {
+		input: QuadernoEndpointInputSchemas.webhooksList,
+		output: QuadernoEndpointOutputSchemas.webhooksList,
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof quadernoEndpointsNested
+>;
 
 const quadernoWebhookSchemas =
 	{} as const satisfies RequiredPluginWebhookSchemas<

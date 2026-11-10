@@ -24,8 +24,7 @@ number.
 
 Lists answer a **bare array**, not an envelope. Page with `created_before`,
 passing the previous page's `next_created_before`, which is `null` on the last
-page. Three routes take `cursor` instead; all of them are documented on the
-API page.
+page. No route here takes a `cursor` parameter.
 
 A missing record answers **401**, not 404, and so does a wrong key. The plugin
 reads the message to tell them apart, so a bad id is reported as
@@ -123,7 +122,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.quaderno.api.invoices.list({ limit: 10 });
+await tenant.quaderno.api.invoices.list({ state: 'outstanding', limit: 10 });
 ```
 
 
