@@ -651,15 +651,20 @@ export const framesCreate: MiroEndpoints['framesCreate'] = (ctx, input) =>
 		(parsed) => ({
 			method: 'POST',
 			path: `${boardPath(parsed.boardId)}/frames`,
-			body: itemBody(
-				{
-					title: parsed.title,
-					showContent: parsed.showContent,
-					position: parsed.position,
-					geometry: parsed.geometry,
-				},
-				{ dataKeys: ['title', 'showContent'] },
-			),
+			body: {
+				// `data` is required on a frame create, even with nothing in it;
+				// itemBody leaves it out when no title or showContent was given.
+				data: {},
+				...itemBody(
+					{
+						title: parsed.title,
+						showContent: parsed.showContent,
+						position: parsed.position,
+						geometry: parsed.geometry,
+					},
+					{ dataKeys: ['title', 'showContent'] },
+				),
+			},
 		}),
 		{
 			shape: (raw) => itemOf(raw),

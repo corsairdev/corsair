@@ -848,6 +848,21 @@ describe('frames', () => {
 		});
 	});
 
+	it('sends an empty data object for a frame with no title', async () => {
+		// The reference marks `data` required on a frame create.
+		respond(frame, 201);
+
+		await invoke(framesCreate, {
+			boardId: BOARD,
+			geometry: { width: 800, height: 600 },
+		});
+
+		expect(lastRequest().body).toEqual({
+			data: {},
+			geometry: { width: 800, height: 600 },
+		});
+	});
+
 	it('updates a frame', async () => {
 		respond(frame);
 
