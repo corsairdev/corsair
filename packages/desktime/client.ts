@@ -7,9 +7,10 @@ import type {
 import { ApiError, request } from 'corsair/http';
 
 /**
- * DeskTime's API is a read-only GET surface whose shape is
- * `/api/v2/{format}/{action}`. `format` supports json, xml, jsonp and plist;
- * this plugin only asks for json.
+ * DeskTime's API has the shape `/api/v2/{format}/{action}`. `format` supports
+ * json, xml, jsonp and plist; this plugin only asks for json, and only calls the
+ * read actions. `create-project` (POST), `start-project` and `stop-project`
+ * (GET, but they change what is being tracked) are not called here.
  * https://help.desktime.com/hc/en-us/articles/25494558790685
  */
 export const DESKTIME_API_BASE = 'https://desktime.com/api/v2/json';
@@ -65,7 +66,8 @@ export class DeskTimeAPIError extends Error {
 		this.retryAfter = options.retryAfter;
 		this.transport = options.transport ?? false;
 		// Every operation in this plugin is a GET that changes nothing, so a
-		// replay can never duplicate a write.
+		// replay can never duplicate a write. An action that does change state,
+		// such as `start-project`, would have to pass `replaySafe: false`.
 		this.replaySafe = options.replaySafe ?? true;
 		this.isRateLimit = options.status === 429;
 	}

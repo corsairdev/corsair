@@ -115,7 +115,8 @@ export const deskTimeEndpointSchemas = {
 
 const defaultAuthType = 'api_key' as const;
 
-// Every operation here reads; the v2 API has no write surface at all.
+// Every operation here reads. DeskTime's write actions (`create-project`,
+// `start-project`, `stop-project`) are not part of this plugin.
 const deskTimeEndpointMeta = {
 	'ping.get': {
 		riskLevel: 'read',

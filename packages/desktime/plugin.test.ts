@@ -43,7 +43,7 @@ describe('plugin shape', () => {
 
 	it('carries a schema version and no entities', () => {
 		expect(DeskTimeSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
-		// The API is read-only and every read is current, so a local mirror would
+		// The plugin only reads and every read is current, so a local mirror would
 		// only add staleness.
 		expect(DeskTimeSchema.entities).toEqual({});
 	});
@@ -52,7 +52,7 @@ describe('plugin shape', () => {
 describe('endpoint metadata', () => {
 	const meta = plugin.endpointMeta ?? {};
 
-	it('marks every operation as a read, because the API has no writes', () => {
+	it('marks every operation as a read, because the plugin exposes no writes', () => {
 		const paths = Object.keys(meta);
 		expect(paths.length).toBe(7);
 		for (const path of paths) {

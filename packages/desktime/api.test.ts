@@ -9,7 +9,7 @@ import {
  *
  *   DESKTIME_API_KEY=... pnpm --filter @corsair-dev/desktime test api.test.ts
  *
- * Read-only: DeskTime's v2 API has no write surface. Four calls, well under the
+ * Read-only: these four calls only read. Well under the
  * documented 600 per window.
  */
 const describeIfKey = process.env.DESKTIME_API_KEY ? describe : describe.skip;
