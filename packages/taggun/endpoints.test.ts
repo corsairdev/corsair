@@ -7,6 +7,7 @@ import {
 	CREATE_ACK,
 	NOT_FOUND_ACK,
 	SIMPLE_RECEIPT,
+	TOTAL_AMOUNT_REGIONS,
 	UNREADABLE_RECEIPT,
 	VERBOSE_RECEIPT,
 } from './test-fixtures';
@@ -56,6 +57,36 @@ describe('output parsing', () => {
 		);
 		expect(result.amounts).toHaveLength(1);
 		expect(result.numbers?.[1]?.classifyResult).toBe('primaryTotal');
+	});
+
+	it('keeps a real nested region through the parse', async () => {
+		// The published examples empty every `regions` array, so a wrong shape
+		// here would pass every offline test and reject a paid scan. The spec
+		// nests points: an array of shapes, each an array of { x, y }.
+		respond(fetchMock, VERBOSE_RECEIPT);
+
+		const result = (await invoke(Verbose.url, {
+			url: 'https://files.example.com/receipt.png',
+		})) as typeof VERBOSE_RECEIPT;
+
+		expect(result.totalAmount.regions).toEqual(TOTAL_AMOUNT_REGIONS);
+		expect(result.totalAmount.regions?.[0]?.[0]?.x).toBe(437);
+		expect(result.totalAmount.regions?.[0]?.at(-1)?.y).toBe(807);
+	});
+
+	it('rejects a region whose points are not coordinates', async () => {
+		respond(fetchMock, {
+			...VERBOSE_RECEIPT,
+			totalAmount: {
+				...VERBOSE_RECEIPT.totalAmount,
+				// A flat shape, which is what a wrong reading of the spec produces.
+				regions: [{ x: 437, y: 787 }],
+			},
+		});
+
+		await expect(
+			invoke(Verbose.url, { url: 'https://files.example.com/receipt.png' }),
+		).rejects.toThrow();
 	});
 
 	it('accepts an answer where only trackingId is present', async () => {
@@ -111,6 +142,22 @@ describe('output parsing', () => {
 
 		expect(result.smartValidate.prompts[0]?.question).toContain('credit card');
 		expect(result.balanceOwing.max).toBe(0.01);
+	});
+
+	it('reads settings that hold balanceOwing.max of zero', async () => {
+		// A campaign created outside this plugin can store zero, which Taggun
+		// treats as skipping the comparison. The read side must accept it, or
+		// those settings can never be fetched and so never repaired.
+		respond(fetchMock, {
+			...CAMPAIGN_SETTINGS,
+			balanceOwing: { max: 0 },
+		});
+
+		const result = (await invoke(Campaigns.get, {
+			campaignId: 'external-campaign',
+		})) as typeof CAMPAIGN_SETTINGS;
+
+		expect(result.balanceOwing.max).toBe(0);
 	});
 });
 
@@ -292,8 +339,19 @@ describe('input rejections', () => {
 	});
 
 	it('rejects a balanceOwing max of zero, which Taggun does not compare', async () => {
+		// The write side still refuses it: sending zero would look like a rule
+		// and behave like no rule.
 		await expect(
 			invoke(Campaigns.create, {
+				campaignId: 'coffee',
+				settings: { balanceOwing: { max: 0 } },
+			}),
+		).rejects.toThrow(/greater than zero/);
+	});
+
+	it('rejects a zero balanceOwing max on update as well as create', async () => {
+		await expect(
+			invoke(Campaigns.update, {
 				campaignId: 'coffee',
 				settings: { balanceOwing: { max: 0 } },
 			}),

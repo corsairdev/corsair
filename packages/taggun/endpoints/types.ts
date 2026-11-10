@@ -7,6 +7,15 @@ import { z } from 'zod';
 // enables features. Spec: https://api.taggun.io/docs/swagger.json
 
 /**
+ * Pixel coordinates of a value on the document. The shape is doubly nested:
+ * an array of shapes, each shape an array of corner points. Reading it as a
+ * flat array of objects rejects every response that carries a region.
+ */
+const PointSchema = z.object({ x: z.number(), y: z.number() }).loose();
+
+const RegionsSchema = z.array(z.array(PointSchema)).optional();
+
+/**
  * A field Taggun returns as `{ data, confidenceLevel }`, plus verbose-only
  * helpers. `data` can be absent while the object is present, so nothing here
  * is required: the docs say optional properties are omitted, not nulled.
@@ -19,7 +28,7 @@ const ConfidenceSchema = z
 		index: z.number().optional(),
 		keyword: z.string().optional(),
 		currencyCode: z.string().optional(),
-		regions: z.array(z.record(z.string(), z.number())).optional(),
+		regions: RegionsSchema,
 	})
 	.loose();
 
@@ -37,7 +46,7 @@ const RegionTextSchema = z
 		text: z.string().optional(),
 		index: z.number().optional(),
 		classifyResult: z.string().optional(),
-		regions: z.array(z.record(z.string(), z.number())).optional(),
+		regions: RegionsSchema,
 	})
 	.loose();
 
@@ -216,7 +225,7 @@ const ProductLineItemSchema = z
 		confidenceLevel: z.number().optional(),
 		text: z.string().optional(),
 		index: z.number().optional(),
-		regions: z.array(z.record(z.string(), z.number())).optional(),
+		regions: RegionsSchema,
 	})
 	.loose();
 
@@ -323,7 +332,7 @@ export const VerboseReceiptSchema = SimpleReceiptSchema.extend({
 	text: z
 		.object({
 			text: z.string().optional(),
-			regions: z.array(z.record(z.string(), z.number())).optional(),
+			regions: RegionsSchema,
 		})
 		.loose()
 		.optional(),
@@ -574,26 +583,42 @@ const ProductLineItemsSectionSchema = z
 		requireBoth(value.quantity, 'quantity', issue);
 	});
 
-const BalanceOwingSectionSchema = z
-	.object({
-		skip: z
-			.boolean()
-			.optional()
-			.describe(
-				'Extract and return `balanceAmount` without adding `balance_amount_validated` to the result keys. Does not replace `max`.',
-			),
-		max: z
-			.number()
-			.describe(
-				'Maximum accepted amount owing. Required whenever this section is sent, even with `skip`. Use a value above zero: Taggun does not compare when this is 0.',
-			),
-	})
+/** The fields of `balanceOwing`, before any write-time rule is applied. */
+const BalanceOwingShape = {
+	skip: z
+		.boolean()
+		.optional()
+		.describe(
+			'Extract and return `balanceAmount` without adding `balance_amount_validated` to the result keys. Does not replace `max`.',
+		),
+	max: z
+		.number()
+		.describe(
+			'Maximum accepted amount owing. Required whenever this section is sent, even with `skip`. Use a value above zero: Taggun does not compare when this is 0.',
+		),
+};
+
+/**
+ * The write shape. `max` must be above zero, because Taggun skips the
+ * comparison when it is 0: sending that would look like a rule and behave like
+ * no rule.
+ */
+const BalanceOwingInputSchema = z
+	.object(BalanceOwingShape)
 	.loose()
 	.refine((value) => value.max > 0, {
 		message:
 			'`max` must be greater than zero: Taggun skips the comparison entirely when it is 0.',
 		path: ['max'],
 	});
+
+/**
+ * The stored shape, read back by `campaigns.get`. It accepts `max: 0`, because a
+ * campaign created outside this plugin can hold that value; rejecting it here
+ * would make those settings unreadable and so unreparable through the documented
+ * get-then-update flow.
+ */
+const BalanceOwingStoredSchema = z.object(BalanceOwingShape).loose();
 
 const FraudDetectionSectionSchema = z
 	.object({
@@ -658,33 +683,54 @@ const SmartValidateSectionSchema = z
 /**
  * Rules that decide whether a receipt is valid. Every section is optional, and
  * empty sections may be omitted from what Taggun returns.
+ *
+ * One builder serves both directions: writes carry the sections that refuse a
+ * value the API would ignore, reads accept whatever is stored, including values
+ * an earlier or external caller wrote.
  */
-export const CampaignSettingsSchema = z
-	.object({
-		date: z
-			.object({
-				start: z
-					.string()
-					.describe(
-						'Campaign start, UTC ISO 8601, e.g. 2026-06-01T00:00:00.000Z.',
-					),
-				end: z
-					.string()
-					.describe(
-						'Campaign end, UTC ISO 8601, e.g. 2026-06-30T23:59:59.999Z.',
-					),
-			})
-			.loose()
-			.optional()
-			.describe('Receipt date window; both bounds are required when supplied.'),
-		merchantNames: MerchantNamesSectionSchema.optional(),
-		productCodes: ProductCodesSectionSchema.optional(),
-		productLineItems: ProductLineItemsSectionSchema.optional(),
-		balanceOwing: BalanceOwingSectionSchema.optional(),
-		fraudDetection: FraudDetectionSectionSchema.optional(),
-		smartValidate: SmartValidateSectionSchema.optional(),
-	})
-	.loose();
+function buildCampaignSettings(balanceOwing: z.ZodType) {
+	return z
+		.object({
+			date: z
+				.object({
+					start: z
+						.string()
+						.describe(
+							'Campaign start, UTC ISO 8601, e.g. 2026-06-01T00:00:00.000Z.',
+						),
+					end: z
+						.string()
+						.describe(
+							'Campaign end, UTC ISO 8601, e.g. 2026-06-30T23:59:59.999Z.',
+						),
+				})
+				.loose()
+				.optional()
+				.describe(
+					'Receipt date window; both bounds are required when supplied.',
+				),
+			merchantNames: MerchantNamesSectionSchema.optional(),
+			productCodes: ProductCodesSectionSchema.optional(),
+			productLineItems: ProductLineItemsSectionSchema.optional(),
+			balanceOwing: balanceOwing.optional(),
+			fraudDetection: FraudDetectionSectionSchema.optional(),
+			smartValidate: SmartValidateSectionSchema.optional(),
+		})
+		.loose();
+}
+
+/** What `campaigns.create` and `campaigns.update` accept. */
+export const CampaignSettingsSchema = buildCampaignSettings(
+	BalanceOwingInputSchema,
+);
+
+/**
+ * What `campaigns.get` returns. A stored campaign can hold values this plugin
+ * would refuse to write, so the read side must not apply write rules.
+ */
+export const StoredCampaignSettingsSchema = buildCampaignSettings(
+	BalanceOwingStoredSchema,
+);
 
 function requireBoth(
 	range: { min?: number | undefined; max?: number | undefined } | undefined,
@@ -727,7 +773,7 @@ const CampaignsGetInputSchema = z.object({ campaignId: CampaignIdSchema });
 
 export type CampaignsGetInput = z.input<typeof CampaignsGetInputSchema>;
 
-export const CampaignsGetOutputSchema = CampaignSettingsSchema;
+export const CampaignsGetOutputSchema = StoredCampaignSettingsSchema;
 
 export type CampaignsGetResponse = z.output<typeof CampaignsGetOutputSchema>;
 
