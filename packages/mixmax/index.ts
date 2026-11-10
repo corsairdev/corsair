@@ -11,7 +11,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import type { z } from 'zod';
 import {
 	AppointmentLinks,
 	CodeSnippets,
@@ -1518,6 +1519,35 @@ export const mixmaxAuthConfig = {
 
 const defaultAuthType = 'api_key' as const;
 
+type MixmaxOperation = keyof typeof mixmaxEndpointMeta;
+
+// Records that a write succeeded at Mixmax but its response did not match the
+// output schema. The event is `completed` (the write happened) and carries
+// only the schema paths and issue codes, never response values.
+async function recordOutputMismatch(
+	ctx: unknown, // unknown: the Corsair runtime context, passed through from the endpoint call
+	operation: string,
+	error: z.ZodError,
+): Promise<void> {
+	try {
+		await logEventFromContext(
+			ctx as Parameters<typeof logEventFromContext>[0],
+			`mixmax.${operation}.outputMismatch`,
+			{
+				operation,
+				outputMismatch: true,
+				issues: error.issues.slice(0, 20).map((issue) => ({
+					path: issue.path.join('.'),
+					code: issue.code,
+				})),
+			},
+			'completed',
+		);
+	} catch {
+		// Logging must never turn a completed write into a failure.
+	}
+}
+
 // Binds every Mixmax endpoint to its declared input and output schemas.
 // Calls use this validated tree at runtime; the schemas registry stays as
 // introspection metadata. The runtime context and per-operation shapes are
@@ -1543,7 +1573,21 @@ function withMixmaxSchemas<
 			) => {
 				const parsedInput = schema.input.parse(input ?? {});
 				const result = await endpoint(ctx, parsedInput);
-				return schema.output.parse(result);
+				const parsedOutput = schema.output.safeParse(result);
+				if (parsedOutput.success) return parsedOutput.data;
+				// A read that does not match its schema throws: nothing changed
+				// at Mixmax, so the caller can safely retry or report it.
+				if (
+					mixmaxEndpointMeta[operation as MixmaxOperation].riskLevel === 'read'
+				) {
+					throw parsedOutput.error;
+				}
+				// A write has already happened by now (the email is sent, the
+				// record changed). Throwing would invite a retry that sends or
+				// writes twice, so return the response as Mixmax sent it and
+				// record the mismatch next to the completed event instead.
+				await recordOutputMismatch(ctx, operation, parsedOutput.error);
+				return result;
 			};
 			return [key, validated];
 		}
