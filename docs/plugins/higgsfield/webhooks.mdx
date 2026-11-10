@@ -1,0 +1,140 @@
+---
+title: Webhooks
+description: "Higgsfield incoming webhooks: event paths, payloads, and response data."
+---
+
+The Higgsfield plugin handles incoming webhooks. Higgsfield has no account-wide subscription. Pass your Corsair HTTP handler URL as `webhookUrl` to `generations.submit` or `generations.run` for each request, and Higgsfield POSTs the result there when the request reaches completed, failed or nsfw (see [Overview](/plugins/higgsfield/overview) for setup). In a multi-tenant app, put `?tenantId=<tenant>` on that URL: nothing in a delivery names the account, and the handler below forwards the query to `processWebhook`. The signature covers the body but not the URL, so `?tenantId=` only picks which tenant's secret checks a delivery. When tenants share a secret, because they use one Higgsfield account or the `webhookSecret` option, anyone holding a signed delivery under 5 minutes old can resend it with another `tenantId`, and that tenant's hooks run on it. Higgsfield signs with one secret per account, so tenants on one account must all store that account's secret. Give each tenant its own Higgsfield account, or check in an `after` hook that the `request_id` is one that tenant submitted before acting on it. By then the plugin has logged the event under that tenant. A `before` hook runs ahead of the signature check, so it can receive an unsigned or forged delivery. Keep side effects in `after`.
+
+Only signed deliveries are accepted. Higgsfield signs for an account once its secret has been revealed under **Settings** in the [Higgsfield Console](https://console.higgsfield.ai), and sends unsigned deliveries until then. Store the `whsec_` secret with `corsair.higgsfield.keys.set_webhook_signature(secret)` or `higgsfield({ webhookSecret })`. If no secret is set, or a delivery fails verification, `processWebhook` reports a failure and no hook runs after it. The handler below then answers 500, and Higgsfield retries for up to two hours. It doesn't retry a 4xx.
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `requests`
+  - `completed` (`requests.completed`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // The raw text: Higgsfield signs the exact bytes it sent, so don't parse it first.
+    const body = await request.text();
+    // The query carries ?tenantId=, which picks the tenant's signing secret.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    const result = await processWebhook(corsair, headers, body, query);
+    // Answer 500 when processing failed (no signing secret, or a delivery
+    // that failed verification). Higgsfield retries a 5xx, never a 4xx.
+    return Response.json(result.response ?? { success: false }, {
+        status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
+    });
+}
+```
+
+## Events
+
+## Requests
+
+### Completed
+
+`requests.completed`
+
+A request reached completed (with its output), failed or nsfw. Signed with Standard Webhooks; only signed deliveries are accepted.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `status` | `string` | Yes | completed: the output is in payload. failed: see error. nsfw: moderation rejected the input or output. Failed and nsfw requests are not charged. |
+| `error` | `string \| Record<string, any> \| null` | No | — |
+| `expires_at` | `string \| null` | No | When the files in payload are deleted and their URLs stop working: 7 days after the request finished by default. Download them before then. |
+| `payload` | `object \| null` | No | The output, present when status is completed. Some video and 3D operations add artifacts such as zip, mov, jsx, fbx or ply. |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  images?: {
+    url?: string | null,
+    content_type?: string | null
+  }[] | null,
+  video?: {
+    url?: string | null,
+    content_type?: string | null
+  } | null,
+  audio?: {
+    url?: string | null,
+    content_type?: string | null
+  } | null,
+  audios?: {
+    url?: string | null,
+    content_type?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  request_id: string,
+  status: string,
+  error?: string | Record<string, any> | null,
+  expires_at?: string | null,
+  payload?: {
+    images?: {
+      url?: string | null,
+      content_type?: string | null
+    }[] | null,
+    video?: {
+      url?: string | null,
+      content_type?: string | null
+    } | null,
+    audio?: {
+      url?: string | null,
+      content_type?: string | null
+    } | null,
+    audios?: {
+      url?: string | null,
+      content_type?: string | null
+    }[] | null
+  } | null,
+  webhook_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+higgsfield({
+    webhookHooks: {
+        requests: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
