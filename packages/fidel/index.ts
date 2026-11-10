@@ -421,8 +421,9 @@ export const fidelEndpointMeta = {
 		description: 'Unlink a location from an offer',
 	},
 	'offers.sendOfferToBrand': {
-		riskLevel: 'destructive',
-		description: 'Notify a brand about an offer on the live environment',
+		riskLevel: 'write',
+		description:
+			'Send an offer to its brand for approval; this notifies the brand and works only in the live environment',
 	},
 	'offers.activateOfferOnCard': {
 		riskLevel: 'write',
@@ -470,7 +471,8 @@ export const fidelEndpointMeta = {
 	},
 	'mid-requests.createMidRequest': {
 		riskLevel: 'write',
-		description: 'Create a MID request for a program',
+		description:
+			'Create a MID request to onboard, offboard or reassign a merchant ID; offboarding stops transaction tracking for that MID',
 	},
 	'marketplace.listMarketplaceOffers': {
 		riskLevel: 'read',
