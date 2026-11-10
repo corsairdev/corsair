@@ -76,6 +76,8 @@ describeIfKey('live Scrape.do API', () => {
 		expect(result.markdown).toContain(PAGE_TEXT);
 	});
 
+	// The provider's queue can take over a minute when its pool is busy, and
+	// jest's 30s default would abort the wait rather than report it.
 	it('runs an async job and reads its task back', async () => {
 		const created = await makeScrapeDoRequest(key, {
 			kind: 'async',
@@ -89,20 +91,31 @@ describeIfKey('live Scrape.do API', () => {
 		});
 		expect(started.task_ids).toHaveLength(1);
 
-		// Poll a bounded number of times rather than sleeping indefinitely: the
-		// job is one plain fetch, which the live API finishes in about a second.
+		// Poll with a real deadline rather than a fixed attempt count. The async
+		// queue's latency is the provider's: a one-URL job finished in about a
+		// second when this was written, and later sat `queued` with its task
+		// `pending` for 45s+ while the pool was busy. Give it 2 minutes, and fail
+		// with what was actually seen rather than asserting a fast answer.
+		const deadline = Date.now() + 120_000;
 		let status = 'queued';
-		for (let attempt = 0; attempt < 20 && status === 'queued'; attempt++) {
+		while (Date.now() < deadline && status === 'queued') {
 			const read = await makeScrapeDoRequest(key, {
 				kind: 'async',
 				method: 'GET',
 				path: `/jobs/${started.job_id}`,
 			});
-			const body = parseJsonObject(read.body);
-			status = String(body.Status);
+			status = String(parseJsonObject(read.body).Status);
 			if (status === 'queued') {
-				await new Promise((resolve) => setTimeout(resolve, 1000));
+				await new Promise((resolve) => setTimeout(resolve, 3000));
 			}
+		}
+		if (status === 'queued') {
+			// Not a plugin failure: the provider accepted the job and never started
+			// it. Saying that plainly beats a bare expect mismatch, which read as a
+			// plugin bug the first time this happened.
+			throw new Error(
+				`Scrape.do queued job ${started.job_id} for 2 minutes without starting it; its async pool was not draining. The plugin sent the job correctly.`,
+			);
 		}
 		expect(['success', 'error', 'canceled']).toContain(status);
 
@@ -136,5 +149,5 @@ describeIfKey('live Scrape.do API', () => {
 			path: '/jobs',
 		});
 		expect(parseJsonObject(listed.body)).toBeDefined();
-	});
+	}, 180_000);
 });

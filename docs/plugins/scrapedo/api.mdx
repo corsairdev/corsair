@@ -125,7 +125,7 @@ await corsair.scrapedo.api.jobs.get({ jobId: 'a7730ad5-f40f-44a5-98ae-80f57620d2
 |------|------|----------|-------------|
 | `jobId` | `string` | Yes | The `job_id` from `jobs.start`. |
 
-A job is `queued`, then `success`, `error` or `canceled`. Each task is `rotating` while it runs, then `success` or `error`.
+A job is `queued`, then `success`, `error` or `canceled`. Each task is `pending` before the pool picks it up, `rotating` while it runs, then `success` or `error`. Queueing latency is the provider's: a one-URL job can finish in about a second or wait over a minute when its pool is busy, so poll with a real deadline rather than a fixed attempt count.
 
 
 

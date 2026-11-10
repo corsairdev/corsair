@@ -490,10 +490,11 @@ const JobTaskSchema = z
 	.object({
 		task_id: z.string(),
 		url: z.string().nullish(),
-		// The live values: `rotating` while running, then `success` or `error`.
+		// Live values, all observed: `pending` before the pool picks the task up,
+		// `rotating` while it runs, then `success` or `error`.
 		status: z
 			.string()
-			.describe('rotating while running, then success or error.'),
+			.describe('pending, rotating while running, then success or error.'),
 	})
 	.loose();
 
