@@ -9,6 +9,7 @@ import {
 	PATCH_OPERATION_KEYS,
 } from './types';
 
+// unknown: an Actions API action; each builder below sets its fields and Sanity validates them.
 type Action = Record<string, unknown>;
 
 /** Runs Actions API actions in one transaction. */
@@ -36,6 +37,7 @@ function patchOf(input: Record<string, unknown>): Record<string, unknown> {
 	return patch;
 }
 
+// unknown: optional revision guards, passed to Sanity as given.
 function publishAction(id: string, guards: Record<string, unknown> = {}) {
 	return {
 		actionType: 'sanity.action.document.publish',
@@ -176,6 +178,7 @@ export const patch: SanityEndpoints['documentsPatch'] = async (
 	const { projectId, dataset } = await resolveTarget(ctx, input.dataset);
 	const result = await makeSanityRequest<{
 		transactionId?: string;
+		// unknown: the patched document, validated by the output schema below.
 		results?: { document?: unknown }[];
 	}>(ctx.key, { projectId }, `/data/mutate/${dataset}`, {
 		method: 'POST',
@@ -382,6 +385,7 @@ export const history: SanityEndpoints['documentsHistory'] = async (
 ) => {
 	const input = Inputs.documentsHistory.parse(rawInput);
 	const { projectId, dataset } = await resolveTarget(ctx, input.dataset);
+	// unknown: past versions of a document, validated by the output schema below.
 	const result = await makeSanityRequest<{ documents?: unknown[] }>(
 		ctx.key,
 		{ projectId },

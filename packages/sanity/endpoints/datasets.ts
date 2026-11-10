@@ -10,6 +10,7 @@ import {
 export const list: SanityEndpoints['datasetsList'] = async (ctx, rawInput) => {
 	Inputs.datasetsList.parse(rawInput ?? {});
 	const projectId = await resolveProjectId(ctx);
+	// unknown: dataset entries, validated by the output schema below.
 	const datasets = await makeSanityRequest<unknown[]>(
 		ctx.key,
 		{ projectId },

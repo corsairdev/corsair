@@ -28,6 +28,7 @@ import {
 	parseNdjson,
 } from './endpoints/documents';
 import { list as schemasList } from './endpoints/schemas';
+import { isStrictBase64, MAX_UPLOAD_BYTES } from './endpoints/types';
 import {
 	attempts as webhooksAttempts,
 	create as webhooksCreate,
@@ -58,6 +59,7 @@ type Ctx = Parameters<typeof documentsQuery>[0];
 const makeCtx = (
 	options: Record<string, unknown> = { projectId: PROJECT_ID },
 	keys: Record<string, () => Promise<string | null>> = {},
+	// unknown: endpoints read ctx.key, ctx.options and ctx.keys; the rest is the runtime's.
 ) => ({ key: TOKEN, options, keys }) as unknown as Ctx;
 
 const ctx = makeCtx();
@@ -591,6 +593,40 @@ describe('assets.upload', () => {
 			imageMetadata: ['exif'],
 		});
 		expect(callOf(0).url).toBe(`${API}/assets/files/${DATASET}`);
+	});
+
+	it('accepts a file at the 25 MB limit and refuses one byte more, before any request', async () => {
+		fetchMock.mockResolvedValueOnce(
+			jsonResponse({
+				document: { _id: 'file-big', _type: 'sanity.fileAsset' },
+			}),
+		);
+		const atLimit = Buffer.alloc(MAX_UPLOAD_BYTES, 7).toString('base64');
+		await assetsUpload(ctx, {
+			kind: 'file',
+			contentBase64: atLimit,
+			contentType: 'application/octet-stream',
+		});
+		expect(Buffer.from(callOf(0).init.body).byteLength).toBe(MAX_UPLOAD_BYTES);
+
+		const overLimit = Buffer.alloc(MAX_UPLOAD_BYTES + 1, 7).toString('base64');
+		await expect(
+			assetsUpload(ctx, {
+				kind: 'file',
+				contentBase64: overLimit,
+				contentType: 'application/octet-stream',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('checks base64 padding and characters', () => {
+		for (const valid of ['QQ==', 'QUI=', 'QUJD', 'QUJDRA==']) {
+			expect(isStrictBase64(valid)).toBe(true);
+		}
+		for (const invalid of ['QQ', 'A===', 'QQ=A', 'QQ==QQ==', 'Q-_=', 'Q Q=']) {
+			expect(isStrictBase64(invalid)).toBe(false);
+		}
 	});
 
 	it('refuses base64 that is not strict', async () => {

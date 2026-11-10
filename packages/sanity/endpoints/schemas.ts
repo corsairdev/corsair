@@ -44,6 +44,7 @@ function summarizeType(node: SchemaNode) {
 function parseTypes(raw: string | undefined): SchemaNode[] {
 	if (!raw) return [];
 	try {
+		// unknown: JSON.parse output, narrowed to an array of type definitions just below.
 		const parsed: unknown = JSON.parse(raw);
 		return Array.isArray(parsed)
 			? (parsed as SchemaNode[]).filter(

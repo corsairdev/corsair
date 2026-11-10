@@ -17,6 +17,7 @@ async function runAgentAction<T>(
 	ctx: Parameters<SanityEndpoints['agentActionsGenerate']>[0],
 	action: ActionName,
 	dataset: string | undefined,
+	// unknown: the request body; the input schema validated its fields and Sanity validates their contents.
 	body: Record<string, unknown>,
 	accept?: 'text',
 ) {

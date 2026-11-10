@@ -558,8 +558,16 @@ export type DocumentsTransactionsResponse = z.infer<
 /** Largest upload, decoded. */
 export const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
 
-const STRICT_BASE64_RE =
-	/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+const BASE64_CHARS_RE = /^[A-Za-z0-9+/]*={0,2}$/;
+
+/**
+ * Standard, padded base64. A single character class and a length check, because
+ * a repeated group (`(?:[...]{4})*`) overflows the regex engine's stack on a few
+ * MB of input, which would refuse every larger upload.
+ */
+export function isStrictBase64(value: string): boolean {
+	return value.length % 4 === 0 && BASE64_CHARS_RE.test(value);
+}
 
 const AssetsUploadInputSchema = z.object({
 	kind: z
@@ -571,7 +579,7 @@ const AssetsUploadInputSchema = z.object({
 		.string()
 		.min(4)
 		.max(Math.ceil(MAX_UPLOAD_BYTES / 3) * 4)
-		.regex(STRICT_BASE64_RE, 'Must be standard base64, padded.')
+		.refine(isStrictBase64, 'Must be standard base64, padded.')
 		.describe('The file as base64, up to 25 MB decoded.'),
 	contentType: z
 		.string()
@@ -621,6 +629,7 @@ const DatasetEntrySchema = z
 			),
 		createdAt: z.string().nullish(),
 		datasetProfile: z.string().nullish(),
+		// unknown: Sanity doesn't document a tag's shape; a new field must not break the list.
 		tags: z.array(z.unknown()).nullish(),
 	})
 	.loose();
@@ -768,7 +777,10 @@ const InstructionParamsSchema = z
 const TargetSchema = z
 	.union([
 		z.record(z.string(), z.unknown()),
-		z.array(z.record(z.string(), z.unknown())).max(50),
+		// unknown: target objects; Sanity validates their path, include, exclude and operation.
+		z
+			.array(z.record(z.string(), z.unknown()))
+			.max(50),
 	])
 	.optional()
 	.describe(

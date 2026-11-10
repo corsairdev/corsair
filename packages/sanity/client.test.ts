@@ -113,6 +113,7 @@ describe('makeSanityRequest', () => {
 	});
 
 	it('refuses a body that cannot be JSON', async () => {
+		// unknown: a circular object, to check that serialization refuses it.
 		const circular: Record<string, unknown> = {};
 		circular.self = circular;
 		await expect(

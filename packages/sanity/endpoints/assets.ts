@@ -27,6 +27,7 @@ export const upload: SanityEndpoints['assetsUpload'] = async (
 	}
 	const { projectId, dataset } = await resolveTarget(ctx, input.dataset);
 	const kind = input.kind === 'image' ? 'images' : 'files';
+	// unknown: the asset document, validated by the output schema below.
 	const result = await makeSanityRequest<{ document?: unknown }>(
 		ctx.key,
 		{ projectId },

@@ -62,6 +62,7 @@ function ruleOf(input: WebhookFields) {
 export const list: SanityEndpoints['webhooksList'] = async (ctx, rawInput) => {
 	Inputs.webhooksList.parse(rawInput ?? {});
 	const projectId = await resolveProjectId(ctx);
+	// unknown: webhook objects; the secret is dropped and the output schema validates the rest.
 	const hooks = await makeSanityRequest<unknown[]>(
 		ctx.key,
 		{ projectId },
@@ -132,6 +133,7 @@ export const update: SanityEndpoints['webhooksUpdate'] = async (
 	let rule = ruleOf(input);
 	if (rule) {
 		// A PATCH replaces the whole rule, so the parts not given are kept.
+		// unknown: the webhook's rule object (on, filter, projection), merged as Sanity returns it.
 		const current = await makeSanityRequest<{ rule?: Record<string, unknown> }>(
 			ctx.key,
 			{ projectId },
@@ -209,6 +211,7 @@ export const attempts: SanityEndpoints['webhooksAttempts'] = async (
 ) => {
 	const input = Inputs.webhooksAttempts.parse(rawInput);
 	const projectId = await resolveProjectId(ctx);
+	// unknown: delivery attempts, validated by the output schema below.
 	const result = await makeSanityRequest<unknown[]>(
 		ctx.key,
 		{ projectId },

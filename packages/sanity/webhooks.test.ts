@@ -19,11 +19,13 @@ import {
 function request(
 	headers: Record<string, string>,
 	rawBody: string | undefined,
+	// unknown: the verifier reads only headers and rawBody.
 ): WebhookRequest<unknown> {
 	return {
 		headers,
 		rawBody,
 		payload: rawBody ? JSON.parse(rawBody) : undefined,
+		// unknown: the verifier reads only headers and rawBody.
 	} as WebhookRequest<unknown>;
 }
 

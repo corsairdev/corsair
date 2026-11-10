@@ -61,7 +61,9 @@ const describeLive = ENV.success ? describe : describe.skip;
 const agentLive =
 	ENV.success &&
 	process.env.SANITY_LIVE_AGENT === '1' &&
-	Boolean(process.env.SANITY_AGENT_DOCUMENT_ID);
+	Boolean(process.env.SANITY_AGENT_DATASET) &&
+	Boolean(process.env.SANITY_AGENT_DOCUMENT_ID) &&
+	Boolean(process.env.SANITY_AGENT_SCHEMA_ID);
 const itAgent = agentLive ? it : it.skip;
 
 const DATASET = ENV.data?.SANITY_TEST_DATASET ?? '';
@@ -70,6 +72,7 @@ const DATASET = ENV.data?.SANITY_TEST_DATASET ?? '';
 const ctx = {
 	key: ENV.data?.SANITY_API_KEY ?? '',
 	options: { projectId: ENV.data?.SANITY_PROJECT_ID, dataset: DATASET },
+	// unknown: endpoints read ctx.key and ctx.options; the rest of the context is the runtime's.
 } as unknown as Parameters<typeof documentsQuery>[0];
 
 const PIXEL_PNG =
@@ -381,6 +384,7 @@ describeLive('Sanity live', () => {
 					target: { path: 'title' },
 				});
 				expect(response.document).toMatchObject({ _id: expect.any(String) });
+				// unknown: the generated title's type comes from the deployed schema.
 				expect(typeof (response.document as { title?: unknown }).title).toBe(
 					'string',
 				);
@@ -398,6 +402,7 @@ describeLive('Sanity live', () => {
 					instruction: 'Rewrite in a more formal tone.',
 					target: { path: 'title' },
 				});
+				// unknown: the generated title's type comes from the deployed schema.
 				expect(typeof (response.document as { title?: unknown }).title).toBe(
 					'string',
 				);
@@ -415,6 +420,7 @@ describeLive('Sanity live', () => {
 					toLanguage: { id: 'de-DE', title: 'German' },
 					target: { path: 'title' },
 				});
+				// unknown: the generated title's type comes from the deployed schema.
 				expect(typeof (response.document as { title?: unknown }).title).toBe(
 					'string',
 				);
