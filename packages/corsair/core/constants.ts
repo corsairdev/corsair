@@ -301,6 +301,7 @@ export const BaseProviders = [
 	'leiga',
 	'lever',
 	'linear',
+	'linguapop',
 	'linkedin',
 	'litescrape',
 	'loyverse',
@@ -764,6 +765,7 @@ export const ProviderDisplayNames = {
 	leiga: 'Leiga',
 	lever: 'Lever',
 	linear: 'Linear',
+	linguapop: 'Linguapop',
 	linkedin: 'LinkedIn',
 	litescrape: 'LiteScrape',
 	loyverse: 'Loyverse',
@@ -1231,6 +1233,7 @@ export type AllProviders =
 	| 'leiga'
 	| 'lever'
 	| 'linear'
+	| 'linguapop'
 	| 'linkedin'
 	| 'litescrape'
 	| 'loyverse'
