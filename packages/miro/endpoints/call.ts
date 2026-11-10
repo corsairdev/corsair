@@ -95,7 +95,17 @@ export function itemBody(
 		body.parent = { id: parsed.parentId };
 	}
 	// A style object is grouped already; each caller flattens its own colours
-	// into it before calling.
-	if (parsed.style !== undefined) body.style = parsed.style;
+	// into it before calling. Miro rejects an empty `style`, so an empty object
+	// is dropped rather than sent.
+	if (parsed.style !== undefined && hasKeys(parsed.style)) {
+		body.style = parsed.style;
+	}
 	return body;
+}
+
+/** True when the value is an object with at least one key. */
+function hasKeys(value: unknown): boolean {
+	return (
+		typeof value === 'object' && value !== null && Object.keys(value).length > 0
+	);
 }

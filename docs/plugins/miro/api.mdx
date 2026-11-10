@@ -627,7 +627,7 @@ Change a card title, description, due date, assignee or position
 **Risk:** `write`
 
 ```ts
-await corsair.miro.api.cards.update({});
+await corsair.miro.api.cards.update({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', title: 'Reopened' });
 ```
 
 **Input**
@@ -812,7 +812,7 @@ Read one connector by id
 **Risk:** `read`
 
 ```ts
-await corsair.miro.api.connectors.get({});
+await corsair.miro.api.connectors.get({ boardId: 'uXjVK1abcd=', connectorId: '3458764513820541007' });
 ```
 
 **Input**
@@ -883,7 +883,7 @@ Page through the connectors on a board, with their endpoints and style
 **Risk:** `read`
 
 ```ts
-await corsair.miro.api.connectors.list({});
+await corsair.miro.api.connectors.list({ boardId: 'uXjVK1abcd=', limit: 10 });
 ```
 
 **Input**
@@ -968,7 +968,7 @@ Delete a connector; the two items it joined stay on the board
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.miro.api.connectors.remove({});
+await corsair.miro.api.connectors.remove({ boardId: 'uXjVK1abcd=', connectorId: '3458764513820541007' });
 ```
 
 **Input**
@@ -999,7 +999,7 @@ Change a connector shape, stroke style or captions
 **Risk:** `write`
 
 ```ts
-await corsair.miro.api.connectors.update({});
+await corsair.miro.api.connectors.update({ boardId: 'uXjVK1abcd=', connectorId: '3458764513820541007', strokeColor: '#f24726' });
 ```
 
 **Input**
@@ -1174,7 +1174,7 @@ Change an embed URL, mode, position or size
 **Risk:** `write`
 
 ```ts
-await corsair.miro.api.embeds.update({});
+await corsair.miro.api.embeds.update({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', mode: 'modal' });
 ```
 
 **Input**
@@ -1370,7 +1370,7 @@ Change a frame title, position, size or whether it shows its content
 **Risk:** `write`
 
 ```ts
-await corsair.miro.api.frames.update({});
+await corsair.miro.api.frames.update({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', title: 'Build' });
 ```
 
 **Input**
@@ -1470,7 +1470,7 @@ Read one item by id, whatever its kind: sticky note, shape, card, text, frame, e
 **Risk:** `read`
 
 ```ts
-await corsair.miro.api.items.get({});
+await corsair.miro.api.items.get({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001' });
 ```
 
 **Input**
@@ -1832,7 +1832,7 @@ Delete any board item by id; its content cannot be restored
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.miro.api.items.remove({});
+await corsair.miro.api.items.remove({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001' });
 ```
 
 **Input**
@@ -1865,7 +1865,7 @@ Read one board member's role and details
 **Risk:** `read`
 
 ```ts
-await corsair.miro.api.members.get({});
+await corsair.miro.api.members.get({ boardId: 'uXjVK1abcd=', memberId: '3074457345618258603' });
 ```
 
 **Input**
@@ -1982,7 +1982,7 @@ Remove a member's access to a board; their role cannot be restored by another ca
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.miro.api.members.remove({});
+await corsair.miro.api.members.remove({ boardId: 'uXjVK1abcd=', memberId: '3074457345618258603' });
 ```
 
 **Input**
@@ -2063,7 +2063,7 @@ Change a board member's role, for example promoting a viewer to an editor
 **Risk:** `write`
 
 ```ts
-await corsair.miro.api.members.update({});
+await corsair.miro.api.members.update({ boardId: 'uXjVK1abcd=', memberId: '3074457345618258603', role: 'commenter' });
 ```
 
 **Input**
@@ -2245,7 +2245,7 @@ Change a shape text, style, position or size
 **Risk:** `write`
 
 ```ts
-await corsair.miro.api.shapes.update({});
+await corsair.miro.api.shapes.update({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', style: { fillColor: '#dbeafe' } });
 ```
 
 **Input**
@@ -2477,7 +2477,7 @@ Change a sticky note text, shape, colour, position or size
 **Risk:** `write`
 
 ```ts
-await corsair.miro.api.stickyNotes.update({});
+await corsair.miro.api.stickyNotes.update({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', content: 'Updated text' });
 ```
 
 **Input**
@@ -2668,7 +2668,7 @@ Read one tag by id, with its title, colour and links
 **Risk:** `read`
 
 ```ts
-await corsair.miro.api.tags.get({});
+await corsair.miro.api.tags.get({ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008' });
 ```
 
 **Input**
@@ -2798,7 +2798,7 @@ List the tags defined on a board, with their colours
 **Risk:** `read`
 
 ```ts
-await corsair.miro.api.tags.list({});
+await corsair.miro.api.tags.list({ boardId: 'uXjVK1abcd=', limit: 20 });
 ```
 
 **Input**
@@ -2865,7 +2865,7 @@ List the tags attached to one item
 **Risk:** `read`
 
 ```ts
-await corsair.miro.api.tags.ofItem({});
+await corsair.miro.api.tags.ofItem({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001' });
 ```
 
 **Input**
@@ -2929,7 +2929,7 @@ Delete a tag from the board; it is detached from every item that carried it
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.miro.api.tags.remove({});
+await corsair.miro.api.tags.remove({ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008' });
 ```
 
 **Input**
@@ -2960,7 +2960,7 @@ Detach a tag from one item; the tag itself stays on the board
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.miro.api.tags.removeFromItem({});
+await corsair.miro.api.tags.removeFromItem({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', tagId: '3458764513820541008' });
 ```
 
 **Input**
@@ -2992,7 +2992,7 @@ Change a tag title or colour
 **Risk:** `write`
 
 ```ts
-await corsair.miro.api.tags.update({});
+await corsair.miro.api.tags.update({ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008', fillColor: 'blue' });
 ```
 
 **Input**
@@ -3161,7 +3161,7 @@ Change a text item content, style, position or size
 **Risk:** `write`
 
 ```ts
-await corsair.miro.api.texts.update({});
+await corsair.miro.api.texts.update({ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', content: 'Sprint 13' });
 ```
 
 **Input**

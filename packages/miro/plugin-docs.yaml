@@ -66,6 +66,49 @@ apiExamples:
     call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', tagId: '3458764513820541008' }"
   tags.items:
     call: "{ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008' }"
+  stickyNotes.update:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', content: 'Updated text' }"
+  shapes.update:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', style: { fillColor: '#dbeafe' } }"
+  cards.update:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', title: 'Reopened' }"
+  texts.update:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', content: 'Sprint 13' }"
+  frames.update:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', title: 'Build' }"
+  embeds.update:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', mode: 'modal' }"
+  items.get:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001' }"
+  items.remove:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001' }"
+  members.get:
+    call: "{ boardId: 'uXjVK1abcd=', memberId: '3074457345618258603' }"
+  members.update:
+    call: "{ boardId: 'uXjVK1abcd=', memberId: '3074457345618258603', role: 'commenter' }"
+  members.remove:
+    call: "{ boardId: 'uXjVK1abcd=', memberId: '3074457345618258603' }"
+  connectors.list:
+    call: "{ boardId: 'uXjVK1abcd=', limit: 10 }"
+  connectors.get:
+    call: "{ boardId: 'uXjVK1abcd=', connectorId: '3458764513820541007' }"
+  connectors.update:
+    call: "{ boardId: 'uXjVK1abcd=', connectorId: '3458764513820541007', strokeColor: '#f24726' }"
+  connectors.remove:
+    call: "{ boardId: 'uXjVK1abcd=', connectorId: '3458764513820541007' }"
+  tags.list:
+    call: "{ boardId: 'uXjVK1abcd=', limit: 20 }"
+  tags.get:
+    call: "{ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008' }"
+  tags.update:
+    call: "{ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008', fillColor: 'blue' }"
+  tags.remove:
+    call: "{ boardId: 'uXjVK1abcd=', tagId: '3458764513820541008' }"
+  tags.removeFromItem:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001', tagId: '3458764513820541008' }"
+  tags.ofItem:
+    call: "{ boardId: 'uXjVK1abcd=', itemId: '3458764513820541001' }"
+
 apiNotes:
   items.list: 'Miro filters on a single item type, so `type` takes one value. Pass `parentItemId` to read only what sits inside a frame.'
   boards.copy: 'The source board is a required `copy_from` query parameter on a PUT to the collection, which this operation fills from `boardId`.'

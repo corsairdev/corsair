@@ -49,6 +49,18 @@ const CursorPagingSchema = {
 
 const HrefSchema = z.string().nullish();
 
+/** True when at least one field carries a value, so an update is not a no-op. */
+function anySet(...values: unknown[]): boolean {
+	return values.some((value) => {
+		if (value === undefined) return false;
+		// An empty object or array is not a change on its own.
+		if (typeof value === 'object' && value !== null) {
+			return Object.keys(value).length > 0;
+		}
+		return true;
+	});
+}
+
 /**
  * A value inside an item's `data`, whose keys differ per item kind.
  *
@@ -567,11 +579,13 @@ const StickyNotesUpdateInputSchema = z
 	})
 	.superRefine((value, ctx) => {
 		if (
-			value.content === undefined &&
-			value.shape === undefined &&
-			value.fillColor === undefined &&
-			value.position === undefined &&
-			value.geometry === undefined
+			!anySet(
+				value.content,
+				value.shape,
+				value.fillColor,
+				value.position,
+				value.geometry,
+			)
 		) {
 			ctx.addIssue({
 				code: 'custom',
@@ -670,12 +684,7 @@ const ShapesUpdateInputSchema = z
 		geometry: GeometrySchema.optional(),
 	})
 	.superRefine((value, ctx) => {
-		if (
-			value.content === undefined &&
-			value.style === undefined &&
-			value.position === undefined &&
-			value.geometry === undefined
-		) {
+		if (!anySet(value.content, value.style, value.position, value.geometry)) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['content'],
@@ -738,16 +747,17 @@ const CardsUpdateInputSchema = z
 		cardTheme: z.string().optional(),
 	})
 	.superRefine((value, ctx) => {
-		const changed = [
-			value.title,
-			value.description,
-			value.dueDate,
-			value.assigneeId,
-			value.position,
-			value.geometry,
-			value.cardTheme,
-		];
-		if (changed.every((entry) => entry === undefined)) {
+		if (
+			!anySet(
+				value.title,
+				value.description,
+				value.dueDate,
+				value.assigneeId,
+				value.position,
+				value.geometry,
+				value.cardTheme,
+			)
+		) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['title'],
@@ -802,12 +812,7 @@ const TextsUpdateInputSchema = z
 		geometry: GeometrySchema.optional(),
 	})
 	.superRefine((value, ctx) => {
-		if (
-			value.content === undefined &&
-			value.style === undefined &&
-			value.position === undefined &&
-			value.geometry === undefined
-		) {
+		if (!anySet(value.content, value.style, value.position, value.geometry)) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['content'],
@@ -862,10 +867,7 @@ const FramesUpdateInputSchema = z
 	})
 	.superRefine((value, ctx) => {
 		if (
-			value.title === undefined &&
-			value.position === undefined &&
-			value.geometry === undefined &&
-			value.showContent === undefined
+			!anySet(value.title, value.position, value.geometry, value.showContent)
 		) {
 			ctx.addIssue({
 				code: 'custom',
@@ -921,12 +923,7 @@ const EmbedsUpdateInputSchema = z
 		geometry: GeometrySchema.optional(),
 	})
 	.superRefine((value, ctx) => {
-		if (
-			value.url === undefined &&
-			value.mode === undefined &&
-			value.position === undefined &&
-			value.geometry === undefined
-		) {
+		if (!anySet(value.url, value.mode, value.position, value.geometry)) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['url'],
@@ -1069,14 +1066,15 @@ const ConnectorsUpdateInputSchema = z
 		captions: z.array(z.string()).optional(),
 	})
 	.superRefine((value, ctx) => {
-		const changed = [
-			value.shape,
-			value.strokeColor,
-			value.strokeWidth,
-			value.strokeStyle,
-			value.captions,
-		];
-		if (changed.every((entry) => entry === undefined)) {
+		if (
+			!anySet(
+				value.shape,
+				value.strokeColor,
+				value.strokeWidth,
+				value.strokeStyle,
+				value.captions,
+			)
+		) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['shape'],
@@ -1250,6 +1248,25 @@ const ItemsByTagResponseSchema = z.object({
 
 export type ItemsByTagResponse = z.infer<typeof ItemsByTagResponseSchema>;
 
+/**
+ * What `items.get` can return: any one item kind, each wrapped in `{ item }`.
+ *
+ * Defined from the schemas so the declared type and the parser cannot drift;
+ * an earlier hand-written union left out cards, texts, frames and embeds and
+ * claimed the payload was unwrapped.
+ */
+const ItemUnionSchema = z.union([
+	ConnectorSchema,
+	StickyNoteSchema,
+	ShapeSchema,
+	CardSchema,
+	TextSchema,
+	FrameSchema,
+	EmbedSchema,
+]);
+
+export type MiroAnyItem = z.infer<typeof ItemUnionSchema>;
+
 // ── Registry ────────────────────────────────────────────────────────────────
 
 export type MiroEndpointInputs = {
@@ -1308,7 +1325,7 @@ export type MiroEndpointOutputs = {
 	membersUpdate: MiroBoardMember;
 	membersRemove: { success: boolean };
 	itemsList: ItemsListResponse;
-	itemsGet: MiroConnector | MiroStickyNote['item'] | MiroShape['item'];
+	itemsGet: MiroAnyItem;
 	itemsRemove: { success: boolean };
 	stickyNotesCreate: MiroStickyNote;
 	stickyNotesUpdate: MiroStickyNote;
@@ -1396,15 +1413,7 @@ export const MiroEndpointOutputSchemas = {
 	membersUpdate: BoardMemberSchema,
 	membersRemove: ItemOrDeletedSchema,
 	itemsList: ItemsListResponseSchema,
-	itemsGet: z.union([
-		ConnectorSchema,
-		StickyNoteSchema,
-		ShapeSchema,
-		CardSchema,
-		TextSchema,
-		FrameSchema,
-		EmbedSchema,
-	]),
+	itemsGet: ItemUnionSchema,
 	itemsRemove: ItemOrDeletedSchema,
 	stickyNotesCreate: StickyNoteSchema,
 	stickyNotesUpdate: StickyNoteSchema,

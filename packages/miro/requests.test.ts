@@ -539,6 +539,36 @@ describe('shapes', () => {
 		expect(lastRequest().method).toBe('PATCH');
 		expect(lastRequest().body).toEqual({ data: { content: 'Renamed' } });
 	});
+
+	it('rejects an update that changes nothing', async () => {
+		await expect(
+			invoke(shapesUpdate, { boardId: BOARD, itemId: 'i-1' }),
+		).rejects.toThrow(/at least one/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('never sends an empty style object', async () => {
+		// Miro rejects `style: {}`, so it is dropped rather than sent.
+		respond(shape);
+
+		await invoke(shapesUpdate, {
+			boardId: BOARD,
+			itemId: 'i-1',
+			content: 'Renamed',
+			style: {},
+		});
+
+		expect(lastRequest().body).toEqual({ data: { content: 'Renamed' } });
+		expect(lastRequest().body).not.toHaveProperty('style');
+	});
+
+	it('rejects a style-only update whose style is empty', async () => {
+		// An empty style is not a change, so the call would do nothing.
+		await expect(
+			invoke(shapesUpdate, { boardId: BOARD, itemId: 'i-1', style: {} }),
+		).rejects.toThrow(/at least one/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 });
 
 describe('cards', () => {
