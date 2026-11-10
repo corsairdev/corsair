@@ -15,12 +15,15 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	ctx: MeloContext,
 	operation: { event: string; input: Input; output: Output },
 	// unknown: raw caller input, parsed below by the operation's input schema.
-	rawInput: unknown,
+	rawInput: unknown /* unknown: parsed by the input schema */,
 	toRequest: (parsed: z.output<Input>) => MeloRequest,
 	options: {
 		// unknown: raw is the response body, undefined when there is none. The
 		// output schema validates whatever this returns.
-		shape?: (raw: unknown, parsed: z.output<Input>) => unknown;
+		shape?: (
+			raw: unknown /* unknown: the unparsed body */,
+			parsed: z.output<Input>,
+		) => unknown /* unknown: handed to the output schema */;
 		log?: (parsed: z.output<Input>, result: z.output<Output>) => LogFields;
 	} = {},
 ): Promise<z.output<Output>> {

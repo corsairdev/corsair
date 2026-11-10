@@ -44,9 +44,11 @@ export function respondEmpty(fetchMock: jest.SpyInstance, status: number) {
 
 // unknown: a promise can reject with any value, so the rejection reason has no
 // static type; each caller narrows it to the fields it asserts on.
-export async function captureError<T>(promise: Promise<T>): Promise<unknown> {
+export async function captureError<T>(
+	promise: Promise<T>,
+): Promise<unknown /* unknown: a rejection reason has no type */> {
 	// unknown: see above.
-	return promise.catch((caught: unknown) => caught);
+	return promise.catch((caught: unknown /* unknown: see above */) => caught);
 }
 
 /**
@@ -60,7 +62,8 @@ export function makeContext(): MeloContext {
 	} as const;
 	// unknown: only `key` and the log path's account lookup are read; the
 	// endpoints never touch the rest of the context.
-	return ctx as unknown as MeloContext;
+	// unknown: a partial context; the endpoints read only `key`.
+	return ctx as unknown /* unknown: see above */ as MeloContext;
 }
 
 export type RecordedCall = {

@@ -12,7 +12,9 @@ const LINK_BASE = 'https://api.stream.estate';
  */
 // unknown: raw is the response body; asRecord narrows it, and a body that is not
 // an object is left for the output schema to reject.
-export function nextPageOf(raw: unknown): number | null {
+export function nextPageOf(
+	raw: unknown /* unknown: a Hydra collection body */,
+): number | null {
 	const view = asRecord(asRecord(raw)?.['hydra:view']);
 	const next = view?.['hydra:next'];
 	if (next === undefined || next === null) return null;
@@ -37,7 +39,9 @@ export function nextPageOf(raw: unknown): number | null {
 /** Adds `nextPage` beside the raw Hydra fields, which stay untouched. */
 // unknown: raw is the response body; a body that is not an object is returned
 // as it came so the output schema rejects it.
-export function withNextPage(raw: unknown): unknown {
+export function withNextPage(
+	raw: unknown /* unknown: see nextPageOf */,
+): unknown /* unknown: see above */ {
 	const record = asRecord(raw);
 	if (!record) return raw;
 	return { ...record, nextPage: nextPageOf(record) };
