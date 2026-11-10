@@ -891,17 +891,103 @@ const GetOrderResponseSchema = SingleDocumentSchema(OrderSchema);
 
 export type GetOrderResponse = z.infer<typeof GetOrderResponseSchema>;
 
-const GenerateOrderInvoiceInputSchema = z.object({
-	orderId: ResourceId.describe('The order to generate an invoice for.'),
-	/** The docs send the order's own type and id in the body, plus the name. */
-	name: z.string().min(1).describe('The name shown on the invoice.'),
-});
+/**
+ * The billing details printed on a generated invoice. Lemon Squeezy reads them
+ * from the query string, not a body, and documents name, address, city, ZIP
+ * code and country as required, with the state required for the US and Canada.
+ */
+const InvoiceDetailsShape = {
+	name: z.string().min(1).describe('The full name shown on the invoice.'),
+	address: z.string().min(1).describe('The street address.'),
+	city: z.string().min(1).describe('The city.'),
+	state: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('The state or province. Required for the US and Canada.'),
+	zipCode: z.string().min(1).describe('The ZIP or postal code.'),
+	country: z
+		.string()
+		.min(1)
+		.describe('The country, as an ISO 3166-1 alpha-2 code such as US.'),
+	notes: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Extra notes printed on the invoice.'),
+	locale: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('An ISO 639 language code for the invoice, such as en.'),
+} as const;
 
-export type GenerateOrderInvoiceInput = z.infer<
+function requireStateForUsAndCanada(
+	value: { country: string; state?: string },
+	ctx: z.RefinementCtx,
+) {
+	if (
+		['US', 'CA'].includes(value.country.toUpperCase()) &&
+		value.state === undefined
+	) {
+		ctx.addIssue({
+			code: 'custom',
+			path: ['state'],
+			message: 'state is required for a US or Canadian address',
+		});
+	}
+}
+
+/** Turns the invoice details into the query parameters Lemon Squeezy reads. */
+export function invoiceQuery(parsed: {
+	name: string;
+	address: string;
+	city: string;
+	state?: string;
+	zipCode: string;
+	country: string;
+	notes?: string;
+	locale?: string;
+}): Record<string, string | undefined> {
+	return {
+		name: parsed.name,
+		address: parsed.address,
+		city: parsed.city,
+		state: parsed.state,
+		zip_code: parsed.zipCode,
+		country: parsed.country,
+		notes: parsed.notes,
+		locale: parsed.locale,
+	};
+}
+
+/**
+ * Both generate-invoice routes answer a link to the PDF under `meta.urls`, with
+ * no `data` member.
+ */
+const GeneratedInvoiceSchema = z
+	.object({
+		meta: z
+			.object({
+				urls: z.object({ download_invoice: z.string() }).loose(),
+			})
+			.loose(),
+		jsonapi: z.object({ version: z.string() }).loose().optional(),
+	})
+	.loose();
+
+const GenerateOrderInvoiceInputSchema = z
+	.object({
+		orderId: ResourceId.describe('The order to generate an invoice for.'),
+		...InvoiceDetailsShape,
+	})
+	.superRefine(requireStateForUsAndCanada);
+
+export type GenerateOrderInvoiceInput = z.input<
 	typeof GenerateOrderInvoiceInputSchema
 >;
 
-const GenerateOrderInvoiceResponseSchema = SingleDocumentSchema(OrderSchema);
+const GenerateOrderInvoiceResponseSchema = GeneratedInvoiceSchema;
 
 export type GenerateOrderInvoiceResponse = z.infer<
 	typeof GenerateOrderInvoiceResponseSchema
@@ -1303,20 +1389,20 @@ export type GetSubscriptionInvoiceResponse = z.infer<
 	typeof GetSubscriptionInvoiceResponseSchema
 >;
 
-const GenerateSubscriptionInvoiceInputSchema = z.object({
-	subscriptionInvoiceId: ResourceId.describe(
-		'The subscription invoice to generate a PDF invoice for.',
-	),
-	name: z.string().min(1).describe('The name shown on the invoice.'),
-});
+const GenerateSubscriptionInvoiceInputSchema = z
+	.object({
+		subscriptionInvoiceId: ResourceId.describe(
+			'The subscription invoice to generate a PDF invoice for.',
+		),
+		...InvoiceDetailsShape,
+	})
+	.superRefine(requireStateForUsAndCanada);
 
-export type GenerateSubscriptionInvoiceInput = z.infer<
+export type GenerateSubscriptionInvoiceInput = z.input<
 	typeof GenerateSubscriptionInvoiceInputSchema
 >;
 
-const GenerateSubscriptionInvoiceResponseSchema = SingleDocumentSchema(
-	SubscriptionInvoiceSchema,
-);
+const GenerateSubscriptionInvoiceResponseSchema = GeneratedInvoiceSchema;
 
 export type GenerateSubscriptionInvoiceResponse = z.infer<
 	typeof GenerateSubscriptionInvoiceResponseSchema

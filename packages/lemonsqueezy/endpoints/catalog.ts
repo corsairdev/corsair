@@ -3,6 +3,7 @@ import { segment } from '../client';
 import { call, idOf } from './call';
 import {
 	LemonSqueezyEndpointInputSchemas as Inputs,
+	invoiceQuery,
 	LemonSqueezyEndpointOutputSchemas as Outputs,
 } from './types';
 
@@ -256,8 +257,9 @@ export const ordersGet: LemonSqueezyEndpoints['ordersGet'] = (ctx, input) =>
 	);
 
 /**
- * Generates the order's invoice PDF. Lemon Squeezy builds it and returns the
- * order with an invoice URL; the call itself does not move money.
+ * Generates the order's invoice PDF. The billing details go in the query
+ * string, and Lemon Squeezy answers a download link under `meta.urls`; the
+ * call itself does not move money.
  */
 export const ordersGenerateInvoice: LemonSqueezyEndpoints['ordersGenerateInvoice'] =
 	(ctx, input) =>
@@ -272,19 +274,11 @@ export const ordersGenerateInvoice: LemonSqueezyEndpoints['ordersGenerateInvoice
 			(parsed) => ({
 				method: 'POST',
 				path: `/v1/orders/${segment(parsed.orderId)}/generate-invoice`,
-				body: {
-					data: {
-						type: 'orders',
-						id: parsed.orderId,
-						attributes: { name: parsed.name },
-					},
-				},
+				query: invoiceQuery(parsed),
 			}),
 			{
-				log: (parsed, result) => ({
-					orderId: parsed.orderId,
-					status: result.data.attributes.status ?? undefined,
-				}),
+				// The billing details are personal data, so only the id is logged.
+				log: (parsed) => ({ orderId: parsed.orderId }),
 			},
 		);
 

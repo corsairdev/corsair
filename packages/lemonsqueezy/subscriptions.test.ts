@@ -1,5 +1,5 @@
 import { Subscriptions } from './endpoints';
-import { emptyList } from './test-fixtures';
+import { emptyList, generatedInvoice } from './test-fixtures';
 import {
 	calls,
 	expectAuthenticated,
@@ -296,26 +296,30 @@ describe('subscriptionInvoices', () => {
 		expect(lastRequest().path).toBe('/v1/subscription-invoices/5');
 	});
 
-	it('subscriptionInvoices.generate POSTs the invoice name', async () => {
-		respond({
-			data: { type: 'subscription-invoices', id: '5', attributes: {} },
-		});
+	it('subscriptionInvoices.generate sends the billing details as query parameters and returns the download link', async () => {
+		respond(generatedInvoice);
 
-		await invoke(Subscriptions.subscriptionInvoicesGenerate, {
+		const result = (await invoke(Subscriptions.subscriptionInvoicesGenerate, {
 			subscriptionInvoiceId: '5',
 			name: 'Acme Ltd',
-		});
+			address: '1 High St',
+			city: 'London',
+			zipCode: 'N1 1AA',
+			country: 'GB',
+		})) as typeof generatedInvoice;
 
 		const sent = lastRequest();
 		expect(sent.method).toBe('POST');
 		expect(sent.path).toBe('/v1/subscription-invoices/5/generate-invoice');
-		expect(sent.body).toEqual({
-			data: {
-				type: 'subscription-invoices',
-				id: '5',
-				attributes: { name: 'Acme Ltd' },
-			},
+		expect(sent.query).toEqual({
+			name: 'Acme Ltd',
+			address: '1 High St',
+			city: 'London',
+			zip_code: 'N1 1AA',
+			country: 'GB',
 		});
+		expect(sent.body).toBeUndefined();
+		expect(result.meta.urls.download_invoice).toContain('/invoice/download');
 	});
 
 	it('subscriptionInvoices.refund POSTs the amount', async () => {

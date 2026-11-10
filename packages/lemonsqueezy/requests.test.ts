@@ -6,6 +6,7 @@ import {
 	customerList,
 	discount,
 	emptyList,
+	generatedInvoice,
 	store,
 	storeList,
 	user,
@@ -16,6 +17,7 @@ import {
 	expectAuthenticated,
 	invoke,
 	lastRequest,
+	mockLog,
 	respond,
 	respondEmpty,
 	setUp,
@@ -221,23 +223,55 @@ describe('orders', () => {
 		expect(lastRequest().path).toBe('/v1/orders/1');
 	});
 
-	it('orders.generateInvoice POSTs the name in a JSON:API envelope', async () => {
-		respond({
-			data: { type: 'orders', id: '1', attributes: { status: 'paid' } },
-		});
+	it('orders.generateInvoice sends the billing details as query parameters and returns the download link', async () => {
+		respond(generatedInvoice);
 
-		await invoke(Catalog.ordersGenerateInvoice, {
+		const result = (await invoke(Catalog.ordersGenerateInvoice, {
 			orderId: '1',
 			name: 'Acme Ltd',
-		});
+			address: '123 Main St',
+			city: 'Anytown',
+			state: 'CA',
+			zipCode: '12345',
+			country: 'US',
+			notes: 'Thank you',
+			locale: 'en',
+		})) as typeof generatedInvoice;
 
 		expectAuthenticated();
 		const sent = lastRequest();
 		expect(sent.method).toBe('POST');
 		expect(sent.path).toBe('/v1/orders/1/generate-invoice');
-		expect(sent.body).toEqual({
-			data: { type: 'orders', id: '1', attributes: { name: 'Acme Ltd' } },
+		expect(sent.query).toEqual({
+			name: 'Acme Ltd',
+			address: '123 Main St',
+			city: 'Anytown',
+			state: 'CA',
+			zip_code: '12345',
+			country: 'US',
+			notes: 'Thank you',
+			locale: 'en',
 		});
+		expect(sent.body).toBeUndefined();
+		expect(result.meta.urls.download_invoice).toBe(
+			generatedInvoice.meta.urls.download_invoice,
+		);
+		// The billing details are personal data and stay out of the event log.
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('Main St');
+	});
+
+	it('orders.generateInvoice needs a state for a US or Canadian address', async () => {
+		await expect(
+			invoke(Catalog.ordersGenerateInvoice, {
+				orderId: '1',
+				name: 'Acme Ltd',
+				address: '123 Main St',
+				city: 'Anytown',
+				zipCode: '12345',
+				country: 'US',
+			}),
+		).rejects.toThrow(/state/);
+		expect(calls()).toBe(0);
 	});
 
 	it('orders.refund sends the amount in a JSON:API envelope', async () => {

@@ -3,6 +3,7 @@ import { segment } from '../client';
 import { call } from './call';
 import {
 	LemonSqueezyEndpointInputSchemas as Inputs,
+	invoiceQuery,
 	LemonSqueezyEndpointOutputSchemas as Outputs,
 } from './types';
 
@@ -307,13 +308,7 @@ export const subscriptionInvoicesGenerate: LemonSqueezyEndpoints['subscriptionIn
 			(parsed) => ({
 				method: 'POST',
 				path: `/v1/subscription-invoices/${segment(parsed.subscriptionInvoiceId)}/generate-invoice`,
-				body: {
-					data: {
-						type: 'subscription-invoices',
-						id: parsed.subscriptionInvoiceId,
-						attributes: { name: parsed.name },
-					},
-				},
+				query: invoiceQuery(parsed),
 			}),
 			{
 				log: (parsed) => ({

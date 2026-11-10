@@ -43,7 +43,7 @@ apiExamples:
   orders.get:
     call: "{ orderId: '1' }"
   orders.generateInvoice:
-    call: "{ orderId: '1', name: 'Acme Ltd' }"
+    call: "{ orderId: '1', name: 'Acme Ltd', address: '123 Main St', city: 'Anytown', state: 'CA', zipCode: '12345', country: 'US' }"
   orders.refund:
     call: "{ orderId: '1', amount: 500 }"
   orderItems.list:
@@ -117,7 +117,7 @@ apiExamples:
   subscriptionInvoices.get:
     call: "{ subscriptionInvoiceId: '1' }"
   subscriptionInvoices.generate:
-    call: "{ subscriptionInvoiceId: '1', name: 'Acme Ltd' }"
+    call: "{ subscriptionInvoiceId: '1', name: 'Acme Ltd', address: '1 High St', city: 'London', zipCode: 'N1 1AA', country: 'GB' }"
   products.get:
     call: "{ productId: '1' }"
   prices.get:
@@ -140,7 +140,7 @@ apiExamples:
     call: "{ affiliateId: '1' }"
 apiNotes:
   orders.refund: 'A partial refund cannot be undone through the API. The amount is in cents and its currency is the store currency; omit it to refund the order in full.'
-  orders.generateInvoice: 'Builds the invoice PDF and returns the order with its invoice URL. No money moves.'
+  orders.generateInvoice: 'Builds the invoice PDF and returns a download link in `meta.urls.download_invoice`. The billing details are sent as query parameters; `state` is required for a US or Canadian address. No money moves.'
   subscriptions.update: 'A variant change prorates the next charge unless `invoiceImmediately` or `disableProrations` says otherwise. `pause` and `unpause` are opposite actions, and at least one change is required.'
   subscriptions.cancel: 'Cancels an active subscription. It stays readable and keeps its history, but stops renewing.'
   subscriptionInvoices.refund: 'The same rules as an order refund: the amount is optional and in cents, and a partial refund cannot be undone through the API.'

@@ -336,3 +336,17 @@ export const taxedOrder = {
 		},
 	},
 };
+
+/**
+ * The answer to both generate-invoice routes, from the docs' example: a
+ * download link under `meta.urls`, with no `data` member.
+ */
+export const generatedInvoice = {
+	jsonapi: { version: '1.0' },
+	meta: {
+		urls: {
+			download_invoice:
+				'https://app.lemonsqueezy.com/my-orders/c1e4de31-b4cf-4668-a6fe-019d071d41ab/invoice/download?name=Acme%20Ltd&signature=c21a17a1',
+		},
+	},
+};
