@@ -1,0 +1,61 @@
+displayName: Klazify
+description: Website classification from any URL or email - IAB and Klazify categories, company data, tech stack, logos, traffic, domain age and similar domains.
+domain: klazify.com
+recommendedAuth: api_key
+overviewNote: |
+  Klazify classifies a website from its URL, or from an email's domain, and returns the categories, company data, tech stack, logo and traffic in separate endpoints or all at once.
+
+  - **A paid plan is required.** Klazify advertises a free key, but an account on the free plan cannot call any endpoint: every route answers `401` with `error: "Plan free no available"` and a message asking you to upgrade. The plugin reports that as `PLAN_REQUIRED_ERROR` so it is not mistaken for a bad key.
+  - **Two targets.** Every classification endpoint takes a `url` or an `email`; give one. `refresh: true` forces a live crawl instead of the cached result, on every paid plan including Starter.
+  - **The widest call first.** `categorize.all` returns categories, logo, social profiles, company data and tech in one response. The narrower endpoints cost the same call, so reach for this one unless you need a single block.
+  - **Nothing is stored.** Klazify is a lookup service and the plugin keeps no local copy; `refresh` already decides whether the provider re-crawls.
+  - **Discovery is the only database search.** `discovery.search` queries Klazify's whole indexed domain database rather than one URL, filters by category, country, technology, employee bucket and TLD, and pages 100 results at a time.
+  - **Two unbilled error categories.** `/Unreachable` and `/No indexable content` are reported inside a `success: false` answer, and Klazify does not bill for either.
+  - **Category taxonomies.** `categories.listV1` returns 620 paths and `categories.listV2` returns 1,091. Both count as an API call.
+  - **Webhooks.** The plugin does not receive webhooks; Klazify's API is pull-only.
+examples:
+  read:
+    path: categories.listV1
+    title: List the v1 category taxonomy
+    args: {}
+  write:
+    path: categorize.all
+    title: Classify a site, returning categories, company data and tech
+    args:
+      url: https://cbsnews.com
+apiExamples:
+  categorize.all:
+    call: "{ url: 'https://cbsnews.com' }"
+  categorize.realtime:
+    call: "{ url: 'https://cbsnews.com', refresh: true }"
+  categories.iab:
+    call: "{ url: 'https://cbsnews.com' }"
+  company.get:
+    call: "{ url: 'https://cbsnews.com' }"
+  tech.get:
+    call: "{ url: 'https://cbsnews.com' }"
+  logo.get:
+    call: "{ email: 'someone@cbsnews.com' }"
+  domain.get:
+    call: "{ url: 'https://apple.com' }"
+  similarDomains.get:
+    call: "{ url: 'https://cbsnews.com' }"
+  traffic.get:
+    call: "{ url: 'https://cbsnews.com' }"
+  categories.listV1: {}
+  categories.listV2: {}
+  discovery.search:
+    call: "{ filters: { category: 'Shopping', country: 'US', tech: 'shopify' }, page: 1 }"
+apiNotes:
+  'categorize.all': 'The widest call: categories, logo, social profiles, company data and tech stack in one answer. Give `url` or `email`.'
+  'categorize.realtime': 'Classification only. `refresh: true` re-crawls instead of returning the cached result.'
+  'categories.iab': 'Each category carries dynamic `IAB*` keys beside `name`, mapping IAB v1 and v3 ids to their labels.'
+  'company.get': 'Name, city, state, country, headcount range, revenue range, funding and tags. Revenue, funding and state are often null.'
+  'tech.get': 'Lowercase snake_case identifiers, e.g. `wordpress` or `google_tag_manager`.'
+  'logo.get': 'Returns a CDN URL, or null or an empty string when no logo was found.'
+  'domain.get': 'Registration and expiry dates plus the age in days and the days left.'
+  'similarDomains.get': 'Up to 10 domains that share the site''s category.'
+  'traffic.get': 'Global, country and category rank; monthly visits keyed by `YYYY-MM`; engagement figures as decimal strings, not numbers.'
+  'categories.listV1': 'The 620-category v1 taxonomy. Counts as one API call.'
+  'categories.listV2': 'The 1,091-category v2 taxonomy. Counts as one API call.'
+  'discovery.search': 'Searches the whole Klazify database. `page` runs 1 to 1000 with 100 results each. A `tld` filter can set `total_is_lower_bound` when its candidate scan runs out.'
