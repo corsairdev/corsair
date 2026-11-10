@@ -32,7 +32,7 @@ await corsair.nanonets.api.files.approve({ model_id: 'd4d3beec-1029-497a-8d4c-8a
 
 
 
-**Output:** `Record<string, unknown>`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -59,7 +59,7 @@ await corsair.nanonets.api.files.assign({ model_id: 'd4d3beec-1029-497a-8d4c-8a3
 
 
 
-**Output:** `Record<string, unknown>`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -85,7 +85,7 @@ await corsair.nanonets.api.files.delete({ model_id: 'd4d3beec-1029-497a-8d4c-8a3
 
 
 
-**Output:** `Record<string, unknown>`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -111,7 +111,7 @@ await corsair.nanonets.api.files.retryExports({ model_id: 'd4d3beec-1029-497a-8d
 
 
 
-**Output:** `Record<string, unknown>`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -137,7 +137,7 @@ await corsair.nanonets.api.files.retryPredictions({ model_id: 'd4d3beec-1029-497
 
 
 
-**Output:** `Record<string, unknown>`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -163,7 +163,7 @@ await corsair.nanonets.api.files.unapprove({ model_id: 'd4d3beec-1029-497a-8d4c-
 
 
 
-**Output:** `Record<string, unknown>`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -172,12 +172,12 @@ await corsair.nanonets.api.files.unapprove({ model_id: 'd4d3beec-1029-497a-8d4c-
 
 `files.updateFields`
 
-Replace a file field set: unchanged boxes stay, new boxes need is_new, and any omitted field is deleted
+Replace the field set of one page of a file: unchanged boxes stay, new boxes need is_new, and any omitted field is deleted
 
 **Risk:** `write`
 
 ```ts
-await corsair.nanonets.api.files.updateFields({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', moderated_boxes: [{ id: 'box-1', label: 'total_amount', xmin: 10, ymin: 20, xmax: 200, ymax: 40, ocr_text: '120.00' }] });
+await corsair.nanonets.api.files.updateFields({ model_id: 'd4d3beec-1029-497a-8d4c-8a3e2de6e7f2', id: '75ff0d9d-066b-11f0-b31d-62e85b8f4aab', page: 0, day_since_epoch: 20168, hour_of_day: 15, is_moderated: true, moderated_boxes: [{ id: 'box-1', label: 'total_amount', xmin: 10, ymin: 20, xmax: 200, ymax: 40, ocr_text: '120.00' }] });
 ```
 
 **Input**
@@ -185,7 +185,12 @@ await corsair.nanonets.api.files.updateFields({ model_id: 'd4d3beec-1029-497a-8d
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model_id` | `string` | Yes | The Nanonets model ID. |
-| `moderated_boxes` | `object[]` | Yes | The full field list: existing boxes unchanged, new boxes with is_new: true, and any field omitted from the array is deleted. |
+| `id` | `string` | Yes | The page ID whose fields are replaced, as returned by predictions.getFileByPageId or predictions.listFiles. |
+| `page` | `number` | No | The page number of that page, copied from the read. |
+| `day_since_epoch` | `number` | No | The day_since_epoch of that page, copied from the read. |
+| `hour_of_day` | `number` | No | The hour_of_day of that page, copied from the read. |
+| `is_moderated` | `boolean` | No | The is_moderated flag of that page, copied from the read. |
+| `moderated_boxes` | `object[]` | Yes | The full field list: existing boxes unchanged, new boxes with is_new: true, any omitted field is deleted, and an empty array removes every field. |
 
 <AccordionGroup>
 <Accordion title="moderated_boxes full type">
@@ -217,7 +222,7 @@ await corsair.nanonets.api.files.updateFields({ model_id: 'd4d3beec-1029-497a-8d
   lookup_edited?: boolean | null,
   lookup_parent_box_ids?: string[] | null,
   is_new?: boolean | null,
-  cells?: Record<string, unknown>[] | null
+  cells?: Record<string, any>[] | null
 }[]
 ```
 </Accordion>
@@ -225,7 +230,7 @@ await corsair.nanonets.api.files.updateFields({ model_id: 'd4d3beec-1029-497a-8d
 
 
 
-**Output:** `Record<string, unknown>`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -257,7 +262,7 @@ await corsair.nanonets.api.integrations.executeQuery({ external_integration_id: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `rows` | `Record<string, unknown>[]` | Yes | — |
+| `rows` | `Record<string, any>[]` | Yes | — |
 
 
 
@@ -293,7 +298,7 @@ await corsair.nanonets.api.integrations.list({});
   email?: string | null,
   name?: string | null,
   type?: string | null,
-  info?: Record<string, unknown> | null,
+  info?: Record<string, any> | null,
   status?: string | null,
   is_internal?: boolean | null
 }[]
@@ -363,7 +368,7 @@ await corsair.nanonets.api.models.updateGuidelines({ model_id: 'd4d3beec-1029-49
 
 
 
-**Output:** `Record<string, unknown>`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -372,7 +377,7 @@ await corsair.nanonets.api.models.updateGuidelines({ model_id: 'd4d3beec-1029-49
 
 `models.uploadTrainingUrls`
 
-Add training images to a model by URL before (re)training
+Add training images to a model by URL, with optional box annotations, before (re)training
 
 **Risk:** `write`
 
@@ -386,6 +391,28 @@ await corsair.nanonets.api.models.uploadTrainingUrls({ model_id: 'd4d3beec-1029-
 |------|------|----------|-------------|
 | `model_id` | `string` | Yes | The Nanonets model ID. |
 | `urls` | `string[]` | Yes | Training image URLs. |
+| `data` | `object[]` | No | Annotations for the images, one entry per labelled image; omit to upload the images without boxes. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  filename: string,
+  object: {
+    name: string,
+    ocr_text?: string,
+    bndbox: {
+      xmin: number,
+      ymin: number,
+      xmax: number,
+      ymax: number
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -397,6 +424,42 @@ await corsair.nanonets.api.models.uploadTrainingUrls({ model_id: 'd4d3beec-1029-
 | `model_type` | `string \| null` | No | — |
 | `state` | `string \| number \| null` | No | — |
 | `message` | `string \| null` | No | — |
+| `Meta` | `object \| null` | No | — |
+| `Data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Meta full type">
+
+```ts
+{
+  ModelID?: string | null,
+  ModelType?: string | null,
+  State?: string | number | null,
+  Categories?: {
+    name?: string | null,
+    count?: number | null
+  }[] | null,
+  Accuracy?: number | null,
+  Status?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="Data full type">
+
+```ts
+{
+  id?: string | null,
+  filename?: string | null,
+  size?: {
+    width?: number | null,
+    height?: number | null
+  } | null,
+  object?: Record<string, any>[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -435,7 +498,7 @@ await corsair.nanonets.api.predictions.createFromFile({ model_id: 'd4d3beec-1029
 |------|------|----------|-------------|
 | `message` | `string \| null` | No | — |
 | `result` | `object[] \| null` | No | — |
-| `signed_urls` | `Record<string, Record<string, string>> \| Record<string, string>[] \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| (Record<string, string> \| null)[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -470,7 +533,7 @@ await corsair.nanonets.api.predictions.createFromFile({ model_id: 'd4d3beec-1029
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
   predicted_boxes?: {
     id?: string | null,
@@ -498,7 +561,7 @@ await corsair.nanonets.api.predictions.createFromFile({ model_id: 'd4d3beec-1029
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
   moderated_boxes?: {
     id?: string | null,
@@ -526,9 +589,9 @@ await corsair.nanonets.api.predictions.createFromFile({ model_id: 'd4d3beec-1029
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
-  raw_ocr?: Record<string, unknown> | null,
+  raw_ocr?: Record<string, any>[] | Record<string, any> | null,
   page?: number | string | null,
   request_file_id?: string | null,
   id?: string | null,
@@ -556,9 +619,10 @@ await corsair.nanonets.api.predictions.createFromFile({ model_id: 'd4d3beec-1029
   no_of_fields?: number | null,
   original_file_name?: string | null,
   day_since_epoch?: number | null,
+  hour_of_day?: number | null,
   url?: string | null,
-  file_metadata?: Record<string, unknown> | null,
-  raw_ocr_api_response?: unknown | null
+  file_metadata?: Record<string, any> | null,
+  raw_ocr_api_response?: any | null
 }[] | null
 ```
 </Accordion>
@@ -599,7 +663,7 @@ await corsair.nanonets.api.predictions.createFromUrls({ model_id: 'd4d3beec-1029
 |------|------|----------|-------------|
 | `message` | `string \| null` | No | — |
 | `result` | `object[] \| null` | No | — |
-| `signed_urls` | `Record<string, Record<string, string>> \| Record<string, string>[] \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| (Record<string, string> \| null)[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -634,7 +698,7 @@ await corsair.nanonets.api.predictions.createFromUrls({ model_id: 'd4d3beec-1029
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
   predicted_boxes?: {
     id?: string | null,
@@ -662,7 +726,7 @@ await corsair.nanonets.api.predictions.createFromUrls({ model_id: 'd4d3beec-1029
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
   moderated_boxes?: {
     id?: string | null,
@@ -690,9 +754,9 @@ await corsair.nanonets.api.predictions.createFromUrls({ model_id: 'd4d3beec-1029
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
-  raw_ocr?: Record<string, unknown> | null,
+  raw_ocr?: Record<string, any>[] | Record<string, any> | null,
   page?: number | string | null,
   request_file_id?: string | null,
   id?: string | null,
@@ -720,9 +784,10 @@ await corsair.nanonets.api.predictions.createFromUrls({ model_id: 'd4d3beec-1029
   no_of_fields?: number | null,
   original_file_name?: string | null,
   day_since_epoch?: number | null,
+  hour_of_day?: number | null,
   url?: string | null,
-  file_metadata?: Record<string, unknown> | null,
-  raw_ocr_api_response?: unknown | null
+  file_metadata?: Record<string, any> | null,
+  raw_ocr_api_response?: any | null
 }[] | null
 ```
 </Accordion>
@@ -736,7 +801,7 @@ await corsair.nanonets.api.predictions.createFromUrls({ model_id: 'd4d3beec-1029
 
 `predictions.getFileByFileId`
 
-Fetch a whole prediction file by request file ID, the poll target for async requests
+Fetch every page of a prediction file by request file ID, listed as moderated and unmoderated; the poll target for async requests
 
 **Risk:** `read`
 
@@ -759,7 +824,11 @@ await corsair.nanonets.api.predictions.getFileByFileId({ model_id: 'd4d3beec-102
 |------|------|----------|-------------|
 | `message` | `string \| null` | No | — |
 | `result` | `object[] \| null` | No | — |
-| `signed_urls` | `Record<string, Record<string, string>> \| Record<string, string>[] \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| (Record<string, string> \| null)[] \| null` | No | — |
+| `moderated_images_count` | `number \| null` | No | — |
+| `unmoderated_images_count` | `number \| null` | No | — |
+| `moderated_images` | `object[] \| null` | No | — |
+| `unmoderated_images` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -794,7 +863,7 @@ await corsair.nanonets.api.predictions.getFileByFileId({ model_id: 'd4d3beec-102
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
   predicted_boxes?: {
     id?: string | null,
@@ -822,7 +891,7 @@ await corsair.nanonets.api.predictions.getFileByFileId({ model_id: 'd4d3beec-102
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
   moderated_boxes?: {
     id?: string | null,
@@ -850,9 +919,9 @@ await corsair.nanonets.api.predictions.getFileByFileId({ model_id: 'd4d3beec-102
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
-  raw_ocr?: Record<string, unknown> | null,
+  raw_ocr?: Record<string, any>[] | Record<string, any> | null,
   page?: number | string | null,
   request_file_id?: string | null,
   id?: string | null,
@@ -880,10 +949,211 @@ await corsair.nanonets.api.predictions.getFileByFileId({ model_id: 'd4d3beec-102
   no_of_fields?: number | null,
   original_file_name?: string | null,
   day_since_epoch?: number | null,
+  hour_of_day?: number | null,
   url?: string | null,
-  file_metadata?: Record<string, unknown> | null,
-  raw_ocr_api_response?: unknown | null
+  file_metadata?: Record<string, any> | null,
+  raw_ocr_api_response?: any | null
 }[] | null
+```
+</Accordion>
+
+<Accordion title="moderated_images full type">
+
+```ts
+(
+  {
+    model_id?: string | null,
+    day_since_epoch?: number | null,
+    hour_of_day?: number | null,
+    is_moderated?: boolean | null,
+    id?: string | null,
+    url?: string | null,
+    predicted_boxes?: (
+      {
+        id?: string | null,
+        label?: string | null,
+        xmin?: number | null,
+        ymin?: number | null,
+        xmax?: number | null,
+        ymax?: number | null,
+        score?: string | number | null,
+        ocr_text?: string | null,
+        type?: string | null,
+        status?: string | null,
+        validation_status?: string | null,
+        validation_message?: string | null,
+        page?: number | string | null,
+        page_no?: number | null,
+        label_id?: string | null,
+        verification_status?: string | null,
+        failed_validation?: boolean | null,
+        row?: number | null,
+        col?: number | null,
+        row_span?: number | null,
+        col_span?: number | null,
+        text?: string | null,
+        lookup_edited?: boolean | null,
+        lookup_parent_box_ids?: string[] | null,
+        is_new?: boolean | null,
+        cells?: Record<string, any>[] | null
+      } | null
+    )[] | null,
+    moderated_boxes?: (
+      {
+        id?: string | null,
+        label?: string | null,
+        xmin?: number | null,
+        ymin?: number | null,
+        xmax?: number | null,
+        ymax?: number | null,
+        score?: string | number | null,
+        ocr_text?: string | null,
+        type?: string | null,
+        status?: string | null,
+        validation_status?: string | null,
+        validation_message?: string | null,
+        page?: number | string | null,
+        page_no?: number | null,
+        label_id?: string | null,
+        verification_status?: string | null,
+        failed_validation?: boolean | null,
+        row?: number | null,
+        col?: number | null,
+        row_span?: number | null,
+        col_span?: number | null,
+        text?: string | null,
+        lookup_edited?: boolean | null,
+        lookup_parent_box_ids?: string[] | null,
+        is_new?: boolean | null,
+        cells?: Record<string, any>[] | null
+      } | null
+    )[] | null,
+    size?: {
+      width?: number | null,
+      height?: number | null
+    } | null,
+    page?: number | string | null,
+    request_file_id?: string | null,
+    original_file_name?: string | null,
+    assigned_member?: string | null,
+    assigned_members?: string[] | null,
+    no_of_fields?: number | null,
+    export_status?: string | null,
+    exported_at?: string | null,
+    updated_at?: string | null,
+    verified_at?: string | null,
+    verified_by?: string | null,
+    current_stage_id?: string | null,
+    uploaded_by?: string | null,
+    upload_channel?: string | null,
+    file_url?: string | null,
+    request_metadata?: string | null,
+    raw_ocr?: Record<string, any>[] | Record<string, any> | null,
+    approval_status?: string | null,
+    processing_type?: string | null,
+    status?: string | null
+  } | null
+)[] | null
+```
+</Accordion>
+
+<Accordion title="unmoderated_images full type">
+
+```ts
+(
+  {
+    model_id?: string | null,
+    day_since_epoch?: number | null,
+    hour_of_day?: number | null,
+    is_moderated?: boolean | null,
+    id?: string | null,
+    url?: string | null,
+    predicted_boxes?: (
+      {
+        id?: string | null,
+        label?: string | null,
+        xmin?: number | null,
+        ymin?: number | null,
+        xmax?: number | null,
+        ymax?: number | null,
+        score?: string | number | null,
+        ocr_text?: string | null,
+        type?: string | null,
+        status?: string | null,
+        validation_status?: string | null,
+        validation_message?: string | null,
+        page?: number | string | null,
+        page_no?: number | null,
+        label_id?: string | null,
+        verification_status?: string | null,
+        failed_validation?: boolean | null,
+        row?: number | null,
+        col?: number | null,
+        row_span?: number | null,
+        col_span?: number | null,
+        text?: string | null,
+        lookup_edited?: boolean | null,
+        lookup_parent_box_ids?: string[] | null,
+        is_new?: boolean | null,
+        cells?: Record<string, any>[] | null
+      } | null
+    )[] | null,
+    moderated_boxes?: (
+      {
+        id?: string | null,
+        label?: string | null,
+        xmin?: number | null,
+        ymin?: number | null,
+        xmax?: number | null,
+        ymax?: number | null,
+        score?: string | number | null,
+        ocr_text?: string | null,
+        type?: string | null,
+        status?: string | null,
+        validation_status?: string | null,
+        validation_message?: string | null,
+        page?: number | string | null,
+        page_no?: number | null,
+        label_id?: string | null,
+        verification_status?: string | null,
+        failed_validation?: boolean | null,
+        row?: number | null,
+        col?: number | null,
+        row_span?: number | null,
+        col_span?: number | null,
+        text?: string | null,
+        lookup_edited?: boolean | null,
+        lookup_parent_box_ids?: string[] | null,
+        is_new?: boolean | null,
+        cells?: Record<string, any>[] | null
+      } | null
+    )[] | null,
+    size?: {
+      width?: number | null,
+      height?: number | null
+    } | null,
+    page?: number | string | null,
+    request_file_id?: string | null,
+    original_file_name?: string | null,
+    assigned_member?: string | null,
+    assigned_members?: string[] | null,
+    no_of_fields?: number | null,
+    export_status?: string | null,
+    exported_at?: string | null,
+    updated_at?: string | null,
+    verified_at?: string | null,
+    verified_by?: string | null,
+    current_stage_id?: string | null,
+    uploaded_by?: string | null,
+    upload_channel?: string | null,
+    file_url?: string | null,
+    request_metadata?: string | null,
+    raw_ocr?: Record<string, any>[] | Record<string, any> | null,
+    approval_status?: string | null,
+    processing_type?: string | null,
+    status?: string | null
+  } | null
+)[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -919,7 +1189,7 @@ await corsair.nanonets.api.predictions.getFileByPageId({ model_id: 'd4d3beec-102
 |------|------|----------|-------------|
 | `message` | `string \| null` | No | — |
 | `result` | `object[] \| null` | No | — |
-| `signed_urls` | `Record<string, Record<string, string>> \| Record<string, string>[] \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| (Record<string, string> \| null)[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
@@ -954,7 +1224,7 @@ await corsair.nanonets.api.predictions.getFileByPageId({ model_id: 'd4d3beec-102
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
   predicted_boxes?: {
     id?: string | null,
@@ -982,7 +1252,7 @@ await corsair.nanonets.api.predictions.getFileByPageId({ model_id: 'd4d3beec-102
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
   moderated_boxes?: {
     id?: string | null,
@@ -1010,9 +1280,9 @@ await corsair.nanonets.api.predictions.getFileByPageId({ model_id: 'd4d3beec-102
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
-  raw_ocr?: Record<string, unknown> | null,
+  raw_ocr?: Record<string, any>[] | Record<string, any> | null,
   page?: number | string | null,
   request_file_id?: string | null,
   id?: string | null,
@@ -1040,9 +1310,10 @@ await corsair.nanonets.api.predictions.getFileByPageId({ model_id: 'd4d3beec-102
   no_of_fields?: number | null,
   original_file_name?: string | null,
   day_since_epoch?: number | null,
+  hour_of_day?: number | null,
   url?: string | null,
-  file_metadata?: Record<string, unknown> | null,
-  raw_ocr_api_response?: unknown | null
+  file_metadata?: Record<string, any> | null,
+  raw_ocr_api_response?: any | null
 }[] | null
 ```
 </Accordion>
@@ -1082,7 +1353,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
 | `unmoderated_images_count` | `number \| null` | No | — |
 | `moderated_images` | `object[] \| null` | No | — |
 | `unmoderated_images` | `object[] \| null` | No | — |
-| `signed_urls` | `Record<string, Record<string, string>> \| Record<string, string>[] \| null` | No | — |
+| `signed_urls` | `Record<string, Record<string, string>> \| (Record<string, string> \| null)[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="moderated_images full type">
@@ -1091,6 +1362,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
 {
   model_id?: string | null,
   day_since_epoch?: number | null,
+  hour_of_day?: number | null,
   is_moderated?: boolean | null,
   id?: string | null,
   url?: string | null,
@@ -1120,7 +1392,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
   moderated_boxes?: {
     id?: string | null,
@@ -1148,7 +1420,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
   size?: {
     width?: number | null,
@@ -1170,9 +1442,10 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
   upload_channel?: string | null,
   file_url?: string | null,
   request_metadata?: string | null,
-  raw_ocr?: Record<string, unknown> | null,
+  raw_ocr?: Record<string, any>[] | Record<string, any> | null,
   approval_status?: string | null,
-  processing_type?: string | null
+  processing_type?: string | null,
+  status?: string | null
 }[] | null
 ```
 </Accordion>
@@ -1183,6 +1456,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
 {
   model_id?: string | null,
   day_since_epoch?: number | null,
+  hour_of_day?: number | null,
   is_moderated?: boolean | null,
   id?: string | null,
   url?: string | null,
@@ -1212,7 +1486,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
   moderated_boxes?: {
     id?: string | null,
@@ -1240,7 +1514,7 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
     lookup_edited?: boolean | null,
     lookup_parent_box_ids?: string[] | null,
     is_new?: boolean | null,
-    cells?: Record<string, unknown>[] | null
+    cells?: Record<string, any>[] | null
   }[] | null,
   size?: {
     width?: number | null,
@@ -1262,9 +1536,10 @@ await corsair.nanonets.api.predictions.listFiles({ model_id: 'd4d3beec-1029-497a
   upload_channel?: string | null,
   file_url?: string | null,
   request_metadata?: string | null,
-  raw_ocr?: Record<string, unknown> | null,
+  raw_ocr?: Record<string, any>[] | Record<string, any> | null,
   approval_status?: string | null,
-  processing_type?: string | null
+  processing_type?: string | null,
+  status?: string | null
 }[] | null
 ```
 </Accordion>

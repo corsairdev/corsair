@@ -8,12 +8,12 @@ Use **Nanonets** through Corsair: one client, typed API calls.
 Create an API key at app.nanonets.com/#keys (Extract Data screen, Account Info, API Keys, "Add a New Key"); the first key is issued automatically at signup. The key is sent as HTTP Basic auth with the key as username and an empty password. Things to know before you call:
 
 - **Predictions are writes.** Every create call uploads a file to Nanonets and consumes API quota, so they are classified `write`, not `read`. Files are sent as `base64_data` (PNG or JPEG); the binary multipart `file` field is not wrapped.
-- **`async: true`** switches a create call to the documented async variant: the response comes back pending with a `request_file_id`, which you poll with `predictions.getFileByFileId` until `message` is `success`. Recommended above 3 pages; results normally finish within ~5 minutes.
-- **Quota and rate limits.** 402 means the free API call quota is exhausted and is never retried. 429 is per model per 1-minute window on the predict calls; the plugin retries up to three times with exponential backoff (Nanonets documents 30s→60s→120s) and honors Retry-After when sent.
+- **`async: true`** switches a create call to the documented async variant: the response comes back pending with a `request_file_id`, which you poll with `predictions.getFileByFileId`. Nanonets documents no done flag on that route: the file is processed once its pages are listed with their `predicted_boxes`, under `unmoderated_images`, or under `moderated_images` after the file is approved. Recommended above 3 pages; results normally finish within ~5 minutes.
+- **Quota and rate limits.** 402 means the free API call quota is exhausted and is never retried. 429 is per model per 1-minute window on the predict calls; the plugin waits the documented 30 seconds between retries (Retry-After is honored when sent), up to three times.
 - **Paging is a day window.** `predictions.listFiles` takes `start_day_interval` and `current_batch_day` as days since 1970-01-01 GMT (floor of unix seconds over 86400) and returns moderated and unmoderated images for that window; walk the windows forward yourself.
-- **`files.updateFields` replaces the whole field set.** Send the full `moderated_boxes` array from a prior read: unchanged boxes stay, new boxes need `is_new: true`, and any field you omit is deleted. The request is sent as `text/plain` because that is the documented working sample.
+- **`files.updateFields` replaces the whole field set of one page.** Read the page first (`predictions.getFileByPageId` or `predictions.listFiles`), then send its `id` with the full `moderated_boxes` array: unchanged boxes stay, new boxes need `is_new: true`, and any field you omit is deleted. Copy `page`, `day_since_epoch`, `hour_of_day` and `is_moderated` from the same read when it returned them; Nanonets's own sample sends all of them. The request is sent as `text/plain` because that is the documented working sample.
 - **Deleting is permanent.** `files.delete` removes the file and its predictions for good. `integrations.executeQuery` runs arbitrary SQL against a connected store (documented examples include UPDATE), so it is also classified destructive.
-- **Training.** `models.uploadTrainingUrls` adds images by URL, then `models.train` retrains; the model state walks 2→3→4→5 (usable). `models.updateGuidelines` changes extraction behavior of Instant Learning models via natural-language instructions.
+- **Training.** `models.uploadTrainingUrls` adds images by URL (pass `data` to label them: one entry per image with its `filename` URL and the boxes in `object`), then `models.train` retrains; the model state walks 2→3→4→5 (usable). `models.updateGuidelines` changes extraction behavior of Instant Learning models via natural-language instructions.
 - **Webhooks.** Nanonets can POST document events to URLs you configure in its UI (Workflow → Exports → Webhooks), but it signs nothing, so the plugin receives none.
 
 **What you get:**
@@ -74,7 +74,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. A call with no saved key throws an `AuthMissingError`, which may carry a `connectUrl` to send the tenant to so they can add their API key.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 nanonets()
