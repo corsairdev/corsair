@@ -189,6 +189,35 @@ describe('fetch.page', () => {
 		).rejects.toThrow(/proxyCountry needs premiumProxy/);
 	});
 
+	it('follows the spec: wait needs a browser, proxyCountry needs premiumProxy', async () => {
+		// The OpenAPI spec says `wait` "Requires js_render" and `proxy_country`
+		// "Requires premium_proxy"; rendering alone does not unlock geolocation.
+		await expect(
+			invoke(Fetch.fetchPage, { url: 'https://example.com', wait: 500 }),
+		).rejects.toThrow(/wait needs jsRender/);
+		await expect(
+			invoke(Fetch.fetchPage, {
+				url: 'https://example.com',
+				jsRender: true,
+				proxyCountry: 'us',
+			}),
+		).rejects.toThrow(/proxyCountry needs premiumProxy/);
+		expect(fetchMock).not.toHaveBeenCalled();
+
+		respond(textPage.html, 200, 'text/plain');
+		await invoke(Fetch.fetchPage, {
+			url: 'https://example.com',
+			mode: 'auto',
+			proxyCountry: 'us',
+			wait: 500,
+		});
+		expect(lastRequest().query).toMatchObject({
+			mode: 'auto',
+			proxy_country: 'us',
+			wait: '500',
+		});
+	});
+
 	it('rejects a non-http url', async () => {
 		await expect(
 			invoke(Fetch.fetchPage, { url: 'ftp://example.com' }),

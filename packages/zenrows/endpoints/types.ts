@@ -222,7 +222,9 @@ const FetchCommonShape = {
 		.int()
 		.nonnegative()
 		.optional()
-		.describe('Milliseconds to wait after load before capture. Defaults to 0.'),
+		.describe(
+			'Milliseconds to wait after load before capture. Needs `jsRender` or `mode: "auto"`. Defaults to 0.',
+		),
 	blockResources: z
 		.array(BlockableResourceSchema)
 		.min(1)
@@ -239,6 +241,7 @@ type FetchCommonInput = {
 	premiumProxy?: boolean;
 	proxyCountry?: string;
 	waitFor?: string;
+	wait?: number;
 };
 
 /**
@@ -272,9 +275,11 @@ export function refineFetchCommon(
 		}
 	}
 	const browser = value.jsRender === true || value.mode === 'auto';
+	// The spec says proxy_country "Requires premium_proxy"; rendering alone
+	// does not unlock it, so only premiumProxy or mode "auto" satisfies it.
 	if (
 		value.proxyCountry !== undefined &&
-		!browser &&
+		value.mode !== 'auto' &&
 		value.premiumProxy !== true
 	) {
 		ctx.addIssue({
@@ -288,6 +293,13 @@ export function refineFetchCommon(
 			code: 'custom',
 			path: ['waitFor'],
 			message: 'waitFor needs jsRender true or mode "auto"',
+		});
+	}
+	if (value.wait !== undefined && !browser) {
+		ctx.addIssue({
+			code: 'custom',
+			path: ['wait'],
+			message: 'wait needs jsRender true or mode "auto"',
 		});
 	}
 	if (options.jsonResponse !== undefined && !browser) {
