@@ -592,7 +592,6 @@ describe('receipts, credits and proformas', () => {
 			[endpoints.proformas.accept, 'accept'],
 			[endpoints.proformas.decline, 'decline'],
 			[endpoints.proformas.revert, 'revert'],
-			[endpoints.proformas.convert, 'convert'],
 		] as const) {
 			respond(invoiceFixture);
 			await run({ id: 9 }, fn);
@@ -602,7 +601,21 @@ describe('receipts, credits and proformas', () => {
 		}
 	});
 
-	it('proformas.deliver GETs the deliver route', async () => {
+	it('proformas.convert returns the new invoice, not the proforma', async () => {
+		// The reference answers 201 with the invoice that was issued.
+		respond(invoiceFixture, 201);
+
+		const { result } = await run({ id: 9 }, endpoints.proformas.convert);
+
+		const { parsed, init } = lastCall();
+		expect(init.method).toBe('PUT');
+		expect(parsed.pathname).toBe('/api/proformas/9/convert');
+		expect(result.invoice.id).toBe(invoiceFixture.id);
+		expect(result.invoice.number).toBe('I2026-00001');
+		expect(result).not.toHaveProperty('proforma');
+	});
+
+	it('proformas.update changes one field without resending the lines', async () => {
 		respond(invoiceFixture);
 
 		await run(

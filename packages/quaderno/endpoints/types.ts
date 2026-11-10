@@ -1294,8 +1294,8 @@ export type QuadernoEndpointOutputs = {
 	proformasAccept: ProformaResponse;
 	proformasDecline: ProformaResponse;
 	proformasRevert: ProformaResponse;
-	proformasConvert: ProformaResponse;
-	proformasDeliver: ProformaResponse;
+	proformasConvert: InvoiceResponse;
+	proformasDeliver: DeliverResponse;
 	taxRatesCalculate: TaxRateCalculateResponse;
 	taxIdsValidate: TaxIdValidateResponse;
 	taxCodesList: TaxCodesListResponse;
@@ -1399,8 +1399,8 @@ export const QuadernoEndpointOutputSchemas = {
 	proformasAccept: ProformaResponseSchema,
 	proformasDecline: ProformaResponseSchema,
 	proformasRevert: ProformaResponseSchema,
-	proformasConvert: ProformaResponseSchema,
-	proformasDeliver: ProformaResponseSchema,
+	proformasConvert: InvoiceResponseSchema,
+	proformasDeliver: DeliverResponseSchema,
 	taxRatesCalculate: TaxRateResponseSchema,
 	taxIdsValidate: TaxIdValidateResponseSchema,
 	taxCodesList: TaxCodesListResponseSchema,

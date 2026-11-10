@@ -564,7 +564,7 @@ export const proformasUpdate: QuadernoEndpoints['proformasUpdate'] = (
 /** The three state actions share one request shape and one response. */
 function proformaAction(
 	event: string,
-	action: 'accept' | 'decline' | 'revert' | 'convert',
+	action: 'accept' | 'decline' | 'revert',
 ) {
 	return (
 		ctx: Parameters<QuadernoEndpoints['proformasAccept']>[0],
@@ -604,11 +604,35 @@ export const proformasRevert: QuadernoEndpoints['proformasRevert'] =
 	proformaAction('proformas.revert', 'revert');
 
 /**
- * Converting issues a real invoice and returns the **proforma**, not the
- * invoice, so the new invoice has to be found by its `related_document`.
+ * Converting issues a real invoice, and the response is that **new invoice**
+ * (201), not the proforma: the reference documents `invoice` as the body. It is
+ * therefore returned under `invoice`, with the invoice's own id and number.
  */
-export const proformasConvert: QuadernoEndpoints['proformasConvert'] =
-	proformaAction('proformas.convert', 'convert');
+export const proformasConvert: QuadernoEndpoints['proformasConvert'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'proformas.convert',
+			input: Inputs.proformasConvert,
+			output: Outputs.proformasConvert,
+			toRequest: ({ id }) => ({
+				method: 'PUT',
+				path: `/proformas/${segment(id)}/convert`,
+			}),
+		},
+		input,
+		{
+			shape: (raw) => wrap('invoice', raw),
+			log: ({ id }, result) => ({
+				proformaId: id,
+				invoiceId: result.invoice.id,
+				number: result.invoice.number ?? undefined,
+			}),
+		},
+	);
 
 export const proformasDeliver: QuadernoEndpoints['proformasDeliver'] = (
 	ctx,

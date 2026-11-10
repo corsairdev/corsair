@@ -625,7 +625,7 @@ const quadernoEndpointMeta = {
 	'proformas.convert': {
 		riskLevel: 'write',
 		description:
-			'Converts a proforma into a real invoice, which **consumes an invoice number and cannot be undone**. Returns the proforma, not the new invoice, so find the invoice by its `related_document`.',
+			'Converts an accepted proforma into a real invoice, which **consumes an invoice number and cannot be undone**. Only a proforma in the accepted state can be converted. Returns the new invoice under `invoice`.',
 	},
 	'proformas.deliver': {
 		riskLevel: 'write',
