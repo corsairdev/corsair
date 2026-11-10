@@ -14,6 +14,7 @@ import {
 	predictionEnvelope,
 	queryRows,
 	requestFileId,
+	retryExportsResponse,
 	uploadTrainingUrlsResponse,
 } from './test-fixtures';
 
@@ -688,6 +689,20 @@ describe('files.retryExports', () => {
 		const body = lastInit().body;
 		expect(JSON.parse(body as string)).toEqual({ file_ids: [requestFileId] });
 		expect(result).toEqual({});
+	});
+});
+
+describe('files.retryExports answer', () => {
+	it('wraps the per-file array Nanonets answers', async () => {
+		respond(retryExportsResponse);
+
+		const result = await invoke(Files.retryExports, {
+			model_id: modelId,
+			file_ids: ['ebc41f3a-90fc-470b-afd3-ded217accba8'],
+		});
+
+		expect(result).toEqual({ files: retryExportsResponse });
+		expect(result.files?.[0]?.id).toBe('ebc41f3a-90fc-470b-afd3-ded217accba8');
 	});
 });
 

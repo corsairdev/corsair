@@ -148,7 +148,9 @@ export const retryExports: NanonetsEndpoints['filesRetryExports'] = (
 			body: { file_ids },
 		}),
 		{
-			shape: emptyBodyAsRecord,
+			// The live answer is an array with one entry per file.
+			shape: (raw) =>
+				Array.isArray(raw) ? { files: raw } : emptyBodyAsRecord(raw),
 			log: ({ model_id, file_ids }) => ({ model_id, files: file_ids.length }),
 		},
 	);

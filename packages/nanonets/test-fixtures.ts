@@ -229,6 +229,11 @@ export const queryRows = [
 	},
 ];
 
+// Live answer (11-10) of files.retryExports: one entry per file.
+export const retryExportsResponse = [
+	{ id: 'ebc41f3a-90fc-470b-afd3-ded217accba8', status: '', message: '' },
+];
+
 // The generic error body: { message, code, errors: [{ reason, message }] }.
 export const error400 = {
 	message: 'No file attached',

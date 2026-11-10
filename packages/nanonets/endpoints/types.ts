@@ -592,7 +592,24 @@ export type FilesRetryExportsInput = z.input<
 	typeof FilesRetryExportsInputSchema
 >;
 
-const FilesRetryExportsResponseSchema = WorkflowActionResponseSchema;
+// Live 11-10: Nanonets answers one { id, status, message } per file; the
+// endpoint wraps that array as `files`. An empty body still reads as {}.
+const FilesRetryExportsResponseSchema = z
+	.object({
+		files: z
+			.array(
+				z
+					.object({
+						id: z.string().nullish(),
+						status: z.string().nullish(),
+						message: z.string().nullish(),
+					})
+					.loose(),
+			)
+			.optional()
+			.describe('One entry per file whose export was retried.'),
+	})
+	.loose();
 
 export type FilesRetryExportsResponse = z.infer<
 	typeof FilesRetryExportsResponseSchema
