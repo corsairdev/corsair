@@ -1,0 +1,85 @@
+displayName: Rocketlane
+description: Professional services automation with Rocketlane - read and write tasks, projects, customer companies, time entries and team members, and archive a project.
+domain: rocketlane.com
+recommendedAuth: api_key
+overviewNote: |
+  Generate a key in Rocketlane under **Settings → API**, then send it in the `api-key` header. The base URL is `https://api.rocketlane.com/api` and every route carries its own version segment (`/1.0/...`). Things to know before you call:
+
+  - **Paging is a token, not a page number.** Every list returns `data` and a `pagination` block; pass `pagination.nextPageToken` back as `page_token`. **The token expires after 15 minutes**, so a paginated walk has to keep moving rather than pausing between pages.
+  - **Filters are `field.operator` query keys.** Rocketlane reads a filter as a key such as `projectName.cn`, with a documented operator set: `eq`, `cn`, `nc`, `oneOf`, `noneOf`, and the numeric `gt`/`ge`/`lt`/`le`. Each operation models the operators it accepts, so a typo is caught before the request rather than silently ignored.
+  - **Status filters take ids or names.** The OpenAPI document types them as strings while its own example is the bare number `1`, so `tasks.list` accepts either for `task_status` and `project_status`.
+  - **Create needs a customer and an owner.** `projects.create` takes a `customer` block naming either a company id or a company name, and an `owner` block naming either a user id or an email. A block that names neither is rejected before the request is sent.
+  - **Ids live in the path, never the body.** `tasks.update`, `projects.update` and `companies.update` send the id in the URL and the changed fields in the body.
+  - **Deletes answer 204.** `tasks.delete`, `projects.delete`, `companies.delete` and `timeEntries.delete` return no body, so the plugin reports `{ success: true, id }` from the id you sent. **These are permanent**, which is why they are marked destructive.
+  - **Archiving is not deleting.** `projects.archive` posts to the project's `/archive` action and keeps the records, so it is a write rather than a destructive call.
+  - **Time entries are capped per day.** Rocketlane rejects entries that would push a single day past 1440 minutes; the plugin requires at least one minute per entry but cannot see the other entries already logged for that day.
+  - **Retries.** Rocketlane documents no throughput window and no `Retry-After`, so a 429 is retried three times with exponential backoff. A 5xx is retried only for a call the plugin declared read-only, never for a create.
+examples:
+  read:
+    path: tasks.list
+    title: List tasks in a project
+    args:
+      project_id:
+        eq: 201
+      page_size: 50
+  write:
+    path: tasks.create
+    title: Create a task in a project
+    args:
+      task_name: Kickoff workshop
+      project_id: 201
+      start_date: '2026-11-10'
+      effort_in_minutes: 240
+apiExamples:
+  tasks.list:
+    call: "{ project_id: { eq: 201 }, task_name: { cn: 'kickoff' }, page_size: 100 }"
+  tasks.get:
+    call: "{ task_id: 9001 }"
+  tasks.create:
+    call: "{ task_name: 'Kickoff workshop', project_id: 201, start_date: '2026-11-10', effort_in_minutes: 240 }"
+  tasks.update:
+    call: "{ task_id: 9001, progress: 80, due_date: '2026-11-20' }"
+  tasks.delete:
+    call: "{ task_id: 9001 }"
+  projects.list:
+    call: "{ company_id: { eq: 301 }, status: { oneOf: ['ACTIVE'] }, page_size: 50 }"
+  projects.get:
+    call: "{ project_id: 201 }"
+  projects.create:
+    call: "{ project_name: 'Acme onboarding', customer: { company_id: 301 }, owner: { email_id: 'sam@example.com' }, start_date: '2026-11-01' }"
+  projects.update:
+    call: "{ project_id: 201, project_name: 'Acme onboarding v2' }"
+  projects.delete:
+    call: "{ project_id: 201 }"
+  projects.archive:
+    call: "{ project_id: 201 }"
+  companies.list:
+    call: "{ match: 'acme', page_size: 50 }"
+  companies.get:
+    call: "{ company_id: 301 }"
+  companies.create:
+    call: "{ company_name: 'Acme Inc', account_owner: { user_id: 401 }, company_url: 'https://acme.example.com' }"
+  companies.update:
+    call: "{ company_id: 301, description: 'Enterprise customer' }"
+  companies.delete:
+    call: "{ company_id: 301 }"
+  users.list:
+    call: "{ page_size: 50 }"
+  users.get:
+    call: "{ user_id: 401 }"
+  timeEntries.list:
+    call: "{ date: { ge: '2026-11-01', le: '2026-11-30' }, billable: { eq: true } }"
+  timeEntries.get:
+    call: "{ time_entry_id: 501 }"
+  timeEntries.create:
+    call: "{ date: '2026-11-10', minutes: 90, project_id: 201, task_id: 9001, billable: true }"
+  timeEntries.delete:
+    call: "{ time_entry_id: 501 }"
+apiNotes:
+  'tasks.list': 'Filters are `field.operator` keys; the token from `pagination.nextPageToken` expires after 15 minutes.'
+  'tasks.create': 'Assignees take `user_id` or `email`; the body sends them as `userId` and `emailId`.'
+  'tasks.delete': 'Answers 204 with no body; the deletion is permanent.'
+  'projects.create': 'The customer and owner blocks each need an id or a name.'
+  'projects.archive': 'Keeps the records and removes the project from active lists; it is not a delete.'
+  'timeEntries.list': 'The date operators are `eq`, `gt`, `ge`, `lt` and `le`.'
+  'timeEntries.create': 'Rocketlane rejects an entry that pushes a single day past 1440 minutes.'
