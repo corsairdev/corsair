@@ -287,6 +287,7 @@ export const BaseProviders = [
 	'keenable',
 	'kibana',
 	'kling',
+	'klipfolio',
 	'leexi',
 	'lever',
 	'linear',
@@ -730,6 +731,7 @@ export const ProviderDisplayNames = {
 	keenable: 'Keenable',
 	kibana: 'Kibana',
 	kling: 'Kling',
+	klipfolio: 'Klipfolio',
 	leexi: 'Leexi',
 	lever: 'Lever',
 	linear: 'Linear',
@@ -1177,6 +1179,7 @@ export type AllProviders =
 	| 'keenable'
 	| 'kibana'
 	| 'kling'
+	| 'klipfolio'
 	| 'leexi'
 	| 'lever'
 	| 'linear'
