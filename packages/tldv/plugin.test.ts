@@ -1,5 +1,8 @@
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, createCorsair } from 'corsair/core';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { tldv, tldvAuthConfig, tldvEndpointSchemas } from './index';
+
+const KEK = process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef';
 
 const OPERATIONS = [
 	'folders.list',
@@ -53,9 +56,14 @@ describe('tldv plugin definition', () => {
 		expect(Object.keys(tldvAuthConfig)).toEqual(['api_key']);
 	});
 
-	it('exposes the webhook signature slot on the account', () => {
-		// tl;dv does not sign, so the shared secret has nowhere else to live.
-		expect([...tldvAuthConfig.api_key.account]).toEqual(['webhook_signature']);
+	it('exposes the webhook secret and tenant link slots on the account', () => {
+		// tl;dv does not sign, so the shared secret has nowhere else to live. The
+		// tenant matcher answers `tenant_external_id`, so the account needs that
+		// field too or there is no setter to store the organizer email with.
+		expect([...tldvAuthConfig.api_key.account]).toEqual([
+			'webhook_signature',
+			'tenant_external_id',
+		]);
 	});
 
 	it('registers exactly the six operations', () => {
@@ -168,6 +176,35 @@ describe('tldv plugin definition', () => {
 
 		expect(names.at(-1)).toBe('DEFAULT');
 		expect(names.indexOf('QUOTA_ERROR')).toBeLessThan(names.indexOf('DEFAULT'));
+	});
+});
+
+describe('tldv tenant link', () => {
+	it('stores the organizer email the tenant matcher looks up', async () => {
+		const testDb = createTestDatabase();
+		try {
+			await createIntegrationAndAccount(testDb.db, 'tldv', 'default');
+			const corsair = createCorsair({
+				plugins: [tldv({ key: 'test-key' })],
+				database: testDb.db,
+				kek: KEK,
+			});
+			// unknown: the key manager's field setters are generated from the auth
+			// config, so the test reads them by name to prove the field exists.
+			const keys = corsair.tldv.keys as unknown as Record<
+				string,
+				((value?: string) => Promise<string | null | undefined>) | undefined
+			>;
+
+			expect(typeof keys.set_tenant_external_id).toBe('function');
+			await keys.issue_new_dek?.();
+			await keys.set_tenant_external_id?.('jordan@example.org');
+			await expect(keys.get_tenant_external_id?.()).resolves.toBe(
+				'jordan@example.org',
+			);
+		} finally {
+			testDb.cleanup();
+		}
 	});
 });
 
