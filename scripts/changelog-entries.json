@@ -2338,5 +2338,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/taggun",
+    "dir": "packages/taggun",
+    "name": "Taggun",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-10",
+    "package": "@corsair-dev/teamcamp",
+    "dir": "packages/teamcamp",
+    "name": "Teamcamp",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
