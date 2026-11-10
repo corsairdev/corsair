@@ -16,12 +16,16 @@ import type { KlaviyoContext } from './index';
  * Live smoke tests against the real API. Gated on `KLAVIYO_API_KEY`.
  *
  * These call the endpoint functions, so the response mapping and every output
- * schema run against a real payload. Every call is read-only: list routes and
- * the webhook-topic list. Nothing is created or deleted.
+ * schema run against a real payload. Most calls are read-only: the list routes
+ * and the webhook-topic list.
  *
- * The key must be a private API key with read access. A key created with a
- * restricted scope answers 403 on the routes it does not cover, which this
- * suite would report as a failure rather than a skip.
+ * One test writes. It creates a profile and then updates it, and that profile
+ * stays on the account afterwards because Klaviyo has no hard delete. Point this
+ * at a test account rather than a production one, and note that each run leaves
+ * another `corsair-live-<timestamp>@example.com` profile behind.
+ *
+ * The key must be a private API key with read access and profile write access;
+ * without the write scope the create test answers 403 rather than skipping.
  *
  * CI ignores this file by name (`api.test.ts`), so it only runs through
  * `pnpm --filter @corsair-dev/klaviyo test:live`.

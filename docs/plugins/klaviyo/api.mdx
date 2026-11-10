@@ -1502,7 +1502,7 @@ await corsair.klaviyo.api.profiles.update({ id: '01H8XYZABC123', first_name: 'Jo
 
 `segments.create`
 
-Create a segment from a definition expression; Klaviyo evaluates it server-side, so the segment is not immediately populated
+Create a segment from a condition group; Klaviyo evaluates it server-side, so the segment is not immediately populated
 
 **Risk:** `write`
 
@@ -1882,7 +1882,7 @@ await corsair.klaviyo.api.segments.remove({ id: 'SgXy12' });
 
 `segments.update`
 
-Change a segment name or its definition expression
+Change a segment name or its condition group
 
 **Risk:** `write`
 
@@ -2516,7 +2516,7 @@ await corsair.klaviyo.api.webhooks.create({ name: 'Order events', endpointUrl: '
 | `topicIds` | `string[]` | Yes | The webhook topic ids to subscribe to, from webhookTopics.list. |
 | `description` | `string` | No | — |
 
-The spec marks `secret_key` and at least one topic required. Klaviyo signs each delivery with that secret.
+The spec marks a secret key and at least one topic required. Klaviyo signs each delivery with `secretKey`, so keep it and verify on your side.
 
 
 

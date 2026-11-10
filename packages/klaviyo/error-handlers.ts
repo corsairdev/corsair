@@ -56,16 +56,22 @@ export const errorHandlers = {
 				60_000,
 		}),
 	},
-	// 5xx: retried with backoff. Every write here is addressed by an id, and a
-	// duplicate profile is merged by Klaviyo rather than duplicated, so a replay
-	// is the lesser risk against a caller who never learns the write succeeded.
+	/**
+	 * 5xx: retried with backoff, but only where a replay cannot duplicate work.
+	 *
+	 * A POST is never replayed: it creates something, and Klaviyo has already acted
+	 * on the request by the time it answers 5xx. A GET always is. A PATCH or DELETE
+	 * is replayed only because both are addressed by an id, so a repeat lands on the
+	 * same resource rather than creating a second one.
+	 */
 	SERVER_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
 			return status !== undefined && status >= 500;
 		},
-		handler: async () => ({
-			maxRetries: 2,
+		handler: async (error: Error) => ({
+			maxRetries:
+				error instanceof KlaviyoAPIError && error.method === 'POST' ? 0 : 2,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

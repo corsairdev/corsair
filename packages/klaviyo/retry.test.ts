@@ -1,11 +1,7 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { klaviyo } from './index';
-import {
-	listResponse,
-	profilesListResponse,
-	rateLimited,
-} from './test-fixtures';
+import { profilesListResponse, rateLimited } from './test-fixtures';
 
 /**
  * The endpoints call the HTTP client, which is configured with `maxRetries: 0`;
@@ -83,17 +79,33 @@ describe('retries through the bound client', () => {
 		}
 	});
 
-	it('retries a 5xx on a create', async () => {
+	it('does not replay a 5xx on a create', async () => {
+		// A POST creates something, and Klaviyo has acted on it by the time it
+		// answers 5xx, so a replay could duplicate it.
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({ errors: [{ status: 500, code: 'server_error' }] }, 500);
-			respond(listResponse, 201);
 
-			const result = (await corsair.klaviyo.api.lists.create({
-				name: 'Newsletter',
-			})) as { data: { id: string } };
+			await expect(
+				corsair.klaviyo.api.lists.create({ name: 'Newsletter' }),
+			).rejects.toMatchObject({ status: 500 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
 
-			expect(result.data.id).toBe('R7QkZp');
+	it('retries a 5xx on a read', async () => {
+		// A GET has no side effect, so a replay is safe and a transient 5xx is
+		// worth one.
+		const { corsair, testDb } = await createClient();
+		try {
+			respond({ errors: [{ status: 500, code: 'server_error' }] }, 500);
+			respond(profilesListResponse);
+
+			const result = await corsair.klaviyo.api.profiles.list({});
+
+			expect(result.data).toHaveLength(2);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();

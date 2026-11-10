@@ -282,6 +282,38 @@ describe('lists', () => {
 		expect(result.success).toBe(true);
 	});
 
+	it('rejects a subscribe with no email for the default email channel', async () => {
+		// The default channel is email, and a job without an address does nothing.
+		await expect(
+			invoke(profilesSubscribe, { listId: 'R7QkZp' }),
+		).rejects.toThrow(/email channel/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects an sms subscribe with no phone number', async () => {
+		await expect(
+			invoke(profilesSubscribe, {
+				listId: 'R7QkZp',
+				email: 'a@b.co',
+				channels: ['sms'],
+			}),
+		).rejects.toThrow(/phone_number/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts a subscribe that has the identifier for each channel', async () => {
+		respond(jobResponse, 202);
+
+		await invoke(profilesSubscribe, {
+			listId: 'R7QkZp',
+			email: 'a@b.co',
+			phone_number: '+15550100',
+			channels: ['email', 'sms'],
+		});
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
 	it('rejects an empty profile list', async () => {
 		await expect(
 			invoke(listsAddProfiles, { id: 'R7QkZp', profileIds: [] }),
@@ -363,7 +395,9 @@ describe('events', () => {
 		expect(result.success).toBe(true);
 	});
 
-	it('sends the profile id when given', async () => {
+	it('puts a profile id beside the resource type, not inside attributes', async () => {
+		// The spec's event profile object carries `id` next to `type`; only the
+		// email belongs in `attributes`.
 		respond(undefined, 202);
 
 		await invoke(eventsCreate, {
@@ -372,10 +406,20 @@ describe('events', () => {
 			properties: {},
 		});
 
-		expect(lastRequest().body).toMatchObject({
+		expect(lastRequest().body).toEqual({
 			data: {
+				type: 'event',
 				attributes: {
-					profile: { data: { attributes: { id: 'p1' } } },
+					metric: {
+						data: {
+							type: 'metric',
+							attributes: { name: 'Viewed Product' },
+						},
+					},
+					profile: {
+						data: { type: 'profile', id: 'p1', attributes: {} },
+					},
+					properties: {},
 				},
 			},
 		});

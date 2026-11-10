@@ -16,7 +16,7 @@ Things that shape the calls:
 - **Subscription is a job.** `profiles.subscribe` grants marketing consent, so Klaviyo answers 202 with a job id rather than the updated profile.
 - **Events are recorded by metric name**, and Klaviyo creates the metric on first use. The event then counts towards any flow listening for it.
 - **Segments evaluate server-side.** A new segment is not populated immediately, and its `definition` is a condition group rather than a filter string.
-- **Webhooks need a secret.** Klaviyo signs every delivery with the `secretKey` you set at creation, so keep it and verify on your side.
+- **Webhooks need a secret, and Corsair does not receive the deliveries.** Klaviyo signs every delivery with the `secretKey` you set at creation. This plugin manages the webhook registrations; you host the endpoint that receives them and verify the signature there.
 - **Rate limits** run a burst and a steady window per account, and a 429 carries `Retry-After`.
 
 **What you get:**

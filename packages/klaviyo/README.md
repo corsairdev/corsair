@@ -31,12 +31,12 @@ pnpm add @corsair-dev/klaviyo
 | `profiles.list` | `klaviyo.api.profiles.list` | `read` | Search profiles with a Klaviyo filter expression, sorted and cursor-paged; returns each profile with its attributes and subscription state |
 | `profiles.subscribe` | `klaviyo.api.profiles.subscribe` | `write` | Subscribe a profile to a list over email or SMS; this creates a bulk job and grants marketing consent, so it returns a job id rather than the profile |
 | `profiles.update` | `klaviyo.api.profiles.update` | `write` | Change a profile name, location, custom properties or identifiers by id |
-| `segments.create` | `klaviyo.api.segments.create` | `write` | Create a segment from a definition expression; Klaviyo evaluates it server-side, so the segment is not immediately populated |
+| `segments.create` | `klaviyo.api.segments.create` | `write` | Create a segment from a condition group; Klaviyo evaluates it server-side, so the segment is not immediately populated |
 | `segments.get` | `klaviyo.api.segments.get` | `read` | Read one segment by id, with its active flag |
 | `segments.list` | `klaviyo.api.segments.list` | `read` | List the segments on the account, filtered and cursor-paged |
 | `segments.profiles` | `klaviyo.api.segments.profiles` | `read` | Page the profiles that currently match a segment |
 | `segments.remove` | `klaviyo.api.segments.remove` | `destructive` | Delete a segment; its definition is lost and cannot be restored |
-| `segments.update` | `klaviyo.api.segments.update` | `write` | Change a segment name or its definition expression |
+| `segments.update` | `klaviyo.api.segments.update` | `write` | Change a segment name or its condition group |
 | `tagGroups.create` | `klaviyo.api.tagGroups.create` | `write` | Create a tag group, optionally exclusive so only one of its tags applies |
 | `tagGroups.list` | `klaviyo.api.tagGroups.list` | `read` | List the tag groups, which namespace tags and can allow only one tag each |
 | `tagGroups.remove` | `klaviyo.api.tagGroups.remove` | `destructive` | Delete a tag group; the tags inside it go with it and cannot be restored |

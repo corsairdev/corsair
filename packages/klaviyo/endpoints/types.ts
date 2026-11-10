@@ -315,16 +315,37 @@ const ProfilesUpdateInputSchema = z
 
 export type ProfilesUpdateInput = z.input<typeof ProfilesUpdateInputSchema>;
 
-const ProfilesSubscribeInputSchema = z.object({
-	listId: z.string().min(1).describe('The list to subscribe the profile to.'),
-	email: z.email().optional(),
-	phone_number: z.string().min(1).optional(),
-	channels: z
-		.array(z.enum(['email', 'sms']))
-		.min(1)
-		.optional()
-		.describe('Which channels to subscribe. Defaults to email.'),
-});
+const ProfilesSubscribeInputSchema = z
+	.object({
+		listId: z.string().min(1).describe('The list to subscribe the profile to.'),
+		email: z.email().optional(),
+		phone_number: z.string().min(1).optional(),
+		channels: z
+			.array(z.enum(['email', 'sms']))
+			.min(1)
+			.optional()
+			.describe('Which channels to subscribe. Defaults to email.'),
+	})
+	.superRefine((value, ctx) => {
+		// Each channel needs its own identifier: Klaviyo cannot subscribe a phone
+		// number over email or an email over SMS, and a missing one is a job that
+		// silently does nothing.
+		const channels = value.channels ?? ['email'];
+		if (channels.includes('email') && value.email === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['email'],
+				message: 'The email channel needs `email`.',
+			});
+		}
+		if (channels.includes('sms') && value.phone_number === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['phone_number'],
+				message: 'The sms channel needs `phone_number`.',
+			});
+		}
+	});
 
 export type ProfilesSubscribeInput = z.input<
 	typeof ProfilesSubscribeInputSchema

@@ -428,11 +428,11 @@ const klaviyoEndpointMeta = {
 	'segments.create': {
 		riskLevel: 'write',
 		description:
-			'Create a segment from a definition expression; Klaviyo evaluates it server-side, so the segment is not immediately populated',
+			'Create a segment from a condition group; Klaviyo evaluates it server-side, so the segment is not immediately populated',
 	},
 	'segments.update': {
 		riskLevel: 'write',
-		description: 'Change a segment name or its definition expression',
+		description: 'Change a segment name or its condition group',
 	},
 	'segments.remove': {
 		riskLevel: 'destructive',

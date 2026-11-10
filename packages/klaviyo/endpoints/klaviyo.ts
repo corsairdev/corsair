@@ -545,10 +545,12 @@ export const eventsCreate: KlaviyoEndpoints['eventsCreate'] = (ctx, input) =>
 		},
 		input,
 		(parsed) => {
-			// The metric and profile are objects inside attributes, not ids.
-			const profile: Record<string, unknown> = {}; // unknown: id or email, built per call.
-			if (parsed.profileId !== undefined) profile.id = parsed.profileId;
-			if (parsed.email !== undefined) profile.email = parsed.email;
+			// The metric and profile are wrapped resource objects inside attributes.
+			// A profile given by id puts it beside `type`, as the spec's
+			// EventProfileCreateQueryResourceObject states; a profile given by email
+			// puts the address in `attributes`.
+			const profileAttributes: Record<string, unknown> = {};
+			if (parsed.email !== undefined) profileAttributes.email = parsed.email;
 
 			return {
 				method: 'POST',
@@ -560,7 +562,15 @@ export const eventsCreate: KlaviyoEndpoints['eventsCreate'] = (ctx, input) =>
 							metric: {
 								data: { type: 'metric', attributes: { name: parsed.metric } },
 							},
-							profile: { data: { type: 'profile', attributes: profile } },
+							profile: {
+								data: {
+									type: 'profile',
+									...(parsed.profileId !== undefined
+										? { id: parsed.profileId }
+										: {}),
+									attributes: profileAttributes,
+								},
+							},
 							properties: parsed.properties,
 							...(parsed.time !== undefined ? { time: parsed.time } : {}),
 							...(parsed.value !== undefined ? { value: parsed.value } : {}),
