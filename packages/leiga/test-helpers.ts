@@ -54,7 +54,10 @@ export const endpoints = leiga({ key: 'test-token' }).endpoints!;
 let spy: jest.SpyInstance | undefined;
 
 export function installFetchMock(): void {
-	spy = jest.spyOn(globalThis, 'fetch');
+	// A call with no queued response must fail the test, not reach Leiga.
+	spy = jest.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+		throw new Error(`Unmocked fetch in a Leiga test: ${String(input)}`);
+	});
 }
 
 export function restoreFetchMock(): void {
