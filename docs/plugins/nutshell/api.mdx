@@ -134,7 +134,7 @@ await corsair.nutshell.api.accounts.create({});
 })& {
   href?: string | null,
   revenue?: {
-    amount?: string | null,
+    amount?: string | number | null,
     formatted?: string | null
   } | null,
   employeeCount?: number | null
@@ -212,10 +212,10 @@ await corsair.nutshell.api.accounts.customFieldAttributes({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `customFields` | `object[] \| null` | No | — |
+| `accounts` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="customFields full type">
+<Accordion title="accounts full type">
 
 ```ts
 {
@@ -381,7 +381,7 @@ await corsair.nutshell.api.accounts.delete({});
 })& {
   href?: string | null,
   revenue?: {
-    amount?: string | null,
+    amount?: string | number | null,
     formatted?: string | null
   } | null,
   employeeCount?: number | null
@@ -707,7 +707,7 @@ await corsair.nutshell.api.accounts.get({});
 })& {
   href?: string | null,
   revenue?: {
-    amount?: string | null,
+    amount?: string | number | null,
     formatted?: string | null
   } | null,
   employeeCount?: number | null
@@ -1054,7 +1054,7 @@ await corsair.nutshell.api.accounts.list({});
 })& {
   href?: string | null,
   revenue?: {
-    amount?: string | null,
+    amount?: string | number | null,
     formatted?: string | null
   } | null,
   employeeCount?: number | null
@@ -1201,13 +1201,15 @@ await corsair.nutshell.api.accounts.listItems({});
   relatedType?: string | null,
   relatedUrl?: string | null,
   relatedUrlPath?: string | null,
-  primaryContact?: string | null,
-  primaryAccount?: string | null,
-  latlon?: string | null,
+  primaryContact?: string | {
+  } | null,
+  primaryAccount?: string | {
+  } | null,
+  latlon?: string | string[] | null,
   mapUrl?: string | null,
   isDeleted?: boolean | null,
   fields?: {
-  }[] | null
+  }[] | Record<string, any> | null
 })& {
   description?: string | null
 })& {
@@ -1310,7 +1312,7 @@ await corsair.nutshell.api.accounts.undelete({});
 })& {
   href?: string | null,
   revenue?: {
-    amount?: string | null,
+    amount?: string | number | null,
     formatted?: string | null
   } | null,
   employeeCount?: number | null
@@ -1378,20 +1380,43 @@ await corsair.nutshell.api.accountTypes.list({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `accountTypes` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="meta full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="accountTypes full type">
 
 ```ts
 {
   id?: string | null,
   name?: string | null,
   modifiedTime?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -1864,20 +1889,43 @@ await corsair.nutshell.api.audiences.list({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `emAudiences` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="meta full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="emAudiences full type">
 
 ```ts
 {
   id?: string | null,
   name?: string | null,
   isWebFX?: boolean | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -1967,14 +2015,14 @@ await corsair.nutshell.api.competitorMaps.get({});
   }
 )& {
   id?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   name?: string | null,
   value?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
-  number?: number | null,
+  number?: string | number | null,
   description?: string | null,
   createdTime?: {
     absoluteLocalizedString?: string | null,
@@ -1982,14 +2030,26 @@ await corsair.nutshell.api.competitorMaps.get({});
     value?: string | null
   } | null,
   closedTime?: string | null,
-  dueTime?: string | null,
-  anticipatedClosedTime?: string | null,
+  dueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  anticipatedClosedTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   ownerType?: string | null,
   status?: string | null,
   lastContactedTime?: any | null,
   pieState?: string | null,
   isOverdue?: boolean | null,
-  overdueTime?: string | null,
+  overdueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   href?: string | null,
   confidence?: number | null,
   priority?: number | null,
@@ -2065,14 +2125,14 @@ await corsair.nutshell.api.competitorMaps.list({});
   }
 )& {
   id?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   name?: string | null,
   value?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
-  number?: number | null,
+  number?: string | number | null,
   description?: string | null,
   createdTime?: {
     absoluteLocalizedString?: string | null,
@@ -2080,14 +2140,26 @@ await corsair.nutshell.api.competitorMaps.list({});
     value?: string | null
   } | null,
   closedTime?: string | null,
-  dueTime?: string | null,
-  anticipatedClosedTime?: string | null,
+  dueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  anticipatedClosedTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   ownerType?: string | null,
   status?: string | null,
   lastContactedTime?: any | null,
   pieState?: string | null,
   isOverdue?: boolean | null,
-  overdueTime?: string | null,
+  overdueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   href?: string | null,
   confidence?: number | null,
   priority?: number | null,
@@ -2464,18 +2536,41 @@ await corsair.nutshell.api.contacts.customFieldAttributes({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="meta full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="contacts full type">
 
 ```ts
 {
   id?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -2500,18 +2595,41 @@ await corsair.nutshell.api.contacts.customfields({});
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `customFields` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="meta full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="customFields full type">
 
 ```ts
 {
   id?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -2536,7 +2654,41 @@ await corsair.nutshell.api.contacts.delete({});
 
 
 
-**Output:** `undefined`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -2920,13 +3072,15 @@ await corsair.nutshell.api.contacts.listItems({});
   relatedType?: string | null,
   relatedUrl?: string | null,
   relatedUrlPath?: string | null,
-  primaryContact?: string | null,
-  primaryAccount?: string | null,
-  latlon?: string | null,
+  primaryContact?: string | {
+  } | null,
+  primaryAccount?: string | {
+  } | null,
+  latlon?: string | string[] | null,
   mapUrl?: string | null,
   isDeleted?: boolean | null,
   fields?: {
-  }[] | null
+  }[] | Record<string, any> | null
 })& {
   description?: string | null
 })& {
@@ -3096,7 +3250,41 @@ await corsair.nutshell.api.contacts.update({});
 
 
 
-**Output:** `undefined`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -3307,13 +3495,13 @@ await corsair.nutshell.api.events.deleted({});
     action?: string | null,
     changes?: {
       attribute?: string | null,
-      oldValue?: {
+      oldValue?: string | number | boolean | {
         id?: string | null,
         type?: string | null,
         name?: string | null,
         position?: number | null
       } | null,
-      newValue?: {
+      newValue?: string | number | boolean | {
         id?: string | null,
         type?: string | null,
         name?: string | null,
@@ -3402,13 +3590,13 @@ await corsair.nutshell.api.events.list({});
     action?: string | null,
     changes?: {
       attribute?: string | null,
-      oldValue?: {
+      oldValue?: string | number | boolean | {
         id?: string | null,
         type?: string | null,
         name?: string | null,
         position?: number | null
       } | null,
-      newValue?: {
+      newValue?: string | number | boolean | {
         id?: string | null,
         type?: string | null,
         name?: string | null,
@@ -3700,20 +3888,43 @@ await corsair.nutshell.api.industries.list({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `industries` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="meta full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="industries full type">
 
 ```ts
 {
   id?: string | null,
   name?: any | null,
   modifiedTime?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -3765,12 +3976,12 @@ await corsair.nutshell.api.invoices.get({});
       term?: string | null,
       price?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       discountUnit?: string | null,
@@ -3785,7 +3996,7 @@ await corsair.nutshell.api.invoices.get({});
       operation?: string | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null
     }[] | null,
@@ -3800,7 +4011,7 @@ await corsair.nutshell.api.invoices.get({});
     number?: string | null,
     total?: {
       formatted?: string | null,
-      amount?: string | null,
+      amount?: string | number | null,
       currency?: string | null
     } | null,
     validThroughTime?: string | null,
@@ -3809,7 +4020,7 @@ await corsair.nutshell.api.invoices.get({});
     sentTime?: string | null,
     paidTime?: string | null,
     completionComment?: string | null,
-    deletedTime?: string | null
+    deletedTime?: string | number | null
   }
 )[] | null
 ```
@@ -3871,12 +4082,12 @@ await corsair.nutshell.api.invoices.list({});
       term?: string | null,
       price?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       discountUnit?: string | null,
@@ -3891,7 +4102,7 @@ await corsair.nutshell.api.invoices.list({});
       operation?: string | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null
     }[] | null,
@@ -3906,7 +4117,7 @@ await corsair.nutshell.api.invoices.list({});
     number?: string | null,
     total?: {
       formatted?: string | null,
-      amount?: string | null,
+      amount?: string | number | null,
       currency?: string | null
     } | null,
     validThroughTime?: string | null,
@@ -3915,7 +4126,7 @@ await corsair.nutshell.api.invoices.list({});
     sentTime?: string | null,
     paidTime?: string | null,
     completionComment?: string | null,
-    deletedTime?: string | null
+    deletedTime?: string | number | null
   }
 )[] | null
 ```
@@ -4004,12 +4215,12 @@ await corsair.nutshell.api.invoices.status({});
       term?: string | null,
       price?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       discountUnit?: string | null,
@@ -4024,7 +4235,7 @@ await corsair.nutshell.api.invoices.status({});
       operation?: string | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null
     }[] | null,
@@ -4039,7 +4250,7 @@ await corsair.nutshell.api.invoices.status({});
     number?: string | null,
     total?: {
       formatted?: string | null,
-      amount?: string | null,
+      amount?: string | number | null,
       currency?: string | null
     } | null,
     validThroughTime?: string | null,
@@ -4048,7 +4259,7 @@ await corsair.nutshell.api.invoices.status({});
     sentTime?: string | null,
     paidTime?: string | null,
     completionComment?: string | null,
-    deletedTime?: string | null
+    deletedTime?: string | number | null
   }
 )[] | null
 ```
@@ -4142,14 +4353,14 @@ await corsair.nutshell.api.leads.create({});
   }
 )& {
   id?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   name?: string | null,
   value?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
-  number?: number | null,
+  number?: string | number | null,
   description?: string | null,
   createdTime?: {
     absoluteLocalizedString?: string | null,
@@ -4157,14 +4368,26 @@ await corsair.nutshell.api.leads.create({});
     value?: string | null
   } | null,
   closedTime?: string | null,
-  dueTime?: string | null,
-  anticipatedClosedTime?: string | null,
+  dueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  anticipatedClosedTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   ownerType?: string | null,
   status?: string | null,
   lastContactedTime?: any | null,
   pieState?: string | null,
   isOverdue?: boolean | null,
-  overdueTime?: string | null,
+  overdueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   href?: string | null,
   confidence?: number | null,
   priority?: number | null,
@@ -4245,18 +4468,41 @@ await corsair.nutshell.api.leads.customFieldAttributes({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `leads` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="meta full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="leads full type">
 
 ```ts
 {
   id?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -4281,10 +4527,32 @@ await corsair.nutshell.api.leads.customfields({});
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `customFields` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="meta full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="customFields full type">
 
 ```ts
 (
@@ -4294,10 +4562,11 @@ await corsair.nutshell.api.leads.customfields({});
     value?: string | null,
     id?: string | null
   }
-)[]
+)[] | null
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -4338,14 +4607,14 @@ await corsair.nutshell.api.leads.delete({});
   }
 )& {
   id?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   name?: string | null,
   value?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
-  number?: number | null,
+  number?: string | number | null,
   description?: string | null,
   createdTime?: {
     absoluteLocalizedString?: string | null,
@@ -4353,14 +4622,26 @@ await corsair.nutshell.api.leads.delete({});
     value?: string | null
   } | null,
   closedTime?: string | null,
-  dueTime?: string | null,
-  anticipatedClosedTime?: string | null,
+  dueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  anticipatedClosedTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   ownerType?: string | null,
   status?: string | null,
   lastContactedTime?: any | null,
   pieState?: string | null,
   isOverdue?: boolean | null,
-  overdueTime?: string | null,
+  overdueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   href?: string | null,
   confidence?: number | null,
   priority?: number | null,
@@ -4439,14 +4720,14 @@ await corsair.nutshell.api.leads.get({});
   }
 )& {
   id?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   name?: string | null,
   value?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
-  number?: number | null,
+  number?: string | number | null,
   description?: string | null,
   createdTime?: {
     absoluteLocalizedString?: string | null,
@@ -4454,14 +4735,26 @@ await corsair.nutshell.api.leads.get({});
     value?: string | null
   } | null,
   closedTime?: string | null,
-  dueTime?: string | null,
-  anticipatedClosedTime?: string | null,
+  dueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  anticipatedClosedTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   ownerType?: string | null,
   status?: string | null,
   lastContactedTime?: any | null,
   pieState?: string | null,
   isOverdue?: boolean | null,
-  overdueTime?: string | null,
+  overdueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   href?: string | null,
   confidence?: number | null,
   priority?: number | null,
@@ -4522,11 +4815,15 @@ await corsair.nutshell.api.leads.installments({});
 ```ts
 {
   id?: string | null,
-  dueTime?: string | null,
+  dueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   description?: string | null,
   value?: {
     currency?: string | null,
-    amount?: number | null
+    amount?: string | number | null
   } | null,
   failedTime?: string | null,
   isPaid?: boolean | null
@@ -4613,14 +4910,14 @@ await corsair.nutshell.api.leads.list({});
   }
 )& {
   id?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   name?: string | null,
   value?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
-  number?: number | null,
+  number?: string | number | null,
   description?: string | null,
   createdTime?: {
     absoluteLocalizedString?: string | null,
@@ -4628,14 +4925,26 @@ await corsair.nutshell.api.leads.list({});
     value?: string | null
   } | null,
   closedTime?: string | null,
-  dueTime?: string | null,
-  anticipatedClosedTime?: string | null,
+  dueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  anticipatedClosedTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   ownerType?: string | null,
   status?: string | null,
   lastContactedTime?: any | null,
   pieState?: string | null,
   isOverdue?: boolean | null,
-  overdueTime?: string | null,
+  overdueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   href?: string | null,
   confidence?: number | null,
   priority?: number | null,
@@ -4783,13 +5092,15 @@ await corsair.nutshell.api.leads.listItems({});
   relatedType?: string | null,
   relatedUrl?: string | null,
   relatedUrlPath?: string | null,
-  primaryContact?: string | null,
-  primaryAccount?: string | null,
-  latlon?: string | null,
+  primaryContact?: string | {
+  } | null,
+  primaryAccount?: string | {
+  } | null,
+  latlon?: string | string[] | null,
   mapUrl?: string | null,
   isDeleted?: boolean | null,
   fields?: {
-  }[] | null
+  }[] | Record<string, any> | null
 })& {
   htmlUrl?: string | null,
   htmlUrlPath?: string | null
@@ -4853,14 +5164,14 @@ await corsair.nutshell.api.leads.postStageset({});
   }
 )& {
   id?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   name?: string | null,
   value?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
-  number?: number | null,
+  number?: string | number | null,
   description?: string | null,
   createdTime?: {
     absoluteLocalizedString?: string | null,
@@ -4868,14 +5179,26 @@ await corsair.nutshell.api.leads.postStageset({});
     value?: string | null
   } | null,
   closedTime?: string | null,
-  dueTime?: string | null,
-  anticipatedClosedTime?: string | null,
+  dueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  anticipatedClosedTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   ownerType?: string | null,
   status?: string | null,
   lastContactedTime?: any | null,
   pieState?: string | null,
   isOverdue?: boolean | null,
-  overdueTime?: string | null,
+  overdueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   href?: string | null,
   confidence?: number | null,
   priority?: number | null,
@@ -4930,14 +5253,14 @@ await corsair.nutshell.api.leads.reopen({});
   }
 )& {
   id?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   name?: string | null,
   value?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
-  number?: number | null,
+  number?: string | number | null,
   description?: string | null,
   createdTime?: {
     absoluteLocalizedString?: string | null,
@@ -4945,14 +5268,26 @@ await corsair.nutshell.api.leads.reopen({});
     value?: string | null
   } | null,
   closedTime?: string | null,
-  dueTime?: string | null,
-  anticipatedClosedTime?: string | null,
+  dueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  anticipatedClosedTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   ownerType?: string | null,
   status?: string | null,
   lastContactedTime?: any | null,
   pieState?: string | null,
   isOverdue?: boolean | null,
-  overdueTime?: string | null,
+  overdueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   href?: string | null,
   confidence?: number | null,
   priority?: number | null,
@@ -5110,7 +5445,7 @@ await corsair.nutshell.api.leads.stages({});
     name?: any | null,
     default?: boolean | null,
     canAccess?: boolean | null,
-    status?: string | null
+    status?: string | number | null
   } | null
 } | null
 ```
@@ -5132,7 +5467,7 @@ await corsair.nutshell.api.leads.stages({});
   canAdvanceStage?: boolean | null,
   links?: {
     stageset?: string | null
-  }[] | null
+  } | null
 }[] | null
 ```
 </Accordion>
@@ -5207,14 +5542,14 @@ await corsair.nutshell.api.leads.status({});
   }
 )& {
   id?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   name?: string | null,
   value?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
-  number?: number | null,
+  number?: string | number | null,
   description?: string | null,
   createdTime?: {
     absoluteLocalizedString?: string | null,
@@ -5222,14 +5557,26 @@ await corsair.nutshell.api.leads.status({});
     value?: string | null
   } | null,
   closedTime?: string | null,
-  dueTime?: string | null,
-  anticipatedClosedTime?: string | null,
+  dueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  anticipatedClosedTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   ownerType?: string | null,
   status?: string | null,
   lastContactedTime?: any | null,
   pieState?: string | null,
   isOverdue?: boolean | null,
-  overdueTime?: string | null,
+  overdueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   href?: string | null,
   confidence?: number | null,
   priority?: number | null,
@@ -5284,14 +5631,14 @@ await corsair.nutshell.api.leads.undelete({});
   }
 )& {
   id?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   name?: string | null,
   value?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
-  number?: number | null,
+  number?: string | number | null,
   description?: string | null,
   createdTime?: {
     absoluteLocalizedString?: string | null,
@@ -5299,14 +5646,26 @@ await corsair.nutshell.api.leads.undelete({});
     value?: string | null
   } | null,
   closedTime?: string | null,
-  dueTime?: string | null,
-  anticipatedClosedTime?: string | null,
+  dueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  anticipatedClosedTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   ownerType?: string | null,
   status?: string | null,
   lastContactedTime?: any | null,
   pieState?: string | null,
   isOverdue?: boolean | null,
-  overdueTime?: string | null,
+  overdueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   href?: string | null,
   confidence?: number | null,
   priority?: number | null,
@@ -5412,11 +5771,15 @@ await corsair.nutshell.api.leads.updateInstallments({});
 ```ts
 {
   id?: string | null,
-  dueTime?: string | null,
+  dueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   description?: string | null,
   value?: {
     currency?: string | null,
-    amount?: number | null
+    amount?: string | number | null
   } | null,
   failedTime?: string | null,
   isPaid?: boolean | null
@@ -5465,14 +5828,14 @@ await corsair.nutshell.api.leads.watch({});
   }
 )& {
   id?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   name?: string | null,
   value?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
-  number?: number | null,
+  number?: string | number | null,
   description?: string | null,
   createdTime?: {
     absoluteLocalizedString?: string | null,
@@ -5480,14 +5843,26 @@ await corsair.nutshell.api.leads.watch({});
     value?: string | null
   } | null,
   closedTime?: string | null,
-  dueTime?: string | null,
-  anticipatedClosedTime?: string | null,
+  dueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
+  anticipatedClosedTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   ownerType?: string | null,
   status?: string | null,
   lastContactedTime?: any | null,
   pieState?: string | null,
   isOverdue?: boolean | null,
-  overdueTime?: string | null,
+  overdueTime?: string | {
+    absoluteLocalizedString?: string | null,
+    timestamp?: number | null,
+    value?: string | null
+  } | null,
   href?: string | null,
   confidence?: number | null,
   priority?: number | null,
@@ -5621,7 +5996,7 @@ await corsair.nutshell.api.notes.create({});
 }& {
   id?: string | null,
   createdTime?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   href?: string | null,
   body?: string | null,
   bodyHtml?: string | null,
@@ -5668,7 +6043,7 @@ await corsair.nutshell.api.notes.delete({});
 }& {
   id?: string | null,
   createdTime?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   href?: string | null,
   body?: string | null,
   bodyHtml?: string | null,
@@ -5715,7 +6090,7 @@ await corsair.nutshell.api.notes.get({});
 }& {
   id?: string | null,
   createdTime?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   href?: string | null,
   body?: string | null,
   bodyHtml?: string | null,
@@ -5763,7 +6138,7 @@ await corsair.nutshell.api.notes.list({});
 }& {
   id?: string | null,
   createdTime?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   href?: string | null,
   body?: string | null,
   bodyHtml?: string | null,
@@ -5810,7 +6185,7 @@ await corsair.nutshell.api.notes.undelete({});
 }& {
   id?: string | null,
   createdTime?: string | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   href?: string | null,
   body?: string | null,
   bodyHtml?: string | null,
@@ -5879,10 +6254,39 @@ await corsair.nutshell.api.outcomes.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| null` | No | — |
-| `name` | `string \| null` | No | — |
-| `status` | `string \| null` | No | — |
-| `type` | `string \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `outcomes` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="outcomes full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  status?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -6078,7 +6482,7 @@ await corsair.nutshell.api.productMaps.delete({});
   relationship?: any | null,
   price?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
   name?: any | null,
@@ -6143,7 +6547,7 @@ await corsair.nutshell.api.productMaps.get({});
   relationship?: any | null,
   price?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
   name?: any | null,
@@ -6203,7 +6607,7 @@ await corsair.nutshell.api.productMaps.list({});
   relationship?: any | null,
   price?: {
     formatted?: string | null,
-    amount?: string | null,
+    amount?: string | number | null,
     currency?: string | null
   } | null,
   name?: any | null,
@@ -6299,19 +6703,19 @@ await corsair.nutshell.api.products.delete({});
   href?: any | null,
   description?: any | null,
   modifiedTime?: number | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   sku?: any | null,
   productType?: any | null,
   prices?: {
     1-markets?: {
-      amount?: number | null,
+      amount?: string | number | null,
       currency?: string | null,
       formatted?: string | null,
       currencySymbol?: string | null
     } | null
   } | null,
   price?: {
-    amount?: number | null,
+    amount?: string | number | null,
     currency?: string | null,
     formatted?: string | null,
     currencySymbol?: string | null
@@ -6361,19 +6765,19 @@ await corsair.nutshell.api.products.get({});
   href?: any | null,
   description?: any | null,
   modifiedTime?: number | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   sku?: any | null,
   productType?: any | null,
   prices?: {
     1-markets?: {
-      amount?: number | null,
+      amount?: string | number | null,
       currency?: string | null,
       formatted?: string | null,
       currencySymbol?: string | null
     } | null
   } | null,
   price?: {
-    amount?: number | null,
+    amount?: string | number | null,
     currency?: string | null,
     formatted?: string | null,
     currencySymbol?: string | null
@@ -6424,19 +6828,19 @@ await corsair.nutshell.api.products.list({});
   href?: any | null,
   description?: any | null,
   modifiedTime?: number | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   sku?: any | null,
   productType?: any | null,
   prices?: {
     1-markets?: {
-      amount?: number | null,
+      amount?: string | number | null,
       currency?: string | null,
       formatted?: string | null,
       currencySymbol?: string | null
     } | null
   } | null,
   price?: {
-    amount?: number | null,
+    amount?: string | number | null,
     currency?: string | null,
     formatted?: string | null,
     currencySymbol?: string | null
@@ -6486,19 +6890,19 @@ await corsair.nutshell.api.products.undelete({});
   href?: any | null,
   description?: any | null,
   modifiedTime?: number | null,
-  deletedTime?: string | null,
+  deletedTime?: string | number | null,
   sku?: any | null,
   productType?: any | null,
   prices?: {
     1-markets?: {
-      amount?: number | null,
+      amount?: string | number | null,
       currency?: string | null,
       formatted?: string | null,
       currencySymbol?: string | null
     } | null
   } | null,
   price?: {
-    amount?: number | null,
+    amount?: string | number | null,
     currency?: string | null,
     formatted?: string | null,
     currencySymbol?: string | null
@@ -6559,12 +6963,12 @@ await corsair.nutshell.api.quotes.createInvoice({});
       term?: string | null,
       price?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       discountUnit?: string | null,
@@ -6579,7 +6983,7 @@ await corsair.nutshell.api.quotes.createInvoice({});
       operation?: string | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null
     }[] | null,
@@ -6594,7 +6998,7 @@ await corsair.nutshell.api.quotes.createInvoice({});
     number?: string | null,
     total?: {
       formatted?: string | null,
-      amount?: string | null,
+      amount?: string | number | null,
       currency?: string | null
     } | null,
     validThroughTime?: string | null,
@@ -6603,7 +7007,7 @@ await corsair.nutshell.api.quotes.createInvoice({});
     sentTime?: string | null,
     paidTime?: string | null,
     completionComment?: string | null,
-    deletedTime?: string | null
+    deletedTime?: string | number | null
   }
 )[] | null
 ```
@@ -6659,12 +7063,12 @@ await corsair.nutshell.api.quotes.get({});
       term?: string | null,
       price?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       discountUnit?: string | null,
@@ -6679,7 +7083,7 @@ await corsair.nutshell.api.quotes.get({});
       operation?: string | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null
     }[] | null,
@@ -6694,7 +7098,7 @@ await corsair.nutshell.api.quotes.get({});
     number?: string | null,
     total?: {
       formatted?: string | null,
-      amount?: string | null,
+      amount?: string | number | null,
       currency?: string | null
     } | null,
     validThroughTime?: string | null,
@@ -6702,7 +7106,7 @@ await corsair.nutshell.api.quotes.get({});
     publishedTime?: string | null,
     sentTime?: string | null,
     acceptedTime?: string | null,
-    deletedTime?: string | null
+    deletedTime?: string | number | null
   }
 )[] | null
 ```
@@ -6764,12 +7168,12 @@ await corsair.nutshell.api.quotes.list({});
       term?: string | null,
       price?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       discountUnit?: string | null,
@@ -6784,7 +7188,7 @@ await corsair.nutshell.api.quotes.list({});
       operation?: string | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null
     }[] | null,
@@ -6799,7 +7203,7 @@ await corsair.nutshell.api.quotes.list({});
     number?: string | null,
     total?: {
       formatted?: string | null,
-      amount?: string | null,
+      amount?: string | number | null,
       currency?: string | null
     } | null,
     validThroughTime?: string | null,
@@ -6807,7 +7211,7 @@ await corsair.nutshell.api.quotes.list({});
     publishedTime?: string | null,
     sentTime?: string | null,
     acceptedTime?: string | null,
-    deletedTime?: string | null
+    deletedTime?: string | number | null
   }
 )[] | null
 ```
@@ -6895,12 +7299,12 @@ await corsair.nutshell.api.quotes.status({});
       term?: string | null,
       price?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null,
       discountUnit?: string | null,
@@ -6915,7 +7319,7 @@ await corsair.nutshell.api.quotes.status({});
       operation?: string | null,
       total?: {
         formatted?: string | null,
-        amount?: string | null,
+        amount?: string | number | null,
         currency?: string | null
       } | null
     }[] | null,
@@ -6930,7 +7334,7 @@ await corsair.nutshell.api.quotes.status({});
     number?: string | null,
     total?: {
       formatted?: string | null,
-      amount?: string | null,
+      amount?: string | number | null,
       currency?: string | null
     } | null,
     validThroughTime?: string | null,
@@ -6938,7 +7342,7 @@ await corsair.nutshell.api.quotes.status({});
     publishedTime?: string | null,
     sentTime?: string | null,
     acceptedTime?: string | null,
-    deletedTime?: string | null
+    deletedTime?: string | number | null
   }
 )[] | null
 ```
@@ -7308,7 +7712,7 @@ await corsair.nutshell.api.stageSets.list({});
     name?: any | null,
     default?: boolean | null,
     canAccess?: boolean | null,
-    status?: string | null
+    status?: string | number | null
   }& {
     type: stagesets,
     links: {
@@ -7562,21 +7966,23 @@ await corsair.nutshell.api.tasks.create({});
 
 ```ts
 {
-  title?: string,
-  description?: string,
-  dueTime?: string,
-  recurrenceRule?: {
-    htmlUrl?: string,
-    htmlUrlPath?: string
-  }& {
-    rule?: string,
-    mode?: dueDate | completion,
-    id?: string
-  },
-  links?: {
-    relatedEntity?: string,
-    assignee?: string
-  }
+  tasks?: {
+    title?: string,
+    description?: string,
+    dueTime?: string,
+    recurrenceRule?: {
+      htmlUrl?: string,
+      htmlUrlPath?: string
+    }& {
+      rule?: string,
+      mode?: dueDate | completion,
+      id?: string
+    },
+    links?: {
+      relatedEntity?: string,
+      assignee?: string
+    }
+  }[]
 }
 ```
 </Accordion>
@@ -7846,7 +8252,56 @@ await corsair.nutshell.api.tasks.update({});
 
 
 
-**Output:** `undefined`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `tasks` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  instanceId?: string | null,
+  siteId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="tasks full type">
+
+```ts
+(
+  {
+    htmlUrl?: string | null,
+    htmlUrlPath?: string | null
+  }& {
+    id?: string | null,
+    recurrenceRule?: {
+      htmlUrl?: string | null,
+      htmlUrlPath?: string | null
+    }& {
+      rule?: string | null,
+      mode?: string | null,
+      id?: string | null
+    } | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -7868,10 +8323,32 @@ await corsair.nutshell.api.territories.list({});
 **Input:** _empty object_
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `territories` | `object[] \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="meta full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="territories full type">
 
 ```ts
 {
@@ -7879,10 +8356,11 @@ await corsair.nutshell.api.territories.list({});
   name?: string | null,
   href?: string | null,
   modifiedTime?: number | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
