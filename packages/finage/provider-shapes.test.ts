@@ -84,4 +84,21 @@ describe('Finage provider response shapes', () => {
 			expect(FinageOutputSchemas[operation].safeParse(bars).success).toBe(true);
 		}
 	});
+
+	it('caps the news limit at the documented maximum of 30', () => {
+		for (const operation of [
+			'getStockMarketNews',
+			'getForexNews',
+			'getCryptoNews',
+		] as const) {
+			expect(
+				FinageInputSchemas[operation].safeParse({ symbol: 'BTC', limit: 30 })
+					.success,
+			).toBe(true);
+			expect(
+				FinageInputSchemas[operation].safeParse({ symbol: 'BTC', limit: 31 })
+					.success,
+			).toBe(false);
+		}
+	});
 });

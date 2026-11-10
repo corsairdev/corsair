@@ -16,6 +16,8 @@ const optionalText = z.string().optional();
 const positiveInteger = z.number().int().positive();
 const limit = z.number().int().min(1).max(50_000).optional();
 const searchLimit = z.number().int().min(1).max(100).optional();
+// The three news routes document a default of 10 and a maximum of 30.
+const newsLimit = z.number().int().min(1).max(30).optional();
 const requiredSearchLimit = z.number().int().min(1).max(100);
 const market = z.enum([
 	'us-stock',
@@ -78,7 +80,7 @@ const baseFinageInputSchemas = {
 	getCryptoDetail: z.object({ symbol: text }),
 	getCryptoLastQuote: symbolInput,
 	getCryptoLastTrade: symbolInput,
-	getCryptoNews: z.object({ symbol: text, limit: searchLimit }),
+	getCryptoNews: z.object({ symbol: text, limit: newsLimit }),
 	getCryptoPreviousClose: symbolInput,
 	getCryptoSnapshot: z.object({
 		quotes: z.boolean(),
@@ -90,7 +92,7 @@ const baseFinageInputSchemas = {
 	getForexLastQuote: symbolInput,
 	getForexLastTrade: symbolInput,
 	getForexMarketAggregates: aggregateInput,
-	getForexNews: z.object({ symbol: text, limit: searchLimit }),
+	getForexNews: z.object({ symbol: text, limit: newsLimit }),
 	getForexPreviousClose: symbolInput,
 	getForexSnapshot: z.object({
 		quotes: z.boolean(),
@@ -104,7 +106,7 @@ const baseFinageInputSchemas = {
 	getStockMarketAggregates: aggregateInput,
 	getStockLastQuote: symbolInput,
 	getStockLastTrade: symbolInput,
-	getStockMarketNews: z.object({ symbol: text, limit: searchLimit }),
+	getStockMarketNews: z.object({ symbol: text, limit: newsLimit }),
 	getStockMarketStatus: z.object({
 		country: text.optional(),
 		currencies: z.boolean().optional(),
