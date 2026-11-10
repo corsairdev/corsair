@@ -1016,10 +1016,10 @@ await corsair.mixmax.api.livefeed.events({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `messageId` | `string` | No | — |
-| `wasSentViaMixmax` | `boolean` | No | — |
+| `wasSentViaMixmax` | `boolean \| true \| false` | No | — |
 | `contactEmail` | `string` | No | — |
-| `includeGroupMembers` | `boolean` | No | — |
-| `includeTeammates` | `boolean` | No | — |
+| `includeGroupMembers` | `boolean \| true \| false` | No | — |
+| `includeTeammates` | `boolean \| true \| false` | No | — |
 | `limit` | `number` | No | — |
 | `next` | `string` | No | — |
 
@@ -1031,7 +1031,7 @@ await corsair.mixmax.api.livefeed.events({});
 |------|------|----------|-------------|
 | `results` | `object[]` | Yes | — |
 | `hasNext` | `boolean` | No | — |
-| `next` | `string` | No | — |
+| `next` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="results full type">
@@ -1040,35 +1040,35 @@ await corsair.mixmax.api.livefeed.events({});
 {
   _id?: string,
   type?: string,
-  recipientEmail?: string,
-  recipientName?: string,
+  recipientEmail?: string | null,
+  recipientName?: string | null,
   subject?: string,
   serviceThreadId?: string,
-  country?: string,
-  region?: string,
-  city?: string,
-  os?: string,
-  program?: string,
-  linkUrl?: string,
-  linkText?: string,
-  fileName?: string,
+  country?: string | null,
+  region?: string | null,
+  city?: string | null,
+  os?: string | null,
+  program?: string | null,
+  linkUrl?: string | null,
+  linkText?: string | null,
+  fileName?: string | null,
   activityType?: string,
   timestamp?: number,
-  isMobile?: number,
+  isMobile?: number | null,
   location?: {
-    country?: string,
-    region?: string,
-    city?: string
+    country?: string | null,
+    region?: string | null,
+    city?: string | null
   },
   device?: {
-    os?: string,
-    program?: string,
-    isMobile?: number
+    os?: string | null,
+    program?: string | null,
+    isMobile?: number | null
   },
   metadata?: {
-    linkUrl?: string,
-    linkText?: string,
-    fileName?: string
+    linkUrl?: string | null,
+    linkText?: string | null,
+    fileName?: string | null
   }
 }[]
 ```
@@ -1101,8 +1101,8 @@ await corsair.mixmax.api.livefeed.list({});
 | `offset` | `number` | No | — |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
-| `stats` | `boolean` | No | — |
-| `showOnlySyncedToMixmax` | `boolean` | No | — |
+| `stats` | `boolean \| true \| false` | No | — |
+| `showOnlySyncedToMixmax` | `boolean \| true \| false` | No | — |
 | `messageIds` | `string[]` | No | — |
 
 
@@ -1126,16 +1126,16 @@ await corsair.mixmax.api.livefeed.list({});
   _id?: string,
   userId?: string,
   fromEmail?: string,
-  fromName?: string,
-  delegatorEmail?: string,
-  delegatorName?: string,
+  fromName?: string | null,
+  delegatorEmail?: string | null,
+  delegatorName?: string | null,
   subject?: string,
   service?: string,
   serviceMessageId?: string,
   serviceThreadId?: string,
   lastEventType?: string,
-  lastEventByEmail?: string,
-  lastEventByName?: string,
+  lastEventByEmail?: string | null,
+  lastEventByName?: string | null,
   sent?: number,
   wasSentViaMixmax?: number,
   includeInTeamLiveFeed?: number,
@@ -1155,7 +1155,7 @@ await corsair.mixmax.api.livefeed.list({});
   lastEventAt?: number,
   recipients?: {
     email?: string,
-    name?: string
+    name?: string | null
   }[]
 }[]
 ```
@@ -1436,7 +1436,7 @@ await corsair.mixmax.api.meetings.searchSummaries({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `isExternal` | `boolean` | No | — |
+| `isExternal` | `boolean \| true \| false` | No | — |
 | `from` | `string` | No | — |
 | `to` | `string` | No | — |
 | `attendee` | `string` | No | — |
@@ -1490,11 +1490,11 @@ await corsair.mixmax.api.meetings.searchSummaries({});
     email: string,
     name: string
   } | null,
-  ownershipLevel: owner | sharedWith,
+  ownershipLevel: string,
   isExternalMeeting: boolean,
   meetingCreatedAt: string,
   sharedWithCount: number,
-  status?: processing | completed,
+  status?: string,
   syncedTo?: {
     crm: string
   }[]
@@ -1725,7 +1725,7 @@ await corsair.mixmax.api.meetingTypes.create({});
 | `name` | `string` | No | — |
 | `link` | `string` | No | — |
 | `durationMin` | `number` | No | — |
-| `type` | `Personal \| Round Robin` | No | — |
+| `type` | `string` | No | — |
 | `calendarIds` | `string[]` | No | — |
 | `daysFromNow` | `object` | No | — |
 | `day0` | `object` | No | — |
@@ -1975,7 +1975,7 @@ await corsair.mixmax.api.meetingTypes.get({});
 | `name` | `string` | No | — |
 | `link` | `string` | No | — |
 | `durationMin` | `number` | No | — |
-| `type` | `Personal \| Round Robin` | No | — |
+| `type` | `string` | No | — |
 | `calendarIds` | `string[]` | No | — |
 | `daysFromNow` | `object` | No | — |
 | `day0` | `object` | No | — |
@@ -2212,7 +2212,7 @@ await corsair.mixmax.api.meetingTypes.list({});
   name?: string,
   link?: string,
   durationMin?: number,
-  type?: Personal | Round Robin,
+  type?: string,
   calendarIds?: string[],
   daysFromNow?: {
   },
@@ -2945,7 +2945,7 @@ await corsair.mixmax.api.messages.list({});
 
 `messages.schedule`
 
-Schedule a saved Mixmax draft to send at a Unix-millisecond timestamp.
+Schedule a saved Mixmax draft: Mixmax emails its recipients at the given Unix-millisecond timestamp unless the send is unscheduled first.
 
 **Risk:** `write`
 
@@ -3022,9 +3022,9 @@ await corsair.mixmax.api.messages.schedule({});
 
 `messages.send`
 
-Send a saved Mixmax draft. Delivery is asynchronous and cannot be undone.
+Send a saved Mixmax draft: this emails its recipients. Delivery is asynchronous and cannot be undone.
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.mixmax.api.messages.send({});
@@ -3098,9 +3098,9 @@ await corsair.mixmax.api.messages.send({});
 
 `messages.sendPlain`
 
-Send a plain email from the user’s mailbox immediately, outside Mixmax tracking.
+Send a plain email from the user’s mailbox to its recipients immediately, outside Mixmax tracking. It cannot be undone.
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.mixmax.api.messages.sendPlain({});
@@ -3120,7 +3120,10 @@ await corsair.mixmax.api.messages.sendPlain({});
   to: {
     address: string,
     name?: string
-  },
+  } | {
+    address: string,
+    name?: string
+  }[],
   from?: {
     address: string,
     name?: string
@@ -3555,7 +3558,7 @@ await corsair.mixmax.api.reports.runDataTable({});
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `sortBy` | `string` | No | — |
-| `sortDesc` | `boolean` | No | — |
+| `sortDesc` | `boolean \| true \| false` | No | — |
 | `timezone` | `string` | No | — |
 
 
@@ -3913,7 +3916,8 @@ await corsair.mixmax.api.rules.create({});
     before: boolean,
     field: string
   }
-} | null
+} | null | {
+}
 ```
 </Accordion>
 
@@ -4021,10 +4025,10 @@ await corsair.mixmax.api.rules.events.get({});
 |------|------|----------|-------------|
 | `_id` | `string` | No | — |
 | `date` | `string` | No | — |
-| `type` | `rules` | No | — |
+| `type` | `string` | No | — |
 | `userId` | `string` | No | — |
 | `email` | `string` | No | — |
-| `status` | `success \| filtered \| pending \| error` | No | — |
+| `status` | `string` | No | — |
 | `message` | `string` | No | — |
 | `payload` | `object` | No | — |
 | `metadata` | `object` | No | — |
@@ -4075,11 +4079,11 @@ await corsair.mixmax.api.rules.events.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | No | — |
-| `getWorkspaceEvents` | `boolean` | No | — |
+| `getWorkspaceEvents` | `boolean \| true \| false` | No | — |
 | `ruleId` | `string` | No | — |
 | `status` | `success \| filtered \| pending \| error` | No | — |
 | `text` | `string` | No | — |
-| `aggregate` | `boolean` | No | — |
+| `aggregate` | `boolean \| true \| false` | No | — |
 | `fields` | `string` | No | — |
 | `offset` | `number` | No | — |
 | `limit` | `number` | No | — |
@@ -4103,10 +4107,10 @@ await corsair.mixmax.api.rules.events.list({});
 {
   _id?: string,
   date?: string,
-  type?: rules,
+  type?: string,
   userId?: string,
   email?: string,
-  status?: success | filtered | pending | error,
+  status?: string,
   message?: string,
   payload?: {
   },
@@ -4201,7 +4205,8 @@ await corsair.mixmax.api.rules.get({});
     before: boolean,
     field: string
   }
-} | null
+} | null | {
+}
 ```
 </Accordion>
 
@@ -4250,7 +4255,7 @@ await corsair.mixmax.api.rules.list({});
 |------|------|----------|-------------|
 | `expand` | `actions` | No | — |
 | `owner` | `string` | No | — |
-| `hidden` | `boolean` | No | — |
+| `hidden` | `boolean \| true \| false` | No | — |
 | `limit` | `number` | No | — |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
@@ -4309,7 +4314,8 @@ await corsair.mixmax.api.rules.list({});
       before: boolean,
       field: string
     }
-  } | null,
+  } | null | {
+  },
   filter?: string,
   isPaused?: boolean,
   createdAt?: string,
@@ -6027,7 +6033,7 @@ await corsair.mixmax.api.sequences.list({});
 
 `sequences.recipients.add`
 
-Add recipients to a Mixmax sequence, starting their sequence emails unless kept as drafts.
+Add recipients to a Mixmax sequence: this starts emailing them the sequence unless each recipient is kept as a draft with scheduledAt false.
 
 **Risk:** `write`
 
@@ -6042,8 +6048,8 @@ await corsair.mixmax.api.sequences.recipients.add({});
 | `id` | `string` | Yes | — |
 | `recipients` | `object[]` | Yes | — |
 | `scheduledAt` | `number` | No | — |
-| `enrich` | `boolean` | No | — |
-| `allowMissingVariables` | `boolean` | No | — |
+| `enrich` | `boolean \| true \| false` | No | — |
+| `allowMissingVariables` | `boolean \| true \| false` | No | — |
 
 <AccordionGroup>
 <Accordion title="recipients full type">
@@ -6106,10 +6112,10 @@ await corsair.mixmax.api.sequences.recipients.list({});
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `sortBy` | `string` | No | — |
-| `sortDesc` | `boolean` | No | — |
+| `sortDesc` | `boolean \| true \| false` | No | — |
 | `query` | `string` | No | — |
 | `analyticsFrom` | `string` | No | — |
-| `includeVariables` | `boolean` | No | — |
+| `includeVariables` | `boolean \| true \| false` | No | — |
 
 
 
@@ -6128,10 +6134,10 @@ await corsair.mixmax.api.sequences.recipients.list({});
   },
   to?: {
     email?: string,
-    name?: string
+    name?: string | null
   },
   state?: string,
-  completedReason?: string,
+  completedReason?: string | null,
   createdAt?: number,
   lastStageSentOrdinal?: number,
   analytics?: {
@@ -6175,7 +6181,7 @@ await corsair.mixmax.api.sequences.search({});
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `sortBy` | `string` | No | — |
-| `sortDesc` | `boolean` | No | — |
+| `sortDesc` | `boolean \| true \| false` | No | — |
 
 
 
@@ -6210,15 +6216,15 @@ await corsair.mixmax.api.sequences.search({});
     sequenceId?: string,
     email?: string,
     domain?: string,
-    name?: string,
+    name?: string | null,
     state?: string,
-    completedReason?: string,
+    completedReason?: string | null,
     createdAt?: number,
-    completedAt?: number,
-    lastStageProcessedAt?: number,
-    lastStageSentAt?: number,
+    completedAt?: number | null,
+    lastStageProcessedAt?: number | null,
+    lastStageSentAt?: number | null,
     lastStageSentOrdinal?: number,
-    nextStageScheduledAt?: number,
+    nextStageScheduledAt?: number | null,
     isActive?: number,
     isPaused?: number,
     isCompleted?: number,
@@ -6234,7 +6240,7 @@ await corsair.mixmax.api.sequences.search({});
     }[],
     to?: {
       email?: string,
-      name?: string
+      name?: string | null
     },
     lastStageSent?: {
       ordinal?: number,
@@ -6277,7 +6283,7 @@ await corsair.mixmax.api.snippets.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `archive` | `boolean` | No | — |
+| `archive` | `boolean \| true \| false` | No | — |
 
 
 
@@ -6303,7 +6309,7 @@ await corsair.mixmax.api.snippets.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `includeDeleted` | `boolean` | No | — |
+| `includeDeleted` | `boolean \| true \| false` | No | — |
 | `expand` | `string` | No | — |
 | `fields` | `string` | No | — |
 
@@ -6313,7 +6319,7 @@ await corsair.mixmax.api.snippets.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string \| number` | No | — |
+| `_id` | `string \| number \| object` | No | — |
 | `userId` | `string` | No | — |
 | `name` | `string` | No | — |
 | `title` | `string` | No | — |
@@ -6330,6 +6336,16 @@ await corsair.mixmax.api.snippets.get({});
 | `savedBy` | `any` | No | — |
 
 <AccordionGroup>
+<Accordion title="_id full type">
+
+```ts
+string | number | {
+  _id?: any,
+  tagId?: any
+}
+```
+</Accordion>
+
 <Accordion title="cc full type">
 
 ```ts
@@ -6394,11 +6410,11 @@ await corsair.mixmax.api.snippets.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `search` | `string` | No | — |
-| `isInline` | `boolean` | No | — |
-| `deletedOnly` | `boolean` | No | — |
-| `archivedOnly` | `boolean` | No | — |
+| `isInline` | `boolean \| true \| false` | No | — |
+| `deletedOnly` | `boolean \| true \| false` | No | — |
+| `archivedOnly` | `boolean \| true \| false` | No | — |
 | `sort` | `string` | No | — |
-| `sortAscending` | `boolean` | No | — |
+| `sortAscending` | `boolean \| true \| false` | No | — |
 | `expand` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `next` | `string` | No | — |
@@ -6421,7 +6437,10 @@ await corsair.mixmax.api.snippets.list({});
 
 ```ts
 {
-  _id?: string | number,
+  _id?: string | number | {
+    _id?: any,
+    tagId?: any
+  },
   userId?: string,
   name?: string,
   title?: string,
@@ -6463,9 +6482,9 @@ await corsair.mixmax.api.snippets.list({});
 
 `snippets.send`
 
-Send an email built from a Mixmax template, immediately or at a scheduled time.
+Send an email built from a Mixmax template to its recipients, immediately or at a scheduled time.
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.mixmax.api.snippets.send({});
@@ -6482,10 +6501,10 @@ await corsair.mixmax.api.snippets.send({});
 | `subject` | `string` | No | — |
 | `variables` | `object` | No | — |
 | `scheduledAt` | `number` | No | — |
-| `trackingEnabled` | `boolean` | No | — |
-| `linkTrackingEnabled` | `boolean` | No | — |
-| `fileTrackingEnabled` | `boolean` | No | — |
-| `notificationsEnabled` | `boolean` | No | — |
+| `trackingEnabled` | `boolean \| true \| false` | No | — |
+| `linkTrackingEnabled` | `boolean \| true \| false` | No | — |
+| `fileTrackingEnabled` | `boolean \| true \| false` | No | — |
+| `notificationsEnabled` | `boolean \| true \| false` | No | — |
 
 <AccordionGroup>
 <Accordion title="to full type">
@@ -6605,7 +6624,7 @@ await corsair.mixmax.api.snippets.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string \| number` | No | — |
+| `_id` | `string \| number \| object` | No | — |
 | `userId` | `string` | No | — |
 | `name` | `string` | No | — |
 | `title` | `string` | No | — |
@@ -6622,6 +6641,16 @@ await corsair.mixmax.api.snippets.update({});
 | `savedBy` | `any` | No | — |
 
 <AccordionGroup>
+<Accordion title="_id full type">
+
+```ts
+string | number | {
+  _id?: any,
+  tagId?: any
+}
+```
+</Accordion>
+
 <Accordion title="cc full type">
 
 ```ts
@@ -6743,7 +6772,7 @@ await corsair.mixmax.api.snippetTags.addSnippets({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string \| number` | No | — |
+| `_id` | `string \| number \| object` | No | — |
 | `userId` | `string` | No | — |
 | `name` | `string` | No | — |
 | `title` | `string` | No | — |
@@ -6760,6 +6789,16 @@ await corsair.mixmax.api.snippetTags.addSnippets({});
 | `savedBy` | `any` | No | — |
 
 <AccordionGroup>
+<Accordion title="_id full type">
+
+```ts
+string | number | {
+  _id?: any,
+  tagId?: any
+}
+```
+</Accordion>
+
 <Accordion title="cc full type">
 
 ```ts
@@ -6825,7 +6864,7 @@ await corsair.mixmax.api.snippetTags.create({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `options` | `object` | No | — |
-| `isInline` | `boolean` | No | — |
+| `isInline` | `boolean \| true \| false` | No | — |
 
 <AccordionGroup>
 <Accordion title="options full type">
@@ -6969,9 +7008,9 @@ await corsair.mixmax.api.snippetTags.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `search` | `string` | No | — |
-| `isInline` | `boolean` | No | — |
+| `isInline` | `boolean \| true \| false` | No | — |
 | `sort` | `string` | No | — |
-| `sortAscending` | `boolean` | No | — |
+| `sortAscending` | `boolean \| true \| false` | No | — |
 | `expand` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `next` | `string` | No | — |
@@ -7037,7 +7076,7 @@ await corsair.mixmax.api.snippetTags.listSnippets({});
 | `id` | `string` | Yes | — |
 | `search` | `string` | No | — |
 | `sort` | `string` | No | — |
-| `sortAscending` | `boolean` | No | — |
+| `sortAscending` | `boolean \| true \| false` | No | — |
 | `expand` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `next` | `string` | No | — |
@@ -7060,7 +7099,10 @@ await corsair.mixmax.api.snippetTags.listSnippets({});
 
 ```ts
 {
-  _id?: string | number,
+  _id?: string | number | {
+    _id?: any,
+    tagId?: any
+  },
   userId?: string,
   name?: string,
   title?: string,
@@ -7208,7 +7250,7 @@ await corsair.mixmax.api.tasks.list({});
 ```ts
 {
   _id: string,
-  type: email | call | linkedin | todo,
+  type: string,
   subject?: string,
   description?: string,
   status: string,
@@ -7290,7 +7332,7 @@ await corsair.mixmax.api.teams.create({});
   userId?: string,
   email?: string,
   name?: string,
-  role: admin | member,
+  role: string,
   accepted?: boolean,
   acceptedAt?: string,
   createdAt?: string,
@@ -7369,7 +7411,7 @@ await corsair.mixmax.api.teams.get({});
   userId?: string,
   email?: string,
   name?: string,
-  role: admin | member,
+  role: string,
   accepted?: boolean,
   acceptedAt?: string,
   createdAt?: string,
@@ -7431,7 +7473,7 @@ await corsair.mixmax.api.teams.list({});
     userId?: string,
     email?: string,
     name?: string,
-    role: admin | member,
+    role: string,
     accepted?: boolean,
     acceptedAt?: string,
     createdAt?: string,
@@ -7450,7 +7492,7 @@ await corsair.mixmax.api.teams.list({});
 
 `teams.members.add`
 
-Invite members to a Mixmax team.
+Add people to a Mixmax team; Mixmax emails each of them an invite.
 
 **Risk:** `write`
 
@@ -7490,7 +7532,7 @@ await corsair.mixmax.api.teams.members.add({});
   userId?: string,
   email?: string,
   name?: string,
-  role: admin | member,
+  role: string,
   accepted?: boolean,
   acceptedAt?: string,
   createdAt?: string,
@@ -7539,7 +7581,7 @@ await corsair.mixmax.api.teams.members.list({});
   userId?: string,
   email?: string,
   name?: string,
-  role: admin | member,
+  role: string,
   accepted?: boolean,
   acceptedAt?: string,
   createdAt?: string,
@@ -7679,7 +7721,7 @@ await corsair.mixmax.api.unsubscribes.list({});
 |------|------|----------|-------------|
 | `email` | `string` | No | — |
 | `sort` | `string` | No | — |
-| `sortAscending` | `boolean` | No | — |
+| `sortAscending` | `boolean \| true \| false` | No | — |
 | `limit` | `number` | No | — |
 | `next` | `string` | No | — |
 | `previous` | `string` | No | — |
@@ -7897,7 +7939,7 @@ await corsair.mixmax.api.users.preferences.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `fields` | `string` | No | — |
-| `includeFinalDefaultCalendarUrl` | `boolean` | No | — |
+| `includeFinalDefaultCalendarUrl` | `boolean \| true \| false` | No | — |
 
 
 
