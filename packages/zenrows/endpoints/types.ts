@@ -952,7 +952,7 @@ const PrepareExtractDomainInputSchema = z.object({
 		.max(5)
 		.optional()
 		.describe(
-			'1 to 5 URLs on that domain. Three or more of the same page type work best, because Extract compares them. Zenrows answers 400 without them for a domain that is not already ready (checked live 11-10); for a ready domain the call just returns its record.',
+			'1 to 5 URLs on that domain. Three or more of the same page type work best, because Extract compares them. Zenrows answers 400 without them for a domain that is not already ready. For a ready domain, the call returns its record.',
 		),
 	idempotencyKey: z
 		.string()

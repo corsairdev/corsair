@@ -604,7 +604,7 @@ await corsair.zenrows.api.extract.prepareDomain({ domain: 'example.com', example
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `domain` | `string` | Yes | The domain to prepare, without scheme: "example.com". Zenrows drops a leading `www.`, and prepares each subdomain separately. |
-| `exampleUrls` | `string[]` | No | 1 to 5 URLs on that domain. Three or more of the same page type work best, because Extract compares them. Zenrows answers 400 without them for a domain that is not already ready (checked live 11-10); for a ready domain the call just returns its record. |
+| `exampleUrls` | `string[]` | No | 1 to 5 URLs on that domain. Three or more of the same page type work best, because Extract compares them. Zenrows answers 400 without them for a domain that is not already ready. For a ready domain, the call returns its record. |
 | `idempotencyKey` | `string` | No | The same key with the same body returns the original submission; a different body answers 409. |
 
 Preparation is free and needs no credits, but it takes one slot of the monthly allowance and minutes to finish. Send `exampleUrls`: a domain that is not already ready is refused without them. A failed attempt that Zenrows could not fetch does not use a slot. Poll `extract.getDomainStatus` rather than blocking.
