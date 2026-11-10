@@ -361,3 +361,40 @@ describe('one request per call', () => {
 		expect(fetchCallCount()).toBe(1);
 	});
 });
+
+describe('browser wait options on the Markdown route', () => {
+	it('sends waitUntil, which the schema now accepts on every scrape route', async () => {
+		respond(MARKDOWN_BODY);
+
+		// The published example uses this, and Greptile caught that the schema
+		// did not accept it: TypeScript rejected the example and JavaScript
+		// silently dropped the field.
+		await endpoints().scrape.markdown(makeCtx(), {
+			url: 'https://example.com/',
+			render: true,
+			waitUntil: 'networkidle',
+		});
+
+		expect(sentQuery().get('waitUntil')).toBe('networkidle');
+	});
+
+	it('sends the wait options on the JSON and screenshot routes too', async () => {
+		respond(JSON_BODY);
+		await endpoints().scrape.json(makeCtx(), {
+			url: 'https://example.com/',
+			render: true,
+			customWait: 750,
+			waitSelector: '#main',
+		});
+		expect(sentQuery().get('customWait')).toBe('750');
+		expect(sentQuery().get('waitSelector')).toBe('#main');
+
+		respond(SCREENSHOT_BODY);
+		await endpoints().scrape.screenshot(makeCtx(), {
+			url: 'https://example.com/',
+			render: true,
+			waitUntil: 'load',
+		});
+		expect(sentQuery().get('waitUntil')).toBe('load');
+	});
+});

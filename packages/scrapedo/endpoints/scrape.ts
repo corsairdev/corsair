@@ -19,13 +19,7 @@ export const html: ScrapeDoEndpoints['scrapeHtml'] = (ctx, input) =>
 			kind: 'scrape',
 			method: 'GET',
 			path: '/',
-			query: {
-				...scrapeQuery(parsed),
-				waitUntil: parsed.waitUntil,
-				customWait: parsed.customWait,
-				waitSelector: parsed.waitSelector,
-				output: parsed.output,
-			},
+			query: { ...scrapeQuery(parsed), output: parsed.output },
 		}),
 		{
 			// The body is the page itself, and its status is the target's status:

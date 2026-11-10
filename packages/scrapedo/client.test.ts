@@ -120,7 +120,24 @@ describe('the scrape surface', () => {
 		expect(error.detail).toContain('inactive or incorrect');
 	});
 
-	it('reads a 400 with PossibleCauses as the target rejecting the request', async () => {
+	it('reads a target 400 with an empty body as the target refusing', async () => {
+		// Captured live: a target answering 400 comes back as status 400 with no
+		// body at all, unlike Scrape.do's own errors.
+		respond('', 400);
+
+		const answer = await makeScrapeDoRequest(TOKEN, {
+			kind: 'scrape',
+			method: 'GET',
+			path: '/',
+			query: { url: 'https://example.com/' },
+		});
+
+		// It is the target's answer, so the page and status come back as a result.
+		expect(answer.status).toBe(400);
+		expect(answer.body).toBe('');
+	});
+
+	it("throws a 400 that carries Scrape.do's envelope, meaning it refused the request", async () => {
 		respond(TARGET_REJECTION_BODY, 400);
 
 		const error = await failure(
@@ -132,26 +149,59 @@ describe('the scrape surface', () => {
 			}),
 		);
 
+		// PossibleCauses is present on Scrape.do's refusals too, so it is the
+		// envelope that marks a refusal, not that field.
 		expect(error.status).toBe(400);
-		expect(error.isTargetRejection).toBe(true);
-		expect(error.causes).toEqual(['The target website rejected the request.']);
+		expect(error.isTargetRejection).toBe(false);
+		expect(error.detail).toContain('The target website returned a bad request');
 	});
 
-	it('reads a 400 with no causes as Scrape.do refusing the request', async () => {
-		respond({ Message: ['Something is wrong'] }, 400);
+	it('passes a target 403 through in transparent mode instead of losing the body', async () => {
+		respond('<html>target said no</html>', 403);
+
+		const answer = await makeScrapeDoRequest(TOKEN, {
+			kind: 'scrape',
+			method: 'GET',
+			path: '/',
+			query: { url: 'https://example.com/', transparentResponse: true },
+		});
+
+		// The target's page is what transparentResponse promises; throwing here
+		// would discard a response the caller asked for and was billed for.
+		expect(answer.status).toBe(403);
+		expect(answer.body).toBe('<html>target said no</html>');
+	});
+
+	it('passes a target 500 through, with the status on the result so it is not retried blindly', async () => {
+		respond('<html>target broke</html>', 500);
+
+		const answer = await makeScrapeDoRequest(TOKEN, {
+			kind: 'scrape',
+			method: 'GET',
+			path: '/',
+			query: { url: 'https://example.com/', transparentResponse: true },
+		});
+
+		expect(answer.status).toBe(500);
+		expect(answer.body).toBe('<html>target broke</html>');
+	});
+
+	it("still throws Scrape.do's own 502, which is not a target page", async () => {
+		respond({ Message: ['Request has failed. Please try again'] }, 502);
 
 		const error = await failure(
 			makeScrapeDoRequest(TOKEN, {
 				kind: 'scrape',
 				method: 'GET',
 				path: '/',
-				query: { url: 'https://example.com/' },
+				query: { url: 'https://example.com/', transparentResponse: true },
 			}),
 		);
 
-		// No PossibleCauses means the request never reached a target, so no
-		// credit was spent: that is the documented difference from the other 400.
-		expect(error.isTargetRejection).toBe(false);
+		// 502 is the proxy's own failure and is documented as retryable, so it
+		// must never be mistaken for a target page even in transparent mode.
+		expect(error.status).toBe(502);
+		expect(error.isRetryableServerError).toBe(true);
 	});
 
 	it('joins the Message array of a missing-token 400', async () => {

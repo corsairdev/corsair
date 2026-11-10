@@ -152,12 +152,21 @@ export class ScrapeDoAPIError extends Error {
 	}
 
 	/**
-	 * 400 carrying `PossibleCauses`: the target site answered with a bad request,
-	 * which does consume a credit. A 400 without them is Scrape.do rejecting the
-	 * request itself (a bad parameter, a missing token), which does not.
+	 * 400 with no error envelope: the target site answered with a bad request.
+	 *
+	 * Scrape.do documents two 400s that mean different things, and only the
+	 * *absence* of its envelope tells them apart. Captured live: a target that
+	 * answers 400 comes back as status 400 with an **empty body**, while
+	 * Scrape.do rejecting the request (a bad `timeout`, a missing token, a
+	 * screenshot without `returnJSON`) answers 400 with
+	 * `{ URL, StatusCode, Message, PossibleCauses, Contact }`.
+	 *
+	 * `PossibleCauses` is present in the refusal envelope too, so it cannot
+	 * distinguish them — which is why this reads whether an envelope was sent at
+	 * all rather than whether it had causes.
 	 */
 	get isTargetRejection(): boolean {
-		return this.status === 400 && this.causes.length > 0;
+		return this.status === 400 && this.detail === undefined;
 	}
 
 	/** 502: Scrape.do says the request failed and asks for a retry. */
@@ -351,13 +360,28 @@ export async function makeScrapeDoRequest(
 
 	const text = await readBody(response, method);
 
-	// A 404 on the scrape surface is the *target* answering, not Scrape.do: the
-	// body is the target's page and a credit was spent. It is returned, not
-	// thrown, so the caller sees what the site said.
-	const isTargetStatus =
-		kind === 'scrape' && (response.status === 404 || response.status === 410);
-	if (!response.ok && !isTargetStatus) {
-		const parsed = parseJsonSoft(text);
+	/*
+	 * A non-2xx on the scrape surface is usually the *target* answering: the
+	 * body is the target's page and a credit was spent, so it is returned rather
+	 * than thrown. Scrape.do's own failures are the exception, and the body says
+	 * which is which:
+	 *
+	 * - Scrape.do's envelope is `{ URL, StatusCode, Message, PossibleCauses }`.
+	 * - A target's own error comes back with the target's body, which for a bare
+	 *   400 was empty in a live probe.
+	 *
+	 * `transparentResponse` makes this the documented contract — the target's
+	 * status and body untouched — but it also applies without it, where Scrape.do
+	 * already forwards a target 404 and bills for it. The statuses Scrape.do
+	 * documents as its own (401, 429, 502, 510) always throw whatever the body
+	 * says, so a proxy failure can never be mistaken for a target page.
+	 */
+	const parsed = parseJsonSoft(text);
+	const isScrapedoFailure =
+		SCRAPEDO_FAILURE_STATUSES.has(response.status) ||
+		isScrapedoEnvelope(parsed);
+	const isTargetAnswer = kind === 'scrape' && !isScrapedoFailure;
+	if (!response.ok && !isTargetAnswer) {
 		const causes = readCauses(parsed);
 		const message = errorMessage(parsed);
 		throw new ScrapeDoAPIError(
@@ -377,6 +401,36 @@ export async function makeScrapeDoRequest(
 		status: response.status,
 		contentType: response.headers.get('content-type') ?? undefined,
 	};
+}
+
+/**
+ * Statuses Scrape.do documents as its own failures rather than a target's, from
+ * https://scrape.do/documentation/api-response/status-codes/. A target cannot
+ * produce these through the proxy: 401 and 429 are the account's, 502 is the
+ * proxy's, and 510 is the caller cancelling.
+ *
+ * 400 and 404 are deliberately absent: both can be either side, and the body
+ * tells them apart.
+ */
+const SCRAPEDO_FAILURE_STATUSES = new Set([401, 429, 502, 510]);
+
+/**
+ * True when the body is Scrape.do's own error envelope rather than a target
+ * page. Its `StatusCode` and `Message` pair is the marker; a page can contain
+ * either word, so both together with a `URL` are required.
+ */
+// unknown: the body is unvalidated; each field is checked for the one type it
+// must have before the shape is believed.
+function isScrapedoEnvelope(body: unknown): boolean {
+	if (typeof body !== 'object' || body === null || Array.isArray(body)) {
+		return false;
+	}
+	const record = body as Record<string, unknown>;
+	return (
+		typeof record.StatusCode === 'number' &&
+		Array.isArray(record.Message) &&
+		typeof record.URL === 'string'
+	);
 }
 
 /** `PossibleCauses` from the scrape envelope, which distinguishes a target 400. */

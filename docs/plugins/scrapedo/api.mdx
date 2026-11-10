@@ -394,6 +394,9 @@ await corsair.scrapedo.api.scrape.json({ url: 'https://example.com/', render: tr
 | `height` | `number` | No | Browser viewport height in pixels. Defaults to 1080. |
 | `blockResources` | `boolean` | No | Skip CSS, images and fonts in the browser. Defaults to true; set false only when the page needs them. |
 | `transparentResponse` | `boolean` | No | Return the target's own status code and body untouched instead of Scrape.do's processed answer. With this on, a target 404 arrives as a 404 rather than as the page content. |
+| `waitUntil` | `load \| domcontentloaded \| networkidle \| networkidle0 \| networkidle2 \| commit` | No | When the browser stops waiting. Defaults to domcontentloaded. Needs `render`. |
+| `customWait` | `number` | No | Milliseconds to wait after the page loads. Defaults to 0. Needs `render`. |
+| `waitSelector` | `string` | No | CSS selector to wait for before answering. Needs `render`. |
 | `showFrames` | `boolean` | No | Include iframe content. Needs `render`. |
 | `showWebsocketRequests` | `boolean` | No | Include WebSocket traffic. Needs `render`. |
 
@@ -468,6 +471,9 @@ await corsair.scrapedo.api.scrape.markdown({ url: 'https://example.com/', render
 | `height` | `number` | No | Browser viewport height in pixels. Defaults to 1080. |
 | `blockResources` | `boolean` | No | Skip CSS, images and fonts in the browser. Defaults to true; set false only when the page needs them. |
 | `transparentResponse` | `boolean` | No | Return the target's own status code and body untouched instead of Scrape.do's processed answer. With this on, a target 404 arrives as a 404 rather than as the page content. |
+| `waitUntil` | `load \| domcontentloaded \| networkidle \| networkidle0 \| networkidle2 \| commit` | No | When the browser stops waiting. Defaults to domcontentloaded. Needs `render`. |
+| `customWait` | `number` | No | Milliseconds to wait after the page loads. Defaults to 0. Needs `render`. |
+| `waitSelector` | `string` | No | CSS selector to wait for before answering. Needs `render`. |
 
 Sets `output=markdown`. The answer starts with `- Meta:` and `- Title:` lines for the page metadata, then the body.
 
@@ -515,6 +521,9 @@ await corsair.scrapedo.api.scrape.screenshot({ url: 'https://example.com/', rend
 | `height` | `number` | No | Browser viewport height in pixels. Defaults to 1080. |
 | `blockResources` | `boolean` | No | Skip CSS, images and fonts in the browser. Defaults to true; set false only when the page needs them. |
 | `transparentResponse` | `boolean` | No | Return the target's own status code and body untouched instead of Scrape.do's processed answer. With this on, a target 404 arrives as a 404 rather than as the page content. |
+| `waitUntil` | `load \| domcontentloaded \| networkidle \| networkidle0 \| networkidle2 \| commit` | No | When the browser stops waiting. Defaults to domcontentloaded. Needs `render`. |
+| `customWait` | `number` | No | Milliseconds to wait after the page loads. Defaults to 0. Needs `render`. |
+| `waitSelector` | `string` | No | CSS selector to wait for before answering. Needs `render`. |
 | `fullPage` | `boolean` | No | Capture the whole scrollable page instead of the viewport. Defaults to false. |
 | `area` | `object` | No | Capture only this area. Mutually exclusive with `fullPage`. |
 

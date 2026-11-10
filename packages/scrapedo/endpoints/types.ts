@@ -124,6 +124,28 @@ const ScrapeOptions = {
 		.describe(
 			"Return the target's own status code and body untouched instead of Scrape.do's processed answer. With this on, a target 404 arrives as a 404 rather than as the page content.",
 		),
+	// The browser wait options apply to every scrape route, not only the HTML
+	// one: the provider documents them against the browser, and the Markdown and
+	// JSON routes drive the same browser.
+	waitUntil: z
+		.enum(SCRAPEDO_WAIT_UNTIL)
+		.optional()
+		.describe(
+			'When the browser stops waiting. Defaults to domcontentloaded. Needs `render`.',
+		),
+	customWait: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe(
+			'Milliseconds to wait after the page loads. Defaults to 0. Needs `render`.',
+		),
+	waitSelector: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('CSS selector to wait for before answering. Needs `render`.'),
 };
 
 /** Options that only do anything with the headless browser on. */
@@ -165,25 +187,6 @@ const ScrapeHtmlInputSchema = z
 	.object({
 		url: HttpUrl.describe('The page to fetch.'),
 		...ScrapeOptions,
-		waitUntil: z
-			.enum(SCRAPEDO_WAIT_UNTIL)
-			.optional()
-			.describe(
-				'When the browser stops waiting. Defaults to domcontentloaded. Needs `render`.',
-			),
-		customWait: z
-			.number()
-			.int()
-			.min(0)
-			.optional()
-			.describe(
-				'Milliseconds to wait after the page loads. Defaults to 0. Needs `render`.',
-			),
-		waitSelector: z
-			.string()
-			.min(1)
-			.optional()
-			.describe('CSS selector to wait for before answering. Needs `render`.'),
 		output: z
 			.enum(SCRAPEDO_OUTPUTS)
 			.optional()

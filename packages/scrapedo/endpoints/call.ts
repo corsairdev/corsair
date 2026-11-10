@@ -61,6 +61,9 @@ export function scrapeQuery(input: {
 	height?: number;
 	blockResources?: boolean;
 	transparentResponse?: boolean;
+	waitUntil?: string;
+	customWait?: number;
+	waitSelector?: string;
 }): Record<string, string | number | boolean | undefined> {
 	return {
 		url: input.url,
@@ -78,5 +81,10 @@ export function scrapeQuery(input: {
 		height: input.height,
 		blockResources: input.blockResources,
 		transparentResponse: input.transparentResponse,
+		// Every scrape route drives the same browser, so these travel with the
+		// shared options rather than from one endpoint's own query.
+		waitUntil: input.waitUntil,
+		customWait: input.customWait,
+		waitSelector: input.waitSelector,
 	};
 }

@@ -165,3 +165,60 @@ describe('retry behaviour', () => {
 		}
 	});
 });
+
+describe('a target status that is not a proxy failure', () => {
+	it('returns a target 500 as the result rather than retrying the scrape', async () => {
+		const { corsair, testDb } = await createClient({ key: 'sd-test-token' });
+		try {
+			respond('<html>target broke</html>', 500);
+
+			const result = await corsair.scrapedo.api.scrape.html({
+				url: 'https://example.com/',
+				transparentResponse: true,
+			});
+
+			// The target answered, the credit is spent, and the page is real: a
+			// replay would pay again for the same target failure.
+			expect(result.status_code).toBe(500);
+			expect(result.html).toBe('<html>target broke</html>');
+			expect(fetchCallCount()).toBe(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('returns a target 403 as the result', async () => {
+		const { corsair, testDb } = await createClient({ key: 'sd-test-token' });
+		try {
+			respond('<html>no access</html>', 403);
+
+			const result = await corsair.scrapedo.api.scrape.html({
+				url: 'https://example.com/',
+				transparentResponse: true,
+			});
+
+			expect(result.status_code).toBe(403);
+			expect(fetchCallCount()).toBe(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('still retries a real proxy 502', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient({ key: 'sd-test-token' });
+		try {
+			respond({ Message: ['Request has failed. Please try again'] }, 502);
+			respond(HTML_BODY);
+
+			const result = await withFakeTimers(
+				corsair.scrapedo.api.scrape.html(URL_ARG),
+			);
+
+			expect(result.status_code).toBe(200);
+			expect(fetchCallCount()).toBe(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
