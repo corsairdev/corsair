@@ -67,7 +67,9 @@ export const IntegrationEnhancementSchema = IntegrationItemSchema.extend({
 	editorHeight: z.number().optional(),
 	editorWidth: z.number().optional(),
 	commands: z.array(z.string()).optional(),
-	category: z.string().optional(),
+	// One category, or several: live, Group Event Poll answers
+	// ['calendaring', 'survey'].
+	category: z.union([z.string(), z.array(z.string())]).optional(),
 	isEditable: z.boolean().optional(),
 });
 
@@ -226,7 +228,9 @@ export const IntegrationsEnhancementsCreateInputSchema = z.object({
 	editorHeight: z.number().optional(),
 	editorWidth: z.number().optional(),
 	commands: z.array(z.string()).optional(),
-	category: z.string().optional(),
+	// One category, or several: live, Group Event Poll answers
+	// ['calendaring', 'survey'].
+	category: z.union([z.string(), z.array(z.string())]).optional(),
 	isEditable: z.boolean().optional(),
 });
 

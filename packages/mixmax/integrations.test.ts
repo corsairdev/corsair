@@ -338,4 +338,38 @@ describe('Mixmax integrations endpoints', () => {
 		).rejects.toThrow();
 		expect(request).not.toHaveBeenCalled();
 	});
+
+	it('integrations.enhancements.list accepts a category list, as Mixmax returns for Group Event Poll', async () => {
+		// Trimmed from GET /v1/integrations/enhancements on a live trial
+		// account (11-10): one enhancement has two categories.
+		const live = {
+			results: [
+				{
+					_id: '5608cca56277da10fc7504a0',
+					id: 'groupscheduling',
+					name: 'Group Event Poll',
+					editorUrl: 'https://emailapps.mixmax.com/groupscheduling/editor',
+					isEditable: true,
+					editorHeight: 640,
+					editorWidth: 680,
+					resolverUrl: 'https://emailapps.mixmax.com/groupscheduling/widget',
+					commands: ['groupscheduling', 'group'],
+					category: ['calendaring', 'survey'],
+				},
+				{
+					_id: '585894f8c1f5b333612c779d',
+					id: 'html',
+					name: 'Custom HTML',
+					category: 'media',
+				},
+			],
+			hasNext: false,
+			hasPrevious: false,
+		};
+		request.mockResolvedValueOnce(live);
+
+		const page = await endpoints.integrations.enhancements.list(ctx, {});
+		expect(page.results[0]?.category).toEqual(['calendaring', 'survey']);
+		expect(page.results[1]?.category).toBe('media');
+	});
 });
