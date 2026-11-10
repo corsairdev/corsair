@@ -724,7 +724,7 @@ await corsair.finage.api.market.getCryptoAggregates({ symbol: 'BTCUSD', multiply
   l: number,
   c: number,
   v?: number,
-  t: number
+  t: number | string
 }[]
 ```
 </Accordion>
@@ -762,15 +762,15 @@ await corsair.finage.api.market.getCryptoDetail({ symbol: 'bitcoin' });
 | `symbol` | `string` | Yes | — |
 | `type` | `string` | Yes | — |
 | `isActive` | `boolean` | Yes | — |
-| `description` | `string` | No | — |
-| `developers` | `object[]` | No | — |
-| `opensource` | `boolean` | No | — |
-| `startedAt` | `string` | No | — |
-| `hashAlgorithm` | `string` | No | — |
-| `links` | `object` | No | — |
-| `thumbnail` | `string` | No | — |
-| `developmentStatus` | `string` | No | — |
-| `hardwareWallet` | `boolean` | No | — |
+| `description` | `string \| null` | No | — |
+| `developers` | `object[] \| null` | No | — |
+| `opensource` | `boolean \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `hashAlgorithm` | `string \| null` | No | — |
+| `links` | `object \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `developmentStatus` | `string \| null` | No | — |
+| `hardwareWallet` | `boolean \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="developers full type">
@@ -779,7 +779,7 @@ await corsair.finage.api.market.getCryptoDetail({ symbol: 'bitcoin' });
 {
   name: string,
   position: string
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -793,7 +793,7 @@ await corsair.finage.api.market.getCryptoDetail({ symbol: 'bitcoin' });
   source_code?: string[],
   website?: string[],
   youtube?: string[]
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1010,7 +1010,7 @@ await corsair.finage.api.market.getCryptoPreviousClose({ symbol: 'BTCUSD' });
   l: number,
   c: number,
   v?: number,
-  t: number
+  t: number | string
 }[]
 ```
 </Accordion>
@@ -1153,10 +1153,10 @@ await corsair.finage.api.market.getDelistedCompanies({ limit: 100 });
 ```ts
 {
   symbol: string,
-  company_name: string,
-  exchange: string,
-  ipo_date: string,
-  delisted_date: string
+  company_name?: string | null,
+  exchange?: string | null,
+  ipo_date?: string | null,
+  delisted_date?: string | null
 }[]
 ```
 </Accordion>
@@ -1194,8 +1194,8 @@ await corsair.finage.api.market.getDividendsCalendar({ from: '2025-01-01', to: '
 ```ts
 {
   symbol: string,
-  label: string,
-  adj_dividend: number,
+  label?: string | null,
+  adj_dividend?: number | null,
   date: string
 }[]
 ```
@@ -1228,11 +1228,11 @@ await corsair.finage.api.market.getEarningsCalendar({});
 ```ts
 {
   symbol: string,
-  eps: number | null,
-  estimated_eps: number | null,
-  revenue: number | null,
-  estimated_revenue: number | null,
-  time: string,
+  eps?: number | null,
+  estimated_eps?: number | null,
+  revenue?: number | null,
+  estimated_revenue?: number | null,
+  time?: string | null,
   date: string
 }[]
 ```
@@ -1272,13 +1272,13 @@ await corsair.finage.api.market.getEconomicCalendar({ from: '2025-01-01', to: '2
 {
   event: string,
   date: string,
-  country: string,
-  countryFlag: string,
-  actual: number | null,
-  previous: number | null,
-  change: number | null,
-  changePercentage: number | null,
-  estimate: number | null
+  country?: string | null,
+  countryFlag?: string | null,
+  actual?: number | null,
+  previous?: number | null,
+  change?: number | null,
+  changePercentage?: number | null,
+  estimate?: number | null
 }[]
 ```
 </Accordion>
@@ -1501,7 +1501,7 @@ await corsair.finage.api.market.getForexMarketAggregates({ symbol: 'GBPUSD', mul
   l: number,
   c: number,
   v?: number,
-  t: number
+  t: number | string
 }[]
 ```
 </Accordion>
@@ -1597,7 +1597,7 @@ await corsair.finage.api.market.getForexPreviousClose({ symbol: 'GBPUSD' });
   l: number,
   c: number,
   v?: number,
-  t: number
+  t: number | string
 }[]
 ```
 </Accordion>
@@ -1628,37 +1628,52 @@ await corsair.finage.api.market.getForexSignal({ interval: 'daily', symbol: 'EUR
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `timestamp` | `string` | Yes | — |
-| `symbol` | `string` | Yes | — |
-| `signal` | `buy \| sell \| hold` | Yes | — |
-| `confidence` | `number` | Yes | — |
-| `indicators` | `object` | Yes | — |
-| `price` | `number` | Yes | — |
+**Output:** `object \| object[]`
 
 <AccordionGroup>
-<Accordion title="indicators full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  sma_20: number,
-  sma_50: number,
-  rsi: number,
-  macd: number,
-  macd_signal: number,
-  macd_diff: number,
-  bollinger_high: number,
-  bollinger_low: number,
-  ma_crossover: boolean,
-  macd_cross: boolean
-}
+  timestamp: string,
+  symbol: string,
+  signal: string,
+  confidence: number,
+  indicators: {
+    sma_20: number,
+    sma_50: number,
+    rsi: number,
+    macd: number,
+    macd_signal: number,
+    macd_diff: number,
+    bollinger_high: number,
+    bollinger_low: number,
+    ma_crossover: boolean,
+    macd_cross: boolean
+  },
+  price: number
+} | {
+  timestamp: string,
+  symbol: string,
+  signal: string,
+  confidence: number,
+  indicators: {
+    sma_20: number,
+    sma_50: number,
+    rsi: number,
+    macd: number,
+    macd_signal: number,
+    macd_diff: number,
+    bollinger_high: number,
+    bollinger_low: number,
+    ma_crossover: boolean,
+    macd_cross: boolean
+  },
+  price: number
+}[]
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -1755,12 +1770,12 @@ await corsair.finage.api.market.getHistoricalDividendsCalendar({ symbol: 'AAPL' 
 
 ```ts
 {
-  label: string,
-  adj_dividend: number,
-  dividend: number,
-  record_date: string,
-  payment_date: string,
-  declaration_date: string,
+  label?: string | null,
+  adj_dividend?: number | null,
+  dividend?: number | null,
+  record_date?: string | null,
+  payment_date?: string | null,
+  declaration_date?: string | null,
   date: string
 }[]
 ```
@@ -1797,9 +1812,9 @@ await corsair.finage.api.market.getHistoricalStockSplitCalendar({ symbol: 'AAPL'
 
 ```ts
 {
-  numerator_factor: number,
-  denominator_factor: number,
-  label: string,
+  numerator_factor?: number | null,
+  denominator_factor?: number | null,
+  label?: string | null,
   date: string
 }[]
 ```
@@ -2000,9 +2015,9 @@ await corsair.finage.api.market.getInstitutionalHolders({ symbol: 'AAPL' });
 ```ts
 {
   holder: string,
-  shares: number,
-  change: number,
-  report_date: string
+  shares?: number | null,
+  change?: number | null,
+  report_date?: string | null
 }[]
 ```
 </Accordion>
@@ -2041,12 +2056,12 @@ await corsair.finage.api.market.getIpoCalendar({ from: '2025-01-01', to: '2025-1
 {
   symbol: string,
   date: string,
-  exchange: string,
-  status: string,
-  shares: number,
-  price_range: string,
-  market_cap: number,
-  company: string
+  exchange?: string | null,
+  status?: string | null,
+  shares?: number | null,
+  price_range?: string | null,
+  market_cap?: number | null,
+  company?: string | null
 }[]
 ```
 </Accordion>
@@ -2118,10 +2133,10 @@ await corsair.finage.api.market.getMutualFundHolders({ symbol: 'AAPL' });
 ```ts
 {
   holder: string,
-  shares: number,
-  change: number,
-  report_date: string,
-  weight_percentage: number
+  shares?: number | null,
+  change?: number | null,
+  report_date?: string | null,
+  weight_percentage?: number | null
 }[]
 ```
 </Accordion>
@@ -2315,10 +2330,10 @@ await corsair.finage.api.market.getSharesFloat({ symbol: 'AAPL' });
 ```ts
 {
   symbol: string,
-  public_float: number,
-  stock_float: number,
-  outstanding_shares: number,
-  date: string
+  public_float?: number | null,
+  stock_float?: number | null,
+  outstanding_shares?: number | null,
+  date?: string | null
 }[]
 ```
 </Accordion>
@@ -2355,18 +2370,18 @@ await corsair.finage.api.market.getStockCompanyDetails({ symbol: 'AAPL' });
 ```ts
 {
   symbol: string,
-  logo?: string,
+  logo?: string | null,
   name: string,
-  url?: string,
-  description?: string,
-  exchange?: string,
-  ceo?: string,
-  industry?: string,
-  state?: string,
-  address?: string,
-  employees?: number,
-  sector?: string,
-  marketcap?: number
+  url?: string | null,
+  description?: string | null,
+  exchange?: string | null,
+  ceo?: string | null,
+  industry?: string | null,
+  state?: string | null,
+  address?: string | null,
+  employees?: number | null,
+  sector?: string | null,
+  marketcap?: number | null
 }[]
 ```
 </Accordion>
@@ -2491,7 +2506,7 @@ await corsair.finage.api.market.getStockMarketAggregates({ symbol: 'AAPL', multi
   l: number,
   c: number,
   v?: number,
-  t: number
+  t: number | string
 }[]
 ```
 </Accordion>
@@ -2631,7 +2646,7 @@ await corsair.finage.api.market.getStockPreviousClose({ symbol: 'AAPL' });
   l: number,
   c: number,
   v?: number,
-  t: number
+  t: number | string
 }[]
 ```
 </Accordion>
@@ -2735,9 +2750,9 @@ await corsair.finage.api.market.getStockSplitCalendar({ from: '2025-01-01', to: 
 ```ts
 {
   symbol: string,
-  numerator_factor: number,
-  denominator_factor: number,
-  label: string,
+  numerator_factor?: number | null,
+  denominator_factor?: number | null,
+  label?: string | null,
   date: string
 }[]
 ```
@@ -2973,37 +2988,52 @@ await corsair.finage.api.market.getUsStocksSignal({ interval: 'daily', symbol: '
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `timestamp` | `string` | Yes | — |
-| `symbol` | `string` | Yes | — |
-| `signal` | `buy \| sell \| hold` | Yes | — |
-| `confidence` | `number` | Yes | — |
-| `indicators` | `object` | Yes | — |
-| `price` | `number` | Yes | — |
+**Output:** `object \| object[]`
 
 <AccordionGroup>
-<Accordion title="indicators full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  sma_20: number,
-  sma_50: number,
-  rsi: number,
-  macd: number,
-  macd_signal: number,
-  macd_diff: number,
-  bollinger_high: number,
-  bollinger_low: number,
-  ma_crossover: boolean,
-  macd_cross: boolean
-}
+  timestamp: string,
+  symbol: string,
+  signal: string,
+  confidence: number,
+  indicators: {
+    sma_20: number,
+    sma_50: number,
+    rsi: number,
+    macd: number,
+    macd_signal: number,
+    macd_diff: number,
+    bollinger_high: number,
+    bollinger_low: number,
+    ma_crossover: boolean,
+    macd_cross: boolean
+  },
+  price: number
+} | {
+  timestamp: string,
+  symbol: string,
+  signal: string,
+  confidence: number,
+  indicators: {
+    sma_20: number,
+    sma_50: number,
+    rsi: number,
+    macd: number,
+    macd_signal: number,
+    macd_diff: number,
+    bollinger_high: number,
+    bollinger_low: number,
+    ma_crossover: boolean,
+    macd_cross: boolean
+  },
+  price: number
+}[]
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
