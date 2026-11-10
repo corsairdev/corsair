@@ -34,6 +34,8 @@ await corsair.coinmarketcap.api.cryptocurrency.info({ id: ['1'], aux: 'descripti
 | `skip_invalid` | `boolean` | No | Skip unknown identifiers instead of failing the whole call. |
 | `aux` | `string` | No | Comma-separated supplemental fields: urls, logo, description, tags, platform, date_added, notice, status. |
 
+Pass exactly one of `id`, `slug`, `symbol` or `address`. A token's `platform.id` is a string on this route and a number on the others.
+
 
 
 **Output**
@@ -66,7 +68,7 @@ await corsair.coinmarketcap.api.cryptocurrency.info({ id: ['1'], aux: 'descripti
   infinite_supply?: boolean | null,
   is_hidden?: number | null,
   platform?: {
-    id?: number | null,
+    id?: number | string | null,
     slug?: string | null,
     name?: string | null,
     symbol?: string | null,
@@ -164,7 +166,7 @@ await corsair.coinmarketcap.api.cryptocurrency.listings({ limit: 10, sort: 'mark
   symbol?: string | null,
   slug?: string | null,
   platform?: {
-    id?: number | null,
+    id?: number | string | null,
     slug?: string | null,
     name?: string | null,
     symbol?: string | null,
@@ -247,7 +249,7 @@ await corsair.coinmarketcap.api.cryptocurrency.listings({ limit: 10, sort: 'mark
 
 `cryptocurrency.map`
 
-Resolve tickers, slugs or a page of the full asset list to the stable CoinMarketCap IDs, names and slugs that every other call takes
+Resolve tickers, or a page of the full asset list, to the stable CoinMarketCap IDs, names and slugs that every other call takes; it has no slug filter
 
 **Risk:** `read`
 
@@ -263,10 +265,10 @@ await corsair.coinmarketcap.api.cryptocurrency.map({ symbol: ['BTC', 'ETH'] });
 | `start` | `number` | No | 1-based index of the first result. Defaults to 1. |
 | `limit` | `number` | No | How many results to return. Defaults to every match; the maximum is 5000. |
 | `sort` | `cmc_rank \| id` | No | Field to sort by. Defaults to id. |
-| `symbol` | `string[]` | No | Tickers to resolve to CMC IDs, such as ["BTC", "ETH"]. When set, every other option is ignored by the API. |
+| `symbol` | `string[]` | No | Tickers to resolve to CMC IDs, such as ["BTC", "ETH"]. When set, the API ignores every other option except `aux`. |
 | `aux` | `string` | No | Comma-separated supplemental fields: platform, first_historical_data, last_historical_data, is_active, status. |
 
-When `symbol` is set, CoinMarketCap ignores every other option, so this operation rejects that combination rather than sending a request that would silently return the wrong rows. To page the full asset list with `aux` fields, omit `symbol`.
+When `symbol` is set, CoinMarketCap ignores `listing_status`, `start`, `limit` and `sort`, so this operation rejects those combinations rather than sending a request that would silently return the wrong rows. `aux` still applies with `symbol`.
 
 
 
@@ -292,7 +294,7 @@ When `symbol` is set, CoinMarketCap ignores every other option, so this operatio
   first_historical_data?: string | null,
   last_historical_data?: string | null,
   platform?: {
-    id?: number | null,
+    id?: number | string | null,
     slug?: string | null,
     name?: string | null,
     symbol?: string | null,
@@ -367,7 +369,7 @@ Pass exactly one of `id`, `slug` or `symbol`. Two at once is rejected by the API
   symbol?: string | null,
   slug?: string | null,
   platform?: {
-    id?: number | null,
+    id?: number | string | null,
     slug?: string | null,
     name?: string | null,
     symbol?: string | null,
@@ -465,8 +467,10 @@ await corsair.coinmarketcap.api.exchange.info({ slug: ['binance'], aux: 'logo,ur
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string[]` | No | CoinMarketCap exchange IDs, such as ["270"]. |
-| `slug` | `string[]` | No | Exchange slugs, such as ["binance"]. At least one of `id` or `slug` is required. |
+| `slug` | `string[]` | No | Exchange slugs, such as ["binance"]. Pass exactly one of `id` or `slug`. |
 | `aux` | `string` | No | Comma-separated supplemental fields: urls, logo, description, date_launched, notice, status. |
+
+Pass exactly one of `id` or `slug`.
 
 
 
@@ -732,7 +736,7 @@ await corsair.coinmarketcap.api.tools.priceConversion({ amount: 10.43, symbol: '
 | `convert` | `string[]` | No | Target currencies by symbol, such as ["USD"]. |
 | `convert_id` | `string[]` | No | Target currencies by CMC ID. Cannot be combined with `convert`. |
 
-Pass exactly one of `id` or `symbol`, and pass `id` as a single number: the route refuses a comma-separated list here even though the quote routes accept one.
+Pass exactly one of `id` or `symbol`, and pass `id` as a single number: the route refuses a comma-separated list here even though the quote routes accept one. A `symbol` lookup returns every asset sharing the ticker, and `price` is null for one CoinMarketCap has no price for.
 
 
 
@@ -754,7 +758,7 @@ Pass exactly one of `id` or `symbol`, and pass `id` as a single number: the rout
   amount?: number | null,
   last_updated?: string | null,
   quote: Record<string, {
-    price: number,
+    price?: number | null,
     last_updated?: string | null
   }>
 }[]

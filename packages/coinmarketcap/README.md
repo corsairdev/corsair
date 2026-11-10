@@ -14,7 +14,7 @@ pnpm add @corsair-dev/coinmarketcap
 |-----------|--------------|------|-------------|
 | `cryptocurrency.info` | `coinmarketcap.api.cryptocurrency.info` | `read` | Static metadata for a cryptocurrency, such as its description, logo, website and social links, by CMC ID, slug, ticker or contract address |
 | `cryptocurrency.listings` | `coinmarketcap.api.cryptocurrency.listings` | `read` | Rank every active cryptocurrency by market cap, price, volume or a percent change, with price, market cap and volume filters, paging and up to 120 quote currencies |
-| `cryptocurrency.map` | `coinmarketcap.api.cryptocurrency.map` | `read` | Resolve tickers, slugs or a page of the full asset list to the stable CoinMarketCap IDs, names and slugs that every other call takes |
+| `cryptocurrency.map` | `coinmarketcap.api.cryptocurrency.map` | `read` | Resolve tickers, or a page of the full asset list, to the stable CoinMarketCap IDs, names and slugs that every other call takes; it has no slug filter |
 | `cryptocurrency.quotes` | `coinmarketcap.api.cryptocurrency.quotes` | `read` | Latest price, market cap, volume and percent changes for specific assets, by CMC ID, slug or ticker, in one or more quote currencies |
 | `exchange.info` | `coinmarketcap.api.exchange.info` | `read` | Metadata for a centralised exchange, such as its description, logo, launch date and links, by CMC exchange ID or slug |
 | `globalMetrics.quotes` | `coinmarketcap.api.globalMetrics.quotes` | `read` | Market-wide totals: total market cap and 24 hour volume, BTC and ETH dominance, and the count of tracked assets, pairs and exchanges |

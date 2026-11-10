@@ -50,4 +50,6 @@ apiExamples:
 apiNotes:
   cryptocurrency.map: 'When `symbol` is set, CoinMarketCap ignores `listing_status`, `start`, `limit` and `sort`, so this operation rejects those combinations rather than sending a request that would silently return the wrong rows. `aux` still applies with `symbol`.'
   cryptocurrency.quotes: 'Pass exactly one of `id`, `slug` or `symbol`. Two at once is rejected by the API as a conflict between exclusive peers.'
-  tools.priceConversion: 'Pass exactly one of `id` or `symbol`, and pass `id` as a single number: the route refuses a comma-separated list here even though the quote routes accept one.'
+  cryptocurrency.info: 'Pass exactly one of `id`, `slug`, `symbol` or `address`. A token''s `platform.id` is a string on this route and a number on the others.'
+  exchange.info: 'Pass exactly one of `id` or `slug`.'
+  tools.priceConversion: 'Pass exactly one of `id` or `symbol`, and pass `id` as a single number: the route refuses a comma-separated list here even though the quote routes accept one. A `symbol` lookup returns every asset sharing the ticker, and `price` is null for one CoinMarketCap has no price for.'

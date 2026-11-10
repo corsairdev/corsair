@@ -621,7 +621,7 @@ const ExchangeInfoInputSchema = z
 	.object({
 		id: csvArray('CoinMarketCap exchange IDs, such as ["270"].').optional(),
 		slug: csvArray(
-			'Exchange slugs, such as ["binance"]. At least one of `id` or `slug` is required.',
+			'Exchange slugs, such as ["binance"]. Pass exactly one of `id` or `slug`.',
 		).optional(),
 		aux: z
 			.string()

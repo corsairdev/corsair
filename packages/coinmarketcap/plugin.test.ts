@@ -98,6 +98,15 @@ describe('coinmarketcap plugin', () => {
 		}
 	});
 
+	it('does not advertise a slug lookup on map, which has no slug filter', () => {
+		// Live on 2026-11-10: /v1/cryptocurrency/map?slug=bitcoin returned the
+		// whole unfiltered list, so an agent told to resolve slugs here would
+		// pull every asset.
+		const { description } = required(meta, 'cryptocurrency.map');
+		expect(description).not.toMatch(/tickers, slugs/i);
+		expect(description).toMatch(/no slug filter/);
+	});
+
 	it('supplies an input and an output schema for every operation', () => {
 		expect(Object.keys(schemas).sort()).toEqual(Object.keys(meta).sort());
 		for (const operation of OPERATIONS) {

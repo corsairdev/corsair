@@ -139,7 +139,7 @@ const coinMarketCapEndpointMeta = {
 	'cryptocurrency.map': {
 		riskLevel: 'read',
 		description:
-			'Resolve tickers, slugs or a page of the full asset list to the stable CoinMarketCap IDs, names and slugs that every other call takes',
+			'Resolve tickers, or a page of the full asset list, to the stable CoinMarketCap IDs, names and slugs that every other call takes; it has no slug filter',
 	},
 	'cryptocurrency.quotes': {
 		riskLevel: 'read',
