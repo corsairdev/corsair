@@ -15,8 +15,9 @@ export type ShapeOptions<Input extends z.ZodType, Output extends z.ZodType> = {
 
 /**
  * Validates the input, sends one request, shapes and validates the response,
- * then logs. Inputs are not logged wholesale, since they carry addresses and
- * search text; `log` picks the safe fields.
+ * then logs. Inputs are not logged wholesale: `log` picks what identifies the
+ * call in the tenant's own event log (a slug, a chain, the search text, a
+ * public wallet address) plus result counts. The API key is never logged.
  */
 export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	ctx: OpenseaContext,
