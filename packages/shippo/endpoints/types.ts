@@ -689,7 +689,12 @@ export const TransactionSchema = z
 			.describe(
 				'`WAITING`, `QUEUED`, `SUCCESS`, `ERROR`, or a refund state. Only `SUCCESS` carries a `label_url`.',
 			),
-		rate: RateSchema.nullish(),
+		rate: z
+			.string()
+			.nullish()
+			.describe(
+				'The rate `object_id` this label was bought from, not the rate object. Read it with `rates.get`.',
+			),
 		parcel: z.string().nullish(),
 		label_url: z
 			.string()
@@ -701,7 +706,12 @@ export const TransactionSchema = z
 		qr_code_url: z.string().nullish(),
 		label_file_type: z.string().nullish(),
 		tracking_number: z.string().nullish(),
-		tracking_status: TrackingStatusSchema.nullish(),
+		tracking_status: z
+			.string()
+			.nullish()
+			.describe(
+				'The latest high-level status of the label as a string — `UNKNOWN`, `PRE_TRANSIT`, `TRANSIT`, `DELIVERED`, `RETURNED` or `FAILURE`. Shippo sends the bare value here, not the tracking-status object that `tracks.get` returns.',
+			),
 		tracking_url_provider: z.string().nullish(),
 		eta: z.string().nullish(),
 		messages: z.array(ResponseMessageSchema).nullish(),

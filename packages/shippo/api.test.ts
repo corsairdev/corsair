@@ -107,6 +107,52 @@ describeIfKey('Shippo live smoke', () => {
 		expect(Array.isArray(page.results)).toBe(true);
 	});
 
+	it('reads a bought label, whose `rate` is an id and `tracking_status` a string', async () => {
+		const raw = await makeShippoRequest(KEY as string, {
+			method: 'GET',
+			path: '/transactions',
+			query: { results: 5 },
+		});
+
+		const page = ShippoEndpointOutputSchemas.transactionsList.parse(raw);
+		const bought = page.results.find((entry) => entry.status === 'SUCCESS');
+		if (!bought) {
+			// A fresh test account has no labels; nothing to compare against.
+			console.warn(
+				'[shippo] no SUCCESS transaction on this account; shape not checked',
+			);
+			return;
+		}
+		// Both of these differ from what the OpenAPI spec declares, and both
+		// rejected every real label before the schema was corrected:
+		// `rate` is the rate's object_id, and `tracking_status` is the bare
+		// status string rather than the tracking-status object.
+		expect(typeof bought.rate).toBe('string');
+		expect(typeof bought.tracking_status).toBe('string');
+		expect(bought.label_url).toBeTruthy();
+	});
+
+	it('reads a rate whose amount is a decimal string', async () => {
+		const raw = await makeShippoRequest(KEY as string, {
+			method: 'GET',
+			path: '/shipments',
+			query: { results: 5 },
+		});
+
+		const page = ShippoEndpointOutputSchemas.shipmentsList.parse(raw);
+		const withRates = page.results.find(
+			(entry) => (entry.rates?.length ?? 0) > 0,
+		);
+		if (!withRates) {
+			console.warn('[shippo] no shipment carries rates; shape not checked');
+			return;
+		}
+		const first = withRates.rates?.[0];
+		expect(typeof first?.amount).toBe('string');
+		// Dimensions and weights come back as strings, reformatted ("2.0000").
+		expect(typeof withRates.parcels?.[0]?.weight).toBe('string');
+	});
+
 	it('reports an unknown object as a 404 with `detail`', async () => {
 		const error = await h.failure<ShippoAPIError>(
 			makeShippoRequest(KEY as string, {
@@ -147,4 +193,3 @@ describeIfKey('Shippo live smoke', () => {
 		expect(error.status).toBe(401);
 	});
 });
-

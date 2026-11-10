@@ -165,7 +165,7 @@ export function segment(value: string | number): string {
 export async function makeShippoRequest(
 	apiKey: string,
 	{ method, path, query, body, shippoAccountId }: ShippoRequest,
-// unknown: the caller's output schema types whatever comes back.
+	// unknown: the caller's output schema types whatever comes back.
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: SHIPPO_API_BASE,

@@ -13,6 +13,7 @@ overviewNote: |
   - **`label_url` expires.** Its `Expires` query parameter is a Unix timestamp; re-read the transaction with `transactions.get` rather than reusing an old URL.
   - **Rate limits are per endpoint and per verb, per minute**, and much tighter in test mode — a list request allows 10 a minute in test, 50 in live. A 429 is retried with a 60-second wait, since every window is a minute.
   - **Auth is checked before routing.** An unknown path answers 401, not 404, so a 401 always means the token.
+  - **A bad country is silently truncated.** Shippo accepted `country: "USA"` and stored `US`, answering 201, so the two-letter rule is enforced here instead — a typo fails before it reaches an address you then ship to.
   - **Webhooks carry the whole object.** The body is `{ event, test, data }`, where `data` is the full track, transaction or batch — not a notification pointing at one. Shippo signs nothing and allows no custom header on the subscription, so keep the receiving URL private.
   - **One webhook per label.** Shippo creates a tracking webhook automatically for every label it sells, so `webhooks.list` grows on its own.
 examples:

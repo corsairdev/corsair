@@ -126,69 +126,14 @@ A Shippo webhook delivery: the `{ event, test, data }` envelope whose `data` is 
   object_updated?: string | null,
   object_state?: string | null,
   status?: string | null,
-  rate?: {
-    object_id?: string | null,
-    object_owner?: string | null,
-    object_created?: string | null,
-    amount?: string | null,
-    amount_local?: string | null,
-    currency?: string | null,
-    currency_local?: string | null,
-    provider?: string | null,
-    provider_image_75?: string | null,
-    provider_image_200?: string | null,
-    arrives_by?: string | null,
-    attributes?: string[] | null,
-    estimated_days?: number | null,
-    duration_terms?: string | null,
-    included_insurance_price?: string | null,
-    servicelevel?: {
-      name?: string | null,
-      token?: string | null,
-      terms?: string | null,
-      extended_token?: string | null,
-      parent_servicelevel?: {
-        name?: string | null,
-        token?: string | null,
-        terms?: string | null,
-        extended_token?: string | null
-      } | null
-    } | null,
-    carrier_account?: string | null,
-    shipment?: string | null,
-    zone?: string | null,
-    messages?: {
-      source?: string | null,
-      code?: string | null,
-      text?: string | null
-    }[] | null,
-    test?: boolean | null
-  } | null,
+  rate?: string | null,
   parcel?: string | null,
   label_url?: string | null,
   commercial_invoice_url?: string | null,
   qr_code_url?: string | null,
   label_file_type?: string | null,
   tracking_number?: string | null,
-  tracking_status?: {
-    object_id?: string | null,
-    object_created?: string | null,
-    object_updated?: string | null,
-    status?: string | null,
-    status_date?: string | null,
-    status_details?: string | null,
-    substatus?: {
-      code?: string | null,
-      text?: string | null,
-      action_required?: boolean | null
-    } | null,
-    location?: {
-      city?: string | null,
-      state?: string | null,
-      zip?: string | null,
-      country?: string | null
-    } | null
-  } | null,
+  tracking_status?: string | null,
   tracking_url_provider?: string | null,
   eta?: string | null,
   messages?: {
@@ -322,69 +267,14 @@ A Shippo webhook delivery: the `{ event, test, data }` envelope whose `data` is 
     object_updated?: string | null,
     object_state?: string | null,
     status?: string | null,
-    rate?: {
-      object_id?: string | null,
-      object_owner?: string | null,
-      object_created?: string | null,
-      amount?: string | null,
-      amount_local?: string | null,
-      currency?: string | null,
-      currency_local?: string | null,
-      provider?: string | null,
-      provider_image_75?: string | null,
-      provider_image_200?: string | null,
-      arrives_by?: string | null,
-      attributes?: string[] | null,
-      estimated_days?: number | null,
-      duration_terms?: string | null,
-      included_insurance_price?: string | null,
-      servicelevel?: {
-        name?: string | null,
-        token?: string | null,
-        terms?: string | null,
-        extended_token?: string | null,
-        parent_servicelevel?: {
-          name?: string | null,
-          token?: string | null,
-          terms?: string | null,
-          extended_token?: string | null
-        } | null
-      } | null,
-      carrier_account?: string | null,
-      shipment?: string | null,
-      zone?: string | null,
-      messages?: {
-        source?: string | null,
-        code?: string | null,
-        text?: string | null
-      }[] | null,
-      test?: boolean | null
-    } | null,
+    rate?: string | null,
     parcel?: string | null,
     label_url?: string | null,
     commercial_invoice_url?: string | null,
     qr_code_url?: string | null,
     label_file_type?: string | null,
     tracking_number?: string | null,
-    tracking_status?: {
-      object_id?: string | null,
-      object_created?: string | null,
-      object_updated?: string | null,
-      status?: string | null,
-      status_date?: string | null,
-      status_details?: string | null,
-      substatus?: {
-        code?: string | null,
-        text?: string | null,
-        action_required?: boolean | null
-      } | null,
-      location?: {
-        city?: string | null,
-        state?: string | null,
-        zip?: string | null,
-        country?: string | null
-      } | null
-    } | null,
+    tracking_status?: string | null,
     tracking_url_provider?: string | null,
     eta?: string | null,
     messages?: {

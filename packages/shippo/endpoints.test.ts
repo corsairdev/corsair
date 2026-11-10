@@ -71,7 +71,11 @@ describe('output parsing', () => {
 		const result = await invoke(Transactions.get, { transaction_id: '1' });
 
 		expect(result.status).toBe('SUCCESS');
-		expect(result.tracking_status?.status).toBe('DELIVERED');
+		// The bare status string, not an object: Shippo sends `"UNKNOWN"` here
+		// even on a SUCCESS label.
+		expect(result.tracking_status).toBe('UNKNOWN');
+		// `rate` is the rate's id, not the nested object.
+		expect(result.rate).toBe('ec9f0d3adc9441449c85d315f0997fd5');
 		expect(result.label_file_type).toBe('PDF_4x6');
 	});
 

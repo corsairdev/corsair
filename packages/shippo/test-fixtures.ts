@@ -146,7 +146,8 @@ export const transaction = {
 	object_updated: '2014-07-09T02:19:13.174Z',
 	object_state: 'VALID',
 	status: 'SUCCESS',
-	rate: rate,
+	// The rate's *id*, not the rate object — confirmed against a real label.
+	rate: 'ec9f0d3adc9441449c85d315f0997fd5',
 	parcel: 'adcfdddf8ec64b84ad22772bce3ea37a',
 	label_url:
 		'https://shippo-delivery.s3.amazonaws.com/70ae8117ee1749e393f249d5b77c45e0.pdf?Signature=vDw1ltcy&Expires=1437093830',
@@ -154,21 +155,9 @@ export const transaction = {
 	qr_code_url: null,
 	label_file_type: 'PDF_4x6',
 	tracking_number: '9205590164917312751089',
-	tracking_status: {
-		object_id: 'track-id',
-		object_created: '2014-07-09T02:19:13.174Z',
-		object_updated: '2014-07-09T02:19:13.174Z',
-		status: 'DELIVERED',
-		status_date: '2014-07-14T17:45:00Z',
-		status_details: 'Your shipment has been delivered.',
-		substatus: null,
-		location: {
-			city: 'San Francisco',
-			state: 'CA',
-			zip: '94117',
-			country: 'US',
-		},
-	},
+	// The bare status string, not the tracking-status object `tracks.get`
+	// returns — confirmed against a real SUCCESS label.
+	tracking_status: 'UNKNOWN',
 	tracking_url_provider: 'https://tools.usps.com/go/TrackConfirmAction',
 	eta: '2014-07-14T17:45:00Z',
 	messages: [],
@@ -183,7 +172,7 @@ export const queuedTransaction = {
 	status: 'QUEUED',
 	label_url: null,
 	tracking_number: null,
-	tracking_status: null,
+	tracking_status: 'UNKNOWN',
 };
 
 /** A label the carrier refused, with the reason in `messages`. */
