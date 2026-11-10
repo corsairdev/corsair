@@ -1,0 +1,727 @@
+---
+title: API
+description: "API reference for Rosette: every `rosette.api.*` operation with input and output types."
+---
+
+Every `rosette.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Categories
+
+### categories
+
+`categories`
+
+Classify a text into topic-taxonomy categories with confidence
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.categories({ content: 'A new machine learning framework was released today.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | The text to analyse. Mutually exclusive with contentUri. |
+| `contentUri` | `string` | No | A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content. |
+| `language` | `string` | No | An ISO 639 language code, two or three letters, such as eng or spa. |
+| `profileId` | `string` | No | A saved language profile to apply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  label?: string | null,
+  score?: number | null,
+  confidence?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Entities
+
+### entities
+
+`entities`
+
+Extract people, places, organisations and other entities, grouped by entity ID and ranked by confidence
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.entities({ content: 'John Smith works at Acme Corp in Seattle.', language: 'eng' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | The text to analyse. Mutually exclusive with contentUri. |
+| `contentUri` | `string` | No | A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content. |
+| `language` | `string` | No | An ISO 639 language code, two or three letters, such as eng or spa. |
+| `profileId` | `string` | No | A saved language profile to apply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entities` | `object[] \| null` | No | Entities, most confident first. |
+
+<AccordionGroup>
+<Accordion title="entities full type">
+
+```ts
+{
+  type?: string | null,
+  mention?: string | null,
+  normalized?: string | null,
+  count?: number | null,
+  confidence?: number | null,
+  entityId?: string | null,
+  mentions?: Record<string, JsonValue>[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Info
+
+### info
+
+`info`
+
+Read the server name, version and build, which explains a change in analysis output
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.info({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `version` | `string \| null` | No | — |
+| `buildNumber` | `string \| null` | No | — |
+| `buildDate` | `string \| null` | No | — |
+
+
+
+---
+
+## Language
+
+### language
+
+`language`
+
+Detect the language of a text, with every candidate and its confidence
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.language({ content: 'The quick brown fox jumps over the lazy dog.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | The text to analyse. Mutually exclusive with contentUri. |
+| `contentUri` | `string` | No | A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content. |
+| `language` | `string` | No | An ISO 639 language code, two or three letters, such as eng or spa. |
+| `profileId` | `string` | No | A saved language profile to apply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language` | `string \| null` | No | The most likely language. |
+| `languageDetections` | `object[] \| null` | No | Every candidate, most likely first. |
+
+<AccordionGroup>
+<Accordion title="languageDetections full type">
+
+```ts
+{
+  language?: string | null,
+  confidence?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Morphology
+
+### morphology
+
+`morphology`
+
+Analyse morphology: lemmas, part-of-speech tags and compound components
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.morphology({ content: 'running', language: 'eng' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | The text to analyse. Mutually exclusive with contentUri. |
+| `contentUri` | `string` | No | A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content. |
+| `language` | `string` | No | An ISO 639 language code, two or three letters, such as eng or spa. |
+| `profileId` | `string` | No | A saved language profile to apply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tokens` | `string[] \| null` | No | — |
+| `lemmas` | `string[] \| null` | No | — |
+| `posTags` | `string[] \| null` | No | — |
+| `compoundComponents` | `Record<string, JsonValue>[] \| null` | No | — |
+
+
+
+---
+
+## Name Similarity
+
+### nameSimilarity
+
+`nameSimilarity`
+
+Score how likely two names are to be the same entity; the order of the two affects the score
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.nameSimilarity({ name1: { text: 'John Smith', entityType: 'PERSON' }, name2: { text: 'Jon Smith', entityType: 'PERSON' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name1` | `object` | Yes | — |
+| `name2` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="name1 full type">
+
+```ts
+{
+  text: string,
+  language?: string,
+  script?: string,
+  entityType?: PERSON | LOCATION | ORGANIZATION
+}
+```
+</Accordion>
+
+<Accordion title="name2 full type">
+
+```ts
+{
+  text: string,
+  language?: string,
+  script?: string,
+  entityType?: PERSON | LOCATION | ORGANIZATION
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `score` | `number \| null` | No | — |
+
+
+
+---
+
+## Name Translation
+
+### nameTranslation
+
+`nameTranslation`
+
+Translate a name into another language, optionally saying which script and entity type it is
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.nameTranslation({ name: 'John Smith', targetLanguage: 'rus', entityType: 'PERSON' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name to translate. |
+| `targetLanguage` | `string` | Yes | The ISO 639 language to translate into. |
+| `entityType` | `PERSON \| LOCATION \| ORGANIZATION` | No | Defaults to PERSON. |
+| `sourceLanguageOfOrigin` | `string` | No | — |
+| `sourceLanguageOfUse` | `string` | No | — |
+| `sourceScript` | `string` | No | ISO 15924 code. |
+| `targetScript` | `string` | No | ISO 15924 code. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `translation` | `string \| null` | No | — |
+
+
+
+---
+
+## Ping
+
+### ping
+
+`ping`
+
+Check that the host is reachable
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.ping({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | "ping" when the host is reachable. |
+
+
+
+---
+
+## Relationships
+
+### relationships
+
+`relationships`
+
+Extract subject-verb-object relationships with the confidence of each predicate
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.relationships({ content: 'John Smith works for Acme Corp.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | The text to analyse. Mutually exclusive with contentUri. |
+| `contentUri` | `string` | No | A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content. |
+| `language` | `string` | No | An ISO 639 language code, two or three letters, such as eng or spa. |
+| `profileId` | `string` | No | A saved language profile to apply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `relationships` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="relationships full type">
+
+```ts
+{
+  predicate?: string | null,
+  predicateId?: string | null,
+  confidence?: number | null,
+  subject?: Record<string, JsonValue> | null,
+  object?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Semantics
+
+### similarTerms
+
+`semantics.similarTerms`
+
+Find terms near the input in embedding space
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.semantics.similarTerms({ content: 'car' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | The text to analyse. Mutually exclusive with contentUri. |
+| `contentUri` | `string` | No | A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content. |
+| `language` | `string` | No | An ISO 639 language code, two or three letters, such as eng or spa. |
+| `profileId` | `string` | No | A saved language profile to apply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `terms` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="terms full type">
+
+```ts
+{
+  term?: string | null,
+  similarity?: number | null,
+  embedding?: number[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### vector
+
+`semantics.vector`
+
+Compute a text embedding, with its dimension count
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.semantics.vector({ content: 'A sentence to embed.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | The text to analyse. Mutually exclusive with contentUri. |
+| `contentUri` | `string` | No | A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content. |
+| `language` | `string` | No | An ISO 639 language code, two or three letters, such as eng or spa. |
+| `profileId` | `string` | No | A saved language profile to apply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `embedding` | `number[] \| null` | No | The embedding vector. |
+| `dimensions` | `number \| null` | No | — |
+
+
+
+---
+
+## Sentences
+
+### sentences
+
+`sentences`
+
+Find sentence boundaries, as offsets into the text
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.sentences({ content: 'The quick brown fox. It jumped over the dog.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | The text to analyse. Mutually exclusive with contentUri. |
+| `contentUri` | `string` | No | A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content. |
+| `language` | `string` | No | An ISO 639 language code, two or three letters, such as eng or spa. |
+| `profileId` | `string` | No | A saved language profile to apply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sentenceDetections` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sentenceDetections full type">
+
+```ts
+{
+  start?: number | null,
+  end?: number | null,
+  text?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sentiment
+
+### sentiment
+
+`sentiment`
+
+Score document and per-entity sentiment, where the label and the score are separate signals
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.sentiment({ content: 'I love this product, but the delivery was slow.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | The text to analyse. Mutually exclusive with contentUri. |
+| `contentUri` | `string` | No | A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content. |
+| `language` | `string` | No | An ISO 639 language code, two or three letters, such as eng or spa. |
+| `profileId` | `string` | No | A saved language profile to apply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `document` | `object \| null` | No | — |
+| `entities` | `object[] \| null` | No | Sentiment per entity, when the analysis returned any. |
+
+<AccordionGroup>
+<Accordion title="document full type">
+
+```ts
+{
+  label?: string | null,
+  score?: number | null,
+  confidence?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="entities full type">
+
+```ts
+{
+  type?: string | null,
+  mention?: string | null,
+  normalized?: string | null,
+  count?: number | null,
+  label?: string | null,
+  score?: number | null,
+  confidence?: number | null,
+  entityId?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tokens
+
+### tokens
+
+`tokens`
+
+Split a text into tokens with part-of-speech tags and lemmas
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.tokens({ content: 'The quick brown fox', language: 'eng' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | The text to analyse. Mutually exclusive with contentUri. |
+| `contentUri` | `string` | No | A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content. |
+| `language` | `string` | No | An ISO 639 language code, two or three letters, such as eng or spa. |
+| `profileId` | `string` | No | A saved language profile to apply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tokens` | `string[] \| null` | No | The text split into tokens. |
+| `posTags` | `string[] \| null` | No | A part-of-speech tag per token, in the same order. |
+| `lemmas` | `string[] \| null` | No | A lemma per token, in the same order. |
+
+
+
+---
+
+## Topics
+
+### topics
+
+`topics`
+
+Extract topics and their broader concepts, with a salience rather than a probability
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.topics({ content: 'A new machine learning framework was released today.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | The text to analyse. Mutually exclusive with contentUri. |
+| `contentUri` | `string` | No | A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content. |
+| `language` | `string` | No | An ISO 639 language code, two or three letters, such as eng or spa. |
+| `profileId` | `string` | No | A saved language profile to apply. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `concepts` | `object[] \| null` | No | — |
+| `topics` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="concepts full type">
+
+```ts
+{
+  label?: string | null,
+  score?: number | null,
+  confidence?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="topics full type">
+
+```ts
+{
+  label?: string | null,
+  score?: number | null,
+  confidence?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transliteration
+
+### transliteration
+
+`transliteration`
+
+Transliterate text into another script, which keeps the words rather than translating them
+
+**Risk:** `read`
+
+```ts
+await corsair.rosette.api.transliteration({ content: 'Хуан Смит', targetScript: 'Latn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | The text to transliterate. |
+| `language` | `string` | No | An ISO 639 language code, two or three letters, such as eng or spa. |
+| `targetScript` | `string` | No | The ISO 15924 script to transliterate into. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transliteration` | `string \| null` | No | — |
+
+
+
+---
+

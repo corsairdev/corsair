@@ -3123,6 +3123,14 @@
                 ]
               },
               {
+                "group": "Rosette",
+                "pages": [
+                  "plugins/rosette/overview",
+                  "plugins/rosette/api",
+                  "plugins/rosette/database"
+                ]
+              },
+              {
                 "group": "Runpod",
                 "pages": [
                   "plugins/runpod/overview",
