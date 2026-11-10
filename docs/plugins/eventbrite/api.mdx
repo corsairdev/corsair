@@ -325,7 +325,7 @@ await corsair.eventbrite.api.attendees.list({ event_id: '2000937221092', status:
 
 `discounts.create`
 
-Create a discount code: a fixed amount or a percentage off, optionally limited by quantity, dates or ticket classes
+Create a discount or access code: a fixed amount or a percentage off (optional on an access code), optionally limited by quantity, dates or ticket classes
 
 **Risk:** `write`
 
@@ -633,7 +633,7 @@ await corsair.eventbrite.api.discounts.update({});
 
 Cancel an event. Refused while it has any pending or completed orders; a canceled event cannot be reopened, only copied
 
-**Risk:** `write` · **Irreversible**
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.eventbrite.api.events.cancel({});

@@ -94,7 +94,7 @@ apiExamples:
 exampleWebhook:
   path: notifications.delivery
   note: |
-    A delivery is a notification, not the changed object. The body holds only `api_url`, which addresses the object on the v3 API, and `config.action`, which names what fired. Read `api_url` back with the tenant's own token to get the object. Eventbrite signs neither the delivery nor a custom header, so keep the receiving URL private.
+    A delivery is a notification, not the changed object. The body holds only `api_url`, which addresses the object on the v3 API, and `config.action`, which names what fired. Read `api_url` back with the tenant's own token to get the object; the plugin only accepts a delivery whose `api_url` is on eventbriteapi.com, so that read never goes to another host. Eventbrite signs neither the delivery nor a custom header, so a delivery cannot be proven to come from Eventbrite: keep the receiving URL private.
   after: "if (result.data?.action === 'order.placed') console.log('order at', result.data.api_url);"
 apiNotes:
   events.get: "Event reads take `expand` as one comma-separated value; the plugin joins the array for you."

@@ -21,18 +21,11 @@ import { processWebhook } from "corsair";
 import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
-	const body = await request.text();
-	const headers = Object.fromEntries(request.headers);
-	const query = Object.fromEntries(new URL(request.url).searchParams);
-	const result = await processWebhook(corsair, headers, body, query);
-	return Response.json(result.response ?? { success: false }, {
-		status: !result.plugin ? 404 : result.response?.success === false ? 500 : 200,
-	});
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
 }
-
-Read the body as text, not `request.json()`: a handler that verifies a signature needs the exact bytes. The `query` argument carries `tenantId`; without it every delivery routes to the default tenant.
-
-Eventbrite does not sign deliveries and does not allow a custom header on the subscription, so this plugin has nothing to verify. Keep the receiving URL private; the notification's `api_url` is read back with the tenant's own token, which is what proves the delivery belongs to that tenant.
 ```
 
 ## Events
@@ -49,7 +42,7 @@ An Eventbrite webhook delivery: the notification naming the changed object’s `
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `api_url` | `string` | Yes | Absolute v3 API URL of the object that changed. |
+| `api_url` | `string` | Yes | Absolute v3 API URL of the object that changed, always on eventbriteapi.com. |
 | `config` | `object \| null` | No | — |
 
 <AccordionGroup>

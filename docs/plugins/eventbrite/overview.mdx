@@ -80,9 +80,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-Create a private token at [your Eventbrite API keys page](https://www.eventbrite.com/platform/api-keys) while signed in and store it with `set_api_key`, or pass `key` to `eventbrite()`. A call with no saved key throws `AuthMissingError`, whose `connectUrl` sends the tenant to the connect page.
-
-The API key and client secret on the same page belong to the OAuth flow for acting on behalf of *other* users, which this plugin does not use; the plugin needs only the private token.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 eventbrite()
@@ -141,7 +139,7 @@ See the full list on the [API](/plugins/eventbrite/api) page.
 
 ## Webhooks
 
-A delivery is a notification, not the changed object. The body holds only `api_url`, which addresses the object on the v3 API, and `config.action`, which names what fired. Read `api_url` back with the tenant's own token to get the object. Eventbrite signs neither the delivery nor a custom header, so keep the receiving URL private.
+A delivery is a notification, not the changed object. The body holds only `api_url`, which addresses the object on the v3 API, and `config.action`, which names what fired. Read `api_url` back with the tenant's own token to get the object; the plugin only accepts a delivery whose `api_url` is on eventbriteapi.com, so that read never goes to another host. Eventbrite signs neither the delivery nor a custom header, so a delivery cannot be proven to come from Eventbrite: keep the receiving URL private.
 
 ```ts
 eventbrite({

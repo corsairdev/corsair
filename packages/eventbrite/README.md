@@ -14,12 +14,12 @@ pnpm add @corsair-dev/eventbrite
 |-----------|--------------|------|-------------|
 | `attendees.get` | `eventbrite.api.attendees.get` | `read` | Read one attendee of an event |
 | `attendees.list` | `eventbrite.api.attendees.list` | `read` | List an event's attendees with their ticket class, order, check-in state and barcodes. Private: requires access to the event |
-| `discounts.create` | `eventbrite.api.discounts.create` | `write` | Create a discount code: a fixed amount or a percentage off, optionally limited by quantity, dates or ticket classes |
+| `discounts.create` | `eventbrite.api.discounts.create` | `write` | Create a discount or access code: a fixed amount or a percentage off (optional on an access code), optionally limited by quantity, dates or ticket classes |
 | `discounts.delete` | `eventbrite.api.discounts.delete` | `destructive` | Delete a discount code. Only an unused code can be deleted, and a deleted code cannot be restored |
 | `discounts.get` | `eventbrite.api.discounts.get` | `read` | Read one discount code with its amount and usage |
 | `discounts.list` | `eventbrite.api.discounts.list` | `read` | List an organization’s discounts for one scope (`event`, `multi_events` or `user`), optionally by code |
 | `discounts.update` | `eventbrite.api.discounts.update` | `write` | Change a discount code |
-| `events.cancel` | `eventbrite.api.events.cancel` | `write` | Cancel an event. Refused while it has any pending or completed orders; a canceled event cannot be reopened, only copied |
+| `events.cancel` | `eventbrite.api.events.cancel` | `destructive` | Cancel an event. Refused while it has any pending or completed orders; a canceled event cannot be reopened, only copied |
 | `events.copy` | `eventbrite.api.events.copy` | `write` | Duplicate an event into a new draft with a new ID, copying its payment options, payout method, refund policy and tax settings |
 | `events.create` | `eventbrite.api.events.create` | `write` | Create an event under an organization: name, start and end, currency, and optionally a venue or online-only, category, format and listing options |
 | `events.delete` | `eventbrite.api.events.delete` | `destructive` | Permanently delete an event and, for a series parent, every occurrence. Refused while any of them has orders |
