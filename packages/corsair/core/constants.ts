@@ -401,6 +401,7 @@ export const BaseProviders = [
 	'tally',
 	'tavily',
 	'tavilymcp',
+	'teamcamp',
 	'teams',
 	'telegram',
 	'textrazor',
@@ -859,6 +860,7 @@ export const ProviderDisplayNames = {
 	tally: 'Tally',
 	tavily: 'Tavily',
 	tavilymcp: 'Tavily MCP',
+	teamcamp: 'Teamcamp',
 	teams: 'Teams',
 	telegram: 'Telegram',
 	textrazor: 'TextRazor',
@@ -1323,6 +1325,7 @@ export type AllProviders =
 	| 'tally'
 	| 'tavily'
 	| 'tavilymcp'
+	| 'teamcamp'
 	| 'teams'
 	| 'telegram'
 	| 'textrazor'
