@@ -183,6 +183,21 @@ describe('parcels', () => {
 		expect(h.lastRequest().path).toBe(`/parcels/${parcel.object_id}`);
 	});
 
+	it('reads a parcel whose insurer or COD method is one Shippo added later', async () => {
+		h.respond({
+			...parcel,
+			extra: {
+				insurance: { amount: '50', currency: 'USD', provider: 'DHL' },
+				COD: { amount: '5', currency: 'USD', payment_method: 'CHECK' },
+			},
+		});
+
+		const result = await invoke(Parcels.get, { parcel_id: parcel.object_id });
+
+		expect(result.extra?.insurance?.provider).toBe('DHL');
+		expect(result.extra?.COD?.payment_method).toBe('CHECK');
+	});
+
 	it('creates a parcel sending weight and dimensions as strings', async () => {
 		h.respond(parcel);
 
@@ -303,6 +318,20 @@ describe('shipments', () => {
 			address_from: ADDRESS_ID,
 			address_to: 'another-address-id',
 			parcels: [parcel.object_id],
+		});
+	});
+
+	it('accepts certified signature confirmation, which the spec lists', async () => {
+		h.respond(shipment);
+		await invoke(Shipments.create, {
+			address_from: ADDRESS_ID,
+			address_to: ADDRESS_ID,
+			parcels: ['parcel-id'],
+			extra: { signature_confirmation: 'CERTIFIED' },
+		});
+
+		expect(h.lastRequest().body).toMatchObject({
+			extra: { signature_confirmation: 'CERTIFIED' },
 		});
 	});
 
@@ -447,6 +476,24 @@ describe('transactions', () => {
 			async: false,
 			metadata: 'Order ID #12345',
 		});
+	});
+
+	it('reads a label whose rate is the nested object an instant purchase returns', async () => {
+		const nestedRate = {
+			object_id: RATE_ID,
+			amount: '5.50',
+			currency: 'USD',
+			provider: 'USPS',
+			servicelevel_token: 'usps_priority',
+		};
+		h.respond(paged([{ ...transaction, rate: nestedRate }]));
+
+		// A label bought from `shipment` + `carrier_account` + servicelevel
+		// (in the dashboard or another client) carries the rate inline, and it
+		// must not fail the whole list.
+		const result = await invoke(Transactions.list, {});
+
+		expect(result.results[0]?.rate).toMatchObject({ object_id: RATE_ID });
 	});
 
 	it('rejects a buy with no rate, which is the one required field', async () => {
@@ -636,6 +683,52 @@ describe('customs', () => {
 		);
 		// A declaration the signer did not certify is not a declaration.
 		expect(error.name).toBe('ZodError');
+	});
+
+	it('reads a declaration whose items are ids, as the spec returns them', async () => {
+		h.respond({ ...customsDeclaration, items: [customsItem.object_id] });
+
+		const result = await invoke(Customs.getDeclaration, {
+			customs_declaration_id: customsDeclaration.object_id,
+		});
+
+		expect(result.items).toEqual([customsItem.object_id]);
+	});
+
+	it('accepts every incoterm and exemption code the spec lists', async () => {
+		for (const [incoterm, eel_pfc] of [
+			['FCA', 'NOEEI_30_37_h'],
+			['DAP', 'NOEEI_30_37_f'],
+			['eDAP', 'AES_ITN'],
+		]) {
+			h.respond(customsDeclaration);
+			await invoke(Customs.createDeclaration, {
+				contents_type: 'MERCHANDISE',
+				non_delivery_option: 'RETURN',
+				certify: true,
+				certify_signer: 'Shawn Ippotle',
+				items: [customsItem.object_id],
+				incoterm,
+				eel_pfc,
+			});
+			expect(h.lastRequest().body).toMatchObject({ incoterm, eel_pfc });
+		}
+	});
+
+	it('sends the importer address as the object the spec documents', async () => {
+		h.respond(customsDeclaration);
+		await invoke(Customs.createDeclaration, {
+			contents_type: 'MERCHANDISE',
+			non_delivery_option: 'RETURN',
+			certify: true,
+			certify_signer: 'Shawn Ippotle',
+			items: [customsItem.object_id],
+			address_importer: { name: 'Mr Hippo', city: 'München', country: 'DE' },
+		});
+
+		expect(h.lastRequest().body).toMatchObject({
+			address_importer: { name: 'Mr Hippo', city: 'München', country: 'DE' },
+		});
 	});
 
 	it('rejects an unknown contents type', async () => {
@@ -923,6 +1016,13 @@ describe('pickups and manifests', () => {
 		h.respond(manifest);
 		await invoke(Pickups.getManifest, { manifest_id: manifest.object_id });
 		expect(h.lastRequest().path).toBe(`/manifests/${manifest.object_id}`);
+
+		// `errors` is an array of strings in the spec.
+		h.respond({ ...manifest, status: 'ERROR', errors: ['Invalid shipment'] });
+		const failed = await invoke(Pickups.getManifest, {
+			manifest_id: manifest.object_id,
+		});
+		expect(failed.errors).toEqual(['Invalid shipment']);
 
 		h.respond(manifest);
 		await invoke(Pickups.createManifest, {

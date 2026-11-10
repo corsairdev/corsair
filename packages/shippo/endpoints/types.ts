@@ -250,10 +250,14 @@ const ParcelInsuranceSchema = z
 			.describe('Declared value, as a decimal string.'),
 		content: z.string().nullish().describe('Description of the contents.'),
 		currency: z.string().nullish(),
+		// A string, not an enum: this schema parses responses, and a provider
+		// Shippo adds later must not fail a read.
 		provider: z
-			.enum(['FEDEX', 'UPS', 'ONTRAC'])
+			.string()
 			.nullish()
-			.describe('Carrier-provided cover instead of Shippo’s XCover.'),
+			.describe(
+				'`FEDEX`, `UPS` or `ONTRAC`: carrier-provided cover instead of Shippo’s XCover.',
+			),
 	})
 	.loose();
 
@@ -267,10 +271,9 @@ const ParcelExtraSchema = z
 		insurance: ParcelInsuranceSchema.nullish(),
 		reference_1: z
 			.string()
-			.max(50)
 			.nullish()
 			.describe('Text printed on the label where the carrier supports it.'),
-		reference_2: z.string().max(50).nullish(),
+		reference_2: z.string().nullish(),
 		COD: z
 			.object({
 				amount: z
@@ -279,9 +282,11 @@ const ParcelExtraSchema = z
 					.describe('Amount to collect, as a decimal string.'),
 				currency: z.string().nullish(),
 				payment_method: z
-					.enum(['SECURED_FUNDS', 'CASH', 'ANY'])
+					.string()
 					.nullish()
-					.describe('Defaults to `ANY` when omitted.'),
+					.describe(
+						'`SECURED_FUNDS`, `CASH` or `ANY`. Defaults to `ANY` when omitted.',
+					),
 			})
 			.loose()
 			.nullish()
@@ -502,6 +507,7 @@ const ShipmentExtraSchema = z
 			.enum([
 				'STANDARD',
 				'ADULT',
+				'CERTIFIED',
 				'INDIRECT',
 				'CARRIER_CONFIRMATION',
 				'NO_SIGNATURE',
@@ -694,11 +700,29 @@ export const TransactionSchema = z
 			.describe(
 				'`WAITING`, `QUEUED`, `SUCCESS`, `ERROR`, or a refund state. Only `SUCCESS` carries a `label_url`.',
 			),
+		// A label bought from a rate carries the rate's id. One bought in a
+		// single call from a shipment, carrier account and servicelevel carries
+		// a short rate object instead, so both parse.
 		rate: z
-			.string()
+			.union([
+				z.string(),
+				z
+					.object({
+						object_id: z.string().nullish(),
+						amount: z.string().nullish(),
+						currency: z.string().nullish(),
+						amount_local: z.string().nullish(),
+						currency_local: z.string().nullish(),
+						provider: z.string().nullish(),
+						carrier_account: z.string().nullish(),
+						servicelevel_name: z.string().nullish(),
+						servicelevel_token: z.string().nullish(),
+					})
+					.loose(),
+			])
 			.nullish()
 			.describe(
-				'The rate `object_id` this label was bought from, not the rate object. Read it with `rates.get`.',
+				'The rate `object_id` this label was bought from; read it with `rates.get`. A label bought in one call from a shipment carries a short rate object here instead.',
 			),
 		parcel: z.string().nullish(),
 		label_url: z
@@ -985,8 +1009,17 @@ export const CustomsDeclarationSchema = z
 		certify_signer: z.string().nullish(),
 		incoterm: z.string().nullish(),
 		eel_pfc: z.string().nullish(),
-		items: z.array(CustomsItemSchema).nullish(),
-		address_importer: z.string().nullish(),
+		// The spec returns the items' ids; an expanded item parses too.
+		items: z
+			.array(z.union([z.string(), CustomsItemSchema]))
+			.nullish()
+			.describe(
+				'The customs items’ `object_id`s. Read one with `customsItems.get`.',
+			),
+		address_importer: z
+			.string()
+			.nullish()
+			.describe('The importer address `object_id`.'),
 		metadata: z.string().nullish(),
 		test: z.boolean().nullish(),
 	})
@@ -1014,11 +1047,25 @@ const CustomsDeclarationCreateInputSchema = z.object({
 			'Items to declare, or the `object_id`s of existing customs items.',
 		),
 	incoterm: z
-		.enum(['DDP', 'DDU'])
+		.enum(['DDP', 'DDU', 'FCA', 'DAP', 'eDAP'])
 		.optional()
-		.describe('Delivered duty paid or unpaid.'),
-	eel_pfc: z.enum(['NOEEI_30_37_a', 'NOEEI_30_36', 'AES_ITN']).optional(),
-	address_importer: z.string().optional(),
+		.describe(
+			'`DDP` (duty paid) or `DDU` (duty unpaid); `FCA`, `DAP` and `eDAP` where the carrier supports them.',
+		),
+	eel_pfc: z
+		.enum([
+			'NOEEI_30_37_a',
+			'NOEEI_30_37_h',
+			'NOEEI_30_37_f',
+			'NOEEI_30_36',
+			'AES_ITN',
+		])
+		.optional(),
+	// The spec documents an address object; the response reports it as an id.
+	address_importer: z
+		.union([AddressFieldsSchema.partial(), Id])
+		.optional()
+		.describe('The importer’s address, when it differs from the recipient.'),
 	metadata: z.string().optional(),
 	...accountIdHeader,
 });
@@ -1075,7 +1122,8 @@ const BatchShipmentSchema = z
 		status: z.string().nullish(),
 		carrier_account: z.string().nullish(),
 		servicelevel_token: z.string().nullish(),
-		messages: z.array(ResponseMessageSchema).nullish(),
+		// The spec leaves the item type open, so strings and objects both parse.
+		messages: z.array(z.union([z.string(), ResponseMessageSchema])).nullish(),
 		metadata: z.string().nullish(),
 	})
 	.loose();
@@ -1525,7 +1573,8 @@ export const ManifestSchema = z
 		transactions: z.array(z.string()).nullish(),
 		address_from: z.string().nullish(),
 		documents: z.array(z.string()).nullish(),
-		errors: z.array(ResponseMessageSchema).nullish(),
+		// Strings in the spec; message objects parse too.
+		errors: z.array(z.union([z.string(), ResponseMessageSchema])).nullish(),
 	})
 	.loose();
 
