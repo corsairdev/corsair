@@ -376,6 +376,7 @@ export const BaseProviders = [
 	'saperly',
 	'sapsuccessfactors',
 	'scaleai',
+	'scrapedo',
 	'scrapegraphai',
 	'search1api',
 	'securitytrails',
@@ -839,6 +840,7 @@ export const ProviderDisplayNames = {
 	saperly: 'Saperly',
 	sapsuccessfactors: 'SAP SuccessFactors',
 	scaleai: 'Scale AI',
+	scrapedo: 'Scrape.do',
 	scrapegraphai: 'ScrapeGraphAI',
 	search1api: 'Search1API',
 	securitytrails: 'SecurityTrails',
@@ -1308,6 +1310,7 @@ export type AllProviders =
 	| 'saperly'
 	| 'sapsuccessfactors'
 	| 'scaleai'
+	| 'scrapedo'
 	| 'scrapegraphai'
 	| 'search1api'
 	| 'securitytrails'

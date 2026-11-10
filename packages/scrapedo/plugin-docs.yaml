@@ -1,0 +1,65 @@
+displayName: Scrape.do
+description: Web scraping with Scrape.do - fetch pages as HTML, Markdown, JSON network reports or screenshots through rotating proxies, and run bulk URL jobs asynchronously.
+domain: scrape.do
+recommendedAuth: api_key
+overviewNote: |
+  Copy your token from https://dashboard.scrape.do. It is generated when you sign up and is the only credential the API needs.
+
+  Things to know before you scrape:
+
+  - **Every scrape spends credits.** Only some statuses are charged: `2xx` and a target `404`, `400` or `410` cost credits, while `429`, `401` (no credits or a suspended subscription), a Scrape.do `400`, `502` and `510` are free. A plain datacenter request is 1 credit; residential proxies and rendering cost more. `account.info` and `account.asyncInfo` are free.
+  - **A target 404 is a result, not an error.** `scrape.html` reports the target's status in `status_code` and still returns the page, because the credit was spent. A target `410` behaves the same way.
+  - **400 means two different things.** One is Scrape.do refusing the request (a bad parameter, no credit spent); the other is the target site answering with a bad request (a credit spent). The error exposes `isTargetRejection`, which reads the provider's `PossibleCauses`, so you can tell which happened.
+  - **A bad token answers HTTP 200 on `/info`.** It returns `IsActive: false` with zeros rather than an error status, so `account.info` turns that into an error instead of reporting a dead account as healthy.
+  - **`/info` is limited to 10 calls a minute** and answers `429` past that. Scrape.do's own retry mechanism is separate and on by default; `disableRetry` turns it off.
+  - **A screenshot needs the browser and the JSON answer.** `scrape.screenshot` requires `render: true` and always requests `returnJSON`, because the API refuses a screenshot without it. The images come back as base64 PNGs.
+  - **Browser-only options are rejected here, not ignored.** `waitUntil`, `customWait`, `waitSelector` and `blockResources` do nothing without `render`, so sending one with `render: false` fails before the request.
+  - **The async API is a second host.** `jobs.*` uses `https://q.scrape.do` with its own concurrency pool and its own account view in `account.asyncInfo`. A job takes up to 100 URLs, and its results are held until they expire, so read them with `jobs.result` before then. `jobs.start` declares a job, so an agent can read it back with `jobs.get` instead of polling the scrape.
+  - **Writes are not retried.** A POST through the proxy forwards its body to the target site, so a failure is reported rather than replayed: the write may have landed.
+  - **No webhooks.** Scrape.do does not send them to this plugin; its own async API can POST results to a URL you set with `webhookUrl` at job creation.
+examples:
+  read:
+    path: scrape.markdown
+    title: Fetch a page as Markdown
+    args:
+      url: https://example.com/
+  write:
+    path: jobs.start
+    title: Start an async job for two URLs
+    args:
+      targets:
+        - https://example.com/
+        - https://example.org/
+apiExamples:
+  scrape.html:
+    call: "{ url: 'https://example.com/', super: true, geoCode: 'us' }"
+  scrape.markdown:
+    call: "{ url: 'https://example.com/', render: true, waitUntil: 'networkidle' }"
+  scrape.json:
+    call: "{ url: 'https://example.com/', render: true, showFrames: true }"
+  scrape.screenshot:
+    call: "{ url: 'https://example.com/', render: true, fullPage: true }"
+  account.info: {}
+  account.asyncInfo: {}
+  jobs.start:
+    call: "{ targets: ['https://example.com/'], render: true, geoCode: 'us' }"
+  jobs.get:
+    call: "{ jobId: 'a7730ad5-f40f-44a5-98ae-80f57620d240' }"
+  jobs.result:
+    call: "{ jobId: 'a7730ad5-f40f-44a5-98ae-80f57620d240', taskId: 'c5e7eca1-5b18-44d8-8693-e4619c8c9b94' }"
+  jobs.cancel:
+    call: "{ jobId: 'a7730ad5-f40f-44a5-98ae-80f57620d240' }"
+  jobs.list:
+    call: "{ pageSize: 20 }"
+apiNotes:
+  scrape.html: 'Returns the body as it comes and the target status beside it. A target 404 or 410 returns its page and still costs a credit, which is why the status is reported rather than thrown.'
+  scrape.markdown: 'Sets `output=markdown`. The answer starts with `- Meta:` and `- Title:` lines for the page metadata, then the body.'
+  scrape.json: 'Sets `returnJSON=true` and renames the answer to `status_code`, `content`, `network_requests` and `websocket_requests`. The network log is empty without `render`.'
+  scrape.screenshot: 'Requires `render: true` and always sets `returnJSON=true`, because the live API answers 400 for a screenshot without it. `fullPage` and `area` are mutually exclusive.'
+  account.info: 'Reads `/info`. A bad token answers HTTP 200 with `IsActive: false`, which this turns into an error. Limited to 10 calls a minute.'
+  account.asyncInfo: 'Reads `/me` on the async host. The provider spells its credits field `AvaliableCredits`; this exposes it as `available_credits`.'
+  jobs.start: 'Takes up to 100 URLs and returns a job id plus one task id per URL. Results are held by Scrape.do until they expire. Set `webhookUrl` to have them POSTed instead of polled.'
+  jobs.get: 'A job is `queued`, then `success`, `error` or `canceled`. Each task is `rotating` while it runs, then `success` or `error`.'
+  jobs.result: 'Returns the task content, its status, and `expires_at`. Read it before then, because Scrape.do drops the content afterwards.'
+  jobs.cancel: 'Cancels a queued or running job. A job that already finished answers 406.'
+  jobs.list: 'Pages through the account''s jobs, 10 per page by default.'
