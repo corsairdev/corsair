@@ -11,6 +11,11 @@ import {
 } from 'corsair/core';
 import { tldv } from './index';
 import {
+	liveMeetingDetail,
+	liveNotesResponse,
+	liveTranscriptResponse,
+} from './live-fixtures';
+import {
 	meetingReadyEvent,
 	meetingReadyNullTranscript,
 	meetingReadyWithoutTranscript,
@@ -295,6 +300,37 @@ describe('tl;dv webhook payloads', () => {
 		});
 
 		expect(parsed.success).toBe(false);
+	});
+});
+
+// tl;dv's help center says deliveries "use the same data structure as the
+// tl;dv API", in an { id, event, executedAt, data } envelope. No delivery was
+// captured, so these wrap the live API responses in that envelope.
+describe('tl;dv webhook payloads built from live responses', () => {
+	it('parses a MeetingReady delivery around a live meeting and notes', () => {
+		const parsed = MeetingReadyEventSchema.safeParse({
+			id: 'webhook-job-id',
+			event: 'MeetingReady',
+			executedAt: '2026-11-10T19:08:00.000Z',
+			data: {
+				...liveMeetingDetail,
+				notes: liveNotesResponse,
+				transcript: liveTranscriptResponse,
+			},
+		});
+
+		expect(parsed.success).toBe(true);
+	});
+
+	it('parses a TranscriptReady delivery around a live transcript', () => {
+		const parsed = TranscriptReadyEventSchema.safeParse({
+			event: 'TranscriptReady',
+			data: liveTranscriptResponse,
+			id: 'webhook-job-id',
+			executedAt: '2026-11-10T19:08:00.000Z',
+		});
+
+		expect(parsed.success).toBe(true);
 	});
 });
 

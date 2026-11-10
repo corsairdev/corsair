@@ -3,7 +3,14 @@ jest.mock('corsair/core', () => {
 	return { ...actual, logEventFromContext: jest.fn().mockResolvedValue('evt') };
 });
 
-import { liveMeetingsListResponse } from './live-fixtures';
+import {
+	liveImportResponse,
+	liveMeetingDetail,
+	liveMeetingsListResponse,
+	liveNotesResponse,
+	liveTranscriptResponse,
+	liveValidationErrorBody,
+} from './live-fixtures';
 import {
 	basicErrorBody,
 	foldersListResponse,
@@ -189,5 +196,59 @@ describe('tl;dv live responses', () => {
 		const result = await endpoints.meetings.list(makeCtx(), {});
 
 		expect(result.results[0]!.happenedAt).toBe('2026-11-10T19:06:44.000Z');
+	});
+
+	it('parses a live single-meeting read with a null phone number', async () => {
+		mockFetch(jsonResponse(liveMeetingDetail));
+
+		const result = await endpoints.meetings.get(makeCtx(), {
+			meetingId: liveMeetingDetail.id,
+		});
+
+		expect(result.phoneNumber).toBeNull();
+		expect(result.metadata).toEqual({ source: 'corsair-plugin-test', run: 1 });
+		expect(result.duration).toBeCloseTo(33.62);
+	});
+
+	it('parses a live transcript', async () => {
+		mockFetch(jsonResponse(liveTranscriptResponse));
+
+		const result = await endpoints.meetings.transcript(makeCtx(), {
+			meetingId: liveTranscriptResponse.meetingId,
+		});
+
+		expect(result.data[0]!.speaker).toBe('Speaker 00');
+	});
+
+	it('parses live notes whose topic summaries are empty', async () => {
+		mockFetch(jsonResponse(liveNotesResponse));
+
+		const result = await endpoints.meetings.notes(makeCtx(), {
+			meetingId: liveTranscriptResponse.meetingId,
+		});
+
+		expect(result.topics.map((topic) => topic.summary)).toEqual(['', '']);
+		expect(result.structuredNotes[1]!.topicId).toBe(result.topics[1]!.id);
+	});
+
+	it('parses a live import response', async () => {
+		mockFetch(jsonResponse(liveImportResponse));
+
+		const result = await endpoints.meetings.import(makeCtx(), {
+			url: 'https://example.org/sample.wav',
+			name: 'corsair-plugin-test',
+		});
+
+		expect(result.jobId).toBe(liveImportResponse.jobId);
+	});
+
+	it('reads the code and first constraint from a live 400', async () => {
+		mockFetch(jsonResponse(liveValidationErrorBody, { status: 400 }));
+
+		await expect(endpoints.meetings.list(makeCtx(), {})).rejects.toMatchObject({
+			status: 400,
+			code: 'BadRequestError',
+			detail: 'meetingType must be one of the following values: ',
+		});
 	});
 });
