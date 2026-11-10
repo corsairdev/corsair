@@ -2151,11 +2151,11 @@ await corsair.shippo.api.orders.list({ results: 10 });
 | `results` | `number` | No | Results per page. Defaults to 25, except addresses which default to 5. Maximum 100. |
 | `order_status` | `(UNKNOWN \| AWAITPAY \| PAID \| REFUNDED \| CANCELLED \| PARTIALLY_FULFILLED \| SHIPPED)[]` | No | Only orders in these statuses. |
 | `shop_app` | `string` | No | — |
-| `placed_at_gte` | `string` | No | Only orders placed at or after this instant, ISO 8601 UTC. |
-| `placed_at_lte` | `string` | No | Only orders placed at or before this instant. |
+| `start_date` | `string` | No | Only orders placed at or after this instant, ISO 8601 UTC. Filtered on `placed_at`. |
+| `end_date` | `string` | No | Only orders placed at or before this instant. Filtered on `placed_at`. |
 | `shippo_account_id` | `string` | No | Sent as `SHIPPO-ACCOUNT-ID`: the managed Shippo account to act on behalf of. Platform accounts only. |
 
-The status filter is sent as `order_status[]`, which Shippo takes as a comma-separated list.
+The status filter is sent as `order_status[]`, which Shippo takes as a comma-separated list. The date filters are `start_date` and `end_date`, and they select on `placed_at`, not on when the object was created; Shippo answers 200 for an unknown query parameter, so a differently-named field would filter nothing.
 
 
 

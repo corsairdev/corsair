@@ -704,14 +704,19 @@ describe('orders', () => {
 
 		await invoke(Orders.list, {
 			order_status: ['PAID', 'SHIPPED'],
-			placed_at_gte: '2026-01-01T00:00:00Z',
+			start_date: '2026-01-01T00:00:00Z',
+			end_date: '2026-02-01T00:00:00Z',
 		});
 
-		// Shippo spells this `order_status[]`, which corsair/http would otherwise
-		// flatten to repeated plain keys.
+		// Shippo spells the status filter `order_status[]`, which corsair/http
+		// would otherwise flatten to repeated plain keys.
 		expect(h.lastRequest().query).toEqual({
 			'order_status[]': 'PAID,SHIPPED',
-			placed_at_gte: '2026-01-01T00:00:00Z',
+			// `start_date`/`end_date`, the API's own names. Shippo ignores an
+			// unknown query parameter and answers 200, so inventing
+			// `placed_at_gte` would filter nothing and look like it worked.
+			start_date: '2026-01-01T00:00:00Z',
+			end_date: '2026-02-01T00:00:00Z',
 		});
 	});
 

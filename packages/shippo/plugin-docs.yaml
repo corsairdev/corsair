@@ -14,6 +14,7 @@ overviewNote: |
   - **Rate limits are per endpoint and per verb, per minute**, and much tighter in test mode — a list request allows 10 a minute in test, 50 in live. A 429 is retried with a 60-second wait, since every window is a minute.
   - **Auth is checked before routing.** An unknown path answers 401, not 404, so a 401 always means the token.
   - **A bad country is silently truncated.** Shippo accepted `country: "USA"` and stored `US`, answering 201, so the two-letter rule is enforced here instead — a typo fails before it reaches an address you then ship to.
+  - **Route webhook deliveries per tenant in the URL.** A Shippo delivery carries no account id, so `processWebhook` falls back to the `default` tenant. Put `?tenantId=` on each subscription URL and pass `{ tenantId }` as the fourth argument; read the query from `request.url`, and read the body with `request.text()` rather than `request.json()`.
   - **Webhooks carry the whole object.** The body is `{ event, test, data }`, where `data` is the full track, transaction or batch — not a notification pointing at one. Shippo signs nothing and allows no custom header on the subscription, so keep the receiving URL private.
   - **One webhook per label.** Shippo creates a tracking webhook automatically for every label it sells, so `webhooks.list` grows on its own.
 examples:
@@ -157,6 +158,6 @@ apiNotes:
   refunds.list: "This route is `/refunds/` with a trailing slash; `/refunds` answers 404."
   batches.create: "Each shipment needs a carrier and a servicelevel, from the entry or the batch defaults. Those two resolve independently."
   batches.purchase: "Charges once per shipment and answers 202, so the merged label URLs arrive through `batches.get`, one PDF per 100 labels."
-  orders.list: "The status filter is sent as `order_status[]`, which Shippo takes as a comma-separated list."
+  orders.list: "The status filter is sent as `order_status[]`, which Shippo takes as a comma-separated list. The date filters are `start_date` and `end_date`, and they select on `placed_at`, not on when the object was created; Shippo answers 200 for an unknown query parameter, so a differently-named field would filter nothing."
   tracks.register: "Registers a tracking number Shippo has not seen, usually from a label bought elsewhere. `track_updated` webhooks fire for it afterwards."
   webhooks.create: "Shippo signs nothing and allows no custom header, so the receiving URL must be private. One subscription per event, but a label it sells creates its own tracking webhook."

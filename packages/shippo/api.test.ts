@@ -153,6 +153,24 @@ describeIfKey('Shippo live smoke', () => {
 		expect(typeof withRates.parcels?.[0]?.weight).toBe('string');
 	});
 
+	it('filters orders by start_date/end_date, the names the API honours', async () => {
+		// Shippo answers 200 for an unknown query parameter, so a wrong name
+		// filters nothing and looks like it worked. This pins the real ones by
+		// asking for an empty window and expecting an empty page.
+		const raw = await makeShippoRequest(KEY as string, {
+			method: 'GET',
+			path: '/orders',
+			query: {
+				start_date: '2000-01-01T00:00:00Z',
+				end_date: '2000-01-02T00:00:00Z',
+			},
+		});
+
+		const page = ShippoEndpointOutputSchemas.ordersList.parse(raw);
+		// Nothing was placed in 2000, so an honoured filter returns nothing.
+		expect(page.results).toHaveLength(0);
+	});
+
 	it('pages refunds and webhooks, which the spec does not document', async () => {
 		// Both routes return a `next` URL when more results exist, even though
 		// the OpenAPI spec lists no paging parameters for them.
@@ -162,10 +180,15 @@ describeIfKey('Shippo live smoke', () => {
 				path,
 				query: { results: 1, page: 1 },
 			});
-			const page = raw as { results?: unknown[]; next?: string | null };
+			// Parsed through the real output schemas, so no cast is needed and the
+			// paging envelope is validated at the same time.
+			const page =
+				path === '/refunds/'
+					? ShippoEndpointOutputSchemas.refundsList.parse(raw)
+					: ShippoEndpointOutputSchemas.webhooksList.parse(raw);
 			expect(Array.isArray(page.results)).toBe(true);
 			// At most one result, which proves `results` was honoured.
-			expect((page.results ?? []).length).toBeLessThanOrEqual(1);
+			expect(page.results.length).toBeLessThanOrEqual(1);
 		}
 	});
 

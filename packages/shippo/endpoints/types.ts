@@ -1333,14 +1333,22 @@ const OrdersListInputSchema = z.object({
 		.optional()
 		.describe('Only orders in these statuses.'),
 	shop_app: z.string().optional(),
-	placed_at_gte: z
+	// The API's own names, from the spec: `start_date`/`end_date` filter on
+	// `placed_at`, not on when the object was created. Shippo ignores an unknown
+	// query parameter and answers 200, so a differently-named field would look
+	// like it worked while filtering nothing.
+	start_date: z
 		.string()
 		.optional()
-		.describe('Only orders placed at or after this instant, ISO 8601 UTC.'),
-	placed_at_lte: z
+		.describe(
+			'Only orders placed at or after this instant, ISO 8601 UTC. Filtered on `placed_at`.',
+		),
+	end_date: z
 		.string()
 		.optional()
-		.describe('Only orders placed at or before this instant.'),
+		.describe(
+			'Only orders placed at or before this instant. Filtered on `placed_at`.',
+		),
 	...accountIdHeader,
 });
 
