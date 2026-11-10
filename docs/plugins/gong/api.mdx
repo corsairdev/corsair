@@ -1,0 +1,2913 @@
+---
+title: API
+description: "API reference for Gong: every `gong.api.*` operation with input and output types."
+---
+
+Every `gong.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts Enrich
+
+### getResults
+
+`accountsEnrich.getResults`
+
+Retrieve account enrichment results for a job.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.accountsEnrich.getResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `accounts` | `object[]` | Yes | — |
+| `summary` | `Record<string, any>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="accounts full type">
+
+```ts
+{
+  id: string,
+  matched: boolean,
+  dataCategories?: {
+    dataCategory?: string,
+    status?: string,
+    enriched?: boolean,
+    data?: Record<string, any> | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`accountsEnrich.start`
+
+Start an account enrichment job.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.accountsEnrich.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataCategories` | `accountData[]` | Yes | — |
+| `accounts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="accounts full type">
+
+```ts
+{
+  id: string,
+  accountSearchCriteria: {
+    name?: string,
+    domain?: string,
+    linkedinUrl?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+
+
+
+---
+
+## Auditing
+
+### listLogs
+
+`auditing.listLogs`
+
+Retrieve Gong audit log entries for a time range.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.auditing.listLogs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logType` | `AccessLog \| UserActivityLog \| UserCallPlay \| ExternallySharedCallAccess \| ExternallySharedCallPlay` | Yes | — |
+| `fromDateTime` | `string` | Yes | — |
+| `toDateTime` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `records` | `Record<string, any>` | Yes | — |
+| `logEntries` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Calls
+
+### add
+
+`calls.add`
+
+Create a Gong call from an externally recorded conversation.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.calls.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientUniqueId` | `string` | Yes | — |
+| `actualStart` | `string` | Yes | — |
+| `parties` | `Record<string, any>[]` | Yes | — |
+| `direction` | `string` | Yes | — |
+| `primaryUser` | `string` | Yes | — |
+
+Send `downloadMediaUrl` with the call, or upload the recording afterwards with `calls.addRecording` and the returned `callId`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `callId` | `string` | Yes | — |
+
+
+
+---
+
+### addRecording
+
+`calls.addRecording`
+
+Upload media for a previously created Gong call.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.calls.addRecording({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `mediaFile` | `custom` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `callId` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`calls.get`
+
+Retrieve details for one Gong call.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.calls.get({ id: '7782342274025937895' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `call` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### getTranscripts
+
+`calls.getTranscripts`
+
+Retrieve transcripts for calls matching the filter.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.calls.getTranscripts({ filter: { callIds: ['7782342274025937895'] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `object` | Yes | — |
+| `cursor` | `string` | No | — |
+
+Gong answers 404 when no call matches the filter.
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  fromDateTime?: string,
+  toDateTime?: string,
+  workspaceId?: string,
+  callIds?: string[],
+  primaryUserIds?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `records` | `object` | No | — |
+| `callTranscripts` | `Record<string, any>[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  cursor?: string,
+  currentPageNumber?: number,
+  totalRecords?: number,
+  pageSize?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`calls.list`
+
+List calls within a requested date range.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.calls.list({ fromDateTime: '2025-06-02T00:00:00Z', toDateTime: '2025-06-09T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fromDateTime` | `string` | Yes | — |
+| `toDateTime` | `string` | Yes | — |
+| `workspaceId` | `string` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `records` | `object` | Yes | — |
+| `calls` | `Record<string, any>[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  cursor?: string,
+  currentPageNumber?: number,
+  totalRecords?: number,
+  pageSize?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listExtensive
+
+`calls.listExtensive`
+
+Retrieve calls with detailed content and filters.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.calls.listExtensive({ filter: { callIds: ['7782342274025937895'] }, contentSelector: { exposedFields: { parties: true, content: { topics: true } } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `filter` | `object` | Yes | — |
+| `contentSelector` | `Record<string, any>` | No | — |
+
+Set `contentSelector.exposedFields` to choose what comes back: parties, content, interaction stats, public comments or media URLs. Gong answers 404 when no call matches the filter.
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  fromDateTime?: string,
+  toDateTime?: string,
+  workspaceId?: string,
+  callIds?: string[],
+  primaryUserIds?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `records` | `object` | Yes | — |
+| `calls` | `Record<string, any>[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  cursor?: string,
+  currentPageNumber?: number,
+  totalRecords?: number,
+  pageSize?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Coaching
+
+### list
+
+`coaching.list`
+
+List coaching metrics for users.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.coaching.list({ 'workspace-id': '623457276584334', 'manager-id': '234599484848423', from: '2025-05-01T00:00:00Z', to: '2025-06-01T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace-id` | `string` | Yes | — |
+| `manager-id` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+
+Gong requires all four inputs: `workspace-id`, `manager-id`, `from` and `to`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+
+
+
+---
+
+## Contacts Enrich
+
+### getResults
+
+`contactsEnrich.getResults`
+
+Retrieve contact enrichment results for a job.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.contactsEnrich.getResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `contacts` | `object[]` | Yes | — |
+| `summary` | `Record<string, any>` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id: string,
+  matched: boolean,
+  dataCategories?: {
+    dataCategory?: string,
+    status?: string,
+    enriched?: boolean,
+    data?: Record<string, any> | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`contactsEnrich.start`
+
+Start a contact enrichment job.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.contactsEnrich.start({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataCategories` | `(contactData \| enrichEmails \| enrichPhones)[]` | Yes | — |
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id: string,
+  firstName?: string,
+  lastName?: string,
+  linkedinUrl?: string,
+  email?: string,
+  accountSearchCriteria?: {
+    name?: string,
+    domain?: string,
+    linkedinUrl?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+
+
+
+---
+
+## Crm
+
+### deleteIntegration
+
+`crm.deleteIntegration`
+
+Delete a Gong CRM integration and the CRM objects uploaded through it.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gong.api.crm.deleteIntegration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `number` | Yes | — |
+| `clientRequestId` | `string` | Yes | — |
+
+Deletes the integration and the CRM objects uploaded through it. The delete is asynchronous: check it with `crm.getRequestStatus`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `clientRequestId` | `string` | Yes | — |
+
+
+
+---
+
+### getObjects
+
+`crm.getObjects`
+
+Retrieve CRM objects by CRM IDs.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.crm.getObjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `number` | Yes | — |
+| `objectType` | `ACCOUNT \| CONTACT \| DEAL \| LEAD` | Yes | — |
+| `objectsCrmIds` | `string[]` | Yes | — |
+
+Gong documents this for development only, to check that uploaded objects were processed. It returns up to 100 objects, and an ID Gong does not know comes back as `null`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `crmObjectsMap` | `Record<string, Record<string, any> \| null>` | Yes | — |
+
+
+
+---
+
+### getRequestStatus
+
+`crm.getRequestStatus`
+
+Retrieve CRM request status.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.crm.getRequestStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `number` | Yes | — |
+| `clientRequestId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `errors` | `object[]` | No | — |
+| `totalErrorCount` | `number` | No | — |
+| `totalSuccessCount` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  line?: number,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listIntegrations
+
+`crm.listIntegrations`
+
+List Gong CRM integrations.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.crm.listIntegrations({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `integrations` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+### listSchemaFields
+
+`crm.listSchemaFields`
+
+List selected CRM schema fields.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.crm.listSchemaFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `number` | Yes | — |
+| `objectType` | `ACCOUNT \| CONTACT \| DEAL \| LEAD` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `objectTypeToSelectedFields` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="objectTypeToSelectedFields full type">
+
+```ts
+Record<string, {
+  uniqueName: string,
+  label: string,
+  type: string,
+  lastModified?: string,
+  isDeleted?: boolean,
+  referenceTo?: string,
+  orderedValueList?: string[]
+}[]>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### registerIntegration
+
+`crm.registerIntegration`
+
+Register a Gong CRM integration.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.crm.registerIntegration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `ownerEmail` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `integrationId` | `number` | Yes | — |
+
+
+
+---
+
+### uploadObjects
+
+`crm.uploadObjects`
+
+Upload CRM objects from a data file.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.crm.uploadObjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `number` | Yes | — |
+| `objectType` | `ACCOUNT \| CONTACT \| DEAL \| LEAD \| BUSINESS_USER \| STAGE` | Yes | — |
+| `clientRequestId` | `string` | Yes | — |
+| `dataFile` | `custom` | Yes | — |
+
+`dataFile` is an LDJSON file with one object per line and one object type per file, up to 200 MB. The upload is asynchronous: check it with `crm.getRequestStatus` and the same `clientRequestId`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `clientRequestId` | `string` | Yes | — |
+
+
+
+---
+
+### uploadSchemaFields
+
+`crm.uploadSchemaFields`
+
+Upload selected CRM schema fields.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.crm.uploadSchemaFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `number` | Yes | — |
+| `objectType` | `ACCOUNT \| CONTACT \| DEAL \| LEAD` | Yes | — |
+| `fields` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  uniqueName: string,
+  label: string,
+  type: DATE | DATETIME | NUMBER | PERCENT | CURRENCY | ID | URL | STRING | BOOLEAN | PHONENUMBER | EMAILADDRESS | PICKLIST | REFERENCE | STRINGARRAY,
+  lastModified?: string,
+  isDeleted?: boolean,
+  referenceTo?: string,
+  orderedValueList?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+
+
+
+---
+
+## Data Privacy
+
+### findEmailReferences
+
+`dataPrivacy.findEmailReferences`
+
+Find Gong records associated with an email address.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.dataPrivacy.findEmailReferences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailAddress` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+
+
+
+---
+
+### findPhoneReferences
+
+`dataPrivacy.findPhoneReferences`
+
+Find Gong records associated with a phone number.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.dataPrivacy.findPhoneReferences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phoneNumber` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+
+
+
+---
+
+### purgeEmailAddress
+
+`dataPrivacy.purgeEmailAddress`
+
+Delete an email address and the emails, calls, leads and contacts tied to it. Cannot be undone.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gong.api.dataPrivacy.purgeEmailAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailAddress` | `string` | Yes | — |
+
+Deletes email messages sent to or from the address, calls where it appears, and leads or contacts that have it. Remove the data from your CRM and email system first, or Gong imports it again.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+
+
+
+---
+
+### purgePhoneNumber
+
+`dataPrivacy.purgePhoneNumber`
+
+Delete a phone number and the calls, leads and contacts tied to it. Cannot be undone.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gong.api.dataPrivacy.purgePhoneNumber({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `phoneNumber` | `string` | Yes | — |
+
+Deletes the calls, leads and contacts tied to the phone number. Remove the data from your CRM first, or Gong imports it again.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+
+
+
+---
+
+## Digital Interactions
+
+### add
+
+`digitalInteractions.add`
+
+Add a digital interaction event to Gong.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.digitalInteractions.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventId` | `string` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `eventType` | `string` | Yes | — |
+| `sourceSystemName` | `string` | No | — |
+| `sessionId` | `string` | No | — |
+| `device` | `MOBILE \| PC` | No | — |
+| `content` | `Record<string, any>` | Yes | — |
+| `person` | `Record<string, any>` | No | — |
+| `customFields` | `Record<string, any>[]` | No | — |
+| `trackingId` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+
+
+
+---
+
+## Engage Flows
+
+### assign
+
+`engageFlows.assign`
+
+Assign prospects to flows.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.engageFlows.assign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crmProspectsIds` | `string[]` | Yes | — |
+| `flowId` | `string` | Yes | — |
+| `flowInstanceOwnerEmail` | `string` | Yes | — |
+| `overrides` | `object` | No | — |
+| `flowInstanceDescription` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="overrides full type">
+
+```ts
+{
+  steps?: Record<string, any>[],
+  flowInstanceVariables?: Record<string, any>[],
+  coolOffOverride?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `flowInstanceIds` | `string[]` | No | — |
+
+
+
+---
+
+### assignedProspects
+
+`engageFlows.assignedProspects`
+
+Retrieve prospects assigned to flows.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.engageFlows.assignedProspects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crmProspectsIds` | `string[]` | No | — |
+| `flowInstanceIds` | `string[]` | No | — |
+
+Pass `crmProspectsIds` or `flowInstanceIds`. At least one of them must have an entry.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `prospectsAssigned` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="prospectsAssigned full type">
+
+```ts
+{
+  flowId?: string,
+  flowName?: string,
+  crmProspectId?: string,
+  flowInstanceId?: string,
+  flowInstanceOwnerEmail?: string,
+  flowInstanceOwnerFullName?: string,
+  flowInstanceCreateDate?: string,
+  flowInstanceStatus?: string,
+  workspaceId?: string,
+  exclusive?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bulkAssignment
+
+`engageFlows.bulkAssignment`
+
+Submit a bulk flow assignment.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.engageFlows.bulkAssignment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flowInstanceOwnerEmail` | `string` | Yes | — |
+| `flowId` | `string` | Yes | — |
+| `prospects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="prospects full type">
+
+```ts
+{
+  firstName?: string,
+  lastName?: string,
+  email?: string,
+  jobTitle?: string,
+  linkedInUrl?: string,
+  crmId?: string,
+  accountCrmId?: string,
+  companyName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+| `processedCount` | `number` | Yes | — |
+| `successCount` | `number` | Yes | — |
+| `failedCount` | `number` | Yes | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  prospect?: {
+    firstName?: string,
+    lastName?: string,
+    email?: string,
+    jobTitle?: string,
+    linkedInUrl?: string,
+    crmId?: string,
+    accountCrmId?: string,
+    companyName?: string
+  },
+  status?: string,
+  crmId?: string,
+  crmObjectType?: string,
+  flowInstanceId?: string,
+  errorCode?: string,
+  errorMessage?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### folders
+
+`engageFlows.folders`
+
+List Engage flow folders.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.engageFlows.folders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flowFolderOwnerEmail` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `parentId` | `string \| number` | No | — |
+| `workspaceId` | `string` | No | — |
+
+Gong's reference documents the returned list under `flows`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `records` | `object` | No | — |
+| `flows` | `Record<string, any>[]` | No | — |
+| `folders` | `Record<string, any>[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  cursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBulkAssignment
+
+`engageFlows.getBulkAssignment`
+
+Retrieve a bulk flow assignment.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.engageFlows.getBulkAssignment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `totalCount` | `number` | Yes | — |
+| `processedCount` | `number` | Yes | — |
+| `successCount` | `number` | Yes | — |
+| `failedCount` | `number` | Yes | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  prospect?: {
+    firstName?: string,
+    lastName?: string,
+    email?: string,
+    jobTitle?: string,
+    linkedInUrl?: string,
+    crmId?: string,
+    accountCrmId?: string,
+    companyName?: string
+  },
+  status?: string,
+  crmId?: string,
+  crmObjectType?: string,
+  flowInstanceId?: string,
+  errorCode?: string,
+  errorMessage?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`engageFlows.list`
+
+List Engage flows.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.engageFlows.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flowOwnerEmail` | `string` | Yes | — |
+| `cursor` | `string` | No | — |
+| `workspaceId` | `string` | No | — |
+| `folderId` | `string` | No | — |
+| `mostRecentlyAssigned` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `records` | `object` | No | — |
+| `flows` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  cursor?: string
+}
+```
+</Accordion>
+
+<Accordion title="flows full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  folderId?: string,
+  folderName?: string,
+  visibility?: string,
+  creationDate?: string,
+  exclusive?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`engageFlows.search`
+
+Search Engage flows.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.engageFlows.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flowOwnerEmail` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `workspaceId` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `flows` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="flows full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  folderId?: string,
+  folderName?: string,
+  visibility?: string,
+  creationDate?: string,
+  exclusive?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### steps
+
+`engageFlows.steps`
+
+Retrieve steps for Engage flows.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.engageFlows.steps({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flowIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `flows` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+### unassign
+
+`engageFlows.unassign`
+
+Unassign flows by instance ID.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.engageFlows.unassign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flowInstanceIds` | `string[]` | Yes | — |
+| `unassignedByUserEmail` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `unassignedFlowInstanceIds` | `string[]` | Yes | — |
+
+
+
+---
+
+### unassignProspects
+
+`engageFlows.unassignProspects`
+
+Unassign prospect flows by CRM ID.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.engageFlows.unassignProspects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `crmProspectId` | `string` | Yes | — |
+| `flowId` | `string` | No | — |
+| `unassignedByUserEmail` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `unassignedFlowInstanceIds` | `string[]` | Yes | — |
+
+
+
+---
+
+## Entities
+
+### ask
+
+`entities.ask`
+
+Ask a question about a CRM entity. Uses Gong credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.entities.ask({ workspaceId: '623457276584334', crmEntityType: 'ACCOUNT', crmEntityId: '0011Q00001xsgZkQAI', timePeriod: 'LAST_30DAYS', question: 'What was the last activity on this account?' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | — |
+| `crmEntityType` | `ACCOUNT \| CONTACT \| DEAL \| LEAD` | Yes | — |
+| `crmEntityId` | `string` | Yes | — |
+| `timePeriod` | `LAST_7DAYS \| LAST_30DAYS \| LAST_90DAYS \| LAST_90_DAYS_SINCE_LAST_ACTIVITY \| LAST_YEAR_SINCE_LAST_ACTIVITY \| LAST_YEAR \| THIS_WEEK \| THIS_MONTH \| THIS_YEAR \| THIS_QUARTER \| CUSTOM_RANGE \| ALL_CONVERSATIONS` | Yes | — |
+| `fromDateTime` | `string` | No | — |
+| `toDateTime` | `string` | No | — |
+| `question` | `string` | Yes | — |
+
+Uses Gong credits, by the number of calls and emails read (up to 60 calls and 500 emails). `fromDateTime` is required when `timePeriod` is `CUSTOM_RANGE`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `numOfCallsSearched` | `number` | Yes | — |
+| `numOfEmailsSearched` | `number` | Yes | — |
+| `answer` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="answer full type">
+
+```ts
+{
+  answerItems?: string[],
+  emailFindings?: Record<string, any>[],
+  callFindings?: Record<string, any>[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generateBrief
+
+`entities.generateBrief`
+
+Generate an AI brief for a CRM entity. Uses Gong credits.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.entities.generateBrief({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | — |
+| `briefName` | `string` | Yes | — |
+| `crmEntityType` | `ACCOUNT \| CONTACT \| DEAL \| LEAD` | Yes | — |
+| `crmEntityId` | `string` | Yes | — |
+| `timePeriod` | `LAST_7DAYS \| LAST_30DAYS \| LAST_90DAYS \| LAST_90_DAYS_SINCE_LAST_ACTIVITY \| LAST_YEAR_SINCE_LAST_ACTIVITY \| LAST_YEAR \| THIS_WEEK \| THIS_MONTH \| THIS_YEAR \| THIS_QUARTER \| CUSTOM_RANGE \| ALL_CONVERSATIONS` | Yes | — |
+| `fromDateTime` | `string` | No | — |
+| `toDateTime` | `string` | No | — |
+
+Uses Gong credits. `briefName` is a brief from `settings.briefs`. `fromDateTime` is required when `timePeriod` is `CUSTOM_RANGE`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `numOfCallsSearched` | `number` | Yes | — |
+| `numOfEmailsSearched` | `number` | Yes | — |
+| `briefSections` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Integration Settings
+
+### update
+
+`integrationSettings.update`
+
+Update Gong integration settings.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.integrationSettings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationTypeSettings` | `Record<string, any>[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `integrationId` | `number` | Yes | — |
+
+
+
+---
+
+## Library
+
+### folderContent
+
+`library.folderContent`
+
+List calls in a library folder.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.library.folderContent({ folderId: '3843152912968920037' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `createdBy` | `string` | Yes | — |
+| `updated` | `string` | Yes | — |
+| `calls` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="calls full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  note?: string,
+  addedBy?: string,
+  created?: string,
+  url?: string,
+  snippet?: {
+    fromSec?: number,
+    toSec?: number
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### folders
+
+`library.folders`
+
+Retrieve public library folders.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.library.folders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `folders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="folders full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  parentFolderId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Outcomes
+
+### list
+
+`outcomes.list`
+
+List available call outcomes.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.outcomes.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `outcomes` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Permissions
+
+### addCallUsers
+
+`permissions.addCallUsers`
+
+Grant individual users access to calls.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.permissions.addCallUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callAccessList` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="callAccessList full type">
+
+```ts
+{
+  callId: string,
+  userIds: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+
+
+
+---
+
+### createProfile
+
+`permissions.createProfile`
+
+Create a permission profile.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.permissions.createProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `profile` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### deleteCallUsers
+
+`permissions.deleteCallUsers`
+
+Remove individual users from call access.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gong.api.permissions.deleteCallUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callAccessList` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="callAccessList full type">
+
+```ts
+{
+  callId: string,
+  userIds: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+
+
+
+---
+
+### getCallUsers
+
+`permissions.getCallUsers`
+
+Retrieve users with individual call access.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.permissions.getCallUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  callIds: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `callAccessList` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="callAccessList full type">
+
+```ts
+{
+  callId: string,
+  users?: {
+    userId?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProfile
+
+`permissions.getProfile`
+
+Retrieve a permission profile.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.permissions.getProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `profile` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### listProfiles
+
+`permissions.listProfiles`
+
+List permission profiles for a workspace.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.permissions.listProfiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `profiles` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+### listProfileUsers
+
+`permissions.listProfileUsers`
+
+List users attached to a permission profile.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.permissions.listProfileUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `users` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+### updateProfile
+
+`permissions.updateProfile`
+
+Update a permission profile.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.permissions.updateProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profileId` | `string` | Yes | — |
+| `body` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `profile` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+## Settings
+
+### briefs
+
+`settings.briefs`
+
+List briefs.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.settings.briefs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `briefs` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+### scorecards
+
+`settings.scorecards`
+
+List scorecards.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.settings.scorecards({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `scorecards` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+### trackers
+
+`settings.trackers`
+
+List keyword trackers.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.settings.trackers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `keywordTrackers` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+## Stats
+
+### aggregate
+
+`stats.aggregate`
+
+Retrieve aggregate user activity.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.stats.aggregate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `filter` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  fromDate: string,
+  toDate: string,
+  createdFromDateTime?: string,
+  createdToDateTime?: string,
+  userIds?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `records` | `object` | Yes | — |
+| `usersAggregateActivityStats` | `Record<string, any>[]` | Yes | — |
+| `fromDateTime` | `string` | Yes | — |
+| `toDateTime` | `string` | Yes | — |
+| `timeZone` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  totalRecords?: number,
+  currentPageSize?: number,
+  currentPageNumber?: number,
+  cursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### aggregateByPeriod
+
+`stats.aggregateByPeriod`
+
+Retrieve aggregate activity by period.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.stats.aggregateByPeriod({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `filter` | `object` | Yes | — |
+| `aggregationPeriod` | `DAY \| WEEK \| MONTH \| QUARTER \| YEAR` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  fromDate: string,
+  toDate: string,
+  createdFromDateTime?: string,
+  createdToDateTime?: string,
+  userIds?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `records` | `object` | Yes | — |
+| `usersAggregateActivity` | `Record<string, any>[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  totalRecords?: number,
+  currentPageSize?: number,
+  currentPageNumber?: number,
+  cursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### answeredScorecards
+
+`stats.answeredScorecards`
+
+Retrieve answered scorecard statistics.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.stats.answeredScorecards({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `filter` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  callFromDate?: string,
+  callToDate?: string,
+  reviewFromDate?: string,
+  reviewToDate?: string,
+  reviewMethod?: AUTOMATIC | MANUAL | BOTH,
+  reviewedUserIds?: string[],
+  scorecardIds?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `records` | `object` | Yes | — |
+| `answeredScorecards` | `Record<string, any>[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  totalRecords?: number,
+  currentPageSize?: number,
+  currentPageNumber?: number,
+  cursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### dayByDay
+
+`stats.dayByDay`
+
+Retrieve daily user activity.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.stats.dayByDay({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `filter` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  fromDate: string,
+  toDate: string,
+  createdFromDateTime?: string,
+  createdToDateTime?: string,
+  userIds?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `records` | `object` | Yes | — |
+| `usersDetailedActivities` | `Record<string, any>[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  totalRecords?: number,
+  currentPageSize?: number,
+  currentPageNumber?: number,
+  cursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### interaction
+
+`stats.interaction`
+
+Retrieve interaction statistics.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.stats.interaction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `filter` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  fromDate: string,
+  toDate: string,
+  createdFromDateTime?: string,
+  createdToDateTime?: string,
+  userIds?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `records` | `object` | Yes | — |
+| `peopleInteractionStats` | `Record<string, any>[]` | Yes | — |
+| `fromDateTime` | `string` | Yes | — |
+| `toDateTime` | `string` | Yes | — |
+| `timeZone` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  totalRecords?: number,
+  currentPageSize?: number,
+  currentPageNumber?: number,
+  cursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Targets
+
+### listDefinitions
+
+`targets.listDefinitions`
+
+List target definitions.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.targets.listDefinitions({ workspaceId: '623457276584334' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `targets` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="targets full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  description?: string,
+  type?: string,
+  unit?: string,
+  hierarchyType?: string,
+  createdDateTime?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadAssignments
+
+`targets.uploadAssignments`
+
+Upload target assignments.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.targets.uploadAssignments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `targetId` | `string` | Yes | — |
+| `workspaceId` | `string \| number` | Yes | — |
+| `validateOnly` | `boolean` | No | — |
+| `file` | `custom` | Yes | — |
+
+`file` is a CSV of up to 10,000 rows. Set `validateOnly` to check the file without saving it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `validateOnly` | `boolean` | Yes | — |
+| `processedRows` | `number` | Yes | — |
+
+
+
+---
+
+## Tasks
+
+### list
+
+`tasks.list`
+
+List Gong tasks.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  userId: string,
+  workspaceId?: string,
+  types: (FLOW | MANUAL)[],
+  taskAction: CALL[],
+  status: (OPEN | DONE | DISMISSED)[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `tasks` | `object[]` | Yes | — |
+| `crmType` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id?: number,
+  userId?: number,
+  created?: string,
+  updated?: string,
+  status?: string,
+  type?: string,
+  actions?: string[],
+  dueDate?: string,
+  title?: string,
+  priority?: {
+    id?: number,
+    name?: string,
+    weight?: number
+  },
+  hasSpecificTime?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateReminder
+
+`tasks.updateReminder`
+
+Update a task reminder.
+
+**Risk:** `write`
+
+```ts
+await corsair.gong.api.tasks.updateReminder({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `status` | `OPEN \| DONE \| DISMISSED` | No | — |
+| `dueDate` | `string` | No | — |
+| `priority` | `string` | No | — |
+| `hasSpecificTime` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Retrieve a user by Gong user identifier.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.users.get({ id: '234599484848423' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `user` | `Record<string, any>` | Yes | — |
+
+
+
+---
+
+### getHistory
+
+`users.getHistory`
+
+Retrieve the settings history for a Gong user.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.users.getHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `userSettingsHistory` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users in the Gong company workspace.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `includeAvatars` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `users` | `Record<string, any>[]` | Yes | — |
+| `records` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  cursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMultiple
+
+`users.listMultiple`
+
+List users matching the supplied filters.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.users.listMultiple({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `filter` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `users` | `Record<string, any>[]` | Yes | — |
+| `records` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  cursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspaces
+
+### list
+
+`workspaces.list`
+
+List company workspaces.
+
+**Risk:** `read`
+
+```ts
+await corsair.gong.api.workspaces.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string` | Yes | — |
+| `workspaces` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="workspaces full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

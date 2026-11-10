@@ -1,4 +1,67 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
 displayName: "Gong"
-description: Access Gong calls, transcripts, users, statistics, settings, and CRM data through the Gong Public API.
+description: Read Gong calls, transcripts, users, stats, library folders and Engage flows, upload calls and CRM data, and run Gong's data privacy requests.
+domain: gong.io
+recommendedAuth: api_key
+overviewNote: |
+  A Gong API key has two halves, an access key and an access key secret. A technical administrator creates them on [Gong's API page](https://app.gong.io/company/api). The plugin needs both and sends them as HTTP Basic. Things to know before you call it:
+
+  - **Both halves of the key.** The access key is the connection's API key and the secret is its `api_key_secret` field. In code you can pass `accessKey` and `accessKeySecret` to `gong()` instead.
+  - **API host.** Requests go to `https://api.gong.io`. If Gong shows your company its own base URL, such as `https://us-12345.api.gong.io`, pass it as `baseUrl`. The plugin accepts `api.gong.io` and `<name>.api.gong.io` and rejects any other host.
+  - **OAuth is a token you bring.** `authType: 'oauth_2'` sends a bearer token as it is. The plugin does not run Gong's OAuth flow and does not refresh the token, and a Gong token lasts one day. Pass the `api_base_url_for_customer` value from Gong's token response as `baseUrl`.
+  - **IDs are digit strings.** Gong IDs are 64-bit numbers, too large for a JavaScript number. Pass them as strings, the way `workspaces.list` returns them.
+  - **Paging.** A list returns `records.cursor` while more pages exist. Send it back as `cursor` and keep every other input the same.
+  - **Rate limits.** Gong allows 3 calls a second and 10,000 a day by default, and answers 429 with `Retry-After`. The plugin waits that long and retries up to three times.
+  - **Erasing data cannot be undone.** `dataPrivacy.purgeEmailAddress` and `dataPrivacy.purgePhoneNumber` delete the emails, calls, leads and contacts tied to that address or number. Gong takes several hours to finish.
+  - **Credits.** `entities.ask` and `entities.generateBrief` use Gong credits on every call.
+  - **Personal data stays out of the event log.** Events record IDs, date ranges and list sizes. Names, email addresses, phone numbers, prospects, call parties and questions are not stored.
+  - **Webhooks.** The plugin does not receive webhooks.
+examples:
+  read:
+    path: calls.list
+    title: List last week's calls
+    args:
+      fromDateTime: "2025-06-02T00:00:00Z"
+      toDateTime: "2025-06-09T00:00:00Z"
+  write:
+    path: permissions.addCallUsers
+    title: Give a user access to a call
+    args:
+      callAccessList:
+        - callId: "7782342274025937895"
+          userIds:
+            - "234599484848423"
+apiNotes:
+  calls.add: "Send `downloadMediaUrl` with the call, or upload the recording afterwards with `calls.addRecording` and the returned `callId`."
+  calls.listExtensive: "Set `contentSelector.exposedFields` to choose what comes back: parties, content, interaction stats, public comments or media URLs. Gong answers 404 when no call matches the filter."
+  calls.getTranscripts: "Gong answers 404 when no call matches the filter."
+  coaching.list: "Gong requires all four inputs: `workspace-id`, `manager-id`, `from` and `to`."
+  crm.getObjects: "Gong documents this for development only, to check that uploaded objects were processed. It returns up to 100 objects, and an ID Gong does not know comes back as `null`."
+  crm.uploadObjects: "`dataFile` is an LDJSON file with one object per line and one object type per file, up to 200 MB. The upload is asynchronous: check it with `crm.getRequestStatus` and the same `clientRequestId`."
+  crm.deleteIntegration: "Deletes the integration and the CRM objects uploaded through it. The delete is asynchronous: check it with `crm.getRequestStatus`."
+  dataPrivacy.purgeEmailAddress: "Deletes email messages sent to or from the address, calls where it appears, and leads or contacts that have it. Remove the data from your CRM and email system first, or Gong imports it again."
+  dataPrivacy.purgePhoneNumber: "Deletes the calls, leads and contacts tied to the phone number. Remove the data from your CRM first, or Gong imports it again."
+  engageFlows.assignedProspects: "Pass `crmProspectsIds` or `flowInstanceIds`. At least one of them must have an entry."
+  engageFlows.folders: "Gong's reference documents the returned list under `flows`."
+  entities.ask: "Uses Gong credits, by the number of calls and emails read (up to 60 calls and 500 emails). `fromDateTime` is required when `timePeriod` is `CUSTOM_RANGE`."
+  entities.generateBrief: "Uses Gong credits. `briefName` is a brief from `settings.briefs`. `fromDateTime` is required when `timePeriod` is `CUSTOM_RANGE`."
+  targets.uploadAssignments: "`file` is a CSV of up to 10,000 rows. Set `validateOnly` to check the file without saving it."
+apiExamples:
+  calls.list:
+    call: "{ fromDateTime: '2025-06-02T00:00:00Z', toDateTime: '2025-06-09T00:00:00Z' }"
+  calls.get:
+    call: "{ id: '7782342274025937895' }"
+  calls.listExtensive:
+    call: "{ filter: { callIds: ['7782342274025937895'] }, contentSelector: { exposedFields: { parties: true, content: { topics: true } } } }"
+  calls.getTranscripts:
+    call: "{ filter: { callIds: ['7782342274025937895'] } }"
+  users.get:
+    call: "{ id: '234599484848423' }"
+  entities.ask:
+    call: "{ workspaceId: '623457276584334', crmEntityType: 'ACCOUNT', crmEntityId: '0011Q00001xsgZkQAI', timePeriod: 'LAST_30DAYS', question: 'What was the last activity on this account?' }"
+  coaching.list:
+    call: "{ 'workspace-id': '623457276584334', 'manager-id': '234599484848423', from: '2025-05-01T00:00:00Z', to: '2025-06-01T00:00:00Z' }"
+  library.folderContent:
+    call: "{ folderId: '3843152912968920037' }"
+  targets.listDefinitions:
+    call: "{ workspaceId: '623457276584334' }"

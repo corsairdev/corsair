@@ -717,11 +717,13 @@ const gongEndpointMeta = {
 	},
 	'dataPrivacy.purgePhoneNumber': {
 		riskLevel: 'destructive',
-		description: 'Delete a phone number and its associated Gong data.',
+		description:
+			'Delete a phone number and the calls, leads and contacts tied to it. Cannot be undone.',
 	},
 	'dataPrivacy.purgeEmailAddress': {
 		riskLevel: 'destructive',
-		description: 'Delete an email address and its associated Gong data.',
+		description:
+			'Delete an email address and the emails, calls, leads and contacts tied to it. Cannot be undone.',
 	},
 	'dataPrivacy.findPhoneReferences': {
 		riskLevel: 'read',
@@ -753,11 +755,11 @@ const gongEndpointMeta = {
 	},
 	'entities.generateBrief': {
 		riskLevel: 'read',
-		description: 'Generate an AI brief for a CRM entity.',
+		description: 'Generate an AI brief for a CRM entity. Uses Gong credits.',
 	},
 	'entities.ask': {
 		riskLevel: 'read',
-		description: 'Ask a question about a CRM entity.',
+		description: 'Ask a question about a CRM entity. Uses Gong credits.',
 	},
 	'coaching.list': {
 		riskLevel: 'read',
@@ -809,7 +811,8 @@ const gongEndpointMeta = {
 	},
 	'crm.deleteIntegration': {
 		riskLevel: 'destructive',
-		description: 'Delete a Gong CRM integration.',
+		description:
+			'Delete a Gong CRM integration and the CRM objects uploaded through it.',
 	},
 	'crm.listSchemaFields': {
 		riskLevel: 'read',

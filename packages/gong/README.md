@@ -24,7 +24,7 @@ pnpm add @corsair-dev/gong
 | `coaching.list` | `gong.api.coaching.list` | `read` | List coaching metrics for users. |
 | `contactsEnrich.getResults` | `gong.api.contactsEnrich.getResults` | `read` | Retrieve contact enrichment results for a job. |
 | `contactsEnrich.start` | `gong.api.contactsEnrich.start` | `write` | Start a contact enrichment job. |
-| `crm.deleteIntegration` | `gong.api.crm.deleteIntegration` | `destructive` | Delete a Gong CRM integration. |
+| `crm.deleteIntegration` | `gong.api.crm.deleteIntegration` | `destructive` | Delete a Gong CRM integration and the CRM objects uploaded through it. |
 | `crm.getObjects` | `gong.api.crm.getObjects` | `read` | Retrieve CRM objects by CRM IDs. |
 | `crm.getRequestStatus` | `gong.api.crm.getRequestStatus` | `read` | Retrieve CRM request status. |
 | `crm.listIntegrations` | `gong.api.crm.listIntegrations` | `read` | List Gong CRM integrations. |
@@ -34,8 +34,8 @@ pnpm add @corsair-dev/gong
 | `crm.uploadSchemaFields` | `gong.api.crm.uploadSchemaFields` | `write` | Upload selected CRM schema fields. |
 | `dataPrivacy.findEmailReferences` | `gong.api.dataPrivacy.findEmailReferences` | `read` | Find Gong records associated with an email address. |
 | `dataPrivacy.findPhoneReferences` | `gong.api.dataPrivacy.findPhoneReferences` | `read` | Find Gong records associated with a phone number. |
-| `dataPrivacy.purgeEmailAddress` | `gong.api.dataPrivacy.purgeEmailAddress` | `destructive` | Delete an email address and its associated Gong data. |
-| `dataPrivacy.purgePhoneNumber` | `gong.api.dataPrivacy.purgePhoneNumber` | `destructive` | Delete a phone number and its associated Gong data. |
+| `dataPrivacy.purgeEmailAddress` | `gong.api.dataPrivacy.purgeEmailAddress` | `destructive` | Delete an email address and the emails, calls, leads and contacts tied to it. Cannot be undone. |
+| `dataPrivacy.purgePhoneNumber` | `gong.api.dataPrivacy.purgePhoneNumber` | `destructive` | Delete a phone number and the calls, leads and contacts tied to it. Cannot be undone. |
 | `digitalInteractions.add` | `gong.api.digitalInteractions.add` | `write` | Add a digital interaction event to Gong. |
 | `engageFlows.assign` | `gong.api.engageFlows.assign` | `write` | Assign prospects to flows. |
 | `engageFlows.assignedProspects` | `gong.api.engageFlows.assignedProspects` | `read` | Retrieve prospects assigned to flows. |
@@ -47,8 +47,8 @@ pnpm add @corsair-dev/gong
 | `engageFlows.steps` | `gong.api.engageFlows.steps` | `read` | Retrieve steps for Engage flows. |
 | `engageFlows.unassign` | `gong.api.engageFlows.unassign` | `write` | Unassign flows by instance ID. |
 | `engageFlows.unassignProspects` | `gong.api.engageFlows.unassignProspects` | `write` | Unassign prospect flows by CRM ID. |
-| `entities.ask` | `gong.api.entities.ask` | `read` | Ask a question about a CRM entity. |
-| `entities.generateBrief` | `gong.api.entities.generateBrief` | `read` | Generate an AI brief for a CRM entity. |
+| `entities.ask` | `gong.api.entities.ask` | `read` | Ask a question about a CRM entity. Uses Gong credits. |
+| `entities.generateBrief` | `gong.api.entities.generateBrief` | `read` | Generate an AI brief for a CRM entity. Uses Gong credits. |
 | `integrationSettings.update` | `gong.api.integrationSettings.update` | `write` | Update Gong integration settings. |
 | `library.folderContent` | `gong.api.library.folderContent` | `read` | List calls in a library folder. |
 | `library.folders` | `gong.api.library.folders` | `read` | Retrieve public library folders. |
@@ -82,6 +82,12 @@ pnpm add @corsair-dev/gong
 ## Auth
 
 Auth: API key, OAuth 2.0 (default API key). Set `authType` on the plugin factory to pick one.
+
+A Gong API key has two halves. Pass `accessKey` and `accessKeySecret` to `gong()`, or store them on the connection as the API key and its `api_key_secret` field. The plugin sends them as HTTP Basic.
+
+Requests go to `https://api.gong.io`. If Gong's API page shows your company its own base URL, such as `https://us-12345.api.gong.io`, pass it as `baseUrl`. The plugin accepts `api.gong.io` and `<name>.api.gong.io` and rejects any other host.
+
+With `authType: 'oauth_2'` the plugin sends the bearer token you give it as `key`. It does not run Gong's OAuth flow or refresh the token, and a Gong token lasts one day.
 
 ## Webhooks
 

@@ -2079,6 +2079,14 @@
                 ]
               },
               {
+                "group": "Gong",
+                "pages": [
+                  "plugins/gong/overview",
+                  "plugins/gong/api",
+                  "plugins/gong/database"
+                ]
+              },
+              {
                 "group": "Google Address Validation",
                 "pages": [
                   "plugins/googleaddressvalidation/overview",
